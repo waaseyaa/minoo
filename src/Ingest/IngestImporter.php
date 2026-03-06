@@ -8,7 +8,6 @@ use Minoo\Entity\IngestLog;
 use Minoo\Ingest\EntityMapper\CulturalCollectionMapper;
 use Minoo\Ingest\EntityMapper\DictionaryEntryMapper;
 use Minoo\Ingest\EntityMapper\SpeakerMapper;
-use Minoo\Ingest\IngestStatus;
 
 final class IngestImporter
 {
