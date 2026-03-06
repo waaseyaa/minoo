@@ -21,55 +21,55 @@ minoo/
 └── vendor/            # Symlinks to ../waaseyaa/packages/*
 ```
 
-## Entity Types (12)
+## Orchestration
+
+| File pattern | Specialist skill | Cold memory spec |
+|---|---|---|
+| `src/Entity/*`, `src/Provider/*` | `minoo:entities` | `docs/specs/entity-model.md` |
+| `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
+| `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
+| `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
+| `config/*`, `public/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
+
+For framework-level work (kernel boot, entity storage, access handler internals), use the waaseyaa MCP tools:
+- `waaseyaa_get_spec entity-system` — entity types, storage, field definitions
+- `waaseyaa_get_spec access-control` — access policies, gate wiring
+- `waaseyaa_get_spec infrastructure` — kernel boot, manifest compiler, providers
+- `waaseyaa_search_specs <query>` — keyword search across all framework specs
+
+## Entity Domains (4 domains, 12 types)
 
 | Domain | Entities | Provider | Policy |
 |--------|----------|----------|--------|
 | Events | `event`, `event_type` | `EventServiceProvider` | `EventAccessPolicy` |
-| Groups | `group`, `group_type` | `GroupServiceProvider` | `GroupAccessPolicy` |
-| Cultural Groups | `cultural_group` | `CulturalGroupServiceProvider` | `CulturalGroupAccessPolicy` |
-| Teachings | `teaching`, `teaching_type` | `TeachingServiceProvider` | `TeachingAccessPolicy` |
-| Collections | `cultural_collection` | `CulturalCollectionServiceProvider` | `CulturalCollectionAccessPolicy` |
+| Groups | `group`, `group_type`, `cultural_group` | `GroupServiceProvider`, `CulturalGroupServiceProvider` | `GroupAccessPolicy`, `CulturalGroupAccessPolicy` |
+| Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingServiceProvider`, `CulturalCollectionServiceProvider` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
 | Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker` | `LanguageServiceProvider` | `LanguageAccessPolicy` |
 
-All entities extend `EntityBase` with hardcoded `entityTypeId` and `entityKeys`. Each entity class constructor takes `(array $values)`.
+## Operation Checklists
 
-## Access Policy Pattern
+**Adding a Minoo entity type:**
+1. Create entity class in `src/Entity/` extending `EntityBase` — hardcode `entityTypeId` and `entityKeys`
+2. Register `EntityType` in existing or new service provider's `register()` method
+3. Create or update `AccessPolicy` in `src/Access/` with `#[PolicyAttribute]`
+4. Write unit test in `tests/Minoo/Unit/Entity/`
+5. Run `./vendor/bin/phpunit` — delete `storage/framework/packages.php` if new provider isn't discovered
 
-All policies follow the same pattern:
-- Authenticated users with `'administer content'` permission: full access
-- Anonymous users: view published only (`status == 1`), no create/update/delete
-- Uses `#[PolicyAttribute(entityType: '...')]` for auto-discovery
-
-`LanguageAccessPolicy` covers all 4 language entity types via `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`.
-
-## Seed Data
-
-- **TaxonomySeeder**: `galleryVocabulary()` (6 terms), `teachingTagsVocabulary()` (6 terms)
-- **ConfigSeeder**: `eventTypes()` (3), `groupTypes()` (3), `teachingTypes()` (3)
-
-Static methods returning structured arrays — not persisted entities. Used by install/seed commands.
+**Adding seed data:**
+1. Add static method to `TaxonomySeeder` (vocabularies) or `ConfigSeeder` (type configs)
+2. Write unit test in `tests/Minoo/Unit/Seed/`
+3. Return structured arrays — not persisted entities
 
 ## Commands
 
 ```bash
-composer install                              # Install deps (creates symlinks to waaseyaa packages)
+composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests
+./vendor/bin/phpunit                          # All tests (42 tests, 115 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
-./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (boots kernel with in-memory SQLite)
+./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
 ```
-
-## API Endpoints
-
-All entity types get automatic JSON:API endpoints:
-- `GET /api/{type}` — list (paginated)
-- `GET /api/{type}/{id}` — read
-- `POST /api/{type}` — create (requires authentication)
-- `PATCH /api/{type}/{id}` — update
-- `DELETE /api/{type}/{id}` — delete
-- `GET /api/schema/{type}` — JSON Schema with field definitions
 
 ## Code Style
 
@@ -77,24 +77,20 @@ All entity types get automatic JSON:API endpoints:
 - Namespace: `Minoo\` for app code, `Minoo\Tests\` for tests
 - PHPUnit 10.5 attributes: `#[Test]`, `#[CoversClass(...)]`, `#[CoversNothing]` for integration
 - `final class` by default
-
-## Framework Relationship
-
-- Framework packages are in `../waaseyaa/packages/` (path repositories in composer.json)
-- Pre-Packagist: uses `@dev` version constraints with symlinks
-- Post-Packagist: switch to `^0.1` constraints, remove path repositories
-- See `../waaseyaa/CLAUDE.md` for full framework conventions and gotchas
-
-## Key Patterns
-
-- Custom entities: extend `EntityBase`, register via `EntityTypeManager` in a service provider's `register()` method
-- Access policies: implement `AccessPolicyInterface`, use `#[PolicyAttribute]` for discovery
-- Service providers: extend `ServiceProvider`, register in `extra.waaseyaa.providers` in composer.json
-- Entity keys: each entity has a unique primary key name (e.g. `eid` for event, `deid` for dictionary_entry)
-- Integration tests: boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite, delete stale `storage/framework/packages.php` before boot
+- See `../waaseyaa/CLAUDE.md` for full framework conventions
 
 ## Gotchas
 
-- `dirname(__DIR__, 3)` from `tests/Minoo/Integration/` to reach project root (3 levels up, not 2)
-- `PackageManifestCompiler` reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
-- Stale `storage/framework/packages.php` cache can prevent new providers/policies from being discovered — delete it when adding new providers
+- **`dirname(__DIR__, 3)`** from `tests/Minoo/Integration/` to reach project root (3 levels up, not 2)
+- **Stale manifest cache**: `storage/framework/packages.php` can prevent new providers/policies from being discovered — delete it when adding new providers
+- **`PackageManifestCompiler`** reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
+- **`LanguageAccessPolicy`** covers all 4 language types via array attribute: `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`
+- **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection)
+- **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
+
+## Codified Context
+
+- **Tier 1 (Constitution):** This CLAUDE.md — orchestration, checklists, gotchas
+- **Tier 2 (Skill):** `skills/minoo/SKILL.md` — domain knowledge for all 4 entity domains
+- **Tier 3 (Spec):** `docs/specs/entity-model.md` — full entity model, access patterns, seed data
+- **Framework specs:** Use `waaseyaa_*` MCP tools for framework-level context
