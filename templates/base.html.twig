@@ -15,10 +15,10 @@
         <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
         <nav id="main-nav" aria-label="Main">
           <ul class="site-nav">
-            <li><a href="/events">Events</a></li>
-            <li><a href="/groups">Groups</a></li>
-            <li><a href="/teachings">Teachings</a></li>
-            <li><a href="/language">Language</a></li>
+            <li><a href="/events"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>Events</a></li>
+            <li><a href="/groups"{% if path is defined and path starts with '/groups' %} aria-current="page"{% endif %}>Groups</a></li>
+            <li><a href="/teachings"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>Teachings</a></li>
+            <li><a href="/language"{% if path is defined and path starts with '/language' %} aria-current="page"{% endif %}>Language</a></li>
           </ul>
         </nav>
       </div>

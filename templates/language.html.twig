@@ -3,10 +3,11 @@
 {% block title %}Language — Minoo{% endblock %}
 
 {% block content %}
+  <div class="flow-lg">
   <h1>Language</h1>
   <p>Ojibwe dictionary entries.</p>
 
-  <div class="card-grid" style="margin-block-start: var(--space-md);">
+  <div class="card-grid">
     {% include "components/dictionary-entry-card.html.twig" with {
       word: "Miigwech",
       part_of_speech: "interjection",
@@ -29,5 +30,6 @@
       example: "Gakina gegoo onjibaa akiing.",
       tags: ["nature"]
     } %}
+  </div>
   </div>
 {% endblock %}
