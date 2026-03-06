@@ -11,7 +11,8 @@ final class CulturalCollectionMapper
     {
         $title = (string) ($data['title'] ?? '');
         $description = (string) ($data['description'] ?? '');
-        $description = strip_tags($description);
+        $description = (string) preg_replace('/<\/(h[1-6]|p|div|li|br)>/i', ' </$1>', $description);
+        $description = trim((string) preg_replace('/\s+/', ' ', strip_tags($description)));
 
         return [
             'title' => $title,

@@ -4,19 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Ingest;
 
-final class ValidationResult
-{
-    /** @param list<string> $errors */
-    public function __construct(
-        public readonly array $errors = [],
-    ) {}
-
-    public function isValid(): bool
-    {
-        return $this->errors === [];
-    }
-}
-
 final class PayloadValidator
 {
     private const array SUPPORTED_VERSIONS = ['1.0'];
@@ -78,6 +65,12 @@ final class PayloadValidator
         if ($envelope['entity_type'] === 'dictionary_entry') {
             $errors = [...$errors, ...$this->validateDictionaryEntry($envelope['data'])];
         }
+        if ($envelope['entity_type'] === 'speaker') {
+            $errors = [...$errors, ...$this->validateSpeaker($envelope['data'])];
+        }
+        if ($envelope['entity_type'] === 'cultural_collection') {
+            $errors = [...$errors, ...$this->validateCulturalCollection($envelope['data'])];
+        }
 
         return new ValidationResult($errors);
     }
@@ -93,6 +86,34 @@ final class PayloadValidator
 
         if (isset($data['part_of_speech']) && !in_array($data['part_of_speech'], self::VALID_PARTS_OF_SPEECH, true)) {
             $errors[] = sprintf('Invalid part_of_speech: %s', $data['part_of_speech']);
+        }
+
+        return $errors;
+    }
+
+    /** @return list<string> */
+    private function validateSpeaker(array $data): array
+    {
+        $errors = [];
+
+        if (empty($data['name'])) {
+            $errors[] = 'Speaker requires name.';
+        }
+
+        if (empty($data['code'])) {
+            $errors[] = 'Speaker requires code.';
+        }
+
+        return $errors;
+    }
+
+    /** @return list<string> */
+    private function validateCulturalCollection(array $data): array
+    {
+        $errors = [];
+
+        if (empty($data['title'])) {
+            $errors[] = 'Cultural collection requires title.';
         }
 
         return $errors;

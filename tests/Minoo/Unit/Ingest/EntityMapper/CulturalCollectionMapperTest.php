@@ -40,6 +40,6 @@ final class CulturalCollectionMapperTest extends TestCase
 
         $result = $mapper->map($data, '');
 
-        $this->assertSame('TitleContent bold', $result['description']);
+        $this->assertSame('Title Content bold', $result['description']);
     }
 }

@@ -32,7 +32,9 @@ final class IngestImporter
             'dictionary_entry' => (new DictionaryEntryMapper())->map($data, $sourceUrl),
             'speaker' => (new SpeakerMapper())->map($data),
             'cultural_collection' => (new CulturalCollectionMapper())->map($data, $sourceUrl),
-            default => [],
+            default => throw new \LogicException(
+                sprintf('No mapper registered for validated entity type: %s', $entityType),
+            ),
         };
 
         $source = (string) ($envelope['source'] ?? 'unknown');

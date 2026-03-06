@@ -21,8 +21,24 @@ final class IngestMaterializer
         $result = new MaterializationResult();
         $context = new MaterializationContext();
 
-        $rawEnvelope = json_decode($log->get('payload_raw'), true) ?? [];
-        $parsedFields = json_decode($log->get('payload_parsed'), true) ?? [];
+        $rawEnvelope = json_decode($log->get('payload_raw'), true);
+        if ($rawEnvelope === null && $log->get('payload_raw') !== 'null') {
+            throw new \RuntimeException(sprintf(
+                'Failed to decode payload_raw: %s',
+                json_last_error_msg(),
+            ));
+        }
+        $rawEnvelope ??= [];
+
+        $parsedFields = json_decode($log->get('payload_parsed'), true);
+        if ($parsedFields === null && $log->get('payload_parsed') !== 'null') {
+            throw new \RuntimeException(sprintf(
+                'Failed to decode payload_parsed: %s',
+                json_last_error_msg(),
+            ));
+        }
+        $parsedFields ??= [];
+
         $entityType = (string) $log->get('entity_type_target');
         $data = $rawEnvelope['data'] ?? [];
 
@@ -30,7 +46,9 @@ final class IngestMaterializer
             'dictionary_entry' => $this->materializeDictionaryEntry($parsedFields, $data, $context, $result, $dryRun),
             'speaker' => $this->materializeSpeaker($parsedFields, $result, $dryRun),
             'cultural_collection' => $this->materializeCulturalCollection($parsedFields, $result, $dryRun),
-            default => $result,
+            default => throw new \InvalidArgumentException(
+                sprintf('Cannot materialize unsupported entity type: %s', $entityType),
+            ),
         };
     }
 
@@ -64,6 +82,11 @@ final class IngestMaterializer
         foreach ($rawData['word_parts'] ?? [] as $wpData) {
             $wpFields = $wordPartMapper->map($wpData, $sourceUrl);
             if ($wpFields === null) {
+                $result->addSkipped(
+                    'word_part',
+                    (string) ($wpData['form'] ?? ''),
+                    sprintf('Invalid morphological_role: %s', (string) ($wpData['morphological_role'] ?? '')),
+                );
                 continue;
             }
             $form = $wpFields['form'];
@@ -154,8 +177,10 @@ final class IngestMaterializer
             if ($ids !== []) {
                 return (int) reset($ids);
             }
-        } catch (\PDOException) {
-            // Field-level querying not available (e.g. in-memory SQLite).
+        } catch (\PDOException $e) {
+            if (!str_contains($e->getMessage(), 'no such column')) {
+                throw $e;
+            }
         }
 
         $entity = $storage->create($fields);
@@ -175,8 +200,10 @@ final class IngestMaterializer
             if ($ids !== []) {
                 return (int) reset($ids);
             }
-        } catch (\PDOException) {
-            // Field-level querying not available (e.g. in-memory SQLite).
+        } catch (\PDOException $e) {
+            if (!str_contains($e->getMessage(), 'no such column')) {
+                throw $e;
+            }
         }
 
         $entity = $storage->create($fields);
