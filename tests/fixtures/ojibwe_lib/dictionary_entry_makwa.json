@@ -1,0 +1,33 @@
+{
+  "payload_id": "fix-dict-makwa-001",
+  "version": "1.0",
+  "source": "ojibwe_lib",
+  "snapshot_type": "full",
+  "timestamp": "2026-03-06T14:30:00Z",
+  "entity_type": "dictionary_entry",
+  "source_url": "https://ojibwe.lib.umn.edu/main-entry/makwa-na",
+  "data": {
+    "lemma": "makwa",
+    "definition": "bear",
+    "part_of_speech": "na",
+    "stem": "/makw-/",
+    "language_code": "oj",
+    "inflected_forms": [
+      {"form": "makwag", "label": "plural"},
+      {"form": "makwan", "label": "obviative"}
+    ],
+    "tags": ["animate", "animal"],
+    "example_sentences": [
+      {
+        "source_sentence_id": "makwa-es-001",
+        "ojibwe_text": "Makwa agamiing dago.",
+        "english_text": "The bear is by the lake.",
+        "speaker_code": "es",
+        "audio_url": "https://ojibwe.lib.umn.edu/audio/makwa-es.mp3"
+      }
+    ],
+    "word_parts": [
+      {"form": "makw-", "morphological_role": "initial", "definition": "bear"}
+    ]
+  }
+}

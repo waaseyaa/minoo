@@ -1,0 +1,16 @@
+{
+  "payload_id": "fix-speaker-es-001",
+  "version": "1.0",
+  "source": "ojibwe_lib",
+  "snapshot_type": "full",
+  "timestamp": "2026-03-06T14:30:00Z",
+  "entity_type": "speaker",
+  "source_url": "https://ojibwe.lib.umn.edu/speaker/eugene-stillday",
+  "data": {
+    "name": "Eugene Stillday",
+    "code": "es",
+    "bio": "Ponemah, Minnesota. First-language speaker of Southwestern Ojibwe.",
+    "photo_url": null,
+    "region": "Ponemah, MN"
+  }
+}

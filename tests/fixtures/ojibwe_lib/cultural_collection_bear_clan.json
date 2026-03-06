@@ -1,0 +1,15 @@
+{
+  "payload_id": "fix-cc-bear-001",
+  "version": "1.0",
+  "source": "ojibwe_lib",
+  "snapshot_type": "full",
+  "timestamp": "2026-03-06T14:30:00Z",
+  "entity_type": "cultural_collection",
+  "source_url": "https://ojibwe.lib.umn.edu/culture/bear-clan",
+  "data": {
+    "title": "The Bear Clan",
+    "description": "Cultural significance of makwa in Anishinaabe tradition.",
+    "source_attribution": "University of Minnesota Ojibwe Language Program",
+    "topics": ["clans", "animals"]
+  }
+}
