@@ -85,7 +85,8 @@
             "providers": [
                 "Minoo\\Provider\\EventServiceProvider",
                 "Minoo\\Provider\\GroupServiceProvider",
-                "Minoo\\Provider\\CulturalGroupServiceProvider"
+                "Minoo\\Provider\\CulturalGroupServiceProvider",
+                "Minoo\\Provider\\TeachingServiceProvider"
             ]
         }
     },
