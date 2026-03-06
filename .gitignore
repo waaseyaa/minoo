@@ -5,3 +5,5 @@
 *.sqlite
 .env
 .phpunit.cache/
+.playwright-mcp/
+/*.png
