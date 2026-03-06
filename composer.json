@@ -86,7 +86,8 @@
                 "Minoo\\Provider\\EventServiceProvider",
                 "Minoo\\Provider\\GroupServiceProvider",
                 "Minoo\\Provider\\CulturalGroupServiceProvider",
-                "Minoo\\Provider\\TeachingServiceProvider"
+                "Minoo\\Provider\\TeachingServiceProvider",
+                "Minoo\\Provider\\CulturalCollectionServiceProvider"
             ]
         }
     },
