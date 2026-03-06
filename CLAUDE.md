@@ -16,8 +16,17 @@ minoo/
 ├── tests/Minoo/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
+├── templates/
+│   ├── base.html.twig           # Page shell (header, nav, footer)
+│   ├── page.html.twig           # Default page (extends base)
+│   ├── 404.html.twig            # Not found page (extends base)
+│   ├── language.html.twig       # Language demo page (extends base)
+│   └── components/              # Reusable Twig partials
+│       └── dictionary-entry-card.html.twig
+├── public/
+│   ├── index.php                # Web entry point
+│   └── css/minoo.css            # Design system (tokens, layout, components)
 ├── config/            # App configuration
-├── public/index.php   # Web entry point
 └── vendor/            # Symlinks to ../waaseyaa/packages/*
 ```
 
@@ -30,7 +39,8 @@ minoo/
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
 | `src/Ingest/*` | `minoo:entities` | `docs/plans/2026-03-06-ingestion-pipeline-design.md` |
-| `config/*`, `public/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
+| `templates/*`, `public/css/*` | — | `docs/plans/2026-03-06-visual-identity-layout-design.md` |
+| `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 
 For framework-level work (kernel boot, entity storage, access handler internals), use the waaseyaa MCP tools:
 - `waaseyaa_get_spec entity-system` — entity types, storage, field definitions
@@ -47,6 +57,24 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 | Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingServiceProvider`, `CulturalCollectionServiceProvider` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
 | Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker` | `LanguageServiceProvider` | `LanguageAccessPolicy` |
 | Ingestion | `ingest_log` | `IngestServiceProvider` | `IngestAccessPolicy` |
+
+## Frontend / SSR
+
+- **CSS:** Single vanilla file `public/css/minoo.css` — no build step, no preprocessor
+- **CSS architecture:** `@layer reset, tokens, base, layout, components, utilities` — oklch colors, fluid `clamp()` type/spacing, native nesting, container queries, logical properties
+- **Templates:** Twig 3 with inheritance — `base.html.twig` defines shell, pages extend it
+- **Path routing:** Framework `RenderController::tryRenderPathTemplate()` maps `/language` → `language.html.twig` (framework#189). Paths without a matching template or path alias get 404.
+- **Design doc:** `docs/plans/2026-03-06-visual-identity-layout-design.md` — color palette, type scale, spacing scale, component patterns
+
+**Adding a public page:**
+1. Create `templates/{path-segment}.html.twig` extending `base.html.twig`
+2. Define `{% block title %}` and `{% block content %}`
+3. The framework serves it at `/{path-segment}` automatically
+
+**Adding a Twig component:**
+1. Create `templates/components/{name}.html.twig`
+2. Use `{% include "components/{name}.html.twig" with { ... } %}` from pages
+3. Add corresponding CSS in `@layer components` in `minoo.css`
 
 ## Operation Checklists
 
@@ -67,7 +95,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests (97 tests, 242 assertions)
+./vendor/bin/phpunit                          # All tests (109 tests, 271 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
@@ -89,6 +117,8 @@ bin/waaseyaa                                  # CLI
 - **`LanguageAccessPolicy`** covers all 4 language types via array attribute: `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`
 - **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection, `ilid` for ingest_log)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
+- **CSS conventions**: logical properties only (`margin-block`, `padding-inline`, never `left`/`right`), `gap` for spacing, native nesting (no BEM), container queries on components, media queries only for page shell
+- **Path-based templates** require framework#189 — `tryRenderPathTemplate()` only matches single URL segments (no nested paths like `/a/b`)
 
 ## Codified Context
 
