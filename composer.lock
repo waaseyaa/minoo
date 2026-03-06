@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2483edb260bd2adee648ef5595b002b5",
+    "content-hash": "ade3bdc4f998a27cef290ef9fd81c4f1",
     "packages": [
         {
             "name": "doctrine/dbal",
@@ -2305,6 +2305,85 @@
             "time": "2026-02-09T09:33:46+00:00"
         },
         {
+            "name": "twig/twig",
+            "version": "v3.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/Twig.git",
+                "reference": "a64dc5d2cc7d6cafb9347f6cd802d0d06d0351c9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a64dc5d2cc7d6cafb9347f6cd802d0d06d0351c9",
+                "reference": "a64dc5d2cc7d6cafb9347f6cd802d0d06d0351c9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1.0",
+                "symfony/deprecation-contracts": "^2.5|^3",
+                "symfony/polyfill-ctype": "^1.8",
+                "symfony/polyfill-mbstring": "^1.3"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.0",
+                "psr/container": "^1.0|^2.0",
+                "symfony/phpunit-bridge": "^5.4.9|^6.4|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Resources/core.php",
+                    "src/Resources/debug.php",
+                    "src/Resources/escaper.php",
+                    "src/Resources/string_loader.php"
+                ],
+                "psr-4": {
+                    "Twig\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Twig Team",
+                    "role": "Contributors"
+                },
+                {
+                    "name": "Armin Ronacher",
+                    "email": "armin.ronacher@active-4.com",
+                    "role": "Project Founder"
+                }
+            ],
+            "description": "Twig, the flexible, fast, and secure template language for PHP",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "templating"
+            ],
+            "support": {
+                "issues": "https://github.com/twigphp/Twig/issues",
+                "source": "https://github.com/twigphp/Twig/tree/v3.23.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-01-23T21:00:41+00:00"
+        },
+        {
             "name": "waaseyaa/access",
             "version": "dev-main",
             "dist": {
@@ -2338,6 +2417,113 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Access control and permission system for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "waaseyaa/ai-agent",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/ai-agent",
+                "reference": "2e3e76e91c0d099dbe1c19f416dc6ec930a58176"
+            },
+            "require": {
+                "php": ">=8.3",
+                "waaseyaa/access": "@dev",
+                "waaseyaa/ai-schema": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\AI\\Agent\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\AI\\Agent\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "AI agent orchestration and tool execution for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "waaseyaa/ai-schema",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/ai-schema",
+                "reference": "af39e96904c7095ad53be7e1ad8decfa10342dbc"
+            },
+            "require": {
+                "php": ">=8.3",
+                "waaseyaa/entity": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\AI\\Schema\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\AI\\Schema\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "AI-friendly schema definitions and entity metadata for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "waaseyaa/ai-vector",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/ai-vector",
+                "reference": "49653d7564d0d240be05a0f8a1351287ee7469ed"
+            },
+            "require": {
+                "php": ">=8.3",
+                "waaseyaa/access": "@dev",
+                "waaseyaa/api": "@dev",
+                "waaseyaa/entity": "@dev",
+                "waaseyaa/queue": "@dev",
+                "waaseyaa/workflows": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\AI\\Vector\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\AI\\Vector\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Vector embedding storage and similarity search for Waaseyaa",
             "transport-options": {
                 "relative": true
             }
@@ -2713,6 +2899,48 @@
             }
         },
         {
+            "name": "waaseyaa/mcp",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/mcp",
+                "reference": "e9fc7130ee27b633143e640830065bd4ed189078"
+            },
+            "require": {
+                "php": ">=8.3",
+                "waaseyaa/access": "@dev",
+                "waaseyaa/ai-agent": "@dev",
+                "waaseyaa/ai-schema": "@dev",
+                "waaseyaa/ai-vector": "@dev",
+                "waaseyaa/api": "@dev",
+                "waaseyaa/cache": "@dev",
+                "waaseyaa/entity": "@dev",
+                "waaseyaa/routing": "@dev",
+                "waaseyaa/workflows": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\Mcp\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\Mcp\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Remote MCP server endpoint for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "waaseyaa/media",
             "version": "dev-main",
             "dist": {
@@ -2983,6 +3211,86 @@
             }
         },
         {
+            "name": "waaseyaa/ssr",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/ssr",
+                "reference": "cafd32517cf60e3825c0a9c970bcec579fba7e5e"
+            },
+            "require": {
+                "php": ">=8.3",
+                "twig/twig": "^3.0",
+                "waaseyaa/cache": "@dev",
+                "waaseyaa/entity": "@dev",
+                "waaseyaa/field": "@dev",
+                "waaseyaa/routing": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "extra": {
+                "waaseyaa": {
+                    "providers": [
+                        "Waaseyaa\\SSR\\ThemeServiceProvider",
+                        "Waaseyaa\\SSR\\SsrServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\SSR\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\SSR\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Server-side rendering with Twig templates for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "waaseyaa/state",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/state",
+                "reference": "44aa57fc4869310e51b47ea371aa453b7454d8db"
+            },
+            "require": {
+                "php": ">=8.3",
+                "waaseyaa/database-legacy": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\State\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\State\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Key-value state storage for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "waaseyaa/taxonomy",
             "version": "dev-main",
             "dist": {
@@ -3098,6 +3406,42 @@
                 "GPL-2.0-or-later"
             ],
             "description": "User entity, authentication, and session management for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "waaseyaa/validation",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/validation",
+                "reference": "771fbc82d51744341f0ec36a3d3754c5cdb015f5"
+            },
+            "require": {
+                "php": ">=8.3",
+                "symfony/validator": "^7.3",
+                "waaseyaa/entity": "@dev",
+                "waaseyaa/typed-data": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\Validation\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\Validation\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Data validation constraints and validators for Waaseyaa",
             "transport-options": {
                 "relative": true
             }
@@ -4860,14 +5204,22 @@
         "waaseyaa/entity-storage": 20,
         "waaseyaa/field": 20,
         "waaseyaa/foundation": 20,
+        "waaseyaa/i18n": 20,
+        "waaseyaa/mcp": 20,
         "waaseyaa/media": 20,
         "waaseyaa/menu": 20,
         "waaseyaa/node": 20,
         "waaseyaa/path": 20,
+        "waaseyaa/plugin": 20,
+        "waaseyaa/queue": 20,
         "waaseyaa/routing": 20,
+        "waaseyaa/ssr": 20,
+        "waaseyaa/state": 20,
         "waaseyaa/taxonomy": 20,
         "waaseyaa/testing": 20,
+        "waaseyaa/typed-data": 20,
         "waaseyaa/user": 20,
+        "waaseyaa/validation": 20,
         "waaseyaa/workflows": 20
     },
     "prefer-stable": true,
