@@ -4,35 +4,37 @@ declare(strict_types=1);
 
 namespace Minoo\Ingest\EntityMapper;
 
+use Minoo\Ingest\SlugGenerator;
+use Minoo\Ingest\ValueObject\SpeakerFields;
+
 final class SpeakerMapper
 {
-    /** @return array<string, mixed> */
-    public function map(array $data): array
+    /** @param array<string, mixed> $data */
+    public function map(array $data): SpeakerFields
     {
         $name = (string) ($data['name'] ?? '');
 
-        return [
-            'name' => $name,
-            'code' => (string) ($data['code'] ?? ''),
-            'bio' => isset($data['bio']) ? (string) $data['bio'] : null,
-            'slug' => DictionaryEntryMapper::generateSlug($name),
-            'status' => 1,
-            'created_at' => time(),
-            'updated_at' => time(),
-        ];
+        return new SpeakerFields(
+            name: $name,
+            code: (string) ($data['code'] ?? ''),
+            bio: isset($data['bio']) ? (string) $data['bio'] : null,
+            slug: SlugGenerator::generate($name),
+            status: 1,
+            createdAt: time(),
+            updatedAt: time(),
+        );
     }
 
-    /** @return array<string, mixed> */
-    public static function fromCode(string $code): array
+    public static function fromCode(string $code): SpeakerFields
     {
-        return [
-            'name' => $code,
-            'code' => $code,
-            'bio' => null,
-            'slug' => $code,
-            'status' => 1,
-            'created_at' => time(),
-            'updated_at' => time(),
-        ];
+        return new SpeakerFields(
+            name: $code,
+            code: $code,
+            bio: null,
+            slug: $code,
+            status: 1,
+            createdAt: time(),
+            updatedAt: time(),
+        );
     }
 }

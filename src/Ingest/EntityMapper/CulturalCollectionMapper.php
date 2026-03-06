@@ -4,25 +4,28 @@ declare(strict_types=1);
 
 namespace Minoo\Ingest\EntityMapper;
 
+use Minoo\Ingest\SlugGenerator;
+use Minoo\Ingest\ValueObject\CulturalCollectionFields;
+
 final class CulturalCollectionMapper
 {
-    /** @return array<string, mixed> */
-    public function map(array $data, string $sourceUrl): array
+    /** @param array<string, mixed> $data */
+    public function map(array $data, string $sourceUrl): CulturalCollectionFields
     {
         $title = (string) ($data['title'] ?? '');
         $description = (string) ($data['description'] ?? '');
         $description = (string) preg_replace('/<\/(h[1-6]|p|div|li|br)>/i', ' </$1>', $description);
         $description = trim((string) preg_replace('/\s+/', ' ', strip_tags($description)));
 
-        return [
-            'title' => $title,
-            'description' => $description,
-            'source_attribution' => isset($data['source_attribution']) ? (string) $data['source_attribution'] : null,
-            'source_url' => $sourceUrl,
-            'slug' => DictionaryEntryMapper::generateSlug($title),
-            'status' => 0,
-            'created_at' => time(),
-            'updated_at' => time(),
-        ];
+        return new CulturalCollectionFields(
+            title: $title,
+            description: $description,
+            sourceAttribution: isset($data['source_attribution']) ? (string) $data['source_attribution'] : null,
+            sourceUrl: $sourceUrl,
+            slug: SlugGenerator::generate($title),
+            status: 0,
+            createdAt: time(),
+            updatedAt: time(),
+        );
     }
 }
