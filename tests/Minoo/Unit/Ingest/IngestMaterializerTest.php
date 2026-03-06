@@ -28,8 +28,8 @@ final class IngestMaterializerTest extends TestCase
         $result = $materializer->materialize($log, dryRun: true);
 
         $this->assertInstanceOf(MaterializationResult::class, $result);
-        $this->assertNotEmpty($result->created);
-        $this->assertNull($result->primaryEntityId);
+        $this->assertNotEmpty($result->getCreated());
+        $this->assertNull($result->getPrimaryEntityId());
     }
 
     #[Test]
@@ -41,7 +41,7 @@ final class IngestMaterializerTest extends TestCase
 
         $result = $materializer->materialize($log, dryRun: true);
 
-        $types = array_column($result->created, 'type');
+        $types = array_column($result->getCreated(), 'type');
         $this->assertContains('dictionary_entry', $types);
         $this->assertContains('speaker', $types);
         $this->assertContains('example_sentence', $types);

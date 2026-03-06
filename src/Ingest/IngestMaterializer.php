@@ -64,7 +64,8 @@ final class IngestMaterializer
         foreach ($sentences as $sentence) {
             $code = (string) ($sentence['speaker_code'] ?? '');
             if ($code !== '' && $context->getSpeakerId($code) === null) {
-                $speakerFields = SpeakerMapper::fromCode($code);
+                $speakerVO = SpeakerMapper::fromCode($code);
+                $speakerFields = $speakerVO->toArray();
                 if ($dryRun) {
                     $result->addCreated('speaker', $speakerFields);
                     $context->setSpeakerId($code, 0);
@@ -80,8 +81,8 @@ final class IngestMaterializer
         $wordPartMapper = new WordPartMapper();
         $sourceUrl = (string) ($parsedFields['source_url'] ?? '');
         foreach ($rawData['word_parts'] ?? [] as $wpData) {
-            $wpFields = $wordPartMapper->map($wpData, $sourceUrl);
-            if ($wpFields === null) {
+            $wpVO = $wordPartMapper->map($wpData, $sourceUrl);
+            if ($wpVO === null) {
                 $result->addSkipped(
                     'word_part',
                     (string) ($wpData['form'] ?? ''),
@@ -89,15 +90,14 @@ final class IngestMaterializer
                 );
                 continue;
             }
-            $form = $wpFields['form'];
-            $type = $wpFields['type'];
-            if ($context->getWordPartId($form, $type) === null) {
+            $wpFields = $wpVO->toArray();
+            if ($context->getWordPartId($wpVO->form, $wpVO->type) === null) {
                 if ($dryRun) {
                     $result->addCreated('word_part', $wpFields);
-                    $context->setWordPartId($form, $type, 0);
+                    $context->setWordPartId($wpVO->form, $wpVO->type, 0);
                 } else {
-                    $id = $this->getOrCreateWordPart($form, $type, $wpFields);
-                    $context->setWordPartId($form, $type, $id);
+                    $id = $this->getOrCreateWordPart($wpVO->form, $wpVO->type, $wpFields);
+                    $context->setWordPartId($wpVO->form, $wpVO->type, $id);
                     $result->addCreated('word_part', $wpFields, $id);
                 }
             }
@@ -112,7 +112,7 @@ final class IngestMaterializer
             $storage->save($entity);
             $entryId = (int) $entity->id();
             $result->addCreated('dictionary_entry', $parsedFields, $entryId);
-            $result->primaryEntityId = $entryId;
+            $result->setPrimaryEntityId($entryId);
         }
 
         // 4. Create example sentences.
@@ -121,8 +121,8 @@ final class IngestMaterializer
         foreach ($sentences as $sData) {
             $speakerCode = (string) ($sData['speaker_code'] ?? '');
             $speakerId = $speakerCode !== '' ? $context->getSpeakerId($speakerCode) : null;
-            $entryId = $result->primaryEntityId ?? 0;
-            $sFields = $sentenceMapper->map($sData, $entryId, $speakerId, $languageCode);
+            $entryId = $result->getPrimaryEntityId() ?? 0;
+            $sFields = $sentenceMapper->map($sData, $entryId, $speakerId, $languageCode)->toArray();
 
             if ($dryRun) {
                 $result->addCreated('example_sentence', $sFields);
@@ -147,7 +147,7 @@ final class IngestMaterializer
         $code = (string) ($parsedFields['code'] ?? '');
         $id = $this->getOrCreateSpeaker($code, $parsedFields);
         $result->addCreated('speaker', $parsedFields, $id);
-        $result->primaryEntityId = $id;
+        $result->setPrimaryEntityId($id);
 
         return $result;
     }
@@ -163,7 +163,7 @@ final class IngestMaterializer
         $entity = $storage->create($parsedFields);
         $storage->save($entity);
         $result->addCreated('cultural_collection', $parsedFields, (int) $entity->id());
-        $result->primaryEntityId = (int) $entity->id();
+        $result->setPrimaryEntityId((int) $entity->id());
 
         return $result;
     }
