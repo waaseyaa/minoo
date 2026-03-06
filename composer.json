@@ -1,0 +1,87 @@
+{
+    "name": "waaseyaa/minoo",
+    "description": "Indigenous knowledge platform powered by NorthCloud ingestion",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "repositories": [
+        { "type": "path", "url": "../waaseyaa/packages/foundation" },
+        { "type": "path", "url": "../waaseyaa/packages/cache" },
+        { "type": "path", "url": "../waaseyaa/packages/plugin" },
+        { "type": "path", "url": "../waaseyaa/packages/typed-data" },
+        { "type": "path", "url": "../waaseyaa/packages/config" },
+        { "type": "path", "url": "../waaseyaa/packages/entity" },
+        { "type": "path", "url": "../waaseyaa/packages/field" },
+        { "type": "path", "url": "../waaseyaa/packages/entity-storage" },
+        { "type": "path", "url": "../waaseyaa/packages/database-legacy" },
+        { "type": "path", "url": "../waaseyaa/packages/access" },
+        { "type": "path", "url": "../waaseyaa/packages/user" },
+        { "type": "path", "url": "../waaseyaa/packages/routing" },
+        { "type": "path", "url": "../waaseyaa/packages/queue" },
+        { "type": "path", "url": "../waaseyaa/packages/state" },
+        { "type": "path", "url": "../waaseyaa/packages/validation" },
+        { "type": "path", "url": "../waaseyaa/packages/node" },
+        { "type": "path", "url": "../waaseyaa/packages/taxonomy" },
+        { "type": "path", "url": "../waaseyaa/packages/media" },
+        { "type": "path", "url": "../waaseyaa/packages/path" },
+        { "type": "path", "url": "../waaseyaa/packages/menu" },
+        { "type": "path", "url": "../waaseyaa/packages/workflows" },
+        { "type": "path", "url": "../waaseyaa/packages/api" },
+        { "type": "path", "url": "../waaseyaa/packages/cli" },
+        { "type": "path", "url": "../waaseyaa/packages/i18n" },
+        { "type": "path", "url": "../waaseyaa/packages/ssr" },
+        { "type": "path", "url": "../waaseyaa/packages/mcp" },
+        { "type": "path", "url": "../waaseyaa/packages/telescope" },
+        { "type": "path", "url": "../waaseyaa/packages/testing" }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "waaseyaa/access": "@dev",
+        "waaseyaa/api": "@dev",
+        "waaseyaa/cache": "@dev",
+        "waaseyaa/cli": "@dev",
+        "waaseyaa/config": "@dev",
+        "waaseyaa/database-legacy": "@dev",
+        "waaseyaa/entity": "@dev",
+        "waaseyaa/entity-storage": "@dev",
+        "waaseyaa/field": "@dev",
+        "waaseyaa/foundation": "@dev",
+        "waaseyaa/media": "@dev",
+        "waaseyaa/menu": "@dev",
+        "waaseyaa/node": "@dev",
+        "waaseyaa/path": "@dev",
+        "waaseyaa/routing": "@dev",
+        "waaseyaa/taxonomy": "@dev",
+        "waaseyaa/user": "@dev",
+        "waaseyaa/workflows": "@dev"
+    },
+    "require-dev": {
+        "waaseyaa/testing": "@dev",
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Minoo\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Minoo\\Tests\\": "tests/Minoo/"
+        }
+    },
+    "extra": {
+        "waaseyaa": {
+            "providers": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "chmod +x bin/waaseyaa"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
