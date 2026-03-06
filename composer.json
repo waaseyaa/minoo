@@ -82,7 +82,9 @@
     },
     "extra": {
         "waaseyaa": {
-            "providers": []
+            "providers": [
+                "Minoo\\Provider\\EventServiceProvider"
+            ]
         }
     },
     "config": {
