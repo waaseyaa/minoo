@@ -1,14 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Waaseyaa</title>
-</head>
-<body>
-  <main>
-    <h1>Waaseyaa</h1>
-    <p>Path: {{ path }}</p>
-  </main>
-</body>
-</html>
+{% extends "base.html.twig" %}
+
+{% block title %}{{ title|default('Minoo') }}{% endblock %}
+
+{% block content %}
+  <h1>{{ title|default('Minoo') }}</h1>
+  <p>Path: {{ path }}</p>
+{% endblock %}
