@@ -12,45 +12,61 @@ Tests: `tests/Minoo/Unit/`, `tests/Minoo/Integration/`
 
 ## Entity Class Pattern
 
-All 12 entities follow identical structure — extend `EntityBase`, hardcode type ID and keys:
+Content entities extend `ContentEntityBase`, config entities extend `ConfigEntityBase`.
+Both hardcode `entityTypeId` and `entityKeys`, with defaults merged in the constructor:
 
 ```php
-final class Event extends EntityBase
+// Content entity (has UUID, field definitions, status)
+final class Event extends ContentEntityBase
 {
     protected string $entityTypeId = 'event';
-    protected array $entityKeys = ['eid' => 'eid'];
+    protected array $entityKeys = ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'];
 
-    public function __construct(array $values)
+    public function __construct(array $values = [])
     {
-        parent::__construct($values);
+        $values += ['status' => 1, 'created_at' => 0, 'updated_at' => 0];
+        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+    }
+}
+
+// Config entity (machine-name keyed, no UUID)
+final class EventType extends ConfigEntityBase
+{
+    protected string $entityTypeId = 'event_type';
+    protected array $entityKeys = ['id' => 'type', 'label' => 'name'];
+
+    public function __construct(array $values = [])
+    {
+        $values += ['description' => ''];
+        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
     }
 }
 ```
 
-Entity key naming convention: first letter(s) of type + `id`:
-- `eid` (event), `etid` (event_type), `gid` (group), `gtid` (group_type)
-- `cgid` (cultural_group), `tid` (teaching), `ttid` (teaching_type)
+Content entity key naming — unique primary key per type:
+- `eid` (event), `gid` (group), `cgid` (cultural_group), `tid` (teaching)
 - `ccid` (cultural_collection), `deid` (dictionary_entry)
-- `esid` (example_sentence), `wpid` (word_part), `spid` (speaker)
+- `esid` (example_sentence), `wpid` (word_part), `sid` (speaker)
+
+Config entity keys always use `type` for id and `name` for label.
 
 ## Service Provider Pattern
 
-Each provider registers `EntityType` definitions with field definitions in `register()`:
+Each provider registers `EntityType` definitions using `$this->entityType()`:
 
 ```php
 final class EventServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $manager = $this->getEntityTypeManager();
-        $manager->addDefinition(new EntityType(
+        $this->entityType(new EntityType(
             id: 'event',
             label: 'Event',
             entityClass: Event::class,
-            entityKeys: ['eid' => 'eid'],
+            entityKeys: ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
             fieldDefinitions: [
-                'title' => FieldDefinition::create('string')->setLabel('Title')->setDescription('...'),
                 'slug' => FieldDefinition::create('string')->setWidget('text')->setLabel('URL Slug'),
+                'description' => FieldDefinition::create('string')->setWidget('richtext')->setLabel('Description'),
                 // ...
             ],
         ));
@@ -83,7 +99,7 @@ Used by: `example_sentence` → `dictionary_entry`, `example_sentence` → `spea
 
 ## Access Policy Pattern
 
-All 6 policies follow identical logic:
+All 6 policies follow identical logic using `match`:
 
 ```php
 #[PolicyAttribute(entityType: 'event')]
@@ -91,19 +107,21 @@ final class EventAccessPolicy implements AccessPolicyInterface
 {
     public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult
     {
-        if ($account->isAuthenticated() && $account->hasPermission('administer content')) {
-            return AccessResult::allowed();
+        if ($account->hasPermission('administer content')) {
+            return AccessResult::allowed('Admin permission.');
         }
-        if ($operation === 'view' && $entity->get('status') == 1) {
-            return AccessResult::allowed();
-        }
-        return AccessResult::neutral();
+        return match ($operation) {
+            'view' => (int) $entity->get('status') === 1 && $account->hasPermission('access content')
+                ? AccessResult::allowed('Published and user has access content.')
+                : AccessResult::neutral('Cannot view unpublished.'),
+            default => AccessResult::neutral('Non-admin cannot modify.'),
+        };
     }
-    // createAccess() and appliesTo() follow same pattern
+    // createAccess() follows same admin-check pattern
 }
 ```
 
-`LanguageAccessPolicy` is the exception — covers 4 types via array:
+`LanguageAccessPolicy` covers 4 types via array:
 ```php
 #[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]
 ```
@@ -131,20 +149,20 @@ Events domain:
   event_type (standalone config entity)
 
 Groups domain:
-  group (has type → group_type, has media_id)
+  group (has type → group_type, has media_id, has url, region)
   group_type (standalone config entity)
   cultural_group (has parent_id → self, hierarchical tree)
 
 Teachings domain:
-  teaching (has type → teaching_type, has tags → taxonomy_term)
+  teaching (has type → teaching_type, has cultural_group_id, has tags → taxonomy_term)
   teaching_type (standalone config entity)
-  cultural_collection (has gallery → taxonomy_term, has media_id)
+  cultural_collection (has gallery → taxonomy_term, has source_url, source_attribution, media_id)
 
 Language domain:
   dictionary_entry (has word, definition, part_of_speech, stem, inflected_forms)
   example_sentence (refs → dictionary_entry, refs → speaker, has audio_url)
-  word_part (has type: initial/medial/final)
-  speaker (has community, dialect, bio)
+  word_part (has form, type: initial/medial/final, definition)
+  speaker (has name, code, bio, media_id)
 ```
 
 ## Testing Patterns
@@ -160,8 +178,11 @@ $this->assertSame('Test', $event->get('title'));
 ```php
 $anonymous = new class implements AccountInterface {
     public function id(): int { return 0; }
-    public function hasPermission(string $permission): bool { return false; }
-    public function getRoles(): array { return []; }
+    public function hasPermission(string $permission): bool
+    {
+        return $permission === 'access content';
+    }
+    public function getRoles(): array { return ['anonymous']; }
     public function isAuthenticated(): bool { return false; }
 };
 ```
@@ -182,6 +203,8 @@ $kernel = new HttpKernel(dirname(__DIR__, 3));
 - **Using `createMock()` for AccountInterface**: PHPUnit can't mock the interface reliably — use anonymous classes
 - **Duplicate entity keys**: Each entity type must have a unique primary key name — don't reuse `id`
 - **Missing `enforceIsNew()`**: When creating entities with pre-set IDs in tests, call `$entity->enforceIsNew()` before `save()`
+- **Wrong base class**: Content entities use `ContentEntityBase`, config entities use `ConfigEntityBase` — not plain `EntityBase`
+- **Wrong constructor**: Must pass `$this->entityTypeId` and `$this->entityKeys` to parent constructor
 
 ## Related Specs
 

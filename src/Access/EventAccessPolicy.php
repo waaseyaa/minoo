@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Access;
 
-use Minoo\Entity\Event;
 use Waaseyaa\Access\AccessPolicyInterface;
 use Waaseyaa\Access\AccessResult;
 use Waaseyaa\Access\AccountInterface;
@@ -26,7 +25,9 @@ final class EventAccessPolicy implements AccessPolicyInterface
         }
 
         return match ($operation) {
-            'view' => $this->viewAccess($entity, $account),
+            'view' => (int) $entity->get('status') === 1 && $account->hasPermission('access content')
+                ? AccessResult::allowed('Published and user has access content.')
+                : AccessResult::neutral('Cannot view unpublished event.'),
             default => AccessResult::neutral('Non-admin cannot modify events.'),
         };
     }
@@ -38,16 +39,5 @@ final class EventAccessPolicy implements AccessPolicyInterface
         }
 
         return AccessResult::neutral('Non-admin cannot create events.');
-    }
-
-    private function viewAccess(EntityInterface $entity, AccountInterface $account): AccessResult
-    {
-        assert($entity instanceof Event);
-
-        if ((int) $entity->get('status') === 1 && $account->hasPermission('access content')) {
-            return AccessResult::allowed('Published and user has access content.');
-        }
-
-        return AccessResult::neutral('Cannot view unpublished event.');
     }
 }

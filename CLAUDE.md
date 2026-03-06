@@ -49,7 +49,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ## Operation Checklists
 
 **Adding a Minoo entity type:**
-1. Create entity class in `src/Entity/` extending `EntityBase` — hardcode `entityTypeId` and `entityKeys`
+1. Create entity class in `src/Entity/` extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`
 2. Register `EntityType` in existing or new service provider's `register()` method
 3. Create or update `AccessPolicy` in `src/Access/` with `#[PolicyAttribute]`
 4. Write unit test in `tests/Minoo/Unit/Entity/`
@@ -65,7 +65,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests (42 tests, 115 assertions)
+./vendor/bin/phpunit                          # All tests (58 tests, 131 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI

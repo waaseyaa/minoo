@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Access;
 
-use Minoo\Entity\CulturalGroup;
 use Waaseyaa\Access\AccessPolicyInterface;
 use Waaseyaa\Access\AccessResult;
 use Waaseyaa\Access\AccountInterface;
