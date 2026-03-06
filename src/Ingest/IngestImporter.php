@@ -45,8 +45,8 @@ final class IngestImporter
             'source' => $source,
             'entity_type_target' => $entityType,
             'payload_raw' => json_encode($envelope, JSON_THROW_ON_ERROR),
-            'payload_parsed' => json_encode($mapped, JSON_THROW_ON_ERROR),
-            'status' => 'pending_review',
+            'payload_parsed' => json_encode($mapped->toArray(), JSON_THROW_ON_ERROR),
+            'status' => IngestStatus::PendingReview->value,
         ]);
     }
 
@@ -58,7 +58,7 @@ final class IngestImporter
             'entity_type_target' => (string) ($envelope['entity_type'] ?? ''),
             'payload_raw' => json_encode($envelope, JSON_THROW_ON_ERROR),
             'payload_parsed' => '{}',
-            'status' => 'failed',
+            'status' => IngestStatus::Failed->value,
             'error_message' => $error,
         ]);
     }

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
 use Minoo\Ingest\EntityMapper\SpeakerMapper;
+use Minoo\Ingest\ValueObject\SpeakerFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(SpeakerMapper::class)]
+#[CoversClass(SpeakerFields::class)]
 final class SpeakerMapperTest extends TestCase
 {
     #[Test]
@@ -20,11 +22,12 @@ final class SpeakerMapperTest extends TestCase
 
         $result = $mapper->map($data);
 
-        $this->assertSame('Eugene Stillday', $result['name']);
-        $this->assertSame('es', $result['code']);
-        $this->assertSame('Ponemah, Minnesota.', $result['bio']);
-        $this->assertSame('eugene-stillday', $result['slug']);
-        $this->assertSame(1, $result['status']);
+        $this->assertInstanceOf(SpeakerFields::class, $result);
+        $this->assertSame('Eugene Stillday', $result->name);
+        $this->assertSame('es', $result->code);
+        $this->assertSame('Ponemah, Minnesota.', $result->bio);
+        $this->assertSame('eugene-stillday', $result->slug);
+        $this->assertSame(1, $result->status);
     }
 
     #[Test]
@@ -32,9 +35,21 @@ final class SpeakerMapperTest extends TestCase
     {
         $result = SpeakerMapper::fromCode('es');
 
-        $this->assertSame('es', $result['name']);
-        $this->assertSame('es', $result['code']);
-        $this->assertNull($result['bio']);
-        $this->assertSame(1, $result['status']);
+        $this->assertInstanceOf(SpeakerFields::class, $result);
+        $this->assertSame('es', $result->name);
+        $this->assertSame('es', $result->code);
+        $this->assertNull($result->bio);
+        $this->assertSame(1, $result->status);
+    }
+
+    #[Test]
+    public function it_converts_to_array(): void
+    {
+        $result = SpeakerMapper::fromCode('es');
+        $array = $result->toArray();
+
+        $this->assertSame('es', $array['name']);
+        $this->assertSame('es', $array['code']);
+        $this->assertNull($array['bio']);
     }
 }

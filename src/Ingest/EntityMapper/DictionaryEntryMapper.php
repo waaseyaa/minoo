@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minoo\Ingest\EntityMapper;
 
+use Minoo\Ingest\SlugGenerator;
+use Minoo\Ingest\ValueObject\DictionaryEntryFields;
+
 final class DictionaryEntryMapper
 {
     /**
@@ -11,9 +14,8 @@ final class DictionaryEntryMapper
      *
      * @param array<string, mixed> $data Payload data block
      * @param string $sourceUrl Envelope source_url
-     * @return array<string, mixed> Mapped entity fields
      */
-    public function map(array $data, string $sourceUrl): array
+    public function map(array $data, string $sourceUrl): DictionaryEntryFields
     {
         $lemma = (string) ($data['lemma'] ?? '');
         $definition = $data['definition'] ?? '';
@@ -21,25 +23,18 @@ final class DictionaryEntryMapper
             $definition = implode('; ', array_filter($definition, 'is_string'));
         }
 
-        return [
-            'word' => $lemma,
-            'definition' => (string) $definition,
-            'part_of_speech' => (string) ($data['part_of_speech'] ?? ''),
-            'stem' => (string) ($data['stem'] ?? ''),
-            'language_code' => (string) ($data['language_code'] ?? 'oj') ?: 'oj',
-            'inflected_forms' => isset($data['inflected_forms']) ? json_encode($data['inflected_forms']) : '',
-            'source_url' => $sourceUrl,
-            'slug' => self::generateSlug($lemma),
-            'status' => 0,
-            'created_at' => time(),
-            'updated_at' => time(),
-        ];
-    }
-
-    public static function generateSlug(string $value): string
-    {
-        $slug = strtolower(trim($value));
-        $slug = (string) preg_replace('/[^a-z0-9]+/', '-', $slug);
-        return trim($slug, '-');
+        return new DictionaryEntryFields(
+            word: $lemma,
+            definition: (string) $definition,
+            partOfSpeech: (string) ($data['part_of_speech'] ?? ''),
+            stem: (string) ($data['stem'] ?? ''),
+            languageCode: (string) ($data['language_code'] ?? 'oj') ?: 'oj',
+            inflectedForms: isset($data['inflected_forms']) ? json_encode($data['inflected_forms']) : '',
+            sourceUrl: $sourceUrl,
+            slug: SlugGenerator::generate($lemma),
+            status: 0,
+            createdAt: time(),
+            updatedAt: time(),
+        );
     }
 }

@@ -46,8 +46,8 @@ final class MaterializationContextTest extends TestCase
         $result->addCreated('speaker', ['name' => 'Eugene Stillday', 'code' => 'es']);
         $result->addCreated('dictionary_entry', ['word' => 'makwa']);
 
-        $this->assertCount(2, $result->created);
-        $this->assertSame('speaker', $result->created[0]['type']);
+        $this->assertCount(2, $result->getCreated());
+        $this->assertSame('speaker', $result->getCreated()[0]['type']);
     }
 
     #[Test]
@@ -57,6 +57,6 @@ final class MaterializationContextTest extends TestCase
 
         $result->addSkipped('speaker', 'es', 'Already exists');
 
-        $this->assertCount(1, $result->skipped);
+        $this->assertCount(1, $result->getSkipped());
     }
 }

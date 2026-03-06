@@ -67,17 +67,17 @@ final class IngestPipelineTest extends TestCase
         $materializer = new IngestMaterializer(self::$manager);
         $result = $materializer->materialize($log);
 
-        $this->assertNotNull($result->primaryEntityId);
+        $this->assertNotNull($result->getPrimaryEntityId());
 
         // Verify dictionary entry was created.
-        $entry = self::$manager->getStorage('dictionary_entry')->load($result->primaryEntityId);
+        $entry = self::$manager->getStorage('dictionary_entry')->load($result->getPrimaryEntityId());
         $this->assertNotNull($entry);
         $this->assertSame('makwa', $entry->get('word'));
         $this->assertSame('bear', $entry->get('definition'));
         $this->assertSame('na', $entry->get('part_of_speech'));
 
         // Verify child entities were created (speaker + example_sentence + word_part).
-        $types = array_column($result->created, 'type');
+        $types = array_column($result->getCreated(), 'type');
         $this->assertContains('speaker', $types);
         $this->assertContains('example_sentence', $types);
         $this->assertContains('word_part', $types);
@@ -97,7 +97,7 @@ final class IngestPipelineTest extends TestCase
         $materializer = new IngestMaterializer(self::$manager);
         $result = $materializer->materialize($log, dryRun: true);
 
-        $this->assertNotEmpty($result->created);
-        $this->assertNull($result->primaryEntityId);
+        $this->assertNotEmpty($result->getCreated());
+        $this->assertNull($result->getPrimaryEntityId());
     }
 }
