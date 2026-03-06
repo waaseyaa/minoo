@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
 use Minoo\Ingest\EntityMapper\CulturalCollectionMapper;
+use Minoo\Ingest\ValueObject\CulturalCollectionFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(CulturalCollectionMapper::class)]
+#[CoversClass(CulturalCollectionFields::class)]
 final class CulturalCollectionMapperTest extends TestCase
 {
     #[Test]
@@ -24,12 +26,13 @@ final class CulturalCollectionMapperTest extends TestCase
 
         $result = $mapper->map($data, 'https://example.com/bear-clan');
 
-        $this->assertSame('The Bear Clan', $result['title']);
-        $this->assertSame('Cultural significance', $result['description']);
-        $this->assertSame('UMN Ojibwe Program', $result['source_attribution']);
-        $this->assertSame('https://example.com/bear-clan', $result['source_url']);
-        $this->assertSame('the-bear-clan', $result['slug']);
-        $this->assertSame(0, $result['status']);
+        $this->assertInstanceOf(CulturalCollectionFields::class, $result);
+        $this->assertSame('The Bear Clan', $result->title);
+        $this->assertSame('Cultural significance', $result->description);
+        $this->assertSame('UMN Ojibwe Program', $result->sourceAttribution);
+        $this->assertSame('https://example.com/bear-clan', $result->sourceUrl);
+        $this->assertSame('the-bear-clan', $result->slug);
+        $this->assertSame(0, $result->status);
     }
 
     #[Test]
@@ -40,6 +43,18 @@ final class CulturalCollectionMapperTest extends TestCase
 
         $result = $mapper->map($data, '');
 
-        $this->assertSame('Title Content bold', $result['description']);
+        $this->assertSame('Title Content bold', $result->description);
+    }
+
+    #[Test]
+    public function it_converts_to_array(): void
+    {
+        $mapper = new CulturalCollectionMapper();
+        $data = ['title' => 'Test'];
+
+        $array = $mapper->map($data, 'https://example.com')->toArray();
+
+        $this->assertSame('Test', $array['title']);
+        $this->assertSame('https://example.com', $array['source_url']);
     }
 }

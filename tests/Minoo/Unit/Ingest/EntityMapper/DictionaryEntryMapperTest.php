@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
 use Minoo\Ingest\EntityMapper\DictionaryEntryMapper;
+use Minoo\Ingest\ValueObject\DictionaryEntryFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DictionaryEntryMapper::class)]
+#[CoversClass(DictionaryEntryFields::class)]
 final class DictionaryEntryMapperTest extends TestCase
 {
     private DictionaryEntryMapper $mapper;
@@ -35,15 +37,16 @@ final class DictionaryEntryMapperTest extends TestCase
 
         $result = $this->mapper->map($data, 'https://ojibwe.lib.umn.edu/main-entry/makwa-na');
 
-        $this->assertSame('makwa', $result['word']);
-        $this->assertSame('bear', $result['definition']);
-        $this->assertSame('na', $result['part_of_speech']);
-        $this->assertSame('/makw-/', $result['stem']);
-        $this->assertSame('oj', $result['language_code']);
-        $this->assertSame('makwa', $result['slug']);
-        $this->assertSame(0, $result['status']);
-        $this->assertSame('https://ojibwe.lib.umn.edu/main-entry/makwa-na', $result['source_url']);
-        $this->assertStringContainsString('makwag', $result['inflected_forms']);
+        $this->assertInstanceOf(DictionaryEntryFields::class, $result);
+        $this->assertSame('makwa', $result->word);
+        $this->assertSame('bear', $result->definition);
+        $this->assertSame('na', $result->partOfSpeech);
+        $this->assertSame('/makw-/', $result->stem);
+        $this->assertSame('oj', $result->languageCode);
+        $this->assertSame('makwa', $result->slug);
+        $this->assertSame(0, $result->status);
+        $this->assertSame('https://ojibwe.lib.umn.edu/main-entry/makwa-na', $result->sourceUrl);
+        $this->assertStringContainsString('makwag', $result->inflectedForms);
     }
 
     #[Test]
@@ -53,7 +56,7 @@ final class DictionaryEntryMapperTest extends TestCase
 
         $result = $this->mapper->map($data, '');
 
-        $this->assertSame('oj', $result['language_code']);
+        $this->assertSame('oj', $result->languageCode);
     }
 
     #[Test]
@@ -63,7 +66,7 @@ final class DictionaryEntryMapperTest extends TestCase
 
         $result = $this->mapper->map($data, '');
 
-        $this->assertSame('bear; a bear', $result['definition']);
+        $this->assertSame('bear; a bear', $result->definition);
     }
 
     #[Test]
@@ -73,6 +76,19 @@ final class DictionaryEntryMapperTest extends TestCase
 
         $result = $this->mapper->map($data, '');
 
-        $this->assertSame('makwa-bear', $result['slug']);
+        $this->assertSame('makwa-bear', $result->slug);
+    }
+
+    #[Test]
+    public function it_converts_to_array(): void
+    {
+        $data = ['lemma' => 'makwa', 'definition' => 'bear'];
+
+        $result = $this->mapper->map($data, 'https://example.com');
+        $array = $result->toArray();
+
+        $this->assertSame('makwa', $array['word']);
+        $this->assertSame('bear', $array['definition']);
+        $this->assertSame('https://example.com', $array['source_url']);
     }
 }

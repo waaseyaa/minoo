@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
 use Minoo\Ingest\EntityMapper\ExampleSentenceMapper;
+use Minoo\Ingest\ValueObject\ExampleSentenceFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ExampleSentenceMapper::class)]
+#[CoversClass(ExampleSentenceFields::class)]
 final class ExampleSentenceMapperTest extends TestCase
 {
     #[Test]
@@ -25,13 +27,27 @@ final class ExampleSentenceMapperTest extends TestCase
 
         $result = $mapper->map($data, 42, 7, 'oj');
 
-        $this->assertSame('Makwa agamiing dago.', $result['ojibwe_text']);
-        $this->assertSame('The bear is by the lake.', $result['english_text']);
-        $this->assertSame(42, $result['dictionary_entry_id']);
-        $this->assertSame(7, $result['speaker_id']);
-        $this->assertSame('oj', $result['language_code']);
-        $this->assertSame('https://example.com/audio.mp3', $result['audio_url']);
-        $this->assertSame('makwa-es-001', $result['source_sentence_id']);
-        $this->assertSame(0, $result['status']);
+        $this->assertInstanceOf(ExampleSentenceFields::class, $result);
+        $this->assertSame('Makwa agamiing dago.', $result->ojibweText);
+        $this->assertSame('The bear is by the lake.', $result->englishText);
+        $this->assertSame(42, $result->dictionaryEntryId);
+        $this->assertSame(7, $result->speakerId);
+        $this->assertSame('oj', $result->languageCode);
+        $this->assertSame('https://example.com/audio.mp3', $result->audioUrl);
+        $this->assertSame('makwa-es-001', $result->sourceSentenceId);
+        $this->assertSame(0, $result->status);
+    }
+
+    #[Test]
+    public function it_converts_to_array(): void
+    {
+        $mapper = new ExampleSentenceMapper();
+        $data = ['ojibwe_text' => 'Test.', 'english_text' => 'Test.'];
+
+        $array = $mapper->map($data, 1, null, 'oj')->toArray();
+
+        $this->assertSame('Test.', $array['ojibwe_text']);
+        $this->assertSame(1, $array['dictionary_entry_id']);
+        $this->assertNull($array['speaker_id']);
     }
 }

@@ -4,22 +4,24 @@ declare(strict_types=1);
 
 namespace Minoo\Ingest\EntityMapper;
 
+use Minoo\Ingest\ValueObject\ExampleSentenceFields;
+
 final class ExampleSentenceMapper
 {
-    /** @return array<string, mixed> */
-    public function map(array $data, int $dictionaryEntryId, ?int $speakerId, string $languageCode): array
+    /** @param array<string, mixed> $data */
+    public function map(array $data, int $dictionaryEntryId, ?int $speakerId, string $languageCode): ExampleSentenceFields
     {
-        return [
-            'ojibwe_text' => (string) ($data['ojibwe_text'] ?? ''),
-            'english_text' => (string) ($data['english_text'] ?? ''),
-            'dictionary_entry_id' => $dictionaryEntryId,
-            'speaker_id' => $speakerId,
-            'language_code' => $languageCode,
-            'audio_url' => (string) ($data['audio_url'] ?? ''),
-            'source_sentence_id' => (string) ($data['source_sentence_id'] ?? ''),
-            'status' => 0,
-            'created_at' => time(),
-            'updated_at' => time(),
-        ];
+        return new ExampleSentenceFields(
+            ojibweText: (string) ($data['ojibwe_text'] ?? ''),
+            englishText: (string) ($data['english_text'] ?? ''),
+            dictionaryEntryId: $dictionaryEntryId,
+            speakerId: $speakerId,
+            languageCode: $languageCode,
+            audioUrl: (string) ($data['audio_url'] ?? ''),
+            sourceSentenceId: (string) ($data['source_sentence_id'] ?? ''),
+            status: 0,
+            createdAt: time(),
+            updatedAt: time(),
+        );
     }
 }
