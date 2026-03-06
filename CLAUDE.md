@@ -29,6 +29,7 @@ minoo/
 | `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
+| `src/Ingest/*` | `minoo:entities` | `docs/plans/2026-03-06-ingestion-pipeline-design.md` |
 | `config/*`, `public/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 
 For framework-level work (kernel boot, entity storage, access handler internals), use the waaseyaa MCP tools:
@@ -66,7 +67,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests (68 tests, 155 assertions)
+./vendor/bin/phpunit                          # All tests (97 tests, 242 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
