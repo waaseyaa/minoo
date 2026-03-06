@@ -1,0 +1,33 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Language — Minoo{% endblock %}
+
+{% block content %}
+  <h1>Language</h1>
+  <p>Ojibwe dictionary entries.</p>
+
+  <div class="card-grid" style="margin-block-start: var(--space-md);">
+    {% include "components/dictionary-entry-card.html.twig" with {
+      word: "Miigwech",
+      part_of_speech: "interjection",
+      definition: "Thank you. An expression of gratitude.",
+      example: "Miigwech for the wild rice.",
+      tags: ["greeting", "common"]
+    } %}
+
+    {% include "components/dictionary-entry-card.html.twig" with {
+      word: "Anishinaabe",
+      part_of_speech: "noun (animate)",
+      definition: "A human being; an Indigenous person. The original people.",
+      tags: ["identity", "common"]
+    } %}
+
+    {% include "components/dictionary-entry-card.html.twig" with {
+      word: "Aki",
+      part_of_speech: "noun (inanimate)",
+      definition: "The earth, land, ground. The physical world.",
+      example: "Gakina gegoo onjibaa akiing.",
+      tags: ["nature"]
+    } %}
+  </div>
+{% endblock %}
