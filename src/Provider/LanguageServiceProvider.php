@@ -46,6 +46,7 @@ final class LanguageServiceProvider extends ServiceProvider
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 10],
                 'speaker_id' => ['type' => 'entity_reference', 'label' => 'Speaker', 'settings' => ['target_type' => 'speaker'], 'weight' => 15],
                 'audio_url' => ['type' => 'uri', 'label' => 'Audio URL', 'weight' => 20],
+                'source_sentence_id' => ['type' => 'string', 'label' => 'Source Sentence ID', 'description' => 'Unique ID from source for dedup across re-crawls.', 'weight' => 22],
                 'language_code' => ['type' => 'string', 'label' => 'Language Code', 'weight' => 25, 'default' => 'oj'],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],

@@ -53,4 +53,17 @@ final class ExampleSentenceTest extends TestCase
         $this->assertSame(5, $sentence->get('speaker_id'));
         $this->assertSame('https://ojibwe.lib.umn.edu/audio/123.mp3', $sentence->get('audio_url'));
     }
+
+    #[Test]
+    public function it_supports_source_sentence_id(): void
+    {
+        $sentence = new ExampleSentence([
+            'ojibwe_text' => 'Makwa agamiing dago.',
+            'english_text' => 'The bear is by the lake.',
+            'dictionary_entry_id' => 1,
+            'source_sentence_id' => 'makwa-es-001',
+        ]);
+
+        $this->assertSame('makwa-es-001', $sentence->get('source_sentence_id'));
+    }
 }
