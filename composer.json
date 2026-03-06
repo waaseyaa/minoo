@@ -84,7 +84,8 @@
         "waaseyaa": {
             "providers": [
                 "Minoo\\Provider\\EventServiceProvider",
-                "Minoo\\Provider\\GroupServiceProvider"
+                "Minoo\\Provider\\GroupServiceProvider",
+                "Minoo\\Provider\\CulturalGroupServiceProvider"
             ]
         }
     },
