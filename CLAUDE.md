@@ -9,9 +9,9 @@ Minoo is a **thin application** — custom entity types, access policies, servic
 ```
 minoo/
 ├── src/
-│   ├── Entity/        # 12 custom entity classes
-│   ├── Provider/      # 6 service providers (one per domain)
-│   ├── Access/        # 6 access policy classes
+│   ├── Entity/        # 13 custom entity classes
+│   ├── Provider/      # 7 service providers (one per domain)
+│   ├── Access/        # 7 access policy classes
 │   └── Seed/          # TaxonomySeeder + ConfigSeeder
 ├── tests/Minoo/
 │   ├── Unit/          # Entity, access, seed tests
@@ -37,7 +37,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 - `waaseyaa_get_spec infrastructure` — kernel boot, manifest compiler, providers
 - `waaseyaa_search_specs <query>` — keyword search across all framework specs
 
-## Entity Domains (4 domains, 12 types)
+## Entity Domains (5 domains, 13 types)
 
 | Domain | Entities | Provider | Policy |
 |--------|----------|----------|--------|
@@ -45,6 +45,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 | Groups | `group`, `group_type`, `cultural_group` | `GroupServiceProvider`, `CulturalGroupServiceProvider` | `GroupAccessPolicy`, `CulturalGroupAccessPolicy` |
 | Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingServiceProvider`, `CulturalCollectionServiceProvider` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
 | Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker` | `LanguageServiceProvider` | `LanguageAccessPolicy` |
+| Ingestion | `ingest_log` | `IngestServiceProvider` | `IngestAccessPolicy` |
 
 ## Operation Checklists
 
@@ -65,7 +66,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests (58 tests, 131 assertions)
+./vendor/bin/phpunit                          # All tests (68 tests, 155 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
@@ -85,12 +86,12 @@ bin/waaseyaa                                  # CLI
 - **Stale manifest cache**: `storage/framework/packages.php` can prevent new providers/policies from being discovered — delete it when adding new providers
 - **`PackageManifestCompiler`** reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
 - **`LanguageAccessPolicy`** covers all 4 language types via array attribute: `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`
-- **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection)
+- **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection, `ilid` for ingest_log)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
 
 ## Codified Context
 
 - **Tier 1 (Constitution):** This CLAUDE.md — orchestration, checklists, gotchas
-- **Tier 2 (Skill):** `skills/minoo/SKILL.md` — domain knowledge for all 4 entity domains
+- **Tier 2 (Skill):** `skills/minoo/SKILL.md` — domain knowledge for all 5 entity domains
 - **Tier 3 (Spec):** `docs/specs/entity-model.md` — full entity model, access patterns, seed data
 - **Framework specs:** Use `waaseyaa_*` MCP tools for framework-level context
