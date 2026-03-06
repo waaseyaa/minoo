@@ -18,6 +18,7 @@ final class GroupServiceProvider extends ServiceProvider
             label: 'Community Group',
             class: Group::class,
             keys: ['id' => 'gid', 'uuid' => 'uuid', 'label' => 'name', 'bundle' => 'type'],
+            group: 'community',
             fieldDefinitions: [
                 'slug' => [
                     'type' => 'string',
@@ -71,6 +72,7 @@ final class GroupServiceProvider extends ServiceProvider
             label: 'Group Type',
             class: GroupType::class,
             keys: ['id' => 'type', 'label' => 'name'],
+            group: 'community',
         ));
     }
 }

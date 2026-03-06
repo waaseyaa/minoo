@@ -18,6 +18,7 @@ final class EventServiceProvider extends ServiceProvider
             label: 'Event',
             class: Event::class,
             keys: ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
+            group: 'events',
             fieldDefinitions: [
                 'slug' => [
                     'type' => 'string',
@@ -77,6 +78,7 @@ final class EventServiceProvider extends ServiceProvider
             label: 'Event Type',
             class: EventType::class,
             keys: ['id' => 'type', 'label' => 'name'],
+            group: 'events',
         ));
     }
 }

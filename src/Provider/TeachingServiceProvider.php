@@ -18,6 +18,7 @@ final class TeachingServiceProvider extends ServiceProvider
             label: 'Teaching',
             class: Teaching::class,
             keys: ['id' => 'tid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
+            group: 'knowledge',
             fieldDefinitions: [
                 'slug' => [
                     'type' => 'string',
@@ -73,6 +74,7 @@ final class TeachingServiceProvider extends ServiceProvider
             label: 'Teaching Type',
             class: TeachingType::class,
             keys: ['id' => 'type', 'label' => 'name'],
+            group: 'knowledge',
         ));
     }
 }

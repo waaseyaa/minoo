@@ -20,6 +20,7 @@ final class LanguageServiceProvider extends ServiceProvider
             label: 'Dictionary Entry',
             class: DictionaryEntry::class,
             keys: ['id' => 'deid', 'uuid' => 'uuid', 'label' => 'word'],
+            group: 'language',
             fieldDefinitions: [
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'definition' => ['type' => 'string', 'label' => 'Definition', 'weight' => 5],
@@ -39,6 +40,7 @@ final class LanguageServiceProvider extends ServiceProvider
             label: 'Example Sentence',
             class: ExampleSentence::class,
             keys: ['id' => 'esid', 'uuid' => 'uuid', 'label' => 'ojibwe_text'],
+            group: 'language',
             fieldDefinitions: [
                 'english_text' => ['type' => 'string', 'label' => 'English Translation', 'weight' => 5],
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 10],
@@ -56,6 +58,7 @@ final class LanguageServiceProvider extends ServiceProvider
             label: 'Word Part',
             class: WordPart::class,
             keys: ['id' => 'wpid', 'uuid' => 'uuid', 'label' => 'form'],
+            group: 'language',
             fieldDefinitions: [
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'type' => ['type' => 'string', 'label' => 'Type', 'description' => 'initial, medial, or final.', 'weight' => 5],
@@ -72,6 +75,7 @@ final class LanguageServiceProvider extends ServiceProvider
             label: 'Speaker',
             class: Speaker::class,
             keys: ['id' => 'sid', 'uuid' => 'uuid', 'label' => 'name'],
+            group: 'language',
             fieldDefinitions: [
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'code' => ['type' => 'string', 'label' => 'Speaker Code', 'description' => 'Abbreviation (e.g., es, nj, gh).', 'weight' => 5],

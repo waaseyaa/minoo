@@ -17,6 +17,7 @@ final class CulturalGroupServiceProvider extends ServiceProvider
             label: 'Cultural Group',
             class: CulturalGroup::class,
             keys: ['id' => 'cgid', 'uuid' => 'uuid', 'label' => 'name'],
+            group: 'community',
             fieldDefinitions: [
                 'slug' => [
                     'type' => 'string',

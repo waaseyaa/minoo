@@ -17,6 +17,7 @@ final class CulturalCollectionServiceProvider extends ServiceProvider
             label: 'Cultural Collection',
             class: CulturalCollection::class,
             keys: ['id' => 'ccid', 'uuid' => 'uuid', 'label' => 'title'],
+            group: 'knowledge',
             fieldDefinitions: [
                 'slug' => [
                     'type' => 'string',
