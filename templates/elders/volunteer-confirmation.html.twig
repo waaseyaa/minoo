@@ -1,0 +1,58 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+  {%- if entity -%}
+    Thank You for Volunteering — Minoo
+  {%- else -%}
+    Volunteer Not Found — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% if entity %}
+    <div class="flow-lg">
+      <div>
+        <span class="card__badge card__badge--elder">Volunteer</span>
+        <h1>Thank You for Volunteering!</h1>
+        <p class="text-secondary">Thank you, {{ entity.get('name') }}. We'll be in touch at {{ entity.get('phone') }} when someone needs help.</p>
+      </div>
+
+      <div class="card card--detail">
+        <dl class="detail__fields">
+          {% if entity.get('availability') %}
+            <div class="detail__field">
+              <dt>Availability</dt>
+              <dd>{{ entity.get('availability') }}</dd>
+            </div>
+          {% endif %}
+          {% if entity.get('skills') is iterable and entity.get('skills')|length > 0 %}
+            <div class="detail__field">
+              <dt>Skills</dt>
+              <dd>
+                <div class="card__tags">
+                  {% for skill in entity.get('skills') %}
+                    <span class="card__tag">{{ skill }}</span>
+                  {% endfor %}
+                </div>
+              </dd>
+            </div>
+          {% endif %}
+          {% if entity.get('notes') %}
+            <div class="detail__field">
+              <dt>Notes</dt>
+              <dd>{{ entity.get('notes') }}</dd>
+            </div>
+          {% endif %}
+        </dl>
+      </div>
+
+      <p><a href="/elders/volunteer">Sign up another volunteer</a></p>
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>Volunteer Not Found</h1>
+      <p>That volunteer record could not be found.</p>
+      <p><a href="/elders/volunteer">Sign up as a volunteer</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Request Elder Support — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <div>
+      <h1>Request Elder Support</h1>
+      <p class="text-secondary">Need help with a ride, groceries, chores, or a visit? Submit a request and a volunteer will be in touch.</p>
+    </div>
+
+    <form class="form" method="POST" action="/elders/request">
+      <div class="form__field">
+        <label class="form__label" for="name">Your Name <span aria-hidden="true">*</span></label>
+        {% if errors.name is defined %}
+          <p class="form__error" role="alert">{{ errors.name }}</p>
+        {% endif %}
+        <input class="form__input{% if errors.name is defined %} form__input--error{% endif %}"
+               type="text" id="name" name="name"
+               value="{{ values.name ?? '' }}"
+               required autocomplete="name">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="phone">Phone Number <span aria-hidden="true">*</span></label>
+        {% if errors.phone is defined %}
+          <p class="form__error" role="alert">{{ errors.phone }}</p>
+        {% endif %}
+        <input class="form__input{% if errors.phone is defined %} form__input--error{% endif %}"
+               type="tel" id="phone" name="phone"
+               value="{{ values.phone ?? '' }}"
+               required autocomplete="tel">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="community">Community <span class="form__label-optional">(optional)</span></label>
+        <input class="form__input" type="text" id="community" name="community"
+               value="{{ values.community ?? '' }}"
+               autocomplete="address-level2">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="type">Type of Help Needed <span aria-hidden="true">*</span></label>
+        {% if errors.type is defined %}
+          <p class="form__error" role="alert">{{ errors.type }}</p>
+        {% endif %}
+        <select class="form__select{% if errors.type is defined %} form__select--error{% endif %}"
+                id="type" name="type" required>
+          <option value="">— Select —</option>
+          <option value="ride"{% if (values.type ?? '') == 'ride' %} selected{% endif %}>Ride</option>
+          <option value="groceries"{% if (values.type ?? '') == 'groceries' %} selected{% endif %}>Groceries</option>
+          <option value="chores"{% if (values.type ?? '') == 'chores' %} selected{% endif %}>Chores</option>
+          <option value="visit"{% if (values.type ?? '') == 'visit' %} selected{% endif %}>Visit / Companionship</option>
+        </select>
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="notes">Additional Notes <span class="form__label-optional">(optional)</span></label>
+        <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes ?? '' }}</textarea>
+      </div>
+
+      <div class="form__actions">
+        <button type="submit" class="form__submit">Submit Request</button>
+      </div>
+    </form>
+
+    <p class="text-secondary">Are you able to help? <a href="/elders/volunteer">Sign up as a volunteer</a>.</p>
+  </div>
+{% endblock %}

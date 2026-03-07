@@ -1,0 +1,68 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Volunteer to Help Elders — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <div>
+      <h1>Volunteer to Help Elders</h1>
+      <p class="text-secondary">Sign up to help community Elders with rides, groceries, chores, or visits.</p>
+    </div>
+
+    <form class="form" method="POST" action="/elders/volunteer">
+      <div class="form__field">
+        <label class="form__label" for="name">Your Name <span aria-hidden="true">*</span></label>
+        {% if errors.name is defined %}
+          <p class="form__error" role="alert">{{ errors.name }}</p>
+        {% endif %}
+        <input class="form__input{% if errors.name is defined %} form__input--error{% endif %}"
+               type="text" id="name" name="name"
+               value="{{ values.name ?? '' }}"
+               required autocomplete="name">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="phone">Phone Number <span aria-hidden="true">*</span></label>
+        {% if errors.phone is defined %}
+          <p class="form__error" role="alert">{{ errors.phone }}</p>
+        {% endif %}
+        <input class="form__input{% if errors.phone is defined %} form__input--error{% endif %}"
+               type="tel" id="phone" name="phone"
+               value="{{ values.phone ?? '' }}"
+               required autocomplete="tel">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="availability">Availability <span class="form__label-optional">(optional)</span></label>
+        <input class="form__input" type="text" id="availability" name="availability"
+               value="{{ values.availability ?? '' }}"
+               placeholder="e.g. Weekends, Tuesday evenings">
+      </div>
+
+      <fieldset class="form__fieldset">
+        <legend class="form__label">Skills / How Can You Help? <span class="form__label-optional">(optional)</span></legend>
+        <div class="form__checkboxes">
+          {% set selectedSkills = values.skills ?? [] %}
+          {% for skill in ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'] %}
+            <label class="form__checkbox-label">
+              <input type="checkbox" name="skills[]" value="{{ skill }}"
+                     {% if skill in selectedSkills %}checked{% endif %}>
+              {{ skill }}
+            </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="form__field">
+        <label class="form__label" for="notes">Additional Notes <span class="form__label-optional">(optional)</span></label>
+        <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes ?? '' }}</textarea>
+      </div>
+
+      <div class="form__actions">
+        <button type="submit" class="form__submit">Sign Up</button>
+      </div>
+    </form>
+
+    <p class="text-secondary">Need help yourself? <a href="/elders/request">Request elder support</a>.</p>
+  </div>
+{% endblock %}
