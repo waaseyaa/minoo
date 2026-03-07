@@ -1,0 +1,95 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Coordinator Dashboard — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section">
+  <h1>Elder Support Dashboard</h1>
+
+  <h2>Open Requests ({{ open_requests|length }})</h2>
+  {% if open_requests is empty %}
+    <p class="dashboard__empty">No open requests.</p>
+  {% else %}
+  <div class="dashboard__cards">
+    {% for req in open_requests %}
+    <article class="card card--dashboard">
+      <span class="card__badge card__badge--open">Open</span>
+      <h3 class="card__title">{{ req.get('name') }}</h3>
+      <dl class="card__meta">
+        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+        <dt>Phone</dt><dd>{{ req.get('phone') }}</dd>
+        {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+        {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
+      </dl>
+      <form class="dashboard__assign-form" method="post" action="/elders/request/{{ req.id() }}/assign">
+        <label class="form__label" for="volunteer-{{ req.id() }}">Assign to</label>
+        <select class="form__select" name="volunteer_id" id="volunteer-{{ req.id() }}" required>
+          <option value="">Select volunteer...</option>
+          {% for vol in volunteers %}
+          <option value="{{ vol.id() }}">{{ vol.get('name') }}{% if vol.get('community') %} ({{ vol.get('community') }}){% endif %}</option>
+          {% endfor %}
+        </select>
+        <button class="form__submit" type="submit">Assign</button>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>Assigned / In Progress ({{ assigned_requests|length }})</h2>
+  {% if assigned_requests is empty %}
+    <p class="dashboard__empty">No assigned requests.</p>
+  {% else %}
+  <div class="dashboard__cards">
+    {% for req in assigned_requests %}
+    <article class="card card--dashboard">
+      <span class="card__badge card__badge--{{ req.get('status') }}">{{ req.get('status')|replace({'_': ' '})|title }}</span>
+      <h3 class="card__title">{{ req.get('name') }}</h3>
+      <dl class="card__meta">
+        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+        {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+      </dl>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>Pending Confirmation ({{ pending_confirmation|length }})</h2>
+  {% if pending_confirmation is empty %}
+    <p class="dashboard__empty">Nothing to confirm.</p>
+  {% else %}
+  <div class="dashboard__cards">
+    {% for req in pending_confirmation %}
+    <article class="card card--dashboard">
+      <span class="card__badge card__badge--completed">Completed</span>
+      <h3 class="card__title">{{ req.get('name') }}</h3>
+      <dl class="card__meta">
+        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+      </dl>
+      <form method="post" action="/elders/request/{{ req.id() }}/confirm">
+        <button class="form__submit" type="submit">Confirm Completion</button>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>Volunteer Pool ({{ volunteers|length }})</h2>
+  {% if volunteers is empty %}
+    <p class="dashboard__empty">No active volunteers.</p>
+  {% else %}
+  <div class="dashboard__cards">
+    {% for vol in volunteers %}
+    <article class="card card--dashboard">
+      <h3 class="card__title">{{ vol.get('name') }}</h3>
+      <dl class="card__meta">
+        <dt>Phone</dt><dd>{{ vol.get('phone') }}</dd>
+        {% if vol.get('community') %}<dt>Community</dt><dd>{{ vol.get('community') }}</dd>{% endif %}
+        {% if vol.get('availability') %}<dt>Availability</dt><dd>{{ vol.get('availability') }}</dd>{% endif %}
+      </dl>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
