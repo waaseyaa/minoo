@@ -22,11 +22,13 @@ minoo/
 │   ├── 404.html.twig            # Not found page (extends base)
 │   ├── events.html.twig         # Events listing + detail (extends base)
 │   ├── groups.html.twig         # Groups listing + detail (extends base)
+│   ├── teachings.html.twig      # Teachings listing + detail (extends base)
 │   ├── language.html.twig       # Language demo page (extends base)
 │   └── components/              # Reusable Twig partials
 │       ├── dictionary-entry-card.html.twig
 │       ├── event-card.html.twig
-│       └── group-card.html.twig
+│       ├── group-card.html.twig
+│       └── teaching-card.html.twig
 ├── public/
 │   ├── index.php                # Web entry point
 │   └── css/minoo.css            # Design system (tokens, layout, components)
