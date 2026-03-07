@@ -8,3 +8,4 @@
 .playwright-mcp/
 /*.png
 mcp/node_modules/
+worktrees/
