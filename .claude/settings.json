@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "minoo-specs": {
+      "command": "node",
+      "args": ["tools/spec-retrieval/server.js"],
+      "cwd": "."
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bin/check-milestones",
+            "show_output": true
+          }
+        ]
+      }
+    ]
+  }
+}

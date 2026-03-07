@@ -48,6 +48,7 @@ minoo/
 | `src/Search/*`, `src/Provider/SearchServiceProvider.php` | — | `docs/specs/search.md` |
 | `templates/*`, `public/css/*` | — | `docs/specs/frontend-ssr.md` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
+| GitHub issues, milestones, new features, roadmap | — | `docs/specs/workflow.md` |
 
 For Minoo-level specs, use the Minoo MCP tools:
 - `minoo_list_specs` — list all available specs
@@ -133,11 +134,24 @@ bin/waaseyaa                                  # CLI
 - **Path-based templates** require framework#189 — `tryRenderPathTemplate()` matches single segments exactly and also falls back to the first segment for multi-segment paths (e.g. `/events/slug` renders `events.html.twig` with `path` set to `/events/slug`)
 - **Listing+detail templates** use path conditionals inside `{% block content %}` — `{% set %}` must be inside the block, and only one `{% block %}` per name (use conditionals inside the block, not multiple blocks in conditionals)
 
+## GitHub Workflow
+
+All work in this repo follows a GitHub-first workflow. See `docs/specs/workflow.md` (via `minoo_get_spec workflow`) for the full governance model including the versioning strategy and current milestone structure.
+
+**The 5 rules — enforced at every session start via `bin/check-milestones`:**
+
+1. **All work begins with an issue.** Ask for the issue number before writing code. If none exists, create one and assign it to a milestone first.
+2. **Every issue belongs to a milestone.** Unassigned issues are incomplete triage — prompt assignment if missing.
+3. **Milestones define the roadmap.** Check the active milestone before proposing work. Do not invent new milestones without explicit discussion.
+4. **PRs must reference issues.** PR title format: `feat(#N): description`. Use `.github/pull_request_template.md`.
+5. **Read the drift report.** `bin/check-milestones` runs at session start. Flag any warnings before beginning work.
+
 ## Codified Context
 
 - **Tier 1 (Constitution):** This CLAUDE.md — orchestration, checklists, gotchas
 - **Tier 2 (Skill):** `skills/minoo/SKILL.md` — domain knowledge for all 5 entity domains
 - **Tier 3 (Specs):** Retrieved via `minoo_*` MCP tools:
+  - `docs/specs/workflow.md` — GitHub workflow governance, versioning model, milestone structure
   - `docs/specs/entity-model.md` — entity types, access, seeds (318 lines)
   - `docs/specs/ingestion-pipeline.md` — NorthCloud ingest, mappers, materialization
   - `docs/specs/search.md` — search provider, config, template
