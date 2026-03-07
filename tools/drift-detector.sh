@@ -12,6 +12,10 @@ declare -A SPEC_MAP=(
   ["src/Provider/"]="docs/specs/entity-model.md"
   ["src/Access/"]="docs/specs/entity-model.md"
   ["src/Seed/"]="docs/specs/entity-model.md"
+  ["src/Ingest/"]="docs/specs/ingestion-pipeline.md"
+  ["src/Search/"]="docs/specs/search.md"
+  ["templates/"]="docs/specs/frontend-ssr.md"
+  ["public/css/"]="docs/specs/frontend-ssr.md"
   ["tests/Minoo/"]="docs/specs/entity-model.md"
 )
 
@@ -20,7 +24,7 @@ declare -A SKILL_MAP=(
   ["src/Provider/"]="skills/minoo/SKILL.md"
   ["src/Access/"]="skills/minoo/SKILL.md"
   ["src/Seed/"]="skills/minoo/SKILL.md"
-  ["tests/Minoo/"]="skills/minoo/SKILL.md"
+  ["src/Ingest/"]="skills/minoo/SKILL.md"
 )
 
 echo "Checking last $COMMITS commits for drift..."

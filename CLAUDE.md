@@ -44,10 +44,15 @@ minoo/
 | `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
-| `src/Ingest/*` | `minoo:entities` | `docs/plans/2026-03-06-ingestion-pipeline-design.md` |
-| `src/Search/*`, `src/Provider/SearchServiceProvider.php` | — | `docs/plans/2026-03-06-search-filtering-design.md` |
-| `templates/*`, `public/css/*` | — | `docs/plans/2026-03-06-visual-identity-layout-design.md` |
+| `src/Ingest/*` | `minoo:entities` | `docs/specs/ingestion-pipeline.md` |
+| `src/Search/*`, `src/Provider/SearchServiceProvider.php` | — | `docs/specs/search.md` |
+| `templates/*`, `public/css/*` | — | `docs/specs/frontend-ssr.md` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
+
+For Minoo-level specs, use the Minoo MCP tools:
+- `minoo_list_specs` — list all available specs
+- `minoo_get_spec <name>` — full spec content (e.g. `entity-model`, `ingestion-pipeline`, `search`, `frontend-ssr`)
+- `minoo_search_specs <query>` — keyword search across all Minoo specs
 
 For framework-level work (kernel boot, entity storage, access handler internals), use the waaseyaa MCP tools:
 - `waaseyaa_get_spec entity-system` — entity types, storage, field definitions
@@ -132,5 +137,9 @@ bin/waaseyaa                                  # CLI
 
 - **Tier 1 (Constitution):** This CLAUDE.md — orchestration, checklists, gotchas
 - **Tier 2 (Skill):** `skills/minoo/SKILL.md` — domain knowledge for all 5 entity domains
-- **Tier 3 (Spec):** `docs/specs/entity-model.md` — full entity model, access patterns, seed data
+- **Tier 3 (Specs):** Retrieved via `minoo_*` MCP tools:
+  - `docs/specs/entity-model.md` — entity types, access, seeds (318 lines)
+  - `docs/specs/ingestion-pipeline.md` — NorthCloud ingest, mappers, materialization
+  - `docs/specs/search.md` — search provider, config, template
+  - `docs/specs/frontend-ssr.md` — templates, CSS design system, components
 - **Framework specs:** Use `waaseyaa_*` MCP tools for framework-level context
