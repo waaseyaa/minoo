@@ -1,0 +1,182 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Search — Minoo{% endblock %}
+
+{% block content %}
+  {% set q = query_param('q') %}
+  {% set topic = query_param('topic') %}
+  {% set content_type = query_param('content_type') %}
+  {% set source = query_param('source') %}
+  {% set page = query_param('page', '1')|number_format(0, '', '') %}
+
+  <div class="flow-lg">
+    <h1>Search</h1>
+
+    <form class="search-form" action="/search" method="get">
+      <input
+        type="search"
+        name="q"
+        value="{{ q }}"
+        placeholder="Search articles, teachings, events..."
+        aria-label="Search"
+        class="search-form__input"
+      >
+      <button type="submit" class="search-form__button">Search</button>
+    </form>
+
+    {% if q %}
+      {% set results = search(q, {topic: topic, content_type: content_type, source: source}, page|number_format(0, '', '')|abs) %}
+
+      {# Active filters #}
+      {% if topic or content_type or source %}
+        <div class="search-active-filters">
+          <span class="search-active-filters__label">Filters:</span>
+          {% if topic %}
+            <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}" class="filter-badge">
+              {{ topic|replace({'_': ' '}) }} &times;
+            </a>
+          {% endif %}
+          {% if content_type %}
+            <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}" class="filter-badge">
+              {{ content_type }} &times;
+            </a>
+          {% endif %}
+          {% if source %}
+            <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}" class="filter-badge">
+              {{ source|replace({'_': ' '}) }} &times;
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="search-layout">
+        {# Sidebar: facet filters #}
+        {% if results.facets %}
+          <aside class="search-filters">
+            {% set topicsFacet = results.getFacet('topics') %}
+            {% if topicsFacet and topicsFacet.buckets %}
+              <div class="search-filters__group">
+                <h3 class="search-filters__heading">Topics</h3>
+                <ul class="search-filters__list">
+                  {% for bucket in topicsFacet.buckets[:15] %}
+                    <li>
+                      <a href="/search?q={{ q|url_encode }}&topic={{ bucket.key|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}"
+                        {% if topic == bucket.key %} aria-current="true" class="search-filters__active"{% endif %}>
+                        {{ bucket.key|replace({'_': ' '}) }}
+                        <span class="search-filters__count">({{ bucket.count }})</span>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% set typesFacet = results.getFacet('content_types') %}
+            {% if typesFacet and typesFacet.buckets %}
+              <div class="search-filters__group">
+                <h3 class="search-filters__heading">Type</h3>
+                <ul class="search-filters__list">
+                  {% for bucket in typesFacet.buckets %}
+                    <li>
+                      <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}&content_type={{ bucket.key|url_encode }}{% if source %}&source={{ source|url_encode }}{% endif %}"
+                        {% if content_type == bucket.key %} aria-current="true" class="search-filters__active"{% endif %}>
+                        {{ bucket.key }}
+                        <span class="search-filters__count">({{ bucket.count }})</span>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% set sourcesFacet = results.getFacet('sources') %}
+            {% if sourcesFacet and sourcesFacet.buckets %}
+              <div class="search-filters__group">
+                <h3 class="search-filters__heading">Sources</h3>
+                <ul class="search-filters__list">
+                  {% for bucket in sourcesFacet.buckets[:20] %}
+                    <li>
+                      <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}&source={{ bucket.key|url_encode }}"
+                        {% if source == bucket.key %} aria-current="true" class="search-filters__active"{% endif %}>
+                        {{ bucket.key|replace({'_': ' '}) }}
+                        <span class="search-filters__count">({{ bucket.count }})</span>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          </aside>
+        {% endif %}
+
+        {# Main results area #}
+        <div class="search-results">
+          <p class="search-results__summary">
+            {{ results.totalHits|number_format }} results
+            <span class="search-results__timing">({{ (results.tookMs / 1000)|number_format(1) }}s)</span>
+          </p>
+
+          {% if results.hits %}
+            <div class="card-grid">
+              {% for hit in results.hits %}
+                {% include "components/search-result-card.html.twig" with {
+                  title: hit.title,
+                  url: hit.url,
+                  source_name: hit.sourceName,
+                  crawled_at: hit.crawledAt,
+                  content_type: hit.contentType,
+                  topics: hit.topics,
+                  highlight: hit.highlight,
+                  og_image: hit.ogImage,
+                } %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p>No results found for "{{ q }}".</p>
+          {% endif %}
+
+          {# Pagination #}
+          {% if results.totalPages > 1 %}
+            {% set currentPage = results.currentPage %}
+            <nav class="pagination" aria-label="Search results pages">
+              {% if currentPage > 1 %}
+                <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ currentPage - 1 }}" class="pagination__link" rel="prev">Previous</a>
+              {% endif %}
+
+              {% set startPage = max(1, currentPage - 2) %}
+              {% set endPage = min(results.totalPages, currentPage + 2) %}
+
+              {% if startPage > 1 %}
+                <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page=1" class="pagination__link">1</a>
+                {% if startPage > 2 %}
+                  <span class="pagination__ellipsis">&hellip;</span>
+                {% endif %}
+              {% endif %}
+
+              {% for p in startPage..endPage %}
+                {% if p == currentPage %}
+                  <span class="pagination__link pagination__link--current" aria-current="page">{{ p }}</span>
+                {% else %}
+                  <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ p }}" class="pagination__link">{{ p }}</a>
+                {% endif %}
+              {% endfor %}
+
+              {% if endPage < results.totalPages %}
+                {% if endPage < results.totalPages - 1 %}
+                  <span class="pagination__ellipsis">&hellip;</span>
+                {% endif %}
+                <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ results.totalPages }}" class="pagination__link">{{ results.totalPages }}</a>
+              {% endif %}
+
+              {% if currentPage < results.totalPages %}
+                <a href="/search?q={{ q|url_encode }}{% if topic %}&topic={{ topic|url_encode }}{% endif %}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ currentPage + 1 }}" class="pagination__link" rel="next">Next</a>
+              {% endif %}
+            </nav>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <p>Enter a search term to discover articles, teachings, events, and community resources from across Indigenous organizations and communities.</p>
+    {% endif %}
+  </div>
+{% endblock %}
