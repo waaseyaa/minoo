@@ -1,8 +1,14 @@
 <article class="card">
-  <h3 class="card__title">{{ word }}</h3>
   {% if part_of_speech is defined and part_of_speech %}
-    <p class="card__meta">{{ part_of_speech }}</p>
+    <span class="card__badge card__badge--language">{{ part_of_speech }}</span>
   {% endif %}
+  <h3 class="card__title">
+    {%- if url is defined and url -%}
+      <a href="{{ url }}">{{ word }}</a>
+    {%- else -%}
+      {{ word }}
+    {%- endif -%}
+  </h3>
   {% if definition is defined and definition %}
     <p class="card__body">{{ definition }}</p>
   {% endif %}

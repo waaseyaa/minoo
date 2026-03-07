@@ -371,6 +371,11 @@
     color: var(--color-earth-700);
   }
 
+  .card__badge--language {
+    background-color: var(--color-forest-100);
+    color: var(--color-forest-500);
+  }
+
   .card__date {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
