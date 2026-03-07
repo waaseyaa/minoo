@@ -7,3 +7,4 @@
 .phpunit.cache/
 .playwright-mcp/
 /*.png
+mcp/node_modules/
