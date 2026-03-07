@@ -12,31 +12,28 @@ use Waaseyaa\SSR\SsrServiceProvider;
 
 final class SearchServiceProvider extends ServiceProvider
 {
+    private ?NorthCloudSearchProvider $provider = null;
+
     public function register(): void
     {
         $searchConfig = $this->config['search'] ?? [];
 
-        $this->singleton(SearchProviderInterface::class, fn(): SearchProviderInterface => new NorthCloudSearchProvider(
-            baseUrl: (string) ($searchConfig['base_url'] ?? 'https://northcloud.one'),
-            timeout: (int) ($searchConfig['timeout'] ?? 5),
-            cacheTtl: (int) ($searchConfig['cache_ttl'] ?? 60),
-        ));
-    }
-
-    public function boot(): void
-    {
-        $twig = SsrServiceProvider::getTwigEnvironment();
-        if ($twig === null) {
-            return;
-        }
-
-        $searchConfig = $this->config['search'] ?? [];
-        $provider = new NorthCloudSearchProvider(
+        $this->provider = new NorthCloudSearchProvider(
             baseUrl: (string) ($searchConfig['base_url'] ?? 'https://northcloud.one'),
             timeout: (int) ($searchConfig['timeout'] ?? 5),
             cacheTtl: (int) ($searchConfig['cache_ttl'] ?? 60),
         );
 
-        $twig->addExtension(new SearchTwigExtension($provider));
+        $this->singleton(SearchProviderInterface::class, fn(): SearchProviderInterface => $this->provider);
+    }
+
+    public function boot(): void
+    {
+        $twig = SsrServiceProvider::getTwigEnvironment();
+        if ($twig === null || $this->provider === null) {
+            return;
+        }
+
+        $twig->addExtension(new SearchTwigExtension($this->provider));
     }
 }

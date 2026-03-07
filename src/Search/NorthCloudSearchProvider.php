@@ -100,12 +100,11 @@ final class NorthCloudSearchProvider implements SearchProviderInterface
 
     private function doRequest(string $body): string|false
     {
+        $url = rtrim($this->baseUrl, '/') . '/api/search';
+
         if ($this->httpClient !== null) {
-            $url = rtrim($this->baseUrl, '/') . '/api/search';
             return ($this->httpClient)($url, ['body' => $body]);
         }
-
-        $url = rtrim($this->baseUrl, '/') . '/api/search';
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
