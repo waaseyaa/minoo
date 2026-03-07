@@ -14,8 +14,10 @@ Minoo and the Waaseyaa Framework version independently.
 | Milestone | Description | Status |
 |-----------|-------------|--------|
 | v0.2 | Foundation — 13 entity types, ingestion pipeline, search, SSR pages, codified context | Closed (2026-03-07) |
-| v0.3 | Content authoring for all 5 entity domains via admin interface (depends on framework v0.7) | Active |
-| v0.4 | Knowledge graph, cultural connections, richer language and teaching features | Future |
+| v0.3 | Content authoring for all 5 entity domains via admin interface (depends on framework v0.7) | Closed |
+| v0.4 | Resource People directory — entity, provider, policy, taxonomies, SSR listing+detail, admin CRUD | Closed (2026-03-07) |
+| v0.5 | Resource People Enhancements — search, filtering, photo support, web presence fields | Active |
+| v0.6 | Knowledge graph, cultural connections, richer language and teaching features | Future |
 | v1.0 | Content model and UX stable — product ready for public launch | Future |
 
 **Update this table whenever milestones are added, closed, or redescribed.**
