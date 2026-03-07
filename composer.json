@@ -92,7 +92,8 @@
                 "Minoo\\Provider\\CulturalCollectionServiceProvider",
                 "Minoo\\Provider\\LanguageServiceProvider",
                 "Minoo\\Provider\\IngestServiceProvider",
-                "Minoo\\Provider\\SearchServiceProvider"
+                "Minoo\\Provider\\SearchServiceProvider",
+                "Minoo\\Provider\\PeopleServiceProvider"
             ]
         }
     },
