@@ -1,0 +1,10 @@
+<article class="card">
+  <span class="card__badge card__badge--group">{{ type }}</span>
+  <h3 class="card__title"><a href="{{ url }}">{{ name }}</a></h3>
+  {% if region is defined and region %}
+    <p class="card__meta">{{ region }}</p>
+  {% endif %}
+  {% if excerpt is defined and excerpt %}
+    <p class="card__body">{{ excerpt }}</p>
+  {% endif %}
+</article>
