@@ -2385,7 +2385,7 @@
         },
         {
             "name": "waaseyaa/access",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/access",
@@ -2423,7 +2423,7 @@
         },
         {
             "name": "waaseyaa/ai-agent",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ai-agent",
@@ -2458,7 +2458,7 @@
         },
         {
             "name": "waaseyaa/ai-schema",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ai-schema",
@@ -2492,7 +2492,7 @@
         },
         {
             "name": "waaseyaa/ai-vector",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ai-vector",
@@ -2530,7 +2530,7 @@
         },
         {
             "name": "waaseyaa/api",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/api",
@@ -2567,7 +2567,7 @@
         },
         {
             "name": "waaseyaa/cache",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/cache",
@@ -2606,7 +2606,7 @@
         },
         {
             "name": "waaseyaa/cli",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/cli",
@@ -2645,7 +2645,7 @@
         },
         {
             "name": "waaseyaa/config",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/config",
@@ -2680,7 +2680,7 @@
         },
         {
             "name": "waaseyaa/database-legacy",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/database-legacy",
@@ -2713,7 +2713,7 @@
         },
         {
             "name": "waaseyaa/entity",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/entity",
@@ -2753,7 +2753,7 @@
         },
         {
             "name": "waaseyaa/entity-storage",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/entity-storage",
@@ -2791,7 +2791,7 @@
         },
         {
             "name": "waaseyaa/field",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/field",
@@ -2827,7 +2827,7 @@
         },
         {
             "name": "waaseyaa/foundation",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/foundation",
@@ -2867,7 +2867,7 @@
         },
         {
             "name": "waaseyaa/i18n",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/i18n",
@@ -2900,7 +2900,7 @@
         },
         {
             "name": "waaseyaa/mcp",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/mcp",
@@ -2942,7 +2942,7 @@
         },
         {
             "name": "waaseyaa/media",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/media",
@@ -2983,7 +2983,7 @@
         },
         {
             "name": "waaseyaa/menu",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/menu",
@@ -3024,7 +3024,7 @@
         },
         {
             "name": "waaseyaa/node",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/node",
@@ -3066,7 +3066,7 @@
         },
         {
             "name": "waaseyaa/path",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/path",
@@ -3107,7 +3107,7 @@
         },
         {
             "name": "waaseyaa/plugin",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/plugin",
@@ -3141,7 +3141,7 @@
         },
         {
             "name": "waaseyaa/queue",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/queue",
@@ -3175,7 +3175,7 @@
         },
         {
             "name": "waaseyaa/routing",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/routing",
@@ -3212,7 +3212,7 @@
         },
         {
             "name": "waaseyaa/search",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/search",
@@ -3246,7 +3246,7 @@
         },
         {
             "name": "waaseyaa/ssr",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ssr",
@@ -3292,7 +3292,7 @@
         },
         {
             "name": "waaseyaa/state",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/state",
@@ -3326,7 +3326,7 @@
         },
         {
             "name": "waaseyaa/taxonomy",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/taxonomy",
@@ -3368,7 +3368,7 @@
         },
         {
             "name": "waaseyaa/typed-data",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/typed-data",
@@ -3402,7 +3402,7 @@
         },
         {
             "name": "waaseyaa/user",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/user",
@@ -3446,7 +3446,7 @@
         },
         {
             "name": "waaseyaa/validation",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/validation",
@@ -3482,7 +3482,7 @@
         },
         {
             "name": "waaseyaa/workflows",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/workflows",
@@ -5195,7 +5195,7 @@
         },
         {
             "name": "waaseyaa/testing",
-            "version": "dev-feat/search-package",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/testing",
