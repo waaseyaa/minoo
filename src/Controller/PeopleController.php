@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
@@ -18,7 +19,7 @@ final class PeopleController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $storage = $this->entityTypeManager->getStorage('resource_person');
         $queryBuilder = $storage->getQuery()
@@ -38,7 +39,7 @@ final class PeopleController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('resource_person');

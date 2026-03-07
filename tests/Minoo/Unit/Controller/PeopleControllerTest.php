@@ -9,6 +9,7 @@ use Minoo\Entity\ResourcePerson;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
@@ -24,6 +25,7 @@ final class PeopleControllerTest extends TestCase
     private EntityStorageInterface $storage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
+    private HttpRequest $request;
 
     protected function setUp(): void
     {
@@ -44,6 +46,7 @@ final class PeopleControllerTest extends TestCase
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
+        $this->request = HttpRequest::create('/');
     }
 
     #[Test]
@@ -58,7 +61,7 @@ final class PeopleControllerTest extends TestCase
             ->willReturn([1 => $mary, 2 => $john]);
 
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
-        $response = $controller->list([], [], $this->account);
+        $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->statusCode);
         $this->assertStringContainsString('Mary Trudeau', $response->content);
@@ -71,7 +74,7 @@ final class PeopleControllerTest extends TestCase
         $this->query->method('execute')->willReturn([]);
 
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
-        $response = $controller->list([], [], $this->account);
+        $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->statusCode);
         $this->assertStringContainsString('/people', $response->content);
@@ -88,7 +91,7 @@ final class PeopleControllerTest extends TestCase
             ->willReturn($mary);
 
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
-        $response = $controller->show(['slug' => 'mary-trudeau'], [], $this->account);
+        $response = $controller->show(['slug' => 'mary-trudeau'], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->statusCode);
         $this->assertStringContainsString('Mary Trudeau', $response->content);
@@ -100,7 +103,7 @@ final class PeopleControllerTest extends TestCase
         $this->query->method('execute')->willReturn([]);
 
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
-        $response = $controller->show(['slug' => 'nonexistent'], [], $this->account);
+        $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
 
         $this->assertSame(404, $response->statusCode);
     }

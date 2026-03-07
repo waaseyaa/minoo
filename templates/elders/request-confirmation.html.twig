@@ -1,0 +1,50 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+  {%- if entity -%}
+    Request Received — Minoo
+  {%- else -%}
+    Request Not Found — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% if entity %}
+    <div class="flow-lg">
+      <div>
+        <span class="card__badge card__badge--elder">Elder Support</span>
+        <h1>Your Request Has Been Received</h1>
+        <p class="text-secondary">Thank you, {{ entity.get('name') }}. A volunteer will reach out to you at {{ entity.get('phone') }}.</p>
+      </div>
+
+      <div class="card card--detail">
+        <dl class="detail__fields">
+          <div class="detail__field">
+            <dt>Type of Help</dt>
+            <dd>{{ entity.get('type')|capitalize }}</dd>
+          </div>
+          {% if entity.get('community') %}
+            <div class="detail__field">
+              <dt>Community</dt>
+              <dd>{{ entity.get('community') }}</dd>
+            </div>
+          {% endif %}
+          {% if entity.get('notes') %}
+            <div class="detail__field">
+              <dt>Notes</dt>
+              <dd>{{ entity.get('notes') }}</dd>
+            </div>
+          {% endif %}
+        </dl>
+      </div>
+
+      <p><a href="/elders/request">Submit another request</a></p>
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>Request Not Found</h1>
+      <p>That request could not be found.</p>
+      <p><a href="/elders/request">Submit a new request</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

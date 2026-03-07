@@ -93,7 +93,8 @@
                 "Minoo\\Provider\\LanguageServiceProvider",
                 "Minoo\\Provider\\IngestServiceProvider",
                 "Minoo\\Provider\\SearchServiceProvider",
-                "Minoo\\Provider\\PeopleServiceProvider"
+                "Minoo\\Provider\\PeopleServiceProvider",
+                "Minoo\\Provider\\ElderSupportServiceProvider"
             ]
         }
     },
