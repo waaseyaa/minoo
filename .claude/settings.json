@@ -1,9 +1,8 @@
 {
   "mcpServers": {
-    "minoo-specs": {
+    "minoo": {
       "command": "node",
-      "args": ["tools/spec-retrieval/server.js"],
-      "cwd": "."
+      "args": ["mcp/server.js"]
     }
   },
   "hooks": {
