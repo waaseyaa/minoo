@@ -17,6 +17,6 @@
     {% endif %}
   </div>
   {% if highlight %}
-    <div class="card__body">{{ highlight|raw }}</div>
+    <div class="card__body">{{ highlight|striptags('<em><strong><mark>')|raw }}</div>
   {% endif %}
 </article>

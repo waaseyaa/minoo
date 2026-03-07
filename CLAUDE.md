@@ -45,6 +45,7 @@ minoo/
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
 | `src/Ingest/*` | `minoo:entities` | `docs/plans/2026-03-06-ingestion-pipeline-design.md` |
+| `src/Search/*`, `src/Provider/SearchServiceProvider.php` | — | `docs/plans/2026-03-06-search-filtering-design.md` |
 | `templates/*`, `public/css/*` | — | `docs/plans/2026-03-06-visual-identity-layout-design.md` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 

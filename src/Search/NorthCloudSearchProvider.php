@@ -115,7 +115,12 @@ final class NorthCloudSearchProvider implements SearchProviderInterface
             ],
         ]);
 
-        return @file_get_contents($url, false, $context);
+        $result = @file_get_contents($url, false, $context);
+        if ($result === false) {
+            error_log(sprintf('NorthCloud search request failed: %s', $url));
+        }
+
+        return $result;
     }
 
     /**
