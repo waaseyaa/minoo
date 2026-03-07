@@ -28,6 +28,12 @@ final class ElderSupportRequest extends ContentEntityBase
         if (!array_key_exists('updated_at', $values)) {
             $values['updated_at'] = 0;
         }
+        if (!array_key_exists('assigned_volunteer', $values)) {
+            $values['assigned_volunteer'] = null;
+        }
+        if (!array_key_exists('assigned_at', $values)) {
+            $values['assigned_at'] = null;
+        }
 
         parent::__construct($values, $this->entityTypeId, $this->entityKeys);
     }

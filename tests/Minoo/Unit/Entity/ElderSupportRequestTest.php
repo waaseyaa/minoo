@@ -45,4 +45,13 @@ final class ElderSupportRequestTest extends TestCase
         $this->assertSame('Sagamok Anishnawbek', $request->get('community'));
         $this->assertSame('Please bring gloves.', $request->get('notes'));
     }
+
+    #[Test]
+    public function it_defaults_assignment_fields_to_null(): void
+    {
+        $request = new ElderSupportRequest(['name' => 'Test', 'phone' => '555', 'type' => 'ride']);
+
+        $this->assertNull($request->get('assigned_volunteer'));
+        $this->assertNull($request->get('assigned_at'));
+    }
 }
