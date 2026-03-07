@@ -65,7 +65,7 @@ final class BootTest extends TestCase
         $this->assertNotNull($manager->getDefinition('taxonomy_term'));
         $this->assertNotNull($manager->getDefinition('user'));
 
-        // All 13 Minoo entity types from app service providers.
+        // All Minoo entity types from app service providers.
         $minooTypes = [
             'event', 'event_type',
             'group', 'group_type',
@@ -74,6 +74,9 @@ final class BootTest extends TestCase
             'cultural_collection',
             'dictionary_entry', 'example_sentence', 'word_part', 'speaker',
             'ingest_log',
+            'resource_person',
+            'elder_support_request', 'volunteer',
+            'community',
         ];
 
         foreach ($minooTypes as $typeId) {
