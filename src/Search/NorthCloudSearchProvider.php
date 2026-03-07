@@ -81,7 +81,7 @@ final class NorthCloudSearchProvider implements SearchProviderInterface
             $params['min_quality_score'] = (string) $request->filters->minQuality;
         }
 
-        $url = rtrim($this->baseUrl, '/') . '/api/v1/search?' . http_build_query($params);
+        $url = rtrim($this->baseUrl, '/') . '/api/search?' . http_build_query($params);
 
         // Array params need explicit bracket notation for Go's query parser.
         foreach ($request->filters->topics as $topic) {

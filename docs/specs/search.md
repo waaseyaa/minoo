@@ -19,7 +19,7 @@ SearchServiceProvider
   boot()     → SearchTwigExtension(provider, baseTopics) → Twig
 ```
 
-The search page uses a Twig function `search(query, filters, page)` provided by the framework's `SearchTwigExtension`. This calls `NorthCloudSearchProvider::search(SearchRequest)` which makes an HTTP GET to NorthCloud's `/api/v1/search` endpoint.
+The search page uses a Twig function `search(query, filters, page)` provided by the framework's `SearchTwigExtension`. This calls `NorthCloudSearchProvider::search(SearchRequest)` which makes an HTTP GET to NorthCloud's `/api/search` endpoint.
 
 ## Interface: SearchProviderInterface
 
@@ -50,7 +50,7 @@ In-memory array cache keyed by `SearchRequest::cacheKey()`. TTL-based expiration
 
 ### Query URL Building
 ```
-GET {baseUrl}/api/v1/search?q={query}&page={page}&page_size={pageSize}&include_facets=1&include_highlights=1
+GET {baseUrl}/api/search?q={query}&page={page}&page_size={pageSize}&include_facets=1&include_highlights=1
   &content_type={filter}      // optional
   &min_quality_score={score}  // optional
   &topics[]={topic}           // repeated, from filters + base_topics
