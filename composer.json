@@ -96,7 +96,8 @@
                 "Minoo\\Provider\\PeopleServiceProvider",
                 "Minoo\\Provider\\ElderSupportServiceProvider",
                 "Minoo\\Provider\\CommunityServiceProvider",
-                "Minoo\\Provider\\AuthServiceProvider"
+                "Minoo\\Provider\\AuthServiceProvider",
+                "Minoo\\Provider\\DashboardServiceProvider"
             ]
         }
     },
