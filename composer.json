@@ -35,6 +35,7 @@
         { "type": "path", "url": "../waaseyaa/packages/ssr" },
         { "type": "path", "url": "../waaseyaa/packages/mcp" },
         { "type": "path", "url": "../waaseyaa/packages/telescope" },
+        { "type": "path", "url": "../waaseyaa/packages/search" },
         { "type": "path", "url": "../waaseyaa/packages/testing" }
     ],
     "require": {
@@ -58,6 +59,7 @@
         "waaseyaa/plugin": "@dev",
         "waaseyaa/queue": "@dev",
         "waaseyaa/routing": "@dev",
+        "waaseyaa/search": "@dev",
         "waaseyaa/ssr": "@dev",
         "waaseyaa/state": "@dev",
         "waaseyaa/taxonomy": "@dev",
@@ -89,7 +91,8 @@
                 "Minoo\\Provider\\TeachingServiceProvider",
                 "Minoo\\Provider\\CulturalCollectionServiceProvider",
                 "Minoo\\Provider\\LanguageServiceProvider",
-                "Minoo\\Provider\\IngestServiceProvider"
+                "Minoo\\Provider\\IngestServiceProvider",
+                "Minoo\\Provider\\SearchServiceProvider"
             ]
         }
     },
