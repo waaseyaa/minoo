@@ -34,6 +34,7 @@ final class SearchServiceProvider extends ServiceProvider
             return;
         }
 
-        $twig->addExtension(new SearchTwigExtension($this->provider));
+        $baseTopics = (array) ($this->config['search']['base_topics'] ?? []);
+        $twig->addExtension(new SearchTwigExtension($this->provider, $baseTopics));
     }
 }

@@ -40,8 +40,8 @@ final class NorthCloudSearchProvider implements SearchProviderInterface
             unset($this->cache[$cacheKey]);
         }
 
-        $body = $this->buildRequestBody($request);
-        $json = $this->doRequest($body);
+        $url = $this->buildQueryUrl($request);
+        $json = $this->doRequest($url);
 
         if ($json === false) {
             return SearchResult::empty();
@@ -64,52 +64,44 @@ final class NorthCloudSearchProvider implements SearchProviderInterface
         return $result;
     }
 
-    private function buildRequestBody(SearchRequest $request): string
+    private function buildQueryUrl(SearchRequest $request): string
     {
-        $body = [
-            'query' => $request->query,
-            'pagination' => [
-                'page' => $request->page,
-                'size' => $request->pageSize,
-            ],
-            'options' => [
-                'include_facets' => true,
-                'include_highlights' => true,
-            ],
+        $params = [
+            'q' => $request->query,
+            'page' => (string) $request->page,
+            'page_size' => (string) $request->pageSize,
+            'include_facets' => '1',
+            'include_highlights' => '1',
         ];
 
-        $filters = [];
-        if ($request->filters->topics !== []) {
-            $filters['topics'] = $request->filters->topics;
-        }
         if ($request->filters->contentType !== '') {
-            $filters['content_type'] = $request->filters->contentType;
-        }
-        if ($request->filters->sourceNames !== []) {
-            $filters['source_names'] = $request->filters->sourceNames;
+            $params['content_type'] = $request->filters->contentType;
         }
         if ($request->filters->minQuality > 0) {
-            $filters['min_quality_score'] = $request->filters->minQuality;
-        }
-        if ($filters !== []) {
-            $body['filters'] = $filters;
+            $params['min_quality_score'] = (string) $request->filters->minQuality;
         }
 
-        return json_encode($body, JSON_THROW_ON_ERROR);
+        $url = rtrim($this->baseUrl, '/') . '/api/search?' . http_build_query($params);
+
+        // Array params need explicit bracket notation for Go's query parser.
+        foreach ($request->filters->topics as $topic) {
+            $url .= '&' . urlencode('topics[]') . '=' . urlencode($topic);
+        }
+        foreach ($request->filters->sourceNames as $source) {
+            $url .= '&' . urlencode('source_names[]') . '=' . urlencode($source);
+        }
+
+        return $url;
     }
 
-    private function doRequest(string $body): string|false
+    private function doRequest(string $url): string|false
     {
-        $url = rtrim($this->baseUrl, '/') . '/api/search';
-
         if ($this->httpClient !== null) {
-            return ($this->httpClient)($url, ['body' => $body]);
+            return ($this->httpClient)($url);
         }
         $context = stream_context_create([
             'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/json\r\n",
-                'content' => $body,
+                'method' => 'GET',
                 'timeout' => $this->timeout,
                 'ignore_errors' => true,
             ],

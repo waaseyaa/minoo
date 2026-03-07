@@ -84,11 +84,11 @@ final class NorthCloudSearchProviderTest extends TestCase
     }
 
     #[Test]
-    public function it_builds_correct_api_request_body(): void
+    public function it_builds_correct_query_url(): void
     {
-        $capturedBody = null;
-        $httpClient = function (string $url, array $options) use (&$capturedBody): string {
-            $capturedBody = $options['body'];
+        $capturedUrl = null;
+        $httpClient = function (string $url) use (&$capturedUrl): string {
+            $capturedUrl = $url;
             return json_encode([
                 'total_hits' => 0, 'total_pages' => 0, 'current_page' => 1,
                 'page_size' => 20, 'took_ms' => 10, 'hits' => [],
@@ -105,15 +105,16 @@ final class NorthCloudSearchProviderTest extends TestCase
         $filters = new SearchFilters(topics: ['education'], contentType: 'article', minQuality: 50);
         $provider->search(new SearchRequest(query: 'test', filters: $filters, page: 3, pageSize: 10));
 
-        $this->assertNotNull($capturedBody);
-        $decoded = json_decode($capturedBody, true);
-        $this->assertSame('test', $decoded['query']);
-        $this->assertSame(['education'], $decoded['filters']['topics']);
-        $this->assertSame('article', $decoded['filters']['content_type']);
-        $this->assertSame(50, $decoded['filters']['min_quality_score']);
-        $this->assertSame(3, $decoded['pagination']['page']);
-        $this->assertSame(10, $decoded['pagination']['size']);
-        $this->assertTrue($decoded['options']['include_facets']);
+        $this->assertNotNull($capturedUrl);
+        $parsed = parse_url($capturedUrl);
+        parse_str($parsed['query'] ?? '', $params);
+        $this->assertSame('test', $params['q']);
+        $this->assertSame('article', $params['content_type']);
+        $this->assertSame('50', $params['min_quality_score']);
+        $this->assertSame('3', $params['page']);
+        $this->assertSame('10', $params['page_size']);
+        $this->assertSame('1', $params['include_facets']);
+        $this->assertStringContainsString('topics%5B%5D=education', $capturedUrl);
     }
 
     #[Test]

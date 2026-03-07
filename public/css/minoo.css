@@ -553,6 +553,15 @@
   }
 
   /* Search results */
+  .search-results__scope {
+    font-size: var(--text-sm);
+    color: var(--color-forest-700);
+    background-color: var(--accent-surface);
+    padding: var(--space-3xs) var(--space-2xs);
+    border-radius: var(--radius-sm);
+    display: inline-block;
+  }
+
   .search-results__summary {
     font-size: var(--text-sm);
     color: var(--text-secondary);
