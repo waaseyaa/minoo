@@ -1,0 +1,89 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+  {%- if path == '/groups' -%}
+    Groups — Minoo
+  {%- elseif path starts with '/groups/' -%}
+    Group — Minoo
+  {%- else -%}
+    Group Not Found — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% set groups = [
+    {
+      slug: "anishinaabe-language-circle",
+      name: "Anishinaabe Language Circle",
+      type: "Online Community",
+      region: "Virtual",
+      excerpt: "A virtual gathering space for Ojibwe language learners at all levels, meeting twice weekly for conversation practice, vocabulary building, and storytelling.",
+      description: "The Anishinaabe Language Circle is an online community dedicated to revitalizing and preserving the Ojibwe language. We meet twice weekly via video call for structured conversation practice, vocabulary building, and traditional storytelling sessions.\n\nWhether you are a complete beginner or a fluent speaker looking to connect, all are welcome. Sessions are led by fluent speakers and language teachers from across Turtle Island."
+    },
+    {
+      slug: "nswakamok-indigenous-friendship-centre",
+      name: "N'Swakamok Indigenous Friendship Centre",
+      type: "Local Community",
+      region: "Northern Ontario",
+      excerpt: "A welcoming community space offering cultural programming, family support services, Elder counselling, and youth mentorship in the Sudbury region.",
+      description: "The N'Swakamok Indigenous Friendship Centre has served the Indigenous community in the Sudbury region for over four decades. We offer a wide range of programming including cultural workshops, family support services, Elder counselling, youth mentorship, and community events.\n\nOur centre is open to all Indigenous peoples and their families, regardless of status or nation. Drop in during regular hours or check our events calendar for upcoming programs."
+    },
+    {
+      slug: "great-lakes-water-protectors",
+      name: "Great Lakes Water Protectors",
+      type: "Advocacy Organization",
+      region: "Great Lakes Region",
+      excerpt: "A grassroots alliance of Indigenous communities and allies working to protect the Great Lakes watershed through legal advocacy, water monitoring, and public education.",
+      description: "The Great Lakes Water Protectors are a grassroots alliance of Indigenous communities, environmental organizations, and concerned citizens working together to protect the Great Lakes watershed. Our work includes legal advocacy, community-based water quality monitoring, public education campaigns, and direct action.\n\nWe believe that water is sacred and that protecting nibi is both a treaty right and a shared responsibility. Join us in this vital work — whether through volunteering, donating, or simply learning more about the issues facing our waters."
+    }
+  ] %}
+
+  {% set slug = path|replace({'/groups/': '', '/groups': ''})|trim('/') %}
+  {% set current_group = null %}
+  {% for g in groups %}
+    {% if g.slug == slug %}
+      {% set current_group = g %}
+    {% endif %}
+  {% endfor %}
+
+  {% if path == '/groups' %}
+    <div class="flow-lg">
+      <h1>Groups</h1>
+      <p>Communities, organizations, and advocacy groups.</p>
+
+      <div class="card-grid">
+        {% for group in groups %}
+          {% include "components/group-card.html.twig" with {
+            name: group.name,
+            type: group.type,
+            region: group.region,
+            excerpt: group.excerpt,
+            url: "/groups/" ~ group.slug
+          } %}
+        {% endfor %}
+      </div>
+    </div>
+  {% elseif current_group %}
+    <div class="flow-lg detail">
+      <a href="/groups" class="detail__back">Groups</a>
+      <div class="detail__header">
+        <span class="card__badge card__badge--group">{{ current_group.type }}</span>
+        <h1>{{ current_group.name }}</h1>
+        <div class="detail__meta">
+          <span>{{ current_group.region }}</span>
+        </div>
+      </div>
+      <div class="detail__body flow">
+        {% for paragraph in current_group.description|split("\n\n") %}
+          <p>{{ paragraph }}</p>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>Group Not Found</h1>
+      <p>The group at <code>{{ path }}</code> could not be found.</p>
+      <p><a href="/groups">Browse all groups</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

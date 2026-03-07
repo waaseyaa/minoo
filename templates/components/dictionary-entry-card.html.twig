@@ -1,0 +1,25 @@
+<article class="card">
+  {% if part_of_speech is defined and part_of_speech %}
+    <span class="card__badge card__badge--language">{{ part_of_speech }}</span>
+  {% endif %}
+  <h3 class="card__title">
+    {%- if url is defined and url -%}
+      <a href="{{ url }}">{{ word }}</a>
+    {%- else -%}
+      {{ word }}
+    {%- endif -%}
+  </h3>
+  {% if definition is defined and definition %}
+    <p class="card__body">{{ definition }}</p>
+  {% endif %}
+  {% if example is defined and example %}
+    <p class="card__body"><em>{{ example }}</em></p>
+  {% endif %}
+  {% if tags is defined and tags %}
+    <div>
+      {% for tag in tags %}
+        <span class="card__tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+</article>

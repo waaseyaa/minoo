@@ -1,0 +1,17 @@
+<article class="card">
+  <span class="card__badge card__badge--teaching">{{ type }}</span>
+  <h3 class="card__title"><a href="{{ url }}">{{ title }}</a></h3>
+  {% if author is defined and author %}
+    <p class="card__meta">{{ author }}</p>
+  {% endif %}
+  {% if excerpt is defined and excerpt %}
+    <p class="card__body">{{ excerpt }}</p>
+  {% endif %}
+  {% if tags is defined and tags %}
+    <div>
+      {% for tag in tags %}
+        <span class="card__tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+</article>

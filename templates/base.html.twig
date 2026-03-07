@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Minoo{% endblock %}</title>
+  <link rel="stylesheet" href="/css/minoo.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <div class="site">
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a href="/" class="site-name">Minoo</a>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
+        <nav id="main-nav" aria-label="Main">
+          <ul class="site-nav">
+            <li><a href="/events"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>Events</a></li>
+            <li><a href="/groups"{% if path is defined and path starts with '/groups' %} aria-current="page"{% endif %}>Groups</a></li>
+            <li><a href="/teachings"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>Teachings</a></li>
+            <li><a href="/language"{% if path is defined and path starts with '/language' %} aria-current="page"{% endif %}>Language</a></li>
+            <li><a href="/search"{% if path is defined and path starts with '/search' %} aria-current="page"{% endif %}>Search</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-main">
+      <div class="site-main__inner">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>&copy; {{ "now"|date("Y") }} Minoo</p>
+      </div>
+    </footer>
+  </div>
+  <script>
+    document.querySelector('.nav-toggle')?.addEventListener('click', function() {
+      const nav = document.getElementById('main-nav')?.querySelector('.site-nav');
+      const open = nav?.classList.toggle('is-open');
+      this.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  </script>
+</body>
+</html>

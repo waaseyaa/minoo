@@ -58,6 +58,13 @@ return [
         'cache_max_age' => (int) (getenv('WAASEYAA_SSR_CACHE_MAX_AGE') ?: 300),
     ],
 
+    // Search provider configuration.
+    'search' => [
+        'base_url' => getenv('NORTHCLOUD_SEARCH_URL') ?: 'https://northcloud.one',
+        'timeout' => (int) (getenv('NORTHCLOUD_SEARCH_TIMEOUT') ?: 5),
+        'cache_ttl' => (int) (getenv('NORTHCLOUD_SEARCH_CACHE_TTL') ?: 60),
+    ],
+
     // AI embedding pipeline configuration.
     'ai' => [
         // 'ollama' or 'openai'. Empty disables embedding generation.
