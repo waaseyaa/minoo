@@ -3,134 +3,79 @@
 {% block title %}
   {%- if path == '/people' -%}
     People — Minoo
-  {%- elseif path starts with '/people/' -%}
-    Person — Minoo
+  {%- elseif person is defined and person -%}
+    {{ person.get('name') }} — Minoo
   {%- else -%}
     Person Not Found — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
-  {% set people = [
-    {
-      slug: "mary-trudeau",
-      name: "Mary Trudeau",
-      role: "Caterer",
-      roles: ["Caterer", "Small Business Owner"],
-      community: "Sagamok Anishnawbek",
-      offerings: ["Food"],
-      business_name: "Mary's Bannock & Catering",
-      excerpt: "Traditional and contemporary Indigenous catering for community events, feasts, and celebrations.",
-      bio: "Mary has been catering community events in Sagamok for over fifteen years. She specializes in traditional dishes including bannock, wild rice soup, and smoked fish, as well as contemporary meals for large gatherings.\n\nHer business, Mary's Bannock & Catering, serves events ranging from small family celebrations to community-wide feasts. She is passionate about keeping traditional food practices alive while making them accessible for modern events.",
-      email: "mary@example.com",
-      phone: "705-555-0101"
-    },
-    {
-      slug: "john-beaucage",
-      name: "John Beaucage",
-      role: "Elder",
-      roles: ["Elder", "Knowledge Keeper"],
-      community: "Sagamok Anishnawbek",
-      offerings: ["Teachings", "Cultural Services"],
-      business_name: "",
-      excerpt: "Elder available for opening prayers, teachings on governance and treaty rights, and cultural guidance for community programs.",
-      bio: "John is a respected Elder in the Sagamok community with deep knowledge of Anishinaabe governance traditions and treaty history. He is frequently called upon to provide opening prayers and cultural guidance for community events and government meetings.\n\nJohn is available for teachings on treaty rights, traditional governance, and land-based education. He has mentored many young leaders in the community over the past three decades.",
-      email: "john@example.com",
-      phone: "705-555-0102"
-    },
-    {
-      slug: "sarah-owl",
-      name: "Sarah Owl",
-      role: "Regalia Maker",
-      roles: ["Regalia Maker", "Crafter", "Workshop Facilitator"],
-      community: "Garden River First Nation",
-      offerings: ["Regalia", "Beadwork", "Workshops"],
-      business_name: "Owl Designs",
-      excerpt: "Custom regalia, beadwork, and crafting workshops. Specializing in jingle dress and fancy shawl regalia.",
-      bio: "Sarah is a skilled regalia maker and beadwork artist from Garden River First Nation. She creates custom jingle dresses, fancy shawl regalia, and beadwork pieces for powwow dancers and community members across the region.\n\nThrough her business Owl Designs, Sarah also runs regular workshops teaching beadwork fundamentals, ribbon skirt making, and regalia construction. She believes in passing traditional crafting skills to the next generation.",
-      email: "sarah@example.com",
-      phone: "705-555-0103"
-    },
-    {
-      slug: "mike-abitong",
-      name: "Mike Abitong",
-      role: "Cedar Harvester",
-      roles: ["Cedar Harvester", "Youth Worker"],
-      community: "Atikameksheng Anishnawbek",
-      offerings: ["Cedar Products", "Workshops", "Cultural Services"],
-      business_name: "",
-      excerpt: "Cedar harvesting, land-based youth programming, and cultural workshops connecting young people to traditional land practices.",
-      bio: "Mike leads land-based youth programs in Atikameksheng, teaching young people traditional harvesting practices including cedar picking, medicine gathering, and seasonal land stewardship.\n\nHe provides cedar bundles and other harvested materials for community ceremonies and events. Mike also runs week-long summer camps focused on reconnecting youth with the land through hands-on traditional activities.",
-      email: "mike@example.com",
-      phone: "705-555-0104"
-    }
-  ] %}
-
-  {% set slug = path|replace({'/people/': '', '/people': ''})|trim('/') %}
-  {% set current_person = null %}
-  {% for p in people %}
-    {% if p.slug == slug %}
-      {% set current_person = p %}
-    {% endif %}
-  {% endfor %}
-
   {% if path == '/people' %}
     <div class="flow-lg">
       <h1>People</h1>
       <p>Community members, knowledge keepers, and service providers.</p>
 
-      <div class="card-grid">
-        {% for person in people %}
-          {% include "components/resource-person-card.html.twig" with {
-            name: person.name,
-            role: person.role,
-            community: person.community,
-            offerings: person.offerings,
-            excerpt: person.excerpt,
-            url: "/people/" ~ person.slug
-          } %}
-        {% endfor %}
-      </div>
+      {% if people is defined and people|length > 0 %}
+        <div class="card-grid">
+          {% for p in people %}
+            {% include "components/resource-person-card.html.twig" with {
+              name: p.get('name'),
+              role: p.get('roles') is iterable ? p.get('roles')|first : '',
+              community: p.get('community'),
+              offerings: p.get('offerings') is iterable ? p.get('offerings') : [],
+              excerpt: p.get('bio') ? p.get('bio')|striptags|slice(0, 160) ~ '…' : '',
+              url: "/people/" ~ p.get('slug')
+            } %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No resource people found.</p>
+      {% endif %}
     </div>
-  {% elseif current_person %}
+  {% elseif person is defined and person %}
     <div class="flow-lg detail">
       <a href="/people" class="detail__back">People</a>
       <div class="detail__header">
-        {% for r in current_person.roles %}
-          <span class="card__badge card__badge--person">{{ r }}</span>
-        {% endfor %}
-        <h1>{{ current_person.name }}</h1>
+        {% if person.get('roles') is iterable %}
+          {% for r in person.get('roles') %}
+            <span class="card__badge card__badge--person">{{ r }}</span>
+          {% endfor %}
+        {% endif %}
+        <h1>{{ person.get('name') }}</h1>
         <div class="detail__meta">
-          {% if current_person.community %}
-            <span>{{ current_person.community }}</span>
+          {% if person.get('community') %}
+            <span>{{ person.get('community') }}</span>
           {% endif %}
-          {% if current_person.business_name %}
-            <span>{{ current_person.business_name }}</span>
+          {% if person.get('business_name') %}
+            <span>{{ person.get('business_name') }}</span>
           {% endif %}
         </div>
       </div>
 
-      {% if current_person.offerings %}
+      {% if person.get('offerings') is iterable and person.get('offerings')|length > 0 %}
         <div class="card__tags">
-          {% for offering in current_person.offerings %}
+          {% for offering in person.get('offerings') %}
             <span class="card__tag">{{ offering }}</span>
           {% endfor %}
         </div>
       {% endif %}
 
-      <div class="detail__body flow">
-        {% for paragraph in current_person.bio|split("\n\n") %}
-          <p>{{ paragraph }}</p>
-        {% endfor %}
-      </div>
+      {% if person.get('bio') %}
+        <div class="detail__body flow">
+          {% for paragraph in person.get('bio')|split("\n\n") %}
+            <p>{{ paragraph }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
 
-      {% if current_person.email or current_person.phone %}
+      {% if person.get('email') or person.get('phone') %}
         <div class="detail__contact">
-          {% if current_person.email %}
-            <a href="mailto:{{ current_person.email }}">{{ current_person.email }}</a>
+          {% if person.get('email') %}
+            <a href="mailto:{{ person.get('email') }}">{{ person.get('email') }}</a>
           {% endif %}
-          {% if current_person.phone %}
-            <span>{{ current_person.phone }}</span>
+          {% if person.get('phone') %}
+            <span>{{ person.get('phone') }}</span>
           {% endif %}
         </div>
       {% endif %}

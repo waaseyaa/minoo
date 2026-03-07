@@ -7,6 +7,8 @@ namespace Minoo\Provider;
 use Minoo\Entity\ResourcePerson;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
+use Waaseyaa\Routing\RouteBuilder;
+use Waaseyaa\Routing\WaaseyaaRouter;
 
 final class PeopleServiceProvider extends ServiceProvider
 {
@@ -33,5 +35,29 @@ final class PeopleServiceProvider extends ServiceProvider
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
         ));
+    }
+
+    public function routes(WaaseyaaRouter $router): void
+    {
+        $router->addRoute(
+            'people.list',
+            RouteBuilder::create('/people')
+                ->controller('Minoo\Controller\PeopleController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'people.show',
+            RouteBuilder::create('/people/{slug}')
+                ->controller('Minoo\Controller\PeopleController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
     }
 }
