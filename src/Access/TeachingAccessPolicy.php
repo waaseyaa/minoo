@@ -10,12 +10,12 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: 'teaching')]
+#[PolicyAttribute(entityType: ['teaching', 'teaching_type'])]
 final class TeachingAccessPolicy implements AccessPolicyInterface
 {
     public function appliesTo(string $entityTypeId): bool
     {
-        return $entityTypeId === 'teaching';
+        return $entityTypeId === 'teaching' || $entityTypeId === 'teaching_type';
     }
 
     public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult
