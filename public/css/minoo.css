@@ -366,6 +366,11 @@
     color: var(--color-forest-700);
   }
 
+  .card__badge--teaching {
+    background-color: var(--color-earth-200);
+    color: var(--color-earth-700);
+  }
+
   .card__date {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
