@@ -36,7 +36,8 @@ final class VolunteerController
         $name = trim((string) $request->request->get('name', ''));
         $phone = trim((string) $request->request->get('phone', ''));
         $availability = trim((string) $request->request->get('availability', ''));
-        $skills = $request->request->all('skills');
+        $allowedSkills = ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'];
+        $skills = array_values(array_intersect($request->request->all('skills'), $allowedSkills));
         $notes = trim((string) $request->request->get('notes', ''));
 
         $errors = [];
