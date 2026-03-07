@@ -77,9 +77,10 @@ jobs:
 
       - name: Assemble build artifact
         run: |
-          mkdir -p .build
+          mkdir -p minoo/.build
           rsync -a \
             --exclude='.git' \
+            --exclude='.build/' \
             --exclude='tests/' \
             --exclude='docs/' \
             --exclude='mcp/' \
@@ -92,7 +93,7 @@ jobs:
             --exclude='deploy.php' \
             --exclude='ops/' \
             --exclude='*.png' \
-            minoo/ .build/
+            minoo/ minoo/.build/
 
       # -----------------------------------------------------------------------
       # Deploy via PHP Deployer
