@@ -1,0 +1,40 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Login — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section">
+  <h1>Login</h1>
+
+  <form class="form" method="post" action="/login">
+    <div class="form__field">
+      <label class="form__label" for="email">Email</label>
+      <input
+        class="form__input{% if errors.email is defined %} form__input--error{% endif %}"
+        type="email" id="email" name="email"
+        value="{{ values.email|default('') }}"
+        required>
+      {% if errors.email is defined %}
+        <p class="form__error" role="alert">{{ errors.email }}</p>
+      {% endif %}
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="password">Password</label>
+      <input
+        class="form__input{% if errors.password is defined %} form__input--error{% endif %}"
+        type="password" id="password" name="password"
+        required>
+      {% if errors.password is defined %}
+        <p class="form__error" role="alert">{{ errors.password }}</p>
+      {% endif %}
+    </div>
+
+    <div class="form__actions">
+      <button class="form__submit" type="submit">Login</button>
+    </div>
+  </form>
+
+  <p class="form__link">Don't have an account? <a href="/register">Register as a volunteer</a></p>
+</section>
+{% endblock %}
