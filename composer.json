@@ -94,7 +94,8 @@
                 "Minoo\\Provider\\IngestServiceProvider",
                 "Minoo\\Provider\\SearchServiceProvider",
                 "Minoo\\Provider\\PeopleServiceProvider",
-                "Minoo\\Provider\\ElderSupportServiceProvider"
+                "Minoo\\Provider\\ElderSupportServiceProvider",
+                "Minoo\\Provider\\AuthServiceProvider"
             ]
         }
     },
