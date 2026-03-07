@@ -20,9 +20,13 @@ minoo/
 │   ├── base.html.twig           # Page shell (header, nav, footer)
 │   ├── page.html.twig           # Default page (extends base)
 │   ├── 404.html.twig            # Not found page (extends base)
+│   ├── events.html.twig         # Events listing + detail (extends base)
+│   ├── groups.html.twig         # Groups listing + detail (extends base)
 │   ├── language.html.twig       # Language demo page (extends base)
 │   └── components/              # Reusable Twig partials
-│       └── dictionary-entry-card.html.twig
+│       ├── dictionary-entry-card.html.twig
+│       ├── event-card.html.twig
+│       └── group-card.html.twig
 ├── public/
 │   ├── index.php                # Web entry point
 │   └── css/minoo.css            # Design system (tokens, layout, components)
@@ -118,7 +122,8 @@ bin/waaseyaa                                  # CLI
 - **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection, `ilid` for ingest_log)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
 - **CSS conventions**: logical properties only (`margin-block`, `padding-inline`, never `left`/`right`), `gap` for spacing, native nesting (no BEM), container queries on components, media queries only for page shell
-- **Path-based templates** require framework#189 — `tryRenderPathTemplate()` only matches single URL segments (no nested paths like `/a/b`)
+- **Path-based templates** require framework#189 — `tryRenderPathTemplate()` matches single segments exactly and also falls back to the first segment for multi-segment paths (e.g. `/events/slug` renders `events.html.twig` with `path` set to `/events/slug`)
+- **Listing+detail templates** use path conditionals inside `{% block content %}` — `{% set %}` must be inside the block, and only one `{% block %}` per name (use conditionals inside the block, not multiple blocks in conditionals)
 
 ## Codified Context
 
