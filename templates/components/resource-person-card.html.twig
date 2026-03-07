@@ -1,0 +1,17 @@
+<article class="card">
+  <span class="card__badge card__badge--person">{{ role }}</span>
+  <h3 class="card__title"><a href="{{ url }}">{{ name }}</a></h3>
+  {% if community is defined and community %}
+    <p class="card__meta">{{ community }}</p>
+  {% endif %}
+  {% if offerings is defined and offerings %}
+    <div class="card__tags">
+      {% for offering in offerings %}
+        <span class="card__tag">{{ offering }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if excerpt is defined and excerpt %}
+    <p class="card__body">{{ excerpt }}</p>
+  {% endif %}
+</article>

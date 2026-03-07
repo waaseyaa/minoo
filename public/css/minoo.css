@@ -376,6 +376,11 @@
     color: var(--color-forest-500);
   }
 
+  .card__badge--person {
+    background: oklch(0.95 0.02 160);
+    color: oklch(0.35 0.06 160);
+  }
+
   .card__date {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
@@ -417,6 +422,14 @@
 
   .detail__body {
     line-height: var(--leading-loose);
+  }
+
+  .detail__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
   }
 
   /* Search form */
