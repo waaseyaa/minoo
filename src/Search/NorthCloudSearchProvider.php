@@ -141,7 +141,7 @@ final class NorthCloudSearchProvider implements SearchProviderInterface
                 topics: array_map(strval(...), $hit['topics'] ?? []),
                 score: (float) ($hit['score'] ?? 0.0),
                 ogImage: (string) ($hit['og_image'] ?? ''),
-                highlight: (string) ($hit['highlight'] ?? ''),
+                highlight: $this->extractHighlight($hit['highlight'] ?? ''),
             );
         }
 
@@ -166,5 +166,25 @@ final class NorthCloudSearchProvider implements SearchProviderInterface
             hits: $hits,
             facets: $facets,
         );
+    }
+
+    private function extractHighlight(mixed $highlight): string
+    {
+        if (is_string($highlight)) {
+            return $highlight;
+        }
+
+        if (!is_array($highlight)) {
+            return '';
+        }
+
+        // API returns {body: [...], raw_text: [...], title: [...]} — prefer body, then raw_text.
+        foreach (['body', 'raw_text', 'title'] as $field) {
+            if (isset($highlight[$field][0]) && is_string($highlight[$field][0])) {
+                return $highlight[$field][0];
+            }
+        }
+
+        return '';
     }
 }

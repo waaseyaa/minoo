@@ -36,6 +36,11 @@ final class NorthCloudSearchProviderTest extends TestCase
                     'topics' => ['education'],
                     'score' => 15.5,
                     'og_image' => 'https://example.com/image.jpg',
+                    'highlight' => [
+                        'body' => ['A source for <em>Indigenous</em> education content'],
+                        'raw_text' => ['A source for Indigenous education content'],
+                        'title' => ['<em>Indigenous</em> Education'],
+                    ],
                 ],
             ],
             'facets' => [
@@ -69,6 +74,7 @@ final class NorthCloudSearchProviderTest extends TestCase
         $this->assertSame('article', $result->hits[0]->contentType);
         $this->assertSame(['education'], $result->hits[0]->topics);
         $this->assertSame('https://example.com/image.jpg', $result->hits[0]->ogImage);
+        $this->assertSame('A source for <em>Indigenous</em> education content', $result->hits[0]->highlight);
 
         $topicsFacet = $result->getFacet('topics');
         $this->assertNotNull($topicsFacet);
