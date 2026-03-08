@@ -68,6 +68,11 @@ final class VolunteerRankerTest extends TestCase
         $this->assertEqualsWithDelta(0.0, $ranked[0]->distanceKm, 0.01);
         $this->assertEqualsWithDelta(68.0, $ranked[1]->distanceKm, 5.0);
         $this->assertEqualsWithDelta(206.0, $ranked[2]->distanceKm, 10.0);
+
+        // No max_travel_km set — exceedsMaxTravel should be false
+        $this->assertFalse($ranked[0]->exceedsMaxTravel);
+        $this->assertFalse($ranked[1]->exceedsMaxTravel);
+        $this->assertFalse($ranked[2]->exceedsMaxTravel);
     }
 
     #[Test]
@@ -117,6 +122,45 @@ final class VolunteerRankerTest extends TestCase
 
         $this->assertCount(1, $ranked);
         $this->assertFalse($ranked[0]->hasDistance());
+    }
+
+    #[Test]
+    public function exceeds_max_travel_flagged_when_beyond_limit(): void
+    {
+        $sagamok = new Community(['cid' => 1, 'name' => 'Sagamok', 'latitude' => 46.15, 'longitude' => -81.72]);
+        $sudbury = new Community(['cid' => 2, 'name' => 'Sudbury', 'latitude' => 46.49, 'longitude' => -80.99]);
+        $ssm = new Community(['cid' => 3, 'name' => 'Sault Ste. Marie', 'latitude' => 46.52, 'longitude' => -84.35]);
+
+        $this->communityStorage->method('load')->willReturnCallback(
+            fn (int $id) => match ($id) {
+                1 => $sagamok,
+                2 => $sudbury,
+                3 => $ssm,
+                default => null,
+            },
+        );
+
+        $request = new ElderSupportRequest(['esrid' => 1, 'name' => 'Elder', 'community' => 1]);
+
+        // 50 km limit — Sudbury (~68 km) exceeds, Sagamok (same) does not
+        $volNear = new Volunteer(['vid' => 1, 'name' => 'Near', 'community' => 2, 'max_travel_km' => 100]);
+        $volFar = new Volunteer(['vid' => 2, 'name' => 'Far', 'community' => 3, 'max_travel_km' => 50]);
+        $volSame = new Volunteer(['vid' => 3, 'name' => 'Same', 'community' => 1, 'max_travel_km' => 10]);
+
+        $ranker = new VolunteerRanker($this->entityTypeManager);
+        $ranked = $ranker->rank([$volNear, $volFar, $volSame], $request);
+
+        // Same community (0 km, limit 10) — does not exceed
+        $this->assertSame('Same', $ranked[0]->volunteer->get('name'));
+        $this->assertFalse($ranked[0]->exceedsMaxTravel);
+
+        // Sudbury (~68 km, limit 100) — does not exceed
+        $this->assertSame('Near', $ranked[1]->volunteer->get('name'));
+        $this->assertFalse($ranked[1]->exceedsMaxTravel);
+
+        // SSM (~206 km, limit 50) — exceeds
+        $this->assertSame('Far', $ranked[2]->volunteer->get('name'));
+        $this->assertTrue($ranked[2]->exceedsMaxTravel);
     }
 
     #[Test]

@@ -27,7 +27,7 @@
           <option value="">Select volunteer...</option>
           {% set ranked = ranked_by_request[req.id()] ?? [] %}
           {% for rv in ranked %}
-          <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% elseif rv.volunteer.get('community') %} ({{ community_names[rv.volunteer.get('community')]|default(rv.volunteer.get('community')) }}){% endif %}</option>
+          <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% if rv.exceedsMaxTravel %} (exceeds {{ rv.volunteer.get('max_travel_km') }} km limit){% endif %}{% elseif rv.volunteer.get('community') %} ({{ community_names[rv.volunteer.get('community')]|default(rv.volunteer.get('community')) }}){% endif %}</option>
           {% endfor %}
         </select>
         <button class="form__submit" type="submit">Assign</button>

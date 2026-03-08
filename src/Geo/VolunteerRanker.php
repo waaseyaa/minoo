@@ -48,7 +48,10 @@ final class VolunteerRanker
                 $volCoords[1],
             );
 
-            $withDistance[] = new RankedVolunteer($volunteer, $distance);
+            $maxTravel = $volunteer->get('max_travel_km');
+            $exceeds = $maxTravel !== null && $maxTravel !== '' && $distance > (float) $maxTravel;
+
+            $withDistance[] = new RankedVolunteer($volunteer, $distance, $exceeds);
         }
 
         usort($withDistance, static fn (RankedVolunteer $a, RankedVolunteer $b): int =>
