@@ -1,0 +1,124 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+  {%- if path == '/communities' -%}
+    Communities — Minoo
+  {%- elseif community is defined and community -%}
+    {{ community.get('name') }} — Minoo
+  {%- else -%}
+    Community Not Found — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% if path == '/communities' %}
+    <div class="flow-lg">
+      <h1>Communities</h1>
+      <p>First Nations and municipalities on the North Shore of Lake Huron.</p>
+
+      <div class="communities__filters">
+        <a href="/communities" class="btn btn--sm{% if type_filter == '' %} btn--active{% endif %}">All</a>
+        <a href="/communities?type=first_nation" class="btn btn--sm{% if type_filter == 'first_nation' %} btn--active{% endif %}">First Nations</a>
+        <a href="/communities?type=municipality" class="btn btn--sm{% if type_filter == 'municipality' %} btn--active{% endif %}">Municipalities</a>
+      </div>
+
+      {% if communities is defined and communities|length > 0 %}
+        <div class="card-grid">
+          {% for c in communities %}
+            <a href="/communities/{{ c.get('slug') }}" class="card card--community">
+              <div class="card__body">
+                {% set type_labels = {first_nation: 'First Nation', municipality: 'Municipality', town: 'Town', region: 'Region'} %}
+                <span class="card__badge card__badge--{{ c.get('community_type') }}">
+                  {{ type_labels[c.get('community_type')] | default(c.get('community_type')|replace({'_': ' '})|capitalize) }}
+                </span>
+                <h3 class="card__title">{{ c.get('name') }}</h3>
+                {% if c.get('nation') %}
+                  <p class="card__meta">{{ c.get('nation') }}</p>
+                {% endif %}
+                {% if c.get('population') %}
+                  <p class="card__meta">Pop. {{ c.get('population')|number_format }}</p>
+                {% endif %}
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No communities found.</p>
+      {% endif %}
+    </div>
+  {% elseif community is defined and community %}
+    <div class="flow-lg detail">
+      <a href="/communities" class="detail__back">Communities</a>
+      <div class="detail__header">
+        {% set type_labels = {first_nation: 'First Nation', municipality: 'Municipality', town: 'Town', region: 'Region'} %}
+        <span class="card__badge card__badge--{{ community.get('community_type') }}">
+          {{ type_labels[community.get('community_type')] | default(community.get('community_type')|replace({'_': ' '})|capitalize) }}
+        </span>
+        <h1>{{ community.get('name') }}</h1>
+        <div class="detail__meta">
+          {% if community.get('nation') %}
+            <span>{{ community.get('nation') }}</span>
+          {% endif %}
+          {% if community.get('region') %}
+            <span>{{ community.get('region') }}</span>
+          {% endif %}
+          {% if community.get('province') %}
+            <span>{{ community.get('province') }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="community__details flow">
+        {% if community.get('population') %}
+          <div class="community__stat">
+            <span class="community__stat-label">Population</span>
+            <span class="community__stat-value">
+              {{ community.get('population')|number_format }}
+              {% if community.get('population_year') %}
+                <small>({{ community.get('population_year') }})</small>
+              {% endif %}
+            </span>
+          </div>
+        {% endif %}
+
+        {% if community.get('treaty') %}
+          <div class="community__stat">
+            <span class="community__stat-label">Treaty</span>
+            <span class="community__stat-value">{{ community.get('treaty') }}</span>
+          </div>
+        {% endif %}
+
+        {% if community.get('language_group') %}
+          <div class="community__stat">
+            <span class="community__stat-label">Language Group</span>
+            <span class="community__stat-value">{{ community.get('language_group') }}</span>
+          </div>
+        {% endif %}
+
+        {% if community.get('reserve_name') %}
+          <div class="community__stat">
+            <span class="community__stat-label">Reserve</span>
+            <span class="community__stat-value">{{ community.get('reserve_name') }}</span>
+          </div>
+        {% endif %}
+
+        {% if community.get('website') %}
+          <div class="community__stat">
+            <span class="community__stat-label">Website</span>
+            <span class="community__stat-value">
+              <a href="{{ community.get('website') }}" target="_blank" rel="noopener">
+                {{ community.get('website')|replace({'https://': '', 'http://': ''}) }}
+              </a>
+            </span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>Community Not Found</h1>
+      <p>The community at <code>{{ path }}</code> could not be found.</p>
+      <p><a href="/communities">Browse all communities</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

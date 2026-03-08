@@ -1,0 +1,117 @@
+name: Deploy to minoo.live
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      # -----------------------------------------------------------------------
+      # Checkout
+      #
+      # Both repos are needed side-by-side because composer.json uses path
+      # repositories pointing to ../waaseyaa/packages/*.
+      # -----------------------------------------------------------------------
+
+      - name: Checkout minoo
+        uses: actions/checkout@v4
+        with:
+          path: minoo
+
+      - name: Checkout waaseyaa framework
+        uses: actions/checkout@v4
+        with:
+          repository: waaseyaa/framework
+          path: waaseyaa
+          token: ${{ secrets.WAASEYAA_PAT }}
+
+      # -----------------------------------------------------------------------
+      # PHP setup
+      # -----------------------------------------------------------------------
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, sqlite3, mbstring, xml
+          coverage: none
+
+      # -----------------------------------------------------------------------
+      # Run tests (install all deps including dev first)
+      # -----------------------------------------------------------------------
+
+      - name: Install all Composer dependencies (with dev)
+        working-directory: minoo
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run unit tests
+        working-directory: minoo
+        run: ./vendor/bin/phpunit --testsuite MinooUnit
+
+      # -----------------------------------------------------------------------
+      # Install production-only dependencies for the artifact
+      # -----------------------------------------------------------------------
+
+      - name: Strip dev dependencies
+        working-directory: minoo
+        run: |
+          composer install \
+            --no-dev \
+            --no-interaction \
+            --optimize-autoloader \
+            --prefer-dist
+
+      # -----------------------------------------------------------------------
+      # Assemble build artifact
+      # -----------------------------------------------------------------------
+
+      - name: Assemble build artifact
+        run: |
+          mkdir -p minoo/.build
+          rsync -aL \
+            --exclude='.git' \
+            --exclude='.build/' \
+            --exclude='tests/' \
+            --exclude='docs/' \
+            --exclude='mcp/' \
+            --exclude='skills/' \
+            --exclude='worktrees/' \
+            --exclude='*.sqlite' \
+            --exclude='.env' \
+            --exclude='storage/framework/packages.php' \
+            --exclude='phpunit.xml.dist' \
+            --exclude='deploy.php' \
+            --exclude='ops/' \
+            --exclude='*.png' \
+            minoo/ minoo/.build/
+
+      # -----------------------------------------------------------------------
+      # Deploy via PHP Deployer
+      # -----------------------------------------------------------------------
+
+      - name: Install PHP Deployer
+        run: composer global require deployer/deployer --no-interaction
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Add known host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan minoo.live >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        working-directory: minoo
+        run: dep deploy production --no-interaction
