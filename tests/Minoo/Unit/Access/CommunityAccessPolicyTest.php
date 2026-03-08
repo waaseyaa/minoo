@@ -6,7 +6,6 @@ namespace Minoo\Tests\Unit\Access;
 
 use Minoo\Access\CommunityAccessPolicy;
 use Minoo\Entity\Community;
-use Waaseyaa\Access\AccessResult;
 use Waaseyaa\Access\AccountInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

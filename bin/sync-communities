@@ -1,0 +1,111 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Sync communities from NorthCloud ES index into Minoo's local entity storage.
+ *
+ * Usage: bin/sync-communities [--dry-run]
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+// Minimal bootstrap — we need entity storage and config.
+$ref = new ReflectionMethod($kernel, 'boot');
+$ref->invoke($kernel);
+
+$config = (new ReflectionProperty($kernel, 'config'))->getValue($kernel);
+$entityTypeManager = (new ReflectionProperty($kernel, 'entityTypeManager'))->getValue($kernel);
+
+$dryRun = in_array('--dry-run', $argv, true);
+$baseUrl = (string) ($config['search']['base_url'] ?? 'https://northcloud.one');
+$endpoint = rtrim($baseUrl, '/') . '/api/communities/search?page_size=100';
+
+fprintf(STDOUT, "Fetching communities from %s\n", $endpoint);
+
+$context = stream_context_create([
+    'http' => ['method' => 'GET', 'timeout' => 10, 'ignore_errors' => true],
+]);
+
+$json = @file_get_contents($endpoint, false, $context);
+if ($json === false) {
+    fprintf(STDERR, "ERROR: Failed to fetch communities from NorthCloud.\n");
+    exit(1);
+}
+
+$data = json_decode($json, true);
+if (!is_array($data) || !isset($data['hits'])) {
+    fprintf(STDERR, "ERROR: Invalid response from NorthCloud.\n");
+    exit(1);
+}
+
+$hits = $data['hits'];
+fprintf(STDOUT, "Found %d communities.\n", count($hits));
+
+if ($dryRun) {
+    foreach ($hits as $hit) {
+        fprintf(STDOUT, "  [DRY RUN] Would sync: %s (%s)\n", $hit['name'] ?? '?', $hit['community_type'] ?? '?');
+    }
+    exit(0);
+}
+
+$storage = $entityTypeManager->getStorage('community');
+$synced = 0;
+$created = 0;
+$updated = 0;
+
+foreach ($hits as $hit) {
+    $name = (string) ($hit['name'] ?? '');
+    if ($name === '') {
+        continue;
+    }
+
+    $slug = (string) ($hit['slug'] ?? strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name)));
+
+    // Check if community already exists by slug.
+    $existingIds = $storage->getQuery()->condition('slug', $slug)->execute();
+
+    $values = [
+        'name' => $name,
+        'slug' => $slug,
+        'community_type' => (string) ($hit['community_type'] ?? ''),
+        'municipality_type' => (string) ($hit['municipality_type'] ?? ''),
+        'province' => (string) ($hit['province'] ?? ''),
+        'region' => (string) ($hit['region'] ?? ''),
+        'latitude' => (float) ($hit['latitude'] ?? 0),
+        'longitude' => (float) ($hit['longitude'] ?? 0),
+        'population' => (int) ($hit['population'] ?? 0),
+        'population_year' => (int) ($hit['population_year'] ?? 0),
+        'nation' => (string) ($hit['nation'] ?? ''),
+        'treaty' => (string) ($hit['treaty'] ?? ''),
+        'reserve_name' => (string) ($hit['reserve_name'] ?? ''),
+        'language_group' => (string) ($hit['language_group'] ?? ''),
+        'website' => (string) ($hit['website'] ?? ''),
+        'inac_id' => (string) ($hit['inac_id'] ?? ''),
+        'statcan_csd' => (string) ($hit['statcan_csd'] ?? ''),
+        'status' => 1,
+        'updated_at' => time(),
+    ];
+
+    if ($existingIds !== []) {
+        $entity = $storage->load(reset($existingIds));
+        if ($entity !== null) {
+            foreach ($values as $key => $value) {
+                $entity->set($key, $value);
+            }
+            $storage->save($entity);
+            $updated++;
+        }
+    } else {
+        $values['created_at'] = time();
+        $entity = new Minoo\Entity\Community($values);
+        $storage->save($entity);
+        $created++;
+    }
+    $synced++;
+}
+
+fprintf(STDOUT, "Sync complete: %d total, %d created, %d updated.\n", $synced, $created, $updated);

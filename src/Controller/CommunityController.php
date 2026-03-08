@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Search\CommunityAutocompleteClient;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
@@ -13,36 +16,68 @@ final class CommunityController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
+        private readonly Environment $twig,
+        private readonly CommunityAutocompleteClient $autocompleteClient,
     ) {}
 
-    public function autocomplete(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    /** @param array<string, mixed> $params */
+    /** @param array<string, mixed> $query */
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $q = trim((string) $request->query->get('q', ''));
         $storage = $this->entityTypeManager->getStorage('community');
 
         $queryBuilder = $storage->getQuery()
-            ->sort('name', 'ASC')
-            ->range(0, 10);
+            ->condition('status', 1)
+            ->sort('name', 'ASC');
 
-        if ($q !== '') {
-            $queryBuilder->condition('name', $q . '%', 'LIKE');
+        $typeFilter = $request->query->getString('type');
+        if ($typeFilter !== '') {
+            $queryBuilder->condition('community_type', $typeFilter);
         }
 
         $ids = $queryBuilder->execute();
         $communities = $ids !== [] ? $storage->loadMultiple($ids) : [];
 
-        $results = [];
-        foreach ($communities as $community) {
-            $results[] = [
-                'id' => $community->id(),
-                'name' => $community->get('name'),
-            ];
-        }
+        $html = $this->twig->render('communities.html.twig', [
+            'path' => '/communities',
+            'communities' => array_values($communities),
+            'type_filter' => $typeFilter,
+        ]);
+
+        return new SsrResponse(content: $html);
+    }
+
+    /** @param array<string, mixed> $params */
+    /** @param array<string, mixed> $query */
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $slug = $params['slug'] ?? '';
+        $storage = $this->entityTypeManager->getStorage('community');
+        $ids = $storage->getQuery()
+            ->condition('slug', $slug)
+            ->condition('status', 1)
+            ->execute();
+
+        $community = $ids !== [] ? $storage->load(reset($ids)) : null;
+
+        $html = $this->twig->render('communities.html.twig', [
+            'path' => '/communities/' . $slug,
+            'community' => $community,
+        ]);
 
         return new SsrResponse(
-            content: json_encode($results, \JSON_THROW_ON_ERROR),
-            statusCode: 200,
-            headers: ['Content-Type' => 'application/json'],
+            content: $html,
+            statusCode: $community !== null ? 200 : 404,
         );
+    }
+
+    /** @param array<string, mixed> $params */
+    /** @param array<string, mixed> $query */
+    public function autocomplete(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
+    {
+        $term = $request->query->getString('q');
+        $suggestions = $this->autocompleteClient->suggest($term);
+
+        return new JsonResponse($suggestions);
     }
 }

@@ -16,8 +16,12 @@ final class Community extends ContentEntityBase
         'label' => 'name',
     ];
 
+    /** @param array<string, mixed> $values */
     public function __construct(array $values = [])
     {
+        if (!array_key_exists('status', $values)) {
+            $values['status'] = 1;
+        }
         if (!array_key_exists('created_at', $values)) {
             $values['created_at'] = 0;
         }

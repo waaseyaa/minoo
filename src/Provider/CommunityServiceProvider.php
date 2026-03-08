@@ -19,44 +19,27 @@ final class CommunityServiceProvider extends ServiceProvider
             label: 'Community',
             class: Community::class,
             keys: ['id' => 'cid', 'uuid' => 'uuid', 'label' => 'name'],
-            group: 'community',
+            group: 'communities',
             fieldDefinitions: [
-                'community_type' => [
-                    'type' => 'string',
-                    'label' => 'Community Type',
-                    'description' => 'first_nation, town, or region.',
-                    'weight' => 1,
-                ],
-                'latitude' => [
-                    'type' => 'float',
-                    'label' => 'Latitude',
-                    'weight' => 10,
-                ],
-                'longitude' => [
-                    'type' => 'float',
-                    'label' => 'Longitude',
-                    'weight' => 11,
-                ],
-                'population' => [
-                    'type' => 'integer',
-                    'label' => 'Population',
-                    'weight' => 15,
-                ],
-                'external_ids' => [
-                    'type' => 'json',
-                    'label' => 'External IDs',
-                    'weight' => 20,
-                ],
-                'created_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Created',
-                    'weight' => 40,
-                ],
-                'updated_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Updated',
-                    'weight' => 41,
-                ],
+                'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
+                'community_type' => ['type' => 'string', 'label' => 'Community Type', 'weight' => 5],
+                'municipality_type' => ['type' => 'string', 'label' => 'Municipality Type', 'weight' => 6],
+                'province' => ['type' => 'string', 'label' => 'Province', 'weight' => 10],
+                'region' => ['type' => 'string', 'label' => 'Region', 'weight' => 11],
+                'latitude' => ['type' => 'float', 'label' => 'Latitude', 'weight' => 15],
+                'longitude' => ['type' => 'float', 'label' => 'Longitude', 'weight' => 16],
+                'population' => ['type' => 'integer', 'label' => 'Population', 'weight' => 20],
+                'population_year' => ['type' => 'integer', 'label' => 'Population Year', 'weight' => 21],
+                'nation' => ['type' => 'string', 'label' => 'Nation/Linguistic Group', 'weight' => 25],
+                'treaty' => ['type' => 'string', 'label' => 'Treaty', 'weight' => 26],
+                'reserve_name' => ['type' => 'string', 'label' => 'Reserve Name', 'weight' => 27],
+                'language_group' => ['type' => 'string', 'label' => 'Language Group', 'weight' => 30],
+                'website' => ['type' => 'string', 'label' => 'Website', 'weight' => 35],
+                'inac_id' => ['type' => 'string', 'label' => 'INAC Band Number', 'weight' => 40],
+                'statcan_csd' => ['type' => 'string', 'label' => 'StatsCan CSD Code', 'weight' => 41],
+                'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 50, 'default' => 1],
+                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 60],
+                'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 61],
             ],
         ));
     }
@@ -64,9 +47,30 @@ final class CommunityServiceProvider extends ServiceProvider
     public function routes(WaaseyaaRouter $router): void
     {
         $router->addRoute(
-            'community.autocomplete',
+            'communities.list',
+            RouteBuilder::create('/communities')
+                ->controller('Minoo\\Controller\\CommunityController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'communities.show',
+            RouteBuilder::create('/communities/{slug}')
+                ->controller('Minoo\\Controller\\CommunityController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'communities.autocomplete',
             RouteBuilder::create('/api/communities/autocomplete')
-                ->controller('Minoo\Controller\CommunityController::autocomplete')
+                ->controller('Minoo\\Controller\\CommunityController::autocomplete')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
