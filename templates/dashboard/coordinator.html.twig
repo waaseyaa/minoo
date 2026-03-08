@@ -32,6 +32,14 @@
         </select>
         <button class="form__submit" type="submit">Assign</button>
       </form>
+      <details class="dashboard__cancel-details">
+        <summary class="form__link">Cancel Request</summary>
+        <form method="post" action="/elders/request/{{ req.id() }}/cancel" class="dashboard__cancel-form">
+          <label class="form__label" for="cancel-reason-{{ req.id() }}">Reason</label>
+          <textarea class="form__textarea" id="cancel-reason-{{ req.id() }}" name="reason" rows="2"></textarea>
+          <button class="form__submit form__submit--danger form__submit--sm" type="submit">Confirm Cancel</button>
+        </form>
+      </details>
     </article>
     {% endfor %}
   </div>
@@ -50,6 +58,14 @@
         <dt>Type</dt><dd>{{ req.get('type') }}</dd>
         {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
       </dl>
+      <details class="dashboard__cancel-details">
+        <summary class="form__link">Cancel Request</summary>
+        <form method="post" action="/elders/request/{{ req.id() }}/cancel" class="dashboard__cancel-form">
+          <label class="form__label" for="cancel-reason-{{ req.id() }}">Reason</label>
+          <textarea class="form__textarea" id="cancel-reason-{{ req.id() }}" name="reason" rows="2"></textarea>
+          <button class="form__submit form__submit--danger form__submit--sm" type="submit">Confirm Cancel</button>
+        </form>
+      </details>
     </article>
     {% endfor %}
   </div>
@@ -87,6 +103,34 @@
         <dt>Phone</dt><dd>{{ vol.get('phone') }}</dd>
         {% if vol.get('community') %}<dt>Community</dt><dd>{{ community_names[vol.get('community')]|default(vol.get('community')) }}</dd>{% endif %}
         {% if vol.get('availability') %}<dt>Availability</dt><dd>{{ vol.get('availability') }}</dd>{% endif %}
+      </dl>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2>History</h2>
+  {% set has_history = confirmed_requests is not empty or cancelled_requests is not empty %}
+  {% if not has_history %}
+    <p class="dashboard__empty">No completed or cancelled requests yet.</p>
+  {% else %}
+  <div class="dashboard__cards">
+    {% for req in confirmed_requests %}
+    <article class="card card--dashboard card--history">
+      <span class="card__badge card__badge--confirmed">Confirmed</span>
+      <h3 class="card__title">{{ req.get('name') }}</h3>
+      <dl class="card__meta">
+        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+      </dl>
+    </article>
+    {% endfor %}
+    {% for req in cancelled_requests %}
+    <article class="card card--dashboard card--history">
+      <span class="card__badge card__badge--cancelled">Cancelled</span>
+      <h3 class="card__title">{{ req.get('name') }}</h3>
+      <dl class="card__meta">
+        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+        {% if req.get('cancelled_reason') %}<dt>Reason</dt><dd>{{ req.get('cancelled_reason') }}</dd>{% endif %}
       </dl>
     </article>
     {% endfor %}

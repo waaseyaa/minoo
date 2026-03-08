@@ -32,6 +32,7 @@ final class CoordinatorDashboardController
         $assigned = [];
         $pendingConfirmation = [];
         $confirmed = [];
+        $cancelled = [];
 
         foreach ($allRequests as $req) {
             match ($req->get('status')) {
@@ -39,6 +40,7 @@ final class CoordinatorDashboardController
                 'assigned', 'in_progress' => $assigned[] = $req,
                 'completed' => $pendingConfirmation[] = $req,
                 'confirmed' => $confirmed[] = $req,
+                'cancelled' => $cancelled[] = $req,
                 default => null,
             };
         }
@@ -65,6 +67,7 @@ final class CoordinatorDashboardController
             'confirmed_requests' => $confirmed,
             'volunteers' => $volunteers,
             'ranked_by_request' => $rankedByRequest,
+            'cancelled_requests' => $cancelled,
             'community_names' => $communityNames,
         ]);
 

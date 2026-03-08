@@ -145,6 +145,68 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $this->assertSame(403, $response->statusCode);
     }
 
+    #[Test]
+    public function cancel_transitions_open_to_cancelled(): void
+    {
+        $entity = new ElderSupportRequest(['esrid' => 1, 'name' => 'Mary', 'phone' => '555', 'type' => 'ride', 'status' => 'open']);
+        $this->requestStorage->method('load')->with(1)->willReturn($entity);
+        $this->requestStorage->expects($this->once())->method('save');
+
+        $account = $this->createCoordinatorAccount();
+        $this->request = HttpRequest::create('/elders/request/1/cancel', 'POST', ['reason' => 'Elder no longer needs help']);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
+
+        $this->assertSame(302, $response->statusCode);
+        $this->assertSame('cancelled', $entity->get('status'));
+        $this->assertSame('Elder no longer needs help', $entity->get('cancelled_reason'));
+    }
+
+    #[Test]
+    public function cancel_transitions_assigned_to_cancelled(): void
+    {
+        $entity = new ElderSupportRequest(['esrid' => 1, 'name' => 'Mary', 'phone' => '555', 'type' => 'ride', 'status' => 'assigned']);
+        $this->requestStorage->method('load')->with(1)->willReturn($entity);
+        $this->requestStorage->expects($this->once())->method('save');
+
+        $account = $this->createCoordinatorAccount();
+        $this->request = HttpRequest::create('/elders/request/1/cancel', 'POST', ['reason' => 'Duplicate']);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
+
+        $this->assertSame(302, $response->statusCode);
+        $this->assertSame('cancelled', $entity->get('status'));
+    }
+
+    #[Test]
+    public function cancel_rejects_completed_request(): void
+    {
+        $entity = new ElderSupportRequest(['esrid' => 1, 'name' => 'Mary', 'phone' => '555', 'type' => 'ride', 'status' => 'completed']);
+        $this->requestStorage->method('load')->with(1)->willReturn($entity);
+
+        $account = $this->createCoordinatorAccount();
+        $this->request = HttpRequest::create('/elders/request/1/cancel', 'POST', ['reason' => 'test']);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
+
+        $this->assertSame(422, $response->statusCode);
+    }
+
+    #[Test]
+    public function cancel_returns_403_for_non_coordinator(): void
+    {
+        $account = $this->createVolunteerAccount(5);
+        $this->request = HttpRequest::create('/elders/request/1/cancel', 'POST', ['reason' => 'test']);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
+
+        $this->assertSame(403, $response->statusCode);
+    }
+
     private function createCoordinatorAccount(): AccountInterface
     {
         return new class implements AccountInterface {
