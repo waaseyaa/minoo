@@ -39,6 +39,8 @@ final class VolunteerController
         $allowedSkills = ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'];
         $skills = array_values(array_intersect($request->request->all('skills'), $allowedSkills));
         $notes = trim((string) $request->request->get('notes', ''));
+        $maxTravelRaw = $request->request->get('max_travel_km', '');
+        $maxTravelKm = $maxTravelRaw !== '' ? (int) $maxTravelRaw : null;
 
         $errors = [];
 
@@ -52,14 +54,14 @@ final class VolunteerController
         if ($errors !== []) {
             $html = $this->twig->render('elders/volunteer.html.twig', [
                 'errors' => $errors,
-                'values' => compact('name', 'phone', 'availability', 'skills', 'notes'),
+                'values' => compact('name', 'phone', 'availability', 'skills', 'notes', 'maxTravelKm'),
             ]);
 
             return new SsrResponse(content: $html, statusCode: 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('volunteer');
-        $entity = $storage->create([
+        $values = [
             'name' => $name,
             'phone' => $phone,
             'availability' => $availability,
@@ -68,7 +70,11 @@ final class VolunteerController
             'status' => 'active',
             'created_at' => time(),
             'updated_at' => time(),
-        ]);
+        ];
+        if ($maxTravelKm !== null) {
+            $values['max_travel_km'] = $maxTravelKm;
+        }
+        $entity = $storage->create($values);
         $storage->save($entity);
 
         return new SsrResponse(

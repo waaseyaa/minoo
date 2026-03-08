@@ -39,6 +39,14 @@
                placeholder="e.g. Weekends, Tuesday evenings">
       </div>
 
+      <div class="form__field">
+        <label class="form__label" for="max_travel_km">Maximum Travel Distance (km) <span class="form__label-optional">(optional)</span></label>
+        <input class="form__input" type="number" id="max_travel_km" name="max_travel_km"
+               value="{{ values.maxTravelKm ?? '' }}"
+               min="1" max="1000" step="1"
+               placeholder="e.g. 50">
+      </div>
+
       <fieldset class="form__fieldset">
         <legend class="form__label">Skills / How Can You Help? <span class="form__label-optional">(optional)</span></legend>
         <div class="form__checkboxes">

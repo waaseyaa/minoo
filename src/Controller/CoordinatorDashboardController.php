@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Geo\VolunteerRanker;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -50,14 +51,37 @@ final class CoordinatorDashboardController
 
         $volunteers = $volunteerIds !== [] ? $volunteerStorage->loadMultiple($volunteerIds) : [];
 
+        $ranker = new VolunteerRanker($this->entityTypeManager);
+        $rankedByRequest = $this->buildRankedMap($ranker, $open, $volunteers);
+
         $html = $this->twig->render('dashboard/coordinator.html.twig', [
             'open_requests' => $open,
             'assigned_requests' => $assigned,
             'pending_confirmation' => $pendingConfirmation,
             'confirmed_requests' => $confirmed,
             'volunteers' => $volunteers,
+            'ranked_by_request' => $rankedByRequest,
         ]);
 
         return new SsrResponse(content: $html);
+    }
+
+    /**
+     * @param \Waaseyaa\Entity\ContentEntityBase[] $openRequests
+     * @param \Waaseyaa\Entity\ContentEntityBase[] $volunteers
+     * @return array<int|string, \Minoo\Geo\RankedVolunteer[]>
+     */
+    private function buildRankedMap(
+        VolunteerRanker $ranker,
+        array $openRequests,
+        array $volunteers,
+    ): array {
+        $map = [];
+
+        foreach ($openRequests as $req) {
+            $map[$req->id()] = $ranker->rank($volunteers, $req);
+        }
+
+        return $map;
     }
 }
