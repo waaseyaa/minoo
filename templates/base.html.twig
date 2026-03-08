@@ -21,7 +21,7 @@
             <li><a href="/language"{% if path is defined and path starts with '/language' %} aria-current="page"{% endif %}>Language</a></li>
             <li><a href="/people"{% if path is defined and path starts with '/people' %} aria-current="page"{% endif %}>People</a></li>
             <li><a href="/communities"{% if path is defined and path starts with '/communities' %} aria-current="page"{% endif %}>Communities</a></li>
-            <li><a href="/elders/request"{% if path is defined and path starts with '/elders' %} aria-current="page"{% endif %}>Elder Support</a></li>
+            <li><a href="/elders"{% if path is defined and path starts with '/elders' %} aria-current="page"{% endif %}>Elder Support</a></li>
             <li><a href="/search"{% if path is defined and path starts with '/search' %} aria-current="page"{% endif %}>Search</a></li>
             {% if account is defined and account.isAuthenticated() %}
               {% if 'elder_coordinator' in account.getRoles() %}

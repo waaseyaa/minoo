@@ -975,6 +975,74 @@
     margin-block-start: var(--space-sm);
     font-size: var(--text-sm);
   }
+
+  .form__submit--danger {
+    background-color: oklch(0.55 0.15 25);
+  }
+
+  .form__submit--danger:hover {
+    background-color: oklch(0.45 0.15 25);
+  }
+
+  .form__submit--sm {
+    padding: var(--space-3xs) var(--space-xs);
+    font-size: var(--text-sm);
+  }
+
+  .card__badge--cancelled {
+    background-color: oklch(0.55 0.1 25);
+    color: white;
+  }
+
+  .card--cancelled {
+    opacity: 0.7;
+  }
+
+  .card--history {
+    opacity: 0.65;
+    border-inline-start: 3px solid var(--color-earth-700);
+  }
+
+  .dashboard__cancel-details {
+    margin-block-start: var(--space-xs);
+  }
+
+  .dashboard__cancel-form {
+    display: grid;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-xs);
+  }
+
+  .how-it-works {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  @media (min-width: 48rem) {
+    .how-it-works {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .how-it-works__step {
+    display: grid;
+    gap: var(--space-sm);
+    align-content: start;
+  }
+
+  .how-it-works__list {
+    padding-inline-start: var(--space-md);
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .form__submit--secondary {
+    background-color: var(--color-earth-700);
+  }
+
+  .form__submit--secondary:hover {
+    background-color: var(--color-earth-800, oklch(0.35 0.05 75));
+  }
 }
 
 @layer utilities {

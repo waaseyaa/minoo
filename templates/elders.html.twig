@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Grandparent Connection — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section flow-lg">
+  <div>
+    <h1>Grandparent Connection</h1>
+    <p class="text-secondary">Connecting Elders with volunteers for everyday support.</p>
+  </div>
+
+  <div class="how-it-works">
+    <div class="how-it-works__step">
+      <h2>For Elders</h2>
+      <p>Need a ride to an appointment? Help with groceries or yard work? A friendly visit? Our volunteer network is here to help.</p>
+      <ol class="how-it-works__list">
+        <li>Submit a request describing what you need</li>
+        <li>A coordinator reviews your request and finds a volunteer</li>
+        <li>The volunteer reaches out to arrange the details</li>
+        <li>After the visit, the coordinator follows up to make sure everything went well</li>
+      </ol>
+      <a href="/elders/request" class="form__submit">Request Help</a>
+    </div>
+
+    <div class="how-it-works__step">
+      <h2>For Volunteers</h2>
+      <p>Share your time and skills with Elders in your community. Sign up and a coordinator will match you with requests that fit your availability.</p>
+      <ol class="how-it-works__list">
+        <li>Sign up with your availability and skills</li>
+        <li>A coordinator assigns you to a request</li>
+        <li>Connect with the Elder and provide support</li>
+        <li>Mark the request complete when you're done</li>
+      </ol>
+      <a href="/elders/volunteer" class="form__submit form__submit--secondary">Volunteer</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
