@@ -6,12 +6,16 @@ namespace Minoo\Search;
 
 final class CommunityAutocompleteClient
 {
+    /** @var array<string, array{result: list<array{id: string, name: string, community_type: string, province: string}>, expires: int}> */
+    private array $cache = [];
+
     /** @var \Closure|null */
     private readonly ?\Closure $httpClient;
 
     public function __construct(
         private readonly string $baseUrl,
         private readonly int $timeout,
+        private readonly int $cacheTtl = 60,
         ?callable $httpClient = null,
     ) {
         $this->httpClient = $httpClient !== null ? $httpClient(...) : null;
@@ -24,6 +28,16 @@ final class CommunityAutocompleteClient
     {
         if (trim($query) === '') {
             return [];
+        }
+
+        $cacheKey = $query . ':' . $limit;
+
+        if ($this->cacheTtl > 0 && isset($this->cache[$cacheKey])) {
+            $cached = $this->cache[$cacheKey];
+            if ($cached['expires'] > time()) {
+                return $cached['result'];
+            }
+            unset($this->cache[$cacheKey]);
         }
 
         $params = http_build_query([
@@ -50,6 +64,13 @@ final class CommunityAutocompleteClient
                 'name' => (string) ($hit['name'] ?? ''),
                 'community_type' => (string) ($hit['community_type'] ?? ''),
                 'province' => (string) ($hit['province'] ?? ''),
+            ];
+        }
+
+        if ($this->cacheTtl > 0) {
+            $this->cache[$cacheKey] = [
+                'result' => $results,
+                'expires' => time() + $this->cacheTtl,
             ];
         }
 

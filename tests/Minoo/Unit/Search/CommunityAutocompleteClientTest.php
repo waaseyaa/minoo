@@ -35,6 +35,7 @@ final class CommunityAutocompleteClientTest extends TestCase
         $client = new CommunityAutocompleteClient(
             baseUrl: 'https://northcloud.one',
             timeout: 5,
+            cacheTtl: 0,
             httpClient: fn(string $url): string => $apiResponse,
         );
 
@@ -52,6 +53,7 @@ final class CommunityAutocompleteClientTest extends TestCase
         $client = new CommunityAutocompleteClient(
             baseUrl: 'https://northcloud.one',
             timeout: 5,
+            cacheTtl: 0,
             httpClient: fn(string $url): string => '{"hits":[]}',
         );
 
@@ -65,6 +67,7 @@ final class CommunityAutocompleteClientTest extends TestCase
         $client = new CommunityAutocompleteClient(
             baseUrl: 'https://northcloud.one',
             timeout: 5,
+            cacheTtl: 0,
             httpClient: fn(string $url): string => 'not json',
         );
 
@@ -77,10 +80,52 @@ final class CommunityAutocompleteClientTest extends TestCase
         $client = new CommunityAutocompleteClient(
             baseUrl: 'https://northcloud.one',
             timeout: 5,
+            cacheTtl: 0,
             httpClient: fn(string $url): string|false => false,
         );
 
         $this->assertSame([], $client->suggest('test'));
+    }
+
+    #[Test]
+    public function it_caches_results_within_ttl(): void
+    {
+        $callCount = 0;
+        $client = new CommunityAutocompleteClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            cacheTtl: 300,
+            httpClient: function (string $url) use (&$callCount): string {
+                $callCount++;
+                return json_encode(['hits' => [['id' => '1', 'name' => 'Sagamok', 'community_type' => 'first_nation', 'province' => 'ON']]], JSON_THROW_ON_ERROR);
+            },
+        );
+
+        $client->suggest('sag');
+        $client->suggest('sag');
+        $client->suggest('sag');
+
+        $this->assertSame(1, $callCount, 'HTTP client should only be called once; subsequent calls should hit cache');
+    }
+
+    #[Test]
+    public function it_does_not_cache_when_ttl_is_zero(): void
+    {
+        $callCount = 0;
+        $client = new CommunityAutocompleteClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            cacheTtl: 0,
+            httpClient: function (string $url) use (&$callCount): string {
+                $callCount++;
+                return json_encode(['hits' => []], JSON_THROW_ON_ERROR);
+            },
+        );
+
+        $client->suggest('sag');
+        $client->suggest('sag');
+
+        $this->assertSame(2, $callCount, 'HTTP client should be called each time when cacheTtl is 0');
     }
 
     #[Test]
@@ -90,6 +135,7 @@ final class CommunityAutocompleteClientTest extends TestCase
         $client = new CommunityAutocompleteClient(
             baseUrl: 'https://northcloud.one/',
             timeout: 5,
+            cacheTtl: 0,
             httpClient: function (string $url) use (&$capturedUrl): string {
                 $capturedUrl = $url;
                 return json_encode(['hits' => []], JSON_THROW_ON_ERROR);

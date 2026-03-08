@@ -27,8 +27,9 @@
           {% for c in communities %}
             <a href="/communities/{{ c.get('slug') }}" class="card card--community">
               <div class="card__body">
+                {% set type_labels = {first_nation: 'First Nation', municipality: 'Municipality', town: 'Town', region: 'Region'} %}
                 <span class="card__badge card__badge--{{ c.get('community_type') }}">
-                  {{ c.get('community_type') == 'first_nation' ? 'First Nation' : 'Municipality' }}
+                  {{ type_labels[c.get('community_type')] | default(c.get('community_type')|replace({'_': ' '})|capitalize) }}
                 </span>
                 <h3 class="card__title">{{ c.get('name') }}</h3>
                 {% if c.get('nation') %}
@@ -49,8 +50,9 @@
     <div class="flow-lg detail">
       <a href="/communities" class="detail__back">Communities</a>
       <div class="detail__header">
+        {% set type_labels = {first_nation: 'First Nation', municipality: 'Municipality', town: 'Town', region: 'Region'} %}
         <span class="card__badge card__badge--{{ community.get('community_type') }}">
-          {{ community.get('community_type') == 'first_nation' ? 'First Nation' : 'Municipality' }}
+          {{ type_labels[community.get('community_type')] | default(community.get('community_type')|replace({'_': ' '})|capitalize) }}
         </span>
         <h1>{{ community.get('name') }}</h1>
         <div class="detail__meta">

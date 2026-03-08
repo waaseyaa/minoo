@@ -13,40 +13,60 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 
-// Minimal bootstrap — we need entity storage and config.
-$ref = new ReflectionMethod($kernel, 'boot');
-$ref->invoke($kernel);
+// Boot the kernel — protected method, but ConsoleKernel::handle() calls it too.
+// We load config separately from the config file.
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
 
-$config = (new ReflectionProperty($kernel, 'config'))->getValue($kernel);
-$entityTypeManager = (new ReflectionProperty($kernel, 'entityTypeManager'))->getValue($kernel);
+$entityTypeManager = $kernel->getEntityTypeManager();
+$configFile = dirname(__DIR__) . '/config/waaseyaa.php';
+$config = file_exists($configFile) ? require $configFile : [];
 
 $dryRun = in_array('--dry-run', $argv, true);
 $baseUrl = (string) ($config['search']['base_url'] ?? 'https://northcloud.one');
-$endpoint = rtrim($baseUrl, '/') . '/api/communities/search?page_size=100';
-
-fprintf(STDOUT, "Fetching communities from %s\n", $endpoint);
 
 $context = stream_context_create([
     'http' => ['method' => 'GET', 'timeout' => 10, 'ignore_errors' => true],
 ]);
 
-$json = @file_get_contents($endpoint, false, $context);
-if ($json === false) {
-    fprintf(STDERR, "ERROR: Failed to fetch communities from NorthCloud.\n");
-    exit(1);
+// Paginate through all results.
+$page = 1;
+$pageSize = 100;
+$allHits = [];
+
+while (true) {
+    $endpoint = rtrim($baseUrl, '/') . '/api/communities/search?page_size=' . $pageSize . '&page=' . $page;
+    fprintf(STDOUT, "Fetching page %d from %s\n", $page, $endpoint);
+
+    $json = @file_get_contents($endpoint, false, $context);
+    if ($json === false) {
+        fprintf(STDERR, "ERROR: Failed to fetch communities from NorthCloud.\n");
+        exit(1);
+    }
+
+    $data = json_decode($json, true);
+    if (!is_array($data) || !isset($data['hits'])) {
+        fprintf(STDERR, "ERROR: Invalid response from NorthCloud.\n");
+        exit(1);
+    }
+
+    $hits = $data['hits'];
+    if ($hits === []) {
+        break;
+    }
+
+    array_push($allHits, ...$hits);
+
+    $totalPages = (int) ($data['total_pages'] ?? 1);
+    if ($page >= $totalPages) {
+        break;
+    }
+    $page++;
 }
 
-$data = json_decode($json, true);
-if (!is_array($data) || !isset($data['hits'])) {
-    fprintf(STDERR, "ERROR: Invalid response from NorthCloud.\n");
-    exit(1);
-}
-
-$hits = $data['hits'];
-fprintf(STDOUT, "Found %d communities.\n", count($hits));
+fprintf(STDOUT, "Found %d communities across %d page(s).\n", count($allHits), $page);
 
 if ($dryRun) {
-    foreach ($hits as $hit) {
+    foreach ($allHits as $hit) {
         fprintf(STDOUT, "  [DRY RUN] Would sync: %s (%s)\n", $hit['name'] ?? '?', $hit['community_type'] ?? '?');
     }
     exit(0);
@@ -57,13 +77,16 @@ $synced = 0;
 $created = 0;
 $updated = 0;
 
-foreach ($hits as $hit) {
+foreach ($allHits as $hit) {
     $name = (string) ($hit['name'] ?? '');
     if ($name === '') {
         continue;
     }
 
-    $slug = (string) ($hit['slug'] ?? strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name)));
+    $slug = (string) ($hit['slug'] ?? '');
+    if ($slug === '') {
+        $slug = trim(strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name)), '-');
+    }
 
     // Check if community already exists by slug.
     $existingIds = $storage->getQuery()->condition('slug', $slug)->execute();
