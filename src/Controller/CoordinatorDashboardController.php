@@ -54,6 +54,10 @@ final class CoordinatorDashboardController
         $ranker = new VolunteerRanker($this->entityTypeManager);
         $rankedByRequest = $this->buildRankedMap($ranker, $open, $volunteers);
 
+        $communityNames = $this->buildCommunityNameMap(
+            array_merge($allRequests, array_values($volunteers)),
+        );
+
         $html = $this->twig->render('dashboard/coordinator.html.twig', [
             'open_requests' => $open,
             'assigned_requests' => $assigned,
@@ -61,6 +65,7 @@ final class CoordinatorDashboardController
             'confirmed_requests' => $confirmed,
             'volunteers' => $volunteers,
             'ranked_by_request' => $rankedByRequest,
+            'community_names' => $communityNames,
         ]);
 
         return new SsrResponse(content: $html);
@@ -83,5 +88,36 @@ final class CoordinatorDashboardController
         }
 
         return $map;
+    }
+
+    /**
+     * Collect community IDs from entities and batch-load their names.
+     *
+     * @param \Waaseyaa\Entity\ContentEntityBase[] $entities
+     * @return array<int|string, string>
+     */
+    private function buildCommunityNameMap(array $entities): array
+    {
+        $ids = [];
+        foreach ($entities as $entity) {
+            $ref = $entity->get('community');
+            if ($ref !== null && $ref !== '' && is_numeric($ref)) {
+                $ids[(int) $ref] = true;
+            }
+        }
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $storage = $this->entityTypeManager->getStorage('community');
+        $communities = $storage->loadMultiple(array_keys($ids));
+
+        $names = [];
+        foreach ($communities as $community) {
+            $names[$community->id()] = $community->get('name') ?? '';
+        }
+
+        return $names;
     }
 }

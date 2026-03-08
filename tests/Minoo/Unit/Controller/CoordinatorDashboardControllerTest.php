@@ -49,7 +49,13 @@ final class CoordinatorDashboardControllerTest extends TestCase
         $this->volunteerStorage = $this->createMock(EntityStorageInterface::class);
         $this->volunteerStorage->method('getQuery')->willReturn($this->volunteerQuery);
 
+        $communityQuery = $this->createMock(EntityQueryInterface::class);
+        $communityQuery->method('condition')->willReturnSelf();
+        $communityQuery->method('sort')->willReturnSelf();
+
         $this->communityStorage = $this->createMock(EntityStorageInterface::class);
+        $this->communityStorage->method('getQuery')->willReturn($communityQuery);
+        $this->communityStorage->method('loadMultiple')->willReturn([]);
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
         $this->entityTypeManager->method('getStorage')->willReturnCallback(
@@ -101,11 +107,34 @@ final class CoordinatorDashboardControllerTest extends TestCase
         $sagamok = new Community(['cid' => 1, 'name' => 'Sagamok', 'latitude' => 46.15, 'longitude' => -81.72]);
         $sudbury = new Community(['cid' => 2, 'name' => 'Sudbury', 'latitude' => 46.49, 'longitude' => -80.99]);
 
+        $this->communityStorage = $this->createMock(EntityStorageInterface::class);
+        $communityQuery2 = $this->createMock(EntityQueryInterface::class);
+        $communityQuery2->method('condition')->willReturnSelf();
+        $communityQuery2->method('sort')->willReturnSelf();
+        $this->communityStorage->method('getQuery')->willReturn($communityQuery2);
+
         $this->communityStorage->method('load')->willReturnCallback(
             fn (int $id) => match ($id) {
                 1 => $sagamok,
                 2 => $sudbury,
                 default => null,
+            },
+        );
+        $this->communityStorage->method('loadMultiple')->willReturnCallback(
+            fn (array $ids) => array_filter(
+                [1 => $sagamok, 2 => $sudbury],
+                fn ($key) => in_array($key, $ids, true),
+                \ARRAY_FILTER_USE_KEY,
+            ),
+        );
+
+        $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
+        $this->entityTypeManager->method('getStorage')->willReturnCallback(
+            fn (string $type) => match ($type) {
+                'elder_support_request' => $this->requestStorage,
+                'volunteer' => $this->volunteerStorage,
+                'community' => $this->communityStorage,
+                default => throw new \RuntimeException("Unexpected: $type"),
             },
         );
 
@@ -125,7 +154,7 @@ final class CoordinatorDashboardControllerTest extends TestCase
             ->willReturn([1 => $volNear, 2 => $volSame]);
 
         $this->twig = new Environment(new ArrayLoader([
-            'dashboard/coordinator.html.twig' => '{% for rv in ranked_by_request[10] %}{{ rv.volunteer.get("name") }}:{{ rv.formattedDistance()|raw }};{% endfor %}',
+            'dashboard/coordinator.html.twig' => '{% for rv in ranked_by_request[10] %}{{ rv.volunteer.get("name") }}:{{ rv.formattedDistance()|raw }};{% endfor %}{% for id, name in community_names %}[{{ id }}={{ name }}]{% endfor %}',
         ]));
 
         $controller = new CoordinatorDashboardController($this->entityTypeManager, $this->twig);
@@ -140,5 +169,9 @@ final class CoordinatorDashboardControllerTest extends TestCase
         $samePos = strpos($response->content, 'Same Vol');
         $nearPos = strpos($response->content, 'Near Vol');
         $this->assertLessThan($nearPos, $samePos);
+
+        // Community names are resolved from IDs
+        $this->assertStringContainsString('[1=Sagamok]', $response->content);
+        $this->assertStringContainsString('[2=Sudbury]', $response->content);
     }
 }

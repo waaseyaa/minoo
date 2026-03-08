@@ -18,7 +18,7 @@
       <dl class="card__meta">
         <dt>Type</dt><dd>{{ req.get('type') }}</dd>
         <dt>Phone</dt><dd>{{ req.get('phone') }}</dd>
-        {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+        {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
         {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
       </dl>
       <form class="dashboard__assign-form" method="post" action="/elders/request/{{ req.id() }}/assign">
@@ -27,7 +27,7 @@
           <option value="">Select volunteer...</option>
           {% set ranked = ranked_by_request[req.id()] ?? [] %}
           {% for rv in ranked %}
-          <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% elseif rv.volunteer.get('community') %} ({{ rv.volunteer.get('community') }}){% endif %}</option>
+          <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% elseif rv.volunteer.get('community') %} ({{ community_names[rv.volunteer.get('community')]|default(rv.volunteer.get('community')) }}){% endif %}</option>
           {% endfor %}
         </select>
         <button class="form__submit" type="submit">Assign</button>
@@ -48,7 +48,7 @@
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
         <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-        {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+        {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
       </dl>
     </article>
     {% endfor %}
@@ -85,7 +85,7 @@
       <h3 class="card__title">{{ vol.get('name') }}</h3>
       <dl class="card__meta">
         <dt>Phone</dt><dd>{{ vol.get('phone') }}</dd>
-        {% if vol.get('community') %}<dt>Community</dt><dd>{{ vol.get('community') }}</dd>{% endif %}
+        {% if vol.get('community') %}<dt>Community</dt><dd>{{ community_names[vol.get('community')]|default(vol.get('community')) }}</dd>{% endif %}
         {% if vol.get('availability') %}<dt>Availability</dt><dd>{{ vol.get('availability') }}</dd>{% endif %}
       </dl>
     </article>
