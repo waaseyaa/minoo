@@ -775,6 +775,73 @@
       color: var(--text-primary);
     }
   }
+
+  /* -- Dashboards ---------------------------------------- */
+  .dashboard__cards {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--width-card)), 1fr));
+    margin-block-end: var(--space-lg);
+  }
+
+  .dashboard__empty {
+    color: var(--text-secondary);
+    padding-block: var(--space-sm);
+  }
+
+  .dashboard__assign-form {
+    display: flex;
+    gap: var(--space-2xs);
+    align-items: end;
+    margin-block-start: var(--space-2xs);
+  }
+
+  .card--dashboard {
+    container-type: inline-size;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .card__badge--open {
+    background-color: var(--color-sun-500);
+    color: var(--color-earth-900);
+  }
+
+  .card__badge--assigned {
+    background-color: var(--color-water-600);
+    color: white;
+  }
+
+  .card__badge--in-progress {
+    background-color: var(--accent);
+    color: white;
+  }
+
+  .card__badge--completed {
+    background-color: var(--color-forest-700);
+    color: white;
+  }
+
+  .card__badge--confirmed {
+    background-color: var(--color-earth-700);
+    color: white;
+  }
+
+  .card__note {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .form__link {
+    margin-block-start: var(--space-sm);
+    font-size: var(--text-sm);
+  }
 }
 
 @layer utilities {

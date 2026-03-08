@@ -1,0 +1,158 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minoo\Tests\Unit\Controller;
+
+use Minoo\Controller\CommunityController;
+use Minoo\Entity\Community;
+use Minoo\Search\CommunityAutocompleteClient;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
+use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Storage\EntityQueryInterface;
+use Waaseyaa\Entity\Storage\EntityStorageInterface;
+
+#[CoversClass(CommunityController::class)]
+final class CommunityControllerTest extends TestCase
+{
+    private EntityTypeManager $entityTypeManager;
+    private Environment $twig;
+    private CommunityAutocompleteClient $autocompleteClient;
+    private EntityStorageInterface $storage;
+    private EntityQueryInterface $query;
+    private AccountInterface $account;
+    private HttpRequest $request;
+
+    protected function setUp(): void
+    {
+        $this->query = $this->createMock(EntityQueryInterface::class);
+        $this->query->method('condition')->willReturnSelf();
+        $this->query->method('sort')->willReturnSelf();
+        $this->query->method('range')->willReturnSelf();
+
+        $this->storage = $this->createMock(EntityStorageInterface::class);
+        $this->storage->method('getQuery')->willReturn($this->query);
+
+        $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
+        $this->entityTypeManager->method('getStorage')
+            ->with('community')
+            ->willReturn($this->storage);
+
+        $this->twig = new Environment(new ArrayLoader([
+            'communities.html.twig' => '{{ path }}{% for c in communities|default([]) %}|{{ c.get("name") }}{% endfor %}{% if community is defined and community %}|{{ community.get("name") }}{% endif %}',
+        ]));
+
+        $this->autocompleteClient = new CommunityAutocompleteClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            cacheTtl: 0,
+            httpClient: fn(string $url): string => json_encode(['hits' => []], JSON_THROW_ON_ERROR),
+        );
+
+        $this->account = $this->createMock(AccountInterface::class);
+        $this->request = HttpRequest::create('/');
+    }
+
+    #[Test]
+    public function list_returns_200_with_communities(): void
+    {
+        $sagamok = new Community(['cid' => 1, 'name' => 'Sagamok Anishnawbek', 'slug' => 'sagamok-anishnawbek', 'community_type' => 'first_nation']);
+        $blind = new Community(['cid' => 2, 'name' => 'Blind River', 'slug' => 'blind-river', 'community_type' => 'municipality']);
+
+        $this->query->method('execute')->willReturn([1, 2]);
+        $this->storage->method('loadMultiple')
+            ->with([1, 2])
+            ->willReturn([1 => $sagamok, 2 => $blind]);
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $response = $controller->list([], [], $this->account, $this->request);
+
+        $this->assertSame(200, $response->statusCode);
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
+        $this->assertStringContainsString('Blind River', $response->content);
+    }
+
+    #[Test]
+    public function list_returns_200_when_empty(): void
+    {
+        $this->query->method('execute')->willReturn([]);
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $response = $controller->list([], [], $this->account, $this->request);
+
+        $this->assertSame(200, $response->statusCode);
+        $this->assertStringContainsString('/communities', $response->content);
+    }
+
+    #[Test]
+    public function show_returns_200_for_existing_community(): void
+    {
+        $sagamok = new Community(['cid' => 1, 'name' => 'Sagamok Anishnawbek', 'slug' => 'sagamok-anishnawbek', 'community_type' => 'first_nation']);
+
+        $this->query->method('execute')->willReturn([1]);
+        $this->storage->method('load')
+            ->with(1)
+            ->willReturn($sagamok);
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
+
+        $this->assertSame(200, $response->statusCode);
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
+    }
+
+    #[Test]
+    public function show_returns_404_for_missing_community(): void
+    {
+        $this->query->method('execute')->willReturn([]);
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
+
+        $this->assertSame(404, $response->statusCode);
+    }
+
+    #[Test]
+    public function autocomplete_returns_json_response(): void
+    {
+        $apiResponse = json_encode([
+            'hits' => [
+                ['id' => '1', 'name' => 'Sagamok Anishnawbek', 'community_type' => 'first_nation', 'province' => 'Ontario'],
+            ],
+        ], JSON_THROW_ON_ERROR);
+
+        $autocomplete = new CommunityAutocompleteClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            cacheTtl: 0,
+            httpClient: fn(string $url): string => $apiResponse,
+        );
+
+        $this->request = HttpRequest::create('/?q=Sa');
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $autocomplete);
+        $response = $controller->autocomplete([], ['q' => 'Sa'], $this->account, $this->request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true);
+        $this->assertCount(1, $data);
+        $this->assertSame('Sagamok Anishnawbek', $data[0]['name']);
+    }
+
+    #[Test]
+    public function autocomplete_returns_empty_array_when_no_matches(): void
+    {
+        $this->request = HttpRequest::create('/?q=zzz');
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $response = $controller->autocomplete([], ['q' => 'zzz'], $this->account, $this->request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true);
+        $this->assertSame([], $data);
+    }
+}

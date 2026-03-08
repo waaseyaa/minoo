@@ -6,12 +6,12 @@ namespace Minoo\Entity;
 
 use Waaseyaa\Entity\ContentEntityBase;
 
-final class ElderSupportRequest extends ContentEntityBase
+final class Community extends ContentEntityBase
 {
-    protected string $entityTypeId = 'elder_support_request';
+    protected string $entityTypeId = 'community';
 
     protected array $entityKeys = [
-        'id' => 'esrid',
+        'id' => 'cid',
         'uuid' => 'uuid',
         'label' => 'name',
     ];
@@ -20,19 +20,13 @@ final class ElderSupportRequest extends ContentEntityBase
     public function __construct(array $values = [])
     {
         if (!array_key_exists('status', $values)) {
-            $values['status'] = 'open';
+            $values['status'] = 1;
         }
         if (!array_key_exists('created_at', $values)) {
             $values['created_at'] = 0;
         }
         if (!array_key_exists('updated_at', $values)) {
             $values['updated_at'] = 0;
-        }
-        if (!array_key_exists('assigned_volunteer', $values)) {
-            $values['assigned_volunteer'] = null;
-        }
-        if (!array_key_exists('assigned_at', $values)) {
-            $values['assigned_at'] = null;
         }
 
         parent::__construct($values, $this->entityTypeId, $this->entityKeys);

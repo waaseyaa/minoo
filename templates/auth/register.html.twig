@@ -1,0 +1,61 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Register — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section">
+  <h1>Volunteer Registration</h1>
+
+  <form class="form" method="post" action="/register">
+    <div class="form__field">
+      <label class="form__label" for="name">Name</label>
+      <input
+        class="form__input{% if errors.name is defined %} form__input--error{% endif %}"
+        type="text" id="name" name="name"
+        value="{{ values.name|default('') }}"
+        required>
+      {% if errors.name is defined %}
+        <p class="form__error" role="alert">{{ errors.name }}</p>
+      {% endif %}
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="email">Email</label>
+      <input
+        class="form__input{% if errors.email is defined %} form__input--error{% endif %}"
+        type="email" id="email" name="email"
+        value="{{ values.email|default('') }}"
+        required>
+      {% if errors.email is defined %}
+        <p class="form__error" role="alert">{{ errors.email }}</p>
+      {% endif %}
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="password">Password</label>
+      <input
+        class="form__input{% if errors.password is defined %} form__input--error{% endif %}"
+        type="password" id="password" name="password"
+        minlength="8"
+        required>
+      {% if errors.password is defined %}
+        <p class="form__error" role="alert">{{ errors.password }}</p>
+      {% endif %}
+    </div>
+
+    <div class="form__field">
+      <label class="form__label" for="phone">Phone <span class="form__label-optional">(optional)</span></label>
+      <input
+        class="form__input"
+        type="tel" id="phone" name="phone"
+        value="{{ values.phone|default('') }}">
+    </div>
+
+    <div class="form__actions">
+      <button class="form__submit" type="submit">Create Account</button>
+    </div>
+  </form>
+
+  <p class="form__link">Already have an account? <a href="/login">Login</a></p>
+</section>
+{% endblock %}
