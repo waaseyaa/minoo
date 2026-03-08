@@ -78,7 +78,7 @@ jobs:
       - name: Assemble build artifact
         run: |
           mkdir -p minoo/.build
-          rsync -a \
+          rsync -aL \
             --exclude='.git' \
             --exclude='.build/' \
             --exclude='tests/' \
