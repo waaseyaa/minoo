@@ -9,3 +9,4 @@
 /*.png
 mcp/node_modules/
 worktrees/
+.worktrees/
