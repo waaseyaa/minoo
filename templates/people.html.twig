@@ -17,18 +17,52 @@
       <p>Community members, knowledge keepers, and service providers.</p>
 
       {% if people is defined and people|length > 0 %}
-        <div class="card-grid">
+        <div class="people-search">
+          <input type="search" class="form__input people-search__input" id="people-search" placeholder="Search people…" autocomplete="off">
+        </div>
+
+        <div class="people-filters" id="people-filters">
+          {% if all_roles is defined and all_roles|length > 0 %}
+            <div class="people-filters__group">
+              <label class="people-filters__label" for="filter-role">Role</label>
+              <select class="form__select people-filters__select" id="filter-role" data-filter="role">
+                <option value="">All roles</option>
+                {% for role in all_roles|sort %}
+                  <option value="{{ role }}">{{ role }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+          {% if all_offerings is defined and all_offerings|length > 0 %}
+            <div class="people-filters__group">
+              <label class="people-filters__label" for="filter-offering">Offering</label>
+              <select class="form__select people-filters__select" id="filter-offering" data-filter="offering">
+                <option value="">All offerings</option>
+                {% for offering in all_offerings|sort %}
+                  <option value="{{ offering }}">{{ offering }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+          <button class="people-filters__clear" id="filters-clear" type="button" hidden>Clear filters</button>
+        </div>
+
+        <div class="card-grid" id="people-grid">
           {% for p in people %}
             {% include "components/resource-person-card.html.twig" with {
               name: p.get('name'),
               role: p.get('roles') is iterable ? p.get('roles')|first : '',
               community: p.get('community'),
+              business_name: p.get('business_name'),
               offerings: p.get('offerings') is iterable ? p.get('offerings') : [],
+              bio: p.get('bio') ? p.get('bio')|striptags : '',
               excerpt: p.get('bio') ? p.get('bio')|striptags|slice(0, 160) ~ '…' : '',
-              url: "/people/" ~ p.get('slug')
+              url: "/people/" ~ p.get('slug'),
+              photo_url: photo_urls[p.get('media_id')] ?? ''
             } %}
           {% endfor %}
         </div>
+        <p class="people-filters__empty" id="filters-empty" hidden>No people match your search or filters.</p>
       {% else %}
         <p>No resource people found.</p>
       {% endif %}
@@ -37,18 +71,25 @@
     <div class="flow-lg detail">
       <a href="/people" class="detail__back">People</a>
       <div class="detail__header">
+        <div class="person-photo person-photo--detail">
+          {% if photo_url is defined and photo_url %}
+            <img src="{{ photo_url }}" alt="{{ person.get('name') }}" class="person-photo__img">
+          {% else %}
+            <span class="person-photo__initials">{{ person.get('name')|split(' ')|map(n => n|first|upper)|join('') }}</span>
+          {% endif %}
+        </div>
         {% if person.get('roles') is iterable %}
           {% for r in person.get('roles') %}
             <span class="card__badge card__badge--person">{{ r }}</span>
           {% endfor %}
         {% endif %}
         <h1>{{ person.get('name') }}</h1>
+        {% if person.get('business_name') %}
+          <p class="detail__business">{{ person.get('business_name') }}</p>
+        {% endif %}
         <div class="detail__meta">
           {% if person.get('community') %}
             <span>{{ person.get('community') }}</span>
-          {% endif %}
-          {% if person.get('business_name') %}
-            <span>{{ person.get('business_name') }}</span>
           {% endif %}
         </div>
       </div>
@@ -69,8 +110,11 @@
         </div>
       {% endif %}
 
-      {% if person.get('email') or person.get('phone') %}
+      {% if person.get('email') or person.get('phone') or person.get('website') %}
         <div class="detail__contact">
+          {% if person.get('website') %}
+            <a href="{{ person.get('website') }}" class="detail__website" rel="noopener noreferrer" target="_blank">{{ person.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a>
+          {% endif %}
           {% if person.get('email') %}
             <a href="mailto:{{ person.get('email') }}">{{ person.get('email') }}</a>
           {% endif %}
@@ -86,5 +130,94 @@
       <p>The person at <code>{{ path }}</code> could not be found.</p>
       <p><a href="/people">Browse all people</a></p>
     </div>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  {% if path == '/people' %}
+  <script>
+  (function() {
+    const grid = document.getElementById('people-grid');
+    if (!grid) return;
+
+    const searchInput = document.getElementById('people-search');
+    const roleSelect = document.getElementById('filter-role');
+    const offeringSelect = document.getElementById('filter-offering');
+    const clearBtn = document.getElementById('filters-clear');
+    const emptyMsg = document.getElementById('filters-empty');
+    const cards = grid.querySelectorAll('.card--person');
+
+    function getParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        q: params.get('q') || '',
+        role: params.get('role') || '',
+        offering: params.get('offering') || ''
+      };
+    }
+
+    function applyFromParams() {
+      const { q, role, offering } = getParams();
+      if (searchInput) searchInput.value = q;
+      if (roleSelect) roleSelect.value = role;
+      if (offeringSelect) offeringSelect.value = offering;
+      filter();
+    }
+
+    function updateURL(q, role, offering) {
+      const params = new URLSearchParams();
+      if (q) params.set('q', q);
+      if (role) params.set('role', role);
+      if (offering) params.set('offering', offering);
+      const qs = params.toString();
+      const url = window.location.pathname + (qs ? '?' + qs : '');
+      history.replaceState(null, '', url);
+    }
+
+    function filter() {
+      const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const role = roleSelect ? roleSelect.value : '';
+      const offering = offeringSelect ? offeringSelect.value : '';
+      let visible = 0;
+
+      cards.forEach(function(card) {
+        const cardSearch = card.dataset.search || '';
+        const cardRole = card.dataset.role || '';
+        const cardOfferings = card.dataset.offerings || '';
+        const matchQuery = !q || cardSearch.indexOf(q) !== -1;
+        const matchRole = !role || cardRole === role;
+        const matchOffering = !offering || cardOfferings.split(',').indexOf(offering) !== -1;
+        const show = matchQuery && matchRole && matchOffering;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      const hasFilters = q || role || offering;
+      if (clearBtn) clearBtn.hidden = !hasFilters;
+      if (emptyMsg) emptyMsg.hidden = visible > 0;
+      updateURL(q, role, offering);
+    }
+
+    var debounceTimer;
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(filter, 150);
+      });
+    }
+    if (roleSelect) roleSelect.addEventListener('change', filter);
+    if (offeringSelect) offeringSelect.addEventListener('change', filter);
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        if (searchInput) searchInput.value = '';
+        if (roleSelect) roleSelect.value = '';
+        if (offeringSelect) offeringSelect.value = '';
+        filter();
+      });
+    }
+
+    applyFromParams();
+  })();
+  </script>
   {% endif %}
 {% endblock %}

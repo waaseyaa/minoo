@@ -55,7 +55,7 @@ final class VolunteerController
                 'values' => compact('name', 'phone', 'availability', 'skills', 'notes'),
             ]);
 
-            return new SsrResponse(content: $html);
+            return new SsrResponse(content: $html, statusCode: 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('volunteer');
@@ -71,12 +71,10 @@ final class VolunteerController
         ]);
         $storage->save($entity);
 
-        $id = $entity->id();
-
         return new SsrResponse(
             content: '',
             statusCode: 302,
-            headers: ['Location' => '/elders/volunteer/' . $id],
+            headers: ['Location' => '/elders/volunteer/' . $entity->uuid()],
         );
     }
 
@@ -84,9 +82,16 @@ final class VolunteerController
     /** @param array<string, mixed> $query */
     public function signupDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $vid = (int) ($params['vid'] ?? 0);
-        $storage = $this->entityTypeManager->getStorage('volunteer');
-        $entity = $vid > 0 ? $storage->load($vid) : null;
+        $uuid = $params['uuid'] ?? '';
+        $entity = null;
+
+        if ($uuid !== '') {
+            $storage = $this->entityTypeManager->getStorage('volunteer');
+            $ids = $storage->getQuery()->condition('uuid', $uuid)->execute();
+            if ($ids !== []) {
+                $entity = $storage->load(reset($ids));
+            }
+        }
 
         $html = $this->twig->render('elders/volunteer-confirmation.html.twig', [
             'entity' => $entity,

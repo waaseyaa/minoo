@@ -387,6 +387,139 @@
     color: var(--text-secondary);
   }
 
+  /* Person photo */
+  .person-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    background-color: var(--accent-surface);
+    color: var(--color-forest-700);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .person-photo--card {
+    inline-size: 3rem;
+    block-size: 3rem;
+    font-size: var(--text-sm);
+  }
+
+  .person-photo--detail {
+    inline-size: 6rem;
+    block-size: 6rem;
+    font-size: var(--text-xl);
+  }
+
+  .person-photo__img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .person-photo__initials {
+    line-height: 1;
+    letter-spacing: var(--tracking-wide);
+  }
+
+  /* Person card layout */
+  .card--person .card__header-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .card--person .card__header-text {
+    min-inline-size: 0;
+  }
+
+  .card--person .card__title {
+    font-size: var(--text-lg);
+  }
+
+  .card__business {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .card__tags--compact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+  }
+
+  .card__tags--compact .card__tag {
+    font-size: calc(var(--text-sm) * 0.9);
+    padding: 0.125rem var(--space-2xs);
+  }
+
+  /* People search */
+  .people-search {
+    max-inline-size: 24rem;
+  }
+
+  .people-search__input {
+    inline-size: 100%;
+  }
+
+  /* People filters */
+  .people-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-xs);
+  }
+
+  .people-filters__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .people-filters__label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .people-filters__select {
+    min-inline-size: 12rem;
+  }
+
+  .people-filters__clear {
+    padding: var(--space-2xs) var(--space-xs);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .people-filters__clear:hover {
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+  }
+
+  .people-filters__empty {
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Detail business name */
+  .detail__business {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Detail website link */
+  .detail__website::before {
+    content: "\1F310\00a0";
+  }
+
   .detail {
     max-inline-size: var(--width-prose);
   }
