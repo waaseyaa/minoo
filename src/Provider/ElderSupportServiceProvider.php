@@ -54,6 +54,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
                 'community' => ['type' => 'entity_reference', 'label' => 'Community', 'settings' => ['target_type' => 'community'], 'weight' => 3],
                 'availability' => ['type' => 'string', 'label' => 'Availability', 'weight' => 5],
                 'skills' => ['type' => 'entity_reference', 'label' => 'Skills', 'settings' => ['target_type' => 'taxonomy_term', 'target_vocabulary' => 'volunteer_skills'], 'cardinality' => -1, 'weight' => 10],
+                'max_travel_km' => ['type' => 'integer', 'label' => 'Max Travel (km)', 'weight' => 12],
                 'notes' => ['type' => 'text_long', 'label' => 'Notes', 'weight' => 15],
                 'status' => ['type' => 'string', 'label' => 'Status', 'weight' => 20, 'default' => 'active'],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],

@@ -25,8 +25,9 @@
         <label class="form__label" for="volunteer-{{ req.id() }}">Assign to</label>
         <select class="form__select" name="volunteer_id" id="volunteer-{{ req.id() }}" required>
           <option value="">Select volunteer...</option>
-          {% for vol in volunteers %}
-          <option value="{{ vol.id() }}">{{ vol.get('name') }}{% if vol.get('community') %} ({{ vol.get('community') }}){% endif %}</option>
+          {% set ranked = ranked_by_request[req.id()] ?? [] %}
+          {% for rv in ranked %}
+          <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% elseif rv.volunteer.get('community') %} ({{ rv.volunteer.get('community') }}){% endif %}</option>
           {% endfor %}
         </select>
         <button class="form__submit" type="submit">Assign</button>

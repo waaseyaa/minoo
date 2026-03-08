@@ -971,6 +971,20 @@
     font-style: italic;
   }
 
+  .volunteer-distance {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .volunteer-distance--near {
+    color: var(--color-forest-700);
+  }
+
+  .volunteer-distance--far {
+    color: var(--color-earth-700);
+  }
+
   .form__link {
     margin-block-start: var(--space-sm);
     font-size: var(--text-sm);
