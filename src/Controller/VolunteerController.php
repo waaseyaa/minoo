@@ -17,6 +17,9 @@ final class VolunteerController
         private readonly Environment $twig,
     ) {}
 
+    private const int MAX_TRAVEL_FLOOR = 1;
+    private const int MAX_TRAVEL_CEILING = 1000;
+
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
     public function signupForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -49,6 +52,9 @@ final class VolunteerController
         }
         if ($phone === '') {
             $errors['phone'] = 'Phone number is required.';
+        }
+        if ($maxTravelKm !== null && ($maxTravelKm < self::MAX_TRAVEL_FLOOR || $maxTravelKm > self::MAX_TRAVEL_CEILING)) {
+            $maxTravelKm = null;
         }
 
         if ($errors !== []) {

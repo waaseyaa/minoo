@@ -26,7 +26,7 @@ final class GeoDistanceTest extends TestCase
     }
 
     #[Test]
-    public function sudbury_to_sault_ste_marie_is_about_262_km(): void
+    public function sudbury_to_sault_ste_marie_is_about_257_km(): void
     {
         $distance = GeoDistance::haversine(46.49, -80.99, 46.52, -84.35);
         $this->assertEqualsWithDelta(257.0, $distance, 10.0);

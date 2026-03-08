@@ -71,6 +71,68 @@ final class VolunteerControllerTest extends TestCase
     }
 
     #[Test]
+    public function submit_persists_max_travel_km(): void
+    {
+        $entity = $this->createMock(EntityInterface::class);
+        $entity->method('uuid')->willReturn('test-uuid');
+
+        $storage = $this->createMock(EntityStorageInterface::class);
+        $storage->expects($this->once())
+            ->method('create')
+            ->with($this->callback(function (array $values): bool {
+                return $values['max_travel_km'] === 50;
+            }))
+            ->willReturn($entity);
+        $storage->expects($this->once())->method('save');
+
+        $this->entityTypeManager->method('getStorage')
+            ->with('volunteer')
+            ->willReturn($storage);
+
+        $controller = new VolunteerController($this->entityTypeManager, $this->twig);
+        $request = HttpRequest::create('/elders/volunteer', 'POST', [
+            'name' => 'Jane',
+            'phone' => '555-1234',
+            'max_travel_km' => '50',
+        ]);
+
+        $response = $controller->submitSignup([], [], $this->account, $request);
+
+        $this->assertSame(302, $response->statusCode);
+    }
+
+    #[Test]
+    public function submit_discards_invalid_max_travel_km(): void
+    {
+        $entity = $this->createMock(EntityInterface::class);
+        $entity->method('uuid')->willReturn('test-uuid');
+
+        $storage = $this->createMock(EntityStorageInterface::class);
+        $storage->expects($this->once())
+            ->method('create')
+            ->with($this->callback(function (array $values): bool {
+                return !array_key_exists('max_travel_km', $values);
+            }))
+            ->willReturn($entity);
+        $storage->expects($this->once())->method('save');
+
+        $this->entityTypeManager->method('getStorage')
+            ->with('volunteer')
+            ->willReturn($storage);
+
+        $controller = new VolunteerController($this->entityTypeManager, $this->twig);
+        $request = HttpRequest::create('/elders/volunteer', 'POST', [
+            'name' => 'Jane',
+            'phone' => '555-1234',
+            'max_travel_km' => '-5',
+        ]);
+
+        $response = $controller->submitSignup([], [], $this->account, $request);
+
+        $this->assertSame(302, $response->statusCode);
+    }
+
+    #[Test]
     public function signup_detail_with_valid_uuid_returns_200(): void
     {
         $uuid = '550e8400-e29b-41d4-a716-446655440000';

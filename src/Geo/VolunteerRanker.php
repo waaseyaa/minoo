@@ -26,13 +26,15 @@ final class VolunteerRanker
      */
     public function rank(array $volunteers, ContentEntityBase $request): array
     {
-        $requestCoords = $this->resolveCoords($request);
+        /** @var array<int, array{float, float}|null> */
+        $coordsCache = [];
+        $requestCoords = $this->resolveCoords($request, $coordsCache);
 
         $withDistance = [];
         $withoutDistance = [];
 
         foreach ($volunteers as $volunteer) {
-            $volCoords = $this->resolveCoords($volunteer);
+            $volCoords = $this->resolveCoords($volunteer, $coordsCache);
 
             if ($requestCoords === null || $volCoords === null) {
                 $withoutDistance[] = new RankedVolunteer($volunteer, null);
@@ -62,9 +64,10 @@ final class VolunteerRanker
     }
 
     /**
+     * @param array<int, array{float, float}|null> $cache
      * @return array{float, float}|null [latitude, longitude] or null if missing
      */
-    private function resolveCoords(ContentEntityBase $entity): ?array
+    private function resolveCoords(ContentEntityBase $entity, array &$cache): ?array
     {
         $communityRef = $entity->get('community');
 
@@ -72,10 +75,17 @@ final class VolunteerRanker
             return null;
         }
 
+        $communityId = (int) $communityRef;
+
+        if (array_key_exists($communityId, $cache)) {
+            return $cache[$communityId];
+        }
+
         $communityStorage = $this->entityTypeManager->getStorage('community');
-        $community = $communityStorage->load((int) $communityRef);
+        $community = $communityStorage->load($communityId);
 
         if ($community === null) {
+            $cache[$communityId] = null;
             return null;
         }
 
@@ -83,9 +93,13 @@ final class VolunteerRanker
         $lon = $community->get('longitude');
 
         if ($lat === null || $lon === null) {
+            $cache[$communityId] = null;
             return null;
         }
 
-        return [(float) $lat, (float) $lon];
+        $coords = [(float) $lat, (float) $lon];
+        $cache[$communityId] = $coords;
+
+        return $coords;
     }
 }
