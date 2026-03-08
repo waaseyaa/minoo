@@ -86,7 +86,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
 
         $router->addRoute(
             'elders.request.detail',
-            RouteBuilder::create('/elders/request/{esrid}')
+            RouteBuilder::create('/elders/request/{uuid}')
                 ->controller('Minoo\Controller\ElderSupportController::requestDetail')
                 ->allowAll()
                 ->render()
@@ -116,7 +116,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
 
         $router->addRoute(
             'elders.volunteer.detail',
-            RouteBuilder::create('/elders/volunteer/{vid}')
+            RouteBuilder::create('/elders/volunteer/{uuid}')
                 ->controller('Minoo\Controller\VolunteerController::signupDetail')
                 ->allowAll()
                 ->render()

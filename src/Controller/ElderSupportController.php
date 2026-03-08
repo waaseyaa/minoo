@@ -57,7 +57,7 @@ final class ElderSupportController
                 'values' => compact('name', 'phone', 'community', 'type', 'notes'),
             ]);
 
-            return new SsrResponse(content: $html);
+            return new SsrResponse(content: $html, statusCode: 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
@@ -73,12 +73,10 @@ final class ElderSupportController
         ]);
         $storage->save($entity);
 
-        $id = $entity->id();
-
         return new SsrResponse(
             content: '',
             statusCode: 302,
-            headers: ['Location' => '/elders/request/' . $id],
+            headers: ['Location' => '/elders/request/' . $entity->uuid()],
         );
     }
 
@@ -86,9 +84,16 @@ final class ElderSupportController
     /** @param array<string, mixed> $query */
     public function requestDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $esrid = (int) ($params['esrid'] ?? 0);
-        $storage = $this->entityTypeManager->getStorage('elder_support_request');
-        $entity = $esrid > 0 ? $storage->load($esrid) : null;
+        $uuid = $params['uuid'] ?? '';
+        $entity = null;
+
+        if ($uuid !== '') {
+            $storage = $this->entityTypeManager->getStorage('elder_support_request');
+            $ids = $storage->getQuery()->condition('uuid', $uuid)->execute();
+            if ($ids !== []) {
+                $entity = $storage->load(reset($ids));
+            }
+        }
 
         $html = $this->twig->render('elders/request-confirmation.html.twig', [
             'entity' => $entity,
