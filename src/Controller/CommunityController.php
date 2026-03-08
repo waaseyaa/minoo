@@ -17,7 +17,6 @@ final class CommunityController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
-        private readonly CommunityAutocompleteClient $autocompleteClient,
     ) {}
 
     /** @param array<string, mixed> $params */
@@ -76,8 +75,12 @@ final class CommunityController
     public function autocomplete(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
         $term = $request->query->getString('q');
-        $suggestions = $this->autocompleteClient->suggest($term);
 
-        return new JsonResponse($suggestions);
+        $client = new CommunityAutocompleteClient(
+            baseUrl: (string) getenv('NORTHCLOUD_API_URL'),
+            timeout: 5,
+        );
+
+        return new JsonResponse($client->suggest($term));
     }
 }

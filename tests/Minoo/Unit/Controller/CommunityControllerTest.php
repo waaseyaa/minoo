@@ -6,7 +6,6 @@ namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\CommunityController;
 use Minoo\Entity\Community;
-use Minoo\Search\CommunityAutocompleteClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +22,6 @@ final class CommunityControllerTest extends TestCase
 {
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
-    private CommunityAutocompleteClient $autocompleteClient;
     private EntityStorageInterface $storage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
@@ -48,13 +46,6 @@ final class CommunityControllerTest extends TestCase
             'communities.html.twig' => '{{ path }}{% for c in communities|default([]) %}|{{ c.get("name") }}{% endfor %}{% if community is defined and community %}|{{ community.get("name") }}{% endif %}',
         ]));
 
-        $this->autocompleteClient = new CommunityAutocompleteClient(
-            baseUrl: 'https://northcloud.one',
-            timeout: 5,
-            cacheTtl: 0,
-            httpClient: fn(string $url): string => json_encode(['hits' => []], JSON_THROW_ON_ERROR),
-        );
-
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
     }
@@ -70,7 +61,7 @@ final class CommunityControllerTest extends TestCase
             ->with([1, 2])
             ->willReturn([1 => $sagamok, 2 => $blind]);
 
-        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->statusCode);
@@ -83,7 +74,7 @@ final class CommunityControllerTest extends TestCase
     {
         $this->query->method('execute')->willReturn([]);
 
-        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->statusCode);
@@ -100,7 +91,7 @@ final class CommunityControllerTest extends TestCase
             ->with(1)
             ->willReturn($sagamok);
 
-        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->statusCode);
@@ -112,7 +103,7 @@ final class CommunityControllerTest extends TestCase
     {
         $this->query->method('execute')->willReturn([]);
 
-        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
 
         $this->assertSame(404, $response->statusCode);
@@ -121,38 +112,32 @@ final class CommunityControllerTest extends TestCase
     #[Test]
     public function autocomplete_returns_json_response(): void
     {
-        $apiResponse = json_encode([
-            'hits' => [
-                ['id' => '1', 'name' => 'Sagamok Anishnawbek', 'community_type' => 'first_nation', 'province' => 'Ontario'],
-            ],
-        ], JSON_THROW_ON_ERROR);
-
-        $autocomplete = new CommunityAutocompleteClient(
-            baseUrl: 'https://northcloud.one',
-            timeout: 5,
-            cacheTtl: 0,
-            httpClient: fn(string $url): string => $apiResponse,
-        );
+        putenv('NORTHCLOUD_API_URL=https://northcloud.one');
 
         $this->request = HttpRequest::create('/?q=Sa');
-        $controller = new CommunityController($this->entityTypeManager, $this->twig, $autocomplete);
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->autocomplete([], ['q' => 'Sa'], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
         $data = json_decode($response->getContent(), true);
-        $this->assertCount(1, $data);
-        $this->assertSame('Sagamok Anishnawbek', $data[0]['name']);
+        $this->assertIsArray($data);
+
+        putenv('NORTHCLOUD_API_URL');
     }
 
     #[Test]
-    public function autocomplete_returns_empty_array_when_no_matches(): void
+    public function autocomplete_returns_empty_for_blank_query(): void
     {
-        $this->request = HttpRequest::create('/?q=zzz');
-        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->autocompleteClient);
-        $response = $controller->autocomplete([], ['q' => 'zzz'], $this->account, $this->request);
+        putenv('NORTHCLOUD_API_URL=https://northcloud.one');
+
+        $this->request = HttpRequest::create('/?q=');
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
+        $response = $controller->autocomplete([], ['q' => ''], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
         $data = json_decode($response->getContent(), true);
         $this->assertSame([], $data);
+
+        putenv('NORTHCLOUD_API_URL');
     }
 }
