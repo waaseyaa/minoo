@@ -80,6 +80,7 @@ final class VolunteerController
         if ($maxTravelKm !== null) {
             $values['max_travel_km'] = $maxTravelKm;
         }
+        $values['account_id'] = $account->id();
         $entity = $storage->create($values);
         $storage->save($entity);
 

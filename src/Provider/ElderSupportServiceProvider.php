@@ -38,6 +38,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
                     'label' => 'Assigned At',
                     'weight' => 26,
                 ],
+                'cancelled_reason' => ['type' => 'text_long', 'label' => 'Cancellation Reason', 'weight' => 30],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
@@ -55,6 +56,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
                 'availability' => ['type' => 'string', 'label' => 'Availability', 'weight' => 5],
                 'skills' => ['type' => 'entity_reference', 'label' => 'Skills', 'settings' => ['target_type' => 'taxonomy_term', 'target_vocabulary' => 'volunteer_skills'], 'cardinality' => -1, 'weight' => 10],
                 'max_travel_km' => ['type' => 'integer', 'label' => 'Max Travel (km)', 'weight' => 12],
+                'account_id' => ['type' => 'integer', 'label' => 'Account ID', 'weight' => 35],
                 'notes' => ['type' => 'text_long', 'label' => 'Notes', 'weight' => 15],
                 'status' => ['type' => 'string', 'label' => 'Status', 'weight' => 20, 'default' => 'active'],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
@@ -165,6 +167,15 @@ final class ElderSupportServiceProvider extends ServiceProvider
             'elder.reassign',
             RouteBuilder::create('/elders/request/{esrid}/reassign')
                 ->controller('Minoo\Controller\ElderSupportWorkflowController::reassignVolunteer')
+                ->requireRole('elder_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'elder.cancel',
+            RouteBuilder::create('/elders/request/{esrid}/cancel')
+                ->controller('Minoo\Controller\ElderSupportWorkflowController::cancelRequest')
                 ->requireRole('elder_coordinator')
                 ->methods('POST')
                 ->build(),

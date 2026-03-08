@@ -1,0 +1,61 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Edit My Profile — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section">
+  <div class="flow-lg">
+    <div>
+      <h1>Edit My Profile</h1>
+      <p class="text-secondary">Update your volunteer information.</p>
+    </div>
+
+    <form class="form" method="POST" action="/dashboard/volunteer/edit">
+      <div class="form__field">
+        <label class="form__label" for="phone">Phone Number</label>
+        <input class="form__input" type="tel" id="phone" name="phone"
+               value="{{ volunteer.get('phone') ?? '' }}" autocomplete="tel">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="availability">Availability</label>
+        <input class="form__input" type="text" id="availability" name="availability"
+               value="{{ volunteer.get('availability') ?? '' }}"
+               placeholder="e.g. Weekends, Tuesday evenings">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="max_travel_km">Maximum Travel Distance (km)</label>
+        <input class="form__input" type="number" id="max_travel_km" name="max_travel_km"
+               value="{{ volunteer.get('max_travel_km') ?? '' }}"
+               min="1" max="1000" step="1"
+               placeholder="e.g. 50">
+      </div>
+
+      <fieldset class="form__fieldset">
+        <legend class="form__label">Skills / How Can You Help?</legend>
+        <div class="form__checkboxes">
+          {% set currentSkills = volunteer.get('skills') ?? [] %}
+          {% for skill in ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'] %}
+            <label class="form__checkbox-label">
+              <input type="checkbox" name="skills[]" value="{{ skill }}"
+                     {% if skill in currentSkills %}checked{% endif %}>
+              {{ skill }}
+            </label>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="form__field">
+        <label class="form__label" for="notes">Additional Notes</label>
+        <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ volunteer.get('notes') ?? '' }}</textarea>
+      </div>
+
+      <div class="form__actions">
+        <button type="submit" class="form__submit">Save Changes</button>
+        <a href="/dashboard/volunteer" class="form__link">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

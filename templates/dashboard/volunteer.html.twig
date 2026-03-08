@@ -6,6 +6,18 @@
 <section class="content-section">
   <h1>My Assignments</h1>
 
+  {% if volunteer is defined and volunteer %}
+  <div class="dashboard__profile-bar">
+    <span class="status-indicator status-indicator--{{ volunteer.get('status') }}">{{ volunteer.get('status')|title }}</span>
+    <a href="/dashboard/volunteer/edit" class="form__link">Edit Profile</a>
+    <form method="post" action="/dashboard/volunteer/toggle-availability" class="dashboard__toggle-form">
+      <button type="submit" class="form__submit form__submit--secondary form__submit--sm">
+        {% if volunteer.get('status') == 'active' %}Go Unavailable{% else %}Go Active{% endif %}
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
   {% if requests is empty %}
     <p class="dashboard__empty">No assignments yet. A coordinator will assign requests to you.</p>
   {% else %}
@@ -59,6 +71,21 @@
           <dt>Type</dt><dd>{{ req.get('type') }}</dd>
         </dl>
         <p class="card__note">Waiting for coordinator confirmation.</p>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if grouped.confirmed is not empty %}
+    <h2>History</h2>
+    <div class="dashboard__cards">
+      {% for req in grouped.confirmed %}
+      <article class="card card--dashboard card--history">
+        <span class="card__badge card__badge--confirmed">Confirmed</span>
+        <h3 class="card__title">{{ req.get('name') }}</h3>
+        <dl class="card__meta">
+          <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+        </dl>
       </article>
       {% endfor %}
     </div>
