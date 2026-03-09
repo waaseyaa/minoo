@@ -1,0 +1,166 @@
+{% extends "base.html.twig" %}
+
+{% set page_path = path|default('/legal') %}
+
+{% block title %}
+  {%- if page_path == '/legal/privacy' -%}
+    Privacy Policy — Minoo
+  {%- elseif page_path == '/legal/terms' -%}
+    Terms of Use — Minoo
+  {%- elseif page_path == '/legal/accessibility' -%}
+    Accessibility Statement — Minoo
+  {%- else -%}
+    Legal — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  <div class="content-section flow-lg">
+
+    {% if page_path == '/legal/privacy' %}
+      <div>
+        <h1>Privacy Policy</h1>
+        <p class="text-secondary">Last updated: March 2026</p>
+      </div>
+
+      <section class="flow">
+        <h2>What We Collect</h2>
+        <p>When you use Minoo, we may collect the following information:</p>
+        <ul class="how-it-works__list">
+          <li><strong>Contact information</strong> — Name and phone number, provided when submitting a request or volunteering</li>
+          <li><strong>Community</strong> — Your community name, to match you with nearby volunteers or requests</li>
+          <li><strong>Location data</strong> — If you enable browser location services, we use your approximate coordinates to find the nearest community. We store only the community ID, not precise coordinates</li>
+          <li><strong>Request details</strong> — Type of help needed, notes, and representative information if someone submits on behalf of an Elder</li>
+          <li><strong>Volunteer profile</strong> — Availability, skills, and maximum travel distance</li>
+        </ul>
+      </section>
+
+      <section class="flow">
+        <h2>How We Use Your Information</h2>
+        <ul class="how-it-works__list">
+          <li>To connect Elders with nearby volunteers</li>
+          <li>To enable coordinators to manage and follow up on requests</li>
+          <li>To display relevant community information based on your location</li>
+        </ul>
+      </section>
+
+      <section class="flow">
+        <h2>Location Services</h2>
+        <p>Minoo uses browser geolocation to detect your approximate location. This is used to:</p>
+        <ul class="how-it-works__list">
+          <li>Identify the nearest community to pre-fill forms</li>
+          <li>Sort communities and resources by proximity</li>
+          <li>Show relevant local information on the homepage</li>
+        </ul>
+        <p>Location detection is optional. You can set your community manually using the location bar. We store only your selected community, not GPS coordinates.</p>
+      </section>
+
+      <section class="flow">
+        <h2>Data Storage and Security</h2>
+        <p>Your data is stored securely and accessed only by authorized coordinators and administrators. We do not sell or share your information with third parties.</p>
+      </section>
+
+      <section class="flow">
+        <h2>Your Rights</h2>
+        <p>You may request to view, update, or delete your personal information at any time by contacting your community coordinator.</p>
+      </section>
+
+    {% elseif page_path == '/legal/terms' %}
+      <div>
+        <h1>Terms of Use</h1>
+        <p class="text-secondary">Last updated: March 2026</p>
+      </div>
+
+      <section class="flow">
+        <h2>About Minoo</h2>
+        <p>Minoo is a community platform that connects Indigenous Elders with volunteers for everyday support. By using this service, you agree to these terms.</p>
+      </section>
+
+      <section class="flow">
+        <h2>User Responsibilities</h2>
+        <ul class="how-it-works__list">
+          <li>Provide accurate contact information when submitting requests or signing up as a volunteer</li>
+          <li>Treat all users — Elders, volunteers, and coordinators — with respect and dignity</li>
+          <li>Follow the <a href="/safety">safety guidelines</a> at all times</li>
+          <li>Report any concerns to your community coordinator promptly</li>
+        </ul>
+      </section>
+
+      <section class="flow">
+        <h2>Coordinator Role</h2>
+        <p>Community coordinators review requests, match volunteers, and follow up on visits. They are community members, not employees of Minoo.</p>
+      </section>
+
+      <section class="flow">
+        <h2>Limitation of Liability</h2>
+        <p>Minoo facilitates connections between community members. We are not responsible for the actions of individual volunteers or Elders. All support is provided voluntarily and at the participants' own discretion.</p>
+      </section>
+
+      <section class="flow">
+        <h2>Changes to Terms</h2>
+        <p>We may update these terms as the service evolves. Continued use of Minoo constitutes acceptance of updated terms.</p>
+      </section>
+
+    {% elseif page_path == '/legal/accessibility' %}
+      <div>
+        <h1>Accessibility Statement</h1>
+        <p class="text-secondary">Last updated: March 2026</p>
+      </div>
+
+      <section class="flow">
+        <h2>Our Commitment</h2>
+        <p>Minoo is committed to ensuring digital accessibility for all users, including people with disabilities. We aim to conform to WCAG 2.1 Level AA standards.</p>
+      </section>
+
+      <section class="flow">
+        <h2>Accessibility Features</h2>
+        <ul class="how-it-works__list">
+          <li>Semantic HTML structure with proper heading hierarchy</li>
+          <li>Skip-to-content link for keyboard navigation</li>
+          <li>ARIA labels on interactive elements</li>
+          <li>Sufficient color contrast throughout the interface</li>
+          <li>Form fields with associated labels and error messages</li>
+          <li>Responsive design that works across devices and screen sizes</li>
+        </ul>
+      </section>
+
+      <section class="flow">
+        <h2>Phone Access</h2>
+        <p>If you are unable to use the website, you can access Minoo's services by calling your local community coordinator. Visit the <a href="/elders">Elder Support page</a> for more information.</p>
+      </section>
+
+      <section class="flow">
+        <h2>Feedback</h2>
+        <p>If you encounter any accessibility barriers on this site, please let us know. We welcome your feedback and will work to address issues promptly.</p>
+      </section>
+
+    {% else %}
+      <div>
+        <h1>Legal</h1>
+        <p class="text-secondary">Legal information and policies for Minoo.</p>
+      </div>
+
+      <div class="card-grid">
+        <a href="/legal/privacy" class="card">
+          <div class="card__body">
+            <h2 class="card__title">Privacy Policy</h2>
+            <p class="card__meta">How we collect, use, and protect your information</p>
+          </div>
+        </a>
+        <a href="/legal/terms" class="card">
+          <div class="card__body">
+            <h2 class="card__title">Terms of Use</h2>
+            <p class="card__meta">Rules and responsibilities for using Minoo</p>
+          </div>
+        </a>
+        <a href="/legal/accessibility" class="card">
+          <div class="card__body">
+            <h2 class="card__title">Accessibility</h2>
+            <p class="card__meta">Our commitment to digital accessibility</p>
+          </div>
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock %}
