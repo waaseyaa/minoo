@@ -178,7 +178,7 @@
         const res = await fetch('/api/location/set', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({community_id: parseInt(li.dataset.id, 10)})
+          body: JSON.stringify({community_id: li.dataset.id})
         });
         const data = await res.json();
         if (data.success) location.reload();

@@ -36,10 +36,14 @@ final class LocationController
     public function set(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
         $body = json_decode($request->getContent(), true) ?? [];
-        $communityId = (int) ($body['community_id'] ?? 0);
+        $communityId = $body['community_id'] ?? null;
 
-        if ($communityId === 0) {
+        if ($communityId === null || $communityId === '' || $communityId === 0) {
             return new JsonResponse(['error' => 'community_id is required'], 400);
+        }
+
+        if (is_numeric($communityId)) {
+            $communityId = (int) $communityId;
         }
 
         $service = $this->makeService();

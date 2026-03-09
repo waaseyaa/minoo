@@ -67,10 +67,16 @@ final class LocationService
         );
     }
 
-    public function resolveFromCommunityId(int $communityId): LocationContext
+    public function resolveFromCommunityId(int|string $communityId): LocationContext
     {
         $storage = $this->entityTypeManager->getStorage('community');
-        $community = $storage->load($communityId);
+
+        if (is_int($communityId)) {
+            $community = $storage->load($communityId);
+        } else {
+            $ids = $storage->getQuery()->condition('uuid', $communityId)->execute();
+            $community = $ids !== [] ? $storage->load(reset($ids)) : null;
+        }
 
         if ($community === null) {
             return LocationContext::none();
