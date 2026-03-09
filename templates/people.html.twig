@@ -14,7 +14,7 @@
   {% if path == '/people' %}
     <div class="flow-lg">
       <h1>People</h1>
-      <p>Community members, knowledge keepers, and service providers.</p>
+      <p class="hero__subtitle">Community resource people, Elders, and knowledge keepers. Use the filters to find someone who can help.</p>
 
       {% if location is defined and location.hasLocation() %}
         <p class="text-secondary">Showing results near {{ location.communityName }}. <a href="/people?all=1">Show all</a></p>
