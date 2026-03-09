@@ -24,9 +24,12 @@ final class VolunteerController
     /** @param array<string, mixed> $query */
     public function signupForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
+        $location = $this->resolveLocation($request);
+
         $html = $this->twig->render('elders/volunteer.html.twig', [
             'errors' => [],
             'values' => [],
+            'location' => $location,
         ]);
 
         return new SsrResponse(content: $html);
@@ -41,6 +44,7 @@ final class VolunteerController
         $availability = trim((string) $request->request->get('availability', ''));
         $allowedSkills = ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'];
         $skills = array_values(array_intersect($request->request->all('skills'), $allowedSkills));
+        $community = trim((string) $request->request->get('community', ''));
         $notes = trim((string) $request->request->get('notes', ''));
         $maxTravelRaw = $request->request->get('max_travel_km', '');
         $maxTravelKm = $maxTravelRaw !== '' ? (int) $maxTravelRaw : null;
@@ -60,7 +64,7 @@ final class VolunteerController
         if ($errors !== []) {
             $html = $this->twig->render('elders/volunteer.html.twig', [
                 'errors' => $errors,
-                'values' => compact('name', 'phone', 'availability', 'skills', 'notes', 'maxTravelKm'),
+                'values' => compact('name', 'phone', 'community', 'availability', 'skills', 'notes', 'maxTravelKm'),
             ]);
 
             return new SsrResponse(content: $html, statusCode: 422);
@@ -70,6 +74,7 @@ final class VolunteerController
         $values = [
             'name' => $name,
             'phone' => $phone,
+            'community' => $community,
             'availability' => $availability,
             'skills' => $skills,
             'notes' => $notes,
@@ -114,5 +119,13 @@ final class VolunteerController
             content: $html,
             statusCode: $entity !== null ? 200 : 404,
         );
+    }
+
+    private function resolveLocation(HttpRequest $request): \Minoo\Geo\LocationContext
+    {
+        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
+        $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
+        $service = new \Minoo\Geo\LocationService($this->entityTypeManager, $config);
+        return $service->fromRequest($request);
     }
 }

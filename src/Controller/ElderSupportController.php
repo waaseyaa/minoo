@@ -21,9 +21,12 @@ final class ElderSupportController
     /** @param array<string, mixed> $query */
     public function requestForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
+        $location = $this->resolveLocation($request);
+
         $html = $this->twig->render('elders/request.html.twig', [
             'errors' => [],
             'values' => [],
+            'location' => $location,
         ]);
 
         return new SsrResponse(content: $html);
@@ -103,5 +106,13 @@ final class ElderSupportController
             content: $html,
             statusCode: $entity !== null ? 200 : 404,
         );
+    }
+
+    private function resolveLocation(HttpRequest $request): \Minoo\Geo\LocationContext
+    {
+        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
+        $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
+        $service = new \Minoo\Geo\LocationService($this->entityTypeManager, $config);
+        return $service->fromRequest($request);
     }
 }

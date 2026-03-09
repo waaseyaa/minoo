@@ -35,7 +35,7 @@
       <div class="form__field">
         <label class="form__label" for="community">Community <span class="form__label-optional">(optional)</span></label>
         <input class="form__input" type="text" id="community" name="community"
-               value="{{ values.community ?? '' }}"
+               value="{{ values.community ?? (location is defined and location.hasLocation() ? location.communityName : '') }}"
                autocomplete="address-level2">
       </div>
 
