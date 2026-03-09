@@ -4,9 +4,9 @@
 
 {% block content %}
 <section class="content-section flow-lg">
-  <div>
+  <div class="portal-section">
     <h1>Grandparent Connection</h1>
-    <p class="text-secondary">Connecting Elders with volunteers for everyday support.</p>
+    <p class="text-secondary">Connecting Elders with volunteers for everyday support — rides, groceries, chores, and friendly visits.</p>
   </div>
 
   <div class="how-it-works">
@@ -19,7 +19,7 @@
         <li>The volunteer reaches out to arrange the details</li>
         <li>After the visit, the coordinator follows up to make sure everything went well</li>
       </ol>
-      <a href="/elders/request" class="form__submit">Request Help</a>
+      <a href="/elders/request" class="btn btn--primary">Request Help</a>
     </div>
 
     <div class="how-it-works__step">
@@ -31,8 +31,18 @@
         <li>Connect with the Elder and provide support</li>
         <li>Mark the request complete when you're done</li>
       </ol>
-      <a href="/elders/volunteer" class="form__submit form__submit--secondary">Volunteer</a>
+      <a href="/elders/volunteer" class="btn btn--secondary">Volunteer</a>
     </div>
+  </div>
+
+  <div class="safety-callout">
+    <h2>Your Safety Matters</h2>
+    <p>All volunteers are screened by community coordinators. If you ever feel uncomfortable, you can cancel a request at any time. <a href="/safety">Read our safety guidelines</a>.</p>
+  </div>
+
+  <div class="portal-section">
+    <h2>Prefer to Call?</h2>
+    <p>Contact your local coordinator at your community phone number. They can submit a request on your behalf.</p>
   </div>
 </section>
 {% endblock %}

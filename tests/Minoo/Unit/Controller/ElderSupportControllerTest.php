@@ -140,4 +140,42 @@ final class ElderSupportControllerTest extends TestCase
 
         $this->assertSame(404, $response->statusCode);
     }
+
+    #[Test]
+    public function representative_without_consent_returns_422(): void
+    {
+        $controller = new ElderSupportController($this->entityTypeManager, $this->twig);
+        $request = HttpRequest::create('/elders/request', 'POST', [
+            'name' => 'Jane',
+            'phone' => '555-1234',
+            'type' => 'ride',
+            'is_representative' => '1',
+            'elder_name' => 'Mary',
+            'consent' => '',
+        ]);
+
+        $response = $controller->submitRequest([], [], $this->account, $request);
+
+        $this->assertSame(422, $response->statusCode);
+        $this->assertStringContainsString('consent', $response->content);
+    }
+
+    #[Test]
+    public function representative_without_elder_name_returns_422(): void
+    {
+        $controller = new ElderSupportController($this->entityTypeManager, $this->twig);
+        $request = HttpRequest::create('/elders/request', 'POST', [
+            'name' => 'Jane',
+            'phone' => '555-1234',
+            'type' => 'ride',
+            'is_representative' => '1',
+            'elder_name' => '',
+            'consent' => '1',
+        ]);
+
+        $response = $controller->submitRequest([], [], $this->account, $request);
+
+        $this->assertSame(422, $response->statusCode);
+        $this->assertStringContainsString('elder_name', $response->content);
+    }
 }

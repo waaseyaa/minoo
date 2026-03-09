@@ -41,6 +41,9 @@ final class ElderSupportController
         $community = trim((string) $request->request->get('community', ''));
         $type = trim((string) $request->request->get('type', ''));
         $notes = trim((string) $request->request->get('notes', ''));
+        $isRepresentative = $request->request->get('is_representative') === '1';
+        $elderName = trim((string) $request->request->get('elder_name', ''));
+        $consent = $request->request->get('consent') === '1';
 
         $errors = [];
 
@@ -53,11 +56,19 @@ final class ElderSupportController
         if (!in_array($type, ['ride', 'groceries', 'chores', 'visit'], true)) {
             $errors['type'] = 'Please select a request type.';
         }
+        if ($isRepresentative) {
+            if ($elderName === '') {
+                $errors['elder_name'] = 'Elder\'s name is required when requesting on their behalf.';
+            }
+            if (!$consent) {
+                $errors['consent'] = 'Please confirm the Elder has given permission.';
+            }
+        }
 
         if ($errors !== []) {
             $html = $this->twig->render('elders/request.html.twig', [
                 'errors' => $errors,
-                'values' => compact('name', 'phone', 'community', 'type', 'notes'),
+                'values' => compact('name', 'phone', 'community', 'type', 'notes', 'isRepresentative', 'elderName', 'consent'),
             ]);
 
             return new SsrResponse(content: $html, statusCode: 422);
@@ -70,6 +81,9 @@ final class ElderSupportController
             'community' => $community,
             'type' => $type,
             'notes' => $notes,
+            'is_representative' => $isRepresentative,
+            'elder_name' => $isRepresentative ? $elderName : '',
+            'has_consent' => $isRepresentative && $consent,
             'status' => 'open',
             'created_at' => time(),
             'updated_at' => time(),

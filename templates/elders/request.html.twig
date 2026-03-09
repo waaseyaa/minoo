@@ -22,6 +22,36 @@
       </div>
 
       <div class="form__field">
+        <label class="form__checkbox-label">
+          <input type="checkbox" id="is_representative" name="is_representative" value="1"
+                 {% if values.isRepresentative is defined and values.isRepresentative %}checked{% endif %}>
+          I'm requesting on behalf of an Elder
+        </label>
+      </div>
+
+      <div id="representative-fields" class="form__fieldset" {% if not (values.isRepresentative is defined and values.isRepresentative) %}hidden{% endif %}>
+        <div class="form__field">
+          <label class="form__label" for="elder_name">Elder's Name <span aria-hidden="true">*</span></label>
+          {% if errors.elder_name is defined %}
+            <p class="form__error" role="alert">{{ errors.elder_name }}</p>
+          {% endif %}
+          <input class="form__input{% if errors.elder_name is defined %} form__input--error{% endif %}"
+                 type="text" id="elder_name" name="elder_name"
+                 value="{{ values.elderName ?? '' }}">
+        </div>
+        <div class="form__field">
+          <label class="form__checkbox-label">
+            <input type="checkbox" id="consent" name="consent" value="1"
+                   {% if values.consent is defined and values.consent %}checked{% endif %}>
+            I confirm the Elder has given permission for this request
+          </label>
+          {% if errors.consent is defined %}
+            <p class="form__error" role="alert">{{ errors.consent }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form__field">
         <label class="form__label" for="phone">Phone Number <span aria-hidden="true">*</span></label>
         {% if errors.phone is defined %}
           <p class="form__error" role="alert">{{ errors.phone }}</p>
@@ -59,11 +89,26 @@
         <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes ?? '' }}</textarea>
       </div>
 
+      <div class="privacy-note">
+        <p>Your information is used only to connect you with a volunteer. We store your name, phone number, and community.
+        If location services are enabled, we use approximate location to find nearby volunteers.
+        <a href="/legal/privacy">Read our full privacy policy</a>.</p>
+      </div>
+
       <div class="form__actions">
-        <button type="submit" class="form__submit">Submit Request</button>
+        <button type="submit" class="btn btn--primary">Submit Request</button>
       </div>
     </form>
 
     <p class="text-secondary">Are you able to help? <a href="/elders/volunteer">Sign up as a volunteer</a>.</p>
+    <p class="text-secondary">Your safety matters. <a href="/safety">Read our safety guidelines</a>.</p>
   </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('is_representative')?.addEventListener('change', function() {
+    document.getElementById('representative-fields').hidden = !this.checked;
+  });
+</script>
 {% endblock %}
