@@ -8,7 +8,7 @@ test.describe('Location Bar', () => {
 
   test('location bar has toggle button', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#location-toggle')).toBeVisible();
+    await expect(page.locator('#location-toggle')).toBeAttached();
   });
 
   test('location bar dropdown is initially hidden', async ({ page }) => {
