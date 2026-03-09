@@ -5,6 +5,7 @@
 {% block content %}
 <section class="content-section flow-lg">
   <h1>My Assignments</h1>
+  <p class="text-secondary">Your coordinator will assign requests to you. Here's where you'll manage them.</p>
 
   {% if volunteer is defined and volunteer %}
   <div class="dashboard__profile-bar">
@@ -19,7 +20,7 @@
   {% endif %}
 
   {% if requests is empty %}
-    <p class="dashboard__empty">No assignments yet. A coordinator will assign requests to you.</p>
+    <p class="dashboard__empty">No assignments yet. When a coordinator matches you with an Elder, it'll show up here.</p>
   {% else %}
 
     {% if grouped.assigned is not empty %}

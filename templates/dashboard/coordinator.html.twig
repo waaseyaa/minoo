@@ -4,11 +4,12 @@
 
 {% block content %}
 <section class="content-section flow-lg">
-  <h1>Elder Support Dashboard</h1>
+  <h1>Coordinator Dashboard</h1>
+  <p class="text-secondary">You're the link between Elders who need support and volunteers who can help. Here's what needs your attention.</p>
 
   <h2>Open Requests ({{ open_requests|length }})</h2>
   {% if open_requests is empty %}
-    <p class="dashboard__empty">No open requests.</p>
+    <p class="dashboard__empty">No open requests right now. New requests will appear here as they come in.</p>
   {% else %}
   <div class="dashboard__cards">
     {% for req in open_requests %}
@@ -73,7 +74,7 @@
 
   <h2>Pending Confirmation ({{ pending_confirmation|length }})</h2>
   {% if pending_confirmation is empty %}
-    <p class="dashboard__empty">Nothing to confirm.</p>
+    <p class="dashboard__empty">No requests waiting for confirmation.</p>
   {% else %}
   <div class="dashboard__cards">
     {% for req in pending_confirmation %}
@@ -93,7 +94,7 @@
 
   <h2>Volunteer Pool ({{ volunteers|length }})</h2>
   {% if volunteers is empty %}
-    <p class="dashboard__empty">No active volunteers.</p>
+    <p class="dashboard__empty">No active volunteers yet. Volunteer signups will appear here once approved.</p>
   {% else %}
   <div class="dashboard__cards">
     {% for vol in volunteers %}
