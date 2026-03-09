@@ -584,7 +584,6 @@
   a.card {
     text-decoration: none;
     color: inherit;
-    transition: box-shadow 0.15s ease;
   }
 
   a.card:hover {
