@@ -39,12 +39,31 @@ jobs:
       # PHP setup
       # -----------------------------------------------------------------------
 
-      - name: Set up PHP 8.3
+      - name: Set up PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           extensions: pdo_sqlite, sqlite3, mbstring, xml
           coverage: none
+
+      # -----------------------------------------------------------------------
+      # Node.js setup (Playwright)
+      # -----------------------------------------------------------------------
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: minoo/package-lock.json
+
+      - name: Install Node dependencies
+        working-directory: minoo
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: minoo
+        run: npx playwright install --with-deps chromium
 
       # -----------------------------------------------------------------------
       # Run tests (install all deps including dev first)
@@ -54,9 +73,13 @@ jobs:
         working-directory: minoo
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run unit tests
+      - name: Run PHPUnit tests
         working-directory: minoo
-        run: ./vendor/bin/phpunit --testsuite MinooUnit
+        run: ./vendor/bin/phpunit
+
+      - name: Run Playwright smoke tests
+        working-directory: minoo
+        run: npx playwright test
 
       # -----------------------------------------------------------------------
       # Install production-only dependencies for the artifact
