@@ -1,0 +1,28 @@
+{
+  "name": "minoo",
+  "version": "1.0.0",
+  "description": "Indigenous knowledge platform powered by [Waaseyaa CMS](https://github.com/waaseyaa/framework) and [NorthCloud](https://github.com/jonesrussell/north-cloud) ingestion.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waaseyaa/minoo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/waaseyaa/minoo/issues"
+  },
+  "homepage": "https://github.com/waaseyaa/minoo#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
