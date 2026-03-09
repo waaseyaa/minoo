@@ -75,5 +75,32 @@ final class CommunityServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        $router->addRoute(
+            'location.current',
+            RouteBuilder::create('/api/location/current')
+                ->controller('Minoo\\Controller\\LocationController::current')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'location.set',
+            RouteBuilder::create('/api/location/set')
+                ->controller('Minoo\\Controller\\LocationController::set')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'location.update',
+            RouteBuilder::create('/api/location/update')
+                ->controller('Minoo\\Controller\\LocationController::update')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
     }
 }
