@@ -14,7 +14,7 @@
       <div>
         <span class="card__badge card__badge--elder">Volunteer</span>
         <h1>Thank You for Volunteering!</h1>
-        <p class="text-secondary">Thank you, {{ entity.get('name') }}. We'll be in touch at {{ entity.get('phone') }} when someone needs help.</p>
+        <p class="text-secondary">Thank you, {{ entity.get('name') }}. Your willingness to help means a lot. A coordinator will reach out to you at {{ entity.get('phone') }} when an Elder in your area needs support.</p>
       </div>
 
       <div class="card card--detail">
@@ -44,6 +44,15 @@
             </div>
           {% endif %}
         </dl>
+      </div>
+
+      <div class="flow">
+        <h2>What Happens Next</h2>
+        <ol class="how-it-works__list">
+          <li>A community coordinator will review your signup</li>
+          <li>When an Elder nearby needs help that matches your skills and availability, the coordinator will call you</li>
+          <li>You'll connect with the Elder and arrange the details together</li>
+        </ol>
       </div>
 
       <p><a href="/elders/volunteer">Sign up another volunteer</a></p>
