@@ -1,19 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Homepage', () => {
-  test('shows hero with title and CTAs', async ({ page }) => {
+  test('shows hero with platform title and CTAs', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.hero__title')).toBeVisible();
-    await expect(page.locator('.hero__actions .btn--primary')).toBeVisible();
-    await expect(page.locator('.hero__actions .btn--secondary')).toBeVisible();
-  });
-
-  test('hero CTA links are correct', async ({ page }) => {
-    await page.goto('/');
-    const helpBtn = page.locator('.hero__actions .btn--primary');
-    await expect(helpBtn).toHaveAttribute('href', '/elders');
-    const volunteerBtn = page.locator('.hero__actions .btn--secondary');
-    await expect(volunteerBtn).toHaveAttribute('href', '/volunteer');
+    await expect(page.locator('.hero__title')).toContainText('Minoo');
+    await expect(page.locator('.hero__actions .btn--primary')).toHaveAttribute('href', '/communities');
+    await expect(page.locator('.hero__actions .btn--secondary')).toHaveAttribute('href', '/people');
   });
 
   test('has skip link', async ({ page }) => {
@@ -22,16 +14,34 @@ test.describe('Homepage', () => {
     await expect(skipLink).toHaveAttribute('href', '#main-content');
   });
 
-  test('has how-it-works section', async ({ page }) => {
+  test('has Explore Minoo section with 5 cards', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'How It Works' })).toBeVisible();
+    const heading = page.getByRole('heading', { name: 'Explore Minoo' });
+    await expect(heading).toBeVisible();
+    const section = heading.locator('..');
+    await expect(section.locator('.card-grid .card')).toHaveCount(5);
   });
 
-  test('has explore section with cards', async ({ page }) => {
+  test('Explore section includes Elder Support card', async ({ page }) => {
     await page.goto('/');
-    const exploreHeading = page.getByRole('heading', { name: 'Explore' });
-    await expect(exploreHeading).toBeVisible();
-    const exploreSection = exploreHeading.locator('..');
-    await expect(exploreSection.locator('.card-grid .card')).toHaveCount(4);
+    await expect(page.locator('.card-grid a[href="/elders"] .card__title')).toContainText('Elder Support');
+  });
+
+  test('navigation has Programs dropdown', async ({ page }) => {
+    await page.goto('/');
+    const programsBtn = page.locator('.site-nav__dropdown-toggle');
+    await expect(programsBtn).toHaveText(/Programs/);
+    await programsBtn.click();
+    await expect(page.locator('.site-nav__dropdown-menu')).toBeVisible();
+    await expect(page.locator('.site-nav__dropdown-menu a[href="/elders"]')).toBeVisible();
+    await expect(page.locator('.site-nav__dropdown-menu a[href="/volunteer"]')).toBeVisible();
+  });
+
+  test('navigation shows primary items', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.site-nav a[href="/communities"]')).toBeVisible();
+    await expect(page.locator('.site-nav a[href="/people"]')).toBeVisible();
+    await expect(page.locator('.site-nav a[href="/teachings"]')).toBeVisible();
+    await expect(page.locator('.site-nav a[href="/events"]')).toBeVisible();
   });
 });
