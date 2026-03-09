@@ -1043,6 +1043,84 @@
   .form__submit--secondary:hover {
     background-color: var(--color-earth-800, oklch(0.35 0.05 75));
   }
+
+  /* Location bar */
+  .location-bar {
+    background: oklch(0.97 0.01 240);
+    border-block-end: 1px solid oklch(0.9 0.01 240);
+    font-size: var(--step--1);
+  }
+
+  .location-bar__inner {
+    max-inline-size: var(--content-max, 72rem);
+    margin-inline: auto;
+    padding-inline: var(--space-s);
+    padding-block: var(--space-2xs);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .location-bar__icon {
+    font-size: var(--step-0);
+  }
+
+  .location-bar__text {
+    flex: 1;
+  }
+
+  .location-bar__toggle {
+    background: none;
+    border: none;
+    color: oklch(0.5 0.15 240);
+    cursor: pointer;
+    font-size: inherit;
+    text-decoration: underline;
+    padding: 0;
+  }
+
+  .location-bar__toggle:hover {
+    color: oklch(0.4 0.15 240);
+  }
+
+  .location-bar__dropdown {
+    max-inline-size: var(--content-max, 72rem);
+    margin-inline: auto;
+    padding-inline: var(--space-s);
+    padding-block-end: var(--space-xs);
+  }
+
+  .location-bar__input {
+    inline-size: 100%;
+    max-inline-size: 24rem;
+    padding: var(--space-3xs) var(--space-2xs);
+    border: 1px solid oklch(0.8 0.01 240);
+    border-radius: 0.25rem;
+    font-size: inherit;
+  }
+
+  .location-bar__results {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-inline-size: 24rem;
+    max-block-size: 12rem;
+    overflow-y: auto;
+  }
+
+  .location-bar__result {
+    padding: var(--space-3xs) var(--space-2xs);
+    cursor: pointer;
+    border-block-end: 1px solid oklch(0.95 0.01 240);
+  }
+
+  .location-bar__result:hover {
+    background: oklch(0.95 0.02 240);
+  }
+
+  .location-bar__result small {
+    color: oklch(0.6 0.01 240);
+  }
 }
 
 @layer utilities {

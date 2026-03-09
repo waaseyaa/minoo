@@ -38,6 +38,8 @@
       </div>
     </header>
 
+    {% include "components/location-bar.html.twig" %}
+
     <main class="site-main">
       <div class="site-main__inner">
         {% block content %}{% endblock %}
@@ -56,6 +58,114 @@
       const open = nav?.classList.toggle('is-open');
       this.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+  </script>
+  <script>
+  (function() {
+    const bar = document.getElementById('location-bar');
+    if (!bar) return;
+    const textEl = document.getElementById('location-text');
+    const toggle = document.getElementById('location-toggle');
+    const dropdown = document.getElementById('location-dropdown');
+    const searchInput = document.getElementById('location-search');
+    const resultsList = document.getElementById('location-results');
+    const cookieName = bar.dataset.cookieName || 'minoo_location';
+
+    function readCookie() {
+      const match = document.cookie.split('; ').find(c => c.startsWith(cookieName + '='));
+      if (!match) return null;
+      try { return JSON.parse(decodeURIComponent(match.split('=').slice(1).join('='))); }
+      catch { return null; }
+    }
+
+    function render(loc) {
+      if (loc && loc.communityName) {
+        textEl.textContent = 'Near ' + loc.communityName;
+        toggle.textContent = 'Change';
+      } else {
+        textEl.textContent = 'Set your location';
+        toggle.textContent = '';
+      }
+    }
+
+    render(readCookie());
+
+    toggle.addEventListener('click', function() {
+      const open = dropdown.hidden;
+      dropdown.hidden = !open;
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) searchInput.focus();
+    });
+    textEl.addEventListener('click', function() {
+      if (!readCookie()) {
+        dropdown.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+        searchInput.focus();
+      }
+    });
+    textEl.style.cursor = 'pointer';
+
+    let debounce;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(debounce);
+      debounce = setTimeout(async () => {
+        const q = searchInput.value.trim();
+        if (q.length < 2) { resultsList.replaceChildren(); return; }
+        try {
+          const res = await fetch('/api/communities/autocomplete?q=' + encodeURIComponent(q));
+          const items = await res.json();
+          resultsList.replaceChildren();
+          items.forEach(c => {
+            const li = document.createElement('li');
+            li.className = 'location-bar__result';
+            li.setAttribute('role', 'option');
+            li.dataset.id = c.id;
+            li.textContent = c.name;
+            if (c.community_type) {
+              const small = document.createElement('small');
+              small.textContent = ' (' + c.community_type.replace('_', ' ') + ')';
+              li.appendChild(small);
+            }
+            resultsList.appendChild(li);
+          });
+        } catch {
+          resultsList.replaceChildren();
+          const li = document.createElement('li');
+          li.textContent = 'Error loading results';
+          resultsList.appendChild(li);
+        }
+      }, 300);
+    });
+
+    resultsList.addEventListener('click', async function(e) {
+      const li = e.target.closest('[data-id]');
+      if (!li) return;
+      try {
+        const res = await fetch('/api/location/set', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({community_id: parseInt(li.dataset.id, 10)})
+        });
+        const data = await res.json();
+        if (data.success) location.reload();
+      } catch {}
+    });
+
+    const loc = readCookie();
+    if ((!loc || loc.source === 'ip' || loc.source === 'none') && navigator.geolocation && !sessionStorage.getItem('minoo_geo_asked')) {
+      sessionStorage.setItem('minoo_geo_asked', '1');
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        try {
+          const res = await fetch('/api/location/update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
+          });
+          const data = await res.json();
+          if (data.success) render({communityName: data.community.name, source: 'browser'});
+        } catch {}
+      }, () => {}, {timeout: 10000, maximumAge: 300000});
+    }
+  })();
   </script>
   {% block scripts %}{% endblock %}
 </body>
