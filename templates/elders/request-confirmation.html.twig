@@ -13,9 +13,10 @@
     <div class="flow-lg">
       <div>
         <span class="card__badge card__badge--elder">Elder Support</span>
-        <h1>Your Request Has Been Received</h1>
+        <h1>Your request is in good hands</h1>
         <p class="card__meta">Reference: {{ entity.uuid() }}</p>
-        <p class="text-secondary">Thank you, {{ entity.get('name') }}. A community coordinator will review your request and a volunteer will reach out to you at {{ entity.get('phone') }}.</p>
+        <p class="text-secondary">Thank you, {{ entity.get('name') }}. A community coordinator will review your request and match you with a nearby volunteer. They'll reach out to you at {{ entity.get('phone') }} — usually within one to two business days.</p>
+        <p class="text-secondary">If your plans change, reach out to your community coordinator to cancel.</p>
       </div>
 
       <div class="card card--detail">
