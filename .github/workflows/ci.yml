@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish
+
+      - name: Check PHP syntax
+        run: find src -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  test:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout minoo
+        uses: actions/checkout@v4
+        with:
+          path: minoo
+
+      - name: Checkout waaseyaa framework
+        uses: actions/checkout@v4
+        with:
+          repository: waaseyaa/framework
+          path: waaseyaa
+          token: ${{ secrets.WAASEYAA_PAT }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, sqlite3, mbstring, xml
+          coverage: none
+
+      - name: Install dependencies
+        working-directory: minoo
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run unit tests
+        working-directory: minoo
+        run: ./vendor/bin/phpunit --testsuite MinooUnit
+
+      - name: Run integration tests
+        working-directory: minoo
+        run: ./vendor/bin/phpunit --testsuite MinooIntegration
+
+  playwright:
+    name: Playwright
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout minoo
+        uses: actions/checkout@v4
+        with:
+          path: minoo
+
+      - name: Checkout waaseyaa framework
+        uses: actions/checkout@v4
+        with:
+          repository: waaseyaa/framework
+          path: waaseyaa
+          token: ${{ secrets.WAASEYAA_PAT }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, sqlite3, mbstring, xml
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: minoo/package-lock.json
+
+      - name: Install PHP dependencies
+        working-directory: minoo
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Node dependencies
+        working-directory: minoo
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: minoo
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright smoke tests
+        working-directory: minoo
+        run: npx playwright test
