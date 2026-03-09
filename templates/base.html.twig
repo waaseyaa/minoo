@@ -196,7 +196,7 @@
             body: JSON.stringify({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
           });
           const data = await res.json();
-          if (data.success) render({communityName: data.community.name, source: 'browser'});
+          if (data.success) render({communityName: data.communityName, source: 'browser'});
         } catch {}
       }, () => {}, {timeout: 10000, maximumAge: 300000});
     }
