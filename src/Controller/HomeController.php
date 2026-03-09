@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Geo\CommunityFinder;
-use Minoo\Geo\LocationService;
+use Minoo\Domain\Geo\Service\CommunityFinder;
+use Minoo\Domain\Geo\Service\LocationService;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;

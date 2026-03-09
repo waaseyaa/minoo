@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
-use Minoo\Ingest\EntityMapper\DictionaryEntryMapper;
-use Minoo\Ingest\ValueObject\DictionaryEntryFields;
+use Minoo\Ingestion\EntityMapper\DictionaryEntryMapper;
+use Minoo\Ingestion\ValueObject\DictionaryEntryFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

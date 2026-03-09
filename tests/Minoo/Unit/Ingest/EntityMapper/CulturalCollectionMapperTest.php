@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
-use Minoo\Ingest\EntityMapper\CulturalCollectionMapper;
-use Minoo\Ingest\ValueObject\CulturalCollectionFields;
+use Minoo\Ingestion\EntityMapper\CulturalCollectionMapper;
+use Minoo\Ingestion\ValueObject\CulturalCollectionFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

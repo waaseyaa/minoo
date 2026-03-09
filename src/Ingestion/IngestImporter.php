@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingest;
+namespace Minoo\Ingestion;
 
 use Minoo\Entity\IngestLog;
-use Minoo\Ingest\EntityMapper\CulturalCollectionMapper;
-use Minoo\Ingest\EntityMapper\DictionaryEntryMapper;
-use Minoo\Ingest\EntityMapper\SpeakerMapper;
+use Minoo\Ingestion\EntityMapper\CulturalCollectionMapper;
+use Minoo\Ingestion\EntityMapper\DictionaryEntryMapper;
+use Minoo\Ingestion\EntityMapper\SpeakerMapper;
 
 final class IngestImporter
 {

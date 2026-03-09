@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Ingest;
 
 use Minoo\Entity\IngestLog;
-use Minoo\Ingest\IngestImporter;
-use Minoo\Ingest\PayloadValidator;
+use Minoo\Ingestion\IngestImporter;
+use Minoo\Ingestion\PayloadValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

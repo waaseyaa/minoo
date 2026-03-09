@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Geo;
 
-use Minoo\Geo\CommunityFinder;
+use Minoo\Domain\Geo\Service\CommunityFinder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

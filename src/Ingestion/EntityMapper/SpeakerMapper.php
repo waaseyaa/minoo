@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingest\EntityMapper;
+namespace Minoo\Ingestion\EntityMapper;
 
-use Minoo\Ingest\SlugGenerator;
-use Minoo\Ingest\ValueObject\SpeakerFields;
+use Minoo\Support\SlugGenerator;
+use Minoo\Ingestion\ValueObject\SpeakerFields;
 
 final class SpeakerMapper
 {

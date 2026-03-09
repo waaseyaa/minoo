@@ -9,10 +9,15 @@ Minoo is a **thin application** — custom entity types, access policies, servic
 ```
 minoo/
 ├── src/
-│   ├── Entity/        # 13 custom entity classes
-│   ├── Provider/      # 7 service providers (one per domain)
-│   ├── Access/        # 7 access policy classes
-│   └── Seed/          # TaxonomySeeder + ConfigSeeder
+│   ├── Access/        # 10 access policy classes
+│   ├── Controller/    # 10 HTTP controllers
+│   ├── Domain/        # Bounded contexts (Geo/)
+│   ├── Entity/        # 17 custom entity classes
+│   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
+│   ├── Provider/      # 13 service providers
+│   ├── Search/        # Search providers, autocomplete
+│   ├── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
+│   └── Support/       # Cross-cutting utilities (GeoDistance, SlugGenerator)
 ├── tests/Minoo/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
@@ -44,7 +49,9 @@ minoo/
 | `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
-| `src/Ingest/*` | `minoo:entities` | `docs/specs/ingestion-pipeline.md` |
+| `src/Ingestion/*` | `minoo:entities` | `docs/specs/ingestion-pipeline.md` |
+| `src/Domain/*` | — | (domain-specific bounded contexts) |
+| `src/Support/*` | — | (cross-cutting utilities) |
 | `src/Search/*`, `src/Provider/SearchServiceProvider.php` | — | `docs/specs/search.md` |
 | `templates/*`, `public/css/*` | — | `docs/specs/frontend-ssr.md` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |

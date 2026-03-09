@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Geo;
 
-use Minoo\Geo\GeoDistance;
+use Minoo\Support\GeoDistance;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

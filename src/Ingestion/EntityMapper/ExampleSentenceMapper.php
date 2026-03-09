@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingest\EntityMapper;
+namespace Minoo\Ingestion\EntityMapper;
 
-use Minoo\Ingest\ValueObject\ExampleSentenceFields;
+use Minoo\Ingestion\ValueObject\ExampleSentenceFields;
 
 final class ExampleSentenceMapper
 {

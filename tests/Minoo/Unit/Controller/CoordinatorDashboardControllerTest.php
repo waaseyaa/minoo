@@ -8,7 +8,7 @@ use Minoo\Controller\CoordinatorDashboardController;
 use Minoo\Entity\Community;
 use Minoo\Entity\ElderSupportRequest;
 use Minoo\Entity\Volunteer;
-use Minoo\Geo\VolunteerRanker;
+use Minoo\Domain\Geo\Service\VolunteerRanker;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

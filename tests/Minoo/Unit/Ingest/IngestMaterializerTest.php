@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Ingest;
 
 use Minoo\Entity\IngestLog;
-use Minoo\Ingest\IngestMaterializer;
-use Minoo\Ingest\MaterializationContext;
-use Minoo\Ingest\MaterializationResult;
+use Minoo\Ingestion\IngestMaterializer;
+use Minoo\Ingestion\MaterializationContext;
+use Minoo\Ingestion\MaterializationResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

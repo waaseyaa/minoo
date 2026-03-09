@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Geo;
+namespace Minoo\Support;
 
 final class GeoDistance
 {

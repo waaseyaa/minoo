@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
-use Minoo\Ingest\EntityMapper\WordPartMapper;
-use Minoo\Ingest\ValueObject\WordPartFields;
+use Minoo\Ingestion\EntityMapper\WordPartMapper;
+use Minoo\Ingestion\ValueObject\WordPartFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

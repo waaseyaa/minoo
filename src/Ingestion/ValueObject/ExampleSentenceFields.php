@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingest\ValueObject;
+namespace Minoo\Ingestion\ValueObject;
 
 final readonly class ExampleSentenceFields
 {

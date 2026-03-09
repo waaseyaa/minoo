@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Geo\VolunteerRanker;
+use Minoo\Domain\Geo\Service\VolunteerRanker;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -77,7 +77,7 @@ final class CoordinatorDashboardController
     /**
      * @param \Waaseyaa\Entity\ContentEntityBase[] $openRequests
      * @param \Waaseyaa\Entity\ContentEntityBase[] $volunteers
-     * @return array<int|string, \Minoo\Geo\RankedVolunteer[]>
+     * @return array<int|string, \Minoo\Domain\Geo\ValueObject\RankedVolunteer[]>
      */
     private function buildRankedMap(
         VolunteerRanker $ranker,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Geo;
+namespace Minoo\Domain\Geo\ValueObject;
 
 use Waaseyaa\Entity\ContentEntityBase;
 
