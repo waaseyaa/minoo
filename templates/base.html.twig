@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preload" href="/fonts/atkinson-hyperlegible-next-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/atkinson-hyperlegible-next-700.woff2" as="font" type="font/woff2" crossorigin>
   <title>{% block title %}Minoo{% endblock %}</title>
   <link rel="stylesheet" href="/css/minoo.css">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -13,7 +15,9 @@
   <div class="site">
     <header class="site-header">
       <div class="site-header__inner">
-        <a href="/" class="site-name">Minoo</a>
+        <a href="/" class="site-name" aria-label="Minoo — home">
+          <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-name__wordmark" width="100" height="28">
+        </a>
         <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
         <nav id="main-nav" aria-label="Main">
           <ul class="site-nav">
@@ -54,12 +58,18 @@
 
     <footer class="site-footer">
       <div class="site-footer__inner">
-        <p>&copy; {{ "now"|date("Y") }} Minoo</p>
-        <nav class="site-footer__links" aria-label="Legal">
-          <a href="/legal/privacy">Privacy</a>
-          <a href="/legal/terms">Terms</a>
-          <a href="/legal/accessibility">Accessibility</a>
-        </nav>
+        <div class="site-footer__brand">
+          <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-footer__wordmark" width="80" height="22">
+          <p class="site-footer__tagline">A living map of community</p>
+        </div>
+        <div class="site-footer__bottom">
+          <p>&copy; {{ "now"|date("Y") }} Minoo</p>
+          <nav class="site-footer__links" aria-label="Legal">
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/accessibility">Accessibility</a>
+          </nav>
+        </div>
       </div>
     </footer>
   </div>
