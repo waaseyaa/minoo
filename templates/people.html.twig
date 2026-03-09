@@ -16,6 +16,10 @@
       <h1>People</h1>
       <p>Community members, knowledge keepers, and service providers.</p>
 
+      {% if location is defined and location.hasLocation() %}
+        <p class="text-secondary">Showing results near {{ location.communityName }}. <a href="/people?all=1">Show all</a></p>
+      {% endif %}
+
       {% if people is defined and people|length > 0 %}
         <div class="people-search">
           <input type="search" class="form__input people-search__input" id="people-search" placeholder="Search people…" autocomplete="off">

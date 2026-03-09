@@ -56,6 +56,7 @@ final class PeopleController
         }
 
         $photoUrls = $mediaIds !== [] ? $this->resolvePhotoUrls($mediaIds) : [];
+        $location = $this->resolveLocation($request);
 
         $html = $this->twig->render('people.html.twig', [
             'path' => '/people',
@@ -63,6 +64,7 @@ final class PeopleController
             'photo_urls' => $photoUrls,
             'all_roles' => array_keys($allRoles),
             'all_offerings' => array_keys($allOfferings),
+            'location' => $location,
         ]);
 
         return new SsrResponse(content: $html);
@@ -100,6 +102,14 @@ final class PeopleController
             content: $html,
             statusCode: $person !== null ? 200 : 404,
         );
+    }
+
+    private function resolveLocation(HttpRequest $request): \Minoo\Geo\LocationContext
+    {
+        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
+        $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
+        $service = new \Minoo\Geo\LocationService($this->entityTypeManager, $config);
+        return $service->fromRequest($request);
     }
 
     /**
