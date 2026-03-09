@@ -17,24 +17,27 @@
         <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
         <nav id="main-nav" aria-label="Main">
           <ul class="site-nav">
-            <li><a href="/events"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>Events</a></li>
-            <li><a href="/groups"{% if path is defined and path starts with '/groups' %} aria-current="page"{% endif %}>Groups</a></li>
-            <li><a href="/teachings"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>Teachings</a></li>
-            <li><a href="/language"{% if path is defined and path starts with '/language' %} aria-current="page"{% endif %}>Language</a></li>
-            <li><a href="/people"{% if path is defined and path starts with '/people' %} aria-current="page"{% endif %}>People</a></li>
             <li><a href="/communities"{% if path is defined and path starts with '/communities' %} aria-current="page"{% endif %}>Communities</a></li>
-            <li><a href="/elders"{% if path is defined and path starts with '/elders' %} aria-current="page"{% endif %}>Elder Support</a></li>
-            <li><a href="/volunteer"{% if path is defined and path starts with '/volunteer' %} aria-current="page"{% endif %}>Volunteer</a></li>
-            <li><a href="/search"{% if path is defined and path starts with '/search' %} aria-current="page"{% endif %}>Search</a></li>
+            <li><a href="/people"{% if path is defined and path starts with '/people' %} aria-current="page"{% endif %}>People</a></li>
+            <li><a href="/teachings"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>Teachings</a></li>
+            <li><a href="/events"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>Events</a></li>
+            <li class="site-nav__dropdown">
+              <button class="site-nav__dropdown-toggle" aria-expanded="false"{% if path is defined and (path starts with '/elders' or path starts with '/volunteer') %} aria-current="true"{% endif %}>Programs</button>
+              <ul class="site-nav__dropdown-menu">
+                <li><a href="/elders"{% if path is defined and path starts with '/elders' %} aria-current="page"{% endif %}>Elder Support</a></li>
+                <li><a href="/volunteer"{% if path is defined and path starts with '/volunteer' %} aria-current="page"{% endif %}>Volunteer</a></li>
+              </ul>
+            </li>
+            <li class="site-nav__utility"><a href="/search"{% if path is defined and path starts with '/search' %} aria-current="page"{% endif %}>Search</a></li>
             {% if account is defined and account.isAuthenticated() %}
               {% if 'elder_coordinator' in account.getRoles() %}
-                <li><a href="/dashboard/coordinator"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>Dashboard</a></li>
+                <li class="site-nav__utility"><a href="/dashboard/coordinator"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>Dashboard</a></li>
               {% elseif 'volunteer' in account.getRoles() %}
-                <li><a href="/dashboard/volunteer"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>My Dashboard</a></li>
+                <li class="site-nav__utility"><a href="/dashboard/volunteer"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>My Dashboard</a></li>
               {% endif %}
-              <li><a href="/logout">Logout</a></li>
+              <li class="site-nav__utility"><a href="/logout">Logout</a></li>
             {% else %}
-              <li><a href="/login"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>Login</a></li>
+              <li class="site-nav__utility"><a href="/login"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>Login</a></li>
             {% endif %}
           </ul>
         </nav>
@@ -65,6 +68,20 @@
       const nav = document.getElementById('main-nav')?.querySelector('.site-nav');
       const open = nav?.classList.toggle('is-open');
       this.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.querySelectorAll('.site-nav__dropdown-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const menu = this.nextElementSibling;
+        const isOpen = menu.classList.toggle('is-open');
+        this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+    });
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.site-nav__dropdown-menu.is-open').forEach(function(m) {
+        m.classList.remove('is-open');
+        m.previousElementSibling.setAttribute('aria-expanded', 'false');
+      });
     });
   </script>
   <script>

@@ -1,15 +1,15 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Minoo — Supporting Elders, Strengthening Communities{% endblock %}
+{% block title %}Minoo — A Living Map of Community{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
     <section class="hero">
-      <h1 class="hero__title">Supporting Elders, Strengthening Communities</h1>
-      <p class="hero__subtitle">Connecting Elders with community volunteers for the everyday help that makes a difference — rides, groceries, yard work, and friendly visits.</p>
+      <h1 class="hero__title">Minoo: A Living Map of Community</h1>
+      <p class="hero__subtitle">Discover communities, people, teachings, and programs that connect and support where you live.</p>
       <div class="hero__actions">
-        <a href="/elders" class="btn btn--primary btn--lg">Request Help for an Elder</a>
-        <a href="/volunteer" class="btn btn--secondary btn--lg">Volunteer</a>
+        <a href="/communities" class="btn btn--primary btn--lg">Explore Communities</a>
+        <a href="/people" class="btn btn--secondary btn--lg">Browse Community Resources</a>
       </div>
     </section>
 
@@ -46,27 +46,8 @@
       </section>
     {% endif %}
 
-    <section class="portal-section flow">
-      <h2>How It Works</h2>
-      <div class="how-it-works">
-        <div class="how-it-works__step flow">
-          <h3>1. Request Help</h3>
-          <p>An Elder or someone on their behalf submits a request — a ride, help with groceries, yard work, or a friendly visit.</p>
-        </div>
-        <div class="how-it-works__step flow">
-          <h3>2. Get Matched</h3>
-          <p>A community coordinator reviews the request and connects the Elder with a nearby volunteer.</p>
-        </div>
-        <div class="how-it-works__step flow">
-          <h3>3. Receive Support</h3>
-          <p>The volunteer reaches out, arranges the details, and provides the help. The coordinator follows up.</p>
-        </div>
-      </div>
-      <p><a href="/how-it-works">Learn more about how it works</a></p>
-    </section>
-
     <section class="portal-section">
-      <h2>Explore</h2>
+      <h2>Explore Minoo</h2>
       <div class="card-grid">
         <a href="/communities" class="card">
           <div class="card__body">
@@ -80,16 +61,22 @@
             <p class="card__meta">Community resource people, Elders, and knowledge keepers</p>
           </div>
         </a>
+        <a href="/teachings" class="card">
+          <div class="card__body">
+            <h3 class="card__title">Teachings</h3>
+            <p class="card__meta">Traditional knowledge and cultural resources</p>
+          </div>
+        </a>
         <a href="/events" class="card">
           <div class="card__body">
             <h3 class="card__title">Events</h3>
             <p class="card__meta">Community gatherings and cultural events</p>
           </div>
         </a>
-        <a href="/teachings" class="card">
+        <a href="/elders" class="card">
           <div class="card__body">
-            <h3 class="card__title">Teachings</h3>
-            <p class="card__meta">Traditional knowledge and cultural resources</p>
+            <h3 class="card__title">Elder Support Program</h3>
+            <p class="card__meta">Request help for an Elder or volunteer your time</p>
           </div>
         </a>
       </div>
