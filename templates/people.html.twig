@@ -14,7 +14,7 @@
   {% if path == '/people' %}
     <div class="flow-lg">
       <h1>People</h1>
-      <p class="hero__subtitle">Community resource people, Elders, and knowledge keepers. Use the filters to find someone who can help.</p>
+      <p class="hero__subtitle">The Elders, Knowledge Keepers, language speakers, makers, and community leaders who carry our communities forward. Find someone near you — or discover what people in your region have to offer.</p>
 
       {% if location is defined and location.hasLocation() %}
         <p class="text-secondary">Showing results near {{ location.communityName }}. <a href="/people?all=1">Show all</a></p>
@@ -51,6 +51,10 @@
           <button class="people-filters__clear" id="filters-clear" type="button" hidden>Clear filters</button>
         </div>
 
+        <div class="mentor-callout">
+          <p><strong>Looking for a mentor?</strong> Many of our Elders and Knowledge Keepers are open to sharing their knowledge with the next generation. <a href="/people?role=Elder">Browse Elders</a> or <a href="/people?role=Knowledge+Keeper">Knowledge Keepers</a> to find someone near you.</p>
+        </div>
+
         <div class="card-grid" id="people-grid">
           {% for p in people %}
             {% include "components/resource-person-card.html.twig" with {
@@ -68,7 +72,7 @@
         </div>
         <p class="people-filters__empty" id="filters-empty" hidden>No people match your search or filters.</p>
       {% else %}
-        <p>No resource people found.</p>
+        <p>No community members found.</p>
       {% endif %}
     </div>
   {% elseif person is defined and person %}

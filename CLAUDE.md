@@ -122,6 +122,13 @@ bin/waaseyaa                                  # CLI
 bin/waaseyaa schema:check                     # Detect schema drift (missing columns)
 ```
 
+## Content Tone
+
+All user-facing copy follows `docs/content-tone-guide.md`:
+- **Voice:** First-person plural ("we," "our") or second-person ("you"). Never corporate third-person.
+- **Terminology:** Elder, Knowledge Keeper, Teachings (capitalized). "Community leaders and Knowledge Keepers" not "resource people."
+- **Philosophy:** Every page SHOWs real content, TELLs why it matters, INVITEs action.
+
 ## Code Style
 
 - PHP 8.3+, `declare(strict_types=1)` in every file
