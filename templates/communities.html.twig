@@ -14,7 +14,7 @@
   {% if path == '/communities' %}
     <div class="flow-lg">
       <h1>Communities</h1>
-      <p>First Nations and municipalities on the North Shore of Lake Huron.</p>
+      <p class="hero__subtitle">First Nations and municipalities across the region. {% if location is defined and location.hasLocation() %}Showing communities nearest to {{ location.communityName }}.{% else %}Set your location to see nearby communities first.{% endif %}</p>
 
       <div class="communities__filters">
         <a href="/communities" class="btn btn--sm{% if type_filter == '' %} btn--active{% endif %}">All</a>
