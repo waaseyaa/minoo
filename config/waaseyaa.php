@@ -66,6 +66,14 @@ return [
         'base_topics' => ['indigenous'],
     ],
 
+    // Location detection.
+    'location' => [
+        'geoip_db' => getenv('GEOIP_DB_PATH') ?: __DIR__ . '/../storage/geoip/GeoLite2-City.mmdb',
+        'default_coordinates' => [46.49, -81.00], // Sudbury fallback for dev/private IPs
+        'cookie_name' => 'minoo_location',
+        'cookie_ttl' => 86400 * 30, // 30 days
+    ],
+
     // AI embedding pipeline configuration.
     'ai' => [
         // 'ollama' or 'openai'. Empty disables embedding generation.

@@ -4,6 +4,7 @@
 !/files/.gitkeep
 *.sqlite
 .env
+storage/geoip/
 .phpunit.cache/
 .playwright-mcp/
 /*.png
