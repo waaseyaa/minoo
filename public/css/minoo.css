@@ -1457,6 +1457,70 @@
     margin-block-start: var(--space-md);
   }
 
+  /* Section headings with decorative line */
+  .section-heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 400;
+    position: relative;
+    padding-block-start: var(--space-sm);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-start: 50%;
+      transform: translateX(-50%);
+      inline-size: 3rem;
+      block-size: 3px;
+      background-color: var(--accent);
+      border-radius: var(--radius-full);
+    }
+  }
+
+  /* Explore section */
+  .explore-section {
+    background-color: var(--surface-warm);
+    margin-inline: calc(-1 * var(--gutter));
+    padding: var(--space-xl) var(--gutter);
+    text-align: center;
+  }
+
+  .explore-grid {
+    text-align: start;
+    margin-block-start: var(--space-md);
+  }
+
+  .explore-card {
+    max-inline-size: unset;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    border-inline-start-width: 1px;
+  }
+
+  .explore-card__icon {
+    inline-size: 2rem;
+    block-size: 2rem;
+    color: var(--accent);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .explore-card:hover .explore-card__icon {
+      transform: translateX(2px);
+    }
+  }
+
+  .explore-card--elder {
+    --card-accent: var(--domain-elders);
+  }
+
+  .explore-card--elder .explore-card__icon {
+    color: var(--domain-elders);
+  }
+
   /* CTA buttons */
   .btn {
     display: inline-flex;
