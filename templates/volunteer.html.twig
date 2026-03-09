@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Volunteer — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <section class="hero">
+      <h1 class="hero__title">Make a Difference in Your Community</h1>
+      <p class="hero__subtitle">Volunteer with Minoo to support Elders in your area. Give a ride, pick up groceries, help with chores, or simply visit.</p>
+      <div class="hero__actions">
+        <a href="/elders/volunteer" class="btn btn--primary btn--lg">Sign Up to Volunteer</a>
+        <a href="/login" class="btn btn--secondary btn--lg">Already Registered? Log In</a>
+      </div>
+    </section>
+
+    <section class="portal-section flow">
+      <h2>Why Volunteer?</h2>
+      <div class="how-it-works">
+        <div class="how-it-works__step flow">
+          <h3>Support Elders</h3>
+          <p>Help community Elders with everyday tasks they need assistance with — transportation, errands, yard work, or friendly conversation.</p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>Stay Connected</h3>
+          <p>Build meaningful relationships with Elders in your community. Every visit makes a difference.</p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>Flexible Commitment</h3>
+          <p>Volunteer on your own schedule. Set your availability and a coordinator will match you with requests that fit.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="portal-section flow">
+      <h2>How It Works</h2>
+      <ol class="how-it-works__list">
+        <li>Sign up with your name, phone, availability, and skills</li>
+        <li>A coordinator reviews your profile and matches you with Elder requests</li>
+        <li>You connect with the Elder and provide support</li>
+        <li>Mark the request complete when you're done</li>
+      </ol>
+      <p><a href="/how-it-works">Learn more about how it works</a></p>
+    </section>
+
+    <div class="safety-callout flow">
+      <h2>Safety First</h2>
+      <p>Your safety and the safety of Elders is our priority. All volunteers are matched through community coordinators who know the area.</p>
+      <p><a href="/safety">Read our safety guidelines</a></p>
+    </div>
+  </div>
+{% endblock %}
