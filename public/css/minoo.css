@@ -1121,6 +1121,11 @@
   .location-bar__result small {
     color: oklch(0.6 0.01 240);
   }
+
+  .card--nearest {
+    outline: 2px solid oklch(0.6 0.15 150);
+    outline-offset: -2px;
+  }
 }
 
 @layer utilities {

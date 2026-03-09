@@ -22,10 +22,14 @@
         <a href="/communities?type=municipality" class="btn btn--sm{% if type_filter == 'municipality' %} btn--active{% endif %}">Municipalities</a>
       </div>
 
+      {% if location is defined and location.hasLocation() %}
+        <p class="text-secondary">Sorted by distance from {{ location.communityName }}.</p>
+      {% endif %}
+
       {% if communities is defined and communities|length > 0 %}
         <div class="card-grid">
           {% for c in communities %}
-            <a href="/communities/{{ c.get('slug') }}" class="card card--community">
+            <a href="/communities/{{ c.get('slug') }}" class="card card--community{% if location is defined and location.hasLocation() and loop.first %} card--nearest{% endif %}">
               <div class="card__body">
                 {% set type_labels = {first_nation: 'First Nation', municipality: 'Municipality', town: 'Town', region: 'Region'} %}
                 <span class="card__badge card__badge--{{ c.get('community_type') }}">

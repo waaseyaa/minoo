@@ -37,10 +37,25 @@ final class CommunityController
         $ids = $queryBuilder->execute();
         $communities = $ids !== [] ? $storage->loadMultiple($ids) : [];
 
+        // Resolve location for proximity sorting
+        $location = $this->resolveLocation($request);
+
+        if ($location->hasLocation() && $location->latitude !== null) {
+            $finder = new \Minoo\Geo\CommunityFinder();
+            $sorted = $finder->findNearby(
+                $location->latitude,
+                $location->longitude,
+                array_values($communities),
+                count($communities),
+            );
+            $communities = array_map(static fn (array $r) => $r['community'], $sorted);
+        }
+
         $html = $this->twig->render('communities.html.twig', [
             'path' => '/communities',
             'communities' => array_values($communities),
             'type_filter' => $typeFilter,
+            'location' => $location,
         ]);
 
         return new SsrResponse(content: $html);
@@ -82,5 +97,13 @@ final class CommunityController
         );
 
         return new JsonResponse($client->suggest($term));
+    }
+
+    private function resolveLocation(HttpRequest $request): \Minoo\Geo\LocationContext
+    {
+        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
+        $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
+        $service = new \Minoo\Geo\LocationService($this->entityTypeManager, $config);
+        return $service->fromRequest($request);
     }
 }
