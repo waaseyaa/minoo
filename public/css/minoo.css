@@ -1304,15 +1304,15 @@
 
   /* Location bar */
   .location-bar {
-    background: oklch(0.97 0.01 240);
-    border-block-end: 1px solid oklch(0.9 0.01 240);
-    font-size: var(--step--1);
+    background: var(--surface-warm);
+    border-block-end: 1px solid var(--border);
+    font-size: var(--text-sm);
   }
 
   .location-bar__inner {
-    max-inline-size: var(--content-max, 72rem);
+    max-inline-size: var(--width-content);
     margin-inline: auto;
-    padding-inline: var(--space-s);
+    padding-inline: var(--gutter);
     padding-block: var(--space-2xs);
     display: flex;
     align-items: center;
@@ -1320,7 +1320,8 @@
   }
 
   .location-bar__icon {
-    font-size: var(--step-0);
+    color: var(--text-secondary);
+    flex-shrink: 0;
   }
 
   .location-bar__text {
@@ -1352,8 +1353,8 @@
     inline-size: 100%;
     max-inline-size: 24rem;
     padding: var(--space-3xs) var(--space-2xs);
-    border: 1px solid oklch(0.8 0.01 240);
-    border-radius: 0.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
     font-size: inherit;
   }
 
