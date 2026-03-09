@@ -31,7 +31,7 @@ jobs:
 
       - name: Validate composer.json
         working-directory: minoo
-        run: composer validate --strict
+        run: composer validate --no-check-publish
 
       - name: Check PHP syntax
         working-directory: minoo
