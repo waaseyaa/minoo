@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Ingest\EntityMapper;
 
-use Minoo\Ingest\EntityMapper\ExampleSentenceMapper;
-use Minoo\Ingest\ValueObject\ExampleSentenceFields;
+use Minoo\Ingestion\EntityMapper\ExampleSentenceMapper;
+use Minoo\Ingestion\ValueObject\ExampleSentenceFields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

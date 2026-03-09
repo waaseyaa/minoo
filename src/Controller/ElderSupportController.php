@@ -122,11 +122,11 @@ final class ElderSupportController
         );
     }
 
-    private function resolveLocation(HttpRequest $request): \Minoo\Geo\LocationContext
+    private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext
     {
         $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
         $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
-        $service = new \Minoo\Geo\LocationService($this->entityTypeManager, $config);
+        $service = new \Minoo\Domain\Geo\Service\LocationService($this->entityTypeManager, $config);
         return $service->fromRequest($request);
     }
 }

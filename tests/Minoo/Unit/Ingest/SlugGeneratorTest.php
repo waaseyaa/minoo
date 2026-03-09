@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Ingest;
 
-use Minoo\Ingest\SlugGenerator;
+use Minoo\Support\SlugGenerator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

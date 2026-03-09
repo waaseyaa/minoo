@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Integration;
 
-use Minoo\Ingest\IngestImporter;
-use Minoo\Ingest\IngestMaterializer;
-use Minoo\Ingest\PayloadValidator;
+use Minoo\Ingestion\IngestImporter;
+use Minoo\Ingestion\IngestMaterializer;
+use Minoo\Ingestion\PayloadValidator;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

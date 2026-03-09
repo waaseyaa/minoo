@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Geo;
+namespace Minoo\Domain\Geo\Service;
 
 use GeoIp2\Database\Reader;
+use Minoo\Domain\Geo\ValueObject\LocationContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;

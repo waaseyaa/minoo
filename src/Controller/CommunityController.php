@@ -41,7 +41,7 @@ final class CommunityController
         $location = $this->resolveLocation($request);
 
         if ($location->hasLocation() && $location->latitude !== null) {
-            $finder = new \Minoo\Geo\CommunityFinder();
+            $finder = new \Minoo\Domain\Geo\Service\CommunityFinder();
             $sorted = $finder->findNearby(
                 $location->latitude,
                 $location->longitude,
@@ -99,11 +99,11 @@ final class CommunityController
         return new JsonResponse($client->suggest($term));
     }
 
-    private function resolveLocation(HttpRequest $request): \Minoo\Geo\LocationContext
+    private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext
     {
         $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
         $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
-        $service = new \Minoo\Geo\LocationService($this->entityTypeManager, $config);
+        $service = new \Minoo\Domain\Geo\Service\LocationService($this->entityTypeManager, $config);
         return $service->fromRequest($request);
     }
 }

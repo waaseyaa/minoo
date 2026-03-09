@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingest\ValueObject;
+namespace Minoo\Ingestion\ValueObject;
 
-final readonly class CulturalCollectionFields
+final readonly class WordPartFields
 {
     public function __construct(
-        public string $title,
-        public string $description,
-        public ?string $sourceAttribution,
+        public string $form,
+        public string $type,
+        public string $definition,
         public string $sourceUrl,
         public string $slug,
         public int $status,
@@ -21,9 +21,9 @@ final readonly class CulturalCollectionFields
     public function toArray(): array
     {
         return [
-            'title' => $this->title,
-            'description' => $this->description,
-            'source_attribution' => $this->sourceAttribution,
+            'form' => $this->form,
+            'type' => $this->type,
+            'definition' => $this->definition,
             'source_url' => $this->sourceUrl,
             'slug' => $this->slug,
             'status' => $this->status,

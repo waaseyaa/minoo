@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingest;
+namespace Minoo\Ingestion;
 
 enum IngestStatus: string
 {

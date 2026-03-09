@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Geo;
 
-use Minoo\Geo\LocationContext;
+use Minoo\Domain\Geo\ValueObject\LocationContext;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

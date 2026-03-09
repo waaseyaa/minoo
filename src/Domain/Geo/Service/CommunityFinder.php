@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Geo;
+namespace Minoo\Domain\Geo\Service;
 
+use Minoo\Support\GeoDistance;
 use Waaseyaa\Entity\ContentEntityBase;
 
 final class CommunityFinder
