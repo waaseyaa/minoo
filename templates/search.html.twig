@@ -50,7 +50,7 @@
             {% set typesFacet = results.getFacet('content_types') %}
             {% if typesFacet and typesFacet.buckets %}
               <div class="search-filters__group">
-                <h3 class="search-filters__heading">Type</h3>
+                <h2 class="search-filters__heading">Type</h3>
                 <ul class="search-filters__list">
                   {% for bucket in typesFacet.buckets %}
                     <li>
@@ -68,7 +68,7 @@
             {% set sourcesFacet = results.getFacet('sources') %}
             {% if sourcesFacet and sourcesFacet.buckets %}
               <div class="search-filters__group">
-                <h3 class="search-filters__heading">Sources</h3>
+                <h2 class="search-filters__heading">Sources</h3>
                 <ul class="search-filters__list">
                   {% for bucket in sourcesFacet.buckets[:20] %}
                     <li>

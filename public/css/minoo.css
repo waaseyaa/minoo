@@ -357,6 +357,16 @@
     border-radius: var(--radius-full);
   }
 
+  a.card {
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s ease;
+  }
+
+  a.card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
   .card > * + * {
     margin-block-start: var(--space-2xs);
   }
@@ -1311,5 +1321,9 @@
 
   .prose {
     max-inline-size: var(--width-prose);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
   }
 }
