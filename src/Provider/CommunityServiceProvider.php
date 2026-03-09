@@ -47,6 +47,16 @@ final class CommunityServiceProvider extends ServiceProvider
     public function routes(WaaseyaaRouter $router): void
     {
         $router->addRoute(
+            'home',
+            RouteBuilder::create('/')
+                ->controller('Minoo\\Controller\\HomeController::index')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
             'communities.list',
             RouteBuilder::create('/communities')
                 ->controller('Minoo\\Controller\\CommunityController::list')

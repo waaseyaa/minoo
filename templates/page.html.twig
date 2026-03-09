@@ -1,8 +1,78 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Minoo{% endblock %}
+{% block title %}Minoo — Indigenous Knowledge Platform{% endblock %}
 
 {% block content %}
-  <h1>Minoo</h1>
-  <p>Path: {{ path }}</p>
+  <div class="flow-lg">
+    <div class="hero">
+      <h1>Minoo</h1>
+      <p class="text-secondary">Connecting Indigenous communities with knowledge, services, and each other.</p>
+    </div>
+
+    {% if location is defined and location.hasLocation() %}
+      <section class="flow">
+        <h2>Your Community</h2>
+        <p>You're near <a href="/communities">{{ location.communityName }}</a>.</p>
+      </section>
+
+      {% if nearby_communities is defined and nearby_communities|length > 0 %}
+        <section class="flow">
+          <h2>Nearby Communities</h2>
+          <div class="card-grid">
+            {% for item in nearby_communities %}
+              <a href="/communities/{{ item.community.get('slug') }}" class="card card--community">
+                <div class="card__body">
+                  <h3 class="card__title">{{ item.community.get('name') }}</h3>
+                  <p class="card__meta">{{ item.distanceKm|round }} km away</p>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+          <p><a href="/communities">View all communities</a></p>
+        </section>
+      {% endif %}
+
+      {% if events is defined and events|length > 0 %}
+        <section class="flow">
+          <h2>Upcoming Events</h2>
+          <div class="card-grid">
+            {% for event in events %}
+              {% include "components/event-card.html.twig" with {event: event} %}
+            {% endfor %}
+          </div>
+          <p><a href="/events">View all events</a></p>
+        </section>
+      {% endif %}
+    {% else %}
+      <section class="flow">
+        <h2>Explore</h2>
+        <div class="card-grid">
+          <a href="/communities" class="card">
+            <div class="card__body">
+              <h3 class="card__title">Communities</h3>
+              <p class="card__meta">First Nations and municipalities</p>
+            </div>
+          </a>
+          <a href="/elders" class="card">
+            <div class="card__body">
+              <h3 class="card__title">Elder Support</h3>
+              <p class="card__meta">Request help or volunteer</p>
+            </div>
+          </a>
+          <a href="/events" class="card">
+            <div class="card__body">
+              <h3 class="card__title">Events</h3>
+              <p class="card__meta">Community gatherings</p>
+            </div>
+          </a>
+          <a href="/teachings" class="card">
+            <div class="card__body">
+              <h3 class="card__title">Teachings</h3>
+              <p class="card__meta">Traditional knowledge</p>
+            </div>
+          </a>
+        </div>
+      </section>
+    {% endif %}
+  </div>
 {% endblock %}
