@@ -26,8 +26,23 @@ final class ElderSupportAccessPolicy implements AccessPolicyInterface
 
         return match ($operation) {
             'view' => AccessResult::allowed('Public view of specific entity by ID.'),
+            'update' => $this->resolveUpdateAccess($entity, $account),
             default => AccessResult::neutral('Non-admin cannot modify elder support entities.'),
         };
+    }
+
+    private function resolveUpdateAccess(EntityInterface $entity, AccountInterface $account): AccessResult
+    {
+        if (in_array('elder_coordinator', $account->getRoles(), true)) {
+            return AccessResult::allowed('Coordinator can update any elder support entity.');
+        }
+
+        $assignedVolunteerId = $entity->get('assigned_volunteer');
+        if ($account->id() !== 0 && $assignedVolunteerId === $account->id()) {
+            return AccessResult::allowed('Assigned volunteer can update their own request.');
+        }
+
+        return AccessResult::forbidden('Not authorized to update this elder support entity.');
     }
 
     public function createAccess(string $entityTypeId, string $bundle, AccountInterface $account): AccessResult
