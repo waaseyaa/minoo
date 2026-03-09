@@ -32,6 +32,7 @@ final class AuthServiceProvider extends ServiceProvider
             RouteBuilder::create('/login')
                 ->controller('Minoo\Controller\AuthController::submitLogin')
                 ->allowAll()
+                ->render()
                 ->methods('POST')
                 ->build(),
         );
@@ -51,6 +52,7 @@ final class AuthServiceProvider extends ServiceProvider
             RouteBuilder::create('/register')
                 ->controller('Minoo\Controller\AuthController::submitRegister')
                 ->allowAll()
+                ->render()
                 ->methods('POST')
                 ->build(),
         );
