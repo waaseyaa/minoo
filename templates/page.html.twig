@@ -1,78 +1,98 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Minoo — Indigenous Knowledge Platform{% endblock %}
+{% block title %}Minoo — Supporting Elders, Strengthening Communities{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
-    <div class="hero">
-      <h1>Minoo</h1>
-      <p class="text-secondary">Connecting Indigenous communities with knowledge, services, and each other.</p>
-    </div>
+    <section class="hero">
+      <h1 class="hero__title">Supporting Elders, Strengthening Communities</h1>
+      <p class="hero__subtitle">Minoo connects Indigenous Elders with volunteers for everyday support — rides, groceries, visits, and more.</p>
+      <div class="hero__actions">
+        <a href="/elders" class="btn btn--primary btn--lg">Request Help for an Elder</a>
+        <a href="/volunteer" class="btn btn--secondary btn--lg">Volunteer</a>
+      </div>
+    </section>
 
     {% if location is defined and location.hasLocation() %}
-      <section class="flow">
-        <h2>Your Community</h2>
-        <p>You're near <a href="/communities">{{ location.communityName }}</a>.</p>
-      </section>
+      <section class="portal-section flow">
+        <div class="portal-section__header">
+          <h2>Near {{ location.communityName }}</h2>
+        </div>
 
-      {% if nearby_communities is defined and nearby_communities|length > 0 %}
-        <section class="flow">
-          <h2>Nearby Communities</h2>
+        {% if nearby_communities is defined and nearby_communities|length > 0 %}
+          <h3>Nearby Communities</h3>
           <div class="card-grid">
             {% for item in nearby_communities %}
               <a href="/communities/{{ item.community.get('slug') }}" class="card card--community">
                 <div class="card__body">
-                  <h3 class="card__title">{{ item.community.get('name') }}</h3>
+                  <h4 class="card__title">{{ item.community.get('name') }}</h4>
                   <p class="card__meta">{{ item.distanceKm|round }} km away</p>
                 </div>
               </a>
             {% endfor %}
           </div>
-          <p><a href="/communities">View all communities</a></p>
-        </section>
-      {% endif %}
+        {% endif %}
 
-      {% if events is defined and events|length > 0 %}
-        <section class="flow">
-          <h2>Upcoming Events</h2>
+        {% if events is defined and events|length > 0 %}
+          <h3>Upcoming Events</h3>
           <div class="card-grid">
             {% for event in events %}
               {% include "components/event-card.html.twig" with {event: event} %}
             {% endfor %}
           </div>
-          <p><a href="/events">View all events</a></p>
-        </section>
-      {% endif %}
-    {% else %}
-      <section class="flow">
-        <h2>Explore</h2>
-        <div class="card-grid">
-          <a href="/communities" class="card">
-            <div class="card__body">
-              <h3 class="card__title">Communities</h3>
-              <p class="card__meta">First Nations and municipalities</p>
-            </div>
-          </a>
-          <a href="/elders" class="card">
-            <div class="card__body">
-              <h3 class="card__title">Elder Support</h3>
-              <p class="card__meta">Request help or volunteer</p>
-            </div>
-          </a>
-          <a href="/events" class="card">
-            <div class="card__body">
-              <h3 class="card__title">Events</h3>
-              <p class="card__meta">Community gatherings</p>
-            </div>
-          </a>
-          <a href="/teachings" class="card">
-            <div class="card__body">
-              <h3 class="card__title">Teachings</h3>
-              <p class="card__meta">Traditional knowledge</p>
-            </div>
-          </a>
-        </div>
+        {% endif %}
+
+        <p><a href="/communities">View all communities</a> · <a href="/events">View all events</a></p>
       </section>
     {% endif %}
+
+    <section class="portal-section flow">
+      <h2>How It Works</h2>
+      <div class="how-it-works">
+        <div class="how-it-works__step flow">
+          <h3>1. Request Help</h3>
+          <p>An Elder or someone on their behalf submits a request — a ride, help with groceries, yard work, or a friendly visit.</p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>2. Get Matched</h3>
+          <p>A community coordinator reviews the request and connects the Elder with a nearby volunteer.</p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>3. Receive Support</h3>
+          <p>The volunteer reaches out, arranges the details, and provides the help. The coordinator follows up.</p>
+        </div>
+      </div>
+      <p><a href="/how-it-works">Learn more about how it works</a></p>
+    </section>
+
+    <section class="portal-section">
+      <h2>Explore</h2>
+      <div class="card-grid">
+        <a href="/communities" class="card">
+          <div class="card__body">
+            <h3 class="card__title">Communities</h3>
+            <p class="card__meta">Find First Nations and municipalities across the region</p>
+          </div>
+        </a>
+        <a href="/people" class="card">
+          <div class="card__body">
+            <h3 class="card__title">People</h3>
+            <p class="card__meta">Community resource people, Elders, and knowledge keepers</p>
+          </div>
+        </a>
+        <a href="/events" class="card">
+          <div class="card__body">
+            <h3 class="card__title">Events</h3>
+            <p class="card__meta">Community gatherings and cultural events</p>
+          </div>
+        </a>
+        <a href="/teachings" class="card">
+          <div class="card__body">
+            <h3 class="card__title">Teachings</h3>
+            <p class="card__meta">Traditional knowledge and cultural resources</p>
+          </div>
+        </a>
+      </div>
+    </section>
   </div>
 {% endblock %}
