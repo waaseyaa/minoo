@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('/fonts/atkinson-hyperlegible-next-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  src: url('/fonts/atkinson-hyperlegible-next-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer reset, tokens, base, layout, components, utilities;
 
 @layer reset {
@@ -89,7 +105,7 @@
     --color-danger:    var(--color-berry-600);
 
     /* Typography */
-    --font-body:    system-ui, -apple-system, sans-serif;
+    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, sans-serif;
     --font-heading: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
     --font-mono:    ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
 
@@ -138,6 +154,29 @@
     --shadow-sm: 0 1px 2px oklch(0.25 0.02 70 / 0.06);
     --shadow-md: 0 2px 4px oklch(0.25 0.02 70 / 0.08), 0 4px 12px oklch(0.25 0.02 70 / 0.04);
     --shadow-lg: 0 4px 8px oklch(0.25 0.02 70 / 0.08), 0 8px 24px oklch(0.25 0.02 70 / 0.06);
+
+    /* Warm surfaces */
+    --surface-warm:    oklch(0.96 0.01 70);
+    --surface-dark:    var(--color-earth-900);
+    --text-on-dark:    oklch(0.92 0.005 70);
+    --text-muted:      oklch(0.55 0.015 70);
+
+    /* Domain accents */
+    --domain-events:    var(--color-water-600);
+    --domain-groups:    var(--color-forest-500);
+    --domain-teachings: var(--color-earth-700);
+    --domain-language:  var(--color-forest-700);
+    --domain-people:    oklch(0.45 0.06 160);
+    --domain-elders:    oklch(0.45 0.10 145);
+
+    /* Motion */
+    --ease-out:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+
+    /* Extended radii */
+    --radius-xl: 1.5rem;
   }
 }
 
@@ -157,7 +196,10 @@
     text-wrap: balance;
   }
 
-  h1 { font-size: var(--text-3xl); }
+  h1 {
+    font-size: var(--text-3xl);
+    letter-spacing: -0.02em;
+  }
   h2 { font-size: var(--text-2xl); }
   h3 { font-size: var(--text-xl); }
   h4 { font-size: var(--text-lg); }
