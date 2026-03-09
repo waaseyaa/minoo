@@ -58,12 +58,18 @@
 
     <footer class="site-footer">
       <div class="site-footer__inner">
-        <p>&copy; {{ "now"|date("Y") }} Minoo</p>
-        <nav class="site-footer__links" aria-label="Legal">
-          <a href="/legal/privacy">Privacy</a>
-          <a href="/legal/terms">Terms</a>
-          <a href="/legal/accessibility">Accessibility</a>
-        </nav>
+        <div class="site-footer__brand">
+          <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-footer__wordmark" width="80" height="22">
+          <p class="site-footer__tagline">A living map of community</p>
+        </div>
+        <div class="site-footer__bottom">
+          <p>&copy; {{ "now"|date("Y") }} Minoo</p>
+          <nav class="site-footer__links" aria-label="Legal">
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/accessibility">Accessibility</a>
+          </nav>
+        </div>
       </div>
     </footer>
   </div>
