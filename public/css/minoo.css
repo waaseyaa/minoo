@@ -555,6 +555,27 @@
                 box-shadow var(--duration-normal) var(--ease-out);
   }
 
+  .flash-message {
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid transparent;
+    border-inline-start-width: 4px;
+    font-weight: 600;
+    margin-block-end: var(--space-md);
+  }
+
+  .flash-message--success {
+    background-color: var(--color-forest-100);
+    border-color: var(--color-forest-500);
+    color: var(--color-forest-700);
+  }
+
+  .flash-message--error {
+    background-color: oklch(0.95 0.03 10);
+    border-color: var(--color-berry-600);
+    color: var(--color-berry-600);
+  }
+
   .card__title {
     font-family: var(--font-heading);
     font-size: var(--text-xl);

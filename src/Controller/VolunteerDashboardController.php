@@ -9,6 +9,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
+use Minoo\Support\Flash;
 
 final class VolunteerDashboardController
 {
@@ -39,11 +40,13 @@ final class VolunteerDashboardController
         $volStorage = $this->entityTypeManager->getStorage('volunteer');
         $volIds = $volStorage->getQuery()->condition('account_id', $account->id())->execute();
         $volunteer = $volIds !== [] ? $volStorage->load(reset($volIds)) : null;
+        $flash = Flash::consume();
 
         $html = $this->twig->render('dashboard/volunteer.html.twig', [
             'requests' => $requests,
             'grouped' => $grouped,
             'volunteer' => $volunteer,
+            'flash' => $flash,
         ]);
 
         return new SsrResponse(content: $html);
@@ -90,6 +93,7 @@ final class VolunteerDashboardController
         $storage = $this->entityTypeManager->getStorage('volunteer');
         $storage->save($volunteer);
 
+        Flash::set('success', 'Your profile has been updated.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 
@@ -107,6 +111,8 @@ final class VolunteerDashboardController
         $storage = $this->entityTypeManager->getStorage('volunteer');
         $storage->save($volunteer);
 
+        $message = $newStatus === 'active' ? 'You are now active.' : 'You are now unavailable.';
+        Flash::set('success', $message);
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 

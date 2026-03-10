@@ -59,6 +59,22 @@
         <dt>Type</dt><dd>{{ req.get('type') }}</dd>
         {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
       </dl>
+      {% if req.get('status') == 'assigned' %}
+      <details class="dashboard__reassign-details">
+        <summary class="form__link">Reassign</summary>
+        <form class="dashboard__assign-form" method="post" action="/elders/request/{{ req.id() }}/reassign">
+          <label class="form__label" for="reassign-volunteer-{{ req.id() }}">Reassign to</label>
+          <select class="form__select" name="volunteer_id" id="reassign-volunteer-{{ req.id() }}" required>
+            <option value="">Select volunteer...</option>
+            {% set ranked = ranked_by_request[req.id()] ?? [] %}
+            {% for rv in ranked %}
+            <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% if rv.exceedsMaxTravel %} (exceeds {{ rv.volunteer.get('max_travel_km') }} km limit){% endif %}{% elseif rv.volunteer.get('community') %} ({{ community_names[rv.volunteer.get('community')]|default(rv.volunteer.get('community')) }}){% endif %}</option>
+            {% endfor %}
+          </select>
+          <button class="form__submit" type="submit">Reassign</button>
+        </form>
+      </details>
+      {% endif %}
       <details class="dashboard__cancel-details">
         <summary class="form__link">Cancel Request</summary>
         <form method="post" action="/elders/request/{{ req.id() }}/cancel" class="dashboard__cancel-form">
