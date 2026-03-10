@@ -49,11 +49,12 @@ minoo/
 | `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
-| `src/Ingestion/*` | `minoo:entities` | `docs/specs/ingestion-pipeline.md` |
+| `src/Ingestion/*` | `minoo:ingestion` | `docs/specs/ingestion-pipeline.md` |
+| `src/Search/*`, `src/Provider/SearchServiceProvider.php` | `minoo:search` | `docs/specs/search.md` |
+| `src/Controller/*`, route definitions in `src/Provider/` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
+| `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/*` | — | (domain-specific bounded contexts) |
 | `src/Support/*` | — | (cross-cutting utilities) |
-| `src/Search/*`, `src/Provider/SearchServiceProvider.php` | — | `docs/specs/search.md` |
-| `templates/*`, `public/css/*` | — | `docs/specs/frontend-ssr.md` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | GitHub issues, milestones, new features, roadmap | — | `docs/specs/workflow.md` |
 
@@ -165,7 +166,12 @@ All work in this repo follows a GitHub-first workflow. See `docs/specs/workflow.
 ## Codified Context
 
 - **Tier 1 (Constitution):** This CLAUDE.md — orchestration, checklists, gotchas
-- **Tier 2 (Skill):** `skills/minoo/SKILL.md` — domain knowledge for all 5 entity domains
+- **Tier 2 (Skills):**
+  - `skills/minoo/SKILL.md` — entity types, access policies, service providers, seed data
+  - `skills/minoo-ingestion/SKILL.md` — ingestion pipeline, mappers, materializer
+  - `skills/minoo-search/SKILL.md` — NorthCloud search, autocomplete
+  - `skills/minoo-controllers/SKILL.md` — HTTP controllers, routing, request handling
+  - `skills/minoo-frontend-ssr/SKILL.md` — templates, CSS design system, SSR rendering
 - **Tier 3 (Specs):** Retrieved via `minoo_*` MCP tools:
   - `docs/specs/workflow.md` — GitHub workflow governance, versioning model, milestone structure
   - `docs/specs/entity-model.md` — entity types, access, seeds (318 lines)

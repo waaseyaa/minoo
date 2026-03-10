@@ -12,8 +12,9 @@ declare -A SPEC_MAP=(
   ["src/Provider/"]="docs/specs/entity-model.md"
   ["src/Access/"]="docs/specs/entity-model.md"
   ["src/Seed/"]="docs/specs/entity-model.md"
-  ["src/Ingest/"]="docs/specs/ingestion-pipeline.md"
+  ["src/Ingestion/"]="docs/specs/ingestion-pipeline.md"
   ["src/Search/"]="docs/specs/search.md"
+  ["src/Controller/"]="docs/specs/frontend-ssr.md"
   ["templates/"]="docs/specs/frontend-ssr.md"
   ["public/css/"]="docs/specs/frontend-ssr.md"
   ["tests/Minoo/"]="docs/specs/entity-model.md"
@@ -24,7 +25,11 @@ declare -A SKILL_MAP=(
   ["src/Provider/"]="skills/minoo/SKILL.md"
   ["src/Access/"]="skills/minoo/SKILL.md"
   ["src/Seed/"]="skills/minoo/SKILL.md"
-  ["src/Ingest/"]="skills/minoo/SKILL.md"
+  ["src/Ingestion/"]="skills/minoo-ingestion/SKILL.md"
+  ["src/Search/"]="skills/minoo-search/SKILL.md"
+  ["src/Controller/"]="skills/minoo-controllers/SKILL.md"
+  ["templates/"]="skills/minoo-frontend-ssr/SKILL.md"
+  ["public/css/"]="skills/minoo-frontend-ssr/SKILL.md"
 )
 
 echo "Checking last $COMMITS commits for drift..."
