@@ -82,6 +82,7 @@
 
     --color-sun-500: oklch(0.70 0.12 85);
 
+    --color-berry-100: oklch(0.95 0.03 10);
     --color-berry-600: oklch(0.50 0.12 10);
 
     /* Semantic aliases */
@@ -571,7 +572,7 @@
   }
 
   .flash-message--error {
-    background-color: oklch(0.95 0.03 10);
+    background-color: var(--color-berry-100);
     border-color: var(--color-berry-600);
     color: var(--color-berry-600);
   }

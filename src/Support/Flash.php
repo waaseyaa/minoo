@@ -6,9 +6,6 @@ namespace Minoo\Support;
 
 final class Flash
 {
-    /**
-     * @param array{type?: string, message?: string} $flash
-     */
     public static function set(string $type, string $message): void
     {
         $_SESSION['flash'] = [
