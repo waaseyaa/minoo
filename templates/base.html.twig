@@ -52,6 +52,13 @@
 
     <main class="site-main" id="main-content">
       <div class="site-main__inner">
+        {% if flash is defined and flash %}
+          {% set flash_type = flash.type|default('success') %}
+          {% set flash_role = flash_type == 'error' ? 'alert' : 'status' %}
+          <div class="flash-message flash-message--{{ flash_type }}" role="{{ flash_role }}" aria-live="polite">
+            {{ flash.message }}
+          </div>
+        {% endif %}
         {% block content %}{% endblock %}
       </div>
     </main>

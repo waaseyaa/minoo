@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
@@ -44,17 +45,30 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
+        Flash::set('success', 'Volunteer assigned successfully.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
     public function startRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        return $this->volunteerTransition($params, $account, 'assigned', 'in_progress');
+        return $this->volunteerTransition(
+            $params,
+            $account,
+            'assigned',
+            'in_progress',
+            'Request marked as in progress.',
+        );
     }
 
     public function completeRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        return $this->volunteerTransition($params, $account, 'in_progress', 'completed');
+        return $this->volunteerTransition(
+            $params,
+            $account,
+            'in_progress',
+            'completed',
+            'Request marked as complete. The coordinator will follow up.',
+        );
     }
 
     public function confirmRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -79,6 +93,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
+        Flash::set('success', 'Request marked as confirmed. Thank you for following up.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
@@ -108,6 +123,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
+        Flash::set('success', 'Request cancelled.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
@@ -135,6 +151,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
+        Flash::set('success', 'Request declined. The coordinator has been notified.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 
@@ -167,10 +184,17 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
+        Flash::set('success', 'Request reassigned.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
-    private function volunteerTransition(array $params, AccountInterface $account, string $fromStatus, string $toStatus): SsrResponse
+    private function volunteerTransition(
+        array $params,
+        AccountInterface $account,
+        string $fromStatus,
+        string $toStatus,
+        string $message,
+    ): SsrResponse
     {
         $esrid = (int) ($params['esrid'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
@@ -192,6 +216,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
+        Flash::set('success', $message);
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 }
