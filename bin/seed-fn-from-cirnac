@@ -61,14 +61,14 @@ if ($handle === false) {
     exit(1);
 }
 
-$header = fgetcsv($handle);
+$header = fgetcsv($handle, 0, ',', '"', '\\');
 if ($header === false) {
     fprintf(STDERR, "ERROR: Empty CSV.\n");
     exit(1);
 }
 
-// Normalize header keys.
-$header = array_map('trim', $header);
+// Normalize header keys — strip UTF-8 BOM and whitespace.
+$header = array_map(static fn(string $h) => trim($h, " \t\n\r\0\x0B\xEF\xBB\xBF"), $header);
 $colBandNumber = array_search('BAND_NUMBER', $header, true);
 $colBandName   = array_search('BAND_NAME', $header, true);
 $colLon        = array_search('LONGITUDE', $header, true);
@@ -82,7 +82,7 @@ if ($colBandNumber === false || $colBandName === false || $colLon === false || $
 // --- Process rows -----------------------------------------------------------
 
 $rows = [];
-while (($row = fgetcsv($handle)) !== false) {
+while (($row = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
     if (count($row) < 4) {
         continue;
     }

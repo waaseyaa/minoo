@@ -29,11 +29,25 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $dryRun = in_array('--dry-run', $argv, true);
 $baseUrl = 'https://northcloud.one';
+$token = '';
 
 foreach ($argv as $arg) {
     if (str_starts_with($arg, '--base-url=')) {
         $baseUrl = rtrim(substr($arg, 11), '/');
     }
+    if (str_starts_with($arg, '--token=')) {
+        $token = substr($arg, 8);
+    }
+}
+
+if ($token === '') {
+    $token = (string) getenv('NORTHCLOUD_TOKEN');
+}
+
+if ($token === '') {
+    fprintf(STDERR, "ERROR: Auth token required. Use --token=<jwt> or set NORTHCLOUD_TOKEN env var.\n");
+    fprintf(STDERR, "Generate one via the MCP get_auth_token tool or the NC auth API.\n");
+    exit(1);
 }
 
 // --- Boot Waaseyaa ----------------------------------------------------------
@@ -47,7 +61,12 @@ $storage = $entityTypeManager->getStorage('community');
 // --- Fetch all NC sources ---------------------------------------------------
 
 $context = stream_context_create([
-    'http' => ['method' => 'GET', 'timeout' => 15, 'ignore_errors' => true],
+    'http' => [
+        'method'  => 'GET',
+        'timeout' => 15,
+        'ignore_errors' => true,
+        'header'  => "Authorization: Bearer {$token}\r\nAccept: application/json\r\n",
+    ],
 ]);
 
 $allSources = [];
@@ -57,7 +76,7 @@ $offset = 0;
 fprintf(STDOUT, "Fetching sources from NorthCloud (%s)...\n", $baseUrl);
 
 while (true) {
-    $url = $baseUrl . '/api/v1/sources?limit=' . $limit . '&offset=' . $offset;
+    $url = $baseUrl . '/api/sources?limit=' . $limit . '&offset=' . $offset;
     $json = @file_get_contents($url, false, $context);
 
     if ($json === false) {
@@ -194,6 +213,13 @@ function normalizeName(string $name): string
 /**
  * Find the best-matching community entity for a given NC source name.
  * Returns null if no match exceeds the similarity threshold.
+ *
+ * Two-gate approach:
+ *  1. First significant word of source must appear in community name (or vice versa)
+ *  2. Overall similar_text score >= 82%
+ *
+ * This prevents "Assembly of First Nations" matching "West Moberly First Nations"
+ * or "Bad River Band" matching "Bear River".
  */
 function findBestMatch(string $sourceName, array $nameMap): ?object
 {
@@ -204,11 +230,18 @@ function findBestMatch(string $sourceName, array $nameMap): ?object
         return $nameMap[$normalizedSource];
     }
 
-    // Fuzzy match using similar_text — threshold 70%.
+    // First significant word of the source name (skip short stop words).
+    $sourceFirstWord = firstSignificantWord($normalizedSource);
+
     $bestScore = 0.0;
     $bestEntity = null;
 
     foreach ($nameMap as $normalizedCommunity => $entity) {
+        // Gate 1: first significant word of source must appear somewhere in community name.
+        if ($sourceFirstWord !== '' && !str_contains($normalizedCommunity, $sourceFirstWord)) {
+            continue;
+        }
+
         similar_text($normalizedSource, $normalizedCommunity, $percent);
         if ($percent > $bestScore) {
             $bestScore = $percent;
@@ -216,10 +249,22 @@ function findBestMatch(string $sourceName, array $nameMap): ?object
         }
     }
 
-    // Require 70% similarity to avoid false positives.
-    if ($bestScore >= 70.0) {
+    // Gate 2: require 90% similarity to avoid false positives on short/similar names.
+    if ($bestScore >= 90.0) {
         return $bestEntity;
     }
 
     return null;
+}
+
+function firstSignificantWord(string $normalized): string
+{
+    $stopWords = ['of', 'the', 'and', 'de', 'la', 'le', 'du'];
+    $words = explode(' ', $normalized);
+    foreach ($words as $word) {
+        if (strlen($word) >= 3 && !in_array($word, $stopWords, true)) {
+            return $word;
+        }
+    }
+    return '';
 }
