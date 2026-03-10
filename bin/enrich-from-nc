@@ -1,0 +1,225 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Enrich First Nations community records with NorthCloud source metadata.
+ *
+ * Paginates /api/v1/sources from NorthCloud, filters to indigenous-related
+ * sources, fuzzy-matches to existing Community entities, and updates the
+ * website field for matched records.
+ *
+ * Tracks: waaseyaa/minoo#170
+ *
+ * Usage:
+ *   bin/enrich-from-nc [--dry-run] [--base-url=https://northcloud.one]
+ *
+ * What this adds to matched community records:
+ *   website (from NC source url)
+ *
+ * What remains blocked until v0.14.5-NC:
+ *   inac_id (authoritative), treaty, language_group, reserve_name, lat/lon (precise),
+ *   population, statcan_csd
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+// --- Parse arguments --------------------------------------------------------
+
+$dryRun = in_array('--dry-run', $argv, true);
+$baseUrl = 'https://northcloud.one';
+
+foreach ($argv as $arg) {
+    if (str_starts_with($arg, '--base-url=')) {
+        $baseUrl = rtrim(substr($arg, 11), '/');
+    }
+}
+
+// --- Boot Waaseyaa ----------------------------------------------------------
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$storage = $entityTypeManager->getStorage('community');
+
+// --- Fetch all NC sources ---------------------------------------------------
+
+$context = stream_context_create([
+    'http' => ['method' => 'GET', 'timeout' => 15, 'ignore_errors' => true],
+]);
+
+$allSources = [];
+$limit = 100;
+$offset = 0;
+
+fprintf(STDOUT, "Fetching sources from NorthCloud (%s)...\n", $baseUrl);
+
+while (true) {
+    $url = $baseUrl . '/api/v1/sources?limit=' . $limit . '&offset=' . $offset;
+    $json = @file_get_contents($url, false, $context);
+
+    if ($json === false) {
+        fprintf(STDERR, "ERROR: Failed to fetch sources at offset %d.\n", $offset);
+        exit(1);
+    }
+
+    $data = json_decode($json, true);
+    if (!is_array($data) || !isset($data['sources'])) {
+        fprintf(STDERR, "ERROR: Unexpected response at offset %d.\n", $offset);
+        exit(1);
+    }
+
+    $sources = $data['sources'];
+    if ($sources === []) {
+        break;
+    }
+
+    array_push($allSources, ...$sources);
+
+    $total = (int) ($data['total'] ?? 0);
+    $offset += $limit;
+    if ($offset >= $total) {
+        break;
+    }
+}
+
+fprintf(STDOUT, "Fetched %d total sources from NorthCloud.\n", count($allSources));
+
+// --- Filter to indigenous-related sources -----------------------------------
+
+$indigenousKeywords = [
+    'First Nation', 'Nation', 'Band', 'Tribe', 'Tribal',
+    'Inuit', 'Métis', 'Metis', 'Indigenous', 'Aboriginal',
+    'Anishinaabe', 'Cree', 'Ojibwe', 'Ojibway', 'Dene',
+    'Haudenosaunee', 'Mi\'kmaq', 'Mohawk', 'Algonquin',
+];
+
+$indigenousSources = array_filter($allSources, static function (array $source) use ($indigenousKeywords): bool {
+    $name = $source['name'] ?? '';
+    foreach ($indigenousKeywords as $kw) {
+        if (stripos($name, $kw) !== false) {
+            return true;
+        }
+    }
+    return false;
+});
+
+$indigenousSources = array_values($indigenousSources);
+fprintf(STDOUT, "Filtered to %d indigenous-related sources.\n\n", count($indigenousSources));
+
+if ($dryRun) {
+    fprintf(STDOUT, "[DRY RUN] No changes will be written.\n\n");
+}
+
+// --- Load all existing community entities -----------------------------------
+
+// Load all community IDs and build a name→entity map for fuzzy matching.
+$allIds = $storage->getQuery()->execute();
+$nameMap = []; // normalized name => entity
+
+foreach ($allIds as $id) {
+    $entity = $storage->load($id);
+    if ($entity === null) {
+        continue;
+    }
+    $normalized = normalizeName((string) $entity->get('name'));
+    $nameMap[$normalized] = $entity;
+}
+
+fprintf(STDOUT, "Loaded %d existing community records for matching.\n\n", count($nameMap));
+
+// --- Match and enrich -------------------------------------------------------
+
+$matched = 0;
+$unmatched = 0;
+$updated = 0;
+$now = time();
+
+foreach ($indigenousSources as $source) {
+    $sourceName = (string) ($source['name'] ?? '');
+    $sourceUrl  = (string) ($source['url'] ?? '');
+    $active     = (bool) ($source['active'] ?? false);
+
+    if ($sourceName === '' || $sourceUrl === '') {
+        continue;
+    }
+
+    $entity = findBestMatch($sourceName, $nameMap);
+
+    if ($entity === null) {
+        fprintf(STDOUT, "  [NO MATCH] %s\n", $sourceName);
+        $unmatched++;
+        continue;
+    }
+
+    $communityName = (string) $entity->get('name');
+    fprintf(STDOUT, "  [MATCH] NC: %s → Community: %s\n", $sourceName, $communityName);
+    $matched++;
+
+    if ($dryRun) {
+        fprintf(STDOUT, "    Would set: website=%s\n", $sourceUrl);
+        continue;
+    }
+
+    $entity->set('website', $sourceUrl);
+    $entity->set('updated_at', $now);
+
+    // Promote to published if NC source is active.
+    if ($active) {
+        $entity->set('status', 1);
+    }
+
+    $storage->save($entity);
+    $updated++;
+}
+
+fprintf(STDOUT, "\nEnrichment complete: %d matched, %d updated, %d unmatched.\n", $matched, $updated, $unmatched);
+
+if ($unmatched > 0) {
+    fprintf(STDOUT, "Tip: Unmatched sources may be regional councils or NGOs — not band-level communities.\n");
+}
+
+// --- Helpers ----------------------------------------------------------------
+
+function normalizeName(string $name): string
+{
+    // Strip common suffixes that differ between NC source names and CIRNAC band names.
+    $name = preg_replace('/\b(First Nation|Nation|Band|Tribe|Tribal Council|Council|Community|Government|Administration|Office)\b/i', '', $name) ?? $name;
+    $name = preg_replace('/[^a-z0-9\s]/i', ' ', $name) ?? $name;
+    return strtolower(trim(preg_replace('/\s+/', ' ', $name) ?? $name));
+}
+
+/**
+ * Find the best-matching community entity for a given NC source name.
+ * Returns null if no match exceeds the similarity threshold.
+ */
+function findBestMatch(string $sourceName, array $nameMap): ?object
+{
+    $normalizedSource = normalizeName($sourceName);
+
+    // Exact match first.
+    if (isset($nameMap[$normalizedSource])) {
+        return $nameMap[$normalizedSource];
+    }
+
+    // Fuzzy match using similar_text — threshold 70%.
+    $bestScore = 0.0;
+    $bestEntity = null;
+
+    foreach ($nameMap as $normalizedCommunity => $entity) {
+        similar_text($normalizedSource, $normalizedCommunity, $percent);
+        if ($percent > $bestScore) {
+            $bestScore = $percent;
+            $bestEntity = $entity;
+        }
+    }
+
+    // Require 70% similarity to avoid false positives.
+    if ($bestScore >= 70.0) {
+        return $bestEntity;
+    }
+
+    return null;
+}
