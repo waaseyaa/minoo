@@ -207,6 +207,65 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $this->assertSame(403, $response->statusCode);
     }
 
+    #[Test]
+    public function decline_clears_volunteer_and_sets_open(): void
+    {
+        $entity = new ElderSupportRequest(['esrid' => 1, 'name' => 'Mary', 'phone' => '555', 'type' => 'ride', 'status' => 'assigned', 'assigned_volunteer' => 5]);
+        $this->requestStorage->method('load')->with(1)->willReturn($entity);
+        $this->requestStorage->expects($this->once())->method('save');
+
+        $account = $this->createVolunteerAccount(5);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->declineRequest(['esrid' => '1'], [], $account, $this->request);
+
+        $this->assertSame(302, $response->statusCode);
+        $this->assertSame('open', $entity->get('status'));
+        $this->assertNull($entity->get('assigned_volunteer'));
+        $this->assertNull($entity->get('assigned_at'));
+    }
+
+    #[Test]
+    public function decline_returns_403_for_wrong_volunteer(): void
+    {
+        $entity = new ElderSupportRequest(['esrid' => 1, 'name' => 'Mary', 'phone' => '555', 'type' => 'ride', 'status' => 'assigned', 'assigned_volunteer' => 5]);
+        $this->requestStorage->method('load')->with(1)->willReturn($entity);
+
+        $account = $this->createVolunteerAccount(99);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->declineRequest(['esrid' => '1'], [], $account, $this->request);
+
+        $this->assertSame(403, $response->statusCode);
+    }
+
+    #[Test]
+    public function decline_returns_422_for_wrong_status(): void
+    {
+        $entity = new ElderSupportRequest(['esrid' => 1, 'name' => 'Mary', 'phone' => '555', 'type' => 'ride', 'status' => 'in_progress', 'assigned_volunteer' => 5]);
+        $this->requestStorage->method('load')->with(1)->willReturn($entity);
+
+        $account = $this->createVolunteerAccount(5);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->declineRequest(['esrid' => '1'], [], $account, $this->request);
+
+        $this->assertSame(422, $response->statusCode);
+    }
+
+    #[Test]
+    public function decline_returns_404_for_missing_request(): void
+    {
+        $this->requestStorage->method('load')->with(99)->willReturn(null);
+
+        $account = $this->createVolunteerAccount(5);
+
+        $controller = new ElderSupportWorkflowController($this->entityTypeManager);
+        $response = $controller->declineRequest(['esrid' => '99'], [], $account, $this->request);
+
+        $this->assertSame(404, $response->statusCode);
+    }
+
     private function createCoordinatorAccount(): AccountInterface
     {
         return new class implements AccountInterface {

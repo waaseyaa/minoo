@@ -164,6 +164,15 @@ final class ElderSupportServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
+            'elder.decline',
+            RouteBuilder::create('/elders/request/{esrid}/decline')
+                ->controller('Minoo\Controller\ElderSupportWorkflowController::declineRequest')
+                ->requireRole('volunteer')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
             'elder.reassign',
             RouteBuilder::create('/elders/request/{esrid}/reassign')
                 ->controller('Minoo\Controller\ElderSupportWorkflowController::reassignVolunteer')

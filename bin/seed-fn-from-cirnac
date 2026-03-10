@@ -1,0 +1,233 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Seed First Nations community records from the CIRNAC open data CSV.
+ *
+ * Source: https://open.canada.ca/data/en/dataset/b6567c5c-8339-4055-99fa-63f92114d9e4
+ * Tracks: waaseyaa/minoo#169
+ *
+ * Usage:
+ *   bin/seed-fn-from-cirnac [--dry-run] [--csv=path/to/fn.csv]
+ *
+ * The CSV is committed at data/cirnac/fn.csv. Columns:
+ *   BAND_NUMBER, BAND_NAME, LONGITUDE, LATITUDE, COORD_SYS
+ *
+ * Fields set by this script:
+ *   name, slug, inac_id, latitude, longitude, community_type, province (inferred), status=false
+ *
+ * Fields left empty (require v0.14.5-NC or enrichment):
+ *   treaty, language_group, reserve_name, statcan_csd, nation, population, website
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+// --- Parse arguments --------------------------------------------------------
+
+$dryRun = in_array('--dry-run', $argv, true);
+$csvPath = null;
+
+foreach ($argv as $arg) {
+    if (str_starts_with($arg, '--csv=')) {
+        $csvPath = substr($arg, 6);
+    }
+}
+
+if ($csvPath === null) {
+    $csvPath = dirname(__DIR__) . '/data/cirnac/fn.csv';
+}
+
+if (!file_exists($csvPath)) {
+    fprintf(STDERR, "ERROR: CSV not found at %s\n", $csvPath);
+    fprintf(STDERR, "Download from: https://open.canada.ca/data/en/dataset/b6567c5c-8339-4055-99fa-63f92114d9e4\n");
+    exit(1);
+}
+
+// --- Boot Waaseyaa ----------------------------------------------------------
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$storage = $entityTypeManager->getStorage('community');
+
+// --- Load CSV ---------------------------------------------------------------
+
+$handle = fopen($csvPath, 'r');
+if ($handle === false) {
+    fprintf(STDERR, "ERROR: Cannot open CSV: %s\n", $csvPath);
+    exit(1);
+}
+
+$header = fgetcsv($handle, 0, ',', '"', '\\');
+if ($header === false) {
+    fprintf(STDERR, "ERROR: Empty CSV.\n");
+    exit(1);
+}
+
+// Normalize header keys — strip UTF-8 BOM and whitespace.
+$header = array_map(static fn(string $h) => trim($h, " \t\n\r\0\x0B\xEF\xBB\xBF"), $header);
+$colBandNumber = array_search('BAND_NUMBER', $header, true);
+$colBandName   = array_search('BAND_NAME', $header, true);
+$colLon        = array_search('LONGITUDE', $header, true);
+$colLat        = array_search('LATITUDE', $header, true);
+
+if ($colBandNumber === false || $colBandName === false || $colLon === false || $colLat === false) {
+    fprintf(STDERR, "ERROR: Unexpected CSV columns: %s\n", implode(', ', $header));
+    exit(1);
+}
+
+// --- Process rows -----------------------------------------------------------
+
+$rows = [];
+while (($row = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
+    if (count($row) < 4) {
+        continue;
+    }
+    $rows[] = [
+        'band_number' => trim($row[$colBandNumber]),
+        'band_name'   => trim($row[$colBandName]),
+        'longitude'   => (float) $row[$colLon],
+        'latitude'    => (float) $row[$colLat],
+    ];
+}
+fclose($handle);
+
+fprintf(STDOUT, "Loaded %d First Nations from CSV.\n", count($rows));
+
+if ($dryRun) {
+    fprintf(STDOUT, "[DRY RUN] No changes will be written.\n\n");
+}
+
+// --- Upsert entities --------------------------------------------------------
+
+$created = 0;
+$updated = 0;
+$skipped = 0;
+$now = time();
+
+foreach ($rows as $row) {
+    $inacId = $row['band_number'];
+    $name   = $row['band_name'];
+    $lat    = $row['latitude'];
+    $lon    = $row['longitude'];
+
+    if ($inacId === '' || $name === '') {
+        $skipped++;
+        continue;
+    }
+
+    $slug     = makeSlug($name);
+    $province = inferProvince($lat, $lon);
+
+    $values = [
+        'name'           => $name,
+        'slug'           => $slug,
+        'inac_id'        => $inacId,
+        'latitude'       => $lat,
+        'longitude'      => $lon,
+        'community_type' => 'first_nation',
+        'province'       => $province,
+        'status'         => 1, // CIRNAC is authoritative — publish immediately
+        'updated_at'     => $now,
+    ];
+
+    // Upsert by inac_id (authoritative), fall back to slug match.
+    $existingIds = $storage->getQuery()->condition('inac_id', $inacId)->execute();
+
+    if ($dryRun) {
+        $action = $existingIds !== [] ? 'UPDATE' : 'CREATE';
+        fprintf(STDOUT, "  [%s] %s (inac_id=%s, province=%s)\n", $action, $name, $inacId, $province ?: '?');
+        continue;
+    }
+
+    if ($existingIds !== []) {
+        $entity = $storage->load(reset($existingIds));
+        if ($entity !== null) {
+            foreach ($values as $key => $value) {
+                $entity->set($key, $value);
+            }
+            $storage->save($entity);
+            $updated++;
+        }
+    } else {
+        $values['created_at'] = $now;
+        $entity = new Minoo\Entity\Community($values);
+        $storage->save($entity);
+        $created++;
+    }
+}
+
+if ($dryRun) {
+    fprintf(STDOUT, "\nDry run complete. %d rows processed, %d skipped.\n", count($rows), $skipped);
+} else {
+    fprintf(STDOUT, "Seed complete: %d created, %d updated, %d skipped.\n", $created, $updated, $skipped);
+}
+
+// --- Helpers ----------------------------------------------------------------
+
+function makeSlug(string $name): string
+{
+    $slug = strtolower($name);
+    $slug = preg_replace("/[^a-z0-9]+/", '-', $slug) ?? $slug;
+    return trim($slug, '-');
+}
+
+/**
+ * Infer Canadian province/territory from coordinates.
+ * Accuracy ~80% — these are approximate bounding boxes, not authoritative borders.
+ * Records are marked status=false so manual review catches errors.
+ */
+function inferProvince(float $lat, float $lon): string
+{
+    // Territories (north of 60°N).
+    if ($lat >= 60.0) {
+        if ($lon < -124.0) {
+            return 'YT';
+        }
+        if ($lon <= -102.0) {
+            return 'NT';
+        }
+        return 'NU';
+    }
+
+    // Provinces (south of 60°N), west to east.
+    if ($lon < -114.0) {
+        return 'BC';
+    }
+    if ($lon < -110.0) {
+        return 'AB';
+    }
+    if ($lon < -101.4) {
+        return 'SK';
+    }
+    if ($lon < -95.2) {
+        return 'MB';
+    }
+    if ($lon < -74.0) {
+        // Distinguish ON from northern QC overlap: QC extends to ~-79 in the south.
+        if ($lat >= 46.0 && $lon < -79.0) {
+            return 'ON';
+        }
+        if ($lat < 46.0 && $lon < -74.5) {
+            return 'ON';
+        }
+        return 'QC';
+    }
+    if ($lon < -59.7) {
+        if ($lon > -67.0 && $lat < 48.0) {
+            return 'NB';
+        }
+        if ($lon > -66.5 && $lat < 47.1) {
+            return 'NS';
+        }
+        if ($lon > -64.5 && $lat < 47.1) {
+            return 'PE';
+        }
+        return 'QC';
+    }
+
+    return 'NL';
+}

@@ -38,6 +38,19 @@ test.describe('Elders Portal', () => {
     await expect(page.locator('#consent')).toBeVisible();
   });
 
+  test('submitting empty request form shows validation errors', async ({ page }) => {
+    await page.goto('/elders/request');
+    await page.locator('button[type="submit"]').click();
+    // HTML5 required fields prevent submission in browser — name field should be focused/invalid
+    // The form has required attributes on name, phone, type
+    const nameInput = page.locator('#name');
+    const phoneInput = page.locator('#phone');
+    const typeSelect = page.locator('#type');
+    await expect(nameInput).toHaveAttribute('required', '');
+    await expect(phoneInput).toHaveAttribute('required', '');
+    await expect(typeSelect).toHaveAttribute('required', '');
+  });
+
   test('request form has privacy note', async ({ page }) => {
     await page.goto('/elders/request');
     await expect(page.locator('.privacy-note')).toBeVisible();
