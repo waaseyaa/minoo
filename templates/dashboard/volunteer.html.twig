@@ -32,7 +32,9 @@
         <h3 class="card__title">{{ req.get('name') }}</h3>
         <dl class="card__meta">
           <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+          {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
           {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+          {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
         </dl>
         <form method="post" action="/elders/request/{{ req.id() }}/start">
           <button class="form__submit" type="submit">Mark In Progress</button>
@@ -51,7 +53,9 @@
         <h3 class="card__title">{{ req.get('name') }}</h3>
         <dl class="card__meta">
           <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+          {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
           {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+          {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
         </dl>
         <form method="post" action="/elders/request/{{ req.id() }}/complete">
           <button class="form__submit" type="submit">Mark Complete</button>
