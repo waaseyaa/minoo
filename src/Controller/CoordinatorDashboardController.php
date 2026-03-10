@@ -52,6 +52,10 @@ final class CoordinatorDashboardController
             ->execute();
 
         $volunteers = $volunteerIds !== [] ? $volunteerStorage->loadMultiple($volunteerIds) : [];
+        $volunteersById = [];
+        foreach ($volunteers as $volunteer) {
+            $volunteersById[$volunteer->id()] = $volunteer;
+        }
 
         $ranker = new VolunteerRanker($this->entityTypeManager);
         $rankedByRequest = $this->buildRankedMap($ranker, $open, $volunteers);
@@ -66,6 +70,7 @@ final class CoordinatorDashboardController
             'pending_confirmation' => $pendingConfirmation,
             'confirmed_requests' => $confirmed,
             'volunteers' => $volunteers,
+            'volunteers_by_id' => $volunteersById,
             'ranked_by_request' => $rankedByRequest,
             'cancelled_requests' => $cancelled,
             'community_names' => $communityNames,
