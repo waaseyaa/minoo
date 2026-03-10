@@ -1179,6 +1179,121 @@
     }
   }
 
+  /* -- Community detail ---------------------------------- */
+  .community__web {
+    font-size: var(--text-lg);
+  }
+
+  .community__website {
+    color: var(--link);
+    text-decoration: none;
+    word-break: break-all;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &::before {
+      content: "\1F310\00a0";
+    }
+  }
+
+  .community__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+    gap: var(--space-xs);
+  }
+
+  .community__stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .community__stat-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: var(--leading-tight);
+  }
+
+  .community__stat-label {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+
+  .community__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .community__section-title {
+    font-size: var(--text-lg);
+    font-family: var(--font-heading);
+  }
+
+  .community__coords {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+
+  .community__map-link {
+    font-size: var(--text-sm);
+    color: var(--link);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &::before {
+      content: "\1F5FA\00a0";
+    }
+  }
+
+  .community__nearby {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-xs);
+  }
+
+  .community__nearby-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: border-color 0.15s;
+
+    &:hover {
+      border-color: var(--accent);
+    }
+  }
+
+  .community__nearby-name {
+    font-weight: 500;
+    line-height: var(--leading-tight);
+  }
+
+  .community__nearby-distance {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   /* -- Dashboards ---------------------------------------- */
   .dashboard__cards {
     display: grid;
@@ -1396,6 +1511,39 @@
   .card--nearest {
     outline: 2px solid oklch(0.6 0.15 150);
     outline-offset: -2px;
+  }
+
+  /* Card details line (province, treaty, language) */
+  .card__details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: var(--leading-normal);
+  }
+
+  .card__details > span + span::before {
+    content: "\00b7\00a0";
+  }
+
+  .card__indicators {
+    display: flex;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-3xs);
+  }
+
+  .card__indicator {
+    font-size: calc(var(--text-sm) * 0.85);
+    color: var(--text-secondary);
+    background: var(--color-earth-100);
+    padding: 0.1em 0.5em;
+    border-radius: var(--radius-sm);
+  }
+
+  .card__indicator--web {
+    background: var(--accent-surface);
+    color: var(--color-forest-700);
   }
 
   /* Hero */

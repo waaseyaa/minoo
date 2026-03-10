@@ -61,6 +61,9 @@ final class CommunityController
         return new SsrResponse(content: $html);
     }
 
+    private const NEARBY_LIMIT = 6;
+    private const NEARBY_MAX_KM = 200.0;
+
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
     public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -74,15 +77,66 @@ final class CommunityController
 
         $community = $ids !== [] ? $storage->load(reset($ids)) : null;
 
+        $nearby = [];
+        $location = $this->resolveLocation($request);
+
+        if ($community !== null) {
+            $nearby = $this->findNearbyCommunities($community, $storage);
+        }
+
         $html = $this->twig->render('communities.html.twig', [
             'path' => '/communities/' . $slug,
             'community' => $community,
+            'nearby' => $nearby,
+            'location' => $location,
         ]);
 
         return new SsrResponse(
             content: $html,
             statusCode: $community !== null ? 200 : 404,
         );
+    }
+
+    /**
+     * @return array<array{community: \Waaseyaa\Entity\ContentEntityBase, distanceKm: float}>
+     */
+    private function findNearbyCommunities(
+        \Waaseyaa\Entity\ContentEntityBase $community,
+        \Waaseyaa\Entity\Storage\EntityStorageInterface $storage,
+    ): array {
+        $lat = $community->get('latitude');
+        $lon = $community->get('longitude');
+
+        if ($lat === null || $lon === null) {
+            return [];
+        }
+
+        $allIds = $storage->getQuery()
+            ->condition('status', 1)
+            ->execute();
+        $all = $allIds !== [] ? $storage->loadMultiple($allIds) : [];
+
+        $finder = new \Minoo\Domain\Geo\Service\CommunityFinder();
+        $results = $finder->findNearby((float) $lat, (float) $lon, array_values($all), self::NEARBY_LIMIT + 1);
+
+        // Filter out the current community and cap at distance limit.
+        $nearby = [];
+        $currentId = $community->id();
+
+        foreach ($results as $result) {
+            if ($result['community']->id() === $currentId) {
+                continue;
+            }
+            if ($result['distanceKm'] > self::NEARBY_MAX_KM) {
+                break;
+            }
+            $nearby[] = $result;
+            if (count($nearby) >= self::NEARBY_LIMIT) {
+                break;
+            }
+        }
+
+        return $nearby;
     }
 
     /** @param array<string, mixed> $params */

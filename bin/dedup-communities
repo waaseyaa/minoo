@@ -1,0 +1,224 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Deduplicate community records after CIRNAC seeding.
+ *
+ * Pre-existing manually-entered communities (no inac_id) may duplicate CIRNAC
+ * records (with inac_id). This script finds those pairs, merges manually-curated
+ * fields (website, feed_url) into the CIRNAC record, and deletes the orphan.
+ *
+ * Tracks: waaseyaa/minoo#173
+ *
+ * Usage:
+ *   bin/dedup-communities              # dry-run (default, no writes)
+ *   bin/dedup-communities --apply      # perform merges and deletions
+ *
+ * Matching logic:
+ *   1. Exact name match (case-insensitive)
+ *   2. Normalized match (strip suffixes, punctuation, lowercase)
+ *   No fuzzy matching — deterministic only.
+ *
+ * Merge rules:
+ *   - CIRNAC record is the survivor (has authoritative inac_id)
+ *   - Manual fields (website, feed_url) copied to survivor if non-empty
+ *   - created_at set to the older of the two timestamps
+ *   - Orphan record deleted after merge
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+// --- Constants ---------------------------------------------------------------
+
+/** Fields that may hold manually-curated data worth preserving. */
+const MANUAL_FIELDS = ['website', 'feed_url'];
+
+/** Suffixes stripped during name normalization. */
+const NAME_SUFFIXES = [
+    'First Nation',
+    'First Nations',
+    'Nation',
+    'Band',
+    'Tribe',
+    'Tribal Council',
+    'Council',
+    'Community',
+    'Government',
+    'Administration',
+    'Office',
+];
+
+// --- Parse arguments ---------------------------------------------------------
+
+$apply = in_array('--apply', $argv, true);
+$dryRun = !$apply;
+
+// --- Boot Waaseyaa -----------------------------------------------------------
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$storage = $entityTypeManager->getStorage('community');
+
+// --- Load orphans (no inac_id) and CIRNAC records (has inac_id) --------------
+
+$allIds = $storage->getQuery()->execute();
+
+/** @var array<string, object> Normalized name → CIRNAC entity */
+$cirnacByName = [];
+/** @var array<string, object> Normalized name → CIRNAC entity (exact lowercase) */
+$cirnacByExact = [];
+/** @var list<object> Records without inac_id */
+$orphans = [];
+
+foreach ($allIds as $id) {
+    $entity = $storage->load($id);
+    if ($entity === null) {
+        continue;
+    }
+
+    $inacId = (string) $entity->get('inac_id');
+
+    if ($inacId !== '') {
+        $name = (string) $entity->get('name');
+        $cirnacByExact[strtolower($name)] = $entity;
+        $cirnacByName[normalizeName($name)] = $entity;
+    } else {
+        $orphans[] = $entity;
+    }
+}
+
+fprintf(STDOUT, "Loaded %d CIRNAC records, %d orphans (no inac_id).\n\n", count($cirnacByName), count($orphans));
+
+if ($orphans === []) {
+    fprintf(STDOUT, "No orphans found. Nothing to deduplicate.\n");
+    exit(0);
+}
+
+if ($dryRun) {
+    fprintf(STDOUT, "[DRY RUN] No changes will be written. Use --apply to execute.\n\n");
+}
+
+// --- Match and merge ---------------------------------------------------------
+
+$merged = 0;
+$unmatched = 0;
+$backupDone = false;
+
+foreach ($orphans as $orphan) {
+    $orphanName = (string) $orphan->get('name');
+    $orphanId = $orphan->id();
+
+    // Gate 1: exact case-insensitive match.
+    $match = $cirnacByExact[strtolower($orphanName)] ?? null;
+
+    // Gate 2: normalized match (strip suffixes, punctuation).
+    if ($match === null) {
+        $match = $cirnacByName[normalizeName($orphanName)] ?? null;
+    }
+
+    if ($match === null) {
+        fprintf(STDOUT, "  [NO MATCH] cid=%d \"%s\" — no CIRNAC counterpart\n", $orphanId, $orphanName);
+        $unmatched++;
+        continue;
+    }
+
+    $matchName = (string) $match->get('name');
+    $matchId = $match->id();
+    $matchInacId = (string) $match->get('inac_id');
+
+    fprintf(STDOUT, "  [MATCH] orphan cid=%d \"%s\" → CIRNAC cid=%d \"%s\" (inac_id=%s)\n",
+        $orphanId, $orphanName, $matchId, $matchName, $matchInacId);
+
+    // Identify manual fields to preserve.
+    $fieldsToMerge = [];
+    $fieldsWouldLose = [];
+
+    foreach (MANUAL_FIELDS as $field) {
+        $orphanValue = (string) $orphan->get($field);
+        $matchValue = (string) $match->get($field);
+
+        if ($orphanValue !== '') {
+            if ($matchValue === '') {
+                $fieldsToMerge[$field] = $orphanValue;
+                fprintf(STDOUT, "    → merge %s: \"%s\"\n", $field, $orphanValue);
+            } elseif ($orphanValue !== $matchValue) {
+                $fieldsWouldLose[$field] = ['orphan' => $orphanValue, 'cirnac' => $matchValue];
+                fprintf(STDOUT, "    → CONFLICT %s: orphan=\"%s\" vs cirnac=\"%s\" (keeping cirnac)\n",
+                    $field, $orphanValue, $matchValue);
+            }
+        }
+    }
+
+    // Preserve older created_at.
+    $orphanCreated = (int) $orphan->get('created_at');
+    $matchCreated = (int) $match->get('created_at');
+    $olderCreated = ($orphanCreated > 0 && ($matchCreated === 0 || $orphanCreated < $matchCreated))
+        ? $orphanCreated
+        : null;
+
+    if ($olderCreated !== null) {
+        fprintf(STDOUT, "    → preserve created_at: %d (from orphan)\n", $olderCreated);
+    }
+
+    if ($dryRun) {
+        fprintf(STDOUT, "    [DRY RUN] Would merge and delete orphan cid=%d\n\n", $orphanId);
+        $merged++;
+        continue;
+    }
+
+    // Back up database before first write.
+    if (!$backupDone) {
+        $dbPath = dirname(__DIR__) . '/waaseyaa.sqlite';
+        $backupPath = $dbPath . '.pre-dedup.bak';
+        if (!copy($dbPath, $backupPath)) {
+            fprintf(STDERR, "ERROR: Failed to back up database to %s\n", $backupPath);
+            exit(1);
+        }
+        fprintf(STDOUT, "  [BACKUP] %s\n", $backupPath);
+        $backupDone = true;
+    }
+
+    // Apply merge: copy manual fields into CIRNAC record.
+    foreach ($fieldsToMerge as $field => $value) {
+        $match->set($field, $value);
+    }
+
+    if ($olderCreated !== null) {
+        $match->set('created_at', $olderCreated);
+    }
+
+    $match->set('updated_at', time());
+    $storage->save($match);
+
+    // Delete orphan.
+    $storage->delete([$orphan]);
+
+    fprintf(STDOUT, "    [DONE] Merged into cid=%d, deleted orphan cid=%d\n\n", $matchId, $orphanId);
+    $merged++;
+}
+
+// --- Summary -----------------------------------------------------------------
+
+fprintf(STDOUT, "\n");
+if ($dryRun) {
+    fprintf(STDOUT, "Dry run complete: %d would merge, %d unmatched.\n", $merged, $unmatched);
+    fprintf(STDOUT, "Run with --apply to execute.\n");
+} else {
+    fprintf(STDOUT, "Dedup complete: %d merged, %d unmatched.\n", $merged, $unmatched);
+}
+
+// --- Helpers -----------------------------------------------------------------
+
+function normalizeName(string $name): string
+{
+    // Strip common suffixes that differ between manual entries and CIRNAC band names.
+    $pattern = '/\b(' . implode('|', array_map('preg_quote', NAME_SUFFIXES)) . ')\b/i';
+    $name = preg_replace($pattern, '', $name) ?? $name;
+    $name = preg_replace('/[^a-z0-9\s]/i', ' ', $name) ?? $name;
+
+    return strtolower(trim(preg_replace('/\s+/', ' ', $name) ?? $name));
+}
