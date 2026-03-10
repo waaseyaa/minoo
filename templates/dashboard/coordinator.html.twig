@@ -18,7 +18,7 @@
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
         <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-        <dt>Phone</dt><dd>{{ req.get('phone') }}</dd>
+        {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
         {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
         {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
       </dl>
@@ -57,7 +57,7 @@
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
         <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-        <dt>Phone</dt><dd>{{ req.get('phone') }}</dd>
+        {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
         {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
         {% set assigned_volunteer = volunteers_by_id[req.get('assigned_volunteer')] ?? null %}
         {% if assigned_volunteer %}<dt>Volunteer</dt><dd>{{ assigned_volunteer.get('name') }}</dd>{% endif %}
