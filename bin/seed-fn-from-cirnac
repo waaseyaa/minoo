@@ -130,7 +130,7 @@ foreach ($rows as $row) {
         'longitude'      => $lon,
         'community_type' => 'first_nation',
         'province'       => $province,
-        'status'         => 0, // unverified — enrichment steps promote to 1
+        'status'         => 1, // CIRNAC is authoritative — publish immediately
         'updated_at'     => $now,
     ];
 
