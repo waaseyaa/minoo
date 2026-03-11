@@ -10,12 +10,14 @@ use SendGrid\Mail\Mail;
 final class MailService
 {
     private SendGrid $client;
+    private string $apiKey;
     private string $fromAddress;
     private string $fromName;
 
     public function __construct(string $apiKey, string $fromAddress, string $fromName)
     {
         $this->client = new SendGrid($apiKey);
+        $this->apiKey = $apiKey;
         $this->fromAddress = $fromAddress;
         $this->fromName = $fromName;
     }
@@ -59,7 +61,7 @@ final class MailService
 
     public function isConfigured(): bool
     {
-        return $this->fromAddress !== '' && $this->client !== null;
+        return $this->apiKey !== '' && $this->fromAddress !== '';
     }
 
     private function dispatch(Mail $email): int
