@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Waaseyaa\Kernel\HttpKernel;
+use Waaseyaa\Foundation\Kernel\HttpKernel;
 
 // Boot kernel to get entity storage
 $kernel = new HttpKernel(dirname(__DIR__));
