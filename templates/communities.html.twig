@@ -144,6 +144,120 @@
         </div>
       {% endif %}
 
+      {# --- Leadership --- #}
+      {% if people is defined and people and people|length > 0 %}
+        <section class="community__section community__leadership">
+          <h2 class="community__section-title">Leadership</h2>
+
+          {% if people|filter(p => p.verified is defined and not p.verified)|length > 0 %}
+            <p class="community__unverified">This information was sourced from community websites and may not be current.</p>
+          {% endif %}
+
+          {% set chief = null %}
+          {% set councillors = [] %}
+          {% for person in people %}
+            {% if person.role == 'chief' and chief is null %}
+              {% set chief = person %}
+            {% else %}
+              {% set councillors = councillors|merge([person]) %}
+            {% endif %}
+          {% endfor %}
+
+          {% if chief %}
+            <div class="community__chief">
+              <div class="community__person">
+                <span class="community__person-role">{{ chief.role_title|default('Chief') }}</span>
+                <span class="community__person-name">{{ chief.name }}</span>
+                {% if chief.email is defined and chief.email %}
+                  <a href="mailto:{{ chief.email }}" class="community__person-contact">{{ chief.email }}</a>
+                {% endif %}
+                {% if chief.phone is defined and chief.phone %}
+                  <a href="tel:{{ chief.phone }}" class="community__person-contact">{{ chief.phone }}</a>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if councillors|length > 0 %}
+            <div class="community__councillors">
+              {% for person in councillors %}
+                <div class="community__person">
+                  <span class="community__person-role">{{ person.role_title|default(person.role|capitalize) }}</span>
+                  <span class="community__person-name">{{ person.name }}</span>
+                  {% if person.email is defined and person.email %}
+                    <a href="mailto:{{ person.email }}" class="community__person-contact">{{ person.email }}</a>
+                  {% endif %}
+                  {% if person.phone is defined and person.phone %}
+                    <a href="tel:{{ person.phone }}" class="community__person-contact">{{ person.phone }}</a>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      {# --- Band Office --- #}
+      {% if band_office is defined and band_office %}
+        <section class="community__section community__band-office">
+          <h2 class="community__section-title">Band Office</h2>
+
+          {% if band_office.verified is defined and not band_office.verified %}
+            <p class="community__unverified">This information was sourced from community websites and may not be current.</p>
+          {% endif %}
+
+          {% set has_address = band_office.address_line1 is defined and band_office.address_line1 %}
+          {% if has_address %}
+            <address class="community__address">
+              {{ band_office.address_line1 }}<br>
+              {% if band_office.address_line2 is defined and band_office.address_line2 %}
+                {{ band_office.address_line2 }}<br>
+              {% endif %}
+              {% if band_office.city is defined and band_office.city %}{{ band_office.city }}{% endif %}{% if band_office.province is defined and band_office.province %}, {{ band_office.province }}{% endif %}
+              {% if band_office.postal_code is defined and band_office.postal_code %}  {{ band_office.postal_code }}{% endif %}
+            </address>
+            <a href="https://www.google.com/maps/search/{{ (band_office.address_line1 ~ ', ' ~ (band_office.city|default('')) ~ ', ' ~ (band_office.province|default('')))|url_encode }}"
+               target="_blank" rel="noopener" class="community__maps-link">
+              View on Google Maps
+            </a>
+          {% endif %}
+
+          <div class="community__contact-grid">
+            {% if band_office.phone is defined and band_office.phone %}
+              <div class="community__contact-item">
+                <span class="community__contact-label">Phone</span>
+                <a href="tel:{{ band_office.phone }}">{{ band_office.phone }}</a>
+              </div>
+            {% endif %}
+            {% if band_office.toll_free is defined and band_office.toll_free %}
+              <div class="community__contact-item">
+                <span class="community__contact-label">Toll-Free</span>
+                <a href="tel:{{ band_office.toll_free }}">{{ band_office.toll_free }}</a>
+              </div>
+            {% endif %}
+            {% if band_office.fax is defined and band_office.fax %}
+              <div class="community__contact-item">
+                <span class="community__contact-label">Fax</span>
+                <span>{{ band_office.fax }}</span>
+              </div>
+            {% endif %}
+            {% if band_office.email is defined and band_office.email %}
+              <div class="community__contact-item">
+                <span class="community__contact-label">Email</span>
+                <a href="mailto:{{ band_office.email }}">{{ band_office.email }}</a>
+              </div>
+            {% endif %}
+          </div>
+
+          {% if band_office.office_hours is defined and band_office.office_hours %}
+            <div class="community__office-hours">
+              <span class="community__contact-label">Office Hours</span>
+              <span>{{ band_office.office_hours }}</span>
+            </div>
+          {% endif %}
+        </section>
+      {% endif %}
+
       {# --- Location --- #}
       {% if community.get('latitude') and community.get('longitude') %}
         <section class="community__section">

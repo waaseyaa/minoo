@@ -1316,6 +1316,107 @@
     flex-shrink: 0;
   }
 
+  /* -- Leadership & Band Office -- */
+
+  .community__leadership {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .community__chief {
+    padding: var(--space-md);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-inline-start: 3px solid var(--accent-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .community__councillors {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .community__person {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-sm);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .community__person-role {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+
+  .community__person-name {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .community__person-contact {
+    font-size: var(--text-sm);
+    color: var(--accent-primary);
+  }
+
+  .community__band-office {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .community__address {
+    font-style: normal;
+    line-height: 1.6;
+  }
+
+  .community__maps-link::before {
+    content: "\1F5FA\FE0F ";
+  }
+
+  .community__contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .community__contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .community__contact-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+
+  .community__office-hours {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .community__unverified {
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--text-secondary);
+    padding: var(--space-xs) var(--space-sm);
+    background: oklch(95% 0.01 80);
+    border-radius: var(--radius-sm);
+  }
+
   /* -- Dashboards ---------------------------------------- */
   .dashboard__cards {
     display: grid;
