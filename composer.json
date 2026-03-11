@@ -41,6 +41,7 @@
     "require": {
         "php": ">=8.3",
         "geoip2/geoip2": "^3.0",
+        "sendgrid/sendgrid": "^8.1",
         "waaseyaa/access": "@dev",
         "waaseyaa/api": "@dev",
         "waaseyaa/cache": "@dev",
@@ -98,7 +99,8 @@
                 "Minoo\\Provider\\ElderSupportServiceProvider",
                 "Minoo\\Provider\\CommunityServiceProvider",
                 "Minoo\\Provider\\AuthServiceProvider",
-                "Minoo\\Provider\\DashboardServiceProvider"
+                "Minoo\\Provider\\DashboardServiceProvider",
+                "Minoo\\Provider\\MailServiceProvider"
             ]
         }
     },
