@@ -1,0 +1,88 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+use Waaseyaa\Kernel\HttpKernel;
+
+// Boot kernel to get entity storage
+$kernel = new HttpKernel(dirname(__DIR__));
+$boot = new ReflectionMethod($kernel, 'boot');
+$boot->setAccessible(true);
+$boot->invoke($kernel);
+
+$container = (new ReflectionProperty($kernel, 'container'))->getValue($kernel);
+$entityTypeManager = $container->get(\Waaseyaa\Entity\EntityTypeManager::class);
+$storage = $entityTypeManager->getStorage('community');
+
+// Load config
+$configPath = dirname(__DIR__) . '/config/waaseyaa.php';
+$config = file_exists($configPath) ? (require $configPath)['northcloud'] ?? [] : [];
+$baseUrl = (string) ($config['base_url'] ?? 'https://northcloud.one');
+
+echo "Fetching communities from NorthCloud ({$baseUrl})...\n";
+
+// Fetch all communities from NC
+$url = rtrim($baseUrl, '/') . '/api/v1/communities?limit=1000';
+$context = stream_context_create(['http' => ['method' => 'GET', 'timeout' => 30]]);
+$json = @file_get_contents($url, false, $context);
+
+if ($json === false) {
+    echo "ERROR: Failed to fetch communities from NorthCloud.\n";
+    exit(1);
+}
+
+$data = json_decode($json, true);
+if (!is_array($data) || !isset($data['communities'])) {
+    echo "ERROR: Unexpected response format.\n";
+    exit(1);
+}
+
+$ncCommunities = $data['communities'];
+echo sprintf("Received %d communities from NorthCloud.\n", count($ncCommunities));
+
+// Build inac_id → nc_id lookup
+$ncByInac = [];
+foreach ($ncCommunities as $nc) {
+    $inacId = $nc['inac_id'] ?? null;
+    if ($inacId !== null && $inacId !== '') {
+        $ncByInac[(string) $inacId] = (string) $nc['id'];
+    }
+}
+
+echo sprintf("Found %d communities with INAC IDs.\n", count($ncByInac));
+
+// Load all local communities
+$allIds = $storage->getQuery()->condition('status', 1)->execute();
+$communities = $allIds !== [] ? $storage->loadMultiple($allIds) : [];
+
+$matched = 0;
+$skipped = 0;
+$noInac = 0;
+
+foreach ($communities as $community) {
+    $inacId = $community->get('inac_id');
+
+    if ($inacId === null || $inacId === '' || $inacId === 0) {
+        $noInac++;
+        continue;
+    }
+
+    $ncId = $ncByInac[(string) $inacId] ?? null;
+    if ($ncId === null) {
+        $skipped++;
+        continue;
+    }
+
+    $community->set('nc_id', $ncId);
+    $storage->save($community);
+    $matched++;
+}
+
+echo "\nBackfill complete:\n";
+echo sprintf("  Matched: %d\n", $matched);
+echo sprintf("  No INAC ID: %d\n", $noInac);
+echo sprintf("  Unmatched: %d\n", $skipped);
+echo sprintf("  Total local: %d\n", count($communities));
