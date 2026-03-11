@@ -26,23 +26,37 @@ $baseUrl = (string) ($config['base_url'] ?? 'https://northcloud.one');
 
 echo "Fetching communities from NorthCloud ({$baseUrl})...\n";
 
-// Fetch all communities from NC
-$url = rtrim($baseUrl, '/') . '/api/v1/communities?limit=1000';
+// Fetch all communities from NC (paginated, API caps at 200 per page)
+$ncCommunities = [];
+$offset = 0;
+$pageSize = 200;
 $context = stream_context_create(['http' => ['method' => 'GET', 'timeout' => 30]]);
-$json = @file_get_contents($url, false, $context);
 
-if ($json === false) {
-    echo "ERROR: Failed to fetch communities from NorthCloud.\n";
-    exit(1);
+while (true) {
+    $url = rtrim($baseUrl, '/') . '/api/v1/communities?limit=' . $pageSize . '&offset=' . $offset;
+    $json = @file_get_contents($url, false, $context);
+
+    if ($json === false) {
+        echo "ERROR: Failed to fetch communities from NorthCloud.\n";
+        exit(1);
+    }
+
+    $data = json_decode($json, true);
+    if (!is_array($data) || !isset($data['communities'])) {
+        echo "ERROR: Unexpected response format.\n";
+        exit(1);
+    }
+
+    $page = $data['communities'];
+    $ncCommunities = array_merge($ncCommunities, $page);
+    echo sprintf("  Fetched page at offset %d: %d communities\n", $offset, count($page));
+
+    if (count($page) < $pageSize) {
+        break;
+    }
+    $offset += $pageSize;
 }
 
-$data = json_decode($json, true);
-if (!is_array($data) || !isset($data['communities'])) {
-    echo "ERROR: Unexpected response format.\n";
-    exit(1);
-}
-
-$ncCommunities = $data['communities'];
 echo sprintf("Received %d communities from NorthCloud.\n", count($ncCommunities));
 
 // Build inac_id → nc_id lookup
