@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Search\CommunityAutocompleteClient;
+use Minoo\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -79,9 +80,18 @@ final class CommunityController
 
         $nearby = [];
         $location = $this->resolveLocation($request);
+        $people = null;
+        $bandOffice = null;
 
         if ($community !== null) {
             $nearby = $this->findNearbyCommunities($community, $storage);
+
+            $ncId = $community->get('nc_id');
+            if ($ncId !== null && $ncId !== '') {
+                $ncClient = $this->createNorthCloudClient();
+                $people = $ncClient->getPeople((string) $ncId);
+                $bandOffice = $ncClient->getBandOffice((string) $ncId);
+            }
         }
 
         $html = $this->twig->render('communities.html.twig', [
@@ -89,6 +99,8 @@ final class CommunityController
             'community' => $community,
             'nearby' => $nearby,
             'location' => $location,
+            'people' => $people,
+            'band_office' => $bandOffice,
         ]);
 
         return new SsrResponse(
@@ -151,6 +163,17 @@ final class CommunityController
         );
 
         return new JsonResponse($client->suggest($term));
+    }
+
+    private function createNorthCloudClient(): NorthCloudClient
+    {
+        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
+        $config = file_exists($configPath) ? (require $configPath)['northcloud'] ?? [] : [];
+
+        return new NorthCloudClient(
+            baseUrl: (string) ($config['base_url'] ?? 'https://northcloud.one'),
+            timeout: (int) ($config['timeout'] ?? 5),
+        );
     }
 
     private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext

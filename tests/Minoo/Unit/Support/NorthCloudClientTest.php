@@ -1,0 +1,180 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minoo\Tests\Unit\Support;
+
+use Minoo\Support\NorthCloudClient;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+
+#[CoversClass(NorthCloudClient::class)]
+final class NorthCloudClientTest extends TestCase
+{
+    #[Test]
+    public function get_people_returns_array_on_success(): void
+    {
+        $responseJson = json_encode([
+            'people' => [
+                [
+                    'id' => 'p1',
+                    'name' => 'Chief Example',
+                    'role' => 'chief',
+                    'role_title' => 'Chief',
+                    'email' => 'chief@example.com',
+                    'phone' => '705-555-0001',
+                    'is_current' => true,
+                    'verified' => false,
+                    'updated_at' => '2026-01-15T00:00:00Z',
+                ],
+                [
+                    'id' => 'p2',
+                    'name' => 'Councillor One',
+                    'role' => 'councillor',
+                    'role_title' => 'Councillor',
+                    'is_current' => true,
+                    'verified' => false,
+                    'updated_at' => '2026-01-15T00:00:00Z',
+                ],
+            ],
+            'total' => 2,
+        ], JSON_THROW_ON_ERROR);
+
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => $responseJson,
+        );
+
+        $result = $client->getPeople('nc-uuid-123');
+
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result);
+        $this->assertSame('Chief Example', $result[0]['name']);
+        $this->assertSame('chief', $result[0]['role']);
+    }
+
+    #[Test]
+    public function get_people_returns_null_on_http_failure(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => false,
+        );
+
+        $this->assertNull($client->getPeople('nc-uuid-123'));
+    }
+
+    #[Test]
+    public function get_people_returns_null_on_malformed_json(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => '<html>not json</html>',
+        );
+
+        $this->assertNull($client->getPeople('nc-uuid-123'));
+    }
+
+    #[Test]
+    public function get_band_office_returns_array_on_success(): void
+    {
+        $responseJson = json_encode([
+            'band_office' => [
+                'id' => 'bo1',
+                'address_line1' => '100 Main St',
+                'city' => 'Sagamok',
+                'province' => 'ON',
+                'postal_code' => 'P0P 1X0',
+                'phone' => '705-555-0002',
+                'fax' => '705-555-0003',
+                'email' => 'office@sagamok.ca',
+                'toll_free' => '1-800-555-0004',
+                'office_hours' => 'Mon-Fri 8:30am-4:30pm',
+                'verified' => false,
+                'updated_at' => '2026-01-15T00:00:00Z',
+            ],
+        ], JSON_THROW_ON_ERROR);
+
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => $responseJson,
+        );
+
+        $result = $client->getBandOffice('nc-uuid-123');
+
+        $this->assertIsArray($result);
+        $this->assertSame('100 Main St', $result['address_line1']);
+        $this->assertSame('705-555-0002', $result['phone']);
+    }
+
+    #[Test]
+    public function get_band_office_returns_null_on_http_failure(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => false,
+        );
+
+        $this->assertNull($client->getBandOffice('nc-uuid-123'));
+    }
+
+    #[Test]
+    public function get_band_office_returns_null_on_404(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => json_encode(['band_office' => null]),
+        );
+
+        $this->assertNull($client->getBandOffice('nc-uuid-123'));
+    }
+
+    #[Test]
+    public function get_people_builds_correct_url(): void
+    {
+        $capturedUrl = '';
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: function (string $url) use (&$capturedUrl): string|false {
+                $capturedUrl = $url;
+                return json_encode(['people' => [], 'total' => 0]);
+            },
+        );
+
+        $client->getPeople('abc-123');
+
+        $this->assertSame(
+            'https://northcloud.one/api/v1/communities/abc-123/people?current_only=true',
+            $capturedUrl,
+        );
+    }
+
+    #[Test]
+    public function get_band_office_builds_correct_url(): void
+    {
+        $capturedUrl = '';
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: function (string $url) use (&$capturedUrl): string|false {
+                $capturedUrl = $url;
+                return json_encode(['band_office' => null]);
+            },
+        );
+
+        $client->getBandOffice('abc-123');
+
+        $this->assertSame(
+            'https://northcloud.one/api/v1/communities/abc-123/band-office',
+            $capturedUrl,
+        );
+    }
+}

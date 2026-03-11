@@ -74,6 +74,7 @@ final class CommunityTest extends TestCase
             'website' => 'https://sagamok.ca',
             'inac_id' => '196',
             'statcan_csd' => '3552091',
+            'nc_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
             'population_year' => 2026,
         ]);
 
@@ -83,6 +84,7 @@ final class CommunityTest extends TestCase
         $this->assertSame('Robinson-Huron Treaty', $community->get('treaty'));
         $this->assertSame('196', $community->get('inac_id'));
         $this->assertSame('3552091', $community->get('statcan_csd'));
+        $this->assertSame('a1b2c3d4-e5f6-7890-abcd-ef1234567890', $community->get('nc_id'));
         $this->assertSame(2026, $community->get('population_year'));
     }
 }

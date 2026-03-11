@@ -37,6 +37,7 @@ final class CommunityServiceProvider extends ServiceProvider
                 'website' => ['type' => 'string', 'label' => 'Website', 'weight' => 35],
                 'inac_id' => ['type' => 'string', 'label' => 'INAC Band Number', 'weight' => 40],
                 'statcan_csd' => ['type' => 'string', 'label' => 'StatsCan CSD Code', 'weight' => 41],
+                'nc_id' => ['type' => 'string', 'label' => 'NorthCloud ID', 'weight' => 42],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 50, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 60],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 61],
