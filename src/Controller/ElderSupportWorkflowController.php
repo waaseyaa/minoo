@@ -62,13 +62,33 @@ final class ElderSupportWorkflowController
 
     public function completeRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        return $this->volunteerTransition(
-            $params,
-            $account,
-            'in_progress',
-            'completed',
-            'Request marked as complete. The coordinator will follow up.',
-        );
+        $esrid = (int) ($params['esrid'] ?? 0);
+        $storage = $this->entityTypeManager->getStorage('elder_support_request');
+        $entity = $esrid > 0 ? $storage->load($esrid) : null;
+
+        if ($entity === null) {
+            return new SsrResponse(content: 'Not found', statusCode: 404);
+        }
+
+        if ($entity->get('assigned_volunteer') !== $account->id()) {
+            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+        }
+
+        if ($entity->get('status') !== 'in_progress') {
+            return new SsrResponse(content: 'Invalid status transition', statusCode: 422);
+        }
+
+        $notes = trim((string) $request->request->get('completion_notes', ''));
+
+        $entity->set('status', 'completed');
+        if ($notes !== '') {
+            $entity->set('completion_notes', $notes);
+        }
+        $entity->set('updated_at', time());
+        $storage->save($entity);
+
+        Flash::set('success', 'Request marked as complete. The coordinator will follow up.');
+        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 
     public function confirmRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse

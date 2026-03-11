@@ -38,6 +38,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
                     'label' => 'Assigned At',
                     'weight' => 26,
                 ],
+                'completion_notes' => ['type' => 'text_long', 'label' => 'Completion Notes', 'weight' => 28],
                 'cancelled_reason' => ['type' => 'text_long', 'label' => 'Cancellation Reason', 'weight' => 30],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],

@@ -36,9 +36,14 @@
           {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
           {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
         </dl>
-        <form method="post" action="/elders/request/{{ req.id() }}/start">
-          <button class="form__submit" type="submit">Mark In Progress</button>
-        </form>
+        <div class="card__actions">
+          <form method="post" action="/elders/request/{{ req.id() }}/start">
+            <button class="form__submit" type="submit">Accept & Start</button>
+          </form>
+          <form method="post" action="/elders/request/{{ req.id() }}/decline">
+            <button class="form__submit form__submit--secondary form__submit--sm" type="submit">Decline</button>
+          </form>
+        </div>
       </article>
       {% endfor %}
     </div>
@@ -57,9 +62,14 @@
           {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
           {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
         </dl>
-        <form method="post" action="/elders/request/{{ req.id() }}/complete">
-          <button class="form__submit" type="submit">Mark Complete</button>
-        </form>
+        <details class="dashboard__complete-details">
+          <summary class="form__submit" type="button">Mark Complete</summary>
+          <form method="post" action="/elders/request/{{ req.id() }}/complete" class="dashboard__complete-form">
+            <label class="form__label" for="completion-notes-{{ req.id() }}">How did it go? (optional)</label>
+            <textarea class="form__textarea" id="completion-notes-{{ req.id() }}" name="completion_notes" rows="2"></textarea>
+            <button class="form__submit" type="submit">Confirm Complete</button>
+          </form>
+        </details>
       </article>
       {% endfor %}
     </div>
