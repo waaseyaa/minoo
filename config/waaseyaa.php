@@ -66,6 +66,12 @@ return [
         'base_topics' => ['indigenous'],
     ],
 
+    // NorthCloud community data API.
+    'northcloud' => [
+        'base_url' => getenv('NORTHCLOUD_BASE_URL') ?: 'https://northcloud.one',
+        'timeout' => (int) (getenv('NORTHCLOUD_TIMEOUT') ?: 5),
+    ],
+
     // Location detection.
     'location' => [
         'geoip_db' => getenv('GEOIP_DB_PATH') ?: __DIR__ . '/../storage/geoip/GeoLite2-City.mmdb',

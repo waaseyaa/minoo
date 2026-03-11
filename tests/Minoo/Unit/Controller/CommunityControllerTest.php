@@ -110,6 +110,31 @@ final class CommunityControllerTest extends TestCase
     }
 
     #[Test]
+    public function show_passes_people_and_band_office_to_template(): void
+    {
+        $sagamok = new Community([
+            'cid' => 1,
+            'name' => 'Sagamok Anishnawbek',
+            'slug' => 'sagamok-anishnawbek',
+            'community_type' => 'first_nation',
+            'nc_id' => 'nc-uuid-123',
+        ]);
+
+        $this->query->method('execute')->willReturn([1]);
+        $this->storage->method('load')->with(1)->willReturn($sagamok);
+
+        $this->twig = new Environment(new ArrayLoader([
+            'communities.html.twig' => '{{ path }}{% if community is defined and community %}|{{ community.get("name") }}{% endif %}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
+        ]));
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
+        $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
+
+        $this->assertSame(200, $response->statusCode);
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
+    }
+
+    #[Test]
     public function autocomplete_returns_json_response(): void
     {
         putenv('NORTHCLOUD_API_URL=https://northcloud.one');
