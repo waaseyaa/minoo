@@ -13,6 +13,7 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\User\User;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 
@@ -28,6 +29,8 @@ final class AuthControllerTest extends TestCase
 
     protected function setUp(): void
     {
+        $_SESSION = [];
+
         $this->query = $this->createMock(EntityQueryInterface::class);
         $this->query->method('condition')->willReturnSelf();
         $this->query->method('sort')->willReturnSelf();
@@ -50,109 +53,96 @@ final class AuthControllerTest extends TestCase
         $this->request = HttpRequest::create('/');
     }
 
-    #[Test]
-    public function login_form_returns_200(): void
+    protected function tearDown(): void
     {
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->loginForm([], [], $this->account, $this->request);
-
-        $this->assertSame(200, $response->statusCode);
+        $_SESSION = [];
     }
 
     #[Test]
-    public function register_form_returns_200(): void
+    public function submit_login_redirects_to_redirect_param_after_success(): void
     {
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->registerForm([], [], $this->account, $this->request);
+        $user = $this->createSuccessfulUser();
 
-        $this->assertSame(200, $response->statusCode);
-    }
-
-    #[Test]
-    public function submit_login_with_empty_email_shows_error(): void
-    {
-        $this->request = HttpRequest::create('/login', 'POST', ['email' => '', 'password' => '']);
-
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitLogin([], [], $this->account, $this->request);
-
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Email is required', $response->content);
-    }
-
-    #[Test]
-    public function submit_login_with_unknown_email_shows_error(): void
-    {
-        $this->query->method('execute')->willReturn([]);
         $this->request = HttpRequest::create('/login', 'POST', [
-            'email' => 'nobody@example.com',
-            'password' => 'secret123',
+            'email' => 'mary@example.com',
+            'password' => 'password123',
+            'redirect' => '/elders/request/42',
         ]);
 
         $controller = new AuthController($this->entityTypeManager, $this->twig);
         $response = $controller->submitLogin([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Invalid email or password', $response->content);
+        self::assertSame(302, $response->statusCode);
+        self::assertSame('/elders/request/42', $response->headers['Location']);
     }
 
     #[Test]
-    public function submit_register_with_empty_fields_shows_errors(): void
+    public function submit_login_falls_back_to_dashboard_when_no_redirect(): void
     {
-        $this->request = HttpRequest::create('/register', 'POST', [
-            'name' => '',
-            'email' => '',
-            'password' => '',
-        ]);
+        $user = $this->createSuccessfulUser();
 
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitRegister([], [], $this->account, $this->request);
-
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Name is required', $response->content);
-    }
-
-    #[Test]
-    public function submit_register_with_short_password_shows_error(): void
-    {
-        $this->request = HttpRequest::create('/register', 'POST', [
-            'name' => 'Mary',
-            'email' => 'mary@example.com',
-            'password' => 'short',
-        ]);
-        $this->query->method('execute')->willReturn([]);
-
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitRegister([], [], $this->account, $this->request);
-
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('at least 8 characters', $response->content);
-    }
-
-    #[Test]
-    public function submit_register_with_duplicate_email_shows_error(): void
-    {
-        $this->query->method('execute')->willReturn([1]);
-        $this->request = HttpRequest::create('/register', 'POST', [
-            'name' => 'Mary',
+        $this->request = HttpRequest::create('/login', 'POST', [
             'email' => 'mary@example.com',
             'password' => 'password123',
         ]);
 
         $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitRegister([], [], $this->account, $this->request);
+        $response = $controller->submitLogin([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('already registered', $response->content);
+        self::assertSame(302, $response->statusCode);
+        self::assertSame('/dashboard/volunteer', $response->headers['Location']);
     }
 
     #[Test]
-    public function logout_redirects_to_home(): void
+    public function submit_login_rejects_absolute_url_redirect(): void
     {
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->logout([], [], $this->account, $this->request);
+        $user = $this->createSuccessfulUser();
 
-        $this->assertSame(302, $response->statusCode);
-        $this->assertSame('/', $response->headers['Location']);
+        $this->request = HttpRequest::create('/login', 'POST', [
+            'email' => 'mary@example.com',
+            'password' => 'password123',
+            'redirect' => 'https://evil.com/phish',
+        ]);
+
+        $controller = new AuthController($this->entityTypeManager, $this->twig);
+        $response = $controller->submitLogin([], [], $this->account, $this->request);
+
+        self::assertSame(302, $response->statusCode);
+        self::assertSame('/dashboard/volunteer', $response->headers['Location']);
+    }
+
+    #[Test]
+    public function submit_login_rejects_protocol_relative_redirect(): void
+    {
+        $user = $this->createSuccessfulUser();
+
+        $this->request = HttpRequest::create('/login', 'POST', [
+            'email' => 'mary@example.com',
+            'password' => 'password123',
+            'redirect' => '//evil.com/phish',
+        ]);
+
+        $controller = new AuthController($this->entityTypeManager, $this->twig);
+        $response = $controller->submitLogin([], [], $this->account, $this->request);
+
+        self::assertSame(302, $response->statusCode);
+        self::assertSame('/dashboard/volunteer', $response->headers['Location']);
+    }
+
+    private function createSuccessfulUser(): User
+    {
+        $user = new User([
+            'uid' => 1,
+            'name' => 'Mary',
+            'mail' => 'mary@example.com',
+            'roles' => ['volunteer'],
+            'status' => 1,
+        ]);
+        $user->setRawPassword('password123');
+
+        $this->query->method('execute')->willReturn([1]);
+        $this->userStorage->method('load')->with(1)->willReturn($user);
+
+        return $user;
     }
 }

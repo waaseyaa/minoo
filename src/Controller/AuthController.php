@@ -23,6 +23,7 @@ final class AuthController
         $html = $this->twig->render('auth/login.html.twig', [
             'errors' => [],
             'values' => [],
+            'redirect' => (string) $request->query->get('redirect', ''),
         ]);
 
         return new SsrResponse(content: $html);
@@ -83,7 +84,10 @@ final class AuthController
 
         $_SESSION['waaseyaa_uid'] = $user->id();
 
-        $redirect = $this->dashboardRedirect($user);
+        $redirect = $this->safeRedirect(
+            (string) $request->request->get('redirect', ''),
+            $this->dashboardRedirect($user),
+        );
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $redirect]);
     }
@@ -168,6 +172,15 @@ final class AuthController
         }
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/']);
+    }
+
+    private function safeRedirect(string $target, string $fallback): string
+    {
+        if ($target === '' || !str_starts_with($target, '/') || str_starts_with($target, '//')) {
+            return $fallback;
+        }
+
+        return $target;
     }
 
     private function dashboardRedirect(User $user): string
