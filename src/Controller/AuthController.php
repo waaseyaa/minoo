@@ -160,6 +160,17 @@ final class AuthController
 
         $storage->save($user);
 
+        $volStorage = $this->entityTypeManager->getStorage('volunteer');
+        $volunteer = $volStorage->create([
+            'name' => $name,
+            'phone' => $phone,
+            'account_id' => $user->id(),
+            'status' => 'active',
+            'created_at' => time(),
+            'updated_at' => time(),
+        ]);
+        $volStorage->save($volunteer);
+
         $_SESSION['waaseyaa_uid'] = $user->id();
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);

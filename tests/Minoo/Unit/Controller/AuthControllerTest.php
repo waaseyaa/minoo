@@ -129,6 +129,50 @@ final class AuthControllerTest extends TestCase
         self::assertSame('/dashboard/volunteer', $response->headers['Location']);
     }
 
+    #[Test]
+    public function submit_register_creates_volunteer_entity_for_new_account(): void
+    {
+        $this->query->method('execute')->willReturn([]);
+
+        $savedUser = null;
+        $this->userStorage->method('create')->willReturnCallback(function (array $values) use (&$savedUser) {
+            $savedUser = new User($values + ['uid' => 42]);
+            return $savedUser;
+        });
+        $this->userStorage->method('save')->willReturn(42);
+
+        $volStorage = $this->createMock(EntityStorageInterface::class);
+        $volEntity = null;
+        $volStorage->method('create')->willReturnCallback(function (array $values) use (&$volEntity) {
+            $volEntity = $values;
+            $entity = $this->createMock(\Waaseyaa\Entity\ContentEntityBase::class);
+            return $entity;
+        });
+        $volStorage->method('save')->willReturn(1);
+
+        $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
+        $this->entityTypeManager->method('getStorage')->willReturnMap([
+            ['user', $this->userStorage],
+            ['volunteer', $volStorage],
+        ]);
+
+        $this->request = HttpRequest::create('/register', 'POST', [
+            'name' => 'Mary',
+            'email' => 'mary@example.com',
+            'password' => 'password123',
+            'phone' => '705-555-1234',
+        ]);
+
+        $controller = new AuthController($this->entityTypeManager, $this->twig);
+        $response = $controller->submitRegister([], [], $this->account, $this->request);
+
+        self::assertSame(302, $response->statusCode);
+        self::assertNotNull($volEntity, 'Volunteer entity should be created');
+        self::assertSame(42, $volEntity['account_id']);
+        self::assertSame('Mary', $volEntity['name']);
+        self::assertSame('705-555-1234', $volEntity['phone']);
+    }
+
     private function createSuccessfulUser(): User
     {
         $user = new User([
