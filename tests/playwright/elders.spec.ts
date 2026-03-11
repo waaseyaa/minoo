@@ -60,4 +60,18 @@ test.describe('Elders Portal', () => {
     await page.goto('/elders/request');
     await expect(page.locator('a[href="/safety"]')).toBeVisible();
   });
+
+  test('request form includes CSRF token', async ({ page }) => {
+    await page.goto('/elders/request');
+    await expect(page.locator('input[name="_csrf_token"]')).toBeAttached();
+  });
+
+  test('submitting valid request redirects to confirmation', async ({ page }) => {
+    await page.goto('/elders/request');
+    await page.locator('#name').fill('Mary Elder');
+    await page.locator('#phone').fill('705-555-1234');
+    await page.locator('#type').selectOption({ index: 1 });
+    await page.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/elders\/request\/[a-f0-9-]+/);
+  });
 });

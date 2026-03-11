@@ -23,6 +23,7 @@
         {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
       </dl>
       <form class="dashboard__assign-form" method="post" action="/elders/request/{{ req.id() }}/assign">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <label class="form__label" for="volunteer-{{ req.id() }}">Assign to</label>
         <select class="form__select" name="volunteer_id" id="volunteer-{{ req.id() }}" required>
           <option value="">Select volunteer...</option>
@@ -36,6 +37,7 @@
       <details class="dashboard__cancel-details">
         <summary class="form__link">Cancel Request</summary>
         <form method="post" action="/elders/request/{{ req.id() }}/cancel" class="dashboard__cancel-form">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
           <label class="form__label" for="cancel-reason-{{ req.id() }}">Reason</label>
           <textarea class="form__textarea" id="cancel-reason-{{ req.id() }}" name="reason" rows="2"></textarea>
           <button class="form__submit form__submit--danger form__submit--sm" type="submit">Confirm Cancel</button>
@@ -66,6 +68,7 @@
       <details class="dashboard__reassign-details">
         <summary class="form__link">Reassign</summary>
         <form class="dashboard__assign-form" method="post" action="/elders/request/{{ req.id() }}/reassign">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
           <label class="form__label" for="reassign-volunteer-{{ req.id() }}">Reassign to</label>
           <select class="form__select" name="volunteer_id" id="reassign-volunteer-{{ req.id() }}" required>
             <option value="">Select volunteer...</option>
@@ -81,6 +84,7 @@
       <details class="dashboard__cancel-details">
         <summary class="form__link">Cancel Request</summary>
         <form method="post" action="/elders/request/{{ req.id() }}/cancel" class="dashboard__cancel-form">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
           <label class="form__label" for="cancel-reason-{{ req.id() }}">Reason</label>
           <textarea class="form__textarea" id="cancel-reason-{{ req.id() }}" name="reason" rows="2"></textarea>
           <button class="form__submit form__submit--danger form__submit--sm" type="submit">Confirm Cancel</button>
@@ -107,6 +111,7 @@
         {% if req.get('completion_notes') %}<dt>Notes</dt><dd>{{ req.get('completion_notes') }}</dd>{% endif %}
       </dl>
       <form method="post" action="/elders/request/{{ req.id() }}/confirm">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <button class="form__submit" type="submit">Confirm Completion</button>
       </form>
     </article>

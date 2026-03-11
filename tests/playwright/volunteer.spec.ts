@@ -34,4 +34,25 @@ test.describe('Volunteer Portal', () => {
     await page.goto('/elders/volunteer');
     await expect(page.locator('input[name="max_travel_km"]')).toBeVisible();
   });
+
+  test('signup form includes CSRF token', async ({ page }) => {
+    await page.goto('/elders/volunteer');
+    await expect(page.locator('input[name="_csrf_token"]')).toBeAttached();
+  });
+
+  test('submitting valid signup redirects to confirmation', async ({ page }) => {
+    await page.goto('/elders/volunteer');
+    await page.locator('#name').fill('John Volunteer');
+    await page.locator('#phone').fill('705-555-5678');
+    await page.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
+  });
+
+  test('submitting signup without name shows validation', async ({ page }) => {
+    await page.goto('/elders/volunteer');
+    await page.locator('#phone').fill('705-555-5678');
+    await page.locator('button[type="submit"]').click();
+    // HTML5 required attribute prevents submission
+    await expect(page.locator('#name')).toHaveAttribute('required', '');
+  });
 });

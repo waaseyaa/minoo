@@ -7,6 +7,7 @@
   <h1>Sign in to your account</h1>
 
   <form class="form" method="post" action="/login">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
     {% if redirect is defined and redirect %}
       <input type="hidden" name="redirect" value="{{ redirect|e('html_attr') }}">
     {% endif %}

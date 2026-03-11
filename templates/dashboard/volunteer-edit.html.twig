@@ -11,6 +11,7 @@
     </div>
 
     <form class="form" method="POST" action="/dashboard/volunteer/edit">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form__field">
         <label class="form__label" for="phone">Phone Number</label>
         <input class="form__input" type="tel" id="phone" name="phone"

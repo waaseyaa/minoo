@@ -12,6 +12,7 @@
     <span class="status-indicator status-indicator--{{ volunteer.get('status') }}">{{ volunteer.get('status')|title }}</span>
     <a href="/dashboard/volunteer/edit" class="form__link">Edit Profile</a>
     <form method="post" action="/dashboard/volunteer/toggle-availability" class="dashboard__toggle-form">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <button type="submit" class="form__submit form__submit--secondary form__submit--sm">
         {% if volunteer.get('status') == 'active' %}Go Unavailable{% else %}Go Active{% endif %}
       </button>
@@ -38,9 +39,11 @@
         </dl>
         <div class="card__actions">
           <form method="post" action="/elders/request/{{ req.id() }}/start">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             <button class="form__submit" type="submit">Accept & Start</button>
           </form>
           <form method="post" action="/elders/request/{{ req.id() }}/decline">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             <button class="form__submit form__submit--secondary form__submit--sm" type="submit">Decline</button>
           </form>
         </div>
@@ -65,6 +68,7 @@
         <details class="dashboard__complete-details">
           <summary class="form__submit" type="button">Mark Complete</summary>
           <form method="post" action="/elders/request/{{ req.id() }}/complete" class="dashboard__complete-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             <label class="form__label" for="completion-notes-{{ req.id() }}">How did it go? (optional)</label>
             <textarea class="form__textarea" id="completion-notes-{{ req.id() }}" name="completion_notes" rows="2"></textarea>
             <button class="form__submit" type="submit">Confirm Complete</button>

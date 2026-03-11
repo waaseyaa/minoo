@@ -10,6 +10,7 @@
     </div>
 
     <form class="form" method="POST" action="/elders/request">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form__field">
         <label class="form__label" for="name">Your Name <span aria-hidden="true">*</span></label>
         {% if errors.name is defined %}
