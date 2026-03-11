@@ -80,6 +80,13 @@ return [
         'cookie_ttl' => 86400 * 30, // 30 days
     ],
 
+    // Mail configuration (SendGrid).
+    'mail' => [
+        'sendgrid_api_key' => getenv('SENDGRID_API_KEY') ?: '',
+        'from_address' => getenv('MAIL_FROM_ADDRESS') ?: 'hello@minoo.live',
+        'from_name' => getenv('MAIL_FROM_NAME') ?: 'Minoo',
+    ],
+
     // AI embedding pipeline configuration.
     'ai' => [
         // 'ollama' or 'openai'. Empty disables embedding generation.
