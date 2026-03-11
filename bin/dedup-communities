@@ -172,7 +172,7 @@ foreach ($orphans as $orphan) {
 
     // Back up database before first write.
     if (!$backupDone) {
-        $dbPath = dirname(__DIR__) . '/waaseyaa.sqlite';
+        $dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/waaseyaa.sqlite';
         $backupPath = $dbPath . '.pre-dedup.bak';
         if (!copy($dbPath, $backupPath)) {
             fprintf(STDERR, "ERROR: Failed to back up database to %s\n", $backupPath);
