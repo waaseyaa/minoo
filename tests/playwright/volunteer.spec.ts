@@ -55,4 +55,45 @@ test.describe('Volunteer Portal', () => {
     // HTML5 required attribute prevents submission
     await expect(page.locator('#name')).toHaveAttribute('required', '');
   });
+
+  test('submitting signup without phone shows validation', async ({ page }) => {
+    await page.goto('/elders/volunteer');
+    await page.locator('#name').fill('John Volunteer');
+    await page.locator('button[type="submit"]').click();
+    // HTML5 required attribute prevents submission
+    await expect(page.locator('#phone')).toHaveAttribute('required', '');
+  });
+
+  test('skills selection appears on confirmation page', async ({ page }) => {
+    await page.goto('/elders/volunteer');
+    await page.locator('#name').fill('Jane Helper');
+    await page.locator('#phone').fill('705-555-4321');
+    // Check two skill checkboxes
+    await page.locator('input[name="skills[]"][value="Rides"]').check();
+    await page.locator('input[name="skills[]"][value="Groceries"]').check();
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
+    // Confirmation should show selected skills as tags
+    await expect(page.locator('.card__tag', { hasText: 'Rides' })).toBeVisible();
+    await expect(page.locator('.card__tag', { hasText: 'Groceries' })).toBeVisible();
+  });
+
+  test('confirmation page shows volunteer details', async ({ page }) => {
+    await page.goto('/elders/volunteer');
+    await page.locator('#name').fill('John Volunteer');
+    await page.locator('#phone').fill('705-555-5678');
+    await page.locator('#availability').fill('Weekends');
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
+    // Should show thank-you heading
+    await expect(page.getByRole('heading', { name: 'Thank You for Volunteering' })).toBeVisible();
+    // Should show the volunteer's name
+    await expect(page.getByText('Thank you, John Volunteer')).toBeVisible();
+    // Should show availability
+    await expect(page.getByText('Weekends')).toBeVisible();
+    // Should show "What Happens Next" steps
+    await expect(page.getByRole('heading', { name: 'What Happens Next' })).toBeVisible();
+  });
 });
