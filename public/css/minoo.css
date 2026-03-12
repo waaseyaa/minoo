@@ -1977,6 +1977,14 @@
       color: var(--link);
     }
   }
+
+  .attribution {
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-sm);
+    border-block-start: 1px solid oklch(var(--neutral-30));
+    font-size: var(--step--1);
+    color: oklch(var(--neutral-60));
+  }
 }
 
 @layer utilities {
