@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Search\CommunityAutocompleteClient;
 use Minoo\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -155,14 +154,32 @@ final class CommunityController
     /** @param array<string, mixed> $query */
     public function autocomplete(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
-        $term = $request->query->getString('q');
+        $term = trim($request->query->getString('q'));
 
-        $client = new CommunityAutocompleteClient(
-            baseUrl: (string) getenv('NORTHCLOUD_API_URL'),
-            timeout: 5,
-        );
+        if (strlen($term) < 2) {
+            return new JsonResponse([]);
+        }
 
-        return new JsonResponse($client->suggest($term));
+        $storage = $this->entityTypeManager->getStorage('community');
+        $ids = $storage->getQuery()
+            ->condition('name', '%' . $term . '%', 'LIKE')
+            ->condition('status', 1)
+            ->range(0, 10)
+            ->execute();
+
+        $results = [];
+        if ($ids !== []) {
+            foreach ($storage->loadMultiple($ids) as $community) {
+                $results[] = [
+                    'id' => (string) $community->id(),
+                    'name' => (string) $community->get('name'),
+                    'community_type' => (string) ($community->get('community_type') ?? ''),
+                    'province' => (string) ($community->get('province') ?? ''),
+                ];
+            }
+        }
+
+        return new JsonResponse($results);
     }
 
     private function createNorthCloudClient(): NorthCloudClient
