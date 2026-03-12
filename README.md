@@ -1,5 +1,7 @@
 # Minoo
 
+[![CI](https://github.com/waaseyaa/minoo/actions/workflows/ci.yml/badge.svg)](https://github.com/waaseyaa/minoo/actions/workflows/ci.yml)
+
 Indigenous knowledge platform powered by [Waaseyaa CMS](https://github.com/waaseyaa/framework) and [NorthCloud](https://github.com/jonesrussell/north-cloud) ingestion.
 
 Minoo aggregates Indigenous cultural content — language resources, teachings, events, community groups, and cultural collections — into a unified platform with structured data and public-facing pages.
@@ -122,4 +124,4 @@ nano /home/deployer/minoo/shared/.env
 
 ## License
 
-GPL-2.0-or-later
+Software: MIT. Community content: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See [LICENSE](LICENSE) for details.
