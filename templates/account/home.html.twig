@@ -1,0 +1,34 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Your Account — Minoo{% endblock %}
+
+{% block content %}
+<section class="account-home">
+  <h1>Your Account</h1>
+
+  <div class="actions">
+    <h2>Profile</h2>
+    <ul class="links">
+      <li><a href="/logout" class="btn btn--outline">Sign Out</a></li>
+    </ul>
+  </div>
+
+  {% if 'volunteer' in roles %}
+  <div class="actions">
+    <h2>Elder Support Program</h2>
+    <ul class="links">
+      <li><a href="/dashboard/volunteer">My Assignments</a></li>
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if 'elder_coordinator' in roles %}
+  <div class="actions">
+    <h2>Coordination</h2>
+    <ul class="links">
+      <li><a href="/dashboard/coordinator">Coordinator Dashboard</a></li>
+    </ul>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

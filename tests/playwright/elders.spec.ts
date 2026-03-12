@@ -74,4 +74,54 @@ test.describe('Elders Portal', () => {
     await page.locator('button[type="submit"]').click();
     await expect(page).toHaveURL(/\/elders\/request\/[a-f0-9-]+/);
   });
+
+  test('confirmation page shows UUID reference and submitted details', async ({ page }) => {
+    await page.goto('/elders/request');
+    await page.locator('#name').fill('Mary Elder');
+    await page.locator('#phone').fill('705-555-1234');
+    await page.locator('#type').selectOption('ride');
+    await page.locator('#community').fill('Wikwemikong');
+    await page.locator('button[type="submit"]').click();
+
+    // Confirmation page should show UUID reference
+    await expect(page.locator('.card__meta')).toContainText(/Reference:/);
+    // Should show the requester name in thank-you text
+    await expect(page.getByText('Thank you, Mary Elder')).toBeVisible();
+    // Should show type of help
+    await expect(page.getByText('Ride')).toBeVisible();
+    // Should show community
+    await expect(page.getByText('Wikwemikong')).toBeVisible();
+    // Should show "What Happens Next" steps
+    await expect(page.getByRole('heading', { name: 'What Happens Next' })).toBeVisible();
+  });
+
+  test('representative submission requires elder name', async ({ page }) => {
+    await page.goto('/elders/request');
+    await page.locator('#name').fill('Jane Representative');
+    await page.locator('#phone').fill('705-555-9999');
+    await page.locator('#type').selectOption('groceries');
+    await page.locator('#is_representative').check();
+    // Wait for JS to unhide representative fields
+    await expect(page.locator('#representative-fields')).toBeVisible();
+    // Leave elder_name empty, do not check consent
+    await page.locator('button[type="submit"]').click();
+    await page.waitForLoadState('networkidle');
+
+    // Server-side validation should show error for elder_name
+    await expect(page.locator('.form__error').first()).toBeVisible();
+  });
+
+  test('representative submission requires consent checkbox', async ({ page }) => {
+    await page.goto('/elders/request');
+    await page.locator('#name').fill('Jane Representative');
+    await page.locator('#phone').fill('705-555-9999');
+    await page.locator('#type').selectOption('groceries');
+    await page.locator('#is_representative').check();
+    await page.locator('#elder_name').fill('Elder Person');
+    // Do not check consent
+    await page.locator('button[type="submit"]').click();
+
+    // Server-side validation should show error for consent
+    await expect(page.locator('.form__error')).toBeVisible();
+  });
 });

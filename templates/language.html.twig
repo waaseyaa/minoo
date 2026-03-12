@@ -3,123 +3,53 @@
 {% block title %}
   {%- if path == '/language' -%}
     Language — Minoo
-  {%- elseif path starts with '/language/' -%}
-    Dictionary Entry — Minoo
+  {%- elseif entry is defined and entry -%}
+    {{ entry.get('word') }} — Minoo
   {%- else -%}
     Entry Not Found — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
-  {% set entries = [
-    {
-      slug: "miigwech",
-      word: "Miigwech",
-      part_of_speech: "interjection",
-      definition: "Thank you. An expression of gratitude.",
-      example: "Miigwech for the wild rice.",
-      description: "Miigwech is one of the most commonly known and used words in Anishinaabemowin. It expresses gratitude and acknowledgment, and is used in both everyday conversation and ceremonial contexts.\n\nThe word carries deep cultural significance — giving thanks is central to Anishinaabe worldview, where gratitude extends to all living beings, the land, the water, and the spirit world. You may hear miigwech spoken at gatherings, after meals, during ceremonies, and in daily interactions.\n\nPronunciation: mee-gwetch (the 'ch' is soft, as in 'church').",
-      word_parts: [
-        { part: "miigw-", meaning: "Root relating to giving/exchange" },
-        { part: "-ech", meaning: "Completive suffix" }
-      ],
-      tags: ["greeting", "common"]
-    },
-    {
-      slug: "anishinaabe",
-      word: "Anishinaabe",
-      part_of_speech: "noun (animate)",
-      definition: "A human being; an Indigenous person. The original people.",
-      example: "Anishinaabe niin. (I am Anishinaabe.)",
-      description: "Anishinaabe refers to the original people — the Indigenous peoples of the Great Lakes region, including the Ojibwe, Odawa, and Potawatomi nations. The word is often translated as 'the good beings' or 'the beings made of nothing' (lowered from the spirit world).\n\nThe plural form is Anishinaabeg. The word is animate in the Ojibwe grammatical system, meaning it takes animate verb forms and is treated as a living being in sentence construction.\n\nThe term encompasses a shared cultural and linguistic identity across many distinct nations and communities spanning from the Atlantic coast to the prairies.",
-      word_parts: [
-        { part: "anishinaa-", meaning: "Original, spontaneous, lowered (from the spirit world)" },
-        { part: "-be", meaning: "Being, person (animate)" }
-      ],
-      tags: ["identity", "common"]
-    },
-    {
-      slug: "aki",
-      word: "Aki",
-      part_of_speech: "noun (inanimate)",
-      definition: "The earth, land, ground. The physical world.",
-      example: "Gakina gegoo onjibaa akiing. (Everything comes from the earth.)",
-      description: "Aki means earth, land, or the physical world. It is an inanimate noun in Ojibwe grammar, though the concept of aki in Anishinaabe philosophy encompasses a living, breathing entity deserving of respect and care.\n\nThe locative form akiing means 'on the earth' or 'in the land.' Aki appears in many compound words and place names throughout the Great Lakes region.\n\nRelated words include akiwenzii (old man, literally 'old earth'), akiwan (it is earth/land), and aki-waanzh (mud, literally 'dirty earth'). The concept of aki is central to teachings about environmental stewardship and the responsibility of humans to care for the land.",
-      word_parts: [
-        { part: "aki", meaning: "Earth, land (root word, inanimate noun)" }
-      ],
-      tags: ["nature"]
-    }
-  ] %}
-
-  {% set slug = path|replace({'/language/': '', '/language': ''})|trim('/') %}
-  {% set current_entry = null %}
-  {% for e in entries %}
-    {% if e.slug == slug %}
-      {% set current_entry = e %}
-    {% endif %}
-  {% endfor %}
-
   {% if path == '/language' %}
     <div class="flow-lg">
       <h1>Language</h1>
       <p class="hero__subtitle">Anishinaabemowin carries a worldview that English cannot. Explore words, meanings, and the structure of a language that has been spoken on this land for thousands of years.</p>
 
-      <div class="card-grid">
-        {% for entry in entries %}
-          {% include "components/dictionary-entry-card.html.twig" with {
-            word: entry.word,
-            part_of_speech: entry.part_of_speech,
-            definition: entry.definition,
-            example: entry.example,
-            tags: entry.tags,
-            url: "/language/" ~ entry.slug
-          } %}
-        {% endfor %}
-      </div>
+      {% if entries is defined and entries|length > 0 %}
+        <div class="card-grid">
+          {% for e in entries %}
+            {% include "components/dictionary-entry-card.html.twig" with {
+              word: e.get('word'),
+              part_of_speech: e.get('part_of_speech')|default(''),
+              definition: e.get('definition')|default(''),
+              example: '',
+              tags: [],
+              url: "/language/" ~ e.get('slug')
+            } %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No dictionary entries available yet. Check back soon.</p>
+      {% endif %}
 
       <footer class="attribution">
         <p>Dictionary content is copyrighted by <a href="http://ojibwe.lib.umn.edu" rel="external noopener">The Ojibwe People's Dictionary</a> and used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external noopener">CC BY-NC-SA 4.0</a>.</p>
       </footer>
     </div>
-  {% elseif current_entry %}
+  {% elseif entry is defined and entry %}
     <div class="flow-lg detail">
       <a href="/language" class="detail__back">Language</a>
       <div class="detail__header">
-        <span class="card__badge card__badge--language">{{ current_entry.part_of_speech }}</span>
-        <h1>{{ current_entry.word }}</h1>
+        <span class="card__badge card__badge--language">{{ entry.get('part_of_speech')|default('') }}</span>
+        <h1>{{ entry.get('word') }}</h1>
         <div class="detail__meta">
-          <span>{{ current_entry.definition }}</span>
+          <span>{{ entry.get('definition')|default('') }}</span>
         </div>
       </div>
-      {% if current_entry.example is defined and current_entry.example %}
-        <blockquote>
-          <p><em>{{ current_entry.example }}</em></p>
-        </blockquote>
-      {% endif %}
       <div class="detail__body flow">
-        {% for paragraph in current_entry.description|split("\n\n") %}
-          <p>{{ paragraph }}</p>
-        {% endfor %}
+        <p>{{ entry.get('definition')|default('') }}</p>
       </div>
-      {% if current_entry.word_parts is defined and current_entry.word_parts %}
-        <div class="flow">
-          <h2>Word Parts</h2>
-          <dl>
-            {% for wp in current_entry.word_parts %}
-              <dt><code>{{ wp.part }}</code></dt>
-              <dd>{{ wp.meaning }}</dd>
-            {% endfor %}
-          </dl>
-        </div>
-      {% endif %}
-      {% if current_entry.tags is defined and current_entry.tags %}
-        <div>
-          {% for tag in current_entry.tags %}
-            <span class="card__tag">{{ tag }}</span>
-          {% endfor %}
-        </div>
-      {% endif %}
 
       <footer class="attribution">
         <p>Dictionary content is copyrighted by <a href="http://ojibwe.lib.umn.edu" rel="external noopener">The Ojibwe People's Dictionary</a> and used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external noopener">CC BY-NC-SA 4.0</a>.</p>

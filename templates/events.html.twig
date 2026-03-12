@@ -3,83 +3,53 @@
 {% block title %}
   {%- if path == '/events' -%}
     Events — Minoo
-  {%- elseif path starts with '/events/' -%}
-    Event — Minoo
+  {%- elseif event is defined and event -%}
+    {{ event.get('title') }} — Minoo
   {%- else -%}
     Event Not Found — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
-  {% set events = [
-    {
-      slug: "summer-solstice-powwow",
-      title: "Summer Solstice Powwow",
-      type: "Powwow",
-      date: "June 21 – 22, 2026",
-      location: "Manitoulin Island, Ontario",
-      excerpt: "A celebration of the longest day with traditional dance, drum circles, and a community feast under the open sky.",
-      description: "Join us on Manitoulin Island for the annual Summer Solstice Powwow, a two-day celebration of Indigenous culture, music, and community. The gathering features grand entry ceremonies, traditional and contemporary dance competitions, drum circles, artisan vendors, and a community feast.\n\nAll nations and visitors are welcome. Bring your own chair and tobacco for offerings. Camping is available on-site."
-    },
-    {
-      slug: "community-healing-circle",
-      title: "Community Healing Circle",
-      type: "Gathering",
-      date: "Every Wednesday, 6:30 PM",
-      location: "Sudbury Community Centre",
-      excerpt: "A safe weekly space for sharing, healing, and reconnection guided by traditional practices.",
-      description: "The Community Healing Circle meets weekly to provide a safe, supportive environment for individuals and families seeking healing through traditional practices. Each session is guided by an Elder and includes smudging, sharing circles, and Teachings.\n\nNo registration required. Light refreshments provided. Childcare available on request."
-    },
-    {
-      slug: "water-ceremony",
-      title: "Spring Water Ceremony",
-      type: "Ceremony",
-      date: "March 22, 2026",
-      location: "Lake Huron shoreline, Sauble Beach",
-      excerpt: "Honouring the water on World Water Day with prayer, song, and offerings at the lakeshore.",
-      description: "On World Water Day, we gather at the shores of Lake Huron to honour nibi (water) through prayer, song, and offerings. The ceremony is led by Water Walkers and community Elders who carry the tradition of caring for the water.\n\nParticipants are asked to bring a small container of water from their home to add to the collective offering. Dress warmly and wear footwear suitable for the shoreline."
-    }
-  ] %}
-
-  {% set slug = path|replace({'/events/': '', '/events': ''})|trim('/') %}
-  {% set current_event = null %}
-  {% for e in events %}
-    {% if e.slug == slug %}
-      {% set current_event = e %}
-    {% endif %}
-  {% endfor %}
-
   {% if path == '/events' %}
     <div class="flow-lg">
       <h1>Events</h1>
       <p class="hero__subtitle">Powwows, gatherings, ceremonies, and community events happening across the region. Come learn, celebrate, and connect.</p>
 
-      <div class="card-grid">
-        {% for event in events %}
-          {% include "components/event-card.html.twig" with {
-            title: event.title,
-            type: event.type,
-            date: event.date,
-            location: event.location,
-            excerpt: event.excerpt,
-            url: "/events/" ~ event.slug
-          } %}
-        {% endfor %}
-      </div>
+      {% if events is defined and events|length > 0 %}
+        <div class="card-grid">
+          {% for e in events %}
+            {% include "components/event-card.html.twig" with {
+              title: e.get('title'),
+              type: e.get('type')|default('')|capitalize,
+              date: e.get('starts_at')|default(''),
+              location: e.get('location')|default(''),
+              excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
+              url: "/events/" ~ e.get('slug')
+            } %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No events scheduled yet. Check back soon.</p>
+      {% endif %}
     </div>
-  {% elseif current_event %}
+  {% elseif event is defined and event %}
     <div class="flow-lg detail">
       <a href="/events" class="detail__back">Events</a>
       <div class="detail__header">
-        <span class="card__badge card__badge--event">{{ current_event.type }}</span>
-        <h1>{{ current_event.title }}</h1>
+        <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
+        <h1>{{ event.get('title') }}</h1>
         <div class="detail__meta">
-          <span class="card__date">{{ current_event.date }}</span>
-          <span>{{ current_event.location }}</span>
+          {% if event.get('starts_at') %}
+            <span class="card__date">{{ event.get('starts_at') }}{% if event.get('ends_at') %} – {{ event.get('ends_at') }}{% endif %}</span>
+          {% endif %}
+          {% if event.get('location') %}
+            <span>{{ event.get('location') }}</span>
+          {% endif %}
         </div>
       </div>
       <div class="detail__body flow">
-        {% for paragraph in current_event.description|split("\n\n") %}
+        {% for paragraph in event.get('description')|default('')|split("\n\n") %}
           <p>{{ paragraph }}</p>
         {% endfor %}
       </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\NorthCloudCache;
 use Minoo\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -187,9 +188,19 @@ final class CommunityController
         $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
         $config = file_exists($configPath) ? (require $configPath)['northcloud'] ?? [] : [];
 
+        $projectRoot = dirname(__DIR__, 2);
+        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/waaseyaa.sqlite';
+        $cache = null;
+        if (file_exists($dbPath)) {
+            $pdo = new \PDO('sqlite:' . $dbPath);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $cache = new NorthCloudCache($pdo, (int) ($config['cache_ttl'] ?? 3600));
+        }
+
         return new NorthCloudClient(
-            baseUrl: (string) ($config['base_url'] ?? 'https://northcloud.one'),
+            baseUrl: (string) ($config['base_url'] ?? 'https://northcloud.web.net'),
             timeout: (int) ($config['timeout'] ?? 5),
+            cache: $cache,
         );
     }
 

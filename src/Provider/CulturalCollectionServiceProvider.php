@@ -54,6 +54,13 @@ final class CulturalCollectionServiceProvider extends ServiceProvider
                     'settings' => ['target_type' => 'media'],
                     'weight' => 20,
                 ],
+                'copyright_status' => [
+                    'type' => 'string',
+                    'label' => 'Copyright Status',
+                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
+                    'default_value' => 'unknown',
+                    'weight' => 99,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',

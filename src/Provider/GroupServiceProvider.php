@@ -8,6 +8,8 @@ use Minoo\Entity\Group;
 use Minoo\Entity\GroupType;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
+use Waaseyaa\Routing\RouteBuilder;
+use Waaseyaa\Routing\WaaseyaaRouter;
 
 final class GroupServiceProvider extends ServiceProvider
 {
@@ -48,6 +50,13 @@ final class GroupServiceProvider extends ServiceProvider
                     'settings' => ['target_type' => 'media'],
                     'weight' => 20,
                 ],
+                'copyright_status' => [
+                    'type' => 'string',
+                    'label' => 'Copyright Status',
+                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
+                    'default_value' => 'unknown',
+                    'weight' => 99,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',
@@ -74,5 +83,29 @@ final class GroupServiceProvider extends ServiceProvider
             keys: ['id' => 'type', 'label' => 'name'],
             group: 'community',
         ));
+    }
+
+    public function routes(WaaseyaaRouter $router): void
+    {
+        $router->addRoute(
+            'groups.list',
+            RouteBuilder::create('/groups')
+                ->controller('Minoo\\Controller\\GroupController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'groups.show',
+            RouteBuilder::create('/groups/{slug}')
+                ->controller('Minoo\\Controller\\GroupController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
     }
 }

@@ -22,7 +22,7 @@ $configFile = dirname(__DIR__) . '/config/waaseyaa.php';
 $config = file_exists($configFile) ? require $configFile : [];
 
 $dryRun = in_array('--dry-run', $argv, true);
-$baseUrl = rtrim((string) ($config['search']['base_url'] ?? 'https://northcloud.one'), '/');
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
 
 $context = stream_context_create([
     'http' => ['method' => 'GET', 'timeout' => 10, 'ignore_errors' => true],

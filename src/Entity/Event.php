@@ -29,6 +29,9 @@ final class Event extends ContentEntityBase
         if (!array_key_exists('updated_at', $values)) {
             $values['updated_at'] = 0;
         }
+        if (!array_key_exists('copyright_status', $values)) {
+            $values['copyright_status'] = 'unknown';
+        }
 
         parent::__construct($values, $this->entityTypeId, $this->entityKeys);
     }

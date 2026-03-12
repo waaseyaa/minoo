@@ -3,92 +3,48 @@
 {% block title %}
   {%- if path == '/teachings' -%}
     Teachings — Minoo
-  {%- elseif path starts with '/teachings/' -%}
-    Teaching — Minoo
+  {%- elseif teaching is defined and teaching -%}
+    {{ teaching.get('title') }} — Minoo
   {%- else -%}
     Teaching Not Found — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
-  {% set teachings = [
-    {
-      slug: "seven-grandfather-teachings",
-      title: "The Seven Grandfather Teachings",
-      type: "Culture",
-      author: "Anishinaabe Traditional Knowledge",
-      excerpt: "The seven sacred values that guide the Anishinaabe way of life: love, respect, bravery, truth, honesty, humility, and wisdom.",
-      description: "The Seven Grandfather Teachings are foundational to Anishinaabe ethics and spirituality. Each teaching was given by one of the seven grandfathers to a young boy who was chosen to receive the wisdom on behalf of all people.\n\nThe seven values are: Zaagi'idiwin (Love), Mnaadendimowin (Respect), Aakode'ewin (Bravery), Debwewin (Truth), Gwayakwaadiziwin (Honesty), Dbaadendiziwin (Humility), and Nibwaakaawin (Wisdom).\n\nThese teachings are not merely abstract principles — they are a practical guide for living in balance with all of creation. Each value is connected to an animal that embodies its spirit, reminding us that wisdom can be found throughout the natural world.",
-      tags: ["ceremony", "governance", "kinship"]
-    },
-    {
-      slug: "history-of-the-anishinaabe-migration",
-      title: "The Great Migration of the Anishinaabe",
-      type: "History",
-      author: "Oral Tradition",
-      excerpt: "The centuries-long journey of the Anishinaabe people from the eastern seaboard to the Great Lakes, guided by the miigis shell prophecy.",
-      description: "The Great Migration is one of the most significant events in Anishinaabe history. According to oral tradition, the Anishinaabe people originally lived along the Atlantic coast. A prophecy told them to follow the miigis shell — a sacred cowrie shell — westward until they found the land where food grows on water.\n\nOver several centuries, the people moved westward in stages, establishing communities along the St. Lawrence River, the Great Lakes, and ultimately arriving at the wild rice beds of what is now Minnesota and Ontario. The journey is recorded in the scrolls of the Midewiwin (Grand Medicine Society).\n\nThis migration shaped the geography, alliances, and cultural identity of the Anishinaabe nations. The wild rice (manoomin) that they found growing on water fulfilled the prophecy and remains a sacred food to this day.",
-      tags: ["history", "land"]
-    },
-    {
-      slug: "anishinaabemowin-verb-structure",
-      title: "Understanding Anishinaabemowin Verb Structure",
-      type: "Language",
-      author: "Language Keepers Program",
-      excerpt: "An introduction to the verb-centered grammar of the Ojibwe language, including animate and inanimate verb classes and the order system.",
-      description: "Anishinaabemowin (the Ojibwe language) is a polysynthetic language where verbs carry most of the meaning in a sentence. Understanding verb structure is the key to unlocking the language.\n\nVerbs in Anishinaabemowin are classified by their transitivity and whether their subjects and objects are animate or inanimate. The four main classes are: VAI (verb, animate, intransitive), VII (verb, inanimate, intransitive), VTA (verb, transitive, animate object), and VTI (verb, transitive, inanimate object).\n\nVerbs also operate in different 'orders' — the independent order for main statements, the conjunct order for subordinate clauses, and the imperative order for commands. Each order has its own set of prefixes and suffixes that encode person, number, and tense.",
-      tags: ["language"]
-    }
-  ] %}
-
-  {% set slug = path|replace({'/teachings/': '', '/teachings': ''})|trim('/') %}
-  {% set current_teaching = null %}
-  {% for t in teachings %}
-    {% if t.slug == slug %}
-      {% set current_teaching = t %}
-    {% endif %}
-  {% endfor %}
-
   {% if path == '/teachings' %}
     <div class="flow-lg">
       <h1>Teachings</h1>
       <p class="hero__subtitle">Living knowledge passed down through generations — culture, history, and language Teachings that guide how we live, relate, and care for the land. These aren't lessons from the past. They're wisdom for right now.</p>
 
-      <div class="card-grid">
-        {% for teaching in teachings %}
-          {% include "components/teaching-card.html.twig" with {
-            title: teaching.title,
-            type: teaching.type,
-            author: teaching.author,
-            excerpt: teaching.excerpt,
-            tags: teaching.tags,
-            url: "/teachings/" ~ teaching.slug
-          } %}
-        {% endfor %}
-      </div>
+      {% if teachings is defined and teachings|length > 0 %}
+        <div class="card-grid">
+          {% for t in teachings %}
+            {% include "components/teaching-card.html.twig" with {
+              title: t.get('title'),
+              type: t.get('type')|default('')|capitalize,
+              author: '',
+              excerpt: t.get('content')|default('')|split("\n\n")|first|length > 120 ? t.get('content')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : t.get('content')|default('')|split("\n\n")|first,
+              tags: [],
+              url: "/teachings/" ~ t.get('slug')
+            } %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>No teachings available yet. Check back soon.</p>
+      {% endif %}
     </div>
-  {% elseif current_teaching %}
+  {% elseif teaching is defined and teaching %}
     <div class="flow-lg detail">
       <a href="/teachings" class="detail__back">Teachings</a>
       <div class="detail__header">
-        <span class="card__badge card__badge--teaching">{{ current_teaching.type }}</span>
-        <h1>{{ current_teaching.title }}</h1>
-        <div class="detail__meta">
-          <span>{{ current_teaching.author }}</span>
-        </div>
+        <span class="card__badge card__badge--teaching">{{ teaching.get('type')|default('')|capitalize }}</span>
+        <h1>{{ teaching.get('title') }}</h1>
       </div>
       <div class="detail__body flow">
-        {% for paragraph in current_teaching.description|split("\n\n") %}
+        {% for paragraph in teaching.get('content')|default('')|split("\n\n") %}
           <p>{{ paragraph }}</p>
         {% endfor %}
       </div>
-      {% if current_teaching.tags is defined and current_teaching.tags %}
-        <div>
-          {% for tag in current_teaching.tags %}
-            <span class="card__tag">{{ tag }}</span>
-          {% endfor %}
-        </div>
-      {% endif %}
     </div>
   {% else %}
     <div class="flow-lg">
