@@ -10,6 +10,8 @@ use Minoo\Entity\Speaker;
 use Minoo\Entity\WordPart;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
+use Waaseyaa\Routing\RouteBuilder;
+use Waaseyaa\Routing\WaaseyaaRouter;
 
 final class LanguageServiceProvider extends ServiceProvider
 {
@@ -31,6 +33,8 @@ final class LanguageServiceProvider extends ServiceProvider
                 'source_url' => ['type' => 'uri', 'label' => 'Source URL', 'weight' => 15],
                 'attribution_source' => ['type' => 'string', 'label' => 'Attribution Source', 'description' => 'Source identifier (e.g., ojibwe-peoples-dictionary).', 'weight' => 16],
                 'attribution_url' => ['type' => 'uri', 'label' => 'Attribution URL', 'description' => 'URL of the authoritative source.', 'weight' => 17],
+                'consent_public' => ['type' => 'boolean', 'label' => 'Public Consent', 'description' => 'Whether this content may be shown on public pages.', 'weight' => 28, 'default' => 1],
+                'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this content may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
@@ -89,5 +93,29 @@ final class LanguageServiceProvider extends ServiceProvider
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
         ));
+    }
+
+    public function routes(WaaseyaaRouter $router): void
+    {
+        $router->addRoute(
+            'language.list',
+            RouteBuilder::create('/language')
+                ->controller('Minoo\\Controller\\LanguageController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'language.show',
+            RouteBuilder::create('/language/{slug}')
+                ->controller('Minoo\\Controller\\LanguageController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
     }
 }

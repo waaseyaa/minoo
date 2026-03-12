@@ -8,6 +8,8 @@ use Minoo\Entity\Teaching;
 use Minoo\Entity\TeachingType;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
+use Waaseyaa\Routing\RouteBuilder;
+use Waaseyaa\Routing\WaaseyaaRouter;
 
 final class TeachingServiceProvider extends ServiceProvider
 {
@@ -50,6 +52,20 @@ final class TeachingServiceProvider extends ServiceProvider
                     'settings' => ['target_type' => 'media'],
                     'weight' => 20,
                 ],
+                'consent_public' => [
+                    'type' => 'boolean',
+                    'label' => 'Public Consent',
+                    'description' => 'Whether this content may be shown on public pages.',
+                    'weight' => 28,
+                    'default' => 1,
+                ],
+                'consent_ai_training' => [
+                    'type' => 'boolean',
+                    'label' => 'AI Training Consent',
+                    'description' => 'Whether this content may be used for AI training. Default: no.',
+                    'weight' => 29,
+                    'default' => 0,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',
@@ -76,5 +92,29 @@ final class TeachingServiceProvider extends ServiceProvider
             keys: ['id' => 'type', 'label' => 'name'],
             group: 'knowledge',
         ));
+    }
+
+    public function routes(WaaseyaaRouter $router): void
+    {
+        $router->addRoute(
+            'teachings.list',
+            RouteBuilder::create('/teachings')
+                ->controller('Minoo\\Controller\\TeachingController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'teachings.show',
+            RouteBuilder::create('/teachings/{slug}')
+                ->controller('Minoo\\Controller\\TeachingController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
     }
 }
