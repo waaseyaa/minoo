@@ -13,6 +13,7 @@ final class NorthCloudClient
         private readonly string $baseUrl,
         private readonly int $timeout = 5,
         ?callable $httpClient = null,
+        private readonly ?NorthCloudCache $cache = null,
     ) {
         $this->httpClient = $httpClient !== null ? $httpClient(...) : null;
     }
@@ -64,23 +65,34 @@ final class NorthCloudClient
 
     private function doRequest(string $url): ?string
     {
-        if ($this->httpClient !== null) {
-            $result = ($this->httpClient)($url);
-            return $result === false ? null : $result;
+        if ($this->cache !== null) {
+            $cached = $this->cache->get($url);
+            if ($cached !== null) {
+                return $cached;
+            }
         }
 
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'GET',
-                'timeout' => $this->timeout,
-                'ignore_errors' => true,
-            ],
-        ]);
+        if ($this->httpClient !== null) {
+            $result = ($this->httpClient)($url);
+            $result = $result === false ? null : $result;
+        } else {
+            $context = stream_context_create([
+                'http' => [
+                    'method' => 'GET',
+                    'timeout' => $this->timeout,
+                    'ignore_errors' => true,
+                ],
+            ]);
 
-        $result = @file_get_contents($url, false, $context);
-        if ($result === false) {
-            error_log(sprintf('NorthCloud API request failed: %s', $url));
-            return null;
+            $result = @file_get_contents($url, false, $context);
+            if ($result === false) {
+                error_log(sprintf('NorthCloud API request failed: %s', $url));
+                $result = null;
+            }
+        }
+
+        if ($result !== null && $this->cache !== null) {
+            $this->cache->set($url, $result);
         }
 
         return $result;

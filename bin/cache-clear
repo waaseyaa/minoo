@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Clear the NorthCloud API cache.
+ *
+ * Usage: bin/cache-clear
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$projectRoot = dirname(__DIR__);
+$dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/waaseyaa.sqlite';
+
+if (!file_exists($dbPath)) {
+    fprintf(STDERR, "Database not found at %s\n", $dbPath);
+    exit(1);
+}
+
+$pdo = new PDO('sqlite:' . $dbPath);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$cache = new Minoo\Support\NorthCloudCache($pdo);
+$cache->clear();
+
+fprintf(STDOUT, "NorthCloud API cache cleared.\n");
