@@ -249,6 +249,27 @@ Policy-to-type mapping:
 
 Config entity types (`event_type`, `group_type`, `teaching_type`) inherit framework default access.
 
+## Consent Field Scope
+
+Two consent fields — `consent_public` and `consent_ai_training` — exist on entity types that hold individually contributed cultural knowledge. Community-level public information intentionally omits these fields.
+
+| Entity Type | `consent_public` | `consent_ai_training` | Rationale |
+|-------------|:-:|:-:|-----------|
+| `teaching` | Yes (default: 1) | Yes (default: 0) | Individually contributed cultural knowledge requires explicit consent |
+| `dictionary_entry` | Yes (default: 1) | Yes (default: 0) | Language data contributed by individual speakers and scholars |
+| `event` | No | No | Community-level public information (gatherings, powwows, ceremonies) |
+| `group` | No | No | Community-level public information (organizations, advocacy groups) |
+| `community` | No | No | Public First Nations registry data from CIRNAC |
+| `cultural_group` | No | No | Hierarchical cultural classification, not individually contributed |
+| `cultural_collection` | No | No | Curated gallery collections, not individually contributed |
+| `example_sentence` | No | No | Inherits consent scope from parent `dictionary_entry` |
+| `word_part` | No | No | Linguistic morpheme data, not individually contributed |
+| `speaker` | No | No | Speaker profile metadata, not cultural content itself |
+
+**Design rationale:** Consent fields gate two distinct concerns: (1) whether content appears on public pages (`consent_public`, checked via `->condition('consent_public', 1)` in controllers), and (2) whether content may be used for AI/ML training (`consent_ai_training`, default off). These controls apply to content where an individual Knowledge Keeper or contributor has a personal stake in how their knowledge is shared. Community-level entities like events and groups represent publicly announced information that does not require per-record consent gating.
+
+**Future extension:** If consent controls become necessary for additional entity types, follow the pattern established in `TeachingServiceProvider` and `LanguageServiceProvider`: add `consent_public` (boolean, default 1) and `consent_ai_training` (boolean, default 0) to the field definitions, and add `->condition('consent_public', 1)` to the corresponding controller queries.
+
 ## Seed Data
 
 ### Taxonomy Vocabularies
