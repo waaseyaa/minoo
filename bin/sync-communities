@@ -2,9 +2,11 @@
 <?php
 
 /**
- * Sync communities from NorthCloud ES index into Minoo's local entity storage.
+ * Sync communities from NorthCloud API into Minoo's local entity storage.
  *
  * Usage: bin/sync-communities [--dry-run]
+ *
+ * Requires NorthCloud v0.14.5+ with GET /api/v1/communities endpoint.
  */
 
 declare(strict_types=1);
@@ -13,8 +15,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 
-// Boot the kernel — protected method, but ConsoleKernel::handle() calls it too.
-// We load config separately from the config file.
 (new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
 
 $entityTypeManager = $kernel->getEntityTypeManager();
@@ -22,20 +22,19 @@ $configFile = dirname(__DIR__) . '/config/waaseyaa.php';
 $config = file_exists($configFile) ? require $configFile : [];
 
 $dryRun = in_array('--dry-run', $argv, true);
-$baseUrl = (string) ($config['search']['base_url'] ?? 'https://northcloud.one');
+$baseUrl = rtrim((string) ($config['search']['base_url'] ?? 'https://northcloud.one'), '/');
 
 $context = stream_context_create([
     'http' => ['method' => 'GET', 'timeout' => 10, 'ignore_errors' => true],
 ]);
 
-// Paginate through all results.
-$page = 1;
-$pageSize = 100;
+$limit = 100;
+$offset = 0;
 $allHits = [];
 
 while (true) {
-    $endpoint = rtrim($baseUrl, '/') . '/api/communities/search?page_size=' . $pageSize . '&page=' . $page;
-    fprintf(STDOUT, "Fetching page %d from %s\n", $page, $endpoint);
+    $endpoint = $baseUrl . '/api/v1/communities?limit=' . $limit . '&offset=' . $offset;
+    fprintf(STDOUT, "Fetching offset %d from %s\n", $offset, $endpoint);
 
     $json = @file_get_contents($endpoint, false, $context);
     if ($json === false) {
@@ -44,30 +43,29 @@ while (true) {
     }
 
     $data = json_decode($json, true);
-    if (!is_array($data) || !isset($data['hits'])) {
+    if (!is_array($data) || !isset($data['data'])) {
         fprintf(STDERR, "ERROR: Invalid response from NorthCloud.\n");
         exit(1);
     }
 
-    $hits = $data['hits'];
+    $hits = $data['data'];
     if ($hits === []) {
         break;
     }
 
     array_push($allHits, ...$hits);
 
-    $totalPages = (int) ($data['total_pages'] ?? 1);
-    if ($page >= $totalPages) {
+    if (count($hits) < $limit) {
         break;
     }
-    $page++;
+    $offset += $limit;
 }
 
-fprintf(STDOUT, "Found %d communities across %d page(s).\n", count($allHits), $page);
+fprintf(STDOUT, "Found %d communities.\n", count($allHits));
 
 if ($dryRun) {
     foreach ($allHits as $hit) {
-        fprintf(STDOUT, "  [DRY RUN] Would sync: %s (%s)\n", $hit['name'] ?? '?', $hit['community_type'] ?? '?');
+        fprintf(STDOUT, "  [DRY RUN] Would sync: %s (inac_id: %s)\n", $hit['name'] ?? '?', $hit['inac_id'] ?? 'none');
     }
     exit(0);
 }
@@ -83,13 +81,21 @@ foreach ($allHits as $hit) {
         continue;
     }
 
+    $inacId = (string) ($hit['inac_id'] ?? '');
+
+    // Upsert by inac_id (authoritative), fall back to name match.
+    $existingIds = [];
+    if ($inacId !== '') {
+        $existingIds = $storage->getQuery()->condition('inac_id', $inacId)->execute();
+    }
+    if ($existingIds === []) {
+        $existingIds = $storage->getQuery()->condition('name', $name)->execute();
+    }
+
     $slug = (string) ($hit['slug'] ?? '');
     if ($slug === '') {
         $slug = trim(strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name)), '-');
     }
-
-    // Check if community already exists by slug.
-    $existingIds = $storage->getQuery()->condition('slug', $slug)->execute();
 
     $values = [
         'name' => $name,
@@ -98,8 +104,8 @@ foreach ($allHits as $hit) {
         'municipality_type' => (string) ($hit['municipality_type'] ?? ''),
         'province' => (string) ($hit['province'] ?? ''),
         'region' => (string) ($hit['region'] ?? ''),
-        'latitude' => (float) ($hit['latitude'] ?? 0),
-        'longitude' => (float) ($hit['longitude'] ?? 0),
+        'latitude' => (float) ($hit['lat'] ?? $hit['latitude'] ?? 0),
+        'longitude' => (float) ($hit['lon'] ?? $hit['longitude'] ?? 0),
         'population' => (int) ($hit['population'] ?? 0),
         'population_year' => (int) ($hit['population_year'] ?? 0),
         'nation' => (string) ($hit['nation'] ?? ''),
@@ -107,8 +113,9 @@ foreach ($allHits as $hit) {
         'reserve_name' => (string) ($hit['reserve_name'] ?? ''),
         'language_group' => (string) ($hit['language_group'] ?? ''),
         'website' => (string) ($hit['website'] ?? ''),
-        'inac_id' => (string) ($hit['inac_id'] ?? ''),
+        'inac_id' => $inacId,
         'statcan_csd' => (string) ($hit['statcan_csd'] ?? ''),
+        'nc_id' => (string) ($hit['id'] ?? ''),
         'status' => 1,
         'updated_at' => time(),
     ];
