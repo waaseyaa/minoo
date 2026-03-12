@@ -108,7 +108,7 @@ test.describe('Elders Portal', () => {
     await page.waitForLoadState('networkidle');
 
     // Server-side validation should show error for elder_name
-    await expect(page.locator('.form__error')).toBeVisible();
+    await expect(page.locator('.form__error').first()).toBeVisible();
   });
 
   test('representative submission requires consent checkbox', async ({ page }) => {
