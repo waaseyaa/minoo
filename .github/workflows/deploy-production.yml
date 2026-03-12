@@ -29,20 +29,64 @@ jobs:
     steps:
       - name: Checkout minoo
         uses: actions/checkout@v4
+        with:
+          path: minoo
+
+      - name: Checkout waaseyaa framework
+        uses: actions/checkout@v4
+        with:
+          repository: waaseyaa/framework
+          path: waaseyaa
+          token: ${{ secrets.WAASEYAA_PAT }}
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
+          extensions: pdo_sqlite, sqlite3, mbstring, xml
           coverage: none
 
-      - name: Install Deployer
-        run: composer global require deployer/deployer
+      - name: Install dependencies (production)
+        working-directory: minoo
+        run: |
+          composer install --no-dev --no-interaction --optimize-autoloader --prefer-dist
+
+      - name: Assemble build artifact
+        run: |
+          mkdir -p minoo/.build
+          rsync -aL \
+            --exclude='.git' \
+            --exclude='.build/' \
+            --exclude='tests/' \
+            --exclude='docs/' \
+            --exclude='mcp/' \
+            --exclude='skills/' \
+            --exclude='worktrees/' \
+            --exclude='*.sqlite' \
+            --exclude='.env' \
+            --exclude='storage/framework/packages.php' \
+            --exclude='phpunit.xml.dist' \
+            --exclude='deploy.php' \
+            --exclude='ops/' \
+            --exclude='*.png' \
+            minoo/ minoo/.build/
+
+      - name: Install PHP Deployer
+        run: composer global require deployer/deployer --no-interaction
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Add known host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan minoo.live >> ~/.ssh/known_hosts
 
       - name: Deploy
-        run: dep deploy production
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        working-directory: minoo
+        run: dep deploy production --no-interaction
 
       - name: Verify deployment
         run: |

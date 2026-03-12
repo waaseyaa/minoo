@@ -1,4 +1,4 @@
-name: Deploy to minoo.live
+name: Deploy to Staging
 
 on:
   push:
@@ -6,14 +6,14 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-production
+  group: deploy-staging
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Build & Deploy
+    name: Build & Deploy to Staging
     runs-on: ubuntu-latest
-    environment: production
+    environment: staging
 
     steps:
       # -----------------------------------------------------------------------
