@@ -1,0 +1,49 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Export all community records as JSON for NorthCloud import.
+ *
+ * Usage: bin/export-communities > data/export/communities.json
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$storage = $entityTypeManager->getStorage('community');
+$ids = $storage->getQuery()->execute();
+
+$communities = [];
+
+foreach ($ids as $id) {
+    $entity = $storage->load($id);
+    if ($entity === null) {
+        continue;
+    }
+
+    $communities[] = [
+        'inac_id' => (string) ($entity->get('inac_id') ?? ''),
+        'name' => (string) ($entity->get('name') ?? ''),
+        'slug' => (string) ($entity->get('slug') ?? ''),
+        'community_type' => (string) ($entity->get('community_type') ?? ''),
+        'province' => (string) ($entity->get('province') ?? ''),
+        'latitude' => (float) ($entity->get('latitude') ?? 0),
+        'longitude' => (float) ($entity->get('longitude') ?? 0),
+        'treaty' => $entity->get('treaty') ?: null,
+        'language_group' => $entity->get('language_group') ?: null,
+        'population' => (int) ($entity->get('population') ?? 0),
+        'population_year' => ((int) ($entity->get('population_year') ?? 0)) ?: null,
+        'website' => $entity->get('website') ?: null,
+        'reserve_name' => $entity->get('reserve_name') ?: null,
+    ];
+}
+
+fprintf(STDERR, "Exported %d communities.\n", count($communities));
+
+echo json_encode($communities, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
