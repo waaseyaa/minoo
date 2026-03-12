@@ -1,0 +1,92 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Seed sample content into Minoo's entity storage.
+ *
+ * Usage: bin/seed-content
+ *
+ * Seeds events, teachings, groups, and dictionary entries from ContentSeeder.
+ * Skips entities that already exist (matched by slug).
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Minoo\Entity\DictionaryEntry;
+use Minoo\Entity\Event;
+use Minoo\Entity\Group;
+use Minoo\Entity\Teaching;
+use Minoo\Seed\ContentSeeder;
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$now = time();
+
+$entityTypes = [
+    [
+        'type_id' => 'event',
+        'class' => Event::class,
+        'data' => ContentSeeder::events(),
+        'slug_field' => 'slug',
+        'label' => 'events',
+    ],
+    [
+        'type_id' => 'teaching',
+        'class' => Teaching::class,
+        'data' => ContentSeeder::teachings(),
+        'slug_field' => 'slug',
+        'label' => 'teachings',
+    ],
+    [
+        'type_id' => 'group',
+        'class' => Group::class,
+        'data' => ContentSeeder::groups(),
+        'slug_field' => 'slug',
+        'label' => 'groups',
+    ],
+    [
+        'type_id' => 'dictionary_entry',
+        'class' => DictionaryEntry::class,
+        'data' => ContentSeeder::dictionaryEntries(),
+        'slug_field' => 'slug',
+        'label' => 'dictionary entries',
+    ],
+];
+
+foreach ($entityTypes as $entityType) {
+    $storage = $entityTypeManager->getStorage($entityType['type_id']);
+    $created = 0;
+
+    foreach ($entityType['data'] as $values) {
+        $slug = $values[$entityType['slug_field']];
+
+        // Check if entity already exists by slug.
+        $existingIds = $storage->getQuery()
+            ->condition($entityType['slug_field'], $slug)
+            ->execute();
+
+        if ($existingIds !== []) {
+            fprintf(STDOUT, "  Skipped %s (already exists)\n", $slug);
+            continue;
+        }
+
+        $values['created_at'] = $now;
+        $values['updated_at'] = $now;
+
+        $class = $entityType['class'];
+        $entity = new $class($values);
+        $storage->save($entity);
+        $created++;
+
+        fprintf(STDOUT, "  Created %s\n", $slug);
+    }
+
+    fprintf(STDOUT, "%s: %d created, %d skipped.\n", $entityType['label'], $created, count($entityType['data']) - $created);
+}
+
+fprintf(STDOUT, "Content seeding complete.\n");

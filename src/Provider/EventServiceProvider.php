@@ -8,6 +8,8 @@ use Minoo\Entity\Event;
 use Minoo\Entity\EventType;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
+use Waaseyaa\Routing\RouteBuilder;
+use Waaseyaa\Routing\WaaseyaaRouter;
 
 final class EventServiceProvider extends ServiceProvider
 {
@@ -80,5 +82,29 @@ final class EventServiceProvider extends ServiceProvider
             keys: ['id' => 'type', 'label' => 'name'],
             group: 'events',
         ));
+    }
+
+    public function routes(WaaseyaaRouter $router): void
+    {
+        $router->addRoute(
+            'events.list',
+            RouteBuilder::create('/events')
+                ->controller('Minoo\\Controller\\EventController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'events.show',
+            RouteBuilder::create('/events/{slug}')
+                ->controller('Minoo\\Controller\\EventController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
     }
 }
