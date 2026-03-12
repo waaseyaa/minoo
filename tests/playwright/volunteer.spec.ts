@@ -82,7 +82,8 @@ test.describe('Volunteer Portal', () => {
   test('confirmation page shows volunteer details', async ({ page }) => {
     await page.goto('/elders/volunteer');
     await page.locator('#name').fill('John Volunteer');
-    await page.locator('#phone').fill('705-555-5678');
+    // Use a unique phone to avoid duplicate phone validation
+    await page.locator('#phone').fill(`705-555-${Date.now().toString().slice(-4)}`);
     await page.locator('#availability').fill('Weekends');
     await page.locator('button[type="submit"]').click();
 

@@ -101,8 +101,11 @@ test.describe('Elders Portal', () => {
     await page.locator('#phone').fill('705-555-9999');
     await page.locator('#type').selectOption('groceries');
     await page.locator('#is_representative').check();
+    // Wait for JS to unhide representative fields
+    await expect(page.locator('#representative-fields')).toBeVisible();
     // Leave elder_name empty, do not check consent
     await page.locator('button[type="submit"]').click();
+    await page.waitForLoadState('networkidle');
 
     // Server-side validation should show error for elder_name
     await expect(page.locator('.form__error')).toBeVisible();

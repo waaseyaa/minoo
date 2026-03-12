@@ -68,13 +68,13 @@
   :root {
     /* Color palette — oklch */
     --color-earth-900: oklch(0.25 0.02 70);
-    --color-earth-700: oklch(0.40 0.02 70);
+    --color-earth-700: oklch(0.35 0.02 70);
     --color-earth-200: oklch(0.88 0.01 70);
     --color-earth-100: oklch(0.94 0.01 70);
     --color-earth-50:  oklch(0.97 0.005 70);
 
     --color-forest-700: oklch(0.40 0.08 155);
-    --color-forest-500: oklch(0.55 0.10 155);
+    --color-forest-500: oklch(0.48 0.10 155);
     --color-forest-100: oklch(0.92 0.03 155);
 
     --color-water-600: oklch(0.50 0.08 230);
@@ -160,7 +160,7 @@
     --surface-warm:    oklch(0.96 0.01 70);
     --surface-dark:    var(--color-earth-900);
     --text-on-dark:    oklch(0.92 0.005 70);
-    --text-muted:      oklch(0.55 0.015 70);
+    --text-muted:      oklch(0.40 0.015 70);
 
     /* Domain accents */
     --domain-events:    var(--color-water-600);
@@ -1782,6 +1782,8 @@
     gap: var(--space-xs);
     padding: var(--space-md);
     border-inline-start-width: 1px;
+    background-color: var(--surface-raised);
+    color: var(--text-primary);
   }
 
   .explore-card__icon {

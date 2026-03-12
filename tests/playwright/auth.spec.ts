@@ -23,6 +23,8 @@ test.describe('Auth flows', () => {
 
   test('login validation shows errors for empty form', async ({ page }) => {
     await page.goto('/login');
+    // Bypass HTML5 required validation to reach server-side errors
+    await page.$eval('form', (form) => form.noValidate = true);
     await page.click('button[type="submit"]');
     await expect(page.getByText('Email is required.')).toBeVisible();
     await expect(page.getByText('Password is required.')).toBeVisible();
@@ -61,6 +63,8 @@ test.describe('Auth flows', () => {
 
   test('registration validation shows errors for empty form', async ({ page }) => {
     await page.goto('/register');
+    // Bypass HTML5 required validation to reach server-side errors
+    await page.$eval('form', (form) => form.noValidate = true);
     await page.click('button[type="submit"]');
     await expect(page.getByText('Name is required.')).toBeVisible();
     await expect(page.getByText('Email is required.')).toBeVisible();
@@ -72,6 +76,8 @@ test.describe('Auth flows', () => {
     await page.fill('input[name="name"]', 'Short Pass User');
     await page.fill('input[name="email"]', 'shortpass@example.com');
     await page.fill('input[name="password"]', 'abc');
+    // Bypass HTML5 minlength validation to reach server-side errors
+    await page.$eval('form', (form) => form.noValidate = true);
     await page.click('button[type="submit"]');
     await expect(page.getByText('Password must be at least 8 characters.')).toBeVisible();
   });

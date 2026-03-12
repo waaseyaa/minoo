@@ -21,7 +21,7 @@ test.describe('Communities', () => {
 
   test('community detail page renders when clicking a card', async ({ page }) => {
     await page.goto('/communities');
-    const firstCard = page.locator('.community-card a, .card a').first();
+    const firstCard = page.locator('a.card--community').first();
     await expect(firstCard).toBeVisible();
     await firstCard.click();
     await expect(page.locator('h1')).toBeVisible();
