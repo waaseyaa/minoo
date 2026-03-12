@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Minoo\Support\PasswordResetService;
 use Waaseyaa\SSR\SsrResponse;
 use Waaseyaa\User\User;
 
@@ -176,6 +177,126 @@ final class AuthController
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 
+    public function forgotPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $html = $this->twig->render('auth/forgot-password.html.twig', [
+            'values' => [],
+        ]);
+
+        return new SsrResponse(content: $html);
+    }
+
+    public function submitForgotPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $email = trim((string) $request->request->get('email', ''));
+
+        $resetUrl = null;
+        if ($email !== '') {
+            $storage = $this->entityTypeManager->getStorage('user');
+            $ids = $storage->getQuery()
+                ->condition('mail', $email)
+                ->execute();
+
+            if ($ids !== []) {
+                $user = $storage->load(reset($ids));
+                if ($user !== null) {
+                    $resetService = $this->createPasswordResetService();
+                    $token = $resetService->createToken($user->id());
+                    $resetUrl = '/reset-password?token=' . $token;
+                }
+            }
+        }
+
+        $html = $this->twig->render('auth/forgot-password.html.twig', [
+            'submitted' => true,
+            'reset_url' => $resetUrl,
+            'values' => compact('email'),
+        ]);
+
+        return new SsrResponse(content: $html);
+    }
+
+    public function resetPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $token = (string) $request->query->get('token', '');
+        $tokenError = null;
+
+        if ($token === '') {
+            $tokenError = 'No reset token provided.';
+        } else {
+            $resetService = $this->createPasswordResetService();
+            $userId = $resetService->validateToken($token);
+            if ($userId === null) {
+                $tokenError = 'This reset link is invalid or has expired.';
+            }
+        }
+
+        $html = $this->twig->render('auth/reset-password.html.twig', [
+            'token' => $token,
+            'token_error' => $tokenError,
+            'errors' => [],
+        ]);
+
+        return new SsrResponse(content: $html);
+    }
+
+    public function submitResetPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $token = (string) $request->request->get('token', '');
+        $password = (string) $request->request->get('password', '');
+        $passwordConfirm = (string) $request->request->get('password_confirm', '');
+
+        $resetService = $this->createPasswordResetService();
+        $userId = $resetService->validateToken($token);
+
+        if ($userId === null) {
+            $html = $this->twig->render('auth/reset-password.html.twig', [
+                'token' => $token,
+                'token_error' => 'This reset link is invalid or has expired.',
+                'errors' => [],
+            ]);
+            return new SsrResponse(content: $html);
+        }
+
+        $errors = [];
+        if ($password === '') {
+            $errors['password'] = 'Password is required.';
+        } elseif (strlen($password) < 8) {
+            $errors['password'] = 'Password must be at least 8 characters.';
+        }
+        if ($password !== $passwordConfirm) {
+            $errors['password_confirm'] = 'Passwords do not match.';
+        }
+
+        if ($errors !== []) {
+            $html = $this->twig->render('auth/reset-password.html.twig', [
+                'token' => $token,
+                'token_error' => null,
+                'errors' => $errors,
+            ]);
+            return new SsrResponse(content: $html);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('user');
+        /** @var User|null $user */
+        $user = $storage->load($userId);
+
+        if ($user === null) {
+            $html = $this->twig->render('auth/reset-password.html.twig', [
+                'token' => $token,
+                'token_error' => 'User account not found.',
+                'errors' => [],
+            ]);
+            return new SsrResponse(content: $html);
+        }
+
+        $user->setRawPassword($password);
+        $storage->save($user);
+        $resetService->consumeToken($token);
+
+        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/login?reset=success']);
+    }
+
     public function logout(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         if (session_status() === \PHP_SESSION_ACTIVE) {
@@ -192,6 +313,16 @@ final class AuthController
         }
 
         return $target;
+    }
+
+    private function createPasswordResetService(): PasswordResetService
+    {
+        $projectRoot = dirname(__DIR__, 2);
+        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/waaseyaa.sqlite';
+        $pdo = new \PDO('sqlite:' . $dbPath);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        return new PasswordResetService($pdo);
     }
 
     private function dashboardRedirect(User $user): string

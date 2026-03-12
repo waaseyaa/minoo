@@ -65,5 +65,45 @@ final class AuthServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        $router->addRoute(
+            'auth.forgot_password_form',
+            RouteBuilder::create('/forgot-password')
+                ->controller('Minoo\Controller\AuthController::forgotPasswordForm')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'auth.forgot_password_submit',
+            RouteBuilder::create('/forgot-password')
+                ->controller('Minoo\Controller\AuthController::submitForgotPassword')
+                ->allowAll()
+                ->render()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'auth.reset_password_form',
+            RouteBuilder::create('/reset-password')
+                ->controller('Minoo\Controller\AuthController::resetPasswordForm')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'auth.reset_password_submit',
+            RouteBuilder::create('/reset-password')
+                ->controller('Minoo\Controller\AuthController::submitResetPassword')
+                ->allowAll()
+                ->render()
+                ->methods('POST')
+                ->build(),
+        );
     }
 }
