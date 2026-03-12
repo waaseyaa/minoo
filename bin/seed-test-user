@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Seed a test user for Playwright auth tests.
+ *
+ * Usage: bin/seed-test-user
+ *
+ * Creates test@minoo.test / TestPass123! with volunteer role.
+ * Skips if the user already exists.
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$storage = $entityTypeManager->getStorage('user');
+
+// Check if test user already exists.
+$existing = $storage->getQuery()->condition('mail', 'test@minoo.test')->execute();
+
+if ($existing !== []) {
+    fprintf(STDOUT, "Test user already exists.\n");
+    exit(0);
+}
+
+$user = $storage->create([
+    'name' => 'Test User',
+    'mail' => 'test@minoo.test',
+    'status' => true,
+    'created' => time(),
+    'roles' => ['volunteer'],
+    'permissions' => ['view own assignments', 'update assignment status'],
+]);
+$user->setRawPassword('TestPass123!');
+$storage->save($user);
+
+fprintf(STDOUT, "Test user created: test@minoo.test / TestPass123!\n");

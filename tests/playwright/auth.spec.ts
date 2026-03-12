@@ -1,9 +1,116 @@
 import { test, expect } from '@playwright/test';
+import { execSync } from 'child_process';
 
-test.describe('Auth redirects', () => {
-  // Dev server auto-authenticates with a fallback account, so redirect
-  // tests cannot work locally. These verify behavior in environments
-  // without the dev fallback (CI with WAASEYAA_ENV=testing, production).
+test.beforeAll(() => {
+  execSync('php bin/seed-test-user', { cwd: process.cwd() });
+});
+
+test.describe('Auth flows', () => {
+  // ── Login ──────────────────────────────────────────────────────────
+
+  test('login form renders with email and password fields', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.locator('h1')).toContainText('Sign in');
+    await expect(page.locator('input[name="email"]')).toBeVisible();
+    await expect(page.locator('input[name="password"]')).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toBeVisible();
+  });
+
+  test('login form includes CSRF token', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.locator('input[name="_csrf_token"]')).toBeAttached();
+  });
+
+  test('login validation shows errors for empty form', async ({ page }) => {
+    await page.goto('/login');
+    await page.click('button[type="submit"]');
+    await expect(page.getByText('Email is required.')).toBeVisible();
+    await expect(page.getByText('Password is required.')).toBeVisible();
+  });
+
+  test('login failure shows error for invalid credentials', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'nobody@example.com');
+    await page.fill('input[name="password"]', 'wrongpassword');
+    await page.click('button[type="submit"]');
+    await expect(page.getByText('Invalid email or password.')).toBeVisible();
+  });
+
+  test('login success redirects to dashboard', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'test@minoo.test');
+    await page.fill('input[name="password"]', 'TestPass123!');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('/dashboard/volunteer');
+  });
+
+  // ── Registration ───────────────────────────────────────────────────
+
+  test('registration form renders with name, email, and password fields', async ({ page }) => {
+    await page.goto('/register');
+    await expect(page.locator('input[name="name"]')).toBeVisible();
+    await expect(page.locator('input[name="email"]')).toBeVisible();
+    await expect(page.locator('input[name="password"]')).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toBeVisible();
+  });
+
+  test('register form includes CSRF token', async ({ page }) => {
+    await page.goto('/register');
+    await expect(page.locator('input[name="_csrf_token"]')).toBeAttached();
+  });
+
+  test('registration validation shows errors for empty form', async ({ page }) => {
+    await page.goto('/register');
+    await page.click('button[type="submit"]');
+    await expect(page.getByText('Name is required.')).toBeVisible();
+    await expect(page.getByText('Email is required.')).toBeVisible();
+    await expect(page.getByText('Password is required.')).toBeVisible();
+  });
+
+  test('registration password too short shows error', async ({ page }) => {
+    await page.goto('/register');
+    await page.fill('input[name="name"]', 'Short Pass User');
+    await page.fill('input[name="email"]', 'shortpass@example.com');
+    await page.fill('input[name="password"]', 'abc');
+    await page.click('button[type="submit"]');
+    await expect(page.getByText('Password must be at least 8 characters.')).toBeVisible();
+  });
+
+  test('registration duplicate email shows error', async ({ page }) => {
+    await page.goto('/register');
+    await page.fill('input[name="name"]', 'Duplicate User');
+    await page.fill('input[name="email"]', 'test@minoo.test');
+    await page.fill('input[name="password"]', 'ValidPass123!');
+    await page.click('button[type="submit"]');
+    await expect(page.getByText('This email is already registered.')).toBeVisible();
+  });
+
+  test('registration success redirects to dashboard', async ({ page }) => {
+    await page.goto('/register');
+    await page.fill('input[name="name"]', 'New Test User');
+    await page.fill('input[name="email"]', `newuser-${Date.now()}@minoo.test`);
+    await page.fill('input[name="password"]', 'NewUserPass123!');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('/dashboard/volunteer');
+  });
+
+  // ── Logout ─────────────────────────────────────────────────────────
+
+  test('logout destroys session and redirects to homepage', async ({ page }) => {
+    // First log in
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'test@minoo.test');
+    await page.fill('input[name="password"]', 'TestPass123!');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('/dashboard/volunteer');
+
+    // Then log out
+    await page.goto('/logout');
+    await page.waitForURL('/');
+  });
+
+  // ── Auth redirects (skipped in dev — fallback account) ────────────
+
   test.skip('coordinator dashboard redirects unauthenticated users to /login', async ({ page }) => {
     await page.goto('/dashboard/coordinator');
     await expect(page).toHaveURL(/\/login/);
@@ -19,36 +126,13 @@ test.describe('Auth redirects', () => {
     await expect(page).toHaveURL(/\/login\?redirect=/);
   });
 
-  test('login page loads', async ({ page }) => {
-    await page.goto('/login');
-    await expect(page.locator('h1')).toContainText('Sign in');
-    await expect(page.locator('input[name="email"]')).toBeVisible();
-    await expect(page.locator('input[name="password"]')).toBeVisible();
-  });
-
-  test('login form includes CSRF token', async ({ page }) => {
-    await page.goto('/login');
-    await expect(page.locator('input[name="_csrf_token"]')).toBeAttached();
-  });
-
-  test('register page loads', async ({ page }) => {
-    await page.goto('/register');
-    await expect(page.locator('input[name="name"]')).toBeVisible();
-    await expect(page.locator('input[name="email"]')).toBeVisible();
-    await expect(page.locator('input[name="password"]')).toBeVisible();
-  });
-
-  test('register form includes CSRF token', async ({ page }) => {
-    await page.goto('/register');
-    await expect(page.locator('input[name="_csrf_token"]')).toBeAttached();
-  });
-
   test('login page has link to register', async ({ page }) => {
     await page.goto('/login');
     await expect(page.locator('a[href="/register"]')).toBeVisible();
   });
 
-  // 403 error page tests — skipped in dev (fallback account has all roles)
+  // ── 403 error page tests (skipped in dev — fallback account) ──────
+
   test.skip('visiting protected route unauthenticated shows friendly 403', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
     await expect(page.locator('h1')).toContainText('Forbidden');
