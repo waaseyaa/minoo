@@ -1,20 +1,20 @@
-## Summary
-<!-- Short description of change and linked issue(s) -->
+# V1 PR Checklist for Maintainers
 
-## Related Issue
-- Closes: #<!-- issue number -->
+Copy-paste this into every PR description before merging to main during the V1 release cycle.
 
-## Checklist (required for V1)
+---
+
+## Required (all boxes must be checked)
 
 ### Issue & Process
 - [ ] PR title includes issue number: `feat(#N): description`
-- [ ] Issue is assigned to V1 milestone
-- [ ] PR targets `release/v1` branch (not `main`)
+- [ ] Issue is assigned to a milestone
+- [ ] PR targets `main` branch
 
 ### Tests
 - [ ] All existing PHPUnit tests pass (`./vendor/bin/phpunit`)
 - [ ] New functionality includes unit tests
-- [ ] Playwright tests updated if templates/CSS changed
+- [ ] Playwright tests pass locally if templates/CSS changed
 - [ ] No tests skipped or marked incomplete without explanation
 
 ### Security
@@ -45,7 +45,7 @@
 - [ ] Color contrast meets 4.5:1 ratio
 
 ### Before Merge
-- [ ] CI pipeline is green (lint + phpunit + playwright + security-audit + commercial-use-check)
-- [ ] At least one CODEOWNER approved
-- [ ] No merge conflicts with target branch
-- [ ] Squash-merge if PR has >3 commits
+- [ ] CI pipeline is green (lint + PHPUnit + Playwright + audit)
+- [ ] At least one reviewer has approved
+- [ ] No merge conflicts with main
+- [ ] Squash-merge if PR has >3 commits (keep history clean)

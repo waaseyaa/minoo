@@ -1,0 +1,50 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy-v1" to confirm production deployment'
+        required: true
+        type: string
+
+jobs:
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm deployment intent
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "deploy-v1" ]; then
+            echo "FAIL: You must type 'deploy-v1' to confirm. Got: '${{ github.event.inputs.confirm }}'"
+            exit 1
+          fi
+          echo "Deployment confirmed."
+
+  deploy:
+    name: Deploy to Production
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout minoo
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install Deployer
+        run: composer global require deployer/deployer
+
+      - name: Deploy
+        run: dep deploy production
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Verify deployment
+        run: |
+          echo "Production deployment complete."
+          echo "Rollback command: dep rollback production"

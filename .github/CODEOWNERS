@@ -1,0 +1,22 @@
+# V1 Code Ownership
+# Require CODEOWNER approval for PRs touching these paths
+
+# Backend: entity types, access policies, providers, ingestion, search
+/src/              @jonesrussell
+/tests/            @jonesrussell
+/config/           @jonesrussell
+/bin/              @jonesrussell
+
+# Frontend: templates, CSS, public assets
+/templates/        @jonesrussell
+/public/           @jonesrussell
+
+# Documentation and plans
+/docs/             @jonesrussell
+
+# CI/CD and GitHub config
+/.github/          @jonesrussell
+
+# Root config files
+/composer.json     @jonesrussell
+/phpunit.xml       @jonesrussell

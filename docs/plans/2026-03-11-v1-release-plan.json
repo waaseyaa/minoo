@@ -1,0 +1,786 @@
+{
+  "v1_plan": {
+    "metadata": {
+      "created": "2026-03-11",
+      "target_release": "2026-04-22",
+      "total_sprints": 3,
+      "sprint_length_weeks": 2,
+      "team_assumptions": {
+        "pm_po": 1,
+        "backend_devs": 2,
+        "frontend_dev": 1,
+        "qa": 1,
+        "devops_part_time": 0.5,
+        "notes": "Assumes 8 story points per dev per sprint. S=2pts, M=5pts, L=8pts. Total capacity ~32pts/sprint across 2 backend + 1 frontend dev."
+      }
+    },
+
+    "prioritized_backlog": [
+      {
+        "id": "#176",
+        "title": "Replace local community storage with NC API sync",
+        "milestone": "Community Registry Sync",
+        "priority": "Must",
+        "estimate": "L",
+        "acceptance_criteria": [
+          "All community entity reads fetch from NorthCloud API (not local SQLite)",
+          "Community list page renders from NC data with <500ms p95 latency",
+          "Fallback to cached data if NC API is unreachable",
+          "No local community insert/update paths remain in application code",
+          "Integration test confirms community detail page renders from NC source"
+        ]
+      },
+      {
+        "id": "#175",
+        "title": "Export communities as JSON for NorthCloud import",
+        "milestone": "Community Registry Sync",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "CLI command bin/export-communities produces valid JSON with all 637 communities",
+          "JSON schema includes: name, inac_id, nc_id, lat, lon, province, nation, treaty",
+          "Output validates against a documented JSON schema",
+          "Unit test confirms export format matches expected schema"
+        ]
+      },
+      {
+        "id": "#171",
+        "title": "Fix bin/sync-communities for v0.14.5-NC endpoints",
+        "milestone": "Community Registry Sync",
+        "priority": "Must",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "bin/sync-communities successfully syncs against current NC API endpoints",
+          "Handles pagination (200-per-page cap)",
+          "Reports sync summary: imported, updated, skipped, failed counts",
+          "Exit code 1 on any failure"
+        ]
+      },
+      {
+        "id": "#129",
+        "title": "Community autocomplete returns HTML instead of JSON",
+        "milestone": "Community Registry Sync",
+        "priority": "Must",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "GET /api/communities/autocomplete?q=... returns Content-Type: application/json",
+          "Response is a JSON array of {id, name, province} objects",
+          "Playwright test confirms autocomplete dropdown populates on keystroke"
+        ]
+      },
+      {
+        "id": "#185",
+        "title": "Cache NorthCloud API responses for community detail pages",
+        "milestone": "People + Band Office Integration",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "Community detail page loads in <200ms from cache on repeat visits",
+          "Cache TTL is configurable (default 1 hour)",
+          "Cache invalidation on manual sync trigger",
+          "Stale-while-revalidate pattern: serve stale on NC API timeout"
+        ]
+      },
+      {
+        "id": "#184",
+        "title": "SQLite cache layer for NorthCloud API responses",
+        "milestone": "People + Band Office Integration",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "SQLite table stores cached API responses with key, body, etag, cached_at, expires_at",
+          "Cache get/put/invalidate methods with unit tests",
+          "Schema migration creates cache table on first run",
+          "bin/waaseyaa cache:clear command exists"
+        ]
+      },
+      {
+        "id": "#134",
+        "title": "Prevent duplicate volunteer signups",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Submitting volunteer signup with an already-registered email returns a user-friendly error",
+          "No duplicate volunteer entity is created",
+          "Unit test confirms uniqueness constraint enforcement",
+          "Playwright test confirms error message displays on duplicate submit"
+        ]
+      },
+      {
+        "id": "#130",
+        "title": "Add password reset flow",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "/forgot-password page renders with email input",
+          "Submitting sends a password reset email via SendGrid",
+          "Reset link with token allows setting a new password",
+          "Token expires after 1 hour",
+          "Playwright test covers happy path: request reset, use link, login with new password"
+        ]
+      },
+      {
+        "id": "#131",
+        "title": "Add validation error display to volunteer edit form",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Invalid form submissions display per-field error messages",
+          "Errors are styled consistently with other forms (red text, field highlight)",
+          "Server-side validation errors are rendered on the form, not as a generic 422 page"
+        ]
+      },
+      {
+        "id": "#128",
+        "title": "Replace hardcoded demo data in templates",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "teachings.html.twig, events.html.twig, language.html.twig, groups.html.twig render from entity queries",
+          "Pages show 'No content yet' empty state when no entities exist",
+          "No hardcoded demo JSON or arrays remain in template files",
+          "Integration test confirms pages render without errors"
+        ]
+      },
+      {
+        "id": "#127",
+        "title": "Friendly error pages for 403/401 responses",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "403 responses render a styled error page with 'Access denied' message and link to homepage",
+          "401 responses redirect to /login with flash message",
+          "Error pages extend base.html.twig and follow design system",
+          "No raw JSON or stack traces shown to unauthenticated users"
+        ]
+      },
+      {
+        "id": "#136",
+        "title": "Playwright tests for auth flows",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "Tests cover: login success, login failure, register, logout, protected route redirect",
+          "All tests pass in CI (GitHub Actions with Chromium)",
+          "Tests use page objects or helper functions for auth actions"
+        ]
+      },
+      {
+        "id": "#137",
+        "title": "Playwright tests for elder request and volunteer signup",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "Tests cover: elder request form happy path, validation errors, volunteer signup happy path",
+          "Tests verify form submission success message appears",
+          "Tests run in CI alongside auth tests"
+        ]
+      },
+      {
+        "id": "#138",
+        "title": "Playwright tests for content browsing pages",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "Tests cover: communities list, community detail, teachings, events, groups, language pages",
+          "Tests verify page loads without errors (no 500s)",
+          "Tests verify key elements render (headings, card components)",
+          "Tests run in CI"
+        ]
+      },
+      {
+        "id": "NEW-1",
+        "title": "CC BY-NC-SA attribution metadata on all OPD-derived content",
+        "milestone": "V1 — Compliance",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "All OPD-derived dictionary entries have attribution_source='ojibwe-peoples-dictionary' and attribution_url='http://ojibwe.lib.umn.edu' in entity metadata",
+          "Language page footer displays: 'Dictionary content is copyrighted by The Ojibwe People's Dictionary (ojibwe.lib.umn.edu) and used under CC BY-NC-SA 4.0'",
+          "No OPD content appears on any page without visible attribution",
+          "Unit test confirms all dictionary_entry entities carry attribution fields"
+        ]
+      },
+      {
+        "id": "NEW-2",
+        "title": "Media copyright flag and approval workflow",
+        "milestone": "V1 — Compliance",
+        "priority": "Must",
+        "estimate": "L",
+        "acceptance_criteria": [
+          "Entity field copyright_status (enum: community_owned, cc_by_nc_sa, requires_permission, unknown) exists on all media-bearing entities",
+          "Entities with copyright_status=requires_permission or unknown are excluded from public rendering",
+          "Coordinator can set copyright_status via admin or CLI",
+          "No media with copyright_status != community_owned|cc_by_nc_sa appears on public pages",
+          "Integration test confirms filtering"
+        ]
+      },
+      {
+        "id": "NEW-3",
+        "title": "Data sovereignty controls and consent metadata",
+        "milestone": "V1 — Compliance",
+        "priority": "Must",
+        "estimate": "L",
+        "acceptance_criteria": [
+          "consent_public (bool) and consent_ai_training (bool, default false) fields on teachings, dictionary_entry, elder_profile entities",
+          "Entities with consent_public=false excluded from public pages and API responses",
+          "Entities with consent_ai_training=false excluded from any future export or API that could feed AI training",
+          "robots.txt disallows crawling of /api/ and /dashboard/ paths",
+          "Data sovereignty statement page at /data-sovereignty renders and links from footer",
+          "Unit tests confirm consent field defaults and filtering behavior"
+        ]
+      },
+      {
+        "id": "NEW-4",
+        "title": "No-commercial-use enforcement gate",
+        "milestone": "V1 — Compliance",
+        "priority": "Must",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "No paid tier, paywall, or commercial feature exists in V1 codebase",
+          "LICENSE file includes CC BY-NC-SA 4.0 for content and a separate software license",
+          "Footer on all public pages includes: 'Community content is shared under CC BY-NC-SA 4.0'",
+          "CI check: grep for stripe, payment, subscription, paywall returns zero matches in src/ and templates/"
+        ]
+      },
+      {
+        "id": "NEW-5",
+        "title": "Security review (OWASP top 10)",
+        "milestone": "V1 — Production Readiness",
+        "priority": "Must",
+        "estimate": "L",
+        "acceptance_criteria": [
+          "All forms use CSRF tokens",
+          "SQL injection: all queries use parameterized statements (verified by code audit)",
+          "XSS: all user-generated content is escaped in Twig templates (autoescape enabled globally)",
+          "Authentication: session cookies are HttpOnly, Secure, SameSite=Lax",
+          "No secrets in version control (verified by CI secret scan)",
+          "Rate limiting on login and form submission endpoints",
+          "Security headers: X-Content-Type-Options, X-Frame-Options, Content-Security-Policy",
+          "Dependency audit: composer audit returns no critical vulnerabilities"
+        ]
+      },
+      {
+        "id": "NEW-6",
+        "title": "Accessibility audit (WCAG 2.1 AA)",
+        "milestone": "V1 — Production Readiness",
+        "priority": "Must",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "All pages pass axe-core automated checks with zero critical or serious violations",
+          "All images have alt text",
+          "All forms have associated labels",
+          "Color contrast meets 4.5:1 ratio (oklch palette verified)",
+          "Keyboard navigation works for all interactive elements",
+          "Skip-to-content link exists on all pages",
+          "Playwright accessibility test runs in CI"
+        ]
+      },
+      {
+        "id": "NEW-7",
+        "title": "CI/CD pipeline for V1",
+        "milestone": "V1 — Production Readiness",
+        "priority": "Must",
+        "estimate": "L",
+        "acceptance_criteria": [
+          "GitHub Actions CI runs on all PRs: lint, PHPUnit (unit + integration), Playwright, composer audit",
+          "Main branch deploys automatically to staging",
+          "Production deploy is manual trigger (workflow_dispatch) with approval",
+          "Deploy uses Deployer with rollback capability",
+          "CI includes secret scan (no .env, credentials in repo)",
+          "CI badge in README shows current status"
+        ]
+      },
+      {
+        "id": "#177",
+        "title": "Community list page: municipality support and mixed nearby",
+        "milestone": "Community Registry Sync",
+        "priority": "Should",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "Community list page displays both First Nations and municipalities",
+          "Nearby results mix both types sorted by distance",
+          "Type indicator distinguishes First Nation from municipality"
+        ]
+      },
+      {
+        "id": "#133",
+        "title": "Location bar error state when geolocation fails",
+        "milestone": "Community Registry Sync",
+        "priority": "Should",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Geolocation failure shows user-friendly message, not raw error",
+          "Manual location entry fallback is available"
+        ]
+      },
+      {
+        "id": "#141",
+        "title": "Update Elder Support and Volunteer copy with reciprocity framing",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Should",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Elder Support pages use reciprocity language per content tone guide",
+          "Volunteer pages emphasize what volunteers receive, not just give"
+        ]
+      },
+      {
+        "id": "#140",
+        "title": "Add introductory subtitles to all listing pages",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Should",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Each listing page has a subtitle below the heading following SHOW+TELL+INVITE philosophy",
+          "Copy follows content tone guide"
+        ]
+      },
+      {
+        "id": "#139",
+        "title": "Add mission-aligned hero copy to homepage",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Should",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Homepage hero section has mission-aligned copy",
+          "Copy follows four narrative pillars"
+        ]
+      },
+      {
+        "id": "#132",
+        "title": "Add flash message support for form success feedback",
+        "milestone": "v0.14 — Quality & Polish",
+        "priority": "Should",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Form submissions display success message on redirect",
+          "Flash messages auto-dismiss after 5 seconds or on click",
+          "Styled consistently with design system"
+        ]
+      },
+      {
+        "id": "#191",
+        "title": "Integrate leadership extraction into main crawler pipeline",
+        "milestone": "People + Band Office Integration",
+        "priority": "Should",
+        "estimate": "L",
+        "acceptance_criteria": [
+          "Crawler pipeline extracts leadership data from community websites",
+          "Extracted data populates leadership fields on community detail pages"
+        ]
+      },
+      {
+        "id": "#190",
+        "title": "Create production leadership scrape jobs",
+        "milestone": "People + Band Office Integration",
+        "priority": "Should",
+        "estimate": "M",
+        "acceptance_criteria": [
+          "Scrape jobs defined for all communities with known leadership pages",
+          "Jobs run on schedule via CLI/cron"
+        ]
+      },
+      {
+        "id": "#189",
+        "title": "Link community sources for leadership scraping",
+        "milestone": "People + Band Office Integration",
+        "priority": "Should",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Community entities have source_url field linking to official website",
+          "Source URLs validated and stored"
+        ]
+      },
+      {
+        "id": "#135",
+        "title": "Extract resolveLocation() to shared trait or service",
+        "milestone": "Community Registry Sync",
+        "priority": "Could",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "Location resolution logic extracted from controller to a reusable service",
+          "All callers updated, existing tests pass"
+        ]
+      },
+      {
+        "id": "#186",
+        "title": "Add --dry-run flag to bin/backfill-nc-ids",
+        "milestone": "People + Band Office Integration",
+        "priority": "Could",
+        "estimate": "S",
+        "acceptance_criteria": [
+          "--dry-run flag outputs what would be changed without writing",
+          "Unit test confirms no writes in dry-run mode"
+        ]
+      },
+      {
+        "id": "#179",
+        "title": "Outreach workflow with NC contact data",
+        "milestone": "People + Band Office Integration",
+        "priority": "Could",
+        "estimate": "L",
+        "acceptance_criteria": [
+          "Coordinator can initiate outreach to communities using NC contact info",
+          "Outreach status tracked per community"
+        ]
+      }
+    ],
+
+    "sprint_plan": [
+      {
+        "sprint": 1,
+        "name": "Foundation & Compliance",
+        "dates": "2026-03-12 to 2026-03-25",
+        "goal": "Establish compliance layer, fix critical bugs, set up CI/CD pipeline",
+        "capacity_points": 32,
+        "items": [
+          {"id": "NEW-7", "title": "CI/CD pipeline for V1", "estimate": "L", "assignee": "DevOps + Backend-1"},
+          {"id": "NEW-1", "title": "CC BY-NC-SA attribution metadata", "estimate": "M", "assignee": "Backend-1"},
+          {"id": "NEW-4", "title": "No-commercial-use enforcement gate", "estimate": "S", "assignee": "Backend-1"},
+          {"id": "#134", "title": "Prevent duplicate volunteer signups", "estimate": "S", "assignee": "Backend-2"},
+          {"id": "#129", "title": "Fix community autocomplete JSON", "estimate": "S", "assignee": "Backend-2"},
+          {"id": "#127", "title": "Friendly 403/401 error pages", "estimate": "S", "assignee": "Frontend"},
+          {"id": "#131", "title": "Volunteer edit form validation errors", "estimate": "S", "assignee": "Frontend"},
+          {"id": "#171", "title": "Fix bin/sync-communities", "estimate": "S", "assignee": "Backend-2"}
+        ],
+        "sprint_points": 27,
+        "deliverables": [
+          "CI pipeline running on all PRs (lint, PHPUnit, Playwright, audit)",
+          "Attribution footer on all OPD-derived content pages",
+          "CC BY-NC-SA footer on all public pages",
+          "Critical bug fixes: duplicate signups, autocomplete, error pages, form validation",
+          "sync-communities CLI tool working against current NC API"
+        ],
+        "qa_tasks": [
+          "Verify CI passes on a test PR",
+          "Manual check: attribution text visible on language page",
+          "Manual check: 403/401 pages render correctly",
+          "Regression test: volunteer signup flow"
+        ]
+      },
+      {
+        "sprint": 2,
+        "name": "Core Features & Data Integrity",
+        "dates": "2026-03-26 to 2026-04-08",
+        "goal": "Complete NC migration, data sovereignty controls, password reset, real content",
+        "capacity_points": 32,
+        "items": [
+          {"id": "#176", "title": "Replace local storage with NC API sync", "estimate": "L", "assignee": "Backend-1"},
+          {"id": "#184", "title": "SQLite cache layer for NC API", "estimate": "M", "assignee": "Backend-2"},
+          {"id": "#185", "title": "Cache NC API responses for community pages", "estimate": "M", "assignee": "Backend-2"},
+          {"id": "NEW-3", "title": "Data sovereignty controls and consent metadata", "estimate": "L", "assignee": "Backend-1 + Frontend"},
+          {"id": "#130", "title": "Password reset flow", "estimate": "M", "assignee": "Frontend"},
+          {"id": "#128", "title": "Replace hardcoded demo data", "estimate": "M", "assignee": "Frontend"},
+          {"id": "#175", "title": "Export communities as JSON", "estimate": "M", "assignee": "Backend-2"}
+        ],
+        "sprint_points": 38,
+        "notes": "Slightly over capacity — #175 can slip to Sprint 3 if needed. Backend-2 handles both cache items as they are tightly coupled.",
+        "deliverables": [
+          "Community pages fully powered by NorthCloud API with SQLite cache",
+          "Data sovereignty fields on teachings, dictionary entries, elder profiles",
+          "Data sovereignty statement page live",
+          "Password reset working end-to-end",
+          "All listing pages render from real entity data",
+          "Community export CLI for governance review"
+        ],
+        "qa_tasks": [
+          "Load test: community pages with cache cold vs warm",
+          "Manual check: consent_public=false entities hidden from public pages",
+          "Manual check: password reset email arrives and flow completes",
+          "Verify no hardcoded demo data remains in any template"
+        ]
+      },
+      {
+        "sprint": 3,
+        "name": "Production Hardening & Release",
+        "dates": "2026-04-09 to 2026-04-22",
+        "goal": "Security review, accessibility audit, Playwright e2e coverage, media copyright controls, release",
+        "capacity_points": 32,
+        "items": [
+          {"id": "NEW-5", "title": "Security review (OWASP top 10)", "estimate": "L", "assignee": "Backend-1 + Backend-2"},
+          {"id": "NEW-6", "title": "Accessibility audit (WCAG 2.1 AA)", "estimate": "M", "assignee": "Frontend + QA"},
+          {"id": "NEW-2", "title": "Media copyright flag and approval workflow", "estimate": "L", "assignee": "Backend-1"},
+          {"id": "#136", "title": "Playwright tests: auth flows", "estimate": "M", "assignee": "QA"},
+          {"id": "#137", "title": "Playwright tests: form submissions", "estimate": "M", "assignee": "QA"},
+          {"id": "#138", "title": "Playwright tests: content browsing", "estimate": "M", "assignee": "QA"}
+        ],
+        "sprint_points": 35,
+        "notes": "QA runs Playwright work in parallel with security/accessibility. Final week is release prep and smoke testing.",
+        "deliverables": [
+          "OWASP top 10 checklist completed with evidence",
+          "WCAG 2.1 AA audit report with zero critical violations",
+          "Media copyright_status field enforced on all media entities",
+          "Full Playwright e2e suite: auth, forms, content browsing",
+          "V1 tagged, deployed to staging, smoke tested, released to production"
+        ],
+        "qa_tasks": [
+          "Full regression: all user flows end-to-end",
+          "Accessibility scan with axe-core on all public pages",
+          "Security headers check (curl -I on all public endpoints)",
+          "composer audit: zero critical vulnerabilities",
+          "Cross-browser smoke: Chrome, Firefox, Safari",
+          "Mobile responsiveness check on 3 breakpoints"
+        ]
+      }
+    ],
+
+    "should_items_sprint_allocation": {
+      "note": "Should items are scheduled opportunistically. If Sprint 1 or 2 finish early, pull from this list in order.",
+      "items": [
+        {"id": "#139", "title": "Homepage hero copy", "estimate": "S", "target": "Sprint 1 stretch"},
+        {"id": "#140", "title": "Listing page subtitles", "estimate": "S", "target": "Sprint 1 stretch"},
+        {"id": "#141", "title": "Elder Support reciprocity copy", "estimate": "S", "target": "Sprint 1 stretch"},
+        {"id": "#132", "title": "Flash message support", "estimate": "S", "target": "Sprint 2 stretch"},
+        {"id": "#133", "title": "Location bar error state", "estimate": "S", "target": "Sprint 2 stretch"},
+        {"id": "#177", "title": "Municipality support in community list", "estimate": "M", "target": "Sprint 2 stretch"},
+        {"id": "#189", "title": "Link community sources for scraping", "estimate": "S", "target": "Sprint 3 stretch"},
+        {"id": "#190", "title": "Production leadership scrape jobs", "estimate": "M", "target": "Post-V1"},
+        {"id": "#191", "title": "Leadership extraction in crawler", "estimate": "L", "target": "Post-V1"}
+      ]
+    },
+
+    "release_checklist": [
+      {"order": 1, "task": "All Must items closed and merged to main", "owner": "PM", "gate": true},
+      {"order": 2, "task": "CI pipeline green on main (lint + PHPUnit + Playwright + audit)", "owner": "DevOps", "gate": true},
+      {"order": 3, "task": "License verification: CC BY-NC-SA 4.0 attribution visible on all OPD-derived content pages", "owner": "PM", "gate": true, "human_signoff": true},
+      {"order": 4, "task": "License verification: footer on all public pages includes CC BY-NC-SA notice", "owner": "PM", "gate": true},
+      {"order": 5, "task": "Media copyright review: all media entities have copyright_status set; requires_permission and unknown excluded from public rendering", "owner": "PM", "gate": true, "human_signoff": true},
+      {"order": 6, "task": "No-commercial-use check: CI grep confirms zero matches for stripe/payment/subscription/paywall in src/ and templates/", "owner": "DevOps", "gate": true},
+      {"order": 7, "task": "Data sovereignty signoff: consent_public and consent_ai_training fields enforced; data sovereignty statement page live", "owner": "PM", "gate": true, "human_signoff": true},
+      {"order": 8, "task": "Community governance review: no community data export without governance approval documented", "owner": "PM", "gate": true, "human_signoff": true},
+      {"order": 9, "task": "robots.txt blocks /api/ and /dashboard/ from crawlers", "owner": "DevOps", "gate": true},
+      {"order": 10, "task": "Security review complete: OWASP top 10 checklist with evidence (CSRF, SQLi, XSS, session, secrets, headers, rate limiting, dependencies)", "owner": "Backend lead", "gate": true},
+      {"order": 11, "task": "Accessibility audit: axe-core zero critical/serious violations on all public pages", "owner": "QA", "gate": true},
+      {"order": 12, "task": "Playwright e2e pass: auth flows, form submissions, content browsing — all green", "owner": "QA", "gate": true},
+      {"order": 13, "task": "PHPUnit pass: 252+ tests, all green, no skipped Must-scope tests", "owner": "QA", "gate": true},
+      {"order": 14, "task": "composer audit: zero critical or high vulnerabilities", "owner": "DevOps", "gate": true},
+      {"order": 15, "task": "Staging deploy and full smoke test (all public pages, auth flows, elder request, volunteer signup)", "owner": "QA", "gate": true},
+      {"order": 16, "task": "Production deploy via Deployer with rollback tested", "owner": "DevOps", "gate": true},
+      {"order": 17, "task": "Rollback plan documented and tested (Deployer rollback + database migration reversal steps)", "owner": "DevOps", "gate": true},
+      {"order": 18, "task": "Monitoring live: uptime check, error rate alert, response time alert", "owner": "DevOps", "gate": false},
+      {"order": 19, "task": "Release notes published", "owner": "PM", "gate": false},
+      {"order": 20, "task": "Community announcement sent", "owner": "PM", "gate": false}
+    ],
+
+    "ci_cd_tasks": [
+      {
+        "job": "lint",
+        "description": "PHP syntax check + composer validate --strict",
+        "trigger": "PR to main, push to main",
+        "status": "planned",
+        "reference": "docs/plans/2026-03-09-ci-workflows-design.md Task 2"
+      },
+      {
+        "job": "phpunit-unit",
+        "description": "Run MinooUnit test suite",
+        "trigger": "PR to main, push to main",
+        "status": "planned"
+      },
+      {
+        "job": "phpunit-integration",
+        "description": "Run MinooIntegration test suite (in-memory SQLite)",
+        "trigger": "PR to main, push to main",
+        "status": "planned"
+      },
+      {
+        "job": "playwright",
+        "description": "Run Playwright e2e tests with Chromium (auth, forms, content browsing)",
+        "trigger": "PR to main, push to main",
+        "status": "planned"
+      },
+      {
+        "job": "security-audit",
+        "description": "composer audit + secret scan (grep for API keys, passwords in tracked files)",
+        "trigger": "PR to main, push to main",
+        "status": "new"
+      },
+      {
+        "job": "commercial-use-check",
+        "description": "Grep src/ and templates/ for payment/stripe/subscription/paywall keywords — fail if found",
+        "trigger": "PR to main",
+        "status": "new"
+      },
+      {
+        "job": "accessibility-check",
+        "description": "axe-core scan on key public pages via Playwright",
+        "trigger": "PR to main (on template/CSS changes)",
+        "status": "new"
+      },
+      {
+        "job": "deploy-staging",
+        "description": "Auto-deploy main to staging via Deployer after CI passes",
+        "trigger": "Push to main (CI green)",
+        "status": "new"
+      },
+      {
+        "job": "deploy-production",
+        "description": "Manual trigger via workflow_dispatch; deploys to production via Deployer with rollback",
+        "trigger": "Manual (workflow_dispatch)",
+        "status": "new"
+      }
+    ],
+
+    "risk_register": [
+      {
+        "rank": 1,
+        "risk": "Accidental commercial use of CC BY-NC-SA content",
+        "likelihood": "Medium",
+        "impact": "Critical",
+        "mitigation": "CI gate blocks any payment/subscription/commercial code in src/. Footer attribution on all pages. LICENSE file explicitly states content license. Code review checklist item."
+      },
+      {
+        "rank": 2,
+        "risk": "Ingesting copyrighted media without permission",
+        "likelihood": "High",
+        "impact": "Critical",
+        "mitigation": "copyright_status field required on all media entities. Default is 'unknown' which blocks public display. Coordinator must manually approve each media item. Automated test confirms unknown/requires_permission items are hidden."
+      },
+      {
+        "rank": 3,
+        "risk": "Community data exported without governance approval",
+        "likelihood": "Medium",
+        "impact": "Critical",
+        "mitigation": "No public API exports community data. Export CLI requires explicit --confirm flag. Data sovereignty statement page documents controls. robots.txt blocks API paths."
+      },
+      {
+        "rank": 4,
+        "risk": "Privacy leak via elder/volunteer personal data",
+        "likelihood": "Medium",
+        "impact": "High",
+        "mitigation": "Access policies restrict elder/volunteer data to authenticated coordinators. No personal data in public pages. Session cookies are HttpOnly/Secure. Security review covers data exposure paths."
+      },
+      {
+        "rank": 5,
+        "risk": "Authentication/ACL bypass allowing unauthorized dashboard access",
+        "likelihood": "Low",
+        "impact": "Critical",
+        "mitigation": "Playwright e2e tests verify auth redirects. Access policies unit-tested for all roles. Security review covers OWASP A01 (Broken Access Control). Friendly 403/401 pages prevent information leakage."
+      },
+      {
+        "rank": 6,
+        "risk": "NorthCloud API unavailability breaks community pages",
+        "likelihood": "Medium",
+        "impact": "High",
+        "mitigation": "SQLite cache layer with stale-while-revalidate. Community pages degrade gracefully to cached data. Monitoring alert on NC API error rate. Cache TTL ensures 1-hour resilience."
+      },
+      {
+        "rank": 7,
+        "risk": "AI training on community knowledge without consent",
+        "likelihood": "Low",
+        "impact": "Critical",
+        "mitigation": "consent_ai_training field defaults to false. robots.txt blocks crawlers from content APIs. Data sovereignty statement is public. No bulk export endpoint exists."
+      },
+      {
+        "rank": 8,
+        "risk": "Framework dependency (Waaseyaa) has unpatched vulnerability",
+        "likelihood": "Low",
+        "impact": "High",
+        "mitigation": "composer audit in CI catches known CVEs. Framework is a sibling repo under same maintainer — patches can be applied immediately. Pin framework to tested commit hash for V1 release."
+      },
+      {
+        "rank": 9,
+        "risk": "Incomplete test coverage masks regression in V1",
+        "likelihood": "Medium",
+        "impact": "Medium",
+        "mitigation": "Sprint 3 dedicated to Playwright e2e expansion. Unit tests at 252+ and growing. Integration tests boot full kernel. QA full regression before release."
+      },
+      {
+        "rank": 10,
+        "risk": "Team capacity shortfall delays release by >1 week",
+        "likelihood": "Medium",
+        "impact": "Medium",
+        "mitigation": "Should items are explicitly deprioritized. Sprint plan has ~10% buffer in Sprints 1 and 3. Could items deferred to post-V1. PM monitors velocity after Sprint 1 and adjusts scope."
+      }
+    ],
+
+    "metrics_and_monitoring": {
+      "success_metrics": [
+        {"metric": "Uptime", "target": "99.5% over first 30 days", "measurement": "Uptime monitoring (UptimeRobot or equivalent)"},
+        {"metric": "Page load time (p95)", "target": "<1.5s for public pages, <500ms for cached community pages", "measurement": "Server-side timing logs"},
+        {"metric": "Error rate", "target": "<1% of requests return 5xx", "measurement": "Access log analysis"},
+        {"metric": "Test coverage", "target": "252+ unit tests passing, 15+ Playwright e2e tests", "measurement": "CI pipeline results"},
+        {"metric": "Accessibility", "target": "Zero critical/serious axe-core violations", "measurement": "CI accessibility job"},
+        {"metric": "Security vulnerabilities", "target": "Zero critical/high in composer audit", "measurement": "CI security audit job"},
+        {"metric": "Elder support requests submitted", "target": "Baseline measurement in first 30 days", "measurement": "Entity count query"},
+        {"metric": "Volunteer signups", "target": "Baseline measurement in first 30 days", "measurement": "Entity count query"},
+        {"metric": "Community pages viewed", "target": "Baseline measurement in first 30 days", "measurement": "Access log analysis"}
+      ],
+      "dashboards_and_alerts": [
+        {"name": "Uptime monitor", "tool": "UptimeRobot / Freshping (free tier)", "alert": "Slack/email on downtime > 5 minutes"},
+        {"name": "Error rate", "tool": "Caddy access log + logrotate + simple grep cron", "alert": "Email if 5xx rate exceeds 5% in any 15-minute window"},
+        {"name": "NC API health", "tool": "bin/waaseyaa health:check CLI + cron", "alert": "Email if NC API unreachable for >15 minutes"},
+        {"name": "Cache hit rate", "tool": "SQLite cache table query (hits vs misses in last hour)", "alert": "Log warning if cache miss rate >50% sustained"},
+        {"name": "CI status", "tool": "GitHub Actions status badge", "alert": "GitHub notification on CI failure on main"}
+      ]
+    },
+
+    "docs_and_communications": {
+      "release_notes": "See companion file: docs/plans/2026-03-11-v1-release-notes.md",
+      "community_announcement": "See companion file: docs/plans/2026-03-11-v1-community-announcement.md",
+      "attribution_text": "Dictionary content is copyrighted by The Ojibwe People's Dictionary (http://ojibwe.lib.umn.edu) and is used under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0). Community content shared on this platform is licensed under CC BY-NC-SA 4.0.",
+      "contributor_guidelines_summary": "All contributions must: (1) reference a GitHub issue, (2) include tests for new functionality, (3) pass CI (lint + PHPUnit + Playwright), (4) not introduce commercial/payment features, (5) respect CC BY-NC-SA on all OPD-derived content, (6) follow content tone guide for user-facing copy."
+    },
+
+    "post_release_plan": {
+      "hotfix_window": {
+        "duration": "2 weeks (2026-04-22 to 2026-05-06)",
+        "scope": "Security patches, data integrity bugs, and broken user flows only. No new features.",
+        "process": "Hotfix PRs branch from main, require 1 review, CI green, deploy immediately after merge.",
+        "on_call": "Primary maintainer monitors error rate and uptime daily."
+      },
+      "rollback_plan": {
+        "deployer_rollback": "deployer rollback — restores previous release symlink instantly",
+        "database_rollback": "New columns (consent_public, consent_ai_training, copyright_status) are additive and nullable — no destructive migration. Rollback is safe without schema changes.",
+        "cache_rollback": "SQLite cache table can be dropped and recreated without data loss",
+        "decision_criteria": "Rollback if: (1) 5xx rate exceeds 10% for >15 minutes, (2) data corruption detected, (3) auth bypass discovered"
+      },
+      "ninety_day_roadmap": [
+        {"phase": "Weeks 1-2 (post-release)", "focus": "Hotfix window. Monitor metrics. Collect community feedback."},
+        {"phase": "Weeks 3-6", "focus": "Should items from V1 backlog: copy polish (#139-141), flash messages (#132), location error handling (#133), municipality support (#177)"},
+        {"phase": "Weeks 7-10", "focus": "Leadership scraping pipeline (#189-191). Outreach workflow (#179). Community governance consultation begins."},
+        {"phase": "Weeks 11-13", "focus": "Grandparent Program MVP planning (v0.15 scope from roadmap). Elder profiles, volunteer onboarding, matching algorithm v2."}
+      ]
+    },
+
+    "framework_tasks": {
+      "blockers": [
+        {
+          "task": "Pin Waaseyaa framework to a tested commit hash for V1",
+          "reason": "Ensures reproducible builds and prevents unexpected framework changes from breaking V1",
+          "effort": "S"
+        },
+        {
+          "task": "Verify framework CI passes (PHP 8.4, per ci-workflows-design.md Task 1)",
+          "reason": "Framework CI must be green before Minoo CI can depend on it",
+          "effort": "S"
+        }
+      ],
+      "nice_to_have": [
+        {
+          "task": "Framework security audit (composer audit, dependency review)",
+          "reason": "Ensures no transitive vulnerabilities in Minoo's dependency chain",
+          "effort": "S"
+        },
+        {
+          "task": "Framework rate limiting middleware",
+          "reason": "Would simplify Minoo's OWASP rate-limiting implementation",
+          "effort": "M"
+        },
+        {
+          "task": "Framework CSRF middleware improvements",
+          "reason": "Current CSRF may need review for form submission edge cases",
+          "effort": "S"
+        }
+      ]
+    }
+  }
+}

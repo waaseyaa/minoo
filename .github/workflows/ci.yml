@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, release/v1]
   pull_request:
-    branches: [main]
+    branches: [main, release/v1]
 
 jobs:
   lint:
@@ -105,3 +105,69 @@ jobs:
       - name: Run Playwright smoke tests
         working-directory: minoo
         run: npx playwright test
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout minoo
+        uses: actions/checkout@v4
+        with:
+          path: minoo
+
+      - name: Checkout waaseyaa framework
+        uses: actions/checkout@v4
+        with:
+          repository: waaseyaa/framework
+          path: waaseyaa
+          token: ${{ secrets.WAASEYAA_PAT }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install dependencies
+        working-directory: minoo
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run composer audit
+        working-directory: minoo
+        run: composer audit --format=plain
+
+      - name: Check for secrets in tracked files
+        working-directory: minoo
+        run: |
+          fail=0
+          # Check for common secret patterns in tracked files
+          if git grep -lE '(SENDGRID_API_KEY|DB_PASSWORD|APP_SECRET|WAASEYAA_PAT)\s*=' -- ':!.env.example' ':!*.md' ':!*.json' 2>/dev/null; then
+            echo "FAIL: Possible secrets found in tracked files"
+            fail=1
+          fi
+          # Check for .env files that shouldn't be committed
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "FAIL: .env file is tracked in git"
+            fail=1
+          fi
+          exit $fail
+
+  commercial-use-check:
+    name: Commercial Use Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for commercial/payment code
+        run: |
+          fail=0
+          echo "Scanning src/ and templates/ for commercial code patterns..."
+          if grep -rlE '\b(stripe|paywall|subscription_tier|paid_plan|payment_gateway)\b' src/ templates/ 2>/dev/null; then
+            echo "FAIL: Commercial/payment code detected in src/ or templates/"
+            echo "V1 is non-commercial. CC BY-NC-SA content cannot be behind a paywall."
+            fail=1
+          fi
+          if [ $fail -eq 0 ]; then
+            echo "PASS: No commercial code patterns found"
+          fi
+          exit $fail
