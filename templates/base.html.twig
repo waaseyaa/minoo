@@ -39,6 +39,7 @@
               {% elseif 'volunteer' in account.getRoles() %}
                 <li class="site-nav__utility"><a href="/dashboard/volunteer"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>My Dashboard</a></li>
               {% endif %}
+              <li class="site-nav__utility"><a href="/account"{% if path is defined and path starts with '/account' %} aria-current="page"{% endif %}>Account</a></li>
               <li class="site-nav__utility"><a href="/logout">Logout</a></li>
             {% else %}
               <li class="site-nav__utility"><a href="/login"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>Login</a></li>
