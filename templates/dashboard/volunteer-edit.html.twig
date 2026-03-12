@@ -14,21 +14,24 @@
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form__field">
         <label class="form__label" for="phone">Phone Number</label>
-        <input class="form__input" type="tel" id="phone" name="phone"
-               value="{{ volunteer.get('phone') ?? '' }}" autocomplete="tel">
+        <input class="form__input{% if errors.phone is defined %} form__input--error{% endif %}" type="tel" id="phone" name="phone"
+               value="{{ values.phone is defined ? values.phone : (volunteer.get('phone') ?? '') }}" autocomplete="tel" required>
+        {% if errors.phone is defined %}
+          <p class="form__error" role="alert">{{ errors.phone }}</p>
+        {% endif %}
       </div>
 
       <div class="form__field">
         <label class="form__label" for="availability">Availability</label>
         <input class="form__input" type="text" id="availability" name="availability"
-               value="{{ volunteer.get('availability') ?? '' }}"
+               value="{{ values.availability is defined ? values.availability : (volunteer.get('availability') ?? '') }}"
                placeholder="e.g. Weekends, Tuesday evenings">
       </div>
 
       <div class="form__field">
         <label class="form__label" for="max_travel_km">Maximum Travel Distance (km)</label>
         <input class="form__input" type="number" id="max_travel_km" name="max_travel_km"
-               value="{{ volunteer.get('max_travel_km') ?? '' }}"
+               value="{{ values.max_travel_km is defined ? values.max_travel_km : (volunteer.get('max_travel_km') ?? '') }}"
                min="1" max="1000" step="1"
                placeholder="e.g. 50">
       </div>
@@ -36,7 +39,7 @@
       <fieldset class="form__fieldset">
         <legend class="form__label">Skills / How Can You Help?</legend>
         <div class="form__checkboxes">
-          {% set currentSkills = volunteer.get('skills') ?? [] %}
+          {% set currentSkills = values.skills is defined ? values.skills : (volunteer.get('skills') ?? []) %}
           {% for skill in ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'] %}
             <label class="form__checkbox-label">
               <input type="checkbox" name="skills[]" value="{{ skill }}"
@@ -49,7 +52,7 @@
 
       <div class="form__field">
         <label class="form__label" for="notes">Additional Notes</label>
-        <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ volunteer.get('notes') ?? '' }}</textarea>
+        <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes is defined ? values.notes : (volunteer.get('notes') ?? '') }}</textarea>
       </div>
 
       <div class="form__actions">

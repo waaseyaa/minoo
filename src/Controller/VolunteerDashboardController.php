@@ -61,6 +61,8 @@ final class VolunteerDashboardController
 
         $html = $this->twig->render('dashboard/volunteer-edit.html.twig', [
             'volunteer' => $volunteer,
+            'errors' => [],
+            'values' => [],
         ]);
 
         return new SsrResponse(content: $html);
@@ -73,7 +75,29 @@ final class VolunteerDashboardController
             return new SsrResponse(content: 'Not found', statusCode: 404);
         }
 
-        $volunteer->set('phone', trim((string) $request->request->get('phone', '')));
+        $phone = trim((string) $request->request->get('phone', ''));
+
+        $errors = [];
+        if ($phone === '') {
+            $errors['phone'] = 'Phone number is required.';
+        }
+
+        if ($errors !== []) {
+            $html = $this->twig->render('dashboard/volunteer-edit.html.twig', [
+                'volunteer' => $volunteer,
+                'errors' => $errors,
+                'values' => [
+                    'phone' => $phone,
+                    'availability' => trim((string) $request->request->get('availability', '')),
+                    'max_travel_km' => $request->request->get('max_travel_km', ''),
+                    'skills' => $request->request->all('skills'),
+                    'notes' => trim((string) $request->request->get('notes', '')),
+                ],
+            ]);
+            return new SsrResponse(content: $html, statusCode: 422);
+        }
+
+        $volunteer->set('phone', $phone);
         $volunteer->set('availability', trim((string) $request->request->get('availability', '')));
 
         $maxTravelRaw = $request->request->get('max_travel_km', '');
