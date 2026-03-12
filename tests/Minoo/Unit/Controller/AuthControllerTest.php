@@ -29,6 +29,7 @@ final class AuthControllerTest extends TestCase
 
     protected function setUp(): void
     {
+        putenv('WAASEYAA_DB=:memory:');
         $_SESSION = [];
 
         $this->query = $this->createMock(EntityQueryInterface::class);
@@ -56,6 +57,7 @@ final class AuthControllerTest extends TestCase
     protected function tearDown(): void
     {
         $_SESSION = [];
+        putenv('WAASEYAA_DB');
     }
 
     #[Test]

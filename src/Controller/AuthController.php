@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Minoo\Middleware\RateLimitMiddleware;
 use Minoo\Support\PasswordResetService;
 use Waaseyaa\SSR\SsrResponse;
 use Waaseyaa\User\User;
@@ -32,6 +33,20 @@ final class AuthController
 
     public function submitLogin(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
+        $limiter = new RateLimitMiddleware(
+            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/waaseyaa.sqlite'
+        );
+        $ip = $request->getClientIp() ?? '0.0.0.0';
+
+        if (!$limiter->check($ip, '/login', 5, 300)) {
+            $html = $this->twig->render('auth/login.html.twig', [
+                'errors' => ['email' => 'Too many attempts. Please try again in 5 minutes.'],
+                'values' => [],
+            ]);
+            return new SsrResponse(content: $html, statusCode: 429);
+        }
+        $limiter->record($ip, '/login');
+
         $email = trim((string) $request->request->get('email', ''));
         $password = (string) $request->request->get('password', '');
 
@@ -188,6 +203,21 @@ final class AuthController
 
     public function submitForgotPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
+        $limiter = new RateLimitMiddleware(
+            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/waaseyaa.sqlite'
+        );
+        $ip = $request->getClientIp() ?? '0.0.0.0';
+
+        if (!$limiter->check($ip, '/forgot-password', 3, 300)) {
+            $html = $this->twig->render('auth/forgot-password.html.twig', [
+                'submitted' => true,
+                'reset_url' => null,
+                'values' => [],
+            ]);
+            return new SsrResponse(content: $html, statusCode: 429);
+        }
+        $limiter->record($ip, '/forgot-password');
+
         $email = trim((string) $request->request->get('email', ''));
 
         $resetUrl = null;
