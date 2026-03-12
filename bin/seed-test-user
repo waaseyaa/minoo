@@ -23,6 +23,12 @@ $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 $entityTypeManager = $kernel->getEntityTypeManager();
 $storage = $entityTypeManager->getStorage('user');
 
+// Clear rate limits so Playwright login attempts don't get throttled.
+$dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/waaseyaa.sqlite';
+$pdo = new PDO('sqlite:' . $dbPath);
+$pdo->exec('DELETE FROM rate_limits');
+fprintf(STDOUT, "Rate limits cleared.\n");
+
 // Seed volunteer test user.
 $existing = $storage->getQuery()->condition('mail', 'test@minoo.test')->execute();
 
