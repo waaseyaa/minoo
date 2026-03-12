@@ -28,6 +28,16 @@ final class GroupController
             ->execute();
         $groups = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
+        $groups = array_filter($groups, function ($entity) {
+            $mediaId = $entity->get('media_id');
+            if ($mediaId === null || $mediaId === '') {
+                return true;
+            }
+            $status = $entity->get('copyright_status');
+            return in_array($status, ['community_owned', 'cc_by_nc_sa'], true);
+        });
+        $groups = array_values($groups);
+
         $html = $this->twig->render('groups.html.twig', [
             'path' => '/groups',
             'groups' => $groups,
@@ -47,6 +57,16 @@ final class GroupController
             ->condition('status', 1)
             ->execute();
         $group = $ids !== [] ? $storage->load(reset($ids)) : null;
+
+        if ($group !== null) {
+            $mediaId = $group->get('media_id');
+            if ($mediaId !== null && $mediaId !== '') {
+                $status = $group->get('copyright_status');
+                if (!in_array($status, ['community_owned', 'cc_by_nc_sa'], true)) {
+                    $group = null;
+                }
+            }
+        }
 
         $html = $this->twig->render('groups.html.twig', [
             'path' => '/groups/' . $slug,

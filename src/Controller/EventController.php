@@ -28,6 +28,16 @@ final class EventController
             ->execute();
         $events = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
+        $events = array_filter($events, function ($entity) {
+            $mediaId = $entity->get('media_id');
+            if ($mediaId === null || $mediaId === '') {
+                return true;
+            }
+            $status = $entity->get('copyright_status');
+            return in_array($status, ['community_owned', 'cc_by_nc_sa'], true);
+        });
+        $events = array_values($events);
+
         $html = $this->twig->render('events.html.twig', [
             'path' => '/events',
             'events' => $events,
@@ -47,6 +57,16 @@ final class EventController
             ->condition('status', 1)
             ->execute();
         $event = $ids !== [] ? $storage->load(reset($ids)) : null;
+
+        if ($event !== null) {
+            $mediaId = $event->get('media_id');
+            if ($mediaId !== null && $mediaId !== '') {
+                $status = $event->get('copyright_status');
+                if (!in_array($status, ['community_owned', 'cc_by_nc_sa'], true)) {
+                    $event = null;
+                }
+            }
+        }
 
         $html = $this->twig->render('events.html.twig', [
             'path' => '/events/' . $slug,

@@ -31,6 +31,13 @@ final class PeopleServiceProvider extends ServiceProvider
                 'business_name' => ['type' => 'string', 'label' => 'Business Name', 'weight' => 25],
                 'website' => ['type' => 'string', 'label' => 'Website', 'weight' => 26],
                 'media_id' => ['type' => 'entity_reference', 'label' => 'Photo', 'settings' => ['target_type' => 'media'], 'weight' => 28],
+                'copyright_status' => [
+                    'type' => 'string',
+                    'label' => 'Copyright Status',
+                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
+                    'default_value' => 'unknown',
+                    'weight' => 99,
+                ],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],

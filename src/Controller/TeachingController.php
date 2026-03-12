@@ -29,6 +29,16 @@ final class TeachingController
             ->execute();
         $teachings = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
+        $teachings = array_filter($teachings, function ($entity) {
+            $mediaId = $entity->get('media_id');
+            if ($mediaId === null || $mediaId === '') {
+                return true;
+            }
+            $status = $entity->get('copyright_status');
+            return in_array($status, ['community_owned', 'cc_by_nc_sa'], true);
+        });
+        $teachings = array_values($teachings);
+
         $html = $this->twig->render('teachings.html.twig', [
             'path' => '/teachings',
             'teachings' => $teachings,
@@ -49,6 +59,16 @@ final class TeachingController
             ->condition('consent_public', 1)
             ->execute();
         $teaching = $ids !== [] ? $storage->load(reset($ids)) : null;
+
+        if ($teaching !== null) {
+            $mediaId = $teaching->get('media_id');
+            if ($mediaId !== null && $mediaId !== '') {
+                $status = $teaching->get('copyright_status');
+                if (!in_array($status, ['community_owned', 'cc_by_nc_sa'], true)) {
+                    $teaching = null;
+                }
+            }
+        }
 
         $html = $this->twig->render('teachings.html.twig', [
             'path' => '/teachings/' . $slug,
