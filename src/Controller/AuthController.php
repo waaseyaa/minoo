@@ -367,6 +367,6 @@ final class AuthController
             return '/dashboard/volunteer';
         }
 
-        return '/';
+        return '/account';
     }
 }
