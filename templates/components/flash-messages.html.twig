@@ -1,0 +1,11 @@
+{% set messages = flash_messages() %}
+{% if messages is not empty %}
+  <div class="flash-messages">
+    {% for msg in messages %}
+      {% set role = msg.type == 'error' ? 'alert' : 'status' %}
+      <div class="flash-message flash-message--{{ msg.type }}" role="{{ role }}" aria-live="polite">
+        {{ msg.message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

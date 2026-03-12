@@ -101,7 +101,8 @@
                 "Minoo\\Provider\\AuthServiceProvider",
                 "Minoo\\Provider\\DashboardServiceProvider",
                 "Minoo\\Provider\\MailServiceProvider",
-                "Minoo\\Provider\\AccountServiceProvider"
+                "Minoo\\Provider\\AccountServiceProvider",
+                "Minoo\\Provider\\FlashServiceProvider"
             ]
         }
     },

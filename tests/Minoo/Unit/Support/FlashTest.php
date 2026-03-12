@@ -23,9 +23,9 @@ final class FlashTest extends TestCase
     }
 
     #[Test]
-    public function setAndConsumeRoundTrip(): void
+    public function successAndConsumeRoundTrip(): void
     {
-        Flash::set('success', 'Request assigned.');
+        Flash::success('Request assigned.');
 
         $flash = Flash::consume();
 
@@ -43,7 +43,7 @@ final class FlashTest extends TestCase
     #[Test]
     public function consumeClearsFlashAfterReading(): void
     {
-        Flash::set('success', 'Done.');
+        Flash::success('Done.');
 
         Flash::consume();
         $second = Flash::consume();
@@ -52,29 +52,36 @@ final class FlashTest extends TestCase
     }
 
     #[Test]
-    public function consumeReturnsNullForEmptyMessage(): void
+    public function errorSetsErrorType(): void
     {
-        $_SESSION['flash'] = ['type' => 'success', 'message' => ''];
+        Flash::error('Something went wrong.');
 
-        self::assertNull(Flash::consume());
+        $flash = Flash::consume();
+
+        self::assertNotNull($flash);
+        self::assertSame('error', $flash['type']);
     }
 
     #[Test]
-    public function consumeDefaultsTypeToSuccess(): void
+    public function infoSetsInfoType(): void
     {
-        $_SESSION['flash'] = ['message' => 'Hello'];
+        Flash::info('For your information.');
+
+        $flash = Flash::consume();
+
+        self::assertNotNull($flash);
+        self::assertSame('info', $flash['type']);
+    }
+
+    #[Test]
+    public function setDelegatesToTypedMethods(): void
+    {
+        Flash::set('success', 'Hello');
 
         $flash = Flash::consume();
 
         self::assertNotNull($flash);
         self::assertSame('success', $flash['type']);
-    }
-
-    #[Test]
-    public function consumeReturnsNullWhenFlashIsNotArray(): void
-    {
-        $_SESSION['flash'] = 'not-an-array';
-
-        self::assertNull(Flash::consume());
+        self::assertSame('Hello', $flash['message']);
     }
 }

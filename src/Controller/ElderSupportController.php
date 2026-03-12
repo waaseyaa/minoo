@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -89,6 +90,8 @@ final class ElderSupportController
             'updated_at' => time(),
         ]);
         $storage->save($entity);
+
+        Flash::success('Your request has been submitted. A coordinator will be in touch.');
 
         return new SsrResponse(
             content: '',
