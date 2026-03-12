@@ -578,9 +578,9 @@
   }
 
   .flash-message--info {
-    background-color: oklch(0.95 0.02 240);
-    border-color: oklch(0.55 0.15 240);
-    color: oklch(0.35 0.1 240);
+    background-color: var(--color-water-100);
+    border-color: var(--color-water-600);
+    color: var(--color-water-600);
   }
 
   .card__title {
