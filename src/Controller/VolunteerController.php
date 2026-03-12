@@ -9,6 +9,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
+use Minoo\Support\Flash;
 
 final class VolunteerController
 {
@@ -24,6 +25,11 @@ final class VolunteerController
     /** @param array<string, mixed> $query */
     public function signupForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
+        if ($account->isAuthenticated() && $this->hasExistingVolunteer($account)) {
+            Flash::set('info', "You're already registered as a volunteer.");
+            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        }
+
         $location = $this->resolveLocation($request);
 
         $html = $this->twig->render('elders/volunteer.html.twig', [
@@ -49,6 +55,11 @@ final class VolunteerController
         $maxTravelRaw = $request->request->get('max_travel_km', '');
         $maxTravelKm = $maxTravelRaw !== '' ? (int) $maxTravelRaw : null;
 
+        if ($account->isAuthenticated() && $this->hasExistingVolunteer($account)) {
+            Flash::set('info', "You're already registered as a volunteer.");
+            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        }
+
         $errors = [];
 
         if ($name === '') {
@@ -56,6 +67,9 @@ final class VolunteerController
         }
         if ($phone === '') {
             $errors['phone'] = 'Phone number is required.';
+        }
+        if ($phone !== '' && !$account->isAuthenticated() && $this->phoneExists($phone)) {
+            $errors['phone'] = 'This phone number is already registered. Please <a href="/login">sign in</a> to manage your volunteer profile.';
         }
         if ($maxTravelKm !== null && ($maxTravelKm < self::MAX_TRAVEL_FLOOR || $maxTravelKm > self::MAX_TRAVEL_CEILING)) {
             $maxTravelKm = null;
@@ -119,6 +133,20 @@ final class VolunteerController
             content: $html,
             statusCode: $entity !== null ? 200 : 404,
         );
+    }
+
+    private function hasExistingVolunteer(AccountInterface $account): bool
+    {
+        $storage = $this->entityTypeManager->getStorage('volunteer');
+        $ids = $storage->getQuery()->condition('account_id', $account->id())->execute();
+        return $ids !== [];
+    }
+
+    private function phoneExists(string $phone): bool
+    {
+        $storage = $this->entityTypeManager->getStorage('volunteer');
+        $ids = $storage->getQuery()->condition('phone', $phone)->execute();
+        return $ids !== [];
     }
 
     private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext
