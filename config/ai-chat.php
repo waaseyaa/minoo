@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'enabled' => filter_var(
-        getenv('MINOO_AI_CHAT_ENABLED') ?: true,
+        getenv('MINOO_AI_CHAT_ENABLED') ?: false,
         FILTER_VALIDATE_BOOLEAN,
     ),
 
