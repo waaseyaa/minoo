@@ -85,12 +85,17 @@ foreach ($files as $file) {
     echo "migrate: applying {$name} ... ";
 
     try {
+        $pdo->beginTransaction();
         $pdo->exec($sql);
         $stmt = $pdo->prepare('INSERT INTO schema_migrations (migration) VALUES (?)');
         $stmt->execute([$name]);
+        $pdo->commit();
         echo "done\n";
         $ran++;
     } catch (\Throwable $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         echo "FAILED\n";
         fwrite(STDERR, "migrate: error in {$name}: {$e->getMessage()}\n");
         exit(1);
