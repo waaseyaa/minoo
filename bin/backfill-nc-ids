@@ -1,0 +1,137 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Backfill nc_id on community entities by matching INAC IDs against NorthCloud API.
+ *
+ * Usage: bin/backfill-nc-ids [--dry-run]
+ *
+ * --dry-run  Print matches without writing to the database.
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$configFile = dirname(__DIR__) . '/config/waaseyaa.php';
+$config = file_exists($configFile) ? require $configFile : [];
+
+$dryRun = in_array('--dry-run', $argv, true);
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
+
+if ($dryRun) {
+    fprintf(STDOUT, "DRY RUN — no changes will be written.\n\n");
+}
+
+// Fetch all communities from NorthCloud.
+$context = stream_context_create([
+    'http' => ['method' => 'GET', 'timeout' => 10, 'ignore_errors' => true],
+]);
+
+$limit = 200;
+$offset = 0;
+$allHits = [];
+
+while (true) {
+    $endpoint = $baseUrl . '/api/v1/communities?limit=' . $limit . '&offset=' . $offset;
+    fprintf(STDOUT, "Fetching offset %d from %s\n", $offset, $endpoint);
+
+    $json = @file_get_contents($endpoint, false, $context);
+    if ($json === false) {
+        fprintf(STDERR, "ERROR: Failed to fetch communities from NorthCloud.\n");
+        exit(1);
+    }
+
+    $data = json_decode($json, true);
+    if (!is_array($data) || !isset($data['data'])) {
+        fprintf(STDERR, "ERROR: Invalid response from NorthCloud.\n");
+        exit(1);
+    }
+
+    $hits = $data['data'];
+    if ($hits === []) {
+        break;
+    }
+
+    array_push($allHits, ...$hits);
+
+    if (count($hits) < $limit) {
+        break;
+    }
+    $offset += $limit;
+}
+
+fprintf(STDOUT, "Fetched %d communities from NorthCloud.\n\n", count($allHits));
+
+// Build a lookup map: inac_id => nc_id (UUID).
+$ncByInacId = [];
+foreach ($allHits as $hit) {
+    $inacId = (string) ($hit['inac_id'] ?? '');
+    $ncId   = (string) ($hit['id'] ?? '');
+    if ($inacId !== '' && $ncId !== '') {
+        $ncByInacId[$inacId] = ['nc_id' => $ncId, 'name' => (string) ($hit['name'] ?? '')];
+    }
+}
+
+// Load local communities and match by inac_id.
+$storage = $entityTypeManager->getStorage('community');
+$ids = $storage->getQuery()->execute();
+
+$matched  = 0;
+$skipped  = 0;
+$noInacId = 0;
+
+foreach ($ids as $id) {
+    $entity = $storage->load($id);
+    if ($entity === null) {
+        continue;
+    }
+
+    $inacId = (string) ($entity->get('inac_id') ?? '');
+    if ($inacId === '') {
+        $noInacId++;
+        continue;
+    }
+
+    if (!isset($ncByInacId[$inacId])) {
+        $skipped++;
+        continue;
+    }
+
+    $ncId   = $ncByInacId[$inacId]['nc_id'];
+    $ncName = $ncByInacId[$inacId]['name'];
+
+    if ($dryRun) {
+        fprintf(
+            STDOUT,
+            "  [MATCH] %s — inac_id: %s → nc_id: %s\n",
+            $entity->get('name') ?? $ncName,
+            $inacId,
+            $ncId,
+        );
+    } else {
+        $entity->set('nc_id', $ncId);
+        $storage->save($entity);
+    }
+
+    $matched++;
+}
+
+fprintf(STDOUT, "\n");
+
+if ($dryRun) {
+    fprintf(STDOUT, "DRY RUN — no changes written.\n");
+}
+
+fprintf(
+    STDOUT,
+    "Done: %d matched, %d no NorthCloud match, %d no local inac_id.\n",
+    $matched,
+    $skipped,
+    $noInacId,
+);
