@@ -1,0 +1,108 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Minoo schema migration runner.
+ *
+ * Reads SQL files from migrations/ in chronological order and runs any that
+ * have not yet been applied. Tracks applied migrations in a `schema_migrations`
+ * table in the same SQLite database used by the application.
+ *
+ * Usage:
+ *   php bin/migrate          Run pending migrations
+ *   php bin/migrate --status Show applied/pending migrations without running
+ *
+ * Environment:
+ *   WAASEYAA_DB   Path to the SQLite database file (defaults to waaseyaa.sqlite
+ *                 in the project root, same as the application).
+ */
+
+declare(strict_types=1);
+
+$projectRoot = dirname(__DIR__);
+$dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/waaseyaa.sqlite';
+$migrationsDir = $projectRoot . '/migrations';
+$statusOnly = in_array('--status', $argv ?? [], true);
+
+if (!file_exists($dbPath)) {
+    fwrite(STDERR, "migrate: database not found at {$dbPath}\n");
+    fwrite(STDERR, "        Set WAASEYAA_DB or ensure the application has booted once.\n");
+    exit(1);
+}
+
+$pdo = new PDO('sqlite:' . $dbPath);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$pdo->exec(<<<SQL
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+        migration TEXT NOT NULL PRIMARY KEY,
+        applied_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+SQL);
+
+$applied = $pdo->query('SELECT migration FROM schema_migrations ORDER BY migration')
+    ->fetchAll(PDO::FETCH_COLUMN);
+$applied = array_flip($applied);
+
+if (!is_dir($migrationsDir)) {
+    echo "migrate: no migrations/ directory found — nothing to do\n";
+    exit(0);
+}
+
+$files = glob($migrationsDir . '/*.sql');
+sort($files);
+
+if ($files === []) {
+    echo "migrate: no migration files found — nothing to do\n";
+    exit(0);
+}
+
+$pending = 0;
+$ran = 0;
+
+foreach ($files as $file) {
+    $name = basename($file);
+    $status = isset($applied[$name]) ? 'applied' : 'pending';
+
+    if ($statusOnly) {
+        printf("  [%-7s]  %s\n", $status, $name);
+        if ($status === 'pending') {
+            $pending++;
+        }
+        continue;
+    }
+
+    if (isset($applied[$name])) {
+        continue;
+    }
+
+    $sql = file_get_contents($file);
+    if ($sql === false || trim($sql) === '') {
+        fwrite(STDERR, "migrate: skipping empty file {$name}\n");
+        continue;
+    }
+
+    echo "migrate: applying {$name} ... ";
+
+    try {
+        $pdo->exec($sql);
+        $stmt = $pdo->prepare('INSERT INTO schema_migrations (migration) VALUES (?)');
+        $stmt->execute([$name]);
+        echo "done\n";
+        $ran++;
+    } catch (\Throwable $e) {
+        echo "FAILED\n";
+        fwrite(STDERR, "migrate: error in {$name}: {$e->getMessage()}\n");
+        exit(1);
+    }
+}
+
+if ($statusOnly) {
+    echo "\n  " . count($applied) . " applied, {$pending} pending\n";
+} elseif ($ran === 0) {
+    echo "migrate: all migrations already applied\n";
+} else {
+    echo "migrate: {$ran} migration(s) applied\n";
+}
+
+exit(0);

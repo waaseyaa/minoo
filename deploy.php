@@ -61,6 +61,14 @@ task('deploy:upload', function (): void {
     ]);
 });
 
+desc('Run pending schema migrations against the shared SQLite database');
+task('minoo:migrate', function (): void {
+    // bin/migrate reads WAASEYAA_DB (set in shared/.env) and applies any SQL
+    // files in migrations/ that have not yet been recorded in schema_migrations.
+    // Runs before deploy:symlink so the schema is ready before traffic switches.
+    run('php {{release_path}}/bin/migrate');
+});
+
 desc('Clear Waaseyaa framework manifest cache');
 task('minoo:clear-manifest', function (): void {
     // packages.php is compiled from composer.json on first boot.
@@ -92,6 +100,7 @@ task('deploy', [
     'deploy:upload',
     'deploy:shared',
     'deploy:writable',
+    'minoo:migrate',
     'minoo:clear-manifest',
     'deploy:symlink',
     'deploy:unlock',
