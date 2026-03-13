@@ -153,9 +153,9 @@ final class VolunteerController
 
     private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext
     {
-        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
-        $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
-        $service = new \Minoo\Domain\Geo\Service\LocationService($this->entityTypeManager, $config);
-        return $service->fromRequest($request);
+        return (new \Minoo\Service\LocationResolver(
+            $this->entityTypeManager,
+            new \Minoo\Domain\Geo\Service\CommunityFinder(),
+        ))->resolveLocation($request);
     }
 }
