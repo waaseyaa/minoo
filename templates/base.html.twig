@@ -193,6 +193,7 @@
     const loc = readCookie();
     if ((!loc || loc.source === 'ip' || loc.source === 'none') && navigator.geolocation && !sessionStorage.getItem('minoo_geo_asked')) {
       sessionStorage.setItem('minoo_geo_asked', '1');
+      textEl.textContent = 'Detecting location\u2026';
       navigator.geolocation.getCurrentPosition(async (pos) => {
         try {
           const res = await fetch('/api/location/update', {
@@ -201,9 +202,13 @@
             body: JSON.stringify({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
           });
           const data = await res.json();
-          if (data.success) render({communityName: data.communityName, source: 'browser'});
-        } catch {}
-      }, () => {}, {timeout: 10000, maximumAge: 300000});
+          if (data.success) {
+            render({communityName: data.communityName, source: 'browser'});
+          } else {
+            render(null);
+          }
+        } catch { render(null); }
+      }, () => { render(null); }, {timeout: 10000, maximumAge: 300000});
     }
   })();
   </script>
