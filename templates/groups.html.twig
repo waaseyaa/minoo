@@ -29,7 +29,12 @@
           {% endfor %}
         </div>
       {% else %}
-        <p>No groups listed yet. Check back soon.</p>
+        {% include "components/empty-state.html.twig" with {
+          heading: "No groups listed yet",
+          body: "Community groups, cultural organizations, and youth programs will appear here as they're registered. Explore other ways to connect in the meantime.",
+          action_url: "/communities",
+          action_label: "Explore communities"
+        } %}
       {% endif %}
     </div>
   {% elseif group is defined and group %}
