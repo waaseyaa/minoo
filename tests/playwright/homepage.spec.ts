@@ -44,4 +44,14 @@ test.describe('Homepage', () => {
     await expect(page.locator('.site-nav a[href="/teachings"]')).toBeVisible();
     await expect(page.locator('.site-nav a[href="/events"]')).toBeVisible();
   });
+
+  test('homepage copy follows tone guide', async ({ page }) => {
+    await page.goto('/');
+    const subtitle = page.locator('.hero__subtitle');
+    await expect(subtitle).toContainText('Find the people, teachings, events, and programs');
+    await expect(subtitle).not.toContainText('Minoo provides');
+    await expect(subtitle).not.toContainText('users');
+    await expect(page.locator('.audience-grid')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Who is Minoo for?' })).toBeVisible();
+  });
 });
