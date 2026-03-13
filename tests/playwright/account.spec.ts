@@ -12,7 +12,7 @@ test.describe('Account Home — member user', () => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'member@minoo.test');
     await page.fill('input[name="password"]', 'MemberPass123!');
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await page.waitForURL('/account');
     await expect(page.locator('h1')).toContainText('Welcome back');
 
@@ -34,7 +34,7 @@ test.describe('Account Home — volunteer user', () => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await page.waitForURL('/dashboard/volunteer');
 
     // Navigate to account page and verify volunteer links appear

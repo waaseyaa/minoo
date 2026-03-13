@@ -13,7 +13,7 @@ test.describe('Auth flows', () => {
     await expect(page.locator('h1')).toContainText('Sign In');
     await expect(page.locator('input[name="email"]')).toBeVisible();
     await expect(page.locator('input[name="password"]')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toBeVisible();
+    await expect(page.locator('.form button[type="submit"]')).toBeVisible();
   });
 
   test('login form includes CSRF token', async ({ page }) => {
@@ -25,7 +25,7 @@ test.describe('Auth flows', () => {
     await page.goto('/login');
     // Bypass HTML5 required validation to reach server-side errors
     await page.$eval('form', (form) => form.noValidate = true);
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await expect(page.getByText('Email is required.')).toBeVisible();
     await expect(page.getByText('Password is required.')).toBeVisible();
   });
@@ -34,7 +34,7 @@ test.describe('Auth flows', () => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'nobody@example.com');
     await page.fill('input[name="password"]', 'wrongpassword');
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await expect(page.getByText('Invalid email or password.')).toBeVisible();
   });
 
@@ -42,7 +42,7 @@ test.describe('Auth flows', () => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await page.waitForURL('/dashboard/volunteer');
   });
 
@@ -53,7 +53,7 @@ test.describe('Auth flows', () => {
     await expect(page.locator('input[name="name"]')).toBeVisible();
     await expect(page.locator('input[name="email"]')).toBeVisible();
     await expect(page.locator('input[name="password"]')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toBeVisible();
+    await expect(page.locator('.form button[type="submit"]')).toBeVisible();
   });
 
   test('register form includes CSRF token', async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe('Auth flows', () => {
     await page.goto('/register');
     // Bypass HTML5 required validation to reach server-side errors
     await page.$eval('form', (form) => form.noValidate = true);
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await expect(page.getByText('Name is required.')).toBeVisible();
     await expect(page.getByText('Email is required.')).toBeVisible();
     await expect(page.getByText('Password is required.')).toBeVisible();
@@ -78,7 +78,7 @@ test.describe('Auth flows', () => {
     await page.fill('input[name="password"]', 'abc');
     // Bypass HTML5 minlength validation to reach server-side errors
     await page.$eval('form', (form) => form.noValidate = true);
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await expect(page.getByText('Password must be at least 8 characters.')).toBeVisible();
   });
 
@@ -87,7 +87,7 @@ test.describe('Auth flows', () => {
     await page.fill('input[name="name"]', 'Duplicate User');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'ValidPass123!');
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await expect(page.getByText('This email is already registered.')).toBeVisible();
   });
 
@@ -96,7 +96,7 @@ test.describe('Auth flows', () => {
     await page.fill('input[name="name"]', 'New Test User');
     await page.fill('input[name="email"]', `newuser-${Date.now()}@minoo.test`);
     await page.fill('input[name="password"]', 'NewUserPass123!');
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await page.waitForURL('/dashboard/volunteer');
   });
 
@@ -107,7 +107,7 @@ test.describe('Auth flows', () => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
-    await page.click('button[type="submit"]');
+    await page.click('.form button[type="submit"]');
     await page.waitForURL('/dashboard/volunteer');
 
     // Then log out
