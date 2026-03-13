@@ -14,7 +14,7 @@
   {% if path == '/communities' %}
     <div class="flow-lg">
       <h1>Communities</h1>
-      <p class="hero__subtitle">The First Nations and municipalities of northern Ontario. Each community has its own history, language, and treaty relationships. {% if location is defined and location.hasLocation() %}Showing communities nearest to {{ location.communityName }}.{% else %}Set your location to see what's nearby.{% endif %}</p>
+      <p class="hero__subtitle">The First Nations and municipalities of northern Ontario.{% if location is defined and location.hasLocation() %} Showing communities nearest to {{ location.communityName }}.{% endif %}</p>
 
       <div class="communities__filters">
         <a href="/communities" class="btn btn--sm{% if type_filter == '' %} btn--active{% endif %}">All</a>
@@ -63,7 +63,12 @@
           {% endfor %}
         </div>
       {% else %}
-        <p>No communities found.</p>
+        {% include "components/empty-state.html.twig" with {
+          heading: "No communities found",
+          body: "No communities match your current filters. Try adjusting your search or removing filters.",
+          action_url: "/communities",
+          action_label: "View all communities"
+        } %}
       {% endif %}
     </div>
   {% elseif community is defined and community %}
@@ -292,7 +297,7 @@
   {% else %}
     <div class="flow-lg">
       <h1>Community Not Found</h1>
-      <p>The community at <code>{{ path }}</code> could not be found.</p>
+      <p>We couldn't find this community. It may have been removed or the link may be outdated.</p>
       <p><a href="/communities">Browse all communities</a></p>
     </div>
   {% endif %}

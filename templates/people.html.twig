@@ -14,7 +14,7 @@
   {% if path == '/people' %}
     <div class="flow-lg">
       <h1>People</h1>
-      <p class="hero__subtitle">The Elders, Knowledge Keepers, language speakers, makers, and community leaders who carry our communities forward. Find someone near you — or discover what people in your region have to offer.</p>
+      <p class="hero__subtitle">The Elders, Knowledge Keepers, language speakers, makers, and community leaders who carry our communities forward.</p>
 
       {% if location is defined and location.hasLocation() %}
         <p class="text-secondary">Showing results near {{ location.communityName }}. <a href="/people?all=1">Show all</a></p>
@@ -141,7 +141,7 @@
   {% else %}
     <div class="flow-lg">
       <h1>Person Not Found</h1>
-      <p>The person at <code>{{ path }}</code> could not be found.</p>
+      <p>We couldn't find this person. Their profile may have been removed or the link may be outdated.</p>
       <p><a href="/people">Browse all people</a></p>
     </div>
   {% endif %}

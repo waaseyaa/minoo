@@ -14,7 +14,7 @@
   {% if path == '/events' %}
     <div class="flow-lg">
       <h1>Events</h1>
-      <p class="hero__subtitle">Powwows, gatherings, ceremonies, and community events happening across the region. Come learn, celebrate, and connect.</p>
+      <p class="hero__subtitle">Powwows, ceremonies, and community gatherings happening across the region.</p>
 
       {% if events is defined and events|length > 0 %}
         <div class="card-grid">
@@ -62,7 +62,7 @@
   {% else %}
     <div class="flow-lg">
       <h1>Event Not Found</h1>
-      <p>The event at <code>{{ path }}</code> could not be found.</p>
+      <p>We couldn't find this event. It may have been removed or the link may be outdated.</p>
       <p><a href="/events">Browse all events</a></p>
     </div>
   {% endif %}
