@@ -2,12 +2,14 @@
 <?php
 
 /**
- * Seed a test user for Playwright auth tests.
+ * Seed test users for Playwright auth tests.
  *
  * Usage: bin/seed-test-user
  *
- * Creates test@minoo.test / TestPass123! with volunteer role.
- * Skips if the user already exists.
+ * Creates:
+ *   test@minoo.test / TestPass123! with volunteer role.
+ *   member@minoo.test / MemberPass123! with no roles.
+ * Skips users that already exist.
  */
 
 declare(strict_types=1);
@@ -21,23 +23,47 @@ $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 $entityTypeManager = $kernel->getEntityTypeManager();
 $storage = $entityTypeManager->getStorage('user');
 
-// Check if test user already exists.
+// Clear rate limits so Playwright login attempts don't get throttled.
+$dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/waaseyaa.sqlite';
+$pdo = new PDO('sqlite:' . $dbPath);
+$pdo->exec('CREATE TABLE IF NOT EXISTS rate_limits (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT NOT NULL, path TEXT NOT NULL, created_at INTEGER NOT NULL)');
+$pdo->exec('DELETE FROM rate_limits');
+fprintf(STDOUT, "Rate limits cleared.\n");
+
+// Seed volunteer test user.
 $existing = $storage->getQuery()->condition('mail', 'test@minoo.test')->execute();
 
 if ($existing !== []) {
     fprintf(STDOUT, "Test user already exists.\n");
-    exit(0);
+} else {
+    $user = $storage->create([
+        'name' => 'Test User',
+        'mail' => 'test@minoo.test',
+        'status' => true,
+        'created' => time(),
+        'roles' => ['volunteer'],
+        'permissions' => ['view own assignments', 'update assignment status'],
+    ]);
+    $user->setRawPassword('TestPass123!');
+    $storage->save($user);
+    fprintf(STDOUT, "Test user created: test@minoo.test / TestPass123!\n");
 }
 
-$user = $storage->create([
-    'name' => 'Test User',
-    'mail' => 'test@minoo.test',
-    'status' => true,
-    'created' => time(),
-    'roles' => ['volunteer'],
-    'permissions' => ['view own assignments', 'update assignment status'],
-]);
-$user->setRawPassword('TestPass123!');
-$storage->save($user);
+// Seed non-volunteer test user.
+$existingMember = $storage->getQuery()->condition('mail', 'member@minoo.test')->execute();
 
-fprintf(STDOUT, "Test user created: test@minoo.test / TestPass123!\n");
+if ($existingMember !== []) {
+    fprintf(STDOUT, "Member user already exists.\n");
+} else {
+    $member = $storage->create([
+        'name' => 'Member User',
+        'mail' => 'member@minoo.test',
+        'status' => true,
+        'created' => time(),
+        'roles' => [],
+        'permissions' => [],
+    ]);
+    $member->setRawPassword('MemberPass123!');
+    $storage->save($member);
+    fprintf(STDOUT, "Member user created: member@minoo.test / MemberPass123!\n");
+}

@@ -14,7 +14,7 @@
   {% if path == '/people' %}
     <div class="flow-lg">
       <h1>People</h1>
-      <p class="hero__subtitle">The Elders, Knowledge Keepers, language speakers, makers, and community leaders who carry our communities forward. Find someone near you — or discover what people in your region have to offer.</p>
+      <p class="hero__subtitle">The Elders, Knowledge Keepers, language speakers, makers, and community leaders who carry our communities forward.</p>
 
       {% if location is defined and location.hasLocation() %}
         <p class="text-secondary">Showing results near {{ location.communityName }}. <a href="/people?all=1">Show all</a></p>
@@ -73,7 +73,12 @@
         </div>
         <p class="people-filters__empty" id="filters-empty" hidden>No people match your search or filters.</p>
       {% else %}
-        <p>No community members found.</p>
+        {% include "components/empty-state.html.twig" with {
+          heading: "No community members listed yet",
+          body: "Elders, Knowledge Keepers, language speakers, makers, and community leaders will appear here as people create profiles. The people who carry our communities forward deserve to be seen.",
+          action_url: "/elders/volunteer",
+          action_label: "Volunteer to support an Elder"
+        } %}
       {% endif %}
     </div>
   {% elseif person is defined and person %}
@@ -136,7 +141,7 @@
   {% else %}
     <div class="flow-lg">
       <h1>Person Not Found</h1>
-      <p>The person at <code>{{ path }}</code> could not be found.</p>
+      <p>We couldn't find this person. Their profile may have been removed or the link may be outdated.</p>
       <p><a href="/people">Browse all people</a></p>
     </div>
   {% endif %}

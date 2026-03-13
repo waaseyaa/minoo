@@ -26,7 +26,7 @@ final class VolunteerController
     public function signupForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         if ($account->isAuthenticated() && $this->hasExistingVolunteer($account)) {
-            Flash::set('info', "You're already registered as a volunteer.");
+            Flash::info("You're already registered as a volunteer.");
             return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
         }
 
@@ -56,7 +56,7 @@ final class VolunteerController
         $maxTravelKm = $maxTravelRaw !== '' ? (int) $maxTravelRaw : null;
 
         if ($account->isAuthenticated() && $this->hasExistingVolunteer($account)) {
-            Flash::set('info', "You're already registered as a volunteer.");
+            Flash::info("You're already registered as a volunteer.");
             return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
         }
 

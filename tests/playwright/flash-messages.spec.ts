@@ -1,0 +1,42 @@
+import { test, expect } from '@playwright/test';
+import { execSync } from 'child_process';
+
+test.beforeAll(() => {
+  execSync('php bin/seed-test-user', { cwd: process.cwd() });
+});
+
+test.describe('Flash messages', () => {
+  test('login shows success flash that disappears on next navigation', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'test@minoo.test');
+    await page.fill('input[name="password"]', 'TestPass123!');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('/dashboard/volunteer');
+
+    // Flash message should be visible after login
+    const flash = page.locator('.flash-message--success');
+    await expect(flash).toBeVisible();
+    await expect(flash).toContainText('Welcome back');
+
+    // Verify accessibility attributes
+    await expect(flash).toHaveAttribute('role', 'status');
+
+    // Navigate away — flash should be consumed and gone
+    await page.goto('/account');
+    await expect(page.locator('.flash-message')).not.toBeVisible();
+  });
+
+  test('availability toggle shows success flash', async ({ page }) => {
+    // Login first
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'member@minoo.test');
+    await page.fill('input[name="password"]', 'MemberPass123!');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('/account');
+
+    // Member user gets flash on login too
+    const flash = page.locator('.flash-message--success');
+    await expect(flash).toBeVisible();
+    await expect(flash).toContainText('Welcome back');
+  });
+});

@@ -10,7 +10,7 @@ test.describe('Auth flows', () => {
 
   test('login form renders with email and password fields', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.locator('h1')).toContainText('Sign in');
+    await expect(page.locator('h1')).toContainText('Sign In');
     await expect(page.locator('input[name="email"]')).toBeVisible();
     await expect(page.locator('input[name="password"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
@@ -130,6 +130,23 @@ test.describe('Auth flows', () => {
   test.skip('redirect preserves intended destination in query param', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
     await expect(page).toHaveURL(/\/login\?redirect=/);
+  });
+
+  test('login form is centered with welcoming copy', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.locator('.form')).toHaveClass(/form--centered/);
+    await expect(page.locator('.text-secondary')).toContainText('Welcome back');
+  });
+
+  test('register form is centered with welcoming copy', async ({ page }) => {
+    await page.goto('/register');
+    await expect(page.locator('.form')).toHaveClass(/form--centered/);
+    await expect(page.locator('.text-secondary')).toContainText('Join Minoo');
+  });
+
+  test('forgot-password form is centered', async ({ page }) => {
+    await page.goto('/forgot-password');
+    await expect(page.locator('.form')).toHaveClass(/form--centered/);
   });
 
   test('login page has link to register', async ({ page }) => {

@@ -39,6 +39,7 @@
               {% elseif 'volunteer' in account.getRoles() %}
                 <li class="site-nav__utility"><a href="/dashboard/volunteer"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>My Dashboard</a></li>
               {% endif %}
+              <li class="site-nav__utility"><a href="/account"{% if path is defined and path starts with '/account' %} aria-current="page"{% endif %}>Account</a></li>
               <li class="site-nav__utility"><a href="/logout">Logout</a></li>
             {% else %}
               <li class="site-nav__utility"><a href="/login"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>Login</a></li>
@@ -52,13 +53,7 @@
 
     <main class="site-main" id="main-content">
       <div class="site-main__inner">
-        {% if flash is defined and flash %}
-          {% set flash_type = flash.type|default('success') %}
-          {% set flash_role = flash_type == 'error' ? 'alert' : 'status' %}
-          <div class="flash-message flash-message--{{ flash_type }}" role="{{ flash_role }}" aria-live="polite">
-            {{ flash.message }}
-          </div>
-        {% endif %}
+        {% include "components/flash-messages.html.twig" %}
         {% block content %}{% endblock %}
       </div>
     </main>
@@ -198,6 +193,7 @@
     const loc = readCookie();
     if ((!loc || loc.source === 'ip' || loc.source === 'none') && navigator.geolocation && !sessionStorage.getItem('minoo_geo_asked')) {
       sessionStorage.setItem('minoo_geo_asked', '1');
+      textEl.textContent = 'Detecting location\u2026';
       navigator.geolocation.getCurrentPosition(async (pos) => {
         try {
           const res = await fetch('/api/location/update', {
@@ -206,10 +202,106 @@
             body: JSON.stringify({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
           });
           const data = await res.json();
-          if (data.success) render({communityName: data.communityName, source: 'browser'});
-        } catch {}
-      }, () => {}, {timeout: 10000, maximumAge: 300000});
+          if (data.success) {
+            render({communityName: data.communityName, source: 'browser'});
+          } else {
+            render(null);
+          }
+        } catch { render(null); }
+      }, () => { render(null); }, {timeout: 10000, maximumAge: 300000});
     }
+  })();
+  </script>
+  {% include "components/chat.html.twig" %}
+  <script>
+  (function() {
+    const widget = document.getElementById('chat-widget');
+    if (!widget) return;
+
+    const toggle = widget.querySelector('.chat-widget__toggle');
+    const panel = document.getElementById('chat-panel');
+    const closeBtn = widget.querySelector('.chat-widget__close');
+    const form = widget.querySelector('.chat-widget__form');
+    const input = document.getElementById('chat-input');
+    const messages = widget.querySelector('.chat-widget__messages');
+    const sendBtn = widget.querySelector('.chat-widget__send');
+
+    const history = [];
+
+    function openPanel() {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      input.focus();
+    }
+
+    function closePanel() {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function addMessage(role, text) {
+      const div = document.createElement('div');
+      div.className = 'chat-widget__message chat-widget__message--' + role;
+      const p = document.createElement('p');
+      p.textContent = text;
+      div.appendChild(p);
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'chat-widget__typing';
+      div.id = 'chat-typing';
+      div.textContent = 'Thinking\u2026';
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('chat-typing');
+      if (el) el.remove();
+    }
+
+    toggle.addEventListener('click', function() {
+      if (panel.hidden) openPanel(); else closePanel();
+    });
+    closeBtn.addEventListener('click', closePanel);
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      addMessage('user', text);
+      history.push({role: 'user', content: text});
+      sendBtn.disabled = true;
+      showTyping();
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({message: text, history: history.slice(0, -1)})
+        });
+        const data = await res.json();
+        removeTyping();
+
+        if (data.error) {
+          addMessage('error', data.error);
+        } else {
+          addMessage('assistant', data.reply);
+          history.push({role: 'assistant', content: data.reply});
+        }
+      } catch {
+        removeTyping();
+        addMessage('error', 'Something went wrong. Please try again.');
+      }
+
+      sendBtn.disabled = false;
+      input.focus();
+    });
   })();
   </script>
   {% block scripts %}{% endblock %}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c9fe0392bedb4cbca2d6dfc0dd5a991",
+    "content-hash": "266fd749abc1cacfafb43f1888ba3eb8",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3676,12 +3676,14 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ssr",
-                "reference": "cafd32517cf60e3825c0a9c970bcec579fba7e5e"
+                "reference": "cef46307b72c9eb578982ef66cfe5a3e69d19767"
             },
             "require": {
-                "php": ">=8.3",
+                "php": ">=8.4",
                 "twig/twig": "^3.0",
+                "waaseyaa/access": "@dev",
                 "waaseyaa/cache": "@dev",
+                "waaseyaa/config": "@dev",
                 "waaseyaa/entity": "@dev",
                 "waaseyaa/field": "@dev",
                 "waaseyaa/routing": "@dev"
@@ -5689,5 +5691,5 @@
         "php": ">=8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
