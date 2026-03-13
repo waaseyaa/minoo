@@ -49,3 +49,26 @@
 - CSS flash styles using `--color-water-*` design tokens
 - Controller integration: AuthController, ElderSupportController, ElderSupportWorkflowController, VolunteerController, VolunteerDashboardController, CoordinatorDashboardController
 - 19 new tests across PHPUnit (FlashMessageServiceTest, FlashTwigExtensionTest, FlashTest) and Playwright
+
+### Location bar error state when geolocation fails
+
+- **Issue:** [#133](https://github.com/waaseyaa/minoo/issues/133)
+- **PR:** [#208](https://github.com/waaseyaa/minoo/pull/208)
+- **Merge commit:** `9267410`
+- **Merged:** 2026-03-13 (squash merge into `release/v1`)
+- **Status:** Complete
+
+**Verification summary:**
+- PHPUnit: 302 tests, 725 assertions — all passing
+- Playwright: location-bar.spec.ts (7 tests) — all pass
+- No regressions in header, navigation, cookie handling, or any other page
+
+**What was fixed:**
+- Default location bar text changed from "Detecting location…" to "Set your location" (progressive enhancement)
+- Geolocation error/timeout now falls back to "Set your location" instead of hanging indefinitely
+- "Detecting location…" shown only during active geolocation request
+- Added `<noscript>` fallback for no-JS users
+- 3 new Playwright tests (error state, cookie render, dropdown click)
+
+**Housekeeping:**
+- Closed #139, #140, #141 (v0.14 copy issues) — all already implemented
