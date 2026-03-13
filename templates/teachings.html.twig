@@ -30,7 +30,12 @@
           {% endfor %}
         </div>
       {% else %}
-        <p>No teachings available yet. Check back soon.</p>
+        {% include "components/empty-state.html.twig" with {
+          heading: "No Teachings shared yet",
+          body: "Living knowledge — culture, history, and language — will be shared here by Knowledge Keepers and community members. This space is growing.",
+          action_url: "/language",
+          action_label: "Explore the language collection"
+        } %}
       {% endif %}
     </div>
   {% elseif teaching is defined and teaching %}

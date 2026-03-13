@@ -30,7 +30,12 @@
           {% endfor %}
         </div>
       {% else %}
-        <p>No events scheduled yet. Check back soon.</p>
+        {% include "components/empty-state.html.twig" with {
+          heading: "No events scheduled yet",
+          body: "Powwows, gatherings, ceremonies, and community events will appear here as they're added. In the meantime, explore what's happening in your community.",
+          action_url: "/communities",
+          action_label: "Explore communities"
+        } %}
       {% endif %}
     </div>
   {% elseif event is defined and event %}

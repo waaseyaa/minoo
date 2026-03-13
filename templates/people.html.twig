@@ -73,7 +73,12 @@
         </div>
         <p class="people-filters__empty" id="filters-empty" hidden>No people match your search or filters.</p>
       {% else %}
-        <p>No community members found.</p>
+        {% include "components/empty-state.html.twig" with {
+          heading: "No community members listed yet",
+          body: "Elders, Knowledge Keepers, language speakers, makers, and community leaders will appear here as people create profiles. The people who carry our communities forward deserve to be seen.",
+          action_url: "/elders/volunteer",
+          action_label: "Volunteer to support an Elder"
+        } %}
       {% endif %}
     </div>
   {% elseif person is defined and person %}

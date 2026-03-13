@@ -30,7 +30,12 @@
           {% endfor %}
         </div>
       {% else %}
-        <p>No dictionary entries available yet. Check back soon.</p>
+        {% include "components/empty-state.html.twig" with {
+          heading: "No dictionary entries yet",
+          body: "Anishinaabemowin words, meanings, and example sentences will appear here as speakers and language learners contribute. Language carries a worldview that translation alone cannot.",
+          action_url: "/teachings",
+          action_label: "Explore Teachings"
+        } %}
       {% endif %}
 
       <footer class="attribution">
