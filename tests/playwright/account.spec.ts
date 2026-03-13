@@ -14,7 +14,10 @@ test.describe('Account Home — member user', () => {
     await page.fill('input[name="password"]', 'MemberPass123!');
     await page.click('button[type="submit"]');
     await page.waitForURL('/account');
-    await expect(page.locator('h1')).toContainText('Your Account');
+    await expect(page.locator('h1')).toContainText('Welcome back');
+
+    // Verify welcoming description
+    await expect(page.locator('.text-secondary').first()).toContainText('your home on Minoo');
 
     // Also verify within same session: sign out link, no volunteer links, nav
     await expect(page.locator('.account-home a[href="/logout"]')).toBeVisible();

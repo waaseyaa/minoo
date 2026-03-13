@@ -5,8 +5,9 @@
 {% block content %}
 <section class="content-section flow-lg">
   <h1>Create Account</h1>
+  <p class="text-secondary">Join Minoo to connect with your community, volunteer, or access Elder Support.</p>
 
-  <form class="form" method="post" action="/register">
+  <form class="form form--centered" method="post" action="/register">
     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
     <div class="form__field">
       <label class="form__label" for="name">Name</label>
