@@ -3,8 +3,11 @@
 {% block title %}Your Account — Minoo{% endblock %}
 
 {% block content %}
-<section class="account-home">
-  <h1>Your Account</h1>
+<section class="account-home flow-lg">
+  <div>
+    <h1>Welcome back{% if account is defined and account.getName() %}, {{ account.getName() }}{% endif %}</h1>
+    <p class="text-secondary">This is your home on Minoo. From here you can manage your account and access community tools.</p>
+  </div>
 
   <div class="actions">
     <h2>Profile</h2>
@@ -16,6 +19,7 @@
   {% if 'volunteer' in roles %}
   <div class="actions">
     <h2>Elder Support Program</h2>
+    <p class="text-secondary">You're a registered volunteer. Check your assignments and update your availability.</p>
     <ul class="links">
       <li><a href="/dashboard/volunteer">My Assignments</a></li>
     </ul>
@@ -25,6 +29,7 @@
   {% if 'elder_coordinator' in roles %}
   <div class="actions">
     <h2>Coordination</h2>
+    <p class="text-secondary">Manage Elder Support requests and coordinate volunteers in your community.</p>
     <ul class="links">
       <li><a href="/dashboard/coordinator">Coordinator Dashboard</a></li>
     </ul>
