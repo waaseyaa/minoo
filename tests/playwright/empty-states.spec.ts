@@ -26,6 +26,7 @@ test.describe('Empty state component', () => {
 
     if (hasEmptyState) {
       await expect(page.locator('.empty-state__heading')).toBeVisible();
+      await expect(page.locator('.empty-state__body')).toBeVisible();
       await expect(page.locator('.empty-state__action')).toBeVisible();
     }
   });
@@ -38,6 +39,7 @@ test.describe('Empty state component', () => {
 
     if (hasEmptyState) {
       await expect(page.locator('.empty-state__heading')).toBeVisible();
+      await expect(page.locator('.empty-state__body')).toBeVisible();
       await expect(page.locator('.empty-state__action')).toBeVisible();
     }
   });
@@ -50,6 +52,7 @@ test.describe('Empty state component', () => {
 
     if (hasEmptyState) {
       await expect(page.locator('.empty-state__heading')).toBeVisible();
+      await expect(page.locator('.empty-state__body')).toBeVisible();
       await expect(page.locator('.empty-state__action')).toBeVisible();
     }
   });
@@ -62,22 +65,27 @@ test.describe('Empty state component', () => {
 
     if (hasEmptyState) {
       await expect(page.locator('.empty-state__heading')).toBeVisible();
+      await expect(page.locator('.empty-state__body')).toBeVisible();
       await expect(page.locator('.empty-state__action')).toBeVisible();
     }
   });
 
   test('empty state action links are valid', async ({ page }) => {
-    // Check any page that shows an empty state has working action links
-    await page.goto('/events');
-    const emptyState = page.locator('.empty-state');
+    // Check all pages for empty states with working action links
+    const pages = ['/events', '/groups', '/teachings', '/language', '/people'];
 
-    if (await emptyState.count() > 0) {
-      const actionLink = emptyState.locator('.empty-state__action');
-      const href = await actionLink.getAttribute('href');
-      expect(href).toBeTruthy();
-      // Verify the link target loads (not a 404)
-      const response = await page.goto(href!);
-      expect(response?.status()).toBeLessThan(400);
+    for (const pagePath of pages) {
+      await page.goto(pagePath);
+      const emptyState = page.locator('.empty-state');
+
+      if (await emptyState.count() > 0) {
+        const actionLink = emptyState.locator('.empty-state__action');
+        const href = await actionLink.getAttribute('href');
+        expect(href).toBeTruthy();
+        // Verify the link target loads (not a 404)
+        const response = await page.goto(href!);
+        expect(response?.status()).toBeLessThan(400);
+      }
     }
   });
 });
