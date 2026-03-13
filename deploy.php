@@ -63,10 +63,11 @@ task('deploy:upload', function (): void {
 
 desc('Run pending schema migrations against the shared SQLite database');
 task('minoo:migrate', function (): void {
-    // bin/migrate reads WAASEYAA_DB (set in shared/.env) and applies any SQL
-    // files in migrations/ that have not yet been recorded in schema_migrations.
-    // Runs before deploy:symlink so the schema is ready before traffic switches.
-    run('php {{release_path}}/bin/migrate');
+    // WAASEYAA_DB is defined in shared/.env and is not present in the deploy
+    // shell environment. Source the file before invoking bin/migrate so the
+    // script can locate the database. deploy:shared must run first so the
+    // symlink {{release_path}}/.env → shared/.env is already in place.
+    run('set -a && . {{deploy_path}}/shared/.env && set +a && php {{release_path}}/bin/migrate');
 });
 
 desc('Clear Waaseyaa framework manifest cache');
