@@ -376,6 +376,7 @@
   .site-main {
     padding-block: var(--space-lg);
     padding-inline: var(--gutter);
+    min-block-size: 60vh;
   }
 
   .site-main__inner {
@@ -1071,6 +1072,10 @@
     display: grid;
     gap: var(--space-sm);
     max-inline-size: 40rem;
+  }
+
+  .form--centered {
+    margin-inline: auto;
   }
 
   .form__field {

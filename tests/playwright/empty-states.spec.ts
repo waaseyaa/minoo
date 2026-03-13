@@ -70,6 +70,18 @@ test.describe('Empty state component', () => {
     }
   });
 
+  test('empty state has correct visual styling', async ({ page }) => {
+    await page.goto('/events');
+    const emptyState = page.locator('.empty-state');
+
+    if (await emptyState.count() > 0) {
+      const bgColor = await emptyState.evaluate(el => getComputedStyle(el).backgroundColor);
+      const borderLeft = await emptyState.evaluate(el => getComputedStyle(el).borderInlineStartWidth);
+      expect(bgColor).not.toBe('rgba(0, 0, 0, 0)');
+      expect(parseFloat(borderLeft)).toBeGreaterThan(0);
+    }
+  });
+
   test('empty state action links are valid', async ({ page }) => {
     // Check all pages for empty states with working action links
     const pages = ['/events', '/groups', '/teachings', '/language', '/people'];
