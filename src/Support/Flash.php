@@ -17,6 +17,11 @@ final class Flash
 {
     private static ?FlashMessageService $service = null;
 
+    public static function setService(FlashMessageService $service): void
+    {
+        self::$service = $service;
+    }
+
     public static function success(string $message): void
     {
         self::getService()->addSuccess($message);

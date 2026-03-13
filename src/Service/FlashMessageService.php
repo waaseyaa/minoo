@@ -35,12 +35,15 @@ final class FlashMessageService
         $messages = $_SESSION[self::SESSION_KEY];
         unset($_SESSION[self::SESSION_KEY]);
 
-        return array_values(array_filter($messages, static function (mixed $msg): bool {
+        $allowedTypes = ['success', 'error', 'info'];
+
+        return array_values(array_filter($messages, static function (mixed $msg) use ($allowedTypes): bool {
             return is_array($msg)
                 && isset($msg['type'], $msg['message'])
                 && is_string($msg['type'])
                 && is_string($msg['message'])
-                && $msg['message'] !== '';
+                && $msg['message'] !== ''
+                && in_array($msg['type'], $allowedTypes, true);
         }));
     }
 

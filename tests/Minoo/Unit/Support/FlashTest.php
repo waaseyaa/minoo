@@ -84,4 +84,28 @@ final class FlashTest extends TestCase
         self::assertSame('success', $flash['type']);
         self::assertSame('Hello', $flash['message']);
     }
+
+    #[Test]
+    public function setDelegatesErrorType(): void
+    {
+        Flash::set('error', 'Something broke');
+
+        $flash = Flash::consume();
+
+        self::assertNotNull($flash);
+        self::assertSame('error', $flash['type']);
+        self::assertSame('Something broke', $flash['message']);
+    }
+
+    #[Test]
+    public function setDelegatesInfoType(): void
+    {
+        Flash::set('info', 'FYI');
+
+        $flash = Flash::consume();
+
+        self::assertNotNull($flash);
+        self::assertSame('info', $flash['type']);
+        self::assertSame('FYI', $flash['message']);
+    }
 }

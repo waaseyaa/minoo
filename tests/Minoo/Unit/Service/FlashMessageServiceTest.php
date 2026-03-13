@@ -110,4 +110,21 @@ final class FlashMessageServiceTest extends TestCase
         self::assertSame('Valid.', $messages[0]['message']);
         self::assertSame('Also valid.', $messages[1]['message']);
     }
+
+    #[Test]
+    public function consumeAllFiltersUnknownTypes(): void
+    {
+        $_SESSION['flash_messages'] = [
+            ['type' => 'success', 'message' => 'Good.'],
+            ['type' => 'warning', 'message' => 'Unknown type.'],
+            ['type' => 'danger', 'message' => 'Also unknown.'],
+            ['type' => 'error', 'message' => 'Bad.'],
+        ];
+
+        $messages = $this->service->consumeAll();
+
+        self::assertCount(2, $messages);
+        self::assertSame('Good.', $messages[0]['message']);
+        self::assertSame('Bad.', $messages[1]['message']);
+    }
 }
