@@ -72,3 +72,23 @@
 
 **Housekeeping:**
 - Closed #139, #140, #141 (v0.14 copy issues) — all already implemented
+
+### Server 500 on stale or corrupted location cookie
+
+- **Issue:** [#209](https://github.com/waaseyaa/minoo/issues/209)
+- **PR:** [#210](https://github.com/waaseyaa/minoo/pull/210)
+- **Merge commit:** `c9cce46`
+- **Merged:** 2026-03-13 (squash merge into `release/v1`)
+- **Status:** Complete
+
+**Verification summary:**
+- PHPUnit: 316 tests, 751 assertions — all passing
+- Playwright: location-bar.spec.ts (7 tests) — all pass
+- No regressions in location bar, cookie handling, or geolocation flow
+
+**What was fixed:**
+- `LocationContext::fromArray()` validates: numeric communityId > 0, numeric lat/lon in valid ranges
+- `LocationContext::hasLocation()` fixed: checks `communityId > 0` (was `!== null`, allowed `0`)
+- `LocationService::fromRequest()` wraps cookie/session parsing with defensive guards
+- Bad cookies auto-cleared so users aren't stuck in 500 loops
+- 14 new unit tests (LocationContextTest, LocationServiceCookieTest)
