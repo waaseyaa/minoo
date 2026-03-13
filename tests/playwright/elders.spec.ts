@@ -40,7 +40,7 @@ test.describe('Elders Portal', () => {
 
   test('submitting empty request form shows validation errors', async ({ page }) => {
     await page.goto('/elders/request');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
     // HTML5 required fields prevent submission in browser — name field should be focused/invalid
     // The form has required attributes on name, phone, type
     const nameInput = page.locator('#name');
@@ -71,7 +71,7 @@ test.describe('Elders Portal', () => {
     await page.locator('#name').fill('Mary Elder');
     await page.locator('#phone').fill('705-555-1234');
     await page.locator('#type').selectOption({ index: 1 });
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
     await expect(page).toHaveURL(/\/elders\/request\/[a-f0-9-]+/);
   });
 
@@ -81,7 +81,7 @@ test.describe('Elders Portal', () => {
     await page.locator('#phone').fill('705-555-1234');
     await page.locator('#type').selectOption('ride');
     await page.locator('#community').fill('Wikwemikong');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
 
     // Confirmation page should show UUID reference
     await expect(page.locator('.card__meta')).toContainText(/Reference:/);
@@ -104,7 +104,7 @@ test.describe('Elders Portal', () => {
     // Wait for JS to unhide representative fields
     await expect(page.locator('#representative-fields')).toBeVisible();
     // Leave elder_name empty, do not check consent
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
     await page.waitForLoadState('networkidle');
 
     // Server-side validation should show error for elder_name
@@ -144,7 +144,7 @@ test.describe('Elders Portal', () => {
     await page.locator('#is_representative').check();
     await page.locator('#elder_name').fill('Elder Person');
     // Do not check consent
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
 
     // Server-side validation should show error for consent
     await expect(page.locator('.form__error')).toBeVisible();
