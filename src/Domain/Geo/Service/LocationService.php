@@ -29,17 +29,31 @@ final class LocationService
         // 1. Check session.
         $session = $request->attributes->get('_session') ?? ($_SESSION ?? []);
         if (isset($session['minoo_location']) && is_array($session['minoo_location'])) {
-            return LocationContext::fromArray($session['minoo_location']);
+            $ctx = LocationContext::fromArray($session['minoo_location']);
+            if ($ctx->hasLocation()) {
+                return $ctx;
+            }
+            // Invalid session data — clear it.
+            unset($_SESSION['minoo_location']);
         }
 
         // 2. Check cookie.
         $cookieName = $this->config['cookie_name'] ?? 'minoo_location';
         $cookieValue = $request->cookies->get($cookieName);
         if ($cookieValue !== null) {
-            $data = json_decode($cookieValue, true);
-            if (is_array($data) && isset($data['communityId'])) {
-                return LocationContext::fromArray($data);
+            try {
+                $data = json_decode($cookieValue, true, 512, JSON_THROW_ON_ERROR);
+                if (is_array($data) && isset($data['communityId'])) {
+                    $ctx = LocationContext::fromArray($data);
+                    if ($ctx->hasLocation()) {
+                        return $ctx;
+                    }
+                }
+            } catch (\Throwable) {
+                // Corrupted cookie — fall through to IP resolution.
             }
+            // Invalid or corrupted cookie — clear it so the user isn't stuck.
+            $this->clearCookie($cookieName);
         }
 
         // 3. Resolve from IP.
@@ -143,6 +157,16 @@ final class LocationService
         } catch (\Exception) {
             return LocationContext::none();
         }
+    }
+
+    private function clearCookie(string $cookieName): void
+    {
+        setcookie($cookieName, '', [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ]);
     }
 
     private function isPrivateIp(string $ip): bool
