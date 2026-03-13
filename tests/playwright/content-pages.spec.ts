@@ -41,7 +41,7 @@ test.describe('Listing page intros follow one-sentence rule', () => {
     { path: '/teachings', intro: /right now/ },
     { path: '/language', intro: /thousands of years/ },
     { path: '/people', intro: /carry our communities forward/ },
-    { path: '/communities', intro: /northern Ontario/ },
+    { path: '/communities', intro: /Find First Nations and municipalities/ },
   ];
 
   for (const { path, intro } of pages) {

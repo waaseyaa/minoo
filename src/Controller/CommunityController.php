@@ -25,31 +25,33 @@ final class CommunityController
     public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $storage = $this->entityTypeManager->getStorage('community');
+        $location = $this->resolveLocation($request);
+
+        $typeFilter = $request->query->getString('type');
 
         $queryBuilder = $storage->getQuery()
             ->condition('status', 1)
             ->sort('name', 'ASC');
 
-        $typeFilter = $request->query->getString('type');
-        if ($typeFilter !== '') {
-            $queryBuilder->condition('community_type', $typeFilter);
+        if ($typeFilter === 'first-nations') {
+            $queryBuilder->condition('is_municipality', 0);
+        } elseif ($typeFilter === 'municipalities') {
+            $queryBuilder->condition('is_municipality', 1);
         }
 
         $ids = $queryBuilder->execute();
-        $communities = $ids !== [] ? $storage->loadMultiple($ids) : [];
+        $communities = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
-        // Resolve location for proximity sorting
-        $location = $this->resolveLocation($request);
-
-        if ($location->hasLocation() && $location->latitude !== null) {
-            $finder = new \Minoo\Domain\Geo\Service\CommunityFinder();
-            $sorted = $finder->findNearby(
-                $location->latitude,
-                $location->longitude,
-                array_values($communities),
-                count($communities),
+        // Sort by proximity when location is known, delegating to LocationResolver
+        if ($location->hasLocation()) {
+            $resolver = new \Minoo\Service\LocationResolver(
+                $this->entityTypeManager,
+                new \Minoo\Domain\Geo\Service\CommunityFinder(),
             );
-            $communities = array_map(static fn (array $r) => $r['community'], $sorted);
+            $communities = array_map(
+                static fn (array $r) => $r['community'],
+                $resolver->resolveNearbyCommunities($location, $communities, count($communities)),
+            );
         }
 
         $html = $this->twig->render('communities.html.twig', [
@@ -206,9 +208,9 @@ final class CommunityController
 
     private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext
     {
-        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
-        $config = file_exists($configPath) ? (require $configPath)['location'] ?? [] : [];
-        $service = new \Minoo\Domain\Geo\Service\LocationService($this->entityTypeManager, $config);
-        return $service->fromRequest($request);
+        return (new \Minoo\Service\LocationResolver(
+            $this->entityTypeManager,
+            new \Minoo\Domain\Geo\Service\CommunityFinder(),
+        ))->resolveLocation($request);
     }
 }

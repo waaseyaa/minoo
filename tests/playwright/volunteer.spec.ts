@@ -22,7 +22,7 @@ test.describe('Volunteer Portal', () => {
   test('volunteer signup form renders with heading and submit button', async ({ page }) => {
     await page.goto('/elders/volunteer');
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('button[type="submit"]')).toBeVisible();
+    await expect(page.locator('.form button[type="submit"]')).toBeVisible();
   });
 
   test('skill checkboxes are present', async ({ page }) => {
@@ -44,14 +44,14 @@ test.describe('Volunteer Portal', () => {
     await page.goto('/elders/volunteer');
     await page.locator('#name').fill('John Volunteer');
     await page.locator('#phone').fill('705-555-5678');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
     await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
   });
 
   test('submitting signup without name shows validation', async ({ page }) => {
     await page.goto('/elders/volunteer');
     await page.locator('#phone').fill('705-555-5678');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
     // HTML5 required attribute prevents submission
     await expect(page.locator('#name')).toHaveAttribute('required', '');
   });
@@ -59,7 +59,7 @@ test.describe('Volunteer Portal', () => {
   test('submitting signup without phone shows validation', async ({ page }) => {
     await page.goto('/elders/volunteer');
     await page.locator('#name').fill('John Volunteer');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
     // HTML5 required attribute prevents submission
     await expect(page.locator('#phone')).toHaveAttribute('required', '');
   });
@@ -71,7 +71,7 @@ test.describe('Volunteer Portal', () => {
     // Check two skill checkboxes
     await page.locator('input[name="skills[]"][value="Rides"]').check();
     await page.locator('input[name="skills[]"][value="Groceries"]').check();
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
     // Confirmation should show selected skills as tags
@@ -85,7 +85,7 @@ test.describe('Volunteer Portal', () => {
     // Use a unique phone to avoid duplicate phone validation
     await page.locator('#phone').fill(`705-555-${Date.now().toString().slice(-4)}`);
     await page.locator('#availability').fill('Weekends');
-    await page.locator('button[type="submit"]').click();
+    await page.locator('.form button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
     // Should show thank-you heading

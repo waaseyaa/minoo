@@ -24,6 +24,7 @@ final class CommunityServiceProvider extends ServiceProvider
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'community_type' => ['type' => 'string', 'label' => 'Community Type', 'weight' => 5],
                 'municipality_type' => ['type' => 'string', 'label' => 'Municipality Type', 'weight' => 6],
+                'is_municipality' => ['type' => 'boolean', 'label' => 'Is Municipality', 'weight' => 7, 'default' => 0],
                 'province' => ['type' => 'string', 'label' => 'Province', 'weight' => 10],
                 'region' => ['type' => 'string', 'label' => 'Region', 'weight' => 11],
                 'latitude' => ['type' => 'float', 'label' => 'Latitude', 'weight' => 15],
