@@ -1,0 +1,7 @@
+<div class="empty-state">
+  <p class="empty-state__heading">{{ heading }}</p>
+  <p class="empty-state__body">{{ body }}</p>
+  {% if action_url is defined and action_label is defined %}
+    <a href="{{ action_url }}" class="empty-state__action">{{ action_label }} →</a>
+  {% endif %}
+</div>
