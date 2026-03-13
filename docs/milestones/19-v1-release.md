@@ -92,3 +92,27 @@
 - `LocationService::fromRequest()` wraps cookie/session parsing with defensive guards
 - Bad cookies auto-cleared so users aren't stuck in 500 loops
 - 14 new unit tests (LocationContextTest, LocationServiceCookieTest)
+
+### Listing page empty states
+
+- **Issue:** [#211](https://github.com/waaseyaa/minoo/issues/211)
+- **PR:** [#212](https://github.com/waaseyaa/minoo/pull/212)
+- **Merge commit:** `9b9a2b8`
+- **Merged:** 2026-03-13 (squash merge into `release/v1`)
+- **Status:** Complete
+
+**Verification summary:**
+- PHPUnit: 316 tests, 751 assertions — all passing
+- Playwright: empty-states.spec.ts (6 tests) — all pass
+- No regressions in any listing page
+
+**What was built:**
+- Reusable `.empty-state` CSS component (earth tones, border accent, action link)
+- `empty-state.html.twig` Twig partial with heading, body, and optional action link
+- Updated 5 listing pages with mission-aligned empty-state copy (Show → Tell → Invite):
+  - Events → explore communities
+  - Groups → explore communities
+  - Teachings → explore language collection
+  - Language → explore Teachings
+  - People → volunteer to support an Elder
+- 6 Playwright tests covering all pages + action link validation
