@@ -14,12 +14,12 @@
   {% if path == '/communities' %}
     <div class="flow-lg">
       <h1>Communities</h1>
-      <p class="hero__subtitle">The First Nations and municipalities of northern Ontario.{% if location is defined and location.hasLocation() %} Showing communities nearest to {{ location.communityName }}.{% endif %}</p>
+      <p class="hero__subtitle">Find First Nations and municipalities near you.{% if location is defined and location.hasLocation() %} Showing communities nearest to {{ location.communityName }}.{% endif %}</p>
 
       <div class="communities__filters">
-        <a href="/communities" class="btn btn--sm{% if type_filter == '' %} btn--active{% endif %}">All</a>
-        <a href="/communities?type=first_nation" class="btn btn--sm{% if type_filter == 'first_nation' %} btn--active{% endif %}">First Nations</a>
-        <a href="/communities?type=municipality" class="btn btn--sm{% if type_filter == 'municipality' %} btn--active{% endif %}">Municipalities</a>
+        <a href="/communities" class="btn btn--sm{% if type_filter == '' or type_filter == 'all' %} btn--active{% endif %}">All</a>
+        <a href="/communities?type=first-nations" class="btn btn--sm{% if type_filter == 'first-nations' %} btn--active{% endif %}">First Nations</a>
+        <a href="/communities?type=municipalities" class="btn btn--sm{% if type_filter == 'municipalities' %} btn--active{% endif %}">Municipalities</a>
       </div>
 
       {% if location is defined and location.hasLocation() %}
@@ -33,8 +33,9 @@
             <a href="/communities/{{ c.get('slug') }}" class="card card--community{% if location is defined and location.hasLocation() and loop.first %} card--nearest{% endif %}">
               <div class="card__body">
                 {% set type_labels = {first_nation: 'First Nation', municipality: 'Municipality', town: 'Town', region: 'Region', city: 'City', settlement: 'Settlement'} %}
-                <span class="card__badge card__badge--{{ c.get('community_type') }}">
-                  {{ type_labels[c.get('community_type')] | default(c.get('community_type')|replace({'_': ' '})|capitalize) }}
+                {% set badge_type = c.get('is_municipality') ? 'municipality' : 'first_nation' %}
+                <span class="card__badge card__badge--{{ badge_type }}">
+                  {{ c.get('is_municipality') ? 'Municipality' : 'First Nation' }}
                 </span>
                 <h3 class="card__title">{{ c.get('name') }}</h3>
                 <div class="card__details">
