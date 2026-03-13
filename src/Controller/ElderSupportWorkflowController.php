@@ -45,7 +45,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
-        Flash::set('success', 'Volunteer assigned successfully.');
+        Flash::success('Volunteer assigned successfully.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
@@ -87,7 +87,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
-        Flash::set('success', 'Request marked as complete. The coordinator will follow up.');
+        Flash::success('Request marked as complete. The coordinator will follow up.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 
@@ -113,7 +113,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
-        Flash::set('success', 'Request marked as confirmed. Thank you for following up.');
+        Flash::success('Request marked as confirmed. Thank you for following up.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
@@ -143,7 +143,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
-        Flash::set('success', 'Request cancelled.');
+        Flash::success('Request cancelled.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
@@ -171,7 +171,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
-        Flash::set('success', 'Request declined. The coordinator has been notified.');
+        Flash::success('Request declined. The coordinator has been notified.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 
@@ -204,7 +204,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
-        Flash::set('success', 'Request reassigned.');
+        Flash::success('Request reassigned.');
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
     }
 
@@ -236,7 +236,7 @@ final class ElderSupportWorkflowController
         $entity->set('updated_at', time());
         $storage->save($entity);
 
-        Flash::set('success', $message);
+        Flash::success($message);
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
 }

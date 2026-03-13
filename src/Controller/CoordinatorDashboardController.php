@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Domain\Geo\Service\VolunteerRanker;
-use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -64,8 +63,6 @@ final class CoordinatorDashboardController
         $communityNames = $this->buildCommunityNameMap(
             array_merge($allRequests, array_values($volunteers)),
         );
-        $flash = Flash::consume();
-
         $html = $this->twig->render('dashboard/coordinator.html.twig', [
             'open_requests' => $open,
             'assigned_requests' => $assigned,
@@ -76,7 +73,6 @@ final class CoordinatorDashboardController
             'ranked_by_request' => $rankedByRequest,
             'cancelled_requests' => $cancelled,
             'community_names' => $communityNames,
-            'flash' => $flash,
         ]);
 
         return new SsrResponse(content: $html);

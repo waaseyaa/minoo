@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -100,6 +101,8 @@ final class AuthController
 
         $_SESSION['waaseyaa_uid'] = $user->id();
 
+        Flash::success('Welcome back, ' . $user->get('name') . '.');
+
         $redirect = $this->safeRedirect(
             (string) $request->request->get('redirect', ''),
             $this->dashboardRedirect($user),
@@ -188,6 +191,8 @@ final class AuthController
         $volStorage->save($volunteer);
 
         $_SESSION['waaseyaa_uid'] = $user->id();
+
+        Flash::success('Welcome to Minoo! Your volunteer account is ready.');
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
     }
@@ -324,7 +329,9 @@ final class AuthController
         $storage->save($user);
         $resetService->consumeToken($token);
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/login?reset=success']);
+        Flash::success('Your password has been reset. Please sign in.');
+
+        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/login']);
     }
 
     public function logout(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse

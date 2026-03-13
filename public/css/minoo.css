@@ -577,6 +577,12 @@
     color: var(--color-berry-600);
   }
 
+  .flash-message--info {
+    background-color: var(--color-water-100);
+    border-color: var(--color-water-600);
+    color: var(--color-water-600);
+  }
+
   .card__title {
     font-family: var(--font-heading);
     font-size: var(--text-xl);
