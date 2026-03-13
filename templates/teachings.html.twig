@@ -14,7 +14,7 @@
   {% if path == '/teachings' %}
     <div class="flow-lg">
       <h1>Teachings</h1>
-      <p class="hero__subtitle">Living knowledge passed down through generations — culture, history, and language Teachings that guide how we live, relate, and care for the land. These aren't lessons from the past. They're wisdom for right now.</p>
+      <p class="hero__subtitle">Living knowledge passed down through generations, for right now.</p>
 
       {% if teachings is defined and teachings|length > 0 %}
         <div class="card-grid">
@@ -54,8 +54,8 @@
   {% else %}
     <div class="flow-lg">
       <h1>Teaching Not Found</h1>
-      <p>The teaching at <code>{{ path }}</code> could not be found.</p>
-      <p><a href="/teachings">Browse all teachings</a></p>
+      <p>We couldn't find this teaching. It may have been removed or the link may be outdated.</p>
+      <p><a href="/teachings">Browse all Teachings</a></p>
     </div>
   {% endif %}
 {% endblock %}

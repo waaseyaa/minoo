@@ -14,7 +14,7 @@
   {% if path == '/language' %}
     <div class="flow-lg">
       <h1>Language</h1>
-      <p class="hero__subtitle">Anishinaabemowin carries a worldview that English cannot. Explore words, meanings, and the structure of a language that has been spoken on this land for thousands of years.</p>
+      <p class="hero__subtitle">Anishinaabemowin words, meanings, and the structure of a language spoken on this land for thousands of years.</p>
 
       {% if entries is defined and entries|length > 0 %}
         <div class="card-grid">
@@ -63,7 +63,7 @@
   {% else %}
     <div class="flow-lg">
       <h1>Entry Not Found</h1>
-      <p>The dictionary entry at <code>{{ path }}</code> could not be found.</p>
+      <p>We couldn't find this dictionary entry. It may have been removed or the link may be outdated.</p>
       <p><a href="/language">Browse all entries</a></p>
     </div>
   {% endif %}
