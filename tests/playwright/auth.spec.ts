@@ -10,7 +10,7 @@ test.describe('Auth flows', () => {
 
   test('login form renders with email and password fields', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.locator('h1')).toContainText('Sign in');
+    await expect(page.locator('h1')).toContainText('Sign In');
     await expect(page.locator('input[name="email"]')).toBeVisible();
     await expect(page.locator('input[name="password"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
