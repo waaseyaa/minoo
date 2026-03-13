@@ -9,7 +9,7 @@
       <p class="text-secondary">You don't have to manage everything alone. Tell us what you need and a coordinator will find a volunteer near you. A family member or friend can also fill this out on your behalf.</p>
     </div>
 
-    <form class="form" method="POST" action="/elders/request">
+    <form class="form form--centered" method="POST" action="/elders/request">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form__field">
         <label class="form__label" for="name">Your Name <span aria-hidden="true">*</span></label>

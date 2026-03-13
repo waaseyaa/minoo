@@ -111,6 +111,31 @@ test.describe('Elders Portal', () => {
     await expect(page.locator('.form__error').first()).toBeVisible();
   });
 
+  test('request form is centered', async ({ page }) => {
+    await page.goto('/elders/request');
+    const form = page.locator('.form');
+    await expect(form).toHaveClass(/form--centered/);
+  });
+
+  test('volunteer form is centered', async ({ page }) => {
+    await page.goto('/elders/volunteer');
+    const form = page.locator('.form');
+    await expect(form).toHaveClass(/form--centered/);
+  });
+
+  test('safety callout uses forest colors', async ({ page }) => {
+    await page.goto('/elders');
+    const callout = page.locator('.safety-callout');
+    await expect(callout).toBeVisible();
+    await expect(callout).toContainText('Your Safety Matters');
+  });
+
+  test('landing page intro has no em-dashes', async ({ page }) => {
+    await page.goto('/elders');
+    const intro = await page.locator('.text-secondary').first().textContent();
+    expect(intro).not.toContain('—');
+  });
+
   test('representative submission requires consent checkbox', async ({ page }) => {
     await page.goto('/elders/request');
     await page.locator('#name').fill('Jane Representative');

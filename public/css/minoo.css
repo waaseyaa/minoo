@@ -1896,9 +1896,9 @@
   /* Safety callout */
   .safety-callout {
     padding: var(--space-sm);
-    background-color: var(--color-water-100);
+    background-color: var(--color-forest-100);
     border-radius: var(--radius-md);
-    border-inline-start: 4px solid var(--color-water-600);
+    border-inline-start: 4px solid var(--color-forest-500);
   }
 
   /* Empty state — shown when a listing has no items */
