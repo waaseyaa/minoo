@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Domain\Geo;
 
 use Minoo\Domain\Geo\ValueObject\LocationContext;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -15,6 +16,7 @@ use PHPUnit\Framework\TestCase;
  * LocationService::fromRequest() depends on Symfony Request and EntityTypeManager,
  * so we test the validation boundary at LocationContext::fromArray() directly.
  */
+#[CoversClass(LocationContext::class)]
 final class LocationServiceCookieTest extends TestCase
 {
     #[Test]

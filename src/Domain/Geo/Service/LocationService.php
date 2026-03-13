@@ -42,7 +42,7 @@ final class LocationService
         $cookieValue = $request->cookies->get($cookieName);
         if ($cookieValue !== null) {
             try {
-                $data = json_decode($cookieValue, true);
+                $data = json_decode($cookieValue, true, 512, JSON_THROW_ON_ERROR);
                 if (is_array($data) && isset($data['communityId'])) {
                     $ctx = LocationContext::fromArray($data);
                     if ($ctx->hasLocation()) {
