@@ -1,0 +1,107 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Create leadership scrape jobs for communities with linked sources.
+ *
+ * Usage: bin/create-leadership-jobs [--dry-run] [--community=SLUG]
+ *
+ * By default runs in dry-run mode. Omit --dry-run to create actual jobs.
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Minoo\Support\NorthCloudClient;
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$configFile = dirname(__DIR__) . '/config/waaseyaa.php';
+$config = file_exists($configFile) ? require $configFile : [];
+
+$dryRun = in_array('--dry-run', $argv, true);
+$communitySlug = null;
+
+foreach ($argv as $arg) {
+    if (str_starts_with($arg, '--community=')) {
+        $communitySlug = substr($arg, strlen('--community='));
+    }
+}
+
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
+$timeout = (int) ($config['northcloud']['timeout'] ?? 5);
+$apiToken = (string) ($config['northcloud']['api_token'] ?? '');
+
+if ($apiToken === '') {
+    fprintf(STDERR, "ERROR: NORTHCLOUD_API_TOKEN not configured.\n");
+    exit(1);
+}
+
+$client = new NorthCloudClient(
+    baseUrl: $baseUrl,
+    timeout: $timeout,
+    apiToken: $apiToken,
+);
+
+// Load communities with nc_id.
+$storage = $entityTypeManager->getStorage('community');
+$query = $storage->getQuery();
+
+if ($communitySlug !== null) {
+    $query->condition('slug', $communitySlug);
+}
+
+$ids = $query->execute();
+
+if ($ids === []) {
+    fprintf(STDERR, "No communities found%s.\n", $communitySlug !== null ? " matching slug '$communitySlug'" : '');
+    exit(1);
+}
+
+$created = 0;
+$skipped = 0;
+$failed = 0;
+
+foreach ($ids as $id) {
+    $entity = $storage->load($id);
+    if ($entity === null) {
+        continue;
+    }
+
+    $ncId = (string) $entity->get('nc_id');
+    $name = (string) $entity->get('name');
+
+    if ($ncId === '') {
+        fprintf(STDOUT, "  SKIP %s — no nc_id\n", $name);
+        $skipped++;
+        continue;
+    }
+
+    if ($dryRun) {
+        fprintf(STDOUT, "  [DRY RUN] Would create leadership scrape job for: %s (nc_id: %s)\n", $name, $ncId);
+        $created++;
+        continue;
+    }
+
+    $result = $client->createLeadershipScrapeJob($ncId);
+
+    if ($result === null) {
+        fprintf(STDERR, "  FAIL %s — API call failed\n", $name);
+        $failed++;
+        continue;
+    }
+
+    $jobId = (string) ($result['id'] ?? $result['job_id'] ?? '?');
+    fprintf(STDOUT, "  OK   %s — job %s created\n", $name, $jobId);
+    $created++;
+}
+
+fprintf(STDOUT, "\nDone: %d created, %d skipped, %d failed.\n", $created, $skipped, $failed);
+
+if ($dryRun) {
+    fprintf(STDOUT, "This was a dry run. Remove --dry-run to create actual jobs.\n");
+}

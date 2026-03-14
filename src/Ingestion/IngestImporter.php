@@ -7,6 +7,7 @@ namespace Minoo\Ingestion;
 use Minoo\Entity\IngestLog;
 use Minoo\Ingestion\EntityMapper\CulturalCollectionMapper;
 use Minoo\Ingestion\EntityMapper\DictionaryEntryMapper;
+use Minoo\Ingestion\EntityMapper\LeaderMapper;
 use Minoo\Ingestion\EntityMapper\SpeakerMapper;
 
 final class IngestImporter
@@ -32,6 +33,7 @@ final class IngestImporter
             'dictionary_entry' => (new DictionaryEntryMapper())->map($data, $sourceUrl),
             'speaker' => (new SpeakerMapper())->map($data),
             'cultural_collection' => (new CulturalCollectionMapper())->map($data, $sourceUrl),
+            'leader' => (new LeaderMapper())->map($data, (string) ($data['community_id'] ?? '')),
             default => throw new \LogicException(
                 sprintf('No mapper registered for validated entity type: %s', $entityType),
             ),
