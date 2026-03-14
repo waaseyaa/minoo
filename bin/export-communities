@@ -4,12 +4,35 @@
 /**
  * Export all community records as JSON for NorthCloud import.
  *
- * Usage: bin/export-communities > data/export/communities.json
+ * Usage: bin/export-communities --confirm > data/export/communities.json
+ *        bin/export-communities --dry-run
+ *
+ * --confirm   Required. Acknowledge governance approval and proceed with export.
+ * --dry-run   Preview what would be exported without producing output.
  */
 
 declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
+
+$confirm = in_array('--confirm', $argv, true);
+$dryRun = in_array('--dry-run', $argv, true);
+
+if (!$confirm && !$dryRun) {
+    fprintf(STDERR, <<<'NOTICE'
+⚠ GOVERNANCE NOTICE
+This command exports community data. Under the project's data sovereignty
+policy, data exports require explicit governance approval.
+
+To proceed, run with --confirm:
+  bin/export-communities --confirm
+
+For a preview without exporting, run with --dry-run:
+  bin/export-communities --dry-run
+
+NOTICE);
+    exit(1);
+}
 
 $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 
@@ -18,6 +41,29 @@ $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 $entityTypeManager = $kernel->getEntityTypeManager();
 $storage = $entityTypeManager->getStorage('community');
 $ids = $storage->getQuery()->execute();
+
+$exportFields = [
+    'inac_id',
+    'name',
+    'slug',
+    'community_type',
+    'province',
+    'latitude',
+    'longitude',
+    'treaty',
+    'language_group',
+    'population',
+    'population_year',
+    'website',
+    'reserve_name',
+];
+
+if ($dryRun) {
+    fprintf(STDOUT, "DRY RUN — no data will be exported.\n\n");
+    fprintf(STDOUT, "Records: %d\n", count($ids));
+    fprintf(STDOUT, "Fields:  %s\n", implode(', ', $exportFields));
+    exit(0);
+}
 
 $communities = [];
 
