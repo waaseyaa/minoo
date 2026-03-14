@@ -79,8 +79,8 @@ final class CommunityController
 
         $html = $this->twig->render('communities/list.html.twig', [
             'path' => '/communities',
-            'communities_json' => json_encode($communitiesJson),
-            'location_json' => json_encode($locationJson),
+            'communities_json' => json_encode($communitiesJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
+            'location_json' => json_encode($locationJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
         ]);
 
         return new SsrResponse(content: $html);
@@ -101,6 +101,16 @@ final class CommunityController
             ->execute();
 
         $community = $ids !== [] ? $storage->load(reset($ids)) : null;
+
+        if ($community === null) {
+            $html = $this->twig->render('communities/list.html.twig', [
+                'path' => '/communities',
+                'communities_json' => '[]',
+                'location_json' => 'null',
+            ]);
+
+            return new SsrResponse(content: $html, statusCode: 404);
+        }
 
         $nearby = [];
         $location = $this->resolveLocation($request);
@@ -138,10 +148,7 @@ final class CommunityController
             'distance_from_user' => $distanceFromUser,
         ]);
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $community !== null ? 200 : 404,
-        );
+        return new SsrResponse(content: $html);
     }
 
     /**

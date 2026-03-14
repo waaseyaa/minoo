@@ -28,6 +28,7 @@
       type="text"
       class="atlas-search"
       placeholder="Search communities by name..."
+      aria-label="Search communities by name"
       x-model="searchQuery"
       @input.debounce.200ms="applyFilters()"
     />

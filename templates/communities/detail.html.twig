@@ -161,7 +161,7 @@
     <div class="atlas-section__label">The Land</div>
     <div id="atlas-detail-map" class="atlas-detail-map"></div>
     <div class="atlas-detail-coords">
-      <span>{{ community.get('latitude')|number_format(4) }}° N, {{ community.get('longitude')|abs|number_format(4) }}° W</span>
+      <span>{{ community.get('latitude')|number_format(4) }}° {{ community.get('latitude') >= 0 ? 'N' : 'S' }}, {{ community.get('longitude')|abs|number_format(4) }}° {{ community.get('longitude') < 0 ? 'W' : 'E' }}</span>
       <a href="https://www.openstreetmap.org/?mlat={{ community.get('latitude') }}&mlon={{ community.get('longitude') }}#map=13/{{ community.get('latitude') }}/{{ community.get('longitude') }}" target="_blank" rel="noopener">OpenStreetMap</a>
       <a href="https://www.google.com/maps?q={{ community.get('latitude') }},{{ community.get('longitude') }}" target="_blank" rel="noopener">Google Maps</a>
     </div>
