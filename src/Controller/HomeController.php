@@ -60,6 +60,17 @@ final class HomeController
             ->execute();
 
         $events = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+
+        $events = array_filter($events, function ($entity) {
+            $mediaId = $entity->get('media_id');
+            if ($mediaId === null || $mediaId === '') {
+                return true;
+            }
+            $status = $entity->get('copyright_status');
+            return in_array($status, ['community_owned', 'cc_by_nc_sa'], true);
+        });
+        $events = array_values($events);
+
         return array_slice($events, 0, $limit);
     }
 

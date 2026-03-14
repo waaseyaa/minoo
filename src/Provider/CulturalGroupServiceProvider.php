@@ -68,6 +68,20 @@ final class CulturalGroupServiceProvider extends ServiceProvider
                     'weight' => 25,
                     'default' => 0,
                 ],
+                'consent_public' => [
+                    'type' => 'boolean',
+                    'label' => 'Public Consent',
+                    'description' => 'Whether this content may be shown on public pages.',
+                    'weight' => 28,
+                    'default' => 1,
+                ],
+                'consent_ai_training' => [
+                    'type' => 'boolean',
+                    'label' => 'AI Training Consent',
+                    'description' => 'Whether this content may be used for AI training. Default: no.',
+                    'weight' => 29,
+                    'default' => 0,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',

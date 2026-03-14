@@ -2,7 +2,7 @@
     "name": "waaseyaa/minoo",
     "description": "Indigenous knowledge platform powered by NorthCloud ingestion",
     "type": "project",
-    "license": "GPL-2.0-or-later",
+    "license": "MIT",
     "repositories": [
         { "type": "path", "url": "../waaseyaa/packages/foundation" },
         { "type": "path", "url": "../waaseyaa/packages/cache" },
