@@ -6,6 +6,9 @@ namespace Minoo\Support;
 
 final class NorthCloudClient
 {
+    /** Attribution string matching the NC API X-Attribution header. */
+    public const string DICTIONARY_ATTRIBUTION = "Ojibwe People's Dictionary, University of Minnesota";
+
     /** @var \Closure|null */
     private readonly ?\Closure $httpClient;
 
@@ -14,6 +17,7 @@ final class NorthCloudClient
         private readonly int $timeout = 5,
         ?callable $httpClient = null,
         private readonly ?NorthCloudCache $cache = null,
+        private readonly string $apiToken = '',
     ) {
         $this->httpClient = $httpClient !== null ? $httpClient(...) : null;
     }
@@ -63,6 +67,117 @@ final class NorthCloudClient
         return $data['band_office'];
     }
 
+    /**
+     * Fetch paginated dictionary entries from NorthCloud.
+     *
+     * @return array{entries: list<array<string, mixed>>, total: int, attribution: string}|null
+     */
+    public function getDictionaryEntries(int $page = 1, int $limit = 50): ?array
+    {
+        $offset = ($page - 1) * $limit;
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/dictionary/entries?limit=' . $limit . '&offset=' . $offset;
+        $json = $this->doRequest($url);
+
+        if ($json === null) {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['entries']) || !is_array($data['entries'])) {
+            error_log('NorthCloud dictionary entries response malformed');
+            return null;
+        }
+
+        return [
+            'entries' => $data['entries'],
+            'total' => (int) ($data['total'] ?? 0),
+            'attribution' => self::DICTIONARY_ATTRIBUTION,
+        ];
+    }
+
+    /**
+     * Search dictionary entries via NorthCloud full-text search.
+     *
+     * @return array{entries: list<array<string, mixed>>, total: int, attribution: string}|null
+     */
+    public function searchDictionary(string $query): ?array
+    {
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/dictionary/search?q=' . urlencode($query);
+        $json = $this->doRequest($url);
+
+        if ($json === null) {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['entries']) || !is_array($data['entries'])) {
+            error_log(sprintf('NorthCloud dictionary search response malformed for query: %s', $query));
+            return null;
+        }
+
+        return [
+            'entries' => $data['entries'],
+            'total' => (int) ($data['total'] ?? 0),
+            'attribution' => self::DICTIONARY_ATTRIBUTION,
+        ];
+    }
+
+    /**
+     * Link community sources via NorthCloud API.
+     *
+     * Requires authentication (api_token).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function linkSources(bool $dryRun = true): ?array
+    {
+        $dryRunParam = $dryRun ? 'true' : 'false';
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/communities/link-sources?dry_run=' . $dryRunParam;
+        $json = $this->doAuthenticatedRequest($url, 'POST');
+
+        if ($json === null) {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (!is_array($data)) {
+            error_log('NorthCloud link-sources response malformed');
+            return null;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Create a leadership scrape job for a community.
+     *
+     * Requires authentication (api_token).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function createLeadershipScrapeJob(string $ncId): ?array
+    {
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/crawl/jobs';
+        $body = json_encode([
+            'community_id' => $ncId,
+            'job_type' => 'leadership_scrape',
+        ], JSON_THROW_ON_ERROR);
+
+        $json = $this->doAuthenticatedRequest($url, 'POST', $body);
+
+        if ($json === null) {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (!is_array($data)) {
+            error_log(sprintf('NorthCloud create crawl job response malformed for community %s', $ncId));
+            return null;
+        }
+
+        return $data;
+    }
+
     private function doRequest(string $url): ?string
     {
         if ($this->cache !== null) {
@@ -93,6 +208,46 @@ final class NorthCloudClient
 
         if ($result !== null && $this->cache !== null) {
             $this->cache->set($url, $result);
+        }
+
+        return $result;
+    }
+
+    private function doAuthenticatedRequest(string $url, string $method = 'POST', ?string $body = null): ?string
+    {
+        if ($this->httpClient !== null) {
+            $result = ($this->httpClient)($url, $method, $body);
+            $result = $result === false ? null : $result;
+            return $result;
+        }
+
+        if ($this->apiToken === '') {
+            error_log('NorthCloud API token not configured \xe2\x80\x94 cannot make authenticated request');
+            return null;
+        }
+
+        $headers = [
+            'Authorization: Bearer ' . $this->apiToken,
+            'Content-Type: application/json',
+        ];
+
+        $httpOptions = [
+            'method' => $method,
+            'timeout' => $this->timeout,
+            'ignore_errors' => true,
+            'header' => implode("\r\n", $headers),
+        ];
+
+        if ($body !== null) {
+            $httpOptions['content'] = $body;
+        }
+
+        $context = stream_context_create(['http' => $httpOptions]);
+
+        $result = @file_get_contents($url, false, $context);
+        if ($result === false) {
+            error_log(sprintf('NorthCloud authenticated API request failed: %s', $url));
+            return null;
         }
 
         return $result;

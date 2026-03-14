@@ -1,0 +1,63 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Link community sources via NorthCloud API.
+ *
+ * Usage: bin/link-sources [--dry-run] [--apply]
+ *
+ * By default runs in dry-run mode. Use --apply to actually link sources.
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Minoo\Support\NorthCloudClient;
+
+$configFile = dirname(__DIR__) . '/config/waaseyaa.php';
+$config = file_exists($configFile) ? require $configFile : [];
+
+$applyMode = in_array('--apply', $argv, true);
+$dryRun = !$applyMode;
+
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
+$timeout = (int) ($config['northcloud']['timeout'] ?? 5);
+$apiToken = (string) ($config['northcloud']['api_token'] ?? '');
+
+if ($apiToken === '') {
+    fprintf(STDERR, "ERROR: NORTHCLOUD_API_TOKEN not configured.\n");
+    exit(1);
+}
+
+$client = new NorthCloudClient(
+    baseUrl: $baseUrl,
+    timeout: $timeout,
+    apiToken: $apiToken,
+);
+
+fprintf(STDOUT, "Linking community sources (%s)...\n", $dryRun ? 'DRY RUN' : 'APPLY');
+
+$result = $client->linkSources($dryRun);
+
+if ($result === null) {
+    fprintf(STDERR, "ERROR: Failed to call link-sources API.\n");
+    exit(1);
+}
+
+$linked = (int) ($result['linked'] ?? 0);
+$skipped = (int) ($result['skipped'] ?? 0);
+
+fprintf(STDOUT, "Result: %d linked, %d skipped.\n", $linked, $skipped);
+
+if (isset($result['details']) && is_array($result['details'])) {
+    foreach ($result['details'] as $detail) {
+        $name = (string) ($detail['community_name'] ?? $detail['name'] ?? '?');
+        $status = (string) ($detail['status'] ?? 'unknown');
+        fprintf(STDOUT, "  %s: %s\n", $name, $status);
+    }
+}
+
+if ($dryRun) {
+    fprintf(STDOUT, "\nThis was a dry run. Use --apply to actually link sources.\n");
+}
