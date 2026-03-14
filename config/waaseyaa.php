@@ -71,6 +71,7 @@ return [
         'base_url' => getenv('NORTHCLOUD_BASE_URL') ?: 'https://northcloud.web.net',
         'timeout' => (int) (getenv('NORTHCLOUD_TIMEOUT') ?: 5),
         'cache_ttl' => (int) (getenv('NORTHCLOUD_CACHE_TTL') ?: 3600),
+        'api_token' => getenv('NORTHCLOUD_API_TOKEN') ?: '',
     ],
 
     // Location detection.
