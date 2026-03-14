@@ -25,16 +25,17 @@ A geographic storytelling approach — warm, editorial, place-centered. The map 
 
 ### Layout (Top to Bottom)
 
-1. **Contextual header** — Dark green gradient banner. Shows detected region name, province, and community count within radius. Falls back to "All Communities" with total count if no geolocation.
+1. **Contextual header** — Dark green gradient banner. Shows detected region name, province, and community count within 200 km. Falls back to "All Communities" with total count if no geolocation.
 
 2. **Map** — Leaflet + OpenStreetMap terrain tiles. Clustered markers. User location pin if available. ~40% viewport height on desktop, ~100px collapsed strip on mobile with "Tap to expand" affordance.
 
 3. **Search + Filter chips** — Prominent search bar with autocomplete. Below it, floating filter chips:
-   - **Community type**: Toggle chips (All / First Nations / Municipalities)
+   - **Community type**: Toggle chips (All / First Nations / Municipalities). Driven by the `is_municipality` boolean field. All non-municipality types (first_nation, settlement, etc.) map to "First Nations" for filter purposes.
    - **Province**: Dropdown multi-select
    - **Nation**: Dropdown multi-select (dynamically filtered to nations present in current results)
    - **Population**: Range presets (< 500, 500–2,000, 2,000–5,000, 5,000+)
    - All filters AND-combined. Update both list and map markers.
+   - **Map viewport acts as an implicit spatial filter** — only communities visible on the map appear in the list. Attribute filters (type, province, nation, population) AND with the viewport constraint. Panning/zooming does NOT reset attribute filters.
 
 4. **Community list** — Grouped by proximity bands when geolocation is available:
    - Within 50 km
@@ -48,7 +49,7 @@ A geographic storytelling approach — warm, editorial, place-centered. The map 
 
 Each card shows:
 - **Community name** (prominent, left-aligned)
-- **Type badge** (pill: "First Nation" or "Municipality")
+- **Type badge** (pill: "First Nation" or "Municipality" — derived from `is_municipality` boolean, not `community_type`)
 - **Nation + Province** (secondary text)
 - **Population** (right-aligned)
 - **Distance** (right-aligned, only when geolocation available)
@@ -95,7 +96,7 @@ Click → navigates to detail page.
 
 5. **The Land** — Interactive Leaflet mini-map showing:
    - Community pin (primary)
-   - Nearby community markers (secondary, with connecting polylines)
+   - Nearby community markers (secondary, with straight-line polylines from the community to each neighbor — decorative, showing spatial relationship, not routes)
    - Coordinates displayed below (lat/long to 4 decimals)
    - Links to OpenStreetMap and Google Maps
 
@@ -124,27 +125,44 @@ Click → navigates to detail page.
 
 ### Data Strategy
 
-- Server renders all communities as a JSON blob in a `<script>` tag on the discovery page
-- ~634 communities ≈ 50–80KB JSON — acceptable payload
-- All filtering, sorting, and proximity grouping happens client-side via Alpine.js
-- No AJAX needed for filtering — instant responsiveness
+Server renders all communities as a JSON blob in a `<script>` tag on the discovery page. ~634 communities ≈ 50–80KB JSON — acceptable payload. All filtering, sorting, and proximity grouping happens client-side via Alpine.js. No AJAX needed for filtering — instant responsiveness.
+
+**JSON blob shape** (per community):
+```json
+{
+  "id": 123,
+  "name": "Garden River First Nation",
+  "slug": "garden-river-first-nation",
+  "lat": 46.531,
+  "lng": -84.078,
+  "province": "Ontario",
+  "nation": "Ojibwe",
+  "population": 1270,
+  "population_year": 2021,
+  "is_municipality": false
+}
+```
+
+Distance is NOT in the blob — calculated client-side via JavaScript Haversine when user location is known.
 
 ### Geolocation Flow
 
-1. Check session/cookie for saved location (existing `LocationService`)
-2. Try browser `navigator.geolocation` API (user permission prompt)
-3. Fall back to IP geolocation (existing `GeoIP2`)
-4. If all fail → "All Communities" alphabetical, no proximity grouping
+1. **Server-side (on page load)**: Check session/cookie for saved location via existing `LocationService`. If found, server passes coordinates as data attributes on a container element.
+2. **Client-side (Alpine init)**: If no server-side location, request `navigator.geolocation.getCurrentPosition()` on Alpine component init. This fires the browser permission prompt.
+   - **On success**: Store coordinates in Alpine state. POST to `/communities/location` (or equivalent) to persist in session/cookie for future page loads. Alpine reactively recalculates distances and re-renders proximity groups. No full page reload.
+   - **On denial/timeout**: Fall through to step 3.
+3. **Server-side fallback**: IP geolocation via existing `GeoIP2` — server passes these coordinates on initial render. If browser geolocation was denied, Alpine uses these coordinates from the page's data attributes.
+4. **All fail** → Page renders as "All Communities" sorted alphabetically, no proximity grouping. Filters still work.
 
 ### Search
 
-- Client-side fuzzy match on the JSON blob for instant results
-- Existing `/api/communities/autocomplete` endpoint as fallback
+- Client-side substring match on community names from the JSON blob for instant results
+- The existing `/api/communities/autocomplete` endpoint remains available but is not used by this page — the client-side search supersedes it
 
 ### Detail Page Data
 
 - Community data: server-rendered from SQLite (existing)
-- Leadership + Band Office: fetched from NorthCloud API via `NorthCloudClient` (existing, cached in SQLite with configurable TTL)
+- Leadership + Band Office: fetched server-side from NorthCloud API via `NorthCloudClient` (existing, cached in SQLite with configurable TTL). **Loading state**: Not applicable — data is fetched server-side before render. **Empty state**: If the API returns null or the community has no `nc_id`, the Leadership and Band Office sections are omitted entirely (matching current behavior).
 - Nearby communities: calculated server-side via existing `CommunityFinder` (Haversine, 6 results, 200km radius)
 
 ### Dependencies
