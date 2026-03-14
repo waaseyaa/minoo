@@ -30,6 +30,16 @@ final class PeopleController
         $ids = $queryBuilder->execute();
         $people = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
+        $people = array_filter($people, function ($entity) {
+            $mediaId = $entity->get('media_id');
+            if ($mediaId === null || $mediaId === '') {
+                return true;
+            }
+            $status = $entity->get('copyright_status');
+            return in_array($status, ['community_owned', 'cc_by_nc_sa'], true);
+        });
+        $people = array_values($people);
+
         $mediaIds = [];
         $allRoles = [];
         $allOfferings = [];
@@ -82,6 +92,16 @@ final class PeopleController
             ->execute();
 
         $person = $ids !== [] ? $storage->load(reset($ids)) : null;
+
+        if ($person !== null) {
+            $mediaId = $person->get('media_id');
+            if ($mediaId !== null && $mediaId !== '') {
+                $status = $person->get('copyright_status');
+                if (!in_array($status, ['community_owned', 'cc_by_nc_sa'], true)) {
+                    $person = null;
+                }
+            }
+        }
 
         $photoUrl = '';
         if ($person !== null) {
