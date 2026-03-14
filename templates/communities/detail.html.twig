@@ -1,0 +1,208 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ community.get('name') }} — Minoo{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="/css/atlas.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+  {# --- Hero --- #}
+  <div class="atlas-detail-hero">
+    <a href="/communities" class="atlas-detail-hero__back">← Back to communities</a>
+    <div class="atlas-detail-hero__badge">
+      {{ community.get('is_municipality') ? 'Municipality' : 'First Nation' }}
+    </div>
+    <h1 class="atlas-detail-hero__name">{{ community.get('name') }}</h1>
+    <div class="atlas-detail-hero__subtitle">
+      {% if community.get('nation') %}{{ community.get('nation') }} · {% endif %}
+      {% if community.get('treaty') %}{{ community.get('treaty') }} · {% endif %}
+      {{ community.get('province') }}
+    </div>
+    <div class="atlas-detail-hero__stats">
+      {% if community.get('population') %}
+        <span>Pop. {{ community.get('population')|number_format }} <span style="opacity:0.5">({{ community.get('population_year') }})</span></span>
+      {% endif %}
+      {% if distance_from_user %}
+        <span>·</span>
+        <span>{{ distance_from_user|number_format(0) }} km from you</span>
+      {% endif %}
+    </div>
+  </div>
+
+  {# --- About --- #}
+  <div class="atlas-section">
+    <div class="atlas-section__label">About</div>
+    <div class="atlas-section__grid">
+      {% if community.get('nation') %}
+      <div>
+        <div class="atlas-section__field-label">Nation</div>
+        <div class="atlas-section__field-value">{{ community.get('nation') }}</div>
+      </div>
+      {% endif %}
+      {% if community.get('language_group') %}
+      <div>
+        <div class="atlas-section__field-label">Language Group</div>
+        <div class="atlas-section__field-value">{{ community.get('language_group') }}</div>
+      </div>
+      {% endif %}
+      {% if community.get('treaty') %}
+      <div>
+        <div class="atlas-section__field-label">Treaty</div>
+        <div class="atlas-section__field-value">{{ community.get('treaty') }}</div>
+      </div>
+      {% endif %}
+      {% if community.get('reserve_name') %}
+      <div>
+        <div class="atlas-section__field-label">Reserve</div>
+        <div class="atlas-section__field-value">{{ community.get('reserve_name') }}</div>
+      </div>
+      {% endif %}
+      {% if community.get('inac_id') %}
+      <div>
+        <div class="atlas-section__field-label">INAC Band No.</div>
+        <div class="atlas-section__field-value">{{ community.get('inac_id') }}</div>
+      </div>
+      {% endif %}
+      {% if community.get('website') %}
+      <div>
+        <div class="atlas-section__field-label">Website</div>
+        <div class="atlas-section__field-value"><a href="{{ community.get('website') }}" target="_blank" rel="noopener">{{ community.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a></div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {# --- Leadership --- #}
+  {% if people is not empty %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">Leadership</div>
+    {% for person in people %}
+      {% if person.role == 'chief' %}
+      <div class="atlas-leader-card atlas-leader-card--chief">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div class="atlas-leader-card__role">Chief</div>
+            <div class="atlas-leader-card__name">{{ person.name }}</div>
+          </div>
+          <div style="font-size: 0.6875rem; color: #999;">Current</div>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+    <div class="atlas-councillor-grid">
+      {% for person in people %}
+        {% if person.role == 'councillor' %}
+        <div class="atlas-leader-card">
+          <div class="atlas-leader-card__role">Councillor</div>
+          <div class="atlas-leader-card__name">{{ person.name }}</div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# --- Band Office --- #}
+  {% if band_office %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">Band Office</div>
+    <div class="atlas-contact-card">
+      <div class="atlas-contact-card__grid">
+        {% if band_office.address_line1 %}
+        <div>
+          <div class="atlas-section__field-label">Address</div>
+          <div class="atlas-section__field-value">
+            {{ band_office.address_line1 }}
+            {% if band_office.address_line2 %}<br>{{ band_office.address_line2 }}{% endif %}
+            {% if band_office.city %}<br>{{ band_office.city }}, {{ band_office.province }} {{ band_office.postal_code }}{% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% if band_office.office_hours %}
+        <div>
+          <div class="atlas-section__field-label">Hours</div>
+          <div class="atlas-section__field-value">{{ band_office.office_hours }}</div>
+        </div>
+        {% endif %}
+        {% if band_office.phone %}
+        <div>
+          <div class="atlas-section__field-label">Phone</div>
+          <div class="atlas-section__field-value"><a href="tel:{{ band_office.phone }}">{{ band_office.phone }}</a></div>
+        </div>
+        {% endif %}
+        {% if band_office.email %}
+        <div>
+          <div class="atlas-section__field-label">Email</div>
+          <div class="atlas-section__field-value"><a href="mailto:{{ band_office.email }}">{{ band_office.email }}</a></div>
+        </div>
+        {% endif %}
+        {% if band_office.toll_free %}
+        <div>
+          <div class="atlas-section__field-label">Toll Free</div>
+          <div class="atlas-section__field-value"><a href="tel:{{ band_office.toll_free }}">{{ band_office.toll_free }}</a></div>
+        </div>
+        {% endif %}
+        {% if band_office.fax %}
+        <div>
+          <div class="atlas-section__field-label">Fax</div>
+          <div class="atlas-section__field-value">{{ band_office.fax }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {# --- The Land --- #}
+  {% if community.get('latitude') and community.get('longitude') %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">The Land</div>
+    <div id="atlas-detail-map" class="atlas-detail-map"></div>
+    <div class="atlas-detail-coords">
+      <span>{{ community.get('latitude')|number_format(4) }}° N, {{ community.get('longitude')|abs|number_format(4) }}° W</span>
+      <a href="https://www.openstreetmap.org/?mlat={{ community.get('latitude') }}&mlon={{ community.get('longitude') }}#map=13/{{ community.get('latitude') }}/{{ community.get('longitude') }}" target="_blank" rel="noopener">OpenStreetMap</a>
+      <a href="https://www.google.com/maps?q={{ community.get('latitude') }},{{ community.get('longitude') }}" target="_blank" rel="noopener">Google Maps</a>
+    </div>
+  </div>
+  {% endif %}
+
+  {# --- Nearby Communities --- #}
+  {% if nearby is not empty %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">Nearby Communities</div>
+    <div class="atlas-nearby-grid">
+      {% for item in nearby %}
+      <a href="/communities/{{ item.community.get('slug') }}" class="atlas-nearby-card">
+        <div class="atlas-nearby-card__name">{{ item.community.get('name') }}</div>
+        <div class="atlas-nearby-card__meta">
+          {{ item.community.get('is_municipality') ? 'Municipality' : item.community.get('nation') ?: 'First Nation' }}
+          · {{ item.distanceKm|number_format(0) }} km
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{% if community.get('latitude') and community.get('longitude') %}
+<script>
+  window.__atlas_detail = {
+    lat: {{ community.get('latitude') }},
+    lng: {{ community.get('longitude') }},
+    name: {{ community.get('name')|json_encode|raw }},
+    nearby: [
+      {% for item in nearby %}
+      { lat: {{ item.community.get('latitude') }}, lng: {{ item.community.get('longitude') }}, name: {{ item.community.get('name')|json_encode|raw }}, slug: {{ item.community.get('slug')|json_encode|raw }} }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  };
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/js/atlas-detail.js"></script>
+{% endif %}
+{% endblock %}

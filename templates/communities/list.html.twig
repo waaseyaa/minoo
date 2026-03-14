@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Communities — Minoo{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="/css/atlas.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+{% endblock %}
+
+{% block content %}
+<div x-data="atlasDiscovery()" x-init="init()">
+
+  {# --- Contextual Header --- #}
+  <div class="atlas-header">
+    <div class="atlas-header__label">Exploring</div>
+    <h1 class="atlas-header__title" x-text="headerTitle">All Communities</h1>
+    <div class="atlas-header__meta" x-text="headerMeta"></div>
+  </div>
+
+  {# --- Map --- #}
+  <div id="atlas-map" class="atlas-map"></div>
+
+  {# --- Search + Filters --- #}
+  <div class="atlas-filters">
+    <input
+      type="text"
+      class="atlas-search"
+      placeholder="Search communities by name..."
+      x-model="searchQuery"
+      @input.debounce.200ms="applyFilters()"
+    />
+    <div class="atlas-chips">
+      {# Type filter #}
+      <button
+        class="atlas-chip"
+        :class="{ 'atlas-chip--active': typeFilter === 'all' }"
+        @click="typeFilter = 'all'; applyFilters()"
+      >All Types</button>
+      <button
+        class="atlas-chip"
+        :class="{ 'atlas-chip--active': typeFilter === 'fn' }"
+        @click="typeFilter = 'fn'; applyFilters()"
+      >First Nations</button>
+      <button
+        class="atlas-chip"
+        :class="{ 'atlas-chip--active': typeFilter === 'mun' }"
+        @click="typeFilter = 'mun'; applyFilters()"
+      >Municipalities</button>
+
+      {# Province dropdown #}
+      <div class="atlas-chip-dropdown" x-data="{ open: false }" @click.outside="open = false">
+        <button class="atlas-chip" :class="{ 'atlas-chip--active': provinceFilter.length > 0 }" @click="open = !open">
+          Province <span x-show="provinceFilter.length > 0" x-text="'(' + provinceFilter.length + ')'"></span> ▾
+        </button>
+        <div class="atlas-chip-dropdown__menu" x-show="open" x-cloak>
+          <template x-for="prov in availableProvinces" :key="prov">
+            <label class="atlas-chip-dropdown__item" @click.stop>
+              <input type="checkbox" :value="prov" x-model="provinceFilter" @change="applyFilters()" />
+              <span x-text="prov"></span>
+            </label>
+          </template>
+        </div>
+      </div>
+
+      {# Nation dropdown #}
+      <div class="atlas-chip-dropdown" x-data="{ open: false }" @click.outside="open = false">
+        <button class="atlas-chip" :class="{ 'atlas-chip--active': nationFilter.length > 0 }" @click="open = !open">
+          Nation <span x-show="nationFilter.length > 0" x-text="'(' + nationFilter.length + ')'"></span> ▾
+        </button>
+        <div class="atlas-chip-dropdown__menu" x-show="open" x-cloak>
+          <template x-for="nat in availableNations" :key="nat">
+            <label class="atlas-chip-dropdown__item" @click.stop>
+              <input type="checkbox" :value="nat" x-model="nationFilter" @change="applyFilters()" />
+              <span x-text="nat"></span>
+            </label>
+          </template>
+        </div>
+      </div>
+
+      {# Population dropdown #}
+      <div class="atlas-chip-dropdown" x-data="{ open: false }" @click.outside="open = false">
+        <button class="atlas-chip" :class="{ 'atlas-chip--active': populationFilter !== 'all' }" @click="open = !open">
+          Population ▾
+        </button>
+        <div class="atlas-chip-dropdown__menu" x-show="open" x-cloak>
+          <div class="atlas-chip-dropdown__item" @click="populationFilter = 'all'; applyFilters(); open = false"
+            :style="populationFilter === 'all' ? 'font-weight:600' : ''">All</div>
+          <div class="atlas-chip-dropdown__item" @click="populationFilter = '0-500'; applyFilters(); open = false"
+            :style="populationFilter === '0-500' ? 'font-weight:600' : ''">Under 500</div>
+          <div class="atlas-chip-dropdown__item" @click="populationFilter = '500-2000'; applyFilters(); open = false"
+            :style="populationFilter === '500-2000' ? 'font-weight:600' : ''">500 – 2,000</div>
+          <div class="atlas-chip-dropdown__item" @click="populationFilter = '2000-5000'; applyFilters(); open = false"
+            :style="populationFilter === '2000-5000' ? 'font-weight:600' : ''">2,000 – 5,000</div>
+          <div class="atlas-chip-dropdown__item" @click="populationFilter = '5000+'; applyFilters(); open = false"
+            :style="populationFilter === '5000+' ? 'font-weight:600' : ''">5,000+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# --- Community List --- #}
+  <div class="atlas-list">
+    {# Proximity-grouped view (when location known) #}
+    <template x-if="hasLocation">
+      <div>
+        <template x-for="group in proximityGroups" :key="group.label">
+          <div x-show="group.communities.length > 0">
+            <div class="atlas-group__label" x-text="group.label"></div>
+            <template x-for="c in group.communities" :key="c.id">
+              <a :href="'/communities/' + c.slug" class="atlas-card"
+                 @mouseenter="highlightMarker(c.id)" @mouseleave="unhighlightMarker(c.id)">
+                <div>
+                  <div class="atlas-card__name" x-text="c.name"></div>
+                  <div class="atlas-card__meta">
+                    <span class="atlas-card__badge" x-text="c.is_municipality ? 'Municipality' : 'First Nation'"></span>
+                    <span x-show="c.nation" x-text="c.nation" style="margin-left: 0.5rem;"></span>
+                    <span style="margin-left: 0.25rem;">·</span>
+                    <span x-text="c.province" style="margin-left: 0.25rem;"></span>
+                  </div>
+                </div>
+                <div class="atlas-card__stats">
+                  <div class="atlas-card__population" x-show="c.population" x-text="'Pop. ' + Number(c.population).toLocaleString()"></div>
+                  <div class="atlas-card__distance" x-text="c.distance.toFixed(0) + ' km'"></div>
+                </div>
+              </a>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    {# Alphabetical view (no location) #}
+    <template x-if="!hasLocation">
+      <div>
+        <template x-for="c in filteredCommunities" :key="c.id">
+          <a :href="'/communities/' + c.slug" class="atlas-card"
+             @mouseenter="highlightMarker(c.id)" @mouseleave="unhighlightMarker(c.id)">
+            <div>
+              <div class="atlas-card__name" x-text="c.name"></div>
+              <div class="atlas-card__meta">
+                <span class="atlas-card__badge" x-text="c.is_municipality ? 'Municipality' : 'First Nation'"></span>
+                <span x-show="c.nation" x-text="c.nation" style="margin-left: 0.5rem;"></span>
+                <span style="margin-left: 0.25rem;">·</span>
+                <span x-text="c.province" style="margin-left: 0.25rem;"></span>
+              </div>
+            </div>
+            <div class="atlas-card__stats">
+              <div class="atlas-card__population" x-show="c.population" x-text="'Pop. ' + Number(c.population).toLocaleString()"></div>
+            </div>
+          </a>
+        </template>
+      </div>
+    </template>
+
+    {# Empty state #}
+    <div x-show="filteredCommunities.length === 0" style="text-align: center; padding: 2rem; color: #999;">
+      No communities match your filters.
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{# --- Community Data --- #}
+<script>
+  window.__atlas_communities = {{ communities_json|raw }};
+  window.__atlas_location = {{ location_json|raw }};
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="/js/atlas-discovery.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"></script>
+{% endblock %}

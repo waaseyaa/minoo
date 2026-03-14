@@ -12,6 +12,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
+use Minoo\Support\GeoDistance;
 
 final class CommunityController
 {
@@ -54,11 +55,32 @@ final class CommunityController
             );
         }
 
-        $html = $this->twig->render('communities.html.twig', [
+        // Serialize communities for client-side Alpine.js
+        $communitiesJson = [];
+        foreach ($communities as $community) {
+            $communitiesJson[] = [
+                'id' => $community->id(),
+                'name' => $community->get('name'),
+                'slug' => $community->get('slug'),
+                'lat' => (float) $community->get('latitude'),
+                'lng' => (float) $community->get('longitude'),
+                'province' => $community->get('province'),
+                'nation' => $community->get('nation'),
+                'population' => (int) $community->get('population'),
+                'population_year' => (int) $community->get('population_year'),
+                'is_municipality' => (bool) $community->get('is_municipality'),
+            ];
+        }
+
+        // LocationService::fromRequest() already checks session → cookie → IP GeoIP2
+        $locationJson = $location->hasLocation()
+            ? ['lat' => $location->latitude, 'lng' => $location->longitude, 'name' => $location->communityName]
+            : null;
+
+        $html = $this->twig->render('communities/list.html.twig', [
             'path' => '/communities',
-            'communities' => array_values($communities),
-            'type_filter' => $typeFilter,
-            'location' => $location,
+            'communities_json' => json_encode($communitiesJson),
+            'location_json' => json_encode($locationJson),
         ]);
 
         return new SsrResponse(content: $html);
@@ -96,13 +118,24 @@ final class CommunityController
             }
         }
 
-        $html = $this->twig->render('communities.html.twig', [
+        $distanceFromUser = null;
+        if ($location->hasLocation() && $community !== null) {
+            $distanceFromUser = GeoDistance::haversine(
+                $location->latitude,
+                $location->longitude,
+                (float) $community->get('latitude'),
+                (float) $community->get('longitude')
+            );
+        }
+
+        $html = $this->twig->render('communities/detail.html.twig', [
             'path' => '/communities/' . $slug,
             'community' => $community,
             'nearby' => $nearby,
             'location' => $location,
             'people' => $people,
             'band_office' => $bandOffice,
+            'distance_from_user' => $distanceFromUser,
         ]);
 
         return new SsrResponse(
