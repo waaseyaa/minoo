@@ -222,7 +222,7 @@ final class NorthCloudClient
         }
 
         if ($this->apiToken === '') {
-            error_log('NorthCloud API token not configured \xe2\x80\x94 cannot make authenticated request');
+            error_log('NorthCloud API token not configured — cannot make authenticated request');
             return null;
         }
 
