@@ -32,7 +32,7 @@ foreach ($argv as $arg) {
     }
 }
 
-$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.one'), '/');
 $timeout = (int) ($config['northcloud']['timeout'] ?? 5);
 $apiToken = (string) ($config['northcloud']['api_token'] ?? '');
 

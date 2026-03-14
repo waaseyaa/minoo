@@ -47,6 +47,10 @@ final class DictionaryEntryMapper
         // Attribution from entry or header.
         $entryAttribution = (string) ($data['attribution'] ?? $attribution);
 
+        // NC API provides consent_public_display; publish entries that have public consent.
+        $consentPublic = !empty($data['consent_public_display']) ? 1 : 0;
+        $status = $consentPublic;
+
         return new DictionaryEntryFields(
             word: $lemma,
             definition: (string) $definition,
@@ -56,7 +60,8 @@ final class DictionaryEntryMapper
             inflectedForms: $inflectedForms,
             sourceUrl: $resolvedSourceUrl,
             slug: SlugGenerator::generate($lemma),
-            status: 0,
+            status: $status,
+            consentPublic: $consentPublic,
             createdAt: time(),
             updatedAt: time(),
             attributionSource: $entryAttribution,

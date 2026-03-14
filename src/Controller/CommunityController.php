@@ -200,7 +200,7 @@ final class CommunityController
         }
 
         return new NorthCloudClient(
-            baseUrl: (string) ($config['base_url'] ?? 'https://northcloud.web.net'),
+            baseUrl: (string) ($config['base_url'] ?? 'https://northcloud.one'),
             timeout: (int) ($config['timeout'] ?? 5),
             cache: $cache,
         );

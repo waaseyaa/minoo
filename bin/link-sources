@@ -21,7 +21,7 @@ $config = file_exists($configFile) ? require $configFile : [];
 $applyMode = in_array('--apply', $argv, true);
 $dryRun = !$applyMode;
 
-$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.one'), '/');
 $timeout = (int) ($config['northcloud']['timeout'] ?? 5);
 $apiToken = (string) ($config['northcloud']['api_token'] ?? '');
 

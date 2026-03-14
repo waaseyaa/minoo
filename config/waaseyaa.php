@@ -60,7 +60,7 @@ return [
 
     // Search provider configuration.
     'search' => [
-        'base_url' => getenv('NORTHCLOUD_SEARCH_URL') ?: 'https://northcloud.web.net',
+        'base_url' => getenv('NORTHCLOUD_SEARCH_URL') ?: 'https://northcloud.one',
         'timeout' => (int) (getenv('NORTHCLOUD_SEARCH_TIMEOUT') ?: 15),
         'cache_ttl' => (int) (getenv('NORTHCLOUD_SEARCH_CACHE_TTL') ?: 60),
         'base_topics' => ['indigenous'],
@@ -68,7 +68,7 @@ return [
 
     // NorthCloud community data API.
     'northcloud' => [
-        'base_url' => getenv('NORTHCLOUD_BASE_URL') ?: 'https://northcloud.web.net',
+        'base_url' => getenv('NORTHCLOUD_BASE_URL') ?: 'https://northcloud.one',
         'timeout' => (int) (getenv('NORTHCLOUD_TIMEOUT') ?: 5),
         'cache_ttl' => (int) (getenv('NORTHCLOUD_CACHE_TTL') ?: 3600),
         'api_token' => getenv('NORTHCLOUD_API_TOKEN') ?: '',

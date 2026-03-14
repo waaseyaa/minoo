@@ -25,7 +25,7 @@ $configFile = dirname(__DIR__) . '/config/waaseyaa.php';
 $config = file_exists($configFile) ? require $configFile : [];
 
 $dryRun = in_array('--dry-run', $argv, true);
-$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.one'), '/');
 $timeout = (int) ($config['northcloud']['timeout'] ?? 5);
 
 if ($dryRun) {
