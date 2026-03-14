@@ -1,0 +1,139 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Sync dictionary entries from NorthCloud dictionary API into local storage.
+ *
+ * Usage: bin/sync-dictionary [--dry-run]
+ *
+ * --dry-run  Print what would be synced without writing to the database.
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Minoo\Ingestion\EntityMapper\DictionaryEntryMapper;
+use Minoo\Support\NorthCloudClient;
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+$configFile = dirname(__DIR__) . '/config/waaseyaa.php';
+$config = file_exists($configFile) ? require $configFile : [];
+
+$dryRun = in_array('--dry-run', $argv, true);
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.web.net'), '/');
+$timeout = (int) ($config['northcloud']['timeout'] ?? 5);
+
+if ($dryRun) {
+    fprintf(STDOUT, "DRY RUN — no changes will be written.\n\n");
+}
+
+$client = new NorthCloudClient($baseUrl, $timeout);
+$mapper = new DictionaryEntryMapper();
+$storage = $entityTypeManager->getStorage('dictionary_entry');
+
+$page = 1;
+$limit = 200;
+$totalFetched = 0;
+$created = 0;
+$updated = 0;
+$errors = 0;
+
+while (true) {
+    fprintf(STDOUT, "Fetching page %d (limit %d)...\n", $page, $limit);
+
+    $result = $client->getDictionaryEntries($page, $limit);
+    if ($result === null) {
+        fprintf(STDERR, "ERROR: Failed to fetch dictionary entries from NorthCloud (page %d).\n", $page);
+        $errors++;
+        break;
+    }
+
+    $entries = $result['entries'];
+    $attribution = $result['attribution'];
+
+    if ($entries === []) {
+        break;
+    }
+
+    $totalFetched += count($entries);
+
+    foreach ($entries as $entry) {
+        $lemma = (string) ($entry['lemma'] ?? '');
+        if ($lemma === '') {
+            $errors++;
+            continue;
+        }
+
+        $fields = $mapper->map($entry, '', $attribution);
+        $fieldArray = $fields->toArray();
+
+        // Check if entry already exists by slug.
+        $existingIds = [];
+        try {
+            $existingIds = $storage->getQuery()
+                ->condition('slug', $fields->slug)
+                ->execute();
+        } catch (\PDOException $e) {
+            if (!str_contains($e->getMessage(), 'no such column')) {
+                throw $e;
+            }
+        }
+
+        if ($existingIds !== []) {
+            // Update existing entry.
+            $existingId = (int) reset($existingIds);
+            if ($dryRun) {
+                fprintf(STDOUT, "  [UPDATE] %s (id: %d)\n", $lemma, $existingId);
+            } else {
+                $existing = $storage->load($existingId);
+                if ($existing !== null) {
+                    foreach ($fieldArray as $key => $value) {
+                        if ($key !== 'created_at') {
+                            $existing->set($key, $value);
+                        }
+                    }
+                    $existing->set('updated_at', time());
+                    $storage->save($existing);
+                }
+            }
+            $updated++;
+        } else {
+            // Create new entry.
+            if ($dryRun) {
+                fprintf(STDOUT, "  [CREATE] %s\n", $lemma);
+            } else {
+                $entity = $storage->create($fieldArray);
+                $storage->save($entity);
+            }
+            $created++;
+        }
+    }
+
+    fprintf(STDOUT, "  Processed %d entries (total: %d / %d).\n", count($entries), $totalFetched, $result['total']);
+
+    if (count($entries) < $limit || $totalFetched >= $result['total']) {
+        break;
+    }
+
+    $page++;
+}
+
+fprintf(STDOUT, "\n");
+
+if ($dryRun) {
+    fprintf(STDOUT, "DRY RUN — no changes written.\n");
+}
+
+fprintf(
+    STDOUT,
+    "Done: %d fetched, %d created, %d updated, %d errors.\n",
+    $totalFetched,
+    $created,
+    $updated,
+    $errors,
+);

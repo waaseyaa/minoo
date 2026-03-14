@@ -12,29 +12,55 @@ final class DictionaryEntryMapper
     /**
      * Map a NorthCloud dictionary entry payload to Minoo entity fields.
      *
+     * Accepts both the ingest-pipeline format (definition, part_of_speech, stem,
+     * inflected_forms) and the NC dictionary API format (definitions, word_class_normalized,
+     * inflections, source_url, attribution).
+     *
      * @param array<string, mixed> $data Payload data block
-     * @param string $sourceUrl Envelope source_url
+     * @param string $sourceUrl Envelope source_url (overridden by $data['source_url'] if present)
+     * @param string $attribution Attribution string from the API (X-Attribution header)
      */
-    public function map(array $data, string $sourceUrl): DictionaryEntryFields
+    public function map(array $data, string $sourceUrl = '', string $attribution = ''): DictionaryEntryFields
     {
         $lemma = (string) ($data['lemma'] ?? '');
-        $definition = $data['definition'] ?? '';
+
+        // NC API uses "definitions" (string); ingest pipeline uses "definition" (string|array).
+        $definition = $data['definitions'] ?? $data['definition'] ?? '';
         if (is_array($definition)) {
             $definition = implode('; ', array_filter($definition, 'is_string'));
         }
 
+        // NC API uses "word_class_normalized"; ingest pipeline uses "part_of_speech".
+        $partOfSpeech = (string) ($data['word_class_normalized'] ?? $data['part_of_speech'] ?? '');
+
+        // NC API uses "inflections" (JSON string); ingest pipeline uses "inflected_forms" (array).
+        $inflectedForms = '';
+        if (isset($data['inflections'])) {
+            $inflectedForms = is_string($data['inflections']) ? $data['inflections'] : json_encode($data['inflections']);
+        } elseif (isset($data['inflected_forms'])) {
+            $inflectedForms = json_encode($data['inflected_forms']);
+        }
+
+        // Prefer source_url from the entry itself (NC API includes it per-entry).
+        $resolvedSourceUrl = (string) ($data['source_url'] ?? $sourceUrl);
+
+        // Attribution from entry or header.
+        $entryAttribution = (string) ($data['attribution'] ?? $attribution);
+
         return new DictionaryEntryFields(
             word: $lemma,
             definition: (string) $definition,
-            partOfSpeech: (string) ($data['part_of_speech'] ?? ''),
+            partOfSpeech: $partOfSpeech,
             stem: (string) ($data['stem'] ?? ''),
             languageCode: (string) ($data['language_code'] ?? 'oj') ?: 'oj',
-            inflectedForms: isset($data['inflected_forms']) ? json_encode($data['inflected_forms']) : '',
-            sourceUrl: $sourceUrl,
+            inflectedForms: $inflectedForms,
+            sourceUrl: $resolvedSourceUrl,
             slug: SlugGenerator::generate($lemma),
             status: 0,
             createdAt: time(),
             updatedAt: time(),
+            attributionSource: $entryAttribution,
+            attributionUrl: $resolvedSourceUrl,
         );
     }
 }

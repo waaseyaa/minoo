@@ -179,6 +179,137 @@ final class NorthCloudClientTest extends TestCase
     }
 
     #[Test]
+    public function get_dictionary_entries_returns_entries_on_success(): void
+    {
+        $responseJson = json_encode([
+            'entries' => [
+                ['id' => 'e1', 'lemma' => 'makwa', 'definitions' => 'bear'],
+                ['id' => 'e2', 'lemma' => 'miigwech', 'definitions' => 'thank you'],
+            ],
+            'total' => 2,
+            'limit' => 50,
+            'offset' => 0,
+        ], JSON_THROW_ON_ERROR);
+
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => $responseJson,
+        );
+
+        $result = $client->getDictionaryEntries();
+
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result['entries']);
+        $this->assertSame(2, $result['total']);
+        $this->assertSame('makwa', $result['entries'][0]['lemma']);
+        $this->assertSame(NorthCloudClient::DICTIONARY_ATTRIBUTION, $result['attribution']);
+    }
+
+    #[Test]
+    public function get_dictionary_entries_builds_correct_url_with_pagination(): void
+    {
+        $capturedUrl = '';
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: function (string $url) use (&$capturedUrl): string|false {
+                $capturedUrl = $url;
+                return json_encode(['entries' => [], 'total' => 0]);
+            },
+        );
+
+        $client->getDictionaryEntries(page: 3, limit: 100);
+
+        $this->assertSame(
+            'https://northcloud.one/api/v1/dictionary/entries?limit=100&offset=200',
+            $capturedUrl,
+        );
+    }
+
+    #[Test]
+    public function get_dictionary_entries_returns_null_on_http_failure(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => false,
+        );
+
+        $this->assertNull($client->getDictionaryEntries());
+    }
+
+    #[Test]
+    public function get_dictionary_entries_returns_null_on_malformed_json(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => '<html>error</html>',
+        );
+
+        $this->assertNull($client->getDictionaryEntries());
+    }
+
+    #[Test]
+    public function search_dictionary_returns_entries_on_success(): void
+    {
+        $responseJson = json_encode([
+            'entries' => [
+                ['id' => 'e1', 'lemma' => 'makwa', 'definitions' => 'bear'],
+            ],
+            'total' => 1,
+            'query' => 'bear',
+        ], JSON_THROW_ON_ERROR);
+
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => $responseJson,
+        );
+
+        $result = $client->searchDictionary('bear');
+
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result['entries']);
+        $this->assertSame(1, $result['total']);
+        $this->assertSame(NorthCloudClient::DICTIONARY_ATTRIBUTION, $result['attribution']);
+    }
+
+    #[Test]
+    public function search_dictionary_builds_correct_url(): void
+    {
+        $capturedUrl = '';
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: function (string $url) use (&$capturedUrl): string|false {
+                $capturedUrl = $url;
+                return json_encode(['entries' => [], 'total' => 0]);
+            },
+        );
+
+        $client->searchDictionary('makwa');
+
+        $this->assertSame(
+            'https://northcloud.one/api/v1/dictionary/search?q=makwa',
+            $capturedUrl,
+        );
+    }
+
+    #[Test]
+    public function search_dictionary_returns_null_on_http_failure(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url): string|false => false,
+        );
+
+        $this->assertNull($client->searchDictionary('test'));
+    }
+
+    #[Test]
     public function link_sources_returns_result_on_success(): void
     {
         $responseJson = json_encode([

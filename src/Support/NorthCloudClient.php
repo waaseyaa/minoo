@@ -6,6 +6,9 @@ namespace Minoo\Support;
 
 final class NorthCloudClient
 {
+    /** Attribution string matching the NC API X-Attribution header. */
+    public const string DICTIONARY_ATTRIBUTION = "Ojibwe People's Dictionary, University of Minnesota";
+
     /** @var \Closure|null */
     private readonly ?\Closure $httpClient;
 
@@ -62,6 +65,61 @@ final class NorthCloudClient
         }
 
         return $data['band_office'];
+    }
+
+    /**
+     * Fetch paginated dictionary entries from NorthCloud.
+     *
+     * @return array{entries: list<array<string, mixed>>, total: int, attribution: string}|null
+     */
+    public function getDictionaryEntries(int $page = 1, int $limit = 50): ?array
+    {
+        $offset = ($page - 1) * $limit;
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/dictionary/entries?limit=' . $limit . '&offset=' . $offset;
+        $json = $this->doRequest($url);
+
+        if ($json === null) {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['entries']) || !is_array($data['entries'])) {
+            error_log('NorthCloud dictionary entries response malformed');
+            return null;
+        }
+
+        return [
+            'entries' => $data['entries'],
+            'total' => (int) ($data['total'] ?? 0),
+            'attribution' => self::DICTIONARY_ATTRIBUTION,
+        ];
+    }
+
+    /**
+     * Search dictionary entries via NorthCloud full-text search.
+     *
+     * @return array{entries: list<array<string, mixed>>, total: int, attribution: string}|null
+     */
+    public function searchDictionary(string $query): ?array
+    {
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/dictionary/search?q=' . urlencode($query);
+        $json = $this->doRequest($url);
+
+        if ($json === null) {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['entries']) || !is_array($data['entries'])) {
+            error_log(sprintf('NorthCloud dictionary search response malformed for query: %s', $query));
+            return null;
+        }
+
+        return [
+            'entries' => $data['entries'],
+            'total' => (int) ($data['total'] ?? 0),
+            'attribution' => self::DICTIONARY_ATTRIBUTION,
+        ];
     }
 
     /**
