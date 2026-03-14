@@ -177,4 +177,102 @@ final class NorthCloudClientTest extends TestCase
             $capturedUrl,
         );
     }
+
+    #[Test]
+    public function link_sources_returns_result_on_success(): void
+    {
+        $responseJson = json_encode([
+            'linked' => 3,
+            'skipped' => 1,
+            'details' => [
+                ['community_name' => 'Sagamok', 'status' => 'linked'],
+            ],
+        ], JSON_THROW_ON_ERROR);
+
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url, string $method = 'GET', ?string $body = null): string|false => $responseJson,
+            apiToken: 'test-token',
+        );
+
+        $result = $client->linkSources(dryRun: true);
+
+        $this->assertIsArray($result);
+        $this->assertSame(3, $result['linked']);
+        $this->assertSame(1, $result['skipped']);
+    }
+
+    #[Test]
+    public function link_sources_returns_null_on_http_failure(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url, string $method = 'GET', ?string $body = null): string|false => false,
+            apiToken: 'test-token',
+        );
+
+        $this->assertNull($client->linkSources());
+    }
+
+    #[Test]
+    public function create_leadership_scrape_job_returns_result_on_success(): void
+    {
+        $responseJson = json_encode([
+            'id' => 'job-uuid-123',
+            'community_id' => 'nc-uuid-456',
+            'job_type' => 'leadership_scrape',
+            'status' => 'pending',
+        ], JSON_THROW_ON_ERROR);
+
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url, string $method = 'GET', ?string $body = null): string|false => $responseJson,
+            apiToken: 'test-token',
+        );
+
+        $result = $client->createLeadershipScrapeJob('nc-uuid-456');
+
+        $this->assertIsArray($result);
+        $this->assertSame('job-uuid-123', $result['id']);
+        $this->assertSame('leadership_scrape', $result['job_type']);
+    }
+
+    #[Test]
+    public function create_leadership_scrape_job_sends_correct_body(): void
+    {
+        $capturedBody = null;
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: function (string $url, string $method = 'GET', ?string $body = null) use (&$capturedBody): string|false {
+                $capturedBody = $body;
+                return json_encode(['id' => 'job-1']);
+            },
+            apiToken: 'test-token',
+        );
+
+        $client->createLeadershipScrapeJob('nc-uuid-789');
+
+        $this->assertNotNull($capturedBody);
+        $decoded = json_decode($capturedBody, true);
+        $this->assertSame('nc-uuid-789', $decoded['community_id']);
+        $this->assertSame('leadership_scrape', $decoded['job_type']);
+    }
+
+    #[Test]
+    public function create_leadership_scrape_job_returns_null_on_http_failure(): void
+    {
+        $client = new NorthCloudClient(
+            baseUrl: 'https://northcloud.one',
+            timeout: 5,
+            httpClient: fn (string $url, string $method = 'GET', ?string $body = null): string|false => false,
+            apiToken: 'test-token',
+        );
+
+        $this->assertNull($client->createLeadershipScrapeJob('nc-uuid-123'));
+    }
+
 }
