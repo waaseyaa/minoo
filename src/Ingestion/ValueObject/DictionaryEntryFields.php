@@ -18,6 +18,8 @@ final readonly class DictionaryEntryFields
         public int $status,
         public int $createdAt,
         public int $updatedAt,
+        public string $attributionSource = '',
+        public string $attributionUrl = '',
     ) {}
 
     /** @return array<string, mixed> */
@@ -35,6 +37,8 @@ final readonly class DictionaryEntryFields
             'status' => $this->status,
             'created_at' => $this->createdAt,
             'updated_at' => $this->updatedAt,
+            'attribution_source' => $this->attributionSource,
+            'attribution_url' => $this->attributionUrl,
         ];
     }
 }

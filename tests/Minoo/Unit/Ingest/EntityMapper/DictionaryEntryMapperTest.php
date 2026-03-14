@@ -91,4 +91,76 @@ final class DictionaryEntryMapperTest extends TestCase
         $this->assertSame('bear', $array['definition']);
         $this->assertSame('https://example.com', $array['source_url']);
     }
+
+    #[Test]
+    public function it_maps_nc_api_format(): void
+    {
+        $data = [
+            'id' => 'uuid-123',
+            'lemma' => 'makwa',
+            'definitions' => 'bear',
+            'word_class_normalized' => 'na',
+            'inflections' => '[{"form":"makwag","label":"plural"}]',
+            'source_url' => 'https://ojibwe.lib.umn.edu/main-entry/makwa-na',
+            'attribution' => 'OPD',
+            'consent_public_display' => true,
+        ];
+
+        $attribution = "Ojibwe People's Dictionary, University of Minnesota";
+        $result = $this->mapper->map($data, '', $attribution);
+
+        $this->assertSame('makwa', $result->word);
+        $this->assertSame('bear', $result->definition);
+        $this->assertSame('na', $result->partOfSpeech);
+        $this->assertSame('https://ojibwe.lib.umn.edu/main-entry/makwa-na', $result->sourceUrl);
+        $this->assertStringContainsString('makwag', $result->inflectedForms);
+    }
+
+    #[Test]
+    public function it_stores_attribution_from_nc_api(): void
+    {
+        $data = [
+            'lemma' => 'makwa',
+            'definitions' => 'bear',
+            'source_url' => 'https://ojibwe.lib.umn.edu/main-entry/makwa-na',
+        ];
+
+        $attribution = "Ojibwe People's Dictionary, University of Minnesota";
+        $result = $this->mapper->map($data, '', $attribution);
+
+        $this->assertSame($attribution, $result->attributionSource);
+        $this->assertSame('https://ojibwe.lib.umn.edu/main-entry/makwa-na', $result->attributionUrl);
+
+        $array = $result->toArray();
+        $this->assertSame($attribution, $array['attribution_source']);
+        $this->assertSame('https://ojibwe.lib.umn.edu/main-entry/makwa-na', $array['attribution_url']);
+    }
+
+    #[Test]
+    public function it_prefers_entry_attribution_over_header(): void
+    {
+        $data = [
+            'lemma' => 'makwa',
+            'definitions' => 'bear',
+            'attribution' => 'Entry-level attribution',
+        ];
+
+        $result = $this->mapper->map($data, '', 'Header attribution');
+
+        $this->assertSame('Entry-level attribution', $result->attributionSource);
+    }
+
+    #[Test]
+    public function it_prefers_entry_source_url_over_parameter(): void
+    {
+        $data = [
+            'lemma' => 'makwa',
+            'definitions' => 'bear',
+            'source_url' => 'https://from-entry.com',
+        ];
+
+        $result = $this->mapper->map($data, 'https://from-param.com');
+
+        $this->assertSame('https://from-entry.com', $result->sourceUrl);
+    }
 }
