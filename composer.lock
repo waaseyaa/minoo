@@ -3411,16 +3411,16 @@
         },
         {
             "name": "waaseyaa/i18n",
-            "version": "v0.1.0-alpha.5",
+            "version": "v0.1.0-alpha.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/i18n.git",
-                "reference": "60c2be5b98dc133992b431029053fdaf7210919d"
+                "reference": "1f7b41cb7523aae45c7feef1509766492b85cfe6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/i18n/zipball/60c2be5b98dc133992b431029053fdaf7210919d",
-                "reference": "60c2be5b98dc133992b431029053fdaf7210919d",
+                "url": "https://api.github.com/repos/waaseyaa/i18n/zipball/1f7b41cb7523aae45c7feef1509766492b85cfe6",
+                "reference": "1f7b41cb7523aae45c7feef1509766492b85cfe6",
                 "shasum": ""
             },
             "require": {
@@ -3448,9 +3448,9 @@
             "description": "Internationalization foundation: Language, LanguageManager, LanguageContext, FallbackChain",
             "support": {
                 "issues": "https://github.com/waaseyaa/i18n/issues",
-                "source": "https://github.com/waaseyaa/i18n/tree/v0.1.0-alpha.5"
+                "source": "https://github.com/waaseyaa/i18n/tree/v0.1.0-alpha.6"
             },
-            "time": "2026-03-15T14:45:02+00:00"
+            "time": "2026-03-15T15:16:19+00:00"
         },
         {
             "name": "waaseyaa/mcp",
@@ -4109,7 +4109,7 @@
         },
         {
             "name": "waaseyaa/validation",
-            "version": "v0.1.0-alpha.5",
+            "version": "v0.1.0-alpha.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/validation.git",
@@ -4147,7 +4147,7 @@
             "description": "Data validation constraints and validators for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/validation/issues",
-                "source": "https://github.com/waaseyaa/validation/tree/v0.1.0-alpha.5"
+                "source": "https://github.com/waaseyaa/validation/tree/v0.1.0-alpha.6"
             },
             "time": "2026-03-15T03:34:57+00:00"
         },
