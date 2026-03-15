@@ -75,7 +75,7 @@ return [
     'nav.login' => 'Biindigen', // dict: biindige: "enter, go inside"
 
     // Footer
-    'footer.tagline' => '',
+    'footer.tagline' => "Oodena mazina'igan bimaadiziwin",
     'footer.copyright' => 'Minoo', // dict: 
     'footer.license' => 'Oodena-mazina\'iganan ogii-biidoon <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external noopener">CC BY-NC-SA 4.0</a> endaad.',
     'footer.nav_label' => 'Inaakonige', // dict: inaakonige: rules, decisions
