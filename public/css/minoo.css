@@ -1,15 +1,23 @@
 @font-face {
-  font-family: 'Atkinson Hyperlegible Next';
-  src: url('/fonts/atkinson-hyperlegible-next-400.woff2') format('woff2');
-  font-weight: 400;
+  font-family: 'Fraunces';
+  src: url('/fonts/fraunces-variable.woff2') format('woff2');
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Atkinson Hyperlegible Next';
-  src: url('/fonts/atkinson-hyperlegible-next-700.woff2') format('woff2');
-  font-weight: 700;
+  font-family: 'Fraunces';
+  src: url('/fonts/fraunces-italic-variable.woff2') format('woff2');
+  font-weight: 400 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/fonts/dm-sans-variable.woff2') format('woff2');
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
