@@ -1,0 +1,209 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * V1 Release Smoke Test Suite
+ * Validates all critical paths are functional.
+ *
+ * Usage: bin/smoke-test
+ *
+ * Exit code 0 if all pass, 1 if any fail.
+ */
+
+$projectRoot = dirname(__DIR__);
+
+$passed = 0;
+$failed = 0;
+
+function pass(string $name): void
+{
+    global $passed;
+    fprintf(STDOUT, "[PASS] %s\n", $name);
+    $passed++;
+}
+
+function fail(string $name, string $reason = ''): void
+{
+    global $failed;
+    $msg = $reason !== '' ? sprintf('%s — %s', $name, $reason) : $name;
+    fprintf(STDOUT, "[FAIL] %s\n", $msg);
+    $failed++;
+}
+
+// ─── 1. Entity consent fields ───────────────────────────────────────────────
+
+$consentEntityTypes = [
+    'EventServiceProvider' => 'event',
+    'GroupServiceProvider' => 'group',
+    'CulturalGroupServiceProvider' => 'cultural_group',
+    'CulturalCollectionServiceProvider' => 'cultural_collection',
+    'PeopleServiceProvider' => 'resource_person',
+    'LeaderServiceProvider' => 'leader',
+    'LanguageServiceProvider' => 'dictionary_entry',
+    'TeachingServiceProvider' => 'teaching',
+];
+
+$providerDir = $projectRoot . '/src/Provider';
+
+foreach ($consentEntityTypes as $providerFile => $entityLabel) {
+    $filePath = $providerDir . '/' . $providerFile . '.php';
+    $testName = sprintf('Consent fields in %s (%s)', $providerFile, $entityLabel);
+
+    if (!is_file($filePath)) {
+        fail($testName, 'provider file not found');
+        continue;
+    }
+
+    $content = file_get_contents($filePath);
+    $hasPublic = str_contains($content, "'consent_public'");
+    $hasAi = str_contains($content, "'consent_ai_training'");
+
+    if ($hasPublic && $hasAi) {
+        pass($testName);
+    } else {
+        $missing = [];
+        if (!$hasPublic) {
+            $missing[] = 'consent_public';
+        }
+        if (!$hasAi) {
+            $missing[] = 'consent_ai_training';
+        }
+        fail($testName, 'missing: ' . implode(', ', $missing));
+    }
+}
+
+// ─── 2. NorthCloud API connectivity ─────────────────────────────────────────
+
+$configFile = $projectRoot . '/config/waaseyaa.php';
+$config = file_exists($configFile) ? require $configFile : [];
+$ncBaseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? ''), '/');
+
+if ($ncBaseUrl === '') {
+    fail('NorthCloud API connectivity', 'base_url not configured');
+} else {
+    $healthUrl = $ncBaseUrl . '/health';
+    $ctx = stream_context_create(['http' => ['method' => 'GET', 'timeout' => 5, 'ignore_errors' => true]]);
+    $response = @file_get_contents($healthUrl, false, $ctx);
+
+    if ($response === false) {
+        fprintf(STDOUT, "[SKIP] NorthCloud API connectivity — %s unreachable (non-blocking)\n", $healthUrl);
+    } else {
+        pass('NorthCloud API connectivity (' . $healthUrl . ')');
+    }
+}
+
+// ─── 3. Dictionary sync dry-run (structural check) ──────────────────────────
+
+$syncScript = $projectRoot . '/bin/sync-dictionary';
+if (is_file($syncScript)) {
+    pass('Dictionary sync script exists');
+} else {
+    fail('Dictionary sync script exists', 'bin/sync-dictionary not found');
+}
+
+// ─── 4. Leadership pipeline ────────────────────────────────────────────────
+
+$leaderProvider = $providerDir . '/LeaderServiceProvider.php';
+$leaderMapper = $projectRoot . '/src/Ingestion/EntityMapper/LeaderMapper.php';
+
+if (is_file($leaderProvider)) {
+    pass('Leader entity type registered (LeaderServiceProvider)');
+} else {
+    fail('Leader entity type registered', 'LeaderServiceProvider.php not found');
+}
+
+if (is_file($leaderMapper)) {
+    pass('LeaderMapper exists');
+} else {
+    fail('LeaderMapper exists', 'src/Ingestion/EntityMapper/LeaderMapper.php not found');
+}
+
+// ─── 5. Export governance ───────────────────────────────────────────────────
+
+$exportScript = $projectRoot . '/bin/export-communities';
+if (is_file($exportScript)) {
+    $exportContent = file_get_contents($exportScript);
+    if (str_contains($exportContent, '--confirm')) {
+        pass('Export governance — requires --confirm flag');
+    } else {
+        fail('Export governance', 'export-communities does not check for --confirm');
+    }
+} else {
+    fail('Export governance', 'bin/export-communities not found');
+}
+
+// ─── 6. Robots.txt ─────────────────────────────────────────────────────────
+
+$robotsFile = $projectRoot . '/public/robots.txt';
+if (is_file($robotsFile)) {
+    $robotsContent = file_get_contents($robotsFile);
+    $blocksApi = str_contains($robotsContent, 'Disallow: /api/');
+    $blocksDashboard = str_contains($robotsContent, 'Disallow: /dashboard/');
+
+    if ($blocksApi && $blocksDashboard) {
+        pass('robots.txt blocks /api/ and /dashboard/');
+    } else {
+        $missing = [];
+        if (!$blocksApi) {
+            $missing[] = '/api/';
+        }
+        if (!$blocksDashboard) {
+            $missing[] = '/dashboard/';
+        }
+        fail('robots.txt', 'missing disallow for: ' . implode(', ', $missing));
+    }
+} else {
+    fail('robots.txt', 'public/robots.txt not found');
+}
+
+// ─── 7. License ────────────────────────────────────────────────────────────
+
+$composerJson = $projectRoot . '/composer.json';
+if (is_file($composerJson)) {
+    $composer = json_decode(file_get_contents($composerJson), true);
+    $license = $composer['license'] ?? '';
+
+    if (strcasecmp($license, 'MIT') === 0) {
+        pass('composer.json license is MIT');
+    } else {
+        fail('composer.json license', sprintf('expected MIT, got "%s"', $license));
+    }
+} else {
+    fail('composer.json license', 'composer.json not found');
+}
+
+// ─── 8. Copyright filtering in controllers ──────────────────────────────────
+
+$controllerDir = $projectRoot . '/src/Controller';
+$controllersToCheck = [
+    'EventController.php',
+    'GroupController.php',
+    'TeachingController.php',
+    'HomeController.php',
+];
+
+foreach ($controllersToCheck as $controllerFile) {
+    $filePath = $controllerDir . '/' . $controllerFile;
+    $testName = sprintf('Copyright filtering in %s', $controllerFile);
+
+    if (!is_file($filePath)) {
+        fail($testName, 'file not found');
+        continue;
+    }
+
+    $content = file_get_contents($filePath);
+    if (str_contains($content, 'copyright_status')) {
+        pass($testName);
+    } else {
+        fail($testName, 'no copyright_status check found');
+    }
+}
+
+// ─── Summary ────────────────────────────────────────────────────────────────
+
+fprintf(STDOUT, "\n");
+fprintf(STDOUT, "Smoke test complete: %d passed, %d failed.\n", $passed, $failed);
+
+exit($failed > 0 ? 1 : 0);

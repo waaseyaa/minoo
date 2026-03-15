@@ -1,0 +1,44 @@
+release: v1.0.2
+target_date: "2026-04-22"
+gates:
+  ci:
+    - name: PHPUnit tests pass
+      command: "vendor/bin/phpunit"
+      status: automated
+    - name: Playwright E2E pass
+      command: "npx playwright test"
+      status: automated
+    - name: Lint pass
+      command: "vendor/bin/phpcs"
+      status: automated
+    - name: Security audit clean
+      command: "composer audit"
+      status: automated
+    - name: Commercial use check
+      command: "bin/validate-release"
+      status: automated
+  governance:
+    - name: License attribution
+      gate: 1
+      status: approved
+      approved_by: "project owner"
+      approved_date: "2026-03-14"
+    - name: Media copyright
+      gate: 2
+      status: approved
+    - name: Data sovereignty
+      gate: 3
+      status: approved
+    - name: Community governance
+      gate: 4
+      status: approved
+    - name: Security review
+      gate: 5
+      status: approved
+  deployment:
+    - name: Staging deploy
+      command: "dep deploy staging"
+      status: pending
+    - name: Production deploy
+      command: "gh workflow run deploy-production.yml -f confirm=deploy-v1"
+      status: pending
