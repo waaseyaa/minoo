@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\CommunityLookup;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -38,7 +39,7 @@ final class EventController
         });
         $events = array_values($events);
 
-        $communities = $this->buildCommunityLookup($events);
+        $communities = CommunityLookup::build($this->entityTypeManager, $events);
 
         $html = $this->twig->render('events.html.twig', [
             'path' => '/events',
@@ -80,30 +81,5 @@ final class EventController
             content: $html,
             statusCode: $event !== null ? 200 : 404,
         );
-    }
-
-    /** @param list<\Waaseyaa\Entity\EntityInterface> $entities */
-    private function buildCommunityLookup(array $entities): array
-    {
-        $communityIds = array_filter(array_unique(array_map(
-            fn ($e) => $e->get('community_id'),
-            $entities
-        )));
-
-        if ($communityIds === []) {
-            return [];
-        }
-
-        $communityStorage = $this->entityTypeManager->getStorage('community');
-        $communities = $communityStorage->loadMultiple($communityIds);
-        $lookup = [];
-        foreach ($communities as $community) {
-            $lookup[(string) $community->id()] = [
-                'name' => $community->get('name') ?? $community->label(),
-                'slug' => $community->get('slug'),
-            ];
-        }
-
-        return $lookup;
     }
 }
