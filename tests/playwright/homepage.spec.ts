@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Homepage', () => {
   test('shows hero with platform title and CTAs', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.hero__title')).toContainText('Minoo');
+    await expect(page.locator('.hero__title')).toContainText('A Living Map of Community');
     await expect(page.locator('.hero__actions .btn--primary')).toHaveAttribute('href', '/communities');
     await expect(page.locator('.hero__actions .btn--secondary')).toHaveAttribute('href', '/people');
   });
