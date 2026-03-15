@@ -48,6 +48,7 @@ return [
     'i18n' => [
         'languages' => [
             ['id' => 'en', 'label' => 'English', 'is_default' => true],
+            ['id' => 'oj', 'label' => 'Anishinaabemowin'],
         ],
     ],
 
