@@ -40,7 +40,7 @@ final class TaxonomySeederTest extends TestCase
 
         $this->assertSame('person_roles', $data['vocabulary']['vid']);
         $this->assertSame('Person Roles', $data['vocabulary']['name']);
-        $this->assertCount(12, $data['terms']);
+        $this->assertCount(15, $data['terms']);
         $this->assertSame('Elder', $data['terms'][0]['name']);
     }
 
@@ -51,7 +51,23 @@ final class TaxonomySeederTest extends TestCase
 
         $this->assertSame('person_offerings', $data['vocabulary']['vid']);
         $this->assertSame('Person Offerings', $data['vocabulary']['name']);
-        $this->assertCount(10, $data['terms']);
+        $this->assertCount(15, $data['terms']);
         $this->assertSame('Food', $data['terms'][0]['name']);
+    }
+
+    #[Test]
+    public function personRolesIncludesArtist(): void
+    {
+        $data = TaxonomySeeder::personRolesVocabulary();
+        $names = array_column($data['terms'], 'name');
+        $this->assertContains('Artist', $names);
+    }
+
+    #[Test]
+    public function personOfferingsIncludesHairServices(): void
+    {
+        $data = TaxonomySeeder::personOfferingsVocabulary();
+        $names = array_column($data['terms'], 'name');
+        $this->assertContains('Hair Services', $names);
     }
 }

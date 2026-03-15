@@ -23,6 +23,7 @@ final class ConfigSeeder
             ['type' => 'online', 'name' => 'Online Community'],
             ['type' => 'offline', 'name' => 'Local Community'],
             ['type' => 'advocacy', 'name' => 'Advocacy Organization'],
+            ['type' => 'business', 'name' => 'Local Business'],
         ];
     }
 

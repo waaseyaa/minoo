@@ -83,6 +83,18 @@ final class EventServiceProvider extends ServiceProvider
                     'weight' => 29,
                     'default' => 0,
                 ],
+                'source' => [
+                    'type' => 'string',
+                    'label' => 'Source',
+                    'description' => 'Provenance tag (e.g. manual:russell:2026-03-15).',
+                    'weight' => 95,
+                ],
+                'verified_at' => [
+                    'type' => 'datetime',
+                    'label' => 'Verified At',
+                    'description' => 'When this record was last verified.',
+                    'weight' => 96,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',

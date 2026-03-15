@@ -30,6 +30,13 @@ final class PeopleServiceProvider extends ServiceProvider
                 'phone' => ['type' => 'string', 'label' => 'Phone', 'weight' => 21],
                 'business_name' => ['type' => 'string', 'label' => 'Business Name', 'weight' => 25],
                 'website' => ['type' => 'string', 'label' => 'Website', 'weight' => 26],
+                'linked_group_id' => [
+                    'type' => 'entity_reference',
+                    'label' => 'Linked Business',
+                    'description' => 'The business group this person is associated with.',
+                    'settings' => ['target_type' => 'group'],
+                    'weight' => 27,
+                ],
                 'media_id' => ['type' => 'entity_reference', 'label' => 'Photo', 'settings' => ['target_type' => 'media'], 'weight' => 28],
                 'copyright_status' => [
                     'type' => 'string',
@@ -51,6 +58,18 @@ final class PeopleServiceProvider extends ServiceProvider
                     'description' => 'Whether this content may be used for AI training. Default: no.',
                     'weight' => 29,
                     'default' => 0,
+                ],
+                'source' => [
+                    'type' => 'string',
+                    'label' => 'Source',
+                    'description' => 'Provenance tag (e.g. manual:russell:2026-03-15).',
+                    'weight' => 95,
+                ],
+                'verified_at' => [
+                    'type' => 'datetime',
+                    'label' => 'Verified At',
+                    'description' => 'When this record was last verified.',
+                    'weight' => 96,
                 ],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],

@@ -1,0 +1,135 @@
+[
+  {
+    "name": "Russell Jones",
+    "slug": "russell-jones",
+    "bio": "Web developer and community builder from Sagamok Anishnawbek. Creator of minoo.live — an Indigenous knowledge and community platform.",
+    "roles": ["Web Developer"],
+    "offerings": ["Web Development"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": true,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Charlotte Southwind",
+    "slug": "charlotte-southwind",
+    "bio": "Beadwork artist from Sagamok Anishnawbek, creating handmade beaded earrings and accessories.",
+    "roles": ["Artist", "Crafter"],
+    "offerings": ["Beadwork", "Crafts"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Nginaajiiw Salon Owner",
+    "slug": "nginaajiiw-salon-owner",
+    "bio": "Owner and operator of Nginaajiiw Salon & Spa in Sagamok Anishnawbek, providing hair, esthetics, massage, and nail services.",
+    "roles": ["Small Business Owner"],
+    "offerings": ["Hair Services", "Esthetics", "Massage", "Nail Services"],
+    "linked_group": "nginaajiiw-salon-spa",
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Sagamok Elder",
+    "slug": "sagamok-elder-placeholder",
+    "bio": "Elder and Knowledge Keeper from Sagamok Anishnawbek sharing traditional teachings and cultural knowledge with the community.",
+    "roles": ["Elder", "Knowledge Keeper"],
+    "offerings": ["Teachings", "Cultural Services"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Sagamok Language Speaker",
+    "slug": "sagamok-language-speaker",
+    "bio": "Anishinaabemowin language speaker from Sagamok Anishnawbek dedicated to preserving and teaching the Ojibwe language.",
+    "roles": ["Language Speaker"],
+    "offerings": ["Teachings", "Workshops"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Sagamok Regalia Maker",
+    "slug": "sagamok-regalia-maker",
+    "bio": "Traditional regalia maker from Sagamok Anishnawbek crafting powwow regalia and cultural items.",
+    "roles": ["Regalia Maker", "Crafter"],
+    "offerings": ["Regalia", "Crafts"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Sagamok Drummer",
+    "slug": "sagamok-drummer",
+    "bio": "Drummer and performer from Sagamok Anishnawbek participating in powwows and cultural events across Northern Ontario.",
+    "roles": ["Drummer"],
+    "offerings": ["Performances", "Cultural Services"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Sagamok Youth Worker",
+    "slug": "sagamok-youth-worker",
+    "bio": "Youth worker from Sagamok Anishnawbek supporting young people through cultural programs, workshops, and mentorship.",
+    "roles": ["Youth Worker", "Workshop Facilitator"],
+    "offerings": ["Workshops", "Cultural Services"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "North Shore Healer",
+    "slug": "north-shore-healer",
+    "bio": "Traditional healer serving North Shore communities with traditional medicine practices and wellness teachings.",
+    "roles": ["Healer"],
+    "offerings": ["Traditional Medicine", "Teachings"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Sagamok Cedar Harvester",
+    "slug": "sagamok-cedar-harvester",
+    "bio": "Cedar harvester from Sagamok Anishnawbek providing cedar products for ceremonies, crafts, and traditional uses.",
+    "roles": ["Cedar Harvester"],
+    "offerings": ["Cedar Products"],
+    "community": "Sagamok Anishnawbek",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Espanola Caterer",
+    "slug": "espanola-caterer",
+    "bio": "Community caterer in Espanola providing food services for gatherings, events, and celebrations.",
+    "roles": ["Caterer"],
+    "offerings": ["Food"],
+    "community": "Espanola",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Serpent River Artist",
+    "slug": "serpent-river-artist",
+    "bio": "Anishinaabe artist from Serpent River First Nation creating works inspired by Northern Ontario landscapes and cultural teachings.",
+    "roles": ["Artist"],
+    "offerings": ["Crafts", "Cultural Services"],
+    "community": "Spanish",
+    "consent_public": false,
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  }
+]

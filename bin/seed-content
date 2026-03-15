@@ -2,91 +2,226 @@
 <?php
 
 /**
- * Seed sample content into Minoo's entity storage.
+ * Seed launch content from JSON fixtures into Minoo's entity storage.
  *
- * Usage: bin/seed-content
- *
- * Seeds events, teachings, groups, and dictionary entries from ContentSeeder.
- * Skips entities that already exist (matched by slug).
+ * Usage:
+ *   bin/seed-content                    # dry-run (default)
+ *   bin/seed-content --apply            # write to database
+ *   bin/seed-content --apply --verbose  # write + per-record detail
+ *   bin/seed-content --file businesses  # seed one fixture type only
  */
 
 declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Minoo\Entity\DictionaryEntry;
 use Minoo\Entity\Event;
 use Minoo\Entity\Group;
-use Minoo\Entity\Teaching;
-use Minoo\Seed\ContentSeeder;
+use Minoo\Entity\ResourcePerson;
+use Minoo\Support\FixtureLoader;
+use Minoo\Support\FixtureResolver;
 
+// --- Parse arguments ---
+$apply = in_array('--apply', $argv, true);
+$verbose = in_array('--verbose', $argv, true);
+$fileIndex = array_search('--file', $argv, true);
+$fileFilter = ($fileIndex !== false && isset($argv[$fileIndex + 1])) ? $argv[$fileIndex + 1] : null;
+
+// --- Boot kernel ---
 $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
-
 (new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
-
-$entityTypeManager = $kernel->getEntityTypeManager();
+$etm = $kernel->getEntityTypeManager();
 $now = time();
 
-$entityTypes = [
-    [
-        'type_id' => 'event',
-        'class' => Event::class,
-        'data' => ContentSeeder::events(),
-        'slug_field' => 'slug',
-        'label' => 'events',
-    ],
-    [
-        'type_id' => 'teaching',
-        'class' => Teaching::class,
-        'data' => ContentSeeder::teachings(),
-        'slug_field' => 'slug',
-        'label' => 'teachings',
-    ],
-    [
-        'type_id' => 'group',
+$loader = new FixtureLoader(dirname(__DIR__) . '/content');
+$resolver = new FixtureResolver($etm);
+
+$mode = $apply ? 'APPLY' : 'DRY-RUN';
+fprintf(STDOUT, "Seed Content (%s)\n%s\n", $mode, str_repeat('━', 50));
+
+// --- Seed order: businesses → people → events ---
+$seedTypes = [
+    'businesses' => [
+        'entity_type_id' => 'group',
         'class' => Group::class,
-        'data' => ContentSeeder::groups(),
-        'slug_field' => 'slug',
-        'label' => 'groups',
+        'label_field' => 'name',
     ],
-    [
-        'type_id' => 'dictionary_entry',
-        'class' => DictionaryEntry::class,
-        'data' => ContentSeeder::dictionaryEntries(),
-        'slug_field' => 'slug',
-        'label' => 'dictionary entries',
+    'people' => [
+        'entity_type_id' => 'resource_person',
+        'class' => ResourcePerson::class,
+        'label_field' => 'name',
+    ],
+    'events' => [
+        'entity_type_id' => 'event',
+        'class' => Event::class,
+        'label_field' => 'title',
     ],
 ];
 
-foreach ($entityTypes as $entityType) {
-    $storage = $entityTypeManager->getStorage($entityType['type_id']);
-    $created = 0;
+$totalErrors = 0;
 
-    foreach ($entityType['data'] as $values) {
-        $slug = $values[$entityType['slug_field']];
-
-        // Check if entity already exists by slug.
-        $existingIds = $storage->getQuery()
-            ->condition($entityType['slug_field'], $slug)
-            ->execute();
-
-        if ($existingIds !== []) {
-            fprintf(STDOUT, "  Skipped %s (already exists)\n", $slug);
-            continue;
-        }
-
-        $values['created_at'] = $now;
-        $values['updated_at'] = $now;
-
-        $class = $entityType['class'];
-        $entity = new $class($values);
-        $storage->save($entity);
-        $created++;
-
-        fprintf(STDOUT, "  Created %s\n", $slug);
+foreach ($seedTypes as $fixtureType => $config) {
+    if ($fileFilter !== null && $fileFilter !== $fixtureType) {
+        continue;
     }
 
-    fprintf(STDOUT, "%s: %d created, %d skipped.\n", $entityType['label'], $created, count($entityType['data']) - $created);
+    $records = $loader->load($fixtureType);
+    if ($records === []) {
+        fprintf(STDOUT, "\n%s: no fixture file found, skipping.\n", $fixtureType);
+        continue;
+    }
+
+    // Validate
+    $errors = $loader->validate($records, $fixtureType);
+
+    // Validate bundle types against config entities (fall back to ConfigSeeder in dev)
+    if ($fixtureType === 'businesses') {
+        $validTypes = array_map(fn($id) => $etm->getStorage('group_type')->load($id)?->get('type'),
+            $etm->getStorage('group_type')->getQuery()->execute());
+        if ($validTypes === []) {
+            $validTypes = array_column(\Minoo\Seed\ConfigSeeder::groupTypes(), 'type');
+        }
+        foreach ($records as $i => $r) {
+            if (isset($r['type']) && !in_array($r['type'], $validTypes, true)) {
+                $errors[] = ($r['slug'] ?? "record {$i}") . ": invalid group type '{$r['type']}'";
+            }
+        }
+    } elseif ($fixtureType === 'events') {
+        $validTypes = array_map(fn($id) => $etm->getStorage('event_type')->load($id)?->get('type'),
+            $etm->getStorage('event_type')->getQuery()->execute());
+        if ($validTypes === []) {
+            $validTypes = array_column(\Minoo\Seed\ConfigSeeder::eventTypes(), 'type');
+        }
+        foreach ($records as $i => $r) {
+            if (isset($r['type']) && !in_array($r['type'], $validTypes, true)) {
+                $errors[] = ($r['slug'] ?? "record {$i}") . ": invalid event type '{$r['type']}'";
+            }
+        }
+    }
+
+    if ($errors !== []) {
+        fprintf(STDERR, "\n%s: validation errors:\n", $fixtureType);
+        foreach ($errors as $error) {
+            fprintf(STDERR, "  ✗ %s\n", $error);
+        }
+        $totalErrors += count($errors);
+        continue;
+    }
+
+    $storage = $etm->getStorage($config['entity_type_id']);
+    $created = 0;
+    $updated = 0;
+    $skipped = 0;
+    $errored = 0;
+    $warnings = [];
+
+    foreach ($records as $record) {
+        $slug = $record['slug'];
+        $values = $record;
+
+        // --- Resolve community ---
+        if ($fixtureType === 'people') {
+            // ResourcePerson has a string community field — write directly
+        } else {
+            // Group and Event have community_id entity_reference
+            if (isset($values['community'])) {
+                $communityId = $resolver->resolveCommunity($values['community']);
+                if ($communityId === null) {
+                    $warnings[] = "Community '{$values['community']}' not found, skipping {$slug}";
+                    $skipped++;
+                    continue;
+                }
+                $values['community_id'] = $communityId;
+                unset($values['community']);
+            }
+        }
+
+        // --- Resolve linked_group (people only) ---
+        if (isset($values['linked_group'])) {
+            $groupId = $resolver->resolveGroupSlug($values['linked_group']);
+            if ($groupId === null) {
+                $warnings[] = "Linked group '{$values['linked_group']}' not found for {$slug}";
+            } else {
+                $values['linked_group_id'] = $groupId;
+            }
+            unset($values['linked_group']);
+        }
+
+        // --- Resolve taxonomy terms (people only) ---
+        if (isset($values['roles']) && is_array($values['roles'])) {
+            $termWarnings = [];
+            $values['roles'] = $resolver->resolveTaxonomyTerms($values['roles'], 'person_roles', $termWarnings);
+            $warnings = array_merge($warnings, $termWarnings);
+        }
+        if (isset($values['offerings']) && is_array($values['offerings'])) {
+            $termWarnings = [];
+            $values['offerings'] = $resolver->resolveTaxonomyTerms($values['offerings'], 'person_offerings', $termWarnings);
+            $warnings = array_merge($warnings, $termWarnings);
+        }
+
+        // --- Upsert ---
+        $existingIds = $storage->getQuery()->condition('slug', $slug)->execute();
+
+        if ($existingIds !== []) {
+            // Update — only fields present in fixture
+            if ($apply) {
+                $entity = $storage->load(reset($existingIds));
+                if ($entity !== null) {
+                    foreach ($values as $key => $value) {
+                        if ($key !== 'created_at' && $key !== 'slug') {
+                            $entity->set($key, $value);
+                        }
+                    }
+                    $entity->set('updated_at', $now);
+                    try {
+                        $storage->save($entity);
+                    } catch (\Throwable $e) {
+                        $errored++;
+                        $warnings[] = "Failed to save {$slug}: " . $e->getMessage();
+                        continue;
+                    }
+                }
+            }
+            $updated++;
+            if ($verbose) {
+                fprintf(STDOUT, "  [UPDATE] %s\n", $slug);
+            }
+        } else {
+            // Create
+            $values['created_at'] = $now;
+            $values['updated_at'] = $now;
+
+            if ($apply) {
+                $class = $config['class'];
+                $entity = new $class($values);
+                try {
+                    $storage->save($entity);
+                } catch (\Throwable $e) {
+                    $errored++;
+                    $warnings[] = "Failed to save {$slug}: " . $e->getMessage();
+                    continue;
+                }
+            }
+            $created++;
+            if ($verbose) {
+                fprintf(STDOUT, "  [CREATE] %s\n", $slug);
+            }
+        }
+    }
+
+    fprintf(STDOUT, "\n%-12s %d create  %d update  %d skip  %d error\n",
+        $fixtureType . ':',
+        $created, $updated, $skipped, $errored
+    );
+
+    foreach ($warnings as $warning) {
+        fprintf(STDOUT, "  ⚠ %s\n", $warning);
+    }
 }
 
-fprintf(STDOUT, "Content seeding complete.\n");
+if (!$apply) {
+    fprintf(STDOUT, "\nRun with --apply to persist changes.\n");
+}
+
+fprintf(STDOUT, "\nDone.\n");
+exit($totalErrors > 0 ? 1 : 0);
