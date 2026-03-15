@@ -43,7 +43,8 @@ final class CommunityControllerTest extends TestCase
             ->willReturn($this->storage);
 
         $this->twig = new Environment(new ArrayLoader([
-            'communities.html.twig' => '{{ path }}{% for c in communities|default([]) %}|{{ c.get("name") }}{% endfor %}{% if community is defined and community %}|{{ community.get("name") }}{% endif %}',
+            'communities/list.html.twig' => '{{ path }}|{{ communities_json|raw }}',
+            'communities/detail.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -78,7 +79,7 @@ final class CommunityControllerTest extends TestCase
         $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('/communities', $response->content);
+        $this->assertStringContainsString('[]', $response->content);
     }
 
     #[Test]
@@ -124,7 +125,7 @@ final class CommunityControllerTest extends TestCase
         $this->storage->method('load')->with(1)->willReturn($sagamok);
 
         $this->twig = new Environment(new ArrayLoader([
-            'communities.html.twig' => '{{ path }}{% if community is defined and community %}|{{ community.get("name") }}{% endif %}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
+            'communities/detail.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
         ]));
 
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
