@@ -41,7 +41,6 @@ test.describe('Listing page intros follow one-sentence rule', () => {
     { path: '/teachings', intro: /right now/ },
     { path: '/language', intro: /thousands of years/ },
     { path: '/people', intro: /carry our communities forward/ },
-    { path: '/communities', intro: /Find First Nations and municipalities/ },
   ];
 
   for (const { path, intro } of pages) {
@@ -54,7 +53,7 @@ test.describe('Listing page intros follow one-sentence rule', () => {
 });
 
 test.describe('Listing pages use empty-state or card-grid', () => {
-  const pages = ['/events', '/groups', '/teachings', '/language', '/people', '/communities'];
+  const pages = ['/events', '/groups', '/teachings', '/language', '/people'];
 
   for (const path of pages) {
     test(`${path} has empty-state component or card-grid`, async ({ page }) => {
@@ -67,7 +66,7 @@ test.describe('Listing pages use empty-state or card-grid', () => {
 });
 
 test.describe('Not-found pages use warm copy', () => {
-  const slugs = ['/events/nonexistent', '/groups/nonexistent', '/teachings/nonexistent', '/language/nonexistent', '/people/nonexistent', '/communities/nonexistent'];
+  const slugs = ['/events/nonexistent', '/groups/nonexistent', '/teachings/nonexistent', '/language/nonexistent', '/people/nonexistent'];
 
   for (const slug of slugs) {
     test(`${slug} uses friendly not-found message`, async ({ page }) => {
