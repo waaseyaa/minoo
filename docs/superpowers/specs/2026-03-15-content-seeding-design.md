@@ -87,13 +87,27 @@ All records upsert by `slug` — unique per entity type. The CLI queries by slug
 
 ### 2.3 Community Resolution
 
-Fixtures reference communities by name string (e.g., `"community": "Sagamok Anishnawbek"`). The CLI resolves to `community_id` at import time:
+**Groups and Events** have a `community_id` entity_reference field. Fixtures reference communities by name string (e.g., `"community": "Sagamok Anishnawbek"`). The CLI resolves to `community_id` at import time:
 
 1. Exact name match
 2. Case-insensitive fallback
 3. Unresolved → record skipped, logged as warning
 
-### 2.4 Business Fixture Format
+**People (ResourcePerson)** have a plain `community` string field (not an entity_reference). The CLI writes the community name string directly — no resolution needed.
+
+### 2.4 Taxonomy Term Resolution
+
+ResourcePerson `roles` and `offerings` are entity_reference fields pointing to taxonomy terms (vocabularies: `person_roles` and `person_offerings`). Fixtures use human-readable strings (e.g., `"roles": ["artist"]`).
+
+The CLI resolves these by matching the string against existing taxonomy term names in the appropriate vocabulary:
+
+1. Query taxonomy terms by vocabulary and name (exact match)
+2. If no match found → log warning, skip that term (do not create terms automatically)
+3. Store resolved term IDs in the entity_reference fields
+
+**Prerequisite:** The `person_roles` and `person_offerings` vocabularies must be seeded (via `TaxonomySeeder`) before running `bin/seed-content`. Any role or offering string in fixtures must match an existing term name. If new terms are needed, add them to `TaxonomySeeder` first.
+
+### 2.5 Business Fixture Format
 
 ```json
 [
@@ -114,7 +128,7 @@ Fixtures reference communities by name string (e.g., `"community": "Sagamok Anis
 ]
 ```
 
-### 2.5 People Fixture Format
+### 2.6 People Fixture Format
 
 ```json
 [
@@ -144,7 +158,7 @@ Fixtures reference communities by name string (e.g., `"community": "Sagamok Anis
 ]
 ```
 
-### 2.6 Event Fixture Format
+### 2.7 Event Fixture Format
 
 ```json
 [
@@ -163,13 +177,23 @@ Fixtures reference communities by name string (e.g., `"community": "Sagamok Anis
 ]
 ```
 
-### 2.7 Linking Convention
+### 2.8 Linking Convention
 
-People reference their business by slug in the `linked_group` field. The CLI resolves this to `linked_group_id` during import. Businesses must be seeded before people.
+People reference their business by slug in the `linked_group` fixture field. This is a **fixture-only key** — the CLI resolves it to `linked_group_id` (the actual database column) during import. The `linked_group` key is never written to the database. Businesses must be seeded before people.
 
-### 2.8 Partial Updates
+### 2.9 Consent Default Override
+
+The ResourcePerson schema defaults `consent_public` to `true` (1). For seeded content, the CLI **must explicitly set `consent_public`** from the fixture value. Every person fixture record should include `consent_public` — do not rely on the schema default. The content policy is: default to `false` for people unless consent is confirmed.
+
+### 2.10 Partial Updates
 
 On upsert, only fields present in the fixture are written. Unspecified fields are never nulled. This allows manual edits via admin UI to coexist with fixture-based seeding.
+
+### 2.11 Type Validation
+
+The CLI must verify that `type` values in fixtures exist as config entities before inserting:
+- Business fixtures: `type` must match an existing `group_type` (e.g., `business`)
+- Event fixtures: `type` must match an existing `event_type` (e.g., `gathering`, `powwow`, `ceremony`)
 
 ## 3. CLI Command: `bin/seed-content`
 
