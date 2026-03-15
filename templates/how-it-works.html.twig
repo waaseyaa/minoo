@@ -1,65 +1,65 @@
 {% extends "base.html.twig" %}
 
-{% block title %}How It Works — Minoo{% endblock %}
+{% block title %}{{ trans('how.title') }}{% endblock %}
 
 {% block content %}
   <div class="content-section flow-lg">
     <div>
-      <h1>How Minoo Works</h1>
-      <p class="text-secondary">Minoo's Elder Support Program connects Elders with volunteers through a simple, coordinator-supported process.</p>
+      <h1>{{ trans('how.title') }}</h1>
+      <p class="text-secondary">{{ trans('how.subtitle') }}</p>
     </div>
 
     <section class="flow">
-      <h2>For Elders Needing Help</h2>
+      <h2>{{ trans('how.elders_heading') }}</h2>
       <ol class="how-it-works__list">
-        <li><strong>Submit a request</strong> — Tell us what you need: a ride, help with groceries, yard work, or a friendly visit. You can submit online or have someone submit on your behalf.</li>
-        <li><strong>A coordinator reviews your request</strong> — A community coordinator in your area looks at your request and finds an available volunteer nearby.</li>
-        <li><strong>A volunteer reaches out</strong> — The matched volunteer contacts you at the phone number you provided to arrange the details.</li>
-        <li><strong>Follow-up</strong> — After the visit, the coordinator checks in to make sure everything went well.</li>
+        <li>{{ trans('how.elders_list_1') }}</li>
+        <li>{{ trans('how.elders_list_2') }}</li>
+        <li>{{ trans('how.elders_list_3') }}</li>
+        <li>{{ trans('how.elders_list_4') }}</li>
       </ol>
-      <p><a href="/elders" class="btn btn--primary">Request Help</a></p>
+      <p><a href="{{ lang_url('/elders') }}" class="btn btn--primary">{{ trans('how.request_button') }}</a></p>
     </section>
 
     <section class="flow">
-      <h2>For Volunteers</h2>
+      <h2>{{ trans('how.volunteers_heading') }}</h2>
       <ol class="how-it-works__list">
-        <li><strong>Sign up</strong> — Share your name, phone number, availability, and the types of help you can offer.</li>
-        <li><strong>Get matched</strong> — A coordinator assigns you to requests that fit your location and availability.</li>
-        <li><strong>Provide support</strong> — Connect with the Elder, arrange the details, and help out.</li>
-        <li><strong>Mark complete</strong> — Let the coordinator know when the visit is done.</li>
+        <li>{{ trans('how.volunteers_list_1') }}</li>
+        <li>{{ trans('how.volunteers_list_2') }}</li>
+        <li>{{ trans('how.volunteers_list_3') }}</li>
+        <li>{{ trans('how.volunteers_list_4') }}</li>
       </ol>
-      <p><a href="/volunteer" class="btn btn--secondary">Volunteer</a></p>
+      <p><a href="{{ lang_url('/volunteer') }}" class="btn btn--secondary">{{ trans('how.volunteer_button') }}</a></p>
     </section>
 
     <section class="flow">
-      <h2>Requesting on Behalf of an Elder</h2>
-      <p>Family members, friends, or community workers can submit requests on behalf of an Elder. When doing so:</p>
+      <h2>{{ trans('how.behalf_heading') }}</h2>
+      <p>{{ trans('how.behalf_intro') }}</p>
       <ul class="how-it-works__list">
-        <li>Check the "I'm requesting on behalf of an Elder" box on the request form</li>
-        <li>Provide the Elder's name</li>
-        <li>Confirm that the Elder has given permission for the request</li>
+        <li>{{ trans('how.behalf_list_1') }}</li>
+        <li>{{ trans('how.behalf_list_2') }}</li>
+        <li>{{ trans('how.behalf_list_3') }}</li>
       </ul>
-      <p>This ensures the Elder knows about and consents to receiving volunteer support.</p>
+      <p>{{ trans('how.behalf_note') }}</p>
     </section>
 
     <section class="flow">
-      <h2>Frequently Asked Questions</h2>
+      <h2>{{ trans('how.faq_heading') }}</h2>
       <div class="flow">
         <div>
-          <h3>Is there a cost?</h3>
-          <p>No. Minoo is a free community service.</p>
+          <h3>{{ trans('how.faq_cost') }}</h3>
+          <p>{{ trans('how.faq_cost_answer') }}</p>
         </div>
         <div>
-          <h3>How are volunteers screened?</h3>
-          <p>Volunteers are matched through community coordinators who know the area and the people involved.</p>
+          <h3>{{ trans('how.faq_screening') }}</h3>
+          <p>{{ trans('how.faq_screening_answer') }}</p>
         </div>
         <div>
-          <h3>What if I need help urgently?</h3>
-          <p>Minoo is for non-emergency support. For emergencies, call 911. For urgent community needs, contact your band office or local social services.</p>
+          <h3>{{ trans('how.faq_urgent') }}</h3>
+          <p>{{ trans('how.faq_urgent_answer') }}</p>
         </div>
         <div>
-          <h3>Can I cancel a request?</h3>
-          <p>Yes. Contact your coordinator or log in to your dashboard to update your request.</p>
+          <h3>{{ trans('how.faq_cancel') }}</h3>
+          <p>{{ trans('how.faq_cancel_answer') }}</p>
         </div>
       </div>
     </section>

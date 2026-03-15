@@ -373,6 +373,68 @@
     margin-inline-start: 0;
   }
 
+  /* Language switcher */
+  .lang-switcher {
+    position: relative;
+  }
+
+  .lang-switcher__toggle {
+    padding: var(--space-3xs) var(--space-2xs);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    background: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+
+    &::after {
+      content: " \25BE";
+      font-size: 0.75em;
+    }
+
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+    }
+  }
+
+  .lang-switcher__menu {
+    display: none;
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-end: 0;
+    min-inline-size: 10rem;
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-3xs) 0;
+    list-style: none;
+    z-index: 10;
+    margin-block-start: var(--space-3xs);
+
+    &.is-open {
+      display: block;
+    }
+  }
+
+  .lang-switcher__item {
+    display: block;
+    padding: var(--space-3xs) var(--space-sm);
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--text-primary);
+
+    &:hover {
+      background-color: var(--surface-hover, oklch(0.95 0 0));
+    }
+
+    &--active {
+      font-weight: 700;
+      color: var(--accent);
+    }
+  }
+
   .site-main {
     padding-block: var(--space-lg);
     padding-inline: var(--gutter);
@@ -531,6 +593,31 @@
 
     .site-nav__utility {
       margin-inline-start: 0;
+    }
+
+    .lang-switcher__toggle {
+      color: var(--text-on-dark);
+      border-color: oklch(0.6 0 0);
+    }
+
+    .lang-switcher__menu {
+      position: static;
+      box-shadow: none;
+      border: none;
+      background: transparent;
+      padding-inline-start: var(--space-sm);
+
+      &.is-open {
+        display: block;
+      }
+    }
+
+    .lang-switcher__item {
+      color: var(--text-on-dark);
+
+      &--active {
+        color: white;
+      }
     }
 
     .site-header__inner {

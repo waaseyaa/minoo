@@ -1,18 +1,23 @@
-<div class="location-bar" id="location-bar" data-cookie-name="minoo_location">
+<div class="location-bar" id="location-bar" data-cookie-name="minoo_location"
+     data-trans-near="{{ trans('location.near') }}"
+     data-trans-set="{{ trans('location.set') }}"
+     data-trans-change="{{ trans('location.change') }}"
+     data-trans-detecting="{{ trans('location.detecting') }}"
+     data-trans-error="{{ trans('location.error') }}">
   <div class="location-bar__inner">
     <svg class="location-bar__icon" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
       <path d="M10 2a6 6 0 016 6c0 4.5-6 10-6 10S4 12.5 4 8a6 6 0 016-6z"/><circle cx="10" cy="8" r="2"/>
     </svg>
-    <span class="location-bar__text" id="location-text">Set your location</span>
-    <button class="location-bar__toggle" id="location-toggle" type="button" aria-expanded="false" aria-label="Change location"></button>
+    <span class="location-bar__text" id="location-text">{{ trans('location.set') }}</span>
+    <button class="location-bar__toggle" id="location-toggle" type="button" aria-expanded="false" aria-label="{{ trans('location.change') }}"></button>
   </div>
   <noscript>
-    <p class="location-bar__noscript">Location features require JavaScript.</p>
+    <p class="location-bar__noscript">{{ trans('location.noscript') }}</p>
   </noscript>
   <div class="location-bar__dropdown" id="location-dropdown" hidden>
-    <label for="location-search" class="visually-hidden">Search communities</label>
+    <label for="location-search" class="visually-hidden">{{ trans('location.search_label') }}</label>
     <input class="location-bar__input" id="location-search" type="search"
-           placeholder="Search communities&hellip;" autocomplete="off">
+           placeholder="{{ trans('location.search_placeholder') }}" autocomplete="off">
     <ul class="location-bar__results" id="location-results" role="listbox"></ul>
   </div>
 </div>

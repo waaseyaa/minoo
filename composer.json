@@ -87,6 +87,7 @@
     "extra": {
         "waaseyaa": {
             "providers": [
+                "Minoo\\Provider\\I18nServiceProvider",
                 "Minoo\\Provider\\EventServiceProvider",
                 "Minoo\\Provider\\GroupServiceProvider",
                 "Minoo\\Provider\\CulturalGroupServiceProvider",

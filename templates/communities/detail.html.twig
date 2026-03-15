@@ -10,9 +10,9 @@
 {% block content %}
   {# --- Hero --- #}
   <div class="atlas-detail-hero">
-    <a href="/communities" class="atlas-detail-hero__back">← Back to communities</a>
+    <a href="{{ lang_url('/communities') }}" class="atlas-detail-hero__back">{{ trans('community.back_button') }}</a>
     <div class="atlas-detail-hero__badge">
-      {{ community.get('is_municipality') ? 'Municipality' : 'First Nation' }}
+      {{ community.get('is_municipality') ? trans('community.municipality') : trans('community.first_nation') }}
     </div>
     <h1 class="atlas-detail-hero__name">{{ community.get('name') }}</h1>
     <div class="atlas-detail-hero__subtitle">
@@ -22,52 +22,52 @@
     </div>
     <div class="atlas-detail-hero__stats">
       {% if community.get('population') %}
-        <span>Pop. {{ community.get('population')|number_format }} <span style="opacity:0.5">({{ community.get('population_year') }})</span></span>
+        <span>{{ trans('community.pop') }} {{ community.get('population')|number_format }} <span style="opacity:0.5">({{ community.get('population_year') }})</span></span>
       {% endif %}
       {% if distance_from_user %}
         <span>·</span>
-        <span>{{ distance_from_user|number_format(0) }} km from you</span>
+        <span>{{ distance_from_user|number_format(0) }} {{ trans('community.km_away') }}</span>
       {% endif %}
     </div>
   </div>
 
   {# --- About --- #}
   <div class="atlas-section">
-    <div class="atlas-section__label">About</div>
+    <div class="atlas-section__label">{{ trans('community.about') }}</div>
     <div class="atlas-section__grid">
       {% if community.get('nation') %}
       <div>
-        <div class="atlas-section__field-label">Nation</div>
+        <div class="atlas-section__field-label">{{ trans('community.nation') }}</div>
         <div class="atlas-section__field-value">{{ community.get('nation') }}</div>
       </div>
       {% endif %}
       {% if community.get('language_group') %}
       <div>
-        <div class="atlas-section__field-label">Language Group</div>
+        <div class="atlas-section__field-label">{{ trans('community.language_group') }}</div>
         <div class="atlas-section__field-value">{{ community.get('language_group') }}</div>
       </div>
       {% endif %}
       {% if community.get('treaty') %}
       <div>
-        <div class="atlas-section__field-label">Treaty</div>
+        <div class="atlas-section__field-label">{{ trans('community.treaty') }}</div>
         <div class="atlas-section__field-value">{{ community.get('treaty') }}</div>
       </div>
       {% endif %}
       {% if community.get('reserve_name') %}
       <div>
-        <div class="atlas-section__field-label">Reserve</div>
+        <div class="atlas-section__field-label">{{ trans('community.reserve') }}</div>
         <div class="atlas-section__field-value">{{ community.get('reserve_name') }}</div>
       </div>
       {% endif %}
       {% if community.get('inac_id') %}
       <div>
-        <div class="atlas-section__field-label">INAC Band No.</div>
+        <div class="atlas-section__field-label">{{ trans('community.inac_band_no') }}</div>
         <div class="atlas-section__field-value">{{ community.get('inac_id') }}</div>
       </div>
       {% endif %}
       {% if community.get('website') %}
       <div>
-        <div class="atlas-section__field-label">Website</div>
+        <div class="atlas-section__field-label">{{ trans('community.website') }}</div>
         <div class="atlas-section__field-value"><a href="{{ community.get('website') }}" target="_blank" rel="noopener">{{ community.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a></div>
       </div>
       {% endif %}
@@ -77,16 +77,16 @@
   {# --- Leadership --- #}
   {% if people is not empty %}
   <div class="atlas-section">
-    <div class="atlas-section__label">Leadership</div>
+    <div class="atlas-section__label">{{ trans('community.leadership') }}</div>
     {% for person in people %}
       {% if person.role == 'chief' %}
       <div class="atlas-leader-card atlas-leader-card--chief">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <div class="atlas-leader-card__role">Chief</div>
+            <div class="atlas-leader-card__role">{{ trans('community.chief') }}</div>
             <div class="atlas-leader-card__name">{{ person.name }}</div>
           </div>
-          <div style="font-size: 0.6875rem; color: #999;">Current</div>
+          <div style="font-size: 0.6875rem; color: #999;">{{ trans('community.current') }}</div>
         </div>
       </div>
       {% endif %}
@@ -95,7 +95,7 @@
       {% for person in people %}
         {% if person.role == 'councillor' %}
         <div class="atlas-leader-card">
-          <div class="atlas-leader-card__role">Councillor</div>
+          <div class="atlas-leader-card__role">{{ trans('community.councillor') }}</div>
           <div class="atlas-leader-card__name">{{ person.name }}</div>
         </div>
         {% endif %}
@@ -107,12 +107,12 @@
   {# --- Band Office --- #}
   {% if band_office %}
   <div class="atlas-section">
-    <div class="atlas-section__label">Band Office</div>
+    <div class="atlas-section__label">{{ trans('community.band_office') }}</div>
     <div class="atlas-contact-card">
       <div class="atlas-contact-card__grid">
         {% if band_office.address_line1 %}
         <div>
-          <div class="atlas-section__field-label">Address</div>
+          <div class="atlas-section__field-label">{{ trans('community.address') }}</div>
           <div class="atlas-section__field-value">
             {{ band_office.address_line1 }}
             {% if band_office.address_line2 %}<br>{{ band_office.address_line2 }}{% endif %}
@@ -122,31 +122,31 @@
         {% endif %}
         {% if band_office.office_hours %}
         <div>
-          <div class="atlas-section__field-label">Hours</div>
+          <div class="atlas-section__field-label">{{ trans('community.hours') }}</div>
           <div class="atlas-section__field-value">{{ band_office.office_hours }}</div>
         </div>
         {% endif %}
         {% if band_office.phone %}
         <div>
-          <div class="atlas-section__field-label">Phone</div>
+          <div class="atlas-section__field-label">{{ trans('community.phone') }}</div>
           <div class="atlas-section__field-value"><a href="tel:{{ band_office.phone }}">{{ band_office.phone }}</a></div>
         </div>
         {% endif %}
         {% if band_office.email %}
         <div>
-          <div class="atlas-section__field-label">Email</div>
+          <div class="atlas-section__field-label">{{ trans('community.email') }}</div>
           <div class="atlas-section__field-value"><a href="mailto:{{ band_office.email }}">{{ band_office.email }}</a></div>
         </div>
         {% endif %}
         {% if band_office.toll_free %}
         <div>
-          <div class="atlas-section__field-label">Toll Free</div>
+          <div class="atlas-section__field-label">{{ trans('community.toll_free') }}</div>
           <div class="atlas-section__field-value"><a href="tel:{{ band_office.toll_free }}">{{ band_office.toll_free }}</a></div>
         </div>
         {% endif %}
         {% if band_office.fax %}
         <div>
-          <div class="atlas-section__field-label">Fax</div>
+          <div class="atlas-section__field-label">{{ trans('community.fax') }}</div>
           <div class="atlas-section__field-value">{{ band_office.fax }}</div>
         </div>
         {% endif %}
@@ -158,12 +158,12 @@
   {# --- The Land --- #}
   {% if community.get('latitude') and community.get('longitude') %}
   <div class="atlas-section">
-    <div class="atlas-section__label">The Land</div>
+    <div class="atlas-section__label">{{ trans('community.the_land') }}</div>
     <div id="atlas-detail-map" class="atlas-detail-map"></div>
     <div class="atlas-detail-coords">
       <span>{{ community.get('latitude')|number_format(4) }}° {{ community.get('latitude') >= 0 ? 'N' : 'S' }}, {{ community.get('longitude')|abs|number_format(4) }}° {{ community.get('longitude') < 0 ? 'W' : 'E' }}</span>
-      <a href="https://www.openstreetmap.org/?mlat={{ community.get('latitude') }}&mlon={{ community.get('longitude') }}#map=13/{{ community.get('latitude') }}/{{ community.get('longitude') }}" target="_blank" rel="noopener">OpenStreetMap</a>
-      <a href="https://www.google.com/maps?q={{ community.get('latitude') }},{{ community.get('longitude') }}" target="_blank" rel="noopener">Google Maps</a>
+      <a href="https://www.openstreetmap.org/?mlat={{ community.get('latitude') }}&mlon={{ community.get('longitude') }}#map=13/{{ community.get('latitude') }}/{{ community.get('longitude') }}" target="_blank" rel="noopener">{{ trans('community.openstreetmap') }}</a>
+      <a href="https://www.google.com/maps?q={{ community.get('latitude') }},{{ community.get('longitude') }}" target="_blank" rel="noopener">{{ trans('community.google_maps') }}</a>
     </div>
   </div>
   {% endif %}
@@ -171,13 +171,13 @@
   {# --- Nearby Communities --- #}
   {% if nearby is not empty %}
   <div class="atlas-section">
-    <div class="atlas-section__label">Nearby Communities</div>
+    <div class="atlas-section__label">{{ trans('community.nearby_communities') }}</div>
     <div class="atlas-nearby-grid">
       {% for item in nearby %}
-      <a href="/communities/{{ item.community.get('slug') }}" class="atlas-nearby-card">
+      <a href="{{ lang_url('/communities/' ~ item.community.get('slug')) }}" class="atlas-nearby-card">
         <div class="atlas-nearby-card__name">{{ item.community.get('name') }}</div>
         <div class="atlas-nearby-card__meta">
-          {{ item.community.get('is_municipality') ? 'Municipality' : item.community.get('nation') ?: 'First Nation' }}
+          {{ item.community.get('is_municipality') ? trans('community.municipality') : item.community.get('nation') ?: trans('community.first_nation') }}
           · {{ item.distanceKm|number_format(0) }} km
         </div>
       </a>

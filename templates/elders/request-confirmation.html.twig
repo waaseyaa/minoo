@@ -2,9 +2,9 @@
 
 {% block title %}
   {%- if entity -%}
-    Request Received — Minoo
+    {{ trans('request_confirm.title') }} — Minoo
   {%- else -%}
-    Request Not Found — Minoo
+    {{ trans('request_confirm.not_found_title') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
@@ -12,34 +12,34 @@
   {% if entity %}
     <div class="flow-lg">
       <div>
-        <span class="card__badge card__badge--elder">Elder Support</span>
-        <h1>Your request is in good hands</h1>
-        <p class="card__meta">Reference: {{ entity.uuid() }}</p>
-        <p class="text-secondary">Thank you, {{ entity.get('name') }}. A community coordinator will review your request and match you with a nearby volunteer. They'll reach out to you at {{ entity.get('phone') }} — usually within one to two business days.</p>
-        <p class="text-secondary">If your plans change, reach out to your community coordinator to cancel.</p>
+        <span class="card__badge card__badge--elder">{{ trans('request_confirm.badge') }}</span>
+        <h1>{{ trans('request_confirm.title') }}</h1>
+        <p class="card__meta">{{ trans('request_confirm.reference') }}: {{ entity.uuid() }}</p>
+        <p class="text-secondary">{{ trans('request_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
+        <p class="text-secondary">{{ trans('request_confirm.cancel_note') }}</p>
       </div>
 
       <div class="card card--detail">
         <dl class="detail__fields">
           <div class="detail__field">
-            <dt>Type of Help</dt>
+            <dt>{{ trans('request_confirm.type_of_help') }}</dt>
             <dd>{{ entity.get('type')|capitalize }}</dd>
           </div>
           {% if entity.get('community') %}
             <div class="detail__field">
-              <dt>Community</dt>
+              <dt>{{ trans('request_confirm.community') }}</dt>
               <dd>{{ entity.get('community') }}</dd>
             </div>
           {% endif %}
           {% if entity.get('is_representative') %}
             <div class="detail__field">
-              <dt>Requested for</dt>
+              <dt>{{ trans('request_confirm.requested_for') }}</dt>
               <dd>{{ entity.get('elder_name') }}</dd>
             </div>
           {% endif %}
           {% if entity.get('notes') %}
             <div class="detail__field">
-              <dt>Notes</dt>
+              <dt>{{ trans('request_confirm.notes') }}</dt>
               <dd>{{ entity.get('notes') }}</dd>
             </div>
           {% endif %}
@@ -47,22 +47,22 @@
       </div>
 
       <div class="flow">
-        <h2>What Happens Next</h2>
+        <h2>{{ trans('request_confirm.what_next') }}</h2>
         <ol class="how-it-works__list">
-          <li>A community coordinator will review your request shortly</li>
-          <li>They'll find a volunteer nearby who can help</li>
-          <li>The volunteer will call you at the phone number you provided to arrange the details</li>
-          <li>After the visit, the coordinator will check in to make sure everything went well</li>
+          <li>{{ trans('request_confirm.next_step1') }}</li>
+          <li>{{ trans('request_confirm.next_step2') }}</li>
+          <li>{{ trans('request_confirm.next_step3') }}</li>
+          <li>{{ trans('request_confirm.next_step4') }}</li>
         </ol>
       </div>
 
-      <p><a href="/elders/request">Submit another request</a></p>
+      <p><a href="{{ lang_url('/elders/request') }}">{{ trans('request_confirm.submit_another') }}</a></p>
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Request Not Found</h1>
-      <p>That request could not be found.</p>
-      <p><a href="/elders/request">Submit a new request</a></p>
+      <h1>{{ trans('request_confirm.not_found_title') }}</h1>
+      <p>{{ trans('request_confirm.not_found_text') }}</p>
+      <p><a href="{{ lang_url('/elders/request') }}">{{ trans('request_confirm.submit_new') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

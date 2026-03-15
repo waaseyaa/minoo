@@ -2,19 +2,19 @@
 
 {% block title %}
   {%- if path == '/groups' -%}
-    Groups — Minoo
+    {{ trans('groups.title') }} — Minoo
   {%- elseif group is defined and group -%}
     {{ group.get('name') }} — Minoo
   {%- else -%}
-    Group Not Found — Minoo
+    {{ trans('groups.not_found') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
   {% if path == '/groups' %}
     <div class="flow-lg">
-      <h1>Groups</h1>
-      <p class="hero__subtitle">Cultural organizations, youth programs, and advocacy groups across the region.</p>
+      <h1>{{ trans('groups.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('groups.subtitle') }}</p>
 
       {% if groups is defined and groups|length > 0 %}
         <div class="card-grid">
@@ -30,16 +30,16 @@
         </div>
       {% else %}
         {% include "components/empty-state.html.twig" with {
-          heading: "No groups listed yet",
-          body: "Community groups, cultural organizations, and youth programs will appear here as they're registered. Explore other ways to connect in the meantime.",
-          action_url: "/communities",
-          action_label: "Explore communities"
+          heading: trans('groups.empty_heading'),
+          body: trans('groups.empty_body'),
+          action_url: lang_url('/communities'),
+          action_label: trans('groups.explore_button')
         } %}
       {% endif %}
     </div>
   {% elseif group is defined and group %}
     <div class="flow-lg detail">
-      <a href="/groups" class="detail__back">Groups</a>
+      <a href="{{ lang_url('/groups') }}" class="detail__back">{{ trans('groups.detail_back') }}</a>
       <div class="detail__header">
         <span class="card__badge card__badge--group">{{ group.get('type')|default('')|capitalize }}</span>
         <h1>{{ group.get('name') }}</h1>
@@ -57,9 +57,9 @@
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Group Not Found</h1>
-      <p>We couldn't find this group. It may have been removed or the link may be outdated.</p>
-      <p><a href="/groups">Browse all groups</a></p>
+      <h1>{{ trans('groups.not_found') }}</h1>
+      <p>{{ trans('groups.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/groups') }}">{{ trans('groups.browse_all') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

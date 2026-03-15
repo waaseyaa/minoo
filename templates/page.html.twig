@@ -1,16 +1,16 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Minoo — A Living Map of Community{% endblock %}
+{% block title %}{{ trans('page.title') }}{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
     <section class="hero hero--home">
       <div class="hero__inner">
-        <h1 class="hero__title">Minoo: A <em>Living</em> Map of Community</h1>
-        <p class="hero__subtitle">Find the people, teachings, events, and programs that strengthen where you live. Explore your community and the communities around you.</p>
+        <h1 class="hero__title">{{ trans('page.title') }}</h1>
+        <p class="hero__subtitle">{{ trans('page.subtitle') }}</p>
         <div class="hero__actions">
-          <a href="/communities" class="btn btn--primary btn--lg">Explore Communities</a>
-          <a href="/people" class="btn btn--secondary btn--lg">Browse People</a>
+          <a href="{{ lang_url('/communities') }}" class="btn btn--primary btn--lg">{{ trans('page.communities_button') }}</a>
+          <a href="{{ lang_url('/people') }}" class="btn btn--secondary btn--lg">{{ trans('page.people_button') }}</a>
         </div>
       </div>
     </section>
@@ -18,14 +18,14 @@
     {% if location is defined and location.hasLocation() %}
       <section class="portal-section flow">
         <div class="portal-section__header">
-          <h2>Near {{ location.communityName }}</h2>
+          <h2>{{ trans('page.nearby_heading', {community: location.communityName}) }}</h2>
         </div>
 
         {% if nearby_communities is defined and nearby_communities|length > 0 %}
-          <h3>Nearby Communities</h3>
+          <h3>{{ trans('page.nearby_communities') }}</h3>
           <div class="card-grid">
             {% for item in nearby_communities %}
-              <a href="/communities/{{ item.community.get('slug') }}" class="card card--community">
+              <a href="{{ lang_url('/communities/' ~ item.community.get('slug')) }}" class="card card--community">
                 <div class="card__body">
                   <h4 class="card__title">{{ item.community.get('name') }}</h4>
                   <p class="card__meta">{{ item.distanceKm|round }} km away</p>
@@ -36,7 +36,7 @@
         {% endif %}
 
         {% if events is defined and events|length > 0 %}
-          <h3>Upcoming Events</h3>
+          <h3>{{ trans('page.upcoming_events') }}</h3>
           <div class="card-grid">
             {% for event in events %}
               {% include "components/event-card.html.twig" with {event: event} %}
@@ -44,74 +44,74 @@
           </div>
         {% endif %}
 
-        <p><a href="/communities">View all communities</a> · <a href="/events">View all events</a></p>
+        <p><a href="{{ lang_url('/communities') }}">{{ trans('page.view_all_communities') }}</a> · <a href="{{ lang_url('/events') }}">{{ trans('page.view_all_events') }}</a></p>
       </section>
     {% endif %}
 
     <section class="explore-section">
-      <h2 class="section-heading">Explore Minoo</h2>
+      <h2 class="section-heading">{{ trans('page.explore_heading') }}</h2>
       <div class="card-grid explore-grid">
-        <a href="/communities" class="card explore-card">
+        <a href="{{ lang_url('/communities') }}" class="card explore-card">
           <svg class="explore-card__icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="16" cy="10" r="4"/><circle cx="7" cy="20" r="3.5"/><circle cx="25" cy="20" r="3.5"/><path d="M12 12c-2 2-4 5-4 8m12-8c2 2 4 5 4 8M14.5 13.5c-.5 1-1 3-1 5m4-5c.5 1 1 3 1 5"/>
           </svg>
-          <h3 class="card__title">Communities</h3>
-          <p class="card__meta">First Nations and municipalities in northern Ontario — find your community and the communities around you</p>
+          <h3 class="card__title">{{ trans('nav.communities') }}</h3>
+          <p class="card__meta">{{ trans('page.communities_desc') }}</p>
         </a>
-        <a href="/people" class="card explore-card">
+        <a href="{{ lang_url('/people') }}" class="card explore-card">
           <svg class="explore-card__icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="16" cy="10" r="5"/><path d="M6 28c0-5.5 4.5-10 10-10s10 4.5 10 10"/>
           </svg>
-          <h3 class="card__title">People</h3>
-          <p class="card__meta">Elders, Knowledge Keepers, language speakers, makers, and community leaders — the people who carry us forward</p>
+          <h3 class="card__title">{{ trans('nav.people') }}</h3>
+          <p class="card__meta">{{ trans('page.people_desc') }}</p>
         </a>
-        <a href="/teachings" class="card explore-card">
+        <a href="{{ lang_url('/teachings') }}" class="card explore-card">
           <svg class="explore-card__icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 4c4-1 8 1 10 4 2-3 6-5 10-4v18c-4-1-8 1-10 3-2-2-6-4-10-3V4z"/><path d="M16 8v17"/>
           </svg>
-          <h3 class="card__title">Teachings</h3>
-          <p class="card__meta">Living knowledge — culture, history, and language Teachings that guide how we live today</p>
+          <h3 class="card__title">{{ trans('nav.teachings') }}</h3>
+          <p class="card__meta">{{ trans('page.teachings_desc') }}</p>
         </a>
-        <a href="/events" class="card explore-card">
+        <a href="{{ lang_url('/events') }}" class="card explore-card">
           <svg class="explore-card__icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <rect x="4" y="6" width="24" height="22" rx="3"/><path d="M4 13h24M10 3v5m12-5v5"/><circle cx="16" cy="21" r="2"/>
           </svg>
-          <h3 class="card__title">Events</h3>
-          <p class="card__meta">Powwows, gatherings, ceremonies, and community events near you</p>
+          <h3 class="card__title">{{ trans('nav.events') }}</h3>
+          <p class="card__meta">{{ trans('page.events_desc') }}</p>
         </a>
-        <a href="/elders" class="card explore-card explore-card--elder">
+        <a href="{{ lang_url('/elders') }}" class="card explore-card explore-card--elder">
           <svg class="explore-card__icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 6c-2 3-6 5-6 9a6 6 0 0012 0c0-4-4-6-6-9z"/><path d="M16 18v4m-3-2h6"/>
           </svg>
-          <h3 class="card__title">Elder Support Program</h3>
-          <p class="card__meta">Help an Elder in your community — or request support for one. A little time goes a long way.</p>
+          <h3 class="card__title">{{ trans('nav.elder_support') }}</h3>
+          <p class="card__meta">{{ trans('page.elder_support_desc') }}</p>
         </a>
       </div>
     </section>
 
     <section class="portal-section flow">
-      <h2 class="section-heading">Who is Minoo for?</h2>
-      <p>Minoo is for anyone connected to community in northern Ontario.</p>
+      <h2 class="section-heading">{{ trans('page.who_for_heading') }}</h2>
+      <p>{{ trans('page.who_for_intro') }}</p>
       <div class="audience-grid">
         <div class="audience-grid__item">
-          <h3>Elders</h3>
-          <p>Request everyday help — rides, groceries, yard work, or a friendly visit — through our Elder Support Program.</p>
+          <h3>{{ trans('page.audience.elders') }}</h3>
+          <p>{{ trans('page.audience.elders_desc') }}</p>
         </div>
         <div class="audience-grid__item">
-          <h3>Young People</h3>
-          <p>Find role models, Teachings, and events in your community. See the people who carry our communities forward — and imagine your own path.</p>
+          <h3>{{ trans('page.audience.young_people') }}</h3>
+          <p>{{ trans('page.audience.young_people_desc') }}</p>
         </div>
         <div class="audience-grid__item">
-          <h3>Knowledge Keepers</h3>
-          <p>Share your Teachings, language, and skills with those who want to learn. Your profile helps people find you.</p>
+          <h3>{{ trans('page.audience.knowledge_keepers') }}</h3>
+          <p>{{ trans('page.audience.knowledge_keepers_desc') }}</p>
         </div>
         <div class="audience-grid__item">
-          <h3>Families</h3>
-          <p>Discover events, cultural programs, and community resources near you. Stay connected to what's happening.</p>
+          <h3>{{ trans('page.audience.families') }}</h3>
+          <p>{{ trans('page.audience.families_desc') }}</p>
         </div>
         <div class="audience-grid__item">
-          <h3>Volunteers</h3>
-          <p>Give a little of your time to support an Elder. It's one of the most rewarding things you can do.</p>
+          <h3>{{ trans('page.audience.volunteers') }}</h3>
+          <p>{{ trans('page.audience.volunteers_desc') }}</p>
         </div>
       </div>
     </section>

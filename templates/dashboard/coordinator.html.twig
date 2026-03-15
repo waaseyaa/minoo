@@ -1,15 +1,15 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Coordinator Dashboard — Minoo{% endblock %}
+{% block title %}{{ trans('coordinator.title') }} — Minoo{% endblock %}
 
 {% block content %}
 <section class="content-section flow-lg">
-  <h1>Coordinator Dashboard</h1>
-  <p class="text-secondary">You're the link between Elders who need support and volunteers who can help. Here's what needs your attention.</p>
+  <h1>{{ trans('coordinator.title') }}</h1>
+  <p class="text-secondary">{{ trans('coordinator.subtitle') }}</p>
 
-  <h2>Open Requests ({{ open_requests|length }})</h2>
+  <h2>{{ trans('coordinator.open_requests', {count: open_requests|length}) }}</h2>
   {% if open_requests is empty %}
-    <p class="dashboard__empty">No open requests right now. New requests will appear here as they come in.</p>
+    <p class="dashboard__empty">{{ trans('coordinator.no_open_requests') }}</p>
   {% else %}
   <div class="dashboard__cards">
     {% for req in open_requests %}
@@ -17,30 +17,30 @@
       <span class="card__badge card__badge--open">Open</span>
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
-        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-        {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
-        {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
-        {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
+        <dt>{{ trans('coordinator.type') }}</dt><dd>{{ req.get('type') }}</dd>
+        {% if req.get('phone') %}<dt>{{ trans('coordinator.phone') }}</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
+        {% if req.get('community') %}<dt>{{ trans('coordinator.community') }}</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
+        {% if req.get('notes') %}<dt>{{ trans('coordinator.notes') }}</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
       </dl>
       <form class="dashboard__assign-form" method="post" action="/elders/request/{{ req.id() }}/assign">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-        <label class="form__label" for="volunteer-{{ req.id() }}">Assign to</label>
+        <label class="form__label" for="volunteer-{{ req.id() }}">{{ trans('coordinator.assign_to') }}</label>
         <select class="form__select" name="volunteer_id" id="volunteer-{{ req.id() }}" required>
-          <option value="">Select volunteer...</option>
+          <option value="">{{ trans('coordinator.select_volunteer') }}</option>
           {% set ranked = ranked_by_request[req.id()] ?? [] %}
           {% for rv in ranked %}
           <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% if rv.exceedsMaxTravel %} (exceeds {{ rv.volunteer.get('max_travel_km') }} km limit){% endif %}{% elseif rv.volunteer.get('community') %} ({{ community_names[rv.volunteer.get('community')]|default(rv.volunteer.get('community')) }}){% endif %}</option>
           {% endfor %}
         </select>
-        <button class="form__submit" type="submit">Assign</button>
+        <button class="form__submit" type="submit">{{ trans('coordinator.assign_button') }}</button>
       </form>
       <details class="dashboard__cancel-details">
-        <summary class="form__link">Cancel Request</summary>
+        <summary class="form__link">{{ trans('coordinator.cancel_request') }}</summary>
         <form method="post" action="/elders/request/{{ req.id() }}/cancel" class="dashboard__cancel-form">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-          <label class="form__label" for="cancel-reason-{{ req.id() }}">Reason</label>
+          <label class="form__label" for="cancel-reason-{{ req.id() }}">{{ trans('coordinator.reason') }}</label>
           <textarea class="form__textarea" id="cancel-reason-{{ req.id() }}" name="reason" rows="2"></textarea>
-          <button class="form__submit form__submit--danger form__submit--sm" type="submit">Confirm Cancel</button>
+          <button class="form__submit form__submit--danger form__submit--sm" type="submit">{{ trans('coordinator.confirm_cancel') }}</button>
         </form>
       </details>
     </article>
@@ -48,9 +48,9 @@
   </div>
   {% endif %}
 
-  <h2>Assigned / In Progress ({{ assigned_requests|length }})</h2>
+  <h2>{{ trans('coordinator.assigned_in_progress', {count: assigned_requests|length}) }}</h2>
   {% if assigned_requests is empty %}
-    <p class="dashboard__empty">No assigned requests.</p>
+    <p class="dashboard__empty">{{ trans('coordinator.no_assigned') }}</p>
   {% else %}
   <div class="dashboard__cards">
     {% for req in assigned_requests %}
@@ -58,36 +58,36 @@
       <span class="card__badge card__badge--{{ req.get('status') }}">{{ req.get('status')|replace({'_': ' '})|title }}</span>
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
-        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-        {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
-        {% if req.get('community') %}<dt>Community</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
+        <dt>{{ trans('coordinator.type') }}</dt><dd>{{ req.get('type') }}</dd>
+        {% if req.get('phone') %}<dt>{{ trans('coordinator.phone') }}</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
+        {% if req.get('community') %}<dt>{{ trans('coordinator.community') }}</dt><dd>{{ community_names[req.get('community')]|default(req.get('community')) }}</dd>{% endif %}
         {% set assigned_volunteer = volunteers_by_id[req.get('assigned_volunteer')] ?? null %}
-        {% if assigned_volunteer %}<dt>Volunteer</dt><dd>{{ assigned_volunteer.get('name') }}</dd>{% endif %}
+        {% if assigned_volunteer %}<dt>{{ trans('coordinator.volunteer') }}</dt><dd>{{ assigned_volunteer.get('name') }}</dd>{% endif %}
       </dl>
       {% if req.get('status') == 'assigned' %}
       <details class="dashboard__reassign-details">
-        <summary class="form__link">Reassign</summary>
+        <summary class="form__link">{{ trans('coordinator.reassign') }}</summary>
         <form class="dashboard__assign-form" method="post" action="/elders/request/{{ req.id() }}/reassign">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-          <label class="form__label" for="reassign-volunteer-{{ req.id() }}">Reassign to</label>
+          <label class="form__label" for="reassign-volunteer-{{ req.id() }}">{{ trans('coordinator.reassign_to') }}</label>
           <select class="form__select" name="volunteer_id" id="reassign-volunteer-{{ req.id() }}" required>
-            <option value="">Select volunteer...</option>
+            <option value="">{{ trans('coordinator.select_volunteer') }}</option>
             {% set ranked = ranked_by_request[req.id()] ?? [] %}
             {% for rv in ranked %}
             <option value="{{ rv.volunteer.id() }}">{{ rv.volunteer.get('name') }}{% if rv.hasDistance() %} — {{ rv.formattedDistance() }}{% if rv.exceedsMaxTravel %} (exceeds {{ rv.volunteer.get('max_travel_km') }} km limit){% endif %}{% elseif rv.volunteer.get('community') %} ({{ community_names[rv.volunteer.get('community')]|default(rv.volunteer.get('community')) }}){% endif %}</option>
             {% endfor %}
           </select>
-          <button class="form__submit" type="submit">Reassign</button>
+          <button class="form__submit" type="submit">{{ trans('coordinator.reassign') }}</button>
         </form>
       </details>
       {% endif %}
       <details class="dashboard__cancel-details">
-        <summary class="form__link">Cancel Request</summary>
+        <summary class="form__link">{{ trans('coordinator.cancel_request') }}</summary>
         <form method="post" action="/elders/request/{{ req.id() }}/cancel" class="dashboard__cancel-form">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-          <label class="form__label" for="cancel-reason-{{ req.id() }}">Reason</label>
+          <label class="form__label" for="cancel-reason-{{ req.id() }}">{{ trans('coordinator.reason') }}</label>
           <textarea class="form__textarea" id="cancel-reason-{{ req.id() }}" name="reason" rows="2"></textarea>
-          <button class="form__submit form__submit--danger form__submit--sm" type="submit">Confirm Cancel</button>
+          <button class="form__submit form__submit--danger form__submit--sm" type="submit">{{ trans('coordinator.confirm_cancel') }}</button>
         </form>
       </details>
     </article>
@@ -95,70 +95,70 @@
   </div>
   {% endif %}
 
-  <h2>Pending Confirmation ({{ pending_confirmation|length }})</h2>
+  <h2>{{ trans('coordinator.pending_confirmation', {count: pending_confirmation|length}) }}</h2>
   {% if pending_confirmation is empty %}
-    <p class="dashboard__empty">No requests waiting for confirmation.</p>
+    <p class="dashboard__empty">{{ trans('coordinator.no_pending') }}</p>
   {% else %}
   <div class="dashboard__cards">
     {% for req in pending_confirmation %}
     <article class="card card--dashboard">
-      <span class="card__badge card__badge--completed">Completed</span>
+      <span class="card__badge card__badge--completed">{{ trans('coordinator.completed') }}</span>
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
-        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+        <dt>{{ trans('coordinator.type') }}</dt><dd>{{ req.get('type') }}</dd>
         {% set assigned_vol = volunteers_by_id[req.get('assigned_volunteer')] ?? null %}
-        {% if assigned_vol %}<dt>Volunteer</dt><dd>{{ assigned_vol.get('name') }}</dd>{% endif %}
-        {% if req.get('completion_notes') %}<dt>Notes</dt><dd>{{ req.get('completion_notes') }}</dd>{% endif %}
+        {% if assigned_vol %}<dt>{{ trans('coordinator.volunteer') }}</dt><dd>{{ assigned_vol.get('name') }}</dd>{% endif %}
+        {% if req.get('completion_notes') %}<dt>{{ trans('coordinator.notes') }}</dt><dd>{{ req.get('completion_notes') }}</dd>{% endif %}
       </dl>
       <form method="post" action="/elders/request/{{ req.id() }}/confirm">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-        <button class="form__submit" type="submit">Confirm Completion</button>
+        <button class="form__submit" type="submit">{{ trans('coordinator.confirm_completion') }}</button>
       </form>
     </article>
     {% endfor %}
   </div>
   {% endif %}
 
-  <h2>Volunteer Pool ({{ volunteers|length }})</h2>
+  <h2>{{ trans('coordinator.volunteer_pool', {count: volunteers|length}) }}</h2>
   {% if volunteers is empty %}
-    <p class="dashboard__empty">No active volunteers yet. Volunteer signups will appear here once approved.</p>
+    <p class="dashboard__empty">{{ trans('coordinator.no_volunteers') }}</p>
   {% else %}
   <div class="dashboard__cards">
     {% for vol in volunteers %}
     <article class="card card--dashboard">
       <h3 class="card__title">{{ vol.get('name') }}</h3>
       <dl class="card__meta">
-        <dt>Phone</dt><dd>{{ vol.get('phone') }}</dd>
-        {% if vol.get('community') %}<dt>Community</dt><dd>{{ community_names[vol.get('community')]|default(vol.get('community')) }}</dd>{% endif %}
-        {% if vol.get('availability') %}<dt>Availability</dt><dd>{{ vol.get('availability') }}</dd>{% endif %}
+        <dt>{{ trans('coordinator.phone') }}</dt><dd>{{ vol.get('phone') }}</dd>
+        {% if vol.get('community') %}<dt>{{ trans('coordinator.community') }}</dt><dd>{{ community_names[vol.get('community')]|default(vol.get('community')) }}</dd>{% endif %}
+        {% if vol.get('availability') %}<dt>{{ trans('coordinator.availability') }}</dt><dd>{{ vol.get('availability') }}</dd>{% endif %}
       </dl>
     </article>
     {% endfor %}
   </div>
   {% endif %}
 
-  <h2>History</h2>
+  <h2>{{ trans('coordinator.history') }}</h2>
   {% set has_history = confirmed_requests is not empty or cancelled_requests is not empty %}
   {% if not has_history %}
-    <p class="dashboard__empty">No completed or cancelled requests yet.</p>
+    <p class="dashboard__empty">{{ trans('coordinator.no_history') }}</p>
   {% else %}
   <div class="dashboard__cards">
     {% for req in confirmed_requests %}
     <article class="card card--dashboard card--history">
-      <span class="card__badge card__badge--confirmed">Confirmed</span>
+      <span class="card__badge card__badge--confirmed">{{ trans('coordinator.confirmed') }}</span>
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
-        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+        <dt>{{ trans('coordinator.type') }}</dt><dd>{{ req.get('type') }}</dd>
       </dl>
     </article>
     {% endfor %}
     {% for req in cancelled_requests %}
     <article class="card card--dashboard card--history">
-      <span class="card__badge card__badge--cancelled">Cancelled</span>
+      <span class="card__badge card__badge--cancelled">{{ trans('coordinator.cancelled') }}</span>
       <h3 class="card__title">{{ req.get('name') }}</h3>
       <dl class="card__meta">
-        <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-        {% if req.get('cancelled_reason') %}<dt>Reason</dt><dd>{{ req.get('cancelled_reason') }}</dd>{% endif %}
+        <dt>{{ trans('coordinator.type') }}</dt><dd>{{ req.get('type') }}</dd>
+        {% if req.get('cancelled_reason') %}<dt>{{ trans('coordinator.reason') }}</dt><dd>{{ req.get('cancelled_reason') }}</dd>{% endif %}
       </dl>
     </article>
     {% endfor %}

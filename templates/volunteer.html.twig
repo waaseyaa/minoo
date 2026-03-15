@@ -1,51 +1,51 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Volunteer — Minoo{% endblock %}
+{% block title %}{{ trans('volunteer_page.title') }} — Minoo{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
     <section class="hero">
-      <h1 class="hero__title">Make a Difference in Your Community</h1>
-      <p class="hero__subtitle">Through Minoo's Elder Support Program, Elders in your community could use a hand. Whether it's a ride, groceries, yard work, or a friendly visit, a little of your time goes a long way.</p>
+      <h1 class="hero__title">{{ trans('volunteer_page.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('volunteer_page.subtitle') }}</p>
       <div class="hero__actions">
-        <a href="/elders/volunteer" class="btn btn--primary btn--lg">Sign Up to Volunteer</a>
-        <a href="/login" class="btn btn--secondary btn--lg">Already Registered? Log In</a>
+        <a href="{{ lang_url('/elders/volunteer') }}" class="btn btn--primary btn--lg">{{ trans('volunteer_page.signup_button') }}</a>
+        <a href="{{ lang_url('/login') }}" class="btn btn--secondary btn--lg">{{ trans('volunteer_page.login_button') }}</a>
       </div>
     </section>
 
     <section class="portal-section flow">
-      <h2>Why Volunteer?</h2>
+      <h2>{{ trans('volunteer_page.why_heading') }}</h2>
       <div class="how-it-works">
         <div class="how-it-works__step flow">
-          <h3>Support Elders</h3>
-          <p>Lend a hand with the everyday things that matter — a ride to an appointment, picking up groceries, clearing a walkway, or just being there for good conversation.</p>
+          <h3>{{ trans('volunteer_page.reason1_title') }}</h3>
+          <p>{{ trans('volunteer_page.reason1_text') }}</p>
         </div>
         <div class="how-it-works__step flow">
-          <h3>Build Real Relationships</h3>
-          <p>Get to know the Elders in your area. Many volunteers say the conversations, stories, and knowledge they receive are the most valuable part of volunteering.</p>
+          <h3>{{ trans('volunteer_page.reason2_title') }}</h3>
+          <p>{{ trans('volunteer_page.reason2_text') }}</p>
         </div>
         <div class="how-it-works__step flow">
-          <h3>Flexible Commitment</h3>
-          <p>Help out on your own schedule — there's no minimum commitment. Set your availability and a coordinator will only reach out when something fits.</p>
+          <h3>{{ trans('volunteer_page.reason3_title') }}</h3>
+          <p>{{ trans('volunteer_page.reason3_text') }}</p>
         </div>
       </div>
     </section>
 
     <section class="portal-section flow">
-      <h2>How It Works</h2>
+      <h2>{{ trans('volunteer_page.how_heading') }}</h2>
       <ol class="how-it-works__list">
-        <li>Sign up with your name, phone, availability, and skills</li>
-        <li>A coordinator reviews your profile and matches you with Elder requests</li>
-        <li>You connect with the Elder and provide support</li>
-        <li>Mark the request complete when you're done</li>
+        <li>{{ trans('volunteer_page.how_step1') }}</li>
+        <li>{{ trans('volunteer_page.how_step2') }}</li>
+        <li>{{ trans('volunteer_page.how_step3') }}</li>
+        <li>{{ trans('volunteer_page.how_step4') }}</li>
       </ol>
-      <p><a href="/how-it-works">Learn more about how it works</a></p>
+      <p><a href="{{ lang_url('/how-it-works') }}">{{ trans('volunteer_page.learn_more') }}</a></p>
     </section>
 
     <div class="safety-callout flow">
-      <h2>Safety First</h2>
-      <p>Your safety and the safety of Elders is our priority. All volunteers are matched through community coordinators who know the area.</p>
-      <p><a href="/safety">Read our safety guidelines</a></p>
+      <h2>{{ trans('volunteer_page.safety_heading') }}</h2>
+      <p>{{ trans('volunteer_page.safety_text') }}</p>
+      <p><a href="{{ lang_url('/safety') }}">{{ trans('volunteer_page.safety_link') }}</a></p>
     </div>
   </div>
 {% endblock %}

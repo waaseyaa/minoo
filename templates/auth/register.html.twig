@@ -1,16 +1,16 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Register — Minoo{% endblock %}
+{% block title %}{{ trans('auth.register_title') }} — Minoo{% endblock %}
 
 {% block content %}
 <section class="content-section flow-lg">
-  <h1>Create Account</h1>
-  <p class="text-secondary">Join Minoo to connect with your community, volunteer, or access Elder Support.</p>
+  <h1>{{ trans('auth.register_title') }}</h1>
+  <p class="text-secondary">{{ trans('auth.register_subtitle') }}</p>
 
-  <form class="form form--centered" method="post" action="/register">
+  <form class="form form--centered" method="post" action="{{ lang_url('/register') }}">
     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
     <div class="form__field">
-      <label class="form__label" for="name">Name</label>
+      <label class="form__label" for="name">{{ trans('auth.name') }}</label>
       <input
         class="form__input{% if errors.name is defined %} form__input--error{% endif %}"
         type="text" id="name" name="name"
@@ -22,7 +22,7 @@
     </div>
 
     <div class="form__field">
-      <label class="form__label" for="email">Email</label>
+      <label class="form__label" for="email">{{ trans('auth.email') }}</label>
       <input
         class="form__input{% if errors.email is defined %} form__input--error{% endif %}"
         type="email" id="email" name="email"
@@ -34,7 +34,7 @@
     </div>
 
     <div class="form__field">
-      <label class="form__label" for="password">Password</label>
+      <label class="form__label" for="password">{{ trans('auth.password') }}</label>
       <input
         class="form__input{% if errors.password is defined %} form__input--error{% endif %}"
         type="password" id="password" name="password"
@@ -46,7 +46,7 @@
     </div>
 
     <div class="form__field">
-      <label class="form__label" for="phone">Phone <span class="form__label-optional">(optional)</span></label>
+      <label class="form__label" for="phone">{{ trans('auth.phone') }} <span class="form__label-optional">({{ trans('auth.optional') }})</span></label>
       <input
         class="form__input"
         type="tel" id="phone" name="phone"
@@ -54,10 +54,10 @@
     </div>
 
     <div class="form__actions">
-      <button class="form__submit" type="submit">Create Account</button>
+      <button class="form__submit" type="submit">{{ trans('auth.register_button') }}</button>
     </div>
   </form>
 
-  <p class="form__link">Already have an account? <a href="/login">Login</a></p>
+  <p class="form__link">{{ trans('auth.have_account') }} <a href="{{ lang_url('/login') }}">{{ trans('auth.login_link') }}</a></p>
 </section>
 {% endblock %}

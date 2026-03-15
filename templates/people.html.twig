@@ -2,36 +2,36 @@
 
 {% block title %}
   {%- if path == '/people' -%}
-    People — Minoo
+    {{ trans('people.title') }} — Minoo
   {%- elseif person is defined and person -%}
     {{ person.get('name') }} — Minoo
   {%- else -%}
-    Person Not Found — Minoo
+    {{ trans('people.not_found') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
   {% if path == '/people' %}
     <div class="flow-lg">
-      <h1>People</h1>
-      <p class="hero__subtitle">The Elders, Knowledge Keepers, language speakers, makers, and community leaders who carry our communities forward.</p>
+      <h1>{{ trans('people.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('people.subtitle') }}</p>
 
       {% if location is defined and location.hasLocation() %}
-        <p class="text-secondary">Showing results near {{ location.communityName }}. <a href="/people?all=1">Show all</a></p>
+        <p class="text-secondary">{{ trans('people.nearby_notice', {community: location.communityName}) }} <a href="{{ lang_url('/people') }}?all=1">{{ trans('people.show_all') }}</a></p>
       {% endif %}
 
       {% if people is defined and people|length > 0 %}
         <div class="people-search">
-          <label for="people-search" class="visually-hidden">Search people</label>
-          <input type="search" class="form__input people-search__input" id="people-search" placeholder="Search people…" autocomplete="off">
+          <label for="people-search" class="visually-hidden">{{ trans('people.search_placeholder') }}</label>
+          <input type="search" class="form__input people-search__input" id="people-search" placeholder="{{ trans('people.search_placeholder') }}" autocomplete="off">
         </div>
 
         <div class="people-filters" id="people-filters">
           {% if all_roles is defined and all_roles|length > 0 %}
             <div class="people-filters__group">
-              <label class="people-filters__label" for="filter-role">Role</label>
+              <label class="people-filters__label" for="filter-role">{{ trans('people.filter_role') }}</label>
               <select class="form__select people-filters__select" id="filter-role" data-filter="role">
-                <option value="">All roles</option>
+                <option value="">{{ trans('people.filter_all_roles') }}</option>
                 {% for role in all_roles|sort %}
                   <option value="{{ role }}">{{ role }}</option>
                 {% endfor %}
@@ -40,20 +40,20 @@
           {% endif %}
           {% if all_offerings is defined and all_offerings|length > 0 %}
             <div class="people-filters__group">
-              <label class="people-filters__label" for="filter-offering">Offering</label>
+              <label class="people-filters__label" for="filter-offering">{{ trans('people.filter_offering') }}</label>
               <select class="form__select people-filters__select" id="filter-offering" data-filter="offering">
-                <option value="">All offerings</option>
+                <option value="">{{ trans('people.filter_all_offerings') }}</option>
                 {% for offering in all_offerings|sort %}
                   <option value="{{ offering }}">{{ offering }}</option>
                 {% endfor %}
               </select>
             </div>
           {% endif %}
-          <button class="people-filters__clear" id="filters-clear" type="button" hidden>Clear filters</button>
+          <button class="people-filters__clear" id="filters-clear" type="button" hidden>{{ trans('people.clear_filters') }}</button>
         </div>
 
         <div class="mentor-callout">
-          <p><strong>Looking for a mentor?</strong> Many of our Elders and Knowledge Keepers are open to sharing their knowledge with the next generation. <a href="/people?role=Elder">Browse Elders</a> or <a href="/people?role=Knowledge+Keeper">Knowledge Keepers</a> to find someone near you.</p>
+          <p>{{ trans('people.mentor_callout') }}</p>
         </div>
 
         <div class="card-grid" id="people-grid">
@@ -71,19 +71,19 @@
             } %}
           {% endfor %}
         </div>
-        <p class="people-filters__empty" id="filters-empty" hidden>No people match your search or filters.</p>
+        <p class="people-filters__empty" id="filters-empty" hidden>{{ trans('people.filters_empty') }}</p>
       {% else %}
         {% include "components/empty-state.html.twig" with {
-          heading: "No community members listed yet",
-          body: "Elders, Knowledge Keepers, language speakers, makers, and community leaders will appear here as people create profiles. The people who carry our communities forward deserve to be seen.",
-          action_url: "/elders/volunteer",
-          action_label: "Volunteer to support an Elder"
+          heading: trans('people.empty_heading'),
+          body: trans('people.empty_body'),
+          action_url: lang_url('/elders/volunteer'),
+          action_label: trans('people.volunteer_button')
         } %}
       {% endif %}
     </div>
   {% elseif person is defined and person %}
     <div class="flow-lg detail">
-      <a href="/people" class="detail__back">People</a>
+      <a href="{{ lang_url('/people') }}" class="detail__back">{{ trans('people.detail_back') }}</a>
       <div class="detail__header">
         <div class="person-photo person-photo--detail">
           {% if photo_url is defined and photo_url %}
@@ -140,9 +140,9 @@
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Person Not Found</h1>
-      <p>We couldn't find this person. Their profile may have been removed or the link may be outdated.</p>
-      <p><a href="/people">Browse all people</a></p>
+      <h1>{{ trans('people.not_found') }}</h1>
+      <p>{{ trans('people.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/people') }}">{{ trans('people.browse_all') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

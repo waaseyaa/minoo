@@ -2,19 +2,19 @@
 
 {% block title %}
   {%- if path == '/events' -%}
-    Events — Minoo
+    {{ trans('events.title') }} — Minoo
   {%- elseif event is defined and event -%}
     {{ event.get('title') }} — Minoo
   {%- else -%}
-    Event Not Found — Minoo
+    {{ trans('events.not_found') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
   {% if path == '/events' %}
     <div class="flow-lg">
-      <h1>Events</h1>
-      <p class="hero__subtitle">Powwows, ceremonies, and community gatherings happening across the region.</p>
+      <h1>{{ trans('events.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('events.subtitle') }}</p>
 
       {% if events is defined and events|length > 0 %}
         <div class="card-grid">
@@ -31,16 +31,16 @@
         </div>
       {% else %}
         {% include "components/empty-state.html.twig" with {
-          heading: "No events scheduled yet",
-          body: "Powwows, gatherings, ceremonies, and community events will appear here as they're added. In the meantime, explore what's happening in your community.",
-          action_url: "/communities",
-          action_label: "Explore communities"
+          heading: trans('events.empty_heading'),
+          body: trans('events.empty_body'),
+          action_url: lang_url('/communities'),
+          action_label: trans('events.explore_button')
         } %}
       {% endif %}
     </div>
   {% elseif event is defined and event %}
     <div class="flow-lg detail">
-      <a href="/events" class="detail__back">Events</a>
+      <a href="{{ lang_url('/events') }}" class="detail__back">{{ trans('events.detail_back') }}</a>
       <div class="detail__header">
         <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
         <h1>{{ event.get('title') }}</h1>
@@ -61,9 +61,9 @@
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Event Not Found</h1>
-      <p>We couldn't find this event. It may have been removed or the link may be outdated.</p>
-      <p><a href="/events">Browse all events</a></p>
+      <h1>{{ trans('events.not_found') }}</h1>
+      <p>{{ trans('events.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/events') }}">{{ trans('events.browse_all') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

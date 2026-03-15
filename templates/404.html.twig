@@ -1,11 +1,11 @@
 {% extends "base.html.twig" %}
 
-{% block title %}404 Not Found — Minoo{% endblock %}
+{% block title %}{{ trans('error.404_title') }} — Minoo{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
-    <h1>Page Not Found</h1>
-    <p>We couldn't find what you're looking for. It may have moved or been removed.</p>
-    <p><a href="/">Go back to the homepage</a></p>
+    <h1>{{ trans('error.404_title') }}</h1>
+    <p>{{ trans('error.404_message') }}</p>
+    <p><a href="{{ lang_url('/') }}">{{ trans('error.404_home') }}</a></p>
   </div>
 {% endblock %}

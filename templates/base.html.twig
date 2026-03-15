@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ current_language().id }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,39 +11,57 @@
   {% block head %}{% endblock %}
 </head>
 <body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <a href="#main-content" class="skip-link">{{ trans('base.skip_link') }}</a>
   <div class="site">
     <header class="site-header">
       <div class="site-header__inner">
-        <a href="/" class="site-name" aria-label="Minoo — home">
+        <a href="{{ lang_url('/') }}" class="site-name" aria-label="{{ trans('base.home_label') }}">
           <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-name__wordmark" width="100" height="28">
         </a>
-        <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
-        <nav id="main-nav" aria-label="Main">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav">{{ trans('base.menu') }}</button>
+        <nav id="main-nav" aria-label="{{ trans('base.nav_main') }}">
           <ul class="site-nav">
-            <li><a href="/communities"{% if path is defined and path starts with '/communities' %} aria-current="page"{% endif %}>Communities</a></li>
-            <li><a href="/people"{% if path is defined and path starts with '/people' %} aria-current="page"{% endif %}>People</a></li>
-            <li><a href="/teachings"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>Teachings</a></li>
-            <li><a href="/events"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>Events</a></li>
+            <li><a href="{{ lang_url('/communities') }}"{% if path is defined and path starts with '/communities' %} aria-current="page"{% endif %}>{{ trans('nav.communities') }}</a></li>
+            <li><a href="{{ lang_url('/people') }}"{% if path is defined and path starts with '/people' %} aria-current="page"{% endif %}>{{ trans('nav.people') }}</a></li>
+            <li><a href="{{ lang_url('/teachings') }}"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>{{ trans('nav.teachings') }}</a></li>
+            <li><a href="{{ lang_url('/events') }}"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>{{ trans('nav.events') }}</a></li>
             <li class="site-nav__dropdown">
-              <button class="site-nav__dropdown-toggle" aria-expanded="false"{% if path is defined and (path starts with '/elders' or path starts with '/volunteer') %} aria-current="true"{% endif %}>Programs</button>
+              <button class="site-nav__dropdown-toggle" aria-expanded="false"{% if path is defined and (path starts with '/elders' or path starts with '/volunteer') %} aria-current="true"{% endif %}>{{ trans('nav.programs') }}</button>
               <ul class="site-nav__dropdown-menu">
-                <li><a href="/elders"{% if path is defined and path starts with '/elders' %} aria-current="page"{% endif %}>Elder Support</a></li>
-                <li><a href="/volunteer"{% if path is defined and path starts with '/volunteer' %} aria-current="page"{% endif %}>Volunteer</a></li>
+                <li><a href="{{ lang_url('/elders') }}"{% if path is defined and path starts with '/elders' %} aria-current="page"{% endif %}>{{ trans('nav.elder_support') }}</a></li>
+                <li><a href="{{ lang_url('/volunteer') }}"{% if path is defined and path starts with '/volunteer' %} aria-current="page"{% endif %}>{{ trans('nav.volunteer') }}</a></li>
               </ul>
             </li>
-            <li class="site-nav__utility"><a href="/search"{% if path is defined and path starts with '/search' %} aria-current="page"{% endif %}>Search</a></li>
+            <li class="site-nav__utility"><a href="{{ lang_url('/search') }}"{% if path is defined and path starts with '/search' %} aria-current="page"{% endif %}>{{ trans('nav.search') }}</a></li>
             {% if account is defined and account.isAuthenticated() %}
               {% if 'elder_coordinator' in account.getRoles() %}
-                <li class="site-nav__utility"><a href="/dashboard/coordinator"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>Dashboard</a></li>
+                <li class="site-nav__utility"><a href="{{ lang_url('/dashboard/coordinator') }}"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>{{ trans('nav.dashboard') }}</a></li>
               {% elseif 'volunteer' in account.getRoles() %}
-                <li class="site-nav__utility"><a href="/dashboard/volunteer"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>My Dashboard</a></li>
+                <li class="site-nav__utility"><a href="{{ lang_url('/dashboard/volunteer') }}"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>{{ trans('nav.my_dashboard') }}</a></li>
               {% endif %}
-              <li class="site-nav__utility"><a href="/account"{% if path is defined and path starts with '/account' %} aria-current="page"{% endif %}>Account</a></li>
-              <li class="site-nav__utility"><a href="/logout">Logout</a></li>
+              <li class="site-nav__utility"><a href="{{ lang_url('/account') }}"{% if path is defined and path starts with '/account' %} aria-current="page"{% endif %}>{{ trans('nav.account') }}</a></li>
+              <li class="site-nav__utility"><a href="{{ lang_url('/logout') }}">{{ trans('nav.logout') }}</a></li>
             {% else %}
-              <li class="site-nav__utility"><a href="/login"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>Login</a></li>
+              <li class="site-nav__utility"><a href="{{ lang_url('/login') }}"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>{{ trans('nav.login') }}</a></li>
             {% endif %}
+            <li class="site-nav__utility site-nav__lang">
+              <div class="lang-switcher">
+                <button class="lang-switcher__toggle" aria-expanded="false" aria-haspopup="true" aria-label="{{ trans('language_switcher.label') }}">
+                  {{ current_language().label }}
+                </button>
+                <ul class="lang-switcher__menu" role="menu">
+                  {% for lang in available_languages() %}
+                    <li role="menuitem">
+                      {% if lang.is_current %}
+                        <span class="lang-switcher__item lang-switcher__item--active" aria-current="true">{{ lang.label }}</span>
+                      {% else %}
+                        <a class="lang-switcher__item" href="{{ lang_switch_url(lang.id, path is defined ? path : '/') }}">{{ lang.label }}</a>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </li>
           </ul>
         </nav>
       </div>
@@ -62,17 +80,17 @@
       <div class="site-footer__inner">
         <div class="site-footer__brand">
           <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-footer__wordmark" width="80" height="22">
-          <p class="site-footer__tagline">A living map of community</p>
+          <p class="site-footer__tagline">{{ trans('footer.tagline') }}</p>
         </div>
         <div class="site-footer__bottom">
-          <p>&copy; {{ "now"|date("Y") }} Minoo</p>
-          <p class="site-footer__license">Community content is shared under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external noopener">CC BY-NC-SA 4.0</a>.</p>
-          <nav class="site-footer__links" aria-label="Legal">
-            <a href="/about">About</a>
-            <a href="/legal/privacy">Privacy</a>
-            <a href="/legal/terms">Terms</a>
-            <a href="/legal/accessibility">Accessibility</a>
-            <a href="/data-sovereignty">Data Sovereignty</a>
+          <p>&copy; {{ "now"|date("Y") }} {{ trans('footer.copyright') }}</p>
+          <p class="site-footer__license">{{ trans('footer.license')|raw }}</p>
+          <nav class="site-footer__links" aria-label="{{ trans('footer.nav_label') }}">
+            <a href="{{ lang_url('/about') }}">{{ trans('footer.about') }}</a>
+            <a href="{{ lang_url('/legal/privacy') }}">{{ trans('footer.privacy') }}</a>
+            <a href="{{ lang_url('/legal/terms') }}">{{ trans('footer.terms') }}</a>
+            <a href="{{ lang_url('/legal/accessibility') }}">{{ trans('footer.accessibility') }}</a>
+            <a href="{{ lang_url('/data-sovereignty') }}">{{ trans('footer.data_sovereignty') }}</a>
           </nav>
         </div>
       </div>
@@ -98,6 +116,21 @@
         m.previousElementSibling.setAttribute('aria-expanded', 'false');
       });
     });
+    // Language switcher dropdown
+    (function() {
+      const toggle = document.querySelector('.lang-switcher__toggle');
+      if (!toggle) return;
+      const menu = toggle.nextElementSibling;
+      toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = menu.classList.toggle('is-open');
+        this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+      document.addEventListener('click', function() {
+        menu.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    })();
   </script>
   <script>
   (function() {
@@ -117,12 +150,18 @@
       catch { return null; }
     }
 
+    const transNear = bar.dataset.transNear || 'Near {community}';
+    const transSet = bar.dataset.transSet || 'Set your location';
+    const transChange = bar.dataset.transChange || 'Change';
+    const transDetecting = bar.dataset.transDetecting || 'Detecting location\u2026';
+    const transError = bar.dataset.transError || 'Error loading results';
+
     function render(loc) {
       if (loc && loc.communityName) {
-        textEl.textContent = 'Near ' + loc.communityName;
-        toggle.textContent = 'Change';
+        textEl.textContent = transNear.replace('{community}', loc.communityName);
+        toggle.textContent = transChange;
       } else {
-        textEl.textContent = 'Set your location';
+        textEl.textContent = transSet;
         toggle.textContent = '';
       }
     }
@@ -170,7 +209,7 @@
         } catch {
           resultsList.replaceChildren();
           const li = document.createElement('li');
-          li.textContent = 'Error loading results';
+          li.textContent = transError;
           resultsList.appendChild(li);
         }
       }, 300);
@@ -193,7 +232,7 @@
     const loc = readCookie();
     if ((!loc || loc.source === 'ip' || loc.source === 'none') && navigator.geolocation && !sessionStorage.getItem('minoo_geo_asked')) {
       sessionStorage.setItem('minoo_geo_asked', '1');
-      textEl.textContent = 'Detecting location\u2026';
+      textEl.textContent = transDetecting;
       navigator.geolocation.getCurrentPosition(async (pos) => {
         try {
           const res = await fetch('/api/location/update', {
@@ -226,6 +265,9 @@
     const messages = widget.querySelector('.chat-widget__messages');
     const sendBtn = widget.querySelector('.chat-widget__send');
 
+    const transThinking = widget.dataset.transThinking || 'Thinking\u2026';
+    const transError = widget.dataset.transError || 'Something went wrong. Please try again.';
+
     const history = [];
 
     function openPanel() {
@@ -253,7 +295,7 @@
       const div = document.createElement('div');
       div.className = 'chat-widget__typing';
       div.id = 'chat-typing';
-      div.textContent = 'Thinking\u2026';
+      div.textContent = transThinking;
       messages.appendChild(div);
       messages.scrollTop = messages.scrollHeight;
     }
@@ -296,7 +338,7 @@
         }
       } catch {
         removeTyping();
-        addMessage('error', 'Something went wrong. Please try again.');
+        addMessage('error', transError);
       }
 
       sendBtn.disabled = false;

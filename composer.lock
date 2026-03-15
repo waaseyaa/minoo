@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4fe7c77de4dfbe9ec3d94e7bab2800b6",
+    "content-hash": "70f1750cea106df48d189852bd24d6ed",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3298,10 +3298,11 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/i18n",
-                "reference": "e2f2b044d4f13cb03b7c151bfc2c018d85c50363"
+                "reference": "d9c370fc8a30650bb320ac117d7eba7787e862b9"
             },
             "require": {
-                "php": ">=8.3"
+                "php": ">=8.3",
+                "twig/twig": "^3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^10.5"

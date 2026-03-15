@@ -1,19 +1,19 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Login — Minoo{% endblock %}
+{% block title %}{{ trans('auth.login_title') }} — Minoo{% endblock %}
 
 {% block content %}
 <section class="content-section flow-lg">
-  <h1>Sign In</h1>
-  <p class="text-secondary">Welcome back. Sign in to access your account and community tools.</p>
+  <h1>{{ trans('auth.login_title') }}</h1>
+  <p class="text-secondary">{{ trans('auth.login_subtitle') }}</p>
 
-  <form class="form form--centered" method="post" action="/login">
+  <form class="form form--centered" method="post" action="{{ lang_url('/login') }}">
     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
     {% if redirect is defined and redirect %}
       <input type="hidden" name="redirect" value="{{ redirect|e('html_attr') }}">
     {% endif %}
     <div class="form__field">
-      <label class="form__label" for="email">Email</label>
+      <label class="form__label" for="email">{{ trans('auth.email') }}</label>
       <input
         class="form__input{% if errors.email is defined %} form__input--error{% endif %}"
         type="email" id="email" name="email"
@@ -25,7 +25,7 @@
     </div>
 
     <div class="form__field">
-      <label class="form__label" for="password">Password</label>
+      <label class="form__label" for="password">{{ trans('auth.password') }}</label>
       <input
         class="form__input{% if errors.password is defined %} form__input--error{% endif %}"
         type="password" id="password" name="password"
@@ -36,12 +36,12 @@
     </div>
 
     <div class="form__actions">
-      <button class="form__submit" type="submit">Login</button>
+      <button class="form__submit" type="submit">{{ trans('auth.login_button') }}</button>
     </div>
 
-    <p class="form__link"><a href="/forgot-password">Forgot password?</a></p>
+    <p class="form__link"><a href="{{ lang_url('/forgot-password') }}">{{ trans('auth.forgot_password') }}</a></p>
   </form>
 
-  <p class="form__link">Don't have an account? <a href="/register">Create an account</a></p>
+  <p class="form__link">{{ trans('auth.no_account') }} <a href="{{ lang_url('/register') }}">{{ trans('auth.create_account_link') }}</a></p>
 </section>
 {% endblock %}
