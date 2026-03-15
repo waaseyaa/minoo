@@ -74,10 +74,13 @@ foreach ($seedTypes as $fixtureType => $config) {
     // Validate
     $errors = $loader->validate($records, $fixtureType);
 
-    // Validate bundle types against config entities
+    // Validate bundle types against config entities (fall back to ConfigSeeder in dev)
     if ($fixtureType === 'businesses') {
         $validTypes = array_map(fn($id) => $etm->getStorage('group_type')->load($id)?->get('type'),
             $etm->getStorage('group_type')->getQuery()->execute());
+        if ($validTypes === []) {
+            $validTypes = array_column(\Minoo\Seed\ConfigSeeder::groupTypes(), 'type');
+        }
         foreach ($records as $i => $r) {
             if (isset($r['type']) && !in_array($r['type'], $validTypes, true)) {
                 $errors[] = ($r['slug'] ?? "record {$i}") . ": invalid group type '{$r['type']}'";
@@ -86,6 +89,9 @@ foreach ($seedTypes as $fixtureType => $config) {
     } elseif ($fixtureType === 'events') {
         $validTypes = array_map(fn($id) => $etm->getStorage('event_type')->load($id)?->get('type'),
             $etm->getStorage('event_type')->getQuery()->execute());
+        if ($validTypes === []) {
+            $validTypes = array_column(\Minoo\Seed\ConfigSeeder::eventTypes(), 'type');
+        }
         foreach ($records as $i => $r) {
             if (isset($r['type']) && !in_array($r['type'], $validTypes, true)) {
                 $errors[] = ($r['slug'] ?? "record {$i}") . ": invalid event type '{$r['type']}'";

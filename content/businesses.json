@@ -1,0 +1,154 @@
+[
+  {
+    "name": "Nginaajiiw Salon & Spa",
+    "slug": "nginaajiiw-salon-spa",
+    "type": "business",
+    "description": "Full-service salon and spa in Sagamok Anishnawbek offering hair, esthetics, massage, and nail services.",
+    "phone": "+17058698163",
+    "email": "nginaajiiwsalonandspa@hotmail.com",
+    "address": "610-7 Sagamok Road, Sagamok Anishnawbek, ON P0P 2L0",
+    "url": "https://www.instagram.com/nginaajiiw.salonandspa",
+    "booking_url": "https://nginaajiiw-salon-spa.square.site",
+    "community": "Sagamok Anishnawbek",
+    "source": "manual:russell:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Z'gamok Enterprises Inc.",
+    "slug": "zgamok-enterprises",
+    "type": "business",
+    "description": "100% Indigenous-owned corporation of Sagamok Anishnawbek providing construction, mining support, and economic development services across Northern Ontario.",
+    "url": "https://zgamok.ca",
+    "community": "Sagamok Anishnawbek",
+    "source": "web:zgamok.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Z'gamok Construction LP",
+    "slug": "zgamok-construction",
+    "type": "business",
+    "description": "Indigenous-owned construction company offering heavy civil construction, ore crushing, haulage, and site maintenance for the mining sector.",
+    "url": "https://zgamok.ca",
+    "community": "Sagamok Anishnawbek",
+    "source": "web:zgamok.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Serpent River Trading Post",
+    "slug": "serpent-river-trading-post",
+    "type": "business",
+    "description": "Community-owned trading post on Highway 17 featuring an art gallery with First Nation and Canadian fine art, gas station, convenience store, and seasonal gift shop.",
+    "address": "479 Highway 17, Spanish, ON",
+    "url": "https://www.instagram.com/serpentrivertradingpost",
+    "community": "Spanish",
+    "source": "web:northernontario.travel:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Serpent River First Nation Economic Development Corporation",
+    "slug": "serpent-river-edc",
+    "type": "business",
+    "description": "Economic development corporation serving Serpent River First Nation and surrounding communities with business support, partnerships, and growth initiatives.",
+    "community": "Spanish",
+    "source": "web:211ontario.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Tanner's Your Independent Grocer",
+    "slug": "tanners-independent-grocer",
+    "type": "business",
+    "description": "Locally owned grocery store serving Espanola and the surrounding area with fresh produce, bakery, deli, and pharmacy services.",
+    "address": "110 Tudhope Street, Espanola, ON P5E 1S6",
+    "community": "Espanola",
+    "source": "web:yellowpages.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Espanola Regional Hospital and Health Centre",
+    "slug": "espanola-regional-hospital",
+    "type": "business",
+    "description": "79-bed acute care facility providing emergency, diagnostic imaging, rehabilitation, and family health services to Espanola and surrounding communities.",
+    "address": "825 McKinnon Drive, Espanola, ON P5E 1R4",
+    "url": "https://espanolaregionalhospital.ca",
+    "community": "Espanola",
+    "source": "web:espanolaregionalhospital.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Cortina Restaurant",
+    "slug": "cortina-restaurant-espanola",
+    "type": "business",
+    "description": "Family-style Italian restaurant in downtown Espanola serving the community with homestyle meals.",
+    "community": "Espanola",
+    "source": "web:northernontariolocal.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Martins Country Market",
+    "slug": "martins-country-market",
+    "type": "business",
+    "description": "Outdoor market on Highway 17 in Massey offering local produce and seasonal goods.",
+    "address": "Highway 17, Massey, ON",
+    "community": "Massey",
+    "source": "web:yellowpages.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "CJ's Auto and Varieties",
+    "slug": "cjs-auto-and-varieties",
+    "type": "business",
+    "description": "Auto repair and variety store on Sable Street in Massey serving local vehicle maintenance needs.",
+    "address": "210 Sable Street E, Massey, ON",
+    "community": "Massey",
+    "source": "web:yellowpages.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Massey Area Museum",
+    "slug": "massey-area-museum",
+    "type": "business",
+    "description": "Local heritage museum preserving and sharing the history of Massey and the surrounding Sables-Spanish Rivers area.",
+    "address": "160 Sable Street E, Massey, ON",
+    "community": "Massey",
+    "source": "web:yellowpages.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Fireside Classic Restaurant",
+    "slug": "fireside-classic-elliot-lake",
+    "type": "business",
+    "description": "Locally owned family restaurant in Elliot Lake offering classic comfort food and a welcoming atmosphere.",
+    "url": "https://www.firesideclassic.com",
+    "community": "Elliot Lake",
+    "source": "web:firesideclassic.com:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Maamwesying North Shore Community Health Services",
+    "slug": "maamwesying-health-services",
+    "type": "business",
+    "description": "Indigenous community health organization providing health programs, mental health support, and wellness services to North Shore First Nations communities.",
+    "community": "Sagamok Anishnawbek",
+    "source": "web:211north.ca:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Sagamok Naandwedjige-Gamik Health Centre",
+    "slug": "sagamok-health-centre",
+    "type": "business",
+    "description": "Community wellness centre in Sagamok Anishnawbek providing health care, health programs, and community wellness services.",
+    "community": "Sagamok Anishnawbek",
+    "source": "web:sagamokanishnawbek.com:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "name": "Waubetek Business Development Corporation",
+    "slug": "waubetek-business-development",
+    "type": "business",
+    "description": "Aboriginal financial institution providing business development support, loans, and advisory services to Indigenous entrepreneurs across Northeastern Ontario.",
+    "url": "https://www.waubetek.com",
+    "community": "Sagamok Anishnawbek",
+    "source": "web:waubetek.com:2026-03-15",
+    "verified_at": "2026-03-15T00:00:00Z"
+  }
+]
