@@ -38,9 +38,12 @@ final class EventController
         });
         $events = array_values($events);
 
+        $communities = $this->buildCommunityLookup($events);
+
         $html = $this->twig->render('events.html.twig', [
             'path' => '/events',
             'events' => $events,
+            'communities' => $communities,
         ]);
 
         return new SsrResponse(content: $html);
@@ -77,5 +80,30 @@ final class EventController
             content: $html,
             statusCode: $event !== null ? 200 : 404,
         );
+    }
+
+    /** @param list<\Waaseyaa\Entity\EntityInterface> $entities */
+    private function buildCommunityLookup(array $entities): array
+    {
+        $communityIds = array_filter(array_unique(array_map(
+            fn ($e) => $e->get('community_id'),
+            $entities
+        )));
+
+        if ($communityIds === []) {
+            return [];
+        }
+
+        $communityStorage = $this->entityTypeManager->getStorage('community');
+        $communities = $communityStorage->loadMultiple($communityIds);
+        $lookup = [];
+        foreach ($communities as $community) {
+            $lookup[(string) $community->id()] = [
+                'name' => $community->get('name') ?? $community->label(),
+                'slug' => $community->get('slug'),
+            ];
+        }
+
+        return $lookup;
     }
 }

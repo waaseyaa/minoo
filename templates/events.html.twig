@@ -19,13 +19,16 @@
       {% if events is defined and events|length > 0 %}
         <div class="card-grid">
           {% for e in events %}
+            {% set comm = communities[e.get('community_id')]|default({}) %}
             {% include "components/event-card.html.twig" with {
               title: e.get('title'),
               type: e.get('type')|default('')|capitalize,
               date: e.get('starts_at')|default(''),
               location: e.get('location')|default(''),
               excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
-              url: "/events/" ~ e.get('slug')
+              url: "/events/" ~ e.get('slug'),
+              community_name: comm.name|default(''),
+              community_slug: comm.slug|default('')
             } %}
           {% endfor %}
         </div>

@@ -38,9 +38,12 @@ final class GroupController
         });
         $groups = array_values($groups);
 
+        $communities = $this->buildCommunityLookup($groups);
+
         $html = $this->twig->render('groups.html.twig', [
             'path' => '/groups',
             'groups' => $groups,
+            'communities' => $communities,
         ]);
 
         return new SsrResponse(content: $html);
@@ -77,5 +80,30 @@ final class GroupController
             content: $html,
             statusCode: $group !== null ? 200 : 404,
         );
+    }
+
+    /** @param list<\Waaseyaa\Entity\EntityInterface> $entities */
+    private function buildCommunityLookup(array $entities): array
+    {
+        $communityIds = array_filter(array_unique(array_map(
+            fn ($e) => $e->get('community_id'),
+            $entities
+        )));
+
+        if ($communityIds === []) {
+            return [];
+        }
+
+        $communityStorage = $this->entityTypeManager->getStorage('community');
+        $communities = $communityStorage->loadMultiple($communityIds);
+        $lookup = [];
+        foreach ($communities as $community) {
+            $lookup[(string) $community->id()] = [
+                'name' => $community->get('name') ?? $community->label(),
+                'slug' => $community->get('slug'),
+            ];
+        }
+
+        return $lookup;
     }
 }

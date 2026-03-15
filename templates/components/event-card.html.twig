@@ -5,6 +5,9 @@
   {% if location is defined and location %}
     <p class="card__meta">{{ location }}</p>
   {% endif %}
+  {% if community_name is defined and community_name %}
+    <p class="card__meta card__community"><a href="/communities/{{ community_slug }}">{{ community_name }}</a></p>
+  {% endif %}
   {% if excerpt is defined and excerpt %}
     <p class="card__body">{{ excerpt }}</p>
   {% endif %}

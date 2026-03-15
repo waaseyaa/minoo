@@ -19,12 +19,15 @@
       {% if groups is defined and groups|length > 0 %}
         <div class="card-grid">
           {% for g in groups %}
+            {% set comm = communities[g.get('community_id')]|default({}) %}
             {% include "components/group-card.html.twig" with {
               name: g.get('name'),
               type: g.get('type')|default('')|capitalize,
               region: g.get('region')|default(''),
               excerpt: g.get('description')|default('')|split("\n\n")|first|length > 120 ? g.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : g.get('description')|default('')|split("\n\n")|first,
-              url: "/groups/" ~ g.get('slug')
+              url: "/groups/" ~ g.get('slug'),
+              community_name: comm.name|default(''),
+              community_slug: comm.slug|default('')
             } %}
           {% endfor %}
         </div>
