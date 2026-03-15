@@ -112,32 +112,31 @@ return [
 
     // Home page
     'page.title' => "Gikinoo'amaadiwin Mazina'igan O'ow Akiing",
-    'page.subtitle' => "Naanagidoon anishinaabeg, gikinoo'amaagewinan, maawanji'idiwinan, miinawaa onaakonigewinan gaa-mino-ayaawiyaang endaayang. Bizindan oodenaying miinawaa gichi-oodena endaayang.",
-    'page.communities_button' => 'Oodenawinan', // dict: oodena: "town" (plural)
-    'page.people_button' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
     'page.nearby_heading' => '{community} endaad noongom',
-    'page.nearby_communities' => 'Oodenawinan endaayang',
-    'page.upcoming_events' => "Maawanji'idiwinan gaa-izhi-ayaawiyan",
-    'page.view_all_communities' => 'Gaa-ganawenjigaadeg oodenawinan',
-    'page.view_all_events' => "Gaa-ganawenjigaadeg maawanji'idiwinan",
-    'page.explore_heading' => 'Bizindaw Minoo',
-    'page.communities_desc' => 'Ogimaawi-anishinaabeg miinawaa onjibaa-onaakonigewinan giiwedin Ontarioing — naanagidoon gid-oodena miinawaa gaye gichi-oodena endaayang.',
-    'page.people_desc' => "Gichi-aya'aag, Gikendaasowininiwag, Anishinaabemowin-ikidowag, odaminowag, miinawaa ogimaawi-anishinaabeg — ogii-aya'aag gaa-ozhitoowaad omaa bimaadiziwin.",
-    'page.teachings_desc' => "Bimaadiziwin gikendaasowin — izhinamowin, dibaajimowin, miinawaa anishinaabemowin. Gikinoo'amaagewinan gaa-izhi-bimaadiziyang noongom.",
-    'page.events_desc' => "Niimi'idiwinan, maawanji'idiwinan, anami'egiwinan, miinawaa oodena-giizhigadwinan gaye endaayang.",
-    'page.elder_support_desc' => "Wiidookaage gichi-aya'aag omaa oodenaying — gaa-izhi-bagidinang wiidookawishin. Apane apii apane mino-ayaawiyaang.",
-    'page.who_for_heading' => 'Aaniin Minoo gaa-izhi-ayaawiyan?',
-    'page.who_for_intro' => 'Minoo gaa-izhi-ayaawiyan ogimaawi-anishinaabeg miinawaa oodenaang giiwedin Ontarioing.',
-    'page.audience.elders' => 'Gichi-aya\'aag', // dict: gichi-aya'aa: "an elder" (plural)
-    'page.audience.elders_desc' => "Gagwe-gashkitoon gaye anooj wiidookaagewin — bimibatooyan, bagidinowin, gitigaan-onaabaniwin, miinawaa gaye ozhiwebad — ogii-aya'aag wiidookaagewin dazhi-izhiwebad.",
-    'page.audience.young_people' => 'Oshki-bimaadizijig', // dict: oshki-: "new" + bimaadizi: "s/he lives"
-    'page.audience.young_people_desc' => "Naanagidoon ogimaawi-bimaadizijig, gikinoo'amaagewinan, miinawaa maawanji'idiwinan oodenaying. Waa-ayaa'aag gaa-ozhitoowaad oodenaang — miinawaa bizindan gid-izhi-bimaadiziyan.",
-    'page.audience.knowledge_keepers' => 'Gekinoo\'amaagedijig', // dict: gikinoo'amaage: "s/he teaches"
-    'page.audience.knowledge_keepers_desc' => "Biidoon gikinoo'amaagewinan, anishinaabemowin, miinawaa gashkitoonaanan ogii-izhi-gikendangig. Gid-ozhibii'igan wiikaa ogii-naanagidoowaag.",
-    'page.audience.families' => 'Odinawemaaganag', // dict: inawemaagan: "a relative" (plural)
-    'page.audience.families_desc' => "Nandawenjige maawanji'idiwinan, izhinamowin-onaakonigewinan, miinawaa oodena-onaakonigewinan endaayang. Gashkitoon wiikaa gii-izhiwebad.",
-    'page.audience.volunteers' => 'Wiidookaagejig', // dict: wiidookaage: "s/he helps people" (plural)
-    'page.audience.volunteers_desc' => "Biinish apii apane wiidookaage gichi-aya'aag. Mii eta go gichi-mino-ayaawiyaang gaa-izhiwebad.",
+    'page.explore_north_shore' => 'Explore communities across the North Shore',
+    'page.search_label' => 'Search',
+    'page.search_type' => 'Search type',
+    'page.search_all' => 'All',
+    'page.search_businesses' => 'Businesses',
+    'page.search_people' => 'People',
+    'page.search_events' => 'Events',
+    'page.search_query' => 'Search',
+    'page.search_placeholder' => 'What are you looking for? e.g., beadwork, salon, powwow',
+    'page.search_button' => 'Explore',
+    'page.tabs_label' => 'Browse content',
+    'page.tab_nearby' => 'Nearby',
+    'page.tab_events' => 'Events',
+    'page.tab_people' => 'People',
+    'page.tab_groups' => 'Groups',
+    'page.type_business' => 'Business',
+    'page.type_event' => 'Event',
+    'page.type_person' => 'Person',
+    'page.empty_state' => "We're just getting started in this area. Know a business, event, or community leader we should include? Let us know.",
+    'page.communities_heading' => 'Communities',
+    'page.about_heading' => 'What is Minoo?',
+    'page.about_body' => "We're building a place where Indigenous communities, businesses, and Knowledge Keepers are visible and connected. Browse local businesses, find upcoming events, or connect with people in your area.",
+    'page.about_cta' => 'Learn more',
+    'page.about_compact' => 'Minoo connects Indigenous communities.',
 
     // Events
     'events.title' => 'Maawanji\'idiwinan', // dict: maawanji'idiwag: "they come together, meet"
