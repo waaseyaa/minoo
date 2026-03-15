@@ -173,7 +173,13 @@ foreach ($seedTypes as $fixtureType => $config) {
                         }
                     }
                     $entity->set('updated_at', $now);
-                    $storage->save($entity);
+                    try {
+                        $storage->save($entity);
+                    } catch (\Throwable $e) {
+                        $errored++;
+                        $warnings[] = "Failed to save {$slug}: " . $e->getMessage();
+                        continue;
+                    }
                 }
             }
             $updated++;
@@ -188,7 +194,13 @@ foreach ($seedTypes as $fixtureType => $config) {
             if ($apply) {
                 $class = $config['class'];
                 $entity = new $class($values);
-                $storage->save($entity);
+                try {
+                    $storage->save($entity);
+                } catch (\Throwable $e) {
+                    $errored++;
+                    $warnings[] = "Failed to save {$slug}: " . $e->getMessage();
+                    continue;
+                }
             }
             $created++;
             if ($verbose) {

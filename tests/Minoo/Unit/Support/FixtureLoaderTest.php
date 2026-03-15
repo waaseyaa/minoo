@@ -136,6 +136,18 @@ final class FixtureLoaderTest extends TestCase
     }
 
     #[Test]
+    public function validatePeopleRequiresConsentPublic(): void
+    {
+        $loader = new FixtureLoader($this->tempDir);
+        $errors = $loader->validate([
+            ['name' => 'Person', 'slug' => 'person', 'community' => 'Town'],
+        ], 'people');
+
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('consent_public', $errors[0]);
+    }
+
+    #[Test]
     public function validateAcceptsE164Phone(): void
     {
         $loader = new FixtureLoader($this->tempDir);

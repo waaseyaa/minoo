@@ -52,6 +52,10 @@ final class FixtureLoader
                 }
             }
 
+            if ($fixtureType === 'people' && !array_key_exists('consent_public', $record)) {
+                $errors[] = "{$label}: missing required field 'consent_public'";
+            }
+
             if (isset($record['slug'])) {
                 if (isset($slugs[$record['slug']])) {
                     $errors[] = "{$label}: duplicate slug '{$record['slug']}'";

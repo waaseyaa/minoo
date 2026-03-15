@@ -128,6 +128,7 @@
     "roles": ["Artist"],
     "offerings": ["Crafts", "Cultural Services"],
     "community": "Spanish",
+    "consent_public": false,
     "source": "manual:russell:2026-03-15",
     "verified_at": "2026-03-15T00:00:00Z"
   }
