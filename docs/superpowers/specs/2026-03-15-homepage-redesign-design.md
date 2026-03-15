@@ -55,7 +55,17 @@ Forest gradient using existing tokens: `--forest-700` to `--forest-900`.
 </form>
 ```
 
-**Phase 1 behavior:** Form submits to section pages. `/explore?type=businesses&q=beadwork` redirects to `/groups?q=beadwork`. Empty `q` redirects to the section landing. Target pages ignore `q` for now — ready for future search API.
+**Phase 1 behavior:** The homepage controller handles the `/explore` route directly (no separate controller needed). It reads `type` and `q`, then redirects:
+
+| `type` value | Redirect target |
+|-------------|-----------------|
+| `businesses` | `/groups?q={q}` |
+| `people` | `/people?q={q}` |
+| `events` | `/events?q={q}` |
+| `all` (default) | `/groups?q={q}` |
+| missing/invalid | `/groups` |
+
+If `q` is empty, redirect to the section landing page without `?q=`. Target pages ignore `q` for now — ready for future search API. The route is registered in the homepage controller's `routes()` method.
 
 ### 1.6 Mobile
 
@@ -85,21 +95,21 @@ Default active tab: **Nearby**.
 
 **SSR (no JS):**
 - All four tab panels rendered in HTML
-- Active panel: `display: block`
-- Inactive panels: `display: none`
+- Active panel: visible (no `hidden` attribute)
+- Inactive panels: `hidden` attribute (HTML standard, removes from rendering and accessibility tree)
 - Tab links are anchor elements with `href` to section pages (`/events`, `/people`, `/groups`)
 - `data-tab` attribute on each tab and `data-panel` on each panel for JS binding
 
 **With JS (~15 lines):**
 - Intercepts tab clicks
-- Swaps `display` and `aria-selected` attributes
+- Toggles `hidden` attribute on panels and `aria-selected` on tabs
 - Updates URL hash (`#events`, `#people`, `#groups`) for direct linking
 - On page load, reads hash to activate correct tab
 
 **Markup pattern:**
 ```html
 <nav class="homepage-tabs" role="tablist">
-  <a href="/groups" role="tab" data-tab="nearby" aria-selected="true" class="homepage-tabs__tab homepage-tabs__tab--active">Nearby</a>
+  <a href="/" role="tab" data-tab="nearby" aria-selected="true" class="homepage-tabs__tab homepage-tabs__tab--active">Nearby</a>
   <a href="/events" role="tab" data-tab="events" aria-selected="false" class="homepage-tabs__tab">Events</a>
   <a href="/people" role="tab" data-tab="people" aria-selected="false" class="homepage-tabs__tab">People</a>
   <a href="/groups" role="tab" data-tab="groups" aria-selected="false" class="homepage-tabs__tab">Groups</a>
@@ -138,7 +148,7 @@ All entity types (business, event, person) use a single card component with a ty
 |------|------------|-------------|
 | Business/Group | `--forest-500` | `--forest-500` |
 | Event | `--water-600` | `--water-600` |
-| Person | `--teal` (domain color) | `--teal` |
+| Person | `--domain-people` | `--domain-people` |
 
 ### 3.3 Meta Line Content
 
@@ -156,7 +166,7 @@ Up to 6 cards per tab panel. If fewer than 6 available, show what exists.
 
 ### 3.5 Content Selection Logic
 
-**Nearby tab:** Query all three entity types, sort by proximity to user location, interleave by type for variety, limit to 6.
+**Nearby tab:** Query up to 3 from each entity type (groups, events, people), sorted by proximity within each type. Merge into a single list using round-robin interleaving: pick 1 group, 1 event, 1 person, repeat until 6 total or all sources exhausted. If a type has fewer than 2 results, the remaining slots go to the other types. Events with `starts_at` in the past are excluded.
 
 **Events tab:** Query events where `starts_at > now()`, sort ascending by `starts_at`, limit to 6.
 
@@ -164,13 +174,15 @@ Up to 6 cards per tab panel. If fewer than 6 available, show what exists.
 
 **Groups tab:** Query groups, sort by proximity, limit to 6.
 
-**Proximity sorting:** When location is unknown, fall back to: events by date, people/groups alphabetically.
+**Proximity sorting:** Entities are sorted by the distance from the user's location to their associated community. Groups and events have a `community_id` field pointing to a community entity with lat/lon coordinates. People have a `community` string field — match it to a community entity by name to get coordinates. When location is unknown, fall back to: events by date, people/groups alphabetically.
 
 ### 3.6 Empty States
 
-If a tab has zero content: show a short message following the content tone guide.
+If a tab has zero content, show a message following the content tone guide:
 
-Example: "We're just getting started here. Help us grow Minoo by sharing a business or event in your community."
+"We're just getting started in this area. Know a business, event, or community leader we should include? Let us know."
+
+This is the final copy for all empty tab panels. No per-tab variation for Phase 1.
 
 ## 4. Communities Row
 
@@ -222,7 +234,7 @@ Background: `--earth-100`. Padding: `var(--space-l)` block.
 
 ### 6.1 Controller Changes
 
-The existing `RenderController` (or a new `HomepageController`) needs to assemble data for all four tab panels:
+A new `HomepageController` in `src/Controller/HomepageController.php` handles both the homepage view and the `/explore` search redirect. Registered via a new route in the existing `PageServiceProvider` (or a dedicated provider if the controller needs its own). The controller assembles data for all four tab panels:
 
 ```php
 // Pseudocode for homepage data assembly
