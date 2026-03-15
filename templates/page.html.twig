@@ -31,10 +31,10 @@
 
   {# === Sticky Tab Row === #}
   <nav class="homepage-tabs" role="tablist" aria-label="{{ trans('page.tabs_label') }}">
-    <a href="{{ lang_url('/') }}" role="tab" data-tab="nearby" aria-selected="true" class="homepage-tab active">{{ trans('page.tab_nearby') }}</a>
-    <a href="{{ lang_url('/events') }}" role="tab" data-tab="events" aria-selected="false" class="homepage-tab">{{ trans('page.tab_events') }}</a>
-    <a href="{{ lang_url('/people') }}" role="tab" data-tab="people" aria-selected="false" class="homepage-tab">{{ trans('page.tab_people') }}</a>
-    <a href="{{ lang_url('/groups') }}" role="tab" data-tab="groups" aria-selected="false" class="homepage-tab">{{ trans('page.tab_groups') }}</a>
+    <a href="{{ lang_url('/') }}" role="tab" data-tab="nearby" aria-selected="true" tabindex="0" class="homepage-tab active">{{ trans('page.tab_nearby') }}</a>
+    <a href="{{ lang_url('/events') }}" role="tab" data-tab="events" aria-selected="false" tabindex="-1" class="homepage-tab">{{ trans('page.tab_events') }}</a>
+    <a href="{{ lang_url('/people') }}" role="tab" data-tab="people" aria-selected="false" tabindex="-1" class="homepage-tab">{{ trans('page.tab_people') }}</a>
+    <a href="{{ lang_url('/groups') }}" role="tab" data-tab="groups" aria-selected="false" tabindex="-1" class="homepage-tab">{{ trans('page.tab_groups') }}</a>
   </nav>
 
   {# === Tab Panels === #}
@@ -175,6 +175,7 @@
       tabs.forEach(t => {
         const isActive = t.dataset.tab === tabId;
         t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        t.setAttribute('tabindex', isActive ? '0' : '-1');
         t.classList.toggle('active', isActive);
       });
       panels.forEach(p => {

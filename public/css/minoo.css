@@ -1885,43 +1885,6 @@
     text-align: center;
   }
 
-  .explore-grid {
-    text-align: start;
-    margin-block-start: var(--space-md);
-  }
-
-  .explore-card {
-    max-inline-size: unset;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--space-md);
-    border-inline-start-width: 1px;
-    background-color: var(--surface-raised);
-    color: var(--text-primary);
-  }
-
-  .explore-card__icon {
-    inline-size: 2rem;
-    block-size: 2rem;
-    color: var(--accent);
-    transition: transform var(--duration-fast) var(--ease-out);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .explore-card:hover .explore-card__icon {
-      transform: translateX(2px);
-    }
-  }
-
-  .explore-card--elder {
-    --card-accent: var(--domain-elders);
-  }
-
-  .explore-card--elder .explore-card__icon {
-    color: var(--domain-elders);
-  }
-
   /* CTA buttons */
   .btn {
     display: inline-flex;
@@ -2329,26 +2292,6 @@
     }
   }
 }
-
-  .audience-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-    gap: var(--space-md);
-
-    & .audience-grid__item {
-      padding: var(--space-sm);
-
-      & h3 {
-        font-size: var(--step-0);
-        margin-block-end: var(--space-xs);
-      }
-
-      & p {
-        font-size: var(--step--1);
-        color: var(--text-secondary);
-      }
-    }
-  }
 
   .mentor-callout {
     background: var(--surface-warm);

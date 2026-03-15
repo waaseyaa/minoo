@@ -60,7 +60,6 @@ return [
 
     // Home page
     'page.title' => 'A Living Map of Community',
-    'page.subtitle' => 'Find the people, teachings, events, and programs that strengthen where you live. Explore your community and the communities around you.',
     'page.nearby_heading' => 'Near {community}',
     'page.explore_north_shore' => 'Explore communities across the North Shore',
     'page.search_label' => 'Search',
