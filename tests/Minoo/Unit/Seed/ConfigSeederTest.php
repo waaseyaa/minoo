@@ -27,8 +27,31 @@ final class ConfigSeederTest extends TestCase
     {
         $types = ConfigSeeder::groupTypes();
 
-        $this->assertCount(3, $types);
+        $this->assertCount(4, $types);
         $this->assertSame('online', $types[0]['type']);
+    }
+
+    #[Test]
+    public function groupTypesIncludesBusiness(): void
+    {
+        $types = ConfigSeeder::groupTypes();
+        $typeIds = array_column($types, 'type');
+        $this->assertContains('business', $typeIds);
+    }
+
+    #[Test]
+    public function businessGroupTypeHasName(): void
+    {
+        $types = ConfigSeeder::groupTypes();
+        $business = null;
+        foreach ($types as $type) {
+            if ($type['type'] === 'business') {
+                $business = $type;
+                break;
+            }
+        }
+        $this->assertNotNull($business);
+        $this->assertSame('Local Business', $business['name']);
     }
 
     #[Test]
