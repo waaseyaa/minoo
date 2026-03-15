@@ -3,8 +3,9 @@
 {% block title %}{{ community.get('name') }} — Minoo{% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="/css/atlas.css?v=5">
-  <link rel="stylesheet" href="/css/leaflet.css">
+  <link rel="stylesheet" href="/css/atlas.min.css?v=6">
+  <link rel="stylesheet" href="/css/leaflet.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/css/leaflet.css"></noscript>
 {% endblock %}
 
 {% block content %}
