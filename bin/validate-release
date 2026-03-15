@@ -1,0 +1,232 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * V1 Release Checklist Validator
+ * Outputs a YAML-formatted report with pass/fail per check.
+ *
+ * Usage: bin/validate-release
+ *
+ * Exit code 0 if all pass, 1 if any fail.
+ */
+
+$projectRoot = dirname(__DIR__);
+
+$results = [];
+$anyFailed = false;
+
+function addResult(string $name, bool $pass, string $detail = ''): void
+{
+    global $results, $anyFailed;
+    $results[] = ['name' => $name, 'status' => $pass ? 'pass' : 'fail', 'detail' => $detail];
+    if (!$pass) {
+        $anyFailed = true;
+    }
+}
+
+// --- 1. composer audit ---
+
+$auditOutput = [];
+$auditExitCode = 0;
+$auditCmd = sprintf('cd %s && composer audit --format=json 2>&1', escapeshellarg($projectRoot));
+$auditRaw = shell_exec($auditCmd);
+$auditJson = $auditRaw !== null ? json_decode($auditRaw, true) : null;
+
+$criticalHigh = 0;
+if (is_array($auditJson) && isset($auditJson['advisories']) && is_array($auditJson['advisories'])) {
+    foreach ($auditJson['advisories'] as $advisories) {
+        foreach ($advisories as $advisory) {
+            $severity = strtolower((string) ($advisory['severity'] ?? ''));
+            if ($severity === 'critical' || $severity === 'high') {
+                $criticalHigh++;
+            }
+        }
+    }
+}
+
+addResult(
+    'composer_audit',
+    $criticalHigh === 0,
+    $criticalHigh > 0
+        ? sprintf('%d critical/high vulnerabilities', $criticalHigh)
+        : 'no critical/high vulnerabilities',
+);
+
+// --- 2. All entity types have consent fields ---
+
+$consentProviders = [
+    'EventServiceProvider',
+    'GroupServiceProvider',
+    'CulturalGroupServiceProvider',
+    'CulturalCollectionServiceProvider',
+    'PeopleServiceProvider',
+    'LeaderServiceProvider',
+    'LanguageServiceProvider',
+    'TeachingServiceProvider',
+];
+
+$consentMissing = [];
+foreach ($consentProviders as $provider) {
+    $filePath = $projectRoot . '/src/Provider/' . $provider . '.php';
+    if (!is_file($filePath)) {
+        $consentMissing[] = $provider . ' (missing)';
+        continue;
+    }
+    $content = file_get_contents($filePath);
+    if (!str_contains($content, "'consent_public'") || !str_contains($content, "'consent_ai_training'")) {
+        $consentMissing[] = $provider;
+    }
+}
+
+addResult(
+    'consent_fields',
+    $consentMissing === [],
+    $consentMissing !== []
+        ? 'missing in: ' . implode(', ', $consentMissing)
+        : 'all providers have consent fields',
+);
+
+// --- 3. robots.txt ---
+
+$robotsFile = $projectRoot . '/public/robots.txt';
+$robotsOk = false;
+$robotsDetail = '';
+if (is_file($robotsFile)) {
+    $robotsContent = file_get_contents($robotsFile);
+    $robotsOk = str_contains($robotsContent, 'Disallow: /api/')
+        && str_contains($robotsContent, 'Disallow: /dashboard/');
+    $robotsDetail = $robotsOk ? '/api/ and /dashboard/ blocked' : 'missing disallow rules';
+} else {
+    $robotsDetail = 'robots.txt not found';
+}
+
+addResult('robots_txt', $robotsOk, $robotsDetail);
+
+// --- 4. License ---
+
+$composerJsonPath = $projectRoot . '/composer.json';
+$licenseOk = false;
+$licenseDetail = '';
+if (is_file($composerJsonPath)) {
+    $composer = json_decode(file_get_contents($composerJsonPath), true);
+    $license = $composer['license'] ?? '';
+    $licenseOk = strcasecmp($license, 'MIT') === 0;
+    $licenseDetail = $licenseOk ? 'MIT' : sprintf('got "%s"', $license);
+} else {
+    $licenseDetail = 'composer.json not found';
+}
+
+addResult('license_mit', $licenseOk, $licenseDetail);
+
+// --- 5. No commercial-use keywords ---
+
+$commercialKeywords = ['stripe', 'payment', 'subscription', 'paywall'];
+$foundCommercial = [];
+
+$scanDirs = ['src', 'config', 'templates'];
+foreach ($scanDirs as $dir) {
+    $fullDir = $projectRoot . '/' . $dir;
+    if (!is_dir($fullDir)) {
+        continue;
+    }
+
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($fullDir, RecursiveDirectoryIterator::SKIP_DOTS),
+    );
+
+    foreach ($iterator as $file) {
+        if (!$file->isFile()) {
+            continue;
+        }
+        $ext = $file->getExtension();
+        if (!in_array($ext, ['php', 'twig', 'yml', 'yaml', 'json'], true)) {
+            continue;
+        }
+
+        $content = file_get_contents($file->getPathname());
+        $contentLower = strtolower($content);
+        foreach ($commercialKeywords as $keyword) {
+            if (str_contains($contentLower, $keyword)) {
+                $relative = str_replace($projectRoot . '/', '', $file->getPathname());
+                $foundCommercial[] = sprintf('%s (%s)', $relative, $keyword);
+            }
+        }
+    }
+}
+
+addResult(
+    'no_commercial_keywords',
+    $foundCommercial === [],
+    $foundCommercial !== []
+        ? 'found: ' . implode(', ', $foundCommercial)
+        : 'clean',
+);
+
+// --- 6. .env.example has required NC variables ---
+
+$envExample = $projectRoot . '/.env.example';
+$requiredVars = ['NORTHCLOUD_BASE_URL', 'NORTHCLOUD_API_TOKEN', 'NORTHCLOUD_SEARCH_URL'];
+$envOk = false;
+$envDetail = '';
+
+if (is_file($envExample)) {
+    $envContent = file_get_contents($envExample);
+    $envMissing = [];
+    foreach ($requiredVars as $var) {
+        if (!str_contains($envContent, $var)) {
+            $envMissing[] = $var;
+        }
+    }
+    $envOk = $envMissing === [];
+    $envDetail = $envOk
+        ? 'all NC variables present'
+        : 'missing: ' . implode(', ', $envMissing);
+} else {
+    $envDetail = '.env.example not found -- consider creating one';
+}
+
+addResult('env_example', $envOk, $envDetail);
+
+// --- 7. All bin/ scripts are executable ---
+
+$binDir = $projectRoot . '/bin';
+$nonExecutable = [];
+if (is_dir($binDir)) {
+    $binFiles = scandir($binDir);
+    foreach ($binFiles as $binFile) {
+        if ($binFile === '.' || $binFile === '..') {
+            continue;
+        }
+        $binPath = $binDir . '/' . $binFile;
+        if (is_file($binPath) && !is_executable($binPath)) {
+            $nonExecutable[] = $binFile;
+        }
+    }
+}
+
+addResult(
+    'bin_executable',
+    $nonExecutable === [],
+    $nonExecutable !== []
+        ? 'not executable: ' . implode(', ', $nonExecutable)
+        : 'all scripts executable',
+);
+
+// --- Output YAML report ---
+
+fprintf(STDOUT, "release_validation:\n");
+fprintf(STDOUT, "  date: \"%s\"\n", date('Y-m-d'));
+fprintf(STDOUT, "  overall: %s\n", $anyFailed ? 'fail' : 'pass');
+fprintf(STDOUT, "  checks:\n");
+
+foreach ($results as $result) {
+    fprintf(STDOUT, "    - name: %s\n", $result['name']);
+    fprintf(STDOUT, "      status: %s\n", $result['status']);
+    if ($result['detail'] !== '') {
+        fprintf(STDOUT, "      detail: \"%s\"\n", addcslashes($result['detail'], '"'));
+    }
+}
+
+exit($anyFailed ? 1 : 0);
