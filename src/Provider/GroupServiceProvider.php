@@ -50,11 +50,34 @@ final class GroupServiceProvider extends ServiceProvider
                     'settings' => ['target_type' => 'community'],
                     'weight' => 16,
                 ],
+                'phone' => [
+                    'type' => 'string',
+                    'label' => 'Phone',
+                    'description' => 'Business phone number in E.164 format.',
+                    'weight' => 17,
+                ],
+                'email' => [
+                    'type' => 'string',
+                    'label' => 'Email',
+                    'weight' => 18,
+                ],
+                'address' => [
+                    'type' => 'string',
+                    'label' => 'Address',
+                    'description' => 'Physical address.',
+                    'weight' => 19,
+                ],
+                'booking_url' => [
+                    'type' => 'uri',
+                    'label' => 'Booking URL',
+                    'description' => 'External booking link.',
+                    'weight' => 20,
+                ],
                 'media_id' => [
                     'type' => 'entity_reference',
                     'label' => 'Image',
                     'settings' => ['target_type' => 'media'],
-                    'weight' => 20,
+                    'weight' => 21,
                 ],
                 'copyright_status' => [
                     'type' => 'string',
@@ -76,6 +99,18 @@ final class GroupServiceProvider extends ServiceProvider
                     'description' => 'Whether this content may be used for AI training. Default: no.',
                     'weight' => 29,
                     'default' => 0,
+                ],
+                'source' => [
+                    'type' => 'string',
+                    'label' => 'Source',
+                    'description' => 'Provenance tag (e.g. manual:russell:2026-03-15).',
+                    'weight' => 95,
+                ],
+                'verified_at' => [
+                    'type' => 'datetime',
+                    'label' => 'Verified At',
+                    'description' => 'When this record was last verified.',
+                    'weight' => 96,
                 ],
                 'status' => [
                     'type' => 'boolean',
