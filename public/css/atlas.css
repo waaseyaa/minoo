@@ -9,6 +9,11 @@
   --atlas-chip-bg: #c8d6c4;
 }
 
+/* --- Page Wrapper (clip Leaflet overflow without breaking vertical scroll) --- */
+[x-data="atlasDiscovery()"] {
+  overflow-x: clip;
+}
+
 /* --- Contextual Header --- */
 .atlas-header {
   background: linear-gradient(135deg, var(--atlas-deep) 0%, var(--atlas-forest) 100%);
