@@ -10,80 +10,81 @@ Surface NorthCloud band office and leadership contact data on community detail p
 
 ## Scope
 
-- **In scope:** Community contact card (leadership + band office), community name links on related entity cards
+- **In scope:** Extract contact card component, add error handling, add community links to entity cards, testing
 - **Out of scope:** Contact forms, outreach logging, stale data flagging, ingestion/sync jobs, authenticated-only features
 
-## Architecture: Controller-Level Fetch
+## Current State (Already Implemented)
 
-No new entities, tables, or providers. The existing `NorthCloudClient` and SQLite cache layer handle all NC communication.
+The core data flow is already working:
 
-### Data Flow
+- **`CommunityController::show()`** already calls `NorthCloudClient::getPeople($ncId)` and `getBandOffice($ncId)`, passing `people` and `band_office` to the template
+- **`templates/communities/detail.html.twig`** already renders leadership (chief + councillors) and band office contact data (address, phone, email, office hours, fax, toll-free) inline with `{% if %}` guards
+- **`NorthCloudClient`** already has both methods with SQLite cache (`nc_api_cache`, TTL: 3600s)
 
-1. `CommunityController::show()` loads the community entity
-2. If the community has an `nc_id`:
-   - Calls `NorthCloudClient::getPeople($ncId)` → array of current leadership
-   - Calls `NorthCloudClient::getBandOffice($ncId)` → band office contact object (or null)
-   - Both calls use the existing SQLite cache (`nc_api_cache`, TTL: 3600s)
-3. Passes `leadership` and `bandOffice` to the template alongside the community entity
-4. If `nc_id` is null or API returns empty/error — no contact card rendered, graceful no-op
+## Remaining Work
 
-### Error Handling
+### 1. Add `community_id` field to event, group, and teaching entities
 
-The NC API calls in `CommunityController::show()` are wrapped in try/catch. If NorthCloud is unreachable or returns an error, the page renders normally without the contact card. The community's own entity data is unaffected.
+These entities currently lack a community relationship. Add a `community_id` field (type: `entity_reference`, target: `community`, nullable) to each:
 
-## Template Changes
+| Entity | Provider | Insert after | Weight |
+|--------|----------|-------------|--------|
+| `event` | `EventServiceProvider` | `location` | 12 |
+| `group` | `GroupServiceProvider` | `region` | 16 |
+| `teaching` | `TeachingServiceProvider` | `cultural_group_id` | 12 |
 
-### New Component: `templates/components/community-contact-card.html.twig`
+**Schema drift:** Adding fields to `fieldDefinitions` does not ALTER existing SQLite tables. Run `bin/waaseyaa schema:check` after, then `ALTER TABLE ... ADD COLUMN community_id` on any environment with existing tables.
 
-Full contact card rendered on the community detail page. Sections:
+### 2. Add try/catch to CommunityController::show()
 
-- **Leadership:** Chief/council names + roles (from `getPeople` response)
-- **Band Office:** Address, phone, email, office hours (from `getBandOffice` response)
-- Each section only renders if the corresponding data exists
+The current `show()` method calls `getPeople()` and `getBandOffice()` without error handling. If NorthCloud is unreachable, the page crashes. Wrap the NC calls in try/catch so the page renders normally without the contact card when NC is unavailable.
 
-### Existing Card Updates
+### 3. Extract community-contact-card component
 
-`event-card.html.twig`, `group-card.html.twig`, `teaching-card.html.twig` — where these cards already display a community name, make it a link to `/communities/{slug}`. No inline contact data on cards.
+Refactor the existing inline leadership + band office markup in `detail.html.twig` (lines ~78–157) into a reusable `templates/components/community-contact-card.html.twig`. Include it from `detail.html.twig` with `{% include %}`. This enables future reuse and keeps the detail template focused.
 
-## CSS
+### 4. Add community links to entity cards
 
-New `.community-contact-card` component in `@layer components` in `public/css/minoo.css`. Follows existing card patterns:
+The card templates (`event-card`, `group-card`, `teaching-card`) currently do **not** reference community data. The page templates that render them (`events.html.twig`, `groups.html.twig`, `teachings.html.twig`) pass pre-shaped variables like `title`, `url`, `excerpt` — but not community info.
 
-- Logical properties (`margin-block`, `padding-inline`)
-- Native nesting
-- Container queries
-- `gap` for spacing
+Changes needed:
+- Controllers/page templates must resolve the `community_id` field to a community entity, then pass `community_name` and `community_slug` to cards
+- Card templates add a community name link to `/communities/{community_slug}` when data is present
+- Cards without a community relationship render unchanged (field is nullable)
 
-## Controller Changes
+### 5. CSS for extracted component
 
-**Modified:** `CommunityController::show()` only.
+Move existing contact card styles into a `.community-contact-card` component in `@layer components` in `minoo.css`. Follows existing patterns: logical properties, native nesting, container queries, `gap` for spacing.
 
-Adds two `NorthCloudClient` calls when `nc_id` is present, passes results to the community detail template. Try/catch for graceful degradation.
+### 6. Testing
 
-**No changes to:** `EventController`, `GroupController`, `TeachingController`. The community name link is a template-level change using data already available in those templates.
-
-## Testing
-
-### Unit Tests
-
-- `CommunityControllerTest`: Mock `NorthCloudClient` to verify `leadership` and `bandOffice` are passed to the template when `nc_id` is present
+**Unit tests:**
+- `CommunityControllerTest`: verify try/catch — mock `NorthCloudClient` to throw exception, assert page still renders
+- Verify `people` and `band_office` are passed when `nc_id` is present
 - Verify graceful handling when `nc_id` is null
-- Verify graceful handling when NC API returns empty/error
+- Entity field definition tests for new `community_id` on event, group, teaching
 
-### Playwright
-
-- Smoke test: community detail page renders the contact card when NC data exists
+**Playwright:**
+- Smoke test: community detail page renders the contact card when data exists
+- Smoke test: entity cards link community name when relationship exists
 
 ## Files to Create/Modify
 
 | File | Action |
 |------|--------|
-| `src/Controller/CommunityController.php` | Modify `show()` — add NC client calls |
-| `templates/components/community-contact-card.html.twig` | Create — full contact card component |
-| `templates/communities.html.twig` | Modify — include contact card component |
-| `templates/components/event-card.html.twig` | Modify — link community name |
-| `templates/components/group-card.html.twig` | Modify — link community name |
-| `templates/components/teaching-card.html.twig` | Modify — link community name |
-| `public/css/minoo.css` | Modify — add `.community-contact-card` component |
-| `tests/Minoo/Unit/Controller/CommunityControllerTest.php` | Create/modify — NC data tests |
-| `tests/playwright/community-contact.spec.ts` | Create — contact card smoke test |
+| `src/Provider/EventServiceProvider.php` | Add `community_id` field definition |
+| `src/Provider/GroupServiceProvider.php` | Add `community_id` field definition |
+| `src/Provider/TeachingServiceProvider.php` | Add `community_id` field definition |
+| `src/Controller/CommunityController.php` | Modify `show()` — add try/catch around NC calls |
+| `templates/components/community-contact-card.html.twig` | Create — extract from `detail.html.twig` |
+| `templates/communities/detail.html.twig` | Modify — replace inline markup with `{% include %}` |
+| `templates/components/event-card.html.twig` | Modify — add optional community name link |
+| `templates/components/group-card.html.twig` | Modify — add optional community name link |
+| `templates/components/teaching-card.html.twig` | Modify — add optional community name link |
+| `templates/events.html.twig` | Modify — pass community data to card includes |
+| `templates/groups.html.twig` | Modify — pass community data to card includes |
+| `templates/teachings.html.twig` | Modify — pass community data to card includes |
+| `public/css/minoo.css` | Modify — add/move `.community-contact-card` component styles |
+| `tests/Minoo/Unit/Controller/CommunityControllerTest.php` | Create/modify — error handling + NC data tests |
+| `tests/Minoo/Unit/Entity/` | Modify — field definition assertions for community_id |
+| `tests/playwright/community-contact.spec.ts` | Create — contact card + community link smoke tests |
