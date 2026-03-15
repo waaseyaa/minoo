@@ -1,0 +1,299 @@
+# Homepage Redesign — Design Spec
+
+**Date:** 2026-03-15
+**Status:** Draft
+**Goal:** Redesign the Minoo homepage as a location-aware dashboard hub that surfaces real seeded content (businesses, people, events) to show the community is alive, while explaining the platform to newcomers.
+
+## Executive Summary
+
+Replace the current hero + explore grid + "who is this for" homepage with a compact dashboard layout:
+
+1. Compact hero with search placeholder and location context
+2. Sticky tab row (Nearby / Events / People / Groups) with progressive enhancement
+3. Unified content cards showing real seeded data, sorted by proximity
+4. Communities pill row linking to nearby communities
+5. Compact "What is Minoo?" section, prominent for newcomers
+
+All SSR with Twig, no new JS frameworks. ~15 lines of vanilla JS for tab switching with full no-JS fallback.
+
+## 1. Compact Hero
+
+### 1.1 Structure
+
+Two-zone horizontal layout:
+
+- **Left zone:** One-line tagline (Charter serif, `text-xl`) + location context line
+- **Right zone:** Search form — type selector dropdown + text input + "Explore" button
+
+### 1.2 Height
+
+~120px maximum. The tab row and first content cards must be visible without scrolling on 1366x768 screens.
+
+### 1.3 Background
+
+Forest gradient using existing tokens: `--forest-700` to `--forest-900`.
+
+### 1.4 Location Context
+
+| State | Left zone shows |
+|-------|-----------------|
+| Location known | "Near {communityName}" |
+| Location unknown | "Explore communities across the North Shore" |
+
+### 1.5 Search Form
+
+```html
+<form class="hero-search" action="/explore" method="get" role="search">
+  <select name="type">
+    <option value="all">All</option>
+    <option value="businesses">Businesses</option>
+    <option value="people">People</option>
+    <option value="events">Events</option>
+  </select>
+  <input name="q" type="search" placeholder="What are you looking for? e.g., beadwork, salon, powwow" />
+  <button type="submit">Explore</button>
+</form>
+```
+
+**Phase 1 behavior:** Form submits to section pages. `/explore?type=businesses&q=beadwork` redirects to `/groups?q=beadwork`. Empty `q` redirects to the section landing. Target pages ignore `q` for now — ready for future search API.
+
+### 1.6 Mobile
+
+Stacks vertically: tagline → location line → search form. Full-width input.
+
+## 2. Sticky Tab Row
+
+### 2.1 Tabs
+
+| Tab | Label | Content |
+|-----|-------|---------|
+| 1 | Nearby | Mixed businesses + events + people, sorted by proximity |
+| 2 | Events | Upcoming events sorted by `starts_at` |
+| 3 | People | People with `consent_public: true`, sorted by proximity |
+| 4 | Groups | Businesses/groups sorted by proximity |
+
+Default active tab: **Nearby**.
+
+### 2.2 Visual Design
+
+- Active tab: bottom border in `--forest-500`, `--earth-900` text
+- Inactive tabs: `--earth-700` text, no border
+- Background: `--earth-50`
+- Sticky: `position: sticky; top: 0; z-index: 10`
+
+### 2.3 Progressive Enhancement
+
+**SSR (no JS):**
+- All four tab panels rendered in HTML
+- Active panel: `display: block`
+- Inactive panels: `display: none`
+- Tab links are anchor elements with `href` to section pages (`/events`, `/people`, `/groups`)
+- `data-tab` attribute on each tab and `data-panel` on each panel for JS binding
+
+**With JS (~15 lines):**
+- Intercepts tab clicks
+- Swaps `display` and `aria-selected` attributes
+- Updates URL hash (`#events`, `#people`, `#groups`) for direct linking
+- On page load, reads hash to activate correct tab
+
+**Markup pattern:**
+```html
+<nav class="homepage-tabs" role="tablist">
+  <a href="/groups" role="tab" data-tab="nearby" aria-selected="true" class="homepage-tabs__tab homepage-tabs__tab--active">Nearby</a>
+  <a href="/events" role="tab" data-tab="events" aria-selected="false" class="homepage-tabs__tab">Events</a>
+  <a href="/people" role="tab" data-tab="people" aria-selected="false" class="homepage-tabs__tab">People</a>
+  <a href="/groups" role="tab" data-tab="groups" aria-selected="false" class="homepage-tabs__tab">Groups</a>
+</nav>
+
+<div role="tabpanel" data-panel="nearby" id="panel-nearby">
+  <!-- 6 unified cards -->
+</div>
+<div role="tabpanel" data-panel="events" id="panel-events" hidden>
+  <!-- 6 event cards -->
+</div>
+<!-- etc. -->
+```
+
+### 2.4 Mobile
+
+Tabs scroll horizontally if needed. Same sticky behavior.
+
+## 3. Unified Content Cards
+
+### 3.1 Card Structure
+
+All entity types (business, event, person) use a single card component with a type-colored left border.
+
+```html
+<article class="homepage-card homepage-card--{type}">
+  <span class="homepage-card__badge">{Type}</span>
+  <h3 class="homepage-card__title"><a href="{url}">{title/name}</a></h3>
+  <p class="homepage-card__meta">{meta line}</p>
+</article>
+```
+
+### 3.2 Type Colors
+
+| Type | Left border | Badge color |
+|------|------------|-------------|
+| Business/Group | `--forest-500` | `--forest-500` |
+| Event | `--water-600` | `--water-600` |
+| Person | `--teal` (domain color) | `--teal` |
+
+### 3.3 Meta Line Content
+
+| Type | Meta format |
+|------|-------------|
+| Business | "{description snippet} · {community}" |
+| Event | "{date formatted} · {location}" |
+| Person | "{roles} · {community}" |
+
+### 3.4 Card Grid
+
+`display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--space-s)`
+
+Up to 6 cards per tab panel. If fewer than 6 available, show what exists.
+
+### 3.5 Content Selection Logic
+
+**Nearby tab:** Query all three entity types, sort by proximity to user location, interleave by type for variety, limit to 6.
+
+**Events tab:** Query events where `starts_at > now()`, sort ascending by `starts_at`, limit to 6.
+
+**People tab:** Query resource_persons where `consent_public = 1`, sort by proximity, limit to 6.
+
+**Groups tab:** Query groups, sort by proximity, limit to 6.
+
+**Proximity sorting:** When location is unknown, fall back to: events by date, people/groups alphabetically.
+
+### 3.6 Empty States
+
+If a tab has zero content: show a short message following the content tone guide.
+
+Example: "We're just getting started here. Help us grow Minoo by sharing a business or event in your community."
+
+## 4. Communities Row
+
+### 4.1 Structure
+
+Horizontal row of pill-shaped links below the tab content area.
+
+- **Heading:** "Communities"
+- **Content:** 4-6 community names as rounded pill links
+- **Links:** `/communities/{slug}`
+
+### 4.2 Content Selection
+
+| State | Communities shown |
+|-------|------------------|
+| Location known | Nearest 6 communities by distance |
+| Location unknown | Curated defaults: Sagamok Anishnawbek, Espanola, Elliot Lake, Spanish, Massey |
+
+### 4.3 Style
+
+Pill style: `--earth-100` background, `--earth-700` text, `border-radius: var(--space-m)`, hover lifts to `--earth-200`.
+
+## 5. What is Minoo
+
+### 5.1 Structure
+
+Compact section at the page bottom.
+
+- **Heading:** "What is Minoo?"
+- **Body:** 2-3 sentences, first-person plural voice per content tone guide
+- **CTA:** "Learn more" → `/how-it-works`
+
+### 5.2 Copy
+
+"We're building a place where Indigenous communities, businesses, and Knowledge Keepers are visible and connected. Browse local businesses, find upcoming events, or connect with people in your area."
+
+### 5.3 Visibility Rules
+
+| State | Behavior |
+|-------|----------|
+| Location unknown, no nearby content | Full section with heading, body, CTA |
+| Location known, content showing | Single-line mention: "Minoo connects Indigenous communities. Learn more" |
+
+### 5.4 Style
+
+Background: `--earth-100`. Padding: `var(--space-l)` block.
+
+## 6. Server-Side Data Assembly
+
+### 6.1 Controller Changes
+
+The existing `RenderController` (or a new `HomepageController`) needs to assemble data for all four tab panels:
+
+```php
+// Pseudocode for homepage data assembly
+$location = $this->resolveLocation($request);
+
+$nearby = $this->getNearbyMixed($location, limit: 6);
+$events = $this->getUpcomingEvents($location, limit: 6);
+$people = $this->getPublicPeople($location, limit: 6);
+$groups = $this->getNearbyGroups($location, limit: 6);
+$communities = $this->getNearbyCommunities($location, limit: 6);
+```
+
+### 6.2 Query Patterns
+
+Use existing entity storage queries:
+
+- Events: `$storage->getQuery()->condition('starts_at', date('Y-m-d'), '>=')->sort('starts_at', 'ASC')->range(0, 6)->execute()`
+- People: `$storage->getQuery()->condition('consent_public', 1)->range(0, 6)->execute()`
+- Groups: `$storage->getQuery()->range(0, 6)->execute()`
+
+Proximity sorting can use the existing `CommunityFinder::findNearby()` pattern or simple in-PHP distance calculation over the small result set.
+
+### 6.3 Caching
+
+No caching needed at this scale. If performance becomes an issue, cache the assembled data per-community for 5 minutes.
+
+## 7. What Is NOT Changing
+
+- Navigation header/footer — untouched
+- Location bar component — untouched
+- CSS layer architecture — new components added to `@layer components`
+- Entity types and storage — no schema changes
+- Other pages (events, people, groups, communities) — untouched
+
+## 8. What Is Being Removed
+
+- The 5-card explore grid (Communities, People, Teachings, Events, Elder Support)
+- The "Who is this for?" audience section (Elders, Youth, Knowledge Keepers, Families, Volunteers)
+- The old static hero with two CTA buttons
+
+These are replaced by the more dynamic, content-driven sections above.
+
+## 9. Accessibility
+
+- Tab row uses `role="tablist"`, `role="tab"`, `role="tabpanel"`, `aria-selected`
+- Search form uses `role="search"`, labels on all inputs
+- Cards are `<article>` elements with linked headings
+- Keyboard navigation: tabs focusable, arrow keys switch tabs (JS enhancement)
+- Color contrast: all badge/border colors checked against their backgrounds
+- Skip link already exists in `base.html.twig`
+
+## 10. Mobile Considerations
+
+- Hero stacks vertically (tagline → location → search)
+- Tabs scroll horizontally, remain sticky
+- Card grid collapses to single column below 40em
+- Communities pills wrap naturally
+- "What is Minoo" section is always full-width
+
+## 11. Testing
+
+**Playwright tests:**
+- Homepage loads without error (200 status)
+- Hero displays location context when location cookie set
+- Tab switching works (JS enabled)
+- Cards link to correct detail pages
+- Search form redirects to section pages
+- No personal contact shown for `consent_public: false` people
+
+**PHPUnit tests:**
+- Homepage controller returns correct data structure
+- Nearby content selection logic (proximity sorting, type mixing)
+- Search redirect routing
+- Consent filtering on people tab
