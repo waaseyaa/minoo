@@ -435,11 +435,11 @@
     &:hover {
       background-color: var(--surface-hover, oklch(0.95 0 0));
     }
+  }
 
-    &--active {
-      font-weight: 700;
-      color: var(--accent);
-    }
+  .lang-switcher__item--active {
+    font-weight: 700;
+    color: var(--accent);
   }
 
   .site-main {
@@ -621,10 +621,10 @@
 
     .lang-switcher__item {
       color: var(--text-on-dark);
+    }
 
-      &--active {
-        color: white;
-      }
+    .lang-switcher__item--active {
+      color: white;
     }
 
     .site-header__inner {
