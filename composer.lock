@@ -2814,7 +2814,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/access",
-                "reference": "952c0c982c2c288994e4d9bc7d87356518f9cc43"
+                "reference": "d38c0b31a1e8b2043be2270052a129c2f43d570d"
             },
             "require": {
                 "php": ">=8.3",
@@ -2828,6 +2828,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Access\\": "src/"
@@ -2852,7 +2857,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ai-agent",
-                "reference": "4a3d139689756b666dc3d6e5b2361ccf82aaa46b"
+                "reference": "29b9cd2fe07c798cfa83322ee08bebb5d9bb2ab0"
             },
             "require": {
                 "php": ">=8.3",
@@ -2863,6 +2868,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\AI\\Agent\\": "src/"
@@ -2887,7 +2897,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ai-schema",
-                "reference": "b19e3d04e885d4d0fe1c59955fc6990f0b0358e4"
+                "reference": "689e0e2ceda89c55fd792b3e89a282e428c1790c"
             },
             "require": {
                 "php": ">=8.3",
@@ -2897,6 +2907,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\AI\\Schema\\": "src/"
@@ -2921,7 +2936,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ai-vector",
-                "reference": "d31c2e1e28a227f8bb5694748dd3aa110346564d"
+                "reference": "7be27316f00b2a243c5d54bf444b0aa5428972aa"
             },
             "require": {
                 "php": ">=8.3",
@@ -2935,6 +2950,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\AI\\Vector\\": "src/"
@@ -2959,7 +2979,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/api",
-                "reference": "aa22d75aa44f4101db662a682b0e37bf756d22cc"
+                "reference": "4498f4607bb918948460f76b3a948bf34472554b"
             },
             "require": {
                 "php": ">=8.3",
@@ -2972,6 +2992,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Api\\": "src/"
@@ -2996,7 +3021,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/cache",
-                "reference": "8be4d9ca5272fb6a8df34d00c17b7815f64b6375"
+                "reference": "26f7a785f82427e96e971fffd5c5e98e818e409b"
             },
             "require": {
                 "php": ">=8.3",
@@ -3011,6 +3036,11 @@
                 "waaseyaa/entity": "Required for EntityCacheInvalidator listener"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Cache\\": "src/"
@@ -3035,7 +3065,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/cli",
-                "reference": "9440c427530ab9dc59702d693ac9bb9b8d57e828"
+                "reference": "44b5dfa4b1b62808d0d97239789cc48a9a266b2c"
             },
             "require": {
                 "php": ">=8.3",
@@ -3050,6 +3080,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\CLI\\": "src/"
@@ -3074,7 +3109,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/config",
-                "reference": "e2fe1d9559040341e4cedc34093e2fd1dca4a3ef"
+                "reference": "46516ea3faaba1b6b4615e66404f8e2e3dca8169"
             },
             "require": {
                 "php": ">=8.3",
@@ -3085,6 +3120,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Config\\": "src/"
@@ -3109,7 +3149,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/database-legacy",
-                "reference": "53f7b9f56b29be85810594d4ae205e3e49edac3e"
+                "reference": "0a8420f8a17f03693b7c13f8998313b38aa3b387"
             },
             "require": {
                 "php": ">=8.3"
@@ -3118,6 +3158,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Database\\": "src/"
@@ -3142,7 +3187,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/entity",
-                "reference": "ecb83f4dca9694f0994c4d844dba2ad3e60fa719"
+                "reference": "3ac119136c9966e3c1f208c1d18e1ac1ab49985f"
             },
             "require": {
                 "php": ">=8.3",
@@ -3160,6 +3205,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Entity\\": "src/"
@@ -3184,7 +3234,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/entity-storage",
-                "reference": "b639c14b3f533eae98d09fd46d5dc44879ea2401"
+                "reference": "ba593b60f5a15e16b8a03ea2cf35bcc2ab570b1d"
             },
             "require": {
                 "php": ">=8.3",
@@ -3198,6 +3248,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\EntityStorage\\": "src/"
@@ -3222,7 +3277,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/field",
-                "reference": "6c70a17a19503162a6790ebd9d54e101099cf2ce"
+                "reference": "ae214cc5844c267efa94f5a938bbc42514241ed2"
             },
             "require": {
                 "php": ">=8.3",
@@ -3234,6 +3289,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Field\\": "src/"
@@ -3258,7 +3318,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/foundation",
-                "reference": "20c081c9ac39a4f5848f58e469895241af90ce34"
+                "reference": "7a776e2d1bd0a7fd64919f50c2ed6c54f8342f93"
             },
             "require": {
                 "doctrine/dbal": "^4.0",
@@ -3274,6 +3334,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Foundation\\": "src/"
@@ -3298,7 +3363,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/i18n",
-                "reference": "d9c370fc8a30650bb320ac117d7eba7787e862b9"
+                "reference": "06209c289c9ae8894ad0b91463a908bac894e44e"
             },
             "require": {
                 "php": ">=8.3",
@@ -3308,6 +3373,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\I18n\\": "src/"
@@ -3332,7 +3402,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/mcp",
-                "reference": "cc7bed7504ba451a27902432145745dcd4db1ef6"
+                "reference": "6d75c1cbeee10b56450d438fece69efea4266b37"
             },
             "require": {
                 "php": ">=8.3",
@@ -3350,6 +3420,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Mcp\\": "src/"
@@ -3374,7 +3449,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/media",
-                "reference": "4e5519652c4862e65deba2498a5de93376eba49c"
+                "reference": "bd9b02e34e5ecc0f5cc836bd7fbed39b90069c0d"
             },
             "require": {
                 "php": ">=8.3",
@@ -3389,6 +3464,9 @@
                     "providers": [
                         "Waaseyaa\\Media\\MediaServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -3415,7 +3493,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/menu",
-                "reference": "c46ef043068c5999ed0d5756d8735b5d91a816b3"
+                "reference": "b04707f8a631d2f92c0e63637a655cff6958c4f0"
             },
             "require": {
                 "php": ">=8.3",
@@ -3430,6 +3508,9 @@
                     "providers": [
                         "Waaseyaa\\Menu\\MenuServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -3456,7 +3537,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/node",
-                "reference": "8f6d06fa2524ec888c7cad3c0e8f2e2b31443286"
+                "reference": "2cf8e64329748782cdf072500d8d17cfb7c5c7ba"
             },
             "require": {
                 "php": ">=8.3",
@@ -3472,6 +3553,9 @@
                     "providers": [
                         "Waaseyaa\\Node\\NodeServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -3498,7 +3582,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/path",
-                "reference": "205c246fbd3e73a7369993db4137bfc5be1478ed"
+                "reference": "ae71a3415c6ff7a7ae6983be88cf7604e8210406"
             },
             "require": {
                 "php": ">=8.3",
@@ -3513,6 +3597,9 @@
                     "providers": [
                         "Waaseyaa\\Path\\PathServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -3539,7 +3626,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/plugin",
-                "reference": "0b8fd28fdc731fc62d29e51193019017aaba19ad"
+                "reference": "b09fd59be2ae49be78dfba8c54bb861974c5d2f5"
             },
             "require": {
                 "php": ">=8.3",
@@ -3549,6 +3636,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Plugin\\": "src/"
@@ -3573,7 +3665,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/queue",
-                "reference": "1cbe4f7f6b8a9d8aa82ff40100acd83056445730"
+                "reference": "86033a68fe66448a299bd71bde54303628f06090"
             },
             "require": {
                 "php": ">=8.3",
@@ -3583,6 +3675,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Queue\\": "src/"
@@ -3607,7 +3704,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/routing",
-                "reference": "82924655b09ede30c210f6b7928bdb3b9e0b1305"
+                "reference": "74fe7c7879e18988c8f67f6fe7a9ef9a87f8879d"
             },
             "require": {
                 "php": ">=8.3",
@@ -3620,6 +3717,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Routing\\": "src/"
@@ -3644,7 +3746,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/search",
-                "reference": "5ee366483127bd8fd3a4d28b4f10bdbb6a25f15e"
+                "reference": "50cc5d24b3558213959ff64b37fbbf3ed346a2c2"
             },
             "require": {
                 "php": ">=8.3",
@@ -3654,6 +3756,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Search\\": "src/"
@@ -3678,7 +3785,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/ssr",
-                "reference": "696bbe23a02f97dc0c2c0715e23110c72421cd60"
+                "reference": "ccfce52a22b59a0d78849edf80c774d33b6ac619"
             },
             "require": {
                 "php": ">=8.4",
@@ -3700,6 +3807,9 @@
                         "Waaseyaa\\SSR\\ThemeServiceProvider",
                         "Waaseyaa\\SSR\\SsrServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -3726,7 +3836,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/state",
-                "reference": "2dc7e4e4e1f7d8cec004d3ecfd31758995f0faca"
+                "reference": "158b54ce0a941291458428e6698458e0f44a825b"
             },
             "require": {
                 "php": ">=8.3",
@@ -3736,6 +3846,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\State\\": "src/"
@@ -3760,7 +3875,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/taxonomy",
-                "reference": "b1c7fe9279ae3be06717cf824d68547b8ff7e41e"
+                "reference": "f15c351aa324ef0f33a137938172aedffd79b091"
             },
             "require": {
                 "php": ">=8.3",
@@ -3776,6 +3891,9 @@
                     "providers": [
                         "Waaseyaa\\Taxonomy\\TaxonomyServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -3802,7 +3920,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/typed-data",
-                "reference": "0a39f0cdd9054c40ebc19c99ca00517c3c12191c"
+                "reference": "4ebd10f03d96c803ea969c0fbcfdaeb153d3bbef"
             },
             "require": {
                 "php": ">=8.3",
@@ -3812,6 +3930,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\TypedData\\": "src/"
@@ -3836,7 +3959,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/user",
-                "reference": "13f76378485ce94e4ca866a1d5242f05623ff101"
+                "reference": "580ead7755baf81613cc056a60ea2ac42e369ad0"
             },
             "require": {
                 "php": ">=8.3",
@@ -3854,6 +3977,9 @@
                     "providers": [
                         "Waaseyaa\\User\\UserServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -3880,7 +4006,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/validation",
-                "reference": "a2365884b7d5fb24fca1d0de5ec3f12362110893"
+                "reference": "977711b37346c25755bed8caf45ced290a80a829"
             },
             "require": {
                 "php": ">=8.3",
@@ -3891,6 +4017,11 @@
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Validation\\": "src/"
@@ -3915,7 +4046,7 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/workflows",
-                "reference": "68f6ed553a8927e1d04c6a64e0e44a7512299806"
+                "reference": "b0c017e6843f11c8054455b04f1ce3b0c42c70fd"
             },
             "require": {
                 "php": ">=8.3",
@@ -3931,6 +4062,9 @@
                     "providers": [
                         "Waaseyaa\\Workflows\\WorkflowServiceProvider"
                     ]
+                },
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -5628,13 +5762,18 @@
             "dist": {
                 "type": "path",
                 "url": "../waaseyaa/packages/testing",
-                "reference": "71386f305e6d40134a7a8b249659b96b17f52a80"
+                "reference": "9481e2cbd0fd1c97d29b33c67d69b0bd04cac2ea"
             },
             "require": {
                 "php": ">=8.3",
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Waaseyaa\\Testing\\": "src/"
