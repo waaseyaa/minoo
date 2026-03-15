@@ -188,14 +188,14 @@
     font-size: var(--text-base);
     line-height: var(--leading-normal);
     color: var(--text-primary);
-    background-color: var(--surface);
+    background-color: var(--surface-dark);
   }
 
-  h1, h2, h3, h4 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
-    text-wrap: balance;
+    color: var(--text-primary);
   }
 
   h1 {
@@ -208,11 +208,11 @@
 
   a {
     color: var(--link);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.15em;
+    text-decoration-color: transparent;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
 
     &:hover {
-      text-decoration-thickness: 2px;
+      text-decoration-color: currentColor;
     }
   }
 
