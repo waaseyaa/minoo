@@ -4,13 +4,13 @@
 
 {% block title %}
   {%- if page_path == '/legal/privacy' -%}
-    {{ trans('legal.privacy_title') }}
+    {{ trans('legal.privacy_title') }} — Minoo
   {%- elseif page_path == '/legal/terms' -%}
-    {{ trans('legal.terms_title') }}
+    {{ trans('legal.terms_title') }} — Minoo
   {%- elseif page_path == '/legal/accessibility' -%}
-    {{ trans('legal.accessibility_title') }}
+    {{ trans('legal.accessibility_title') }} — Minoo
   {%- else -%}
-    {{ trans('legal.main_title') }}
+    {{ trans('legal.main_title') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
