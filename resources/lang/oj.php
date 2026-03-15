@@ -54,10 +54,10 @@ declare(strict_types=1);
 return [
 
     // Base layout
-    'base.skip_link' => '',
+    'base.skip_link' => "Gii-izhi-ayaawiyan gaa-izhi-mazina'igan",
     'base.home_label' => 'Minoo — endaad', // dict: endaad: "h/ home; h/ house"
-    'base.menu' => '',
-    'base.nav_main' => '',
+    'base.menu' => 'Meni',
+    'base.nav_main' => 'Gichi',
 
     // Navigation
     'nav.communities' => 'Oodenawinan', // dict: oodena: "town"; -winan plural
@@ -86,14 +86,14 @@ return [
     'footer.data_sovereignty' => 'Doodem-mazina\'igan ogimaawin',
 
     // Location bar
-    'location.set' => '',
+    'location.set' => 'Gagwe-izhi-ayaawiyan gid-oodena',
     'location.near' => '{community} endaad noongom',
     'location.change' => 'Aanjitoon', // dict: aanjitoon: change it
     'location.search_label' => 'Andawaabandan oodenawinan', // dict: andawaabandan: "look for, search for it"
     'location.search_placeholder' => 'Andawaabandan oodenawinan…', // dict: andawaabandan: "look for, search for it"
-    'location.noscript' => '',
-    'location.detecting' => '',
-    'location.error' => '',
+    'location.noscript' => 'Oodena-izhiwebad gii-izhi-gagwedooyang JavaScript',
+    'location.detecting' => 'Gii-izhi-ayaawiyan oodena...',
+    'location.error' => 'Mish-maadiziwin gaa-izhi-bimaadiziyaan',
 
     // Language switcher
     'language_switcher.label' => 'Inwewin', // dict: inwewin: "a language, a dialect"
@@ -115,9 +115,9 @@ return [
     'page.subtitle' => "Naanagidoon anishinaabeg, gikinoo'amaagewinan, maawanji'idiwinan, miinawaa onaakonigewinan gaa-mino-ayaawiyaang endaayang. Bizindan oodenaying miinawaa gichi-oodena endaayang.",
     'page.communities_button' => 'Oodenawinan', // dict: oodena: "town" (plural)
     'page.people_button' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
-    'page.nearby_heading' => '',
+    'page.nearby_heading' => '{community} endaad noongom',
     'page.nearby_communities' => 'Oodenawinan endaayang',
-    'page.upcoming_events' => '',
+    'page.upcoming_events' => "Maawanji'idiwinan gaa-izhi-ayaawiyan",
     'page.view_all_communities' => 'Gaa-ganawenjigaadeg oodenawinan',
     'page.view_all_events' => "Gaa-ganawenjigaadeg maawanji'idiwinan",
     'page.explore_heading' => 'Bizindaw Minoo',
@@ -141,112 +141,112 @@ return [
 
     // Events
     'events.title' => 'Maawanji\'idiwinan', // dict: maawanji'idiwag: "they come together, meet"
-    'events.subtitle' => '',
-    'events.empty_heading' => '',
-    'events.empty_body' => '',
-    'events.explore_button' => '',
-    'events.detail_back' => '',
-    'events.not_found' => '',
-    'events.not_found_message' => '',
-    'events.browse_all' => '',
+    'events.subtitle' => "Niimi'idiwinan, anami'egiwinan, miinawaa oodena maawanji'idiwinan endaayang",
+    'events.empty_heading' => "Maawanji'idiwinan gaa-izhi-ayaawiyan gaa-izhi-bimaadiziyaan",
+    'events.empty_body' => "Niimi'idiwinan miinawaa maawanji'idiwinan endaayang gii-izhi-waabmin",
+    'events.explore_button' => 'Bizindan oodenawinan',
+    'events.detail_back' => "Maawanji'idiwinan",
+    'events.not_found' => "Maawanji'idiwinan gaa-izhi-waabandamaan",
+    'events.not_found_message' => "Maawanji'idiwinan aabiding gaa-izhi-waabandamaan",
+    'events.browse_all' => "Gaa-ganawenjigaadeg maawanji'idiwinan",
 
     // Groups
     'groups.title' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
-    'groups.subtitle' => '',
-    'groups.empty_heading' => '',
-    'groups.empty_body' => '',
-    'groups.explore_button' => '',
-    'groups.detail_back' => '',
-    'groups.not_found' => '',
-    'groups.not_found_message' => '',
-    'groups.browse_all' => '',
+    'groups.subtitle' => "Gikinoo'amaag, ogimaawag, miinawaa oodena-wiigwaamingan",
+    'groups.empty_heading' => "Gikinoo'amaag gaa-izhi-waabandamaan",
+    'groups.empty_body' => "Gikinoo'amaag aazhitooyang gid-gikinoo'amaagewinan miinawaa maawanji'idiwinan",
+    'groups.explore_button' => "Bizindan gikinoo'amaag",
+    'groups.detail_back' => "Gikinoo'amaag",
+    'groups.not_found' => "Gikinoo'amaag gaa-izhi-waabandamaan",
+    'groups.not_found_message' => "Gikinoo'amaag aabiding gaa-izhi-waabandamaan",
+    'groups.browse_all' => "Gaa-ganawenjigaadeg gikinoo'amaag",
 
     // Teachings
     'teachings.title' => 'Gikinoo\'amaadiwinan', // dict: gikinoo'amaadiwin: "teaching, education"
-    'teachings.subtitle' => '',
-    'teachings.empty_heading' => '',
-    'teachings.empty_body' => '',
-    'teachings.explore_language' => '',
-    'teachings.detail_back' => '',
-    'teachings.not_found' => '',
-    'teachings.not_found_message' => '',
-    'teachings.browse_all' => '',
+    'teachings.subtitle' => 'Izhinamowinan, dibaajimowinan, miinawaa gikendaasowinan',
+    'teachings.empty_heading' => 'Gikendaasowinan gaa-izhi-waabandamaan',
+    'teachings.empty_body' => "Gikinoo'amaagewinan bi-aazhitooyang gid-gikinoo'amaag",
+    'teachings.explore_language' => 'Bizindan gikendaasowinan',
+    'teachings.detail_back' => 'Gikendaasowinan',
+    'teachings.not_found' => 'Gikendaasowin gaa-izhi-waabandamaan',
+    'teachings.not_found_message' => 'Gikendaasowin aabiding gaa-izhi-waabandamaan',
+    'teachings.browse_all' => 'Gaa-ganawenjigaadeg gikendaasowinan',
 
     // Language / Dictionary
     'language.title' => 'Anishinaabemowin', // dict: Anishinaabemowin: "Ojibwe language"
-    'language.subtitle' => '',
-    'language.empty_heading' => '',
-    'language.empty_body' => '',
-    'language.explore_teachings' => '',
+    'language.subtitle' => 'Anishinaabemowin ezhichigewinan, odaminowinan miinawaa odaminag',
+    'language.empty_heading' => 'Anishinaabemowin gaa-izhi-waabandamaan',
+    'language.empty_body' => 'Anishinaabemowin ezhichigewinan, odaminowinan, miinawaa odaminag bi-aazhitooyang',
+    'language.explore_teachings' => "Bizindan mazina'igan",
     'language.copyright' => '',
-    'language.detail_back' => '',
-    'language.not_found' => '',
-    'language.not_found_message' => '',
-    'language.browse_all' => '',
+    'language.detail_back' => 'Anishinaabemowin',
+    'language.not_found' => 'Ezhichigewin gaa-izhi-waabandamaan',
+    'language.not_found_message' => 'Ezhichigewin aabiding gaa-izhi-waabandamaan',
+    'language.browse_all' => 'Gaa-ganawenjigaadeg anishinaabemowin',
 
     // Search
     'search.title' => 'Andone\'igen', // dict: andone': "search for, seek"
     'search.placeholder' => 'Andone\'…', // dict: andone': "search for, seek"
     'search.button' => 'Andone\'', // dict: andone': "search for, seek"
-    'search.filters_label' => '',
+    'search.filters_label' => 'Gashkitoonaanan:',
     'search.type_heading' => '',
     'search.sources_heading' => '',
     'search.scope' => '',
-    'search.results_summary' => '',
-    'search.no_results' => '',
+    'search.results_summary' => '{count} ezhichigewinan ({time}s)',
+    'search.no_results' => 'Ezhichigewinan gaa-izhi-waabandamaan "{query}".',
     'search.pagination_prev' => '',
     'search.pagination_next' => '',
     'search.search_intro' => '',
 
     // People
     'people.title' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
-    'people.subtitle' => '',
-    'people.browse_all' => '',
+    'people.subtitle' => "Gichi-aya'aag, gikendaasowininiwag, anishinaabemowin-ikidowag, miinawaa oodena-ikidowag",
+    'people.browse_all' => 'Gaa-ganawenjigaadeg ogimaawi-ikidowag',
     'people.nearby_notice' => '',
-    'people.show_all' => '',
-    'people.search_placeholder' => '',
-    'people.filter_role' => '',
+    'people.show_all' => 'Kakina',
+    'people.search_placeholder' => "Andone' anishinaabeg\u{2026}",
+    'people.filter_role' => 'Ogimaawi',
     'people.filter_offering' => '',
     'people.filter_all_roles' => '',
     'people.filter_all_offerings' => '',
     'people.clear_filters' => '',
     'people.mentor_callout' => '',
-    'people.empty_heading' => '',
+    'people.empty_heading' => 'Ogimaawi-ikidowag gaa-izhi-waabandamaan',
     'people.empty_body' => '',
-    'people.volunteer_button' => '',
-    'people.detail_back' => '',
-    'people.not_found' => '',
-    'people.not_found_message' => '',
+    'people.volunteer_button' => 'Wiidookaage',
+    'people.detail_back' => 'Anishinaabeg',
+    'people.not_found' => 'Ogimaawi-ikidow gaa-izhi-waabandamaan',
+    'people.not_found_message' => 'Ogimaawi-ikidow aabiding gaa-izhi-waabandamaan',
     'people.filters_empty' => '',
 
     // Communities listing
-    'communities.exploring' => '',
+    'communities.exploring' => 'Bizindaw',
     'communities.all_communities' => 'Kakina oodenawinan', // dict: kakina: "all" + oodenawinan: "towns"
     'communities.search_placeholder' => 'Andawaabandan oodenawinan...', // dict: andawaabandan: "look for, search for"
     'communities.search_label' => 'Andawaabandan oodenawinan', // dict: andawaabandan: "look for, search for"
-    'communities.all_types' => '',
+    'communities.all_types' => 'Kakina',
     'communities.first_nations' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
     'communities.municipalities' => 'Oodenawinan', // dict: oodena: "town" (plural)
     'communities.province' => '',
-    'communities.nation' => '',
-    'communities.population' => '',
+    'communities.nation' => 'Ogimaawi-anishinaabeg',
+    'communities.population' => 'Akiing-ogimaawag',
     'communities.under_500' => '',
     'communities.pop_500_2000' => '',
     'communities.pop_2000_5000' => '',
     'communities.pop_5000_plus' => '',
-    'communities.no_matches' => '',
+    'communities.no_matches' => 'Oodenawinan gaa-izhi-waabandamaan',
 
     // Community detail
-    'community.back_button' => '',
+    'community.back_button' => "\u{2190} Oodenawinan",
     'community.municipality' => 'Oodena', // dict: oodena: "town"
     'community.first_nation' => 'Anishinaabe', // dict: anishinaabe: "person, human being"
     'community.about' => 'Dibaajimowin', // dict: dibaajimowin: "a story; a narrative"
-    'community.nation' => '',
+    'community.nation' => 'Ogimaawi-anishinaabeg',
     'community.language_group' => 'Inwewin', // dict: inwewin: "a language, a dialect"
     'community.treaty' => '',
     'community.reserve' => '',
     'community.inac_band_no' => '',
-    'community.website' => '',
+    'community.website' => "Web-mazina'igan",
     'community.leadership' => 'Ogimaawin', // dict: ogimaa: "chief, leader"
     'community.chief' => 'Ogimaa', // dict: ogimaa: "a chief, a boss"
     'community.current' => '',
@@ -294,11 +294,11 @@ return [
     'about.vision_desc' => '',
 
     // Error pages
-    'error.404_title' => '',
-    'error.404_message' => '',
-    'error.404_home' => '',
-    'error.403_signin' => '',
-    'error.403_home' => '',
+    'error.404_title' => "Mazina'igan gaa-izhi-waabandamaan",
+    'error.404_message' => "Mazina'igan aabiding gaa-izhi-waabandamaan",
+    'error.404_home' => 'Endaad',
+    'error.403_signin' => 'Biindigen',
+    'error.403_home' => 'Endaad',
 
     // Authentication
     'auth.login_title' => 'Biindigen', // dict: biindige: "enter, go inside"
