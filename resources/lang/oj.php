@@ -87,7 +87,7 @@ return [
 
     // Location bar
     'location.set' => '',
-    'location.near' => '',
+    'location.near' => '{community} endaad noongom',
     'location.change' => 'Aanjitoon', // dict: aanjitoon: change it
     'location.search_label' => 'Andawaabandan oodenawinan', // dict: andawaabandan: "look for, search for it"
     'location.search_placeholder' => 'Andawaabandan oodenawinan…', // dict: andawaabandan: "look for, search for it"
@@ -116,7 +116,7 @@ return [
     'page.communities_button' => 'Oodenawinan', // dict: oodena: "town" (plural)
     'page.people_button' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
     'page.nearby_heading' => '',
-    'page.nearby_communities' => '',
+    'page.nearby_communities' => 'Oodenawinan endaayang',
     'page.upcoming_events' => '',
     'page.view_all_communities' => 'Gaa-ganawenjigaadeg oodenawinan',
     'page.view_all_events' => "Gaa-ganawenjigaadeg maawanji'idiwinan",
@@ -126,8 +126,8 @@ return [
     'page.teachings_desc' => "Bimaadiziwin gikendaasowin — izhinamowin, dibaajimowin, miinawaa anishinaabemowin. Gikinoo'amaagewinan gaa-izhi-bimaadiziyang noongom.",
     'page.events_desc' => "Niimi'idiwinan, maawanji'idiwinan, anami'egiwinan, miinawaa oodena-giizhigadwinan gaye endaayang.",
     'page.elder_support_desc' => "Wiidookaage gichi-aya'aag omaa oodenaying — gaa-izhi-bagidinang wiidookawishin. Apane apii apane mino-ayaawiyaang.",
-    'page.who_for_heading' => '',
-    'page.who_for_intro' => '',
+    'page.who_for_heading' => 'Aaniin Minoo gaa-izhi-ayaawiyan?',
+    'page.who_for_intro' => 'Minoo gaa-izhi-ayaawiyan ogimaawi-anishinaabeg miinawaa oodenaang giiwedin Ontarioing.',
     'page.audience.elders' => 'Gichi-aya\'aag', // dict: gichi-aya'aa: "an elder" (plural)
     'page.audience.elders_desc' => "Gagwe-gashkitoon gaye anooj wiidookaagewin — bimibatooyan, bagidinowin, gitigaan-onaabaniwin, miinawaa gaye ozhiwebad — ogii-aya'aag wiidookaagewin dazhi-izhiwebad.",
     'page.audience.young_people' => 'Oshki-bimaadizijig', // dict: oshki-: "new" + bimaadizi: "s/he lives"
@@ -261,8 +261,8 @@ return [
     'community.the_land' => 'Aki', // dict: aki: "land, earth, country"
     'community.openstreetmap' => '',
     'community.google_maps' => '',
-    'community.nearby_communities' => '',
-    'community.km_away' => '',
+    'community.nearby_communities' => 'Oodenawinan endaayang',
+    'community.km_away' => 'km endaad',
     'community.pop' => '',
 
     // About
