@@ -59,7 +59,7 @@ return [
     'chat.error' => 'Something went wrong. Please try again.',
 
     // Home page
-    'page.title' => 'Minoo: A Living Map of Community',
+    'page.title' => 'A Living Map of Community',
     'page.subtitle' => 'Find the people, teachings, events, and programs that strengthen where you live. Explore your community and the communities around you.',
     'page.communities_button' => 'Explore Communities',
     'page.people_button' => 'Browse People',
