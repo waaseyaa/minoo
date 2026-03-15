@@ -1,9 +1,4 @@
 /* Atlas Communities Redesign */
-[x-data="atlasDiscovery()"] {
-  overflow-x: hidden;
-  max-width: 100vw;
-}
-
 :root {
   --atlas-deep: #2d4a3e;
   --atlas-forest: #3d6b5a;
