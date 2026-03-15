@@ -28,7 +28,7 @@
               <a href="{{ lang_url('/communities/' ~ item.community.get('slug')) }}" class="card card--community">
                 <div class="card__body">
                   <h4 class="card__title">{{ item.community.get('name') }}</h4>
-                  <p class="card__meta">{{ item.distanceKm|round }} km away</p>
+                  <p class="card__meta">{{ item.distanceKm|round }} {{ trans('community.km_away') }}</p>
                 </div>
               </a>
             {% endfor %}
