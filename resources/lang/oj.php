@@ -1254,4 +1254,7 @@ return [
     'volunteer_edit.save_button' => '',
     // No suggestions found
     'volunteer_edit.cancel' => '',
+
+    // Open Graph
+    'og.default_description' => '',
 ];
