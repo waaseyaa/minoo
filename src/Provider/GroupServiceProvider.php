@@ -44,6 +44,12 @@ final class GroupServiceProvider extends ServiceProvider
                     'description' => 'Geographic region.',
                     'weight' => 15,
                 ],
+                'community_id' => [
+                    'type' => 'entity_reference',
+                    'label' => 'Community',
+                    'settings' => ['target_type' => 'community'],
+                    'weight' => 16,
+                ],
                 'media_id' => [
                     'type' => 'entity_reference',
                     'label' => 'Image',

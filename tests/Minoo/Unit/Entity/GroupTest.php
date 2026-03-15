@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Entity;
 
 use Minoo\Entity\Group;
+use Minoo\Provider\GroupServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -36,5 +37,20 @@ final class GroupTest extends TestCase
 
         $this->assertSame('https://millelacsband.com', $group->get('url'));
         $this->assertSame('Minnesota', $group->get('region'));
+    }
+
+    #[Test]
+    public function it_defines_community_id_field(): void
+    {
+        $provider = new GroupServiceProvider();
+        $provider->register();
+
+        $types = $provider->getEntityTypes();
+        $groupType = array_values(array_filter($types, fn($t) => $t->id() === 'group'))[0];
+        $fields = $groupType->getFieldDefinitions();
+
+        $this->assertArrayHasKey('community_id', $fields);
+        $this->assertSame('entity_reference', $fields['community_id']['type']);
+        $this->assertSame('community', $fields['community_id']['settings']['target_type']);
     }
 }

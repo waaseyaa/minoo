@@ -39,6 +39,12 @@ final class TeachingServiceProvider extends ServiceProvider
                     'settings' => ['target_type' => 'cultural_group'],
                     'weight' => 10,
                 ],
+                'community_id' => [
+                    'type' => 'entity_reference',
+                    'label' => 'Community',
+                    'settings' => ['target_type' => 'community'],
+                    'weight' => 12,
+                ],
                 'tags' => [
                     'type' => 'entity_reference',
                     'label' => 'Tags',

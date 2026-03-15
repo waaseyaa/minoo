@@ -39,6 +39,12 @@ final class EventServiceProvider extends ServiceProvider
                     'description' => 'Physical location or "online".',
                     'weight' => 10,
                 ],
+                'community_id' => [
+                    'type' => 'entity_reference',
+                    'label' => 'Community',
+                    'settings' => ['target_type' => 'community'],
+                    'weight' => 12,
+                ],
                 'starts_at' => [
                     'type' => 'datetime',
                     'label' => 'Starts At',
