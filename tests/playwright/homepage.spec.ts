@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Homepage', () => {
-  test('shows hero with platform title and CTAs', async ({ page }) => {
+  test('shows hero with platform title and search form', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.hero__title')).toContainText('A Living Map of Community');
-    await expect(page.locator('.hero__actions .btn--primary')).toHaveAttribute('href', '/communities');
-    await expect(page.locator('.hero__actions .btn--secondary')).toHaveAttribute('href', '/people');
+    await expect(page.locator('.homepage-hero-tagline')).toContainText('A Living Map of Community');
+    await expect(page.locator('.homepage-hero-search')).toBeVisible();
+    await expect(page.locator('.homepage-hero-submit')).toBeVisible();
   });
 
   test('has skip link', async ({ page }) => {
@@ -14,17 +14,24 @@ test.describe('Homepage', () => {
     await expect(skipLink).toHaveAttribute('href', '#main-content');
   });
 
-  test('has Explore Minoo section with 5 cards', async ({ page }) => {
+  test('has tab navigation with 4 tabs', async ({ page }) => {
     await page.goto('/');
-    const heading = page.getByRole('heading', { name: 'Explore Minoo' });
-    await expect(heading).toBeVisible();
-    const section = heading.locator('..');
-    await expect(section.locator('.card-grid .card')).toHaveCount(5);
+    const tabs = page.locator('.homepage-tabs .homepage-tab');
+    await expect(tabs).toHaveCount(4);
+    await expect(tabs.nth(0)).toContainText('Nearby');
+    await expect(tabs.nth(1)).toContainText('Events');
+    await expect(tabs.nth(2)).toContainText('People');
+    await expect(tabs.nth(3)).toContainText('Groups');
   });
 
-  test('Explore section includes Elder Support card', async ({ page }) => {
+  test('tab switching works', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.card-grid a[href="/elders"] .card__title')).toContainText('Elder Support');
+    await expect(page.locator('#panel-nearby')).toBeVisible();
+    await expect(page.locator('#panel-events')).toBeHidden();
+
+    await page.locator('.homepage-tab[data-tab="events"]').click();
+    await expect(page.locator('#panel-events')).toBeVisible();
+    await expect(page.locator('#panel-nearby')).toBeHidden();
   });
 
   test('navigation has Programs dropdown', async ({ page }) => {
@@ -45,13 +52,20 @@ test.describe('Homepage', () => {
     await expect(page.locator('.site-nav a[href="/events"]')).toBeVisible();
   });
 
-  test('homepage copy follows tone guide', async ({ page }) => {
+  test('homepage has communities section', async ({ page }) => {
     await page.goto('/');
-    const subtitle = page.locator('.hero__subtitle');
-    await expect(subtitle).toContainText('Find the people, teachings, events, and programs');
-    await expect(subtitle).not.toContainText('Minoo provides');
-    await expect(subtitle).not.toContainText('users');
-    await expect(page.locator('.audience-grid')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Who is Minoo for?' })).toBeVisible();
+    await expect(page.locator('.homepage-communities')).toBeVisible();
+    await expect(page.locator('.homepage-pill').first()).toBeVisible();
+  });
+
+  test('homepage has What is Minoo section', async ({ page }) => {
+    await page.goto('/');
+    const about = page.locator('.homepage-about');
+    await expect(about).toBeVisible();
+  });
+
+  test('explore redirect routes to section pages', async ({ page }) => {
+    const response = await page.goto('/explore?type=events');
+    expect(response?.url()).toContain('/events');
   });
 });
