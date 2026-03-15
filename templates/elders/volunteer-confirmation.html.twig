@@ -2,9 +2,9 @@
 
 {% block title %}
   {%- if entity -%}
-    Thank You for Volunteering — Minoo
+    {{ trans('volunteer_confirm.title') }} — Minoo
   {%- else -%}
-    Volunteer Not Found — Minoo
+    {{ trans('volunteer_confirm.not_found_title') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
@@ -12,22 +12,22 @@
   {% if entity %}
     <div class="flow-lg">
       <div>
-        <span class="card__badge card__badge--elder">Volunteer</span>
-        <h1>Thank You for Volunteering</h1>
-        <p class="text-secondary">Thank you, {{ entity.get('name') }}. You're now part of something that matters to this community. A coordinator will reach out to you at {{ entity.get('phone') }} when an Elder in your area needs support.</p>
+        <span class="card__badge card__badge--elder">{{ trans('volunteer_confirm.badge') }}</span>
+        <h1>{{ trans('volunteer_confirm.title') }}</h1>
+        <p class="text-secondary">{{ trans('volunteer_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
       </div>
 
       <div class="card card--detail">
         <dl class="detail__fields">
           {% if entity.get('availability') %}
             <div class="detail__field">
-              <dt>Availability</dt>
+              <dt>{{ trans('volunteer_confirm.availability') }}</dt>
               <dd>{{ entity.get('availability') }}</dd>
             </div>
           {% endif %}
           {% if entity.get('skills') is iterable and entity.get('skills')|length > 0 %}
             <div class="detail__field">
-              <dt>Skills</dt>
+              <dt>{{ trans('volunteer_confirm.skills') }}</dt>
               <dd>
                 <div class="card__tags">
                   {% for skill in entity.get('skills') %}
@@ -39,7 +39,7 @@
           {% endif %}
           {% if entity.get('notes') %}
             <div class="detail__field">
-              <dt>Notes</dt>
+              <dt>{{ trans('volunteer_confirm.notes') }}</dt>
               <dd>{{ entity.get('notes') }}</dd>
             </div>
           {% endif %}
@@ -47,21 +47,21 @@
       </div>
 
       <div class="flow">
-        <h2>What Happens Next</h2>
+        <h2>{{ trans('volunteer_confirm.what_next') }}</h2>
         <ol class="how-it-works__list">
-          <li>A community coordinator will review your signup</li>
-          <li>When an Elder nearby needs help that matches your skills and availability, the coordinator will call you</li>
-          <li>You'll connect with the Elder and arrange the details together</li>
+          <li>{{ trans('volunteer_confirm.next_step1') }}</li>
+          <li>{{ trans('volunteer_confirm.next_step2') }}</li>
+          <li>{{ trans('volunteer_confirm.next_step3') }}</li>
         </ol>
       </div>
 
-      <p><a href="/elders/volunteer">Sign up another volunteer</a></p>
+      <p><a href="{{ lang_url('/elders/volunteer') }}">{{ trans('volunteer_confirm.signup_another') }}</a></p>
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Volunteer Not Found</h1>
-      <p>That volunteer record could not be found.</p>
-      <p><a href="/elders/volunteer">Sign up as a volunteer</a></p>
+      <h1>{{ trans('volunteer_confirm.not_found_title') }}</h1>
+      <p>{{ trans('volunteer_confirm.not_found_text') }}</p>
+      <p><a href="{{ lang_url('/elders/volunteer') }}">{{ trans('volunteer_confirm.signup_link') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

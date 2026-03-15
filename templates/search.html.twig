@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Search — Minoo{% endblock %}
+{% block title %}{{ trans('search.title') }} — Minoo{% endblock %}
 
 {% block content %}
   {% set q = query_param('q') %}
@@ -9,18 +9,18 @@
   {% set page = query_param('page', '1')|number_format(0, '', '') %}
 
   <div class="flow-lg">
-    <h1>Search</h1>
+    <h1>{{ trans('search.title') }}</h1>
 
-    <form class="search-form" action="/search" method="get">
+    <form class="search-form" action="{{ lang_url('/search') }}" method="get">
       <input
         type="search"
         name="q"
         value="{{ q }}"
-        placeholder="Search articles, teachings, events..."
-        aria-label="Search"
+        placeholder="{{ trans('search.placeholder') }}"
+        aria-label="{{ trans('search.title') }}"
         class="search-form__input"
       >
-      <button type="submit" class="search-form__button">Search</button>
+      <button type="submit" class="search-form__button">{{ trans('search.button') }}</button>
     </form>
 
     {% if q %}
@@ -29,14 +29,14 @@
       {# Active filters #}
       {% if content_type or source %}
         <div class="search-active-filters">
-          <span class="search-active-filters__label">Filters:</span>
+          <span class="search-active-filters__label">{{ trans('search.filters_label') }}</span>
           {% if content_type %}
-            <a href="/search?q={{ q|url_encode }}{% if source %}&source={{ source|url_encode }}{% endif %}" class="filter-badge">
+            <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if source %}&source={{ source|url_encode }}{% endif %}" class="filter-badge">
               {{ content_type }} &times;
             </a>
           {% endif %}
           {% if source %}
-            <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}" class="filter-badge">
+            <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}" class="filter-badge">
               {{ source|replace({'_': ' '}) }} &times;
             </a>
           {% endif %}
@@ -50,11 +50,11 @@
             {% set typesFacet = results.getFacet('content_types') %}
             {% if typesFacet and typesFacet.buckets %}
               <div class="search-filters__group">
-                <h2 class="search-filters__heading">Type</h3>
+                <h2 class="search-filters__heading">{{ trans('search.type_heading') }}</h3>
                 <ul class="search-filters__list">
                   {% for bucket in typesFacet.buckets %}
                     <li>
-                      <a href="/search?q={{ q|url_encode }}&content_type={{ bucket.key|url_encode }}{% if source %}&source={{ source|url_encode }}{% endif %}"
+                      <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}&content_type={{ bucket.key|url_encode }}{% if source %}&source={{ source|url_encode }}{% endif %}"
                         {% if content_type == bucket.key %} aria-current="true" class="search-filters__active"{% endif %}>
                         {{ bucket.key }}
                         <span class="search-filters__count">({{ bucket.count }})</span>
@@ -68,11 +68,11 @@
             {% set sourcesFacet = results.getFacet('sources') %}
             {% if sourcesFacet and sourcesFacet.buckets %}
               <div class="search-filters__group">
-                <h2 class="search-filters__heading">Sources</h3>
+                <h2 class="search-filters__heading">{{ trans('search.sources_heading') }}</h3>
                 <ul class="search-filters__list">
                   {% for bucket in sourcesFacet.buckets[:20] %}
                     <li>
-                      <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}&source={{ bucket.key|url_encode }}"
+                      <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}&source={{ bucket.key|url_encode }}"
                         {% if source == bucket.key %} aria-current="true" class="search-filters__active"{% endif %}>
                         {{ bucket.key|replace({'_': ' '}) }}
                         <span class="search-filters__count">({{ bucket.count }})</span>
@@ -87,10 +87,9 @@
 
         {# Main results area #}
         <div class="search-results">
-          <p class="search-results__scope">Showing Indigenous content only</p>
+          <p class="search-results__scope">{{ trans('search.scope') }}</p>
           <p class="search-results__summary">
-            {{ results.totalHits|number_format }} results
-            <span class="search-results__timing">({{ (results.tookMs / 1000)|number_format(1) }}s)</span>
+            {{ trans('search.results_summary', {count: results.totalHits|number_format, time: (results.tookMs / 1000)|number_format(1)}) }}
           </p>
 
           {% if results.hits %}
@@ -109,7 +108,7 @@
               {% endfor %}
             </div>
           {% else %}
-            <p>No results found for "{{ q }}".</p>
+            <p>{{ trans('search.no_results', {query: q}) }}</p>
           {% endif %}
 
           {# Pagination #}
@@ -117,14 +116,14 @@
             {% set currentPage = results.currentPage %}
             <nav class="pagination" aria-label="Search results pages">
               {% if currentPage > 1 %}
-                <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ currentPage - 1 }}" class="pagination__link" rel="prev">Previous</a>
+                <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ currentPage - 1 }}" class="pagination__link" rel="prev">{{ trans('search.pagination_prev') }}</a>
               {% endif %}
 
               {% set startPage = max(1, currentPage - 2) %}
               {% set endPage = min(results.totalPages, currentPage + 2) %}
 
               {% if startPage > 1 %}
-                <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page=1" class="pagination__link">1</a>
+                <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page=1" class="pagination__link">1</a>
                 {% if startPage > 2 %}
                   <span class="pagination__ellipsis">&hellip;</span>
                 {% endif %}
@@ -134,7 +133,7 @@
                 {% if p == currentPage %}
                   <span class="pagination__link pagination__link--current" aria-current="page">{{ p }}</span>
                 {% else %}
-                  <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ p }}" class="pagination__link">{{ p }}</a>
+                  <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ p }}" class="pagination__link">{{ p }}</a>
                 {% endif %}
               {% endfor %}
 
@@ -142,18 +141,18 @@
                 {% if endPage < results.totalPages - 1 %}
                   <span class="pagination__ellipsis">&hellip;</span>
                 {% endif %}
-                <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ results.totalPages }}" class="pagination__link">{{ results.totalPages }}</a>
+                <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ results.totalPages }}" class="pagination__link">{{ results.totalPages }}</a>
               {% endif %}
 
               {% if currentPage < results.totalPages %}
-                <a href="/search?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ currentPage + 1 }}" class="pagination__link" rel="next">Next</a>
+                <a href="{{ lang_url('/search') }}?q={{ q|url_encode }}{% if content_type %}&content_type={{ content_type|url_encode }}{% endif %}{% if source %}&source={{ source|url_encode }}{% endif %}&page={{ currentPage + 1 }}" class="pagination__link" rel="next">{{ trans('search.pagination_next') }}</a>
               {% endif %}
             </nav>
           {% endif %}
         </div>
       </div>
     {% else %}
-      <p>Enter a search term to discover articles, teachings, events, and community resources from across Indigenous organizations and communities.</p>
+      <p>{{ trans('search.search_intro') }}</p>
     {% endif %}
   </div>
 {% endblock %}

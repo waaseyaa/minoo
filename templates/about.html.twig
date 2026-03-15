@@ -1,58 +1,58 @@
 {% extends "base.html.twig" %}
 
-{% block title %}About Minoo{% endblock %}
+{% block title %}{{ trans('about.title') }}{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
     <section class="hero">
-      <h1 class="hero__title">About Minoo</h1>
-      <p class="hero__subtitle">Minoo connects Indigenous communities, Knowledge Keepers, and the next generation through a living map of people, Teachings, and programs that strengthen cultural identity and support Elders.</p>
+      <h1 class="hero__title">{{ trans('about.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('about.subtitle') }}</p>
     </section>
 
     <section class="portal-section flow">
-      <h2>The Name</h2>
-      <p><strong>Minoo</strong> means <strong>"good"</strong> in Anishinaabemowin (the Ojibwe language). It's a simple word that carries a lot. Good people, good community, good work. That's what this platform is about.</p>
+      <h2>{{ trans('about.name_heading') }}</h2>
+      <p>{{ trans('about.name_definition') }}</p>
     </section>
 
     <section class="portal-section flow">
-      <h2>What is Minoo?</h2>
-      <p>Minoo is a community platform for northern Ontario. It brings together the people, Teachings, events, and programs that make our communities strong — and makes them easier to find.</p>
-      <p>You can use Minoo to:</p>
+      <h2>{{ trans('about.what_heading') }}</h2>
+      <p>{{ trans('about.what_intro') }}</p>
+      <p>{{ trans('about.what_intro2') }}</p>
       <ul>
-        <li>Find communities, Elders, Knowledge Keepers, and language speakers near you</li>
-        <li>Explore Teachings — culture, history, and language knowledge passed down through generations</li>
-        <li>Discover events — powwows, gatherings, ceremonies, and community programs</li>
-        <li>Request help for an Elder or volunteer your time through the Elder Support Program</li>
+        <li>{{ trans('about.what_list_1') }}</li>
+        <li>{{ trans('about.what_list_2') }}</li>
+        <li>{{ trans('about.what_list_3') }}</li>
+        <li>{{ trans('about.what_list_4') }}</li>
       </ul>
     </section>
 
     <section class="portal-section flow">
-      <h2>Who is it for?</h2>
-      <p>Minoo is for anyone connected to community in northern Ontario:</p>
+      <h2>{{ trans('about.for_heading') }}</h2>
+      <p>{{ trans('about.for_intro') }}</p>
       <ul>
-        <li><strong>Elders</strong> who need everyday help — rides, groceries, yard work, or a friendly visit</li>
-        <li><strong>Young people</strong> looking for role models, Teachings, and events in their community</li>
-        <li><strong>Knowledge Keepers</strong> who want to share their Teachings, language, and skills</li>
-        <li><strong>Families</strong> looking for events, cultural programs, and community resources</li>
-        <li><strong>Volunteers</strong> who want to give a little time to support an Elder</li>
+        <li>{{ trans('about.for_list_1') }}</li>
+        <li>{{ trans('about.for_list_2') }}</li>
+        <li>{{ trans('about.for_list_3') }}</li>
+        <li>{{ trans('about.for_list_4') }}</li>
+        <li>{{ trans('about.for_list_5') }}</li>
       </ul>
     </section>
 
     <section class="portal-section flow">
-      <h2>How it works</h2>
-      <p>Minoo is location-aware. Set your community and the platform shows you what's nearby — the closest communities, the people in your area, the next events coming up.</p>
-      <p>For the Elder Support Program, community coordinators review every request and match Elders with volunteers. No one is left to figure it out alone.</p>
+      <h2>{{ trans('about.how_heading') }}</h2>
+      <p>{{ trans('about.how_desc1') }}</p>
+      <p>{{ trans('about.how_desc2') }}</p>
     </section>
 
     <section class="portal-section flow">
-      <h2>Community-driven</h2>
-      <p>Minoo is built by and for the communities it serves. It's not a corporate product. The data comes from community sources, the design follows community values, and the platform grows based on what communities need.</p>
-      <p>If you have ideas, feedback, or want to get involved, reach out to your local community coordinator.</p>
+      <h2>{{ trans('about.community_heading') }}</h2>
+      <p>{{ trans('about.community_desc1') }}</p>
+      <p>{{ trans('about.community_desc2') }}</p>
     </section>
 
     <section class="portal-section flow">
-      <h2>Our vision</h2>
-      <p>A future where every Indigenous young person can see themselves reflected in their community — where the Teachings are alive, the Elders are supported, the language is spoken, and the path forward is rooted in who we are.</p>
+      <h2>{{ trans('about.vision_heading') }}</h2>
+      <p>{{ trans('about.vision_desc') }}</p>
     </section>
   </div>
 {% endblock %}

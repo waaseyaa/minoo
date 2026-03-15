@@ -1,18 +1,18 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Request Elder Support — Minoo{% endblock %}
+{% block title %}{{ trans('request.title') }} — Minoo{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
     <div>
-      <h1>Request Elder Support</h1>
-      <p class="text-secondary">You don't have to manage everything alone. Tell us what you need and a coordinator will find a volunteer near you. A family member or friend can also fill this out on your behalf.</p>
+      <h1>{{ trans('request.title') }}</h1>
+      <p class="text-secondary">{{ trans('request.subtitle') }}</p>
     </div>
 
-    <form class="form form--centered" method="POST" action="/elders/request">
+    <form class="form form--centered" method="POST" action="{{ lang_url('/elders/request') }}">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form__field">
-        <label class="form__label" for="name">Your Name <span aria-hidden="true">*</span></label>
+        <label class="form__label" for="name">{{ trans('request.your_name') }} <span aria-hidden="true">*</span></label>
         {% if errors.name is defined %}
           <p class="form__error" role="alert">{{ errors.name }}</p>
         {% endif %}
@@ -26,13 +26,13 @@
         <label class="form__checkbox-label">
           <input type="checkbox" id="is_representative" name="is_representative" value="1"
                  {% if values.isRepresentative is defined and values.isRepresentative %}checked{% endif %}>
-          I'm requesting on behalf of an Elder
+          {{ trans('request.on_behalf') }}
         </label>
       </div>
 
       <div id="representative-fields" class="form__fieldset" {% if not (values.isRepresentative is defined and values.isRepresentative) %}hidden{% endif %}>
         <div class="form__field">
-          <label class="form__label" for="elder_name">Elder's Name <span aria-hidden="true">*</span></label>
+          <label class="form__label" for="elder_name">{{ trans('request.elder_name') }} <span aria-hidden="true">*</span></label>
           {% if errors.elder_name is defined %}
             <p class="form__error" role="alert">{{ errors.elder_name }}</p>
           {% endif %}
@@ -44,7 +44,7 @@
           <label class="form__checkbox-label">
             <input type="checkbox" id="consent" name="consent" value="1"
                    {% if values.consent is defined and values.consent %}checked{% endif %}>
-            I confirm the Elder has given permission for this request
+            {{ trans('request.consent') }}
           </label>
           {% if errors.consent is defined %}
             <p class="form__error" role="alert">{{ errors.consent }}</p>
@@ -53,7 +53,7 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="phone">Phone Number <span aria-hidden="true">*</span></label>
+        <label class="form__label" for="phone">{{ trans('request.phone') }} <span aria-hidden="true">*</span></label>
         {% if errors.phone is defined %}
           <p class="form__error" role="alert">{{ errors.phone }}</p>
         {% endif %}
@@ -64,44 +64,44 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="community">Community <span class="form__label-optional">(optional)</span></label>
+        <label class="form__label" for="community">{{ trans('request.community') }} <span class="form__label-optional">({{ trans('request.optional') }})</span></label>
         <input class="form__input" type="text" id="community" name="community"
                value="{{ values.community ?? (location is defined and location.hasLocation() ? location.communityName : '') }}"
                autocomplete="address-level2">
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="type">Type of Help Needed <span aria-hidden="true">*</span></label>
+        <label class="form__label" for="type">{{ trans('request.type_of_help') }} <span aria-hidden="true">*</span></label>
         {% if errors.type is defined %}
           <p class="form__error" role="alert">{{ errors.type }}</p>
         {% endif %}
         <select class="form__select{% if errors.type is defined %} form__select--error{% endif %}"
                 id="type" name="type" required>
-          <option value="">— Select —</option>
-          <option value="ride"{% if (values.type ?? '') == 'ride' %} selected{% endif %}>Ride</option>
-          <option value="groceries"{% if (values.type ?? '') == 'groceries' %} selected{% endif %}>Groceries</option>
-          <option value="chores"{% if (values.type ?? '') == 'chores' %} selected{% endif %}>Chores</option>
-          <option value="visit"{% if (values.type ?? '') == 'visit' %} selected{% endif %}>Visit / Companionship</option>
+          <option value="">{{ trans('request.select_default') }}</option>
+          <option value="ride"{% if (values.type ?? '') == 'ride' %} selected{% endif %}>{{ trans('request.type_ride') }}</option>
+          <option value="groceries"{% if (values.type ?? '') == 'groceries' %} selected{% endif %}>{{ trans('request.type_groceries') }}</option>
+          <option value="chores"{% if (values.type ?? '') == 'chores' %} selected{% endif %}>{{ trans('request.type_chores') }}</option>
+          <option value="visit"{% if (values.type ?? '') == 'visit' %} selected{% endif %}>{{ trans('request.type_visit') }}</option>
         </select>
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="notes">Additional Notes <span class="form__label-optional">(optional)</span></label>
+        <label class="form__label" for="notes">{{ trans('request.additional_notes') }} <span class="form__label-optional">({{ trans('request.optional') }})</span></label>
         <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes ?? '' }}</textarea>
       </div>
 
       <div class="privacy-note">
-        <p>Your information is only shared with the coordinator and the volunteer matched to your request. We never share it with anyone else.
-        <a href="/legal/privacy">Read our full privacy policy</a>.</p>
+        <p>{{ trans('request.privacy_note') }}
+        <a href="{{ lang_url('/legal/privacy') }}">{{ trans('request.privacy_link') }}</a>.</p>
       </div>
 
       <div class="form__actions">
-        <button type="submit" class="btn btn--primary">Submit Request</button>
+        <button type="submit" class="btn btn--primary">{{ trans('request.submit_button') }}</button>
       </div>
     </form>
 
-    <p class="text-secondary">Are you able to help? <a href="/elders/volunteer">Sign up as a volunteer</a>.</p>
-    <p class="text-secondary">Your safety matters. <a href="/safety">Read our safety guidelines</a>.</p>
+    <p class="text-secondary">{{ trans('request.can_help') }} <a href="{{ lang_url('/elders/volunteer') }}">{{ trans('request.volunteer_link') }}</a>.</p>
+    <p class="text-secondary">{{ trans('request.safety_matters') }} <a href="{{ lang_url('/safety') }}">{{ trans('request.safety_link') }}</a>.</p>
   </div>
 {% endblock %}
 

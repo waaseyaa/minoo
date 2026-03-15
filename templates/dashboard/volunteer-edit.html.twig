@@ -1,19 +1,19 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Edit My Profile — Minoo{% endblock %}
+{% block title %}{{ trans('volunteer_edit.title') }} — Minoo{% endblock %}
 
 {% block content %}
 <section class="content-section">
   <div class="flow-lg">
     <div>
-      <h1>Edit My Profile</h1>
-      <p class="text-secondary">Update your volunteer information.</p>
+      <h1>{{ trans('volunteer_edit.title') }}</h1>
+      <p class="text-secondary">{{ trans('volunteer_edit.subtitle') }}</p>
     </div>
 
-    <form class="form" method="POST" action="/dashboard/volunteer/edit">
+    <form class="form" method="POST" action="{{ lang_url('/dashboard/volunteer/edit') }}">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form__field">
-        <label class="form__label" for="phone">Phone Number</label>
+        <label class="form__label" for="phone">{{ trans('volunteer_edit.phone') }}</label>
         <input class="form__input{% if errors.phone is defined %} form__input--error{% endif %}" type="tel" id="phone" name="phone"
                value="{{ values.phone is defined ? values.phone : (volunteer.get('phone') ?? '') }}" autocomplete="tel" required>
         {% if errors.phone is defined %}
@@ -22,22 +22,22 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="availability">Availability</label>
+        <label class="form__label" for="availability">{{ trans('volunteer_edit.availability') }}</label>
         <input class="form__input" type="text" id="availability" name="availability"
                value="{{ values.availability is defined ? values.availability : (volunteer.get('availability') ?? '') }}"
-               placeholder="e.g. Weekends, Tuesday evenings">
+               placeholder="{{ trans('volunteer_edit.availability_placeholder') }}">
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="max_travel_km">Maximum Travel Distance (km)</label>
+        <label class="form__label" for="max_travel_km">{{ trans('volunteer_edit.max_travel') }}</label>
         <input class="form__input" type="number" id="max_travel_km" name="max_travel_km"
                value="{{ values.max_travel_km is defined ? values.max_travel_km : (volunteer.get('max_travel_km') ?? '') }}"
                min="1" max="1000" step="1"
-               placeholder="e.g. 50">
+               placeholder="{{ trans('volunteer_edit.max_travel_placeholder') }}">
       </div>
 
       <fieldset class="form__fieldset">
-        <legend class="form__label">Skills / How Can You Help?</legend>
+        <legend class="form__label">{{ trans('volunteer_edit.skills_legend') }}</legend>
         <div class="form__checkboxes">
           {% set currentSkills = values.skills is defined ? values.skills : (volunteer.get('skills') ?? []) %}
           {% for skill in ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'] %}
@@ -51,13 +51,13 @@
       </fieldset>
 
       <div class="form__field">
-        <label class="form__label" for="notes">Additional Notes</label>
+        <label class="form__label" for="notes">{{ trans('volunteer_edit.additional_notes') }}</label>
         <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes is defined ? values.notes : (volunteer.get('notes') ?? '') }}</textarea>
       </div>
 
       <div class="form__actions">
-        <button type="submit" class="form__submit">Save Changes</button>
-        <a href="/dashboard/volunteer" class="form__link">Cancel</a>
+        <button type="submit" class="form__submit">{{ trans('volunteer_edit.save_button') }}</button>
+        <a href="{{ lang_url('/dashboard/volunteer') }}" class="form__link">{{ trans('volunteer_edit.cancel') }}</a>
       </div>
     </form>
   </div>

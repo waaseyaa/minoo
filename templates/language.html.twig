@@ -2,19 +2,19 @@
 
 {% block title %}
   {%- if path == '/language' -%}
-    Language — Minoo
+    {{ trans('language.title') }} — Minoo
   {%- elseif entry is defined and entry -%}
     {{ entry.get('word') }} — Minoo
   {%- else -%}
-    Entry Not Found — Minoo
+    {{ trans('language.not_found') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
   {% if path == '/language' %}
     <div class="flow-lg">
-      <h1>Language</h1>
-      <p class="hero__subtitle">Anishinaabemowin words, meanings, and the structure of a language spoken on this land for thousands of years.</p>
+      <h1>{{ trans('language.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('language.subtitle') }}</p>
 
       {% if entries is defined and entries|length > 0 %}
         <div class="card-grid">
@@ -31,20 +31,20 @@
         </div>
       {% else %}
         {% include "components/empty-state.html.twig" with {
-          heading: "No dictionary entries yet",
-          body: "Anishinaabemowin words, meanings, and example sentences will appear here as speakers and language learners contribute. Language carries a worldview that translation alone cannot.",
-          action_url: "/teachings",
-          action_label: "Explore Teachings"
+          heading: trans('language.empty_heading'),
+          body: trans('language.empty_body'),
+          action_url: lang_url('/teachings'),
+          action_label: trans('language.explore_teachings')
         } %}
       {% endif %}
 
       <footer class="attribution">
-        <p>Dictionary content is copyrighted by <a href="http://ojibwe.lib.umn.edu" rel="external noopener">The Ojibwe People's Dictionary</a> and used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external noopener">CC BY-NC-SA 4.0</a>.</p>
+        <p>{{ trans('language.copyright') }}</p>
       </footer>
     </div>
   {% elseif entry is defined and entry %}
     <div class="flow-lg detail">
-      <a href="/language" class="detail__back">Language</a>
+      <a href="{{ lang_url('/language') }}" class="detail__back">{{ trans('language.detail_back') }}</a>
       <div class="detail__header">
         <span class="card__badge card__badge--language">{{ entry.get('part_of_speech')|default('') }}</span>
         <h1>{{ entry.get('word') }}</h1>
@@ -57,14 +57,14 @@
       </div>
 
       <footer class="attribution">
-        <p>Dictionary content is copyrighted by <a href="http://ojibwe.lib.umn.edu" rel="external noopener">The Ojibwe People's Dictionary</a> and used under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external noopener">CC BY-NC-SA 4.0</a>.</p>
+        <p>{{ trans('language.copyright') }}</p>
       </footer>
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Entry Not Found</h1>
-      <p>We couldn't find this dictionary entry. It may have been removed or the link may be outdated.</p>
-      <p><a href="/language">Browse all entries</a></p>
+      <h1>{{ trans('language.not_found') }}</h1>
+      <p>{{ trans('language.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/language') }}">{{ trans('language.browse_all') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

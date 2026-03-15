@@ -1,37 +1,37 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Your Account — Minoo{% endblock %}
+{% block title %}{{ trans('account.welcome') }} — Minoo{% endblock %}
 
 {% block content %}
 <section class="account-home flow-lg">
   <div>
-    <h1>Welcome back{% if account is defined and account.getName() %}, {{ account.getName() }}{% endif %}</h1>
-    <p class="text-secondary">This is your home on Minoo. From here you can manage your account and access community tools.</p>
+    <h1>{{ trans('account.welcome') }}{% if account is defined and account.getName() %}, {{ account.getName() }}{% endif %}</h1>
+    <p class="text-secondary">{{ trans('account.subtitle') }}</p>
   </div>
 
   <div class="actions">
-    <h2>Profile</h2>
+    <h2>{{ trans('account.profile') }}</h2>
     <ul class="links">
-      <li><a href="/logout" class="btn btn--outline">Sign Out</a></li>
+      <li><a href="{{ lang_url('/logout') }}" class="btn btn--outline">{{ trans('account.logout') }}</a></li>
     </ul>
   </div>
 
   {% if 'volunteer' in roles %}
   <div class="actions">
-    <h2>Elder Support Program</h2>
-    <p class="text-secondary">You're a registered volunteer. Check your assignments and update your availability.</p>
+    <h2>{{ trans('account.elder_support') }}</h2>
+    <p class="text-secondary">{{ trans('account.volunteer_text') }}</p>
     <ul class="links">
-      <li><a href="/dashboard/volunteer">My Assignments</a></li>
+      <li><a href="{{ lang_url('/dashboard/volunteer') }}">{{ trans('account.my_assignments') }}</a></li>
     </ul>
   </div>
   {% endif %}
 
   {% if 'elder_coordinator' in roles %}
   <div class="actions">
-    <h2>Coordination</h2>
-    <p class="text-secondary">Manage Elder Support requests and coordinate volunteers in your community.</p>
+    <h2>{{ trans('account.coordination') }}</h2>
+    <p class="text-secondary">{{ trans('account.coordinator_text') }}</p>
     <ul class="links">
-      <li><a href="/dashboard/coordinator">Coordinator Dashboard</a></li>
+      <li><a href="{{ lang_url('/dashboard/coordinator') }}">{{ trans('account.coordinator_dashboard') }}</a></li>
     </ul>
   </div>
   {% endif %}

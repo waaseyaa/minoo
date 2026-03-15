@@ -1,50 +1,50 @@
 {% extends "base.html.twig" %}
 
-{% block title %}My Dashboard — Minoo{% endblock %}
+{% block title %}{{ trans('volunteer_dash.title') }} — Minoo{% endblock %}
 
 {% block content %}
 <section class="content-section flow-lg">
-  <h1>My Assignments</h1>
-  <p class="text-secondary">Your coordinator will assign requests to you. Here's where you'll manage them.</p>
+  <h1>{{ trans('volunteer_dash.title') }}</h1>
+  <p class="text-secondary">{{ trans('volunteer_dash.subtitle') }}</p>
 
   {% if volunteer is defined and volunteer %}
   <div class="dashboard__profile-bar">
-    <span class="status-indicator status-indicator--{{ volunteer.get('status') }}">{{ volunteer.get('status')|title }}</span>
-    <a href="/dashboard/volunteer/edit" class="form__link">Edit Profile</a>
-    <form method="post" action="/dashboard/volunteer/toggle-availability" class="dashboard__toggle-form">
+    <span class="status-indicator status-indicator--{{ volunteer.get('status') }}">{{ trans('volunteer_dash.status') }}: {{ volunteer.get('status')|title }}</span>
+    <a href="{{ lang_url('/dashboard/volunteer/edit') }}" class="form__link">{{ trans('volunteer_dash.edit_profile') }}</a>
+    <form method="post" action="{{ lang_url('/dashboard/volunteer/toggle-availability') }}" class="dashboard__toggle-form">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <button type="submit" class="form__submit form__submit--secondary form__submit--sm">
-        {% if volunteer.get('status') == 'active' %}Go Unavailable{% else %}Go Active{% endif %}
+        {% if volunteer.get('status') == 'active' %}{{ trans('volunteer_dash.go_unavailable') }}{% else %}{{ trans('volunteer_dash.go_active') }}{% endif %}
       </button>
     </form>
   </div>
   {% endif %}
 
   {% if requests is empty %}
-    <p class="dashboard__empty">No assignments yet. When a coordinator matches you with an Elder, it'll show up here.</p>
+    <p class="dashboard__empty">{{ trans('volunteer_dash.no_assignments') }}</p>
   {% else %}
 
     {% if grouped.assigned is not empty %}
-    <h2>Assigned to You</h2>
+    <h2>{{ trans('volunteer_dash.assigned_to_you') }}</h2>
     <div class="dashboard__cards">
       {% for req in grouped.assigned %}
       <article class="card card--dashboard">
-        <span class="card__badge card__badge--assigned">Assigned</span>
+        <span class="card__badge card__badge--assigned">{{ trans('volunteer_dash.assigned') }}</span>
         <h3 class="card__title">{{ req.get('name') }}</h3>
         <dl class="card__meta">
-          <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-          {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
-          {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
-          {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
+          <dt>{{ trans('volunteer_dash.type') }}</dt><dd>{{ req.get('type') }}</dd>
+          {% if req.get('phone') %}<dt>{{ trans('volunteer_dash.phone') }}</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
+          {% if req.get('community') %}<dt>{{ trans('volunteer_dash.community') }}</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+          {% if req.get('notes') %}<dt>{{ trans('volunteer_dash.notes') }}</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
         </dl>
         <div class="card__actions">
           <form method="post" action="/elders/request/{{ req.id() }}/start">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            <button class="form__submit" type="submit">Accept & Start</button>
+            <button class="form__submit" type="submit">{{ trans('volunteer_dash.accept_start') }}</button>
           </form>
           <form method="post" action="/elders/request/{{ req.id() }}/decline">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            <button class="form__submit form__submit--secondary form__submit--sm" type="submit">Decline</button>
+            <button class="form__submit form__submit--secondary form__submit--sm" type="submit">{{ trans('volunteer_dash.decline') }}</button>
           </form>
         </div>
       </article>
@@ -53,25 +53,25 @@
     {% endif %}
 
     {% if grouped.in_progress is not empty %}
-    <h2>In Progress</h2>
+    <h2>{{ trans('volunteer_dash.in_progress') }}</h2>
     <div class="dashboard__cards">
       {% for req in grouped.in_progress %}
       <article class="card card--dashboard">
-        <span class="card__badge card__badge--in-progress">In Progress</span>
+        <span class="card__badge card__badge--in-progress">{{ trans('volunteer_dash.in_progress') }}</span>
         <h3 class="card__title">{{ req.get('name') }}</h3>
         <dl class="card__meta">
-          <dt>Type</dt><dd>{{ req.get('type') }}</dd>
-          {% if req.get('phone') %}<dt>Phone</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
-          {% if req.get('community') %}<dt>Community</dt><dd>{{ req.get('community') }}</dd>{% endif %}
-          {% if req.get('notes') %}<dt>Notes</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
+          <dt>{{ trans('volunteer_dash.type') }}</dt><dd>{{ req.get('type') }}</dd>
+          {% if req.get('phone') %}<dt>{{ trans('volunteer_dash.phone') }}</dt><dd>{{ req.get('phone') }}</dd>{% endif %}
+          {% if req.get('community') %}<dt>{{ trans('volunteer_dash.community') }}</dt><dd>{{ req.get('community') }}</dd>{% endif %}
+          {% if req.get('notes') %}<dt>{{ trans('volunteer_dash.notes') }}</dt><dd>{{ req.get('notes') }}</dd>{% endif %}
         </dl>
         <details class="dashboard__complete-details">
-          <summary class="form__submit" type="button">Mark Complete</summary>
+          <summary class="form__submit" type="button">{{ trans('volunteer_dash.mark_complete') }}</summary>
           <form method="post" action="/elders/request/{{ req.id() }}/complete" class="dashboard__complete-form">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            <label class="form__label" for="completion-notes-{{ req.id() }}">How did it go? (optional)</label>
+            <label class="form__label" for="completion-notes-{{ req.id() }}">{{ trans('volunteer_dash.how_did_it_go') }}</label>
             <textarea class="form__textarea" id="completion-notes-{{ req.id() }}" name="completion_notes" rows="2"></textarea>
-            <button class="form__submit" type="submit">Confirm Complete</button>
+            <button class="form__submit" type="submit">{{ trans('volunteer_dash.confirm_complete') }}</button>
           </form>
         </details>
       </article>
@@ -80,30 +80,30 @@
     {% endif %}
 
     {% if grouped.completed is not empty %}
-    <h2>Completed (Awaiting Confirmation)</h2>
+    <h2>{{ trans('volunteer_dash.completed_awaiting') }}</h2>
     <div class="dashboard__cards">
       {% for req in grouped.completed %}
       <article class="card card--dashboard">
-        <span class="card__badge card__badge--completed">Completed</span>
+        <span class="card__badge card__badge--completed">{{ trans('volunteer_dash.completed') }}</span>
         <h3 class="card__title">{{ req.get('name') }}</h3>
         <dl class="card__meta">
-          <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+          <dt>{{ trans('volunteer_dash.type') }}</dt><dd>{{ req.get('type') }}</dd>
         </dl>
-        <p class="card__note">Waiting for coordinator confirmation.</p>
+        <p class="card__note">{{ trans('volunteer_dash.waiting_confirmation') }}</p>
       </article>
       {% endfor %}
     </div>
     {% endif %}
 
     {% if grouped.confirmed is not empty %}
-    <h2>History</h2>
+    <h2>{{ trans('volunteer_dash.history') }}</h2>
     <div class="dashboard__cards">
       {% for req in grouped.confirmed %}
       <article class="card card--dashboard card--history">
-        <span class="card__badge card__badge--confirmed">Confirmed</span>
+        <span class="card__badge card__badge--confirmed">{{ trans('volunteer_dash.confirmed') }}</span>
         <h3 class="card__title">{{ req.get('name') }}</h3>
         <dl class="card__meta">
-          <dt>Type</dt><dd>{{ req.get('type') }}</dd>
+          <dt>{{ trans('volunteer_dash.type') }}</dt><dd>{{ req.get('type') }}</dd>
         </dl>
       </article>
       {% endfor %}

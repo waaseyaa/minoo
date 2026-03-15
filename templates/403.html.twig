@@ -6,6 +6,6 @@
   <div class="flow-lg">
     <h1>{{ title }}</h1>
     <p>{{ detail }}</p>
-    <p><a href="/login?redirect={{ request_path|url_encode }}">Sign in</a> to access this page, or <a href="/">return to the homepage</a>.</p>
+    <p><a href="{{ lang_url('/login') }}?redirect={{ request_path|url_encode }}">{{ trans('error.403_signin') }}</a>, <a href="{{ lang_url('/') }}">{{ trans('error.403_home') }}</a>.</p>
   </div>
 {% endblock %}

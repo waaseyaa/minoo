@@ -1,4 +1,9 @@
 /* Atlas Communities Redesign */
+[x-data="atlasDiscovery()"] {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 :root {
   --atlas-deep: #2d4a3e;
   --atlas-forest: #3d6b5a;
@@ -39,6 +44,7 @@
   max-height: 400px;
   background: #dfe6e0;
   border-bottom: 2px solid var(--atlas-chip-bg);
+  overflow: hidden;
 }
 
 /* --- Search + Filters --- */
@@ -151,6 +157,10 @@
   font-size: 0.75rem;
   color: var(--atlas-sage);
   margin-top: 0.1875rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
 }
 .atlas-card__badge {
   display: inline-block;
@@ -365,14 +375,41 @@
   }
   .atlas-filters {
     padding: 0.75rem 1rem;
+    overflow-x: hidden;
   }
   .atlas-chips {
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .atlas-chip {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .atlas-chip-dropdown__menu {
+    min-width: 0;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    right: 0;
+    left: auto;
   }
   .atlas-list {
     padding: 0.75rem 1rem;
+  }
+  .atlas-card {
+    overflow: hidden;
+  }
+  .atlas-card > div:first-child {
+    min-width: 0;
+  }
+  .atlas-card__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .atlas-card__meta {
+    flex-wrap: wrap;
   }
   .atlas-card__badge {
     font-size: 0.5625rem;

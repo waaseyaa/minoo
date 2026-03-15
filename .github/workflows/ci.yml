@@ -38,6 +38,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: waaseyaa/framework
+          ref: develop/v1.1
           path: waaseyaa
           token: ${{ secrets.WAASEYAA_PAT }}
 
@@ -73,6 +74,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: waaseyaa/framework
+          ref: develop/v1.1
           path: waaseyaa
           token: ${{ secrets.WAASEYAA_PAT }}
 
@@ -119,6 +121,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: waaseyaa/framework
+          ref: develop/v1.1
           path: waaseyaa
           token: ${{ secrets.WAASEYAA_PAT }}
 

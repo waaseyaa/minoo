@@ -1,19 +1,19 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Volunteer to Help Elders — Minoo{% endblock %}
+{% block title %}{{ trans('volunteer_signup.title') }} — Minoo{% endblock %}
 
 {% block content %}
   <div class="flow-lg">
     <div>
-      <h1>Volunteer to Help Elders</h1>
-      <p class="text-secondary">Sign up to help community Elders with rides, groceries, chores, or visits.</p>
-      <p class="text-secondary">Elders have given so much to our communities. Volunteering is one way to give something back. A coordinator will match you with a request that fits your time.</p>
+      <h1>{{ trans('volunteer_signup.title') }}</h1>
+      <p class="text-secondary">{{ trans('volunteer_signup.subtitle') }}</p>
+      <p class="text-secondary">{{ trans('volunteer_signup.intro_text') }}</p>
     </div>
 
-    <form class="form form--centered" method="POST" action="/elders/volunteer">
+    <form class="form form--centered" method="POST" action="{{ lang_url('/elders/volunteer') }}">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form__field">
-        <label class="form__label" for="name">Your Name <span aria-hidden="true">*</span></label>
+        <label class="form__label" for="name">{{ trans('volunteer_signup.your_name') }} <span aria-hidden="true">*</span></label>
         {% if errors.name is defined %}
           <p class="form__error" role="alert">{{ errors.name }}</p>
         {% endif %}
@@ -24,7 +24,7 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="phone">Phone Number <span aria-hidden="true">*</span></label>
+        <label class="form__label" for="phone">{{ trans('volunteer_signup.phone') }} <span aria-hidden="true">*</span></label>
         {% if errors.phone is defined %}
           <p class="form__error" role="alert">{{ errors.phone }}</p>
         {% endif %}
@@ -35,29 +35,29 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="community">Community <span class="form__label-optional">(optional)</span></label>
+        <label class="form__label" for="community">{{ trans('volunteer_signup.community') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
         <input class="form__input" type="text" id="community" name="community"
                value="{{ values.community ?? (location is defined and location.hasLocation() ? location.communityName : '') }}"
                autocomplete="address-level2">
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="availability">Availability <span class="form__label-optional">(optional)</span></label>
+        <label class="form__label" for="availability">{{ trans('volunteer_signup.availability') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
         <input class="form__input" type="text" id="availability" name="availability"
                value="{{ values.availability ?? '' }}"
-               placeholder="e.g. Weekends, Tuesday evenings">
+               placeholder="{{ trans('volunteer_signup.availability_placeholder') }}">
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="max_travel_km">Maximum Travel Distance (km) <span class="form__label-optional">(optional)</span></label>
+        <label class="form__label" for="max_travel_km">{{ trans('volunteer_signup.max_travel') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
         <input class="form__input" type="number" id="max_travel_km" name="max_travel_km"
                value="{{ values.maxTravelKm ?? '' }}"
                min="1" max="1000" step="1"
-               placeholder="e.g. 50">
+               placeholder="{{ trans('volunteer_signup.max_travel_placeholder') }}">
       </div>
 
       <fieldset class="form__fieldset">
-        <legend class="form__label">Skills / How Can You Help? <span class="form__label-optional">(optional)</span></legend>
+        <legend class="form__label">{{ trans('volunteer_signup.skills_legend') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></legend>
         <div class="form__checkboxes">
           {% set selectedSkills = values.skills ?? [] %}
           {% for skill in ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'] %}
@@ -71,20 +71,20 @@
       </fieldset>
 
       <div class="form__field">
-        <label class="form__label" for="notes">Additional Notes <span class="form__label-optional">(optional)</span></label>
+        <label class="form__label" for="notes">{{ trans('volunteer_signup.additional_notes') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
         <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes ?? '' }}</textarea>
       </div>
 
       <div class="privacy-note">
-        <p>Your information is only shared with coordinators who match you with Elder support requests. We never share it with anyone else.
-        <a href="/legal/privacy">Read our full privacy policy</a>.</p>
+        <p>{{ trans('volunteer_signup.privacy_note') }}
+        <a href="{{ lang_url('/legal/privacy') }}">{{ trans('volunteer_signup.privacy_link') }}</a>.</p>
       </div>
 
       <div class="form__actions">
-        <button type="submit" class="btn btn--primary">Sign Up</button>
+        <button type="submit" class="btn btn--primary">{{ trans('volunteer_signup.submit_button') }}</button>
       </div>
     </form>
 
-    <p class="text-secondary">Need help yourself? <a href="/elders/request">Request Elder support</a>.</p>
+    <p class="text-secondary">{{ trans('volunteer_signup.need_help') }} <a href="{{ lang_url('/elders/request') }}">{{ trans('volunteer_signup.request_link') }}</a>.</p>
   </div>
 {% endblock %}

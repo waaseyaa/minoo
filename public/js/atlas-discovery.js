@@ -205,6 +205,9 @@ function atlasDiscovery() {
 
     // --- Map ---
     initMap() {
+      // Guard against double-initialization (Alpine may call init() more than once)
+      if (this.map) return;
+
       var defaultCenter = this.hasLocation ? [this.userLat, this.userLng] : [50.0, -85.0];
       var defaultZoom = this.hasLocation ? 8 : 5;
 

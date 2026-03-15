@@ -2,19 +2,19 @@
 
 {% block title %}
   {%- if path == '/teachings' -%}
-    Teachings — Minoo
+    {{ trans('teachings.title') }} — Minoo
   {%- elseif teaching is defined and teaching -%}
     {{ teaching.get('title') }} — Minoo
   {%- else -%}
-    Teaching Not Found — Minoo
+    {{ trans('teachings.not_found') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
 {% block content %}
   {% if path == '/teachings' %}
     <div class="flow-lg">
-      <h1>Teachings</h1>
-      <p class="hero__subtitle">Living knowledge passed down through generations, for right now.</p>
+      <h1>{{ trans('teachings.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('teachings.subtitle') }}</p>
 
       {% if teachings is defined and teachings|length > 0 %}
         <div class="card-grid">
@@ -31,16 +31,16 @@
         </div>
       {% else %}
         {% include "components/empty-state.html.twig" with {
-          heading: "No Teachings shared yet",
-          body: "Living knowledge — culture, history, and language — will be shared here by Knowledge Keepers and community members. This space is growing.",
-          action_url: "/language",
-          action_label: "Explore the language collection"
+          heading: trans('teachings.empty_heading'),
+          body: trans('teachings.empty_body'),
+          action_url: lang_url('/language'),
+          action_label: trans('teachings.explore_language')
         } %}
       {% endif %}
     </div>
   {% elseif teaching is defined and teaching %}
     <div class="flow-lg detail">
-      <a href="/teachings" class="detail__back">Teachings</a>
+      <a href="{{ lang_url('/teachings') }}" class="detail__back">{{ trans('teachings.detail_back') }}</a>
       <div class="detail__header">
         <span class="card__badge card__badge--teaching">{{ teaching.get('type')|default('')|capitalize }}</span>
         <h1>{{ teaching.get('title') }}</h1>
@@ -53,9 +53,9 @@
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Teaching Not Found</h1>
-      <p>We couldn't find this teaching. It may have been removed or the link may be outdated.</p>
-      <p><a href="/teachings">Browse all Teachings</a></p>
+      <h1>{{ trans('teachings.not_found') }}</h1>
+      <p>{{ trans('teachings.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/teachings') }}">{{ trans('teachings.browse_all') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

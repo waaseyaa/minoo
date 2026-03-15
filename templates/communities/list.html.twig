@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Communities — Minoo{% endblock %}
+{% block title %}{{ trans('communities.all_communities') }}{% endblock %}
 
 {% block head %}
   <link rel="stylesheet" href="/css/atlas.css">
@@ -14,8 +14,8 @@
 
   {# --- Contextual Header --- #}
   <div class="atlas-header">
-    <div class="atlas-header__label">Exploring</div>
-    <h1 class="atlas-header__title" x-text="headerTitle">All Communities</h1>
+    <div class="atlas-header__label">{{ trans('communities.exploring') }}</div>
+    <h1 class="atlas-header__title" x-text="headerTitle">{{ trans('communities.all_communities') }}</h1>
     <div class="atlas-header__meta" x-text="headerMeta"></div>
   </div>
 
@@ -27,8 +27,8 @@
     <input
       type="text"
       class="atlas-search"
-      placeholder="Search communities by name..."
-      aria-label="Search communities by name"
+      placeholder="{{ trans('communities.search_placeholder') }}"
+      aria-label="{{ trans('communities.search_label') }}"
       x-model="searchQuery"
       @input.debounce.200ms="applyFilters()"
     />
@@ -38,22 +38,22 @@
         class="atlas-chip"
         :class="{ 'atlas-chip--active': typeFilter === 'all' }"
         @click="typeFilter = 'all'; applyFilters()"
-      >All Types</button>
+      >{{ trans('communities.all_types') }}</button>
       <button
         class="atlas-chip"
         :class="{ 'atlas-chip--active': typeFilter === 'fn' }"
         @click="typeFilter = 'fn'; applyFilters()"
-      >First Nations</button>
+      >{{ trans('communities.first_nations') }}</button>
       <button
         class="atlas-chip"
         :class="{ 'atlas-chip--active': typeFilter === 'mun' }"
         @click="typeFilter = 'mun'; applyFilters()"
-      >Municipalities</button>
+      >{{ trans('communities.municipalities') }}</button>
 
       {# Province dropdown #}
       <div class="atlas-chip-dropdown" x-data="{ open: false }" @click.outside="open = false">
         <button class="atlas-chip" :class="{ 'atlas-chip--active': provinceFilter.length > 0 }" @click="open = !open">
-          Province <span x-show="provinceFilter.length > 0" x-text="'(' + provinceFilter.length + ')'"></span> ▾
+          {{ trans('communities.province') }} <span x-show="provinceFilter.length > 0" x-text="'(' + provinceFilter.length + ')'"></span> ▾
         </button>
         <div class="atlas-chip-dropdown__menu" x-show="open" x-cloak>
           <template x-for="prov in availableProvinces" :key="prov">
@@ -68,7 +68,7 @@
       {# Nation dropdown #}
       <div class="atlas-chip-dropdown" x-data="{ open: false }" @click.outside="open = false">
         <button class="atlas-chip" :class="{ 'atlas-chip--active': nationFilter.length > 0 }" @click="open = !open">
-          Nation <span x-show="nationFilter.length > 0" x-text="'(' + nationFilter.length + ')'"></span> ▾
+          {{ trans('communities.nation') }} <span x-show="nationFilter.length > 0" x-text="'(' + nationFilter.length + ')'"></span> ▾
         </button>
         <div class="atlas-chip-dropdown__menu" x-show="open" x-cloak>
           <template x-for="nat in availableNations" :key="nat">
@@ -83,19 +83,19 @@
       {# Population dropdown #}
       <div class="atlas-chip-dropdown" x-data="{ open: false }" @click.outside="open = false">
         <button class="atlas-chip" :class="{ 'atlas-chip--active': populationFilter !== 'all' }" @click="open = !open">
-          Population ▾
+          {{ trans('communities.population') }} ▾
         </button>
         <div class="atlas-chip-dropdown__menu" x-show="open" x-cloak>
           <div class="atlas-chip-dropdown__item" @click="populationFilter = 'all'; applyFilters(); open = false"
-            :style="populationFilter === 'all' ? 'font-weight:600' : ''">All</div>
+            :style="populationFilter === 'all' ? 'font-weight:600' : ''">{{ trans('communities.all_types') }}</div>
           <div class="atlas-chip-dropdown__item" @click="populationFilter = '0-500'; applyFilters(); open = false"
-            :style="populationFilter === '0-500' ? 'font-weight:600' : ''">Under 500</div>
+            :style="populationFilter === '0-500' ? 'font-weight:600' : ''">{{ trans('communities.under_500') }}</div>
           <div class="atlas-chip-dropdown__item" @click="populationFilter = '500-2000'; applyFilters(); open = false"
-            :style="populationFilter === '500-2000' ? 'font-weight:600' : ''">500 – 2,000</div>
+            :style="populationFilter === '500-2000' ? 'font-weight:600' : ''">{{ trans('communities.pop_500_2000') }}</div>
           <div class="atlas-chip-dropdown__item" @click="populationFilter = '2000-5000'; applyFilters(); open = false"
-            :style="populationFilter === '2000-5000' ? 'font-weight:600' : ''">2,000 – 5,000</div>
+            :style="populationFilter === '2000-5000' ? 'font-weight:600' : ''">{{ trans('communities.pop_2000_5000') }}</div>
           <div class="atlas-chip-dropdown__item" @click="populationFilter = '5000+'; applyFilters(); open = false"
-            :style="populationFilter === '5000+' ? 'font-weight:600' : ''">5,000+</div>
+            :style="populationFilter === '5000+' ? 'font-weight:600' : ''">{{ trans('communities.pop_5000_plus') }}</div>
         </div>
       </div>
     </div>
@@ -115,10 +115,10 @@
                 <div>
                   <div class="atlas-card__name" x-text="c.name"></div>
                   <div class="atlas-card__meta">
-                    <span class="atlas-card__badge" x-text="c.is_municipality ? 'Municipality' : 'First Nation'"></span>
-                    <span x-show="c.nation" x-text="c.nation" style="margin-left: 0.5rem;"></span>
-                    <span style="margin-left: 0.25rem;">·</span>
-                    <span x-text="c.province" style="margin-left: 0.25rem;"></span>
+                    <span class="atlas-card__badge" x-text="c.is_municipality ? '{{ trans('communities.municipalities') }}' : '{{ trans('communities.first_nations') }}'"></span>
+                    <span x-show="c.nation" x-text="c.nation" ></span>
+                    <span >·</span>
+                    <span x-text="c.province" ></span>
                   </div>
                 </div>
                 <div class="atlas-card__stats">
@@ -141,10 +141,10 @@
             <div>
               <div class="atlas-card__name" x-text="c.name"></div>
               <div class="atlas-card__meta">
-                <span class="atlas-card__badge" x-text="c.is_municipality ? 'Municipality' : 'First Nation'"></span>
-                <span x-show="c.nation" x-text="c.nation" style="margin-left: 0.5rem;"></span>
-                <span style="margin-left: 0.25rem;">·</span>
-                <span x-text="c.province" style="margin-left: 0.25rem;"></span>
+                <span class="atlas-card__badge" x-text="c.is_municipality ? '{{ trans('communities.municipalities') }}' : '{{ trans('communities.first_nations') }}'"></span>
+                <span x-show="c.nation" x-text="c.nation" ></span>
+                <span >·</span>
+                <span x-text="c.province" ></span>
               </div>
             </div>
             <div class="atlas-card__stats">
@@ -157,7 +157,7 @@
 
     {# Empty state #}
     <div x-show="filteredCommunities.length === 0" style="text-align: center; padding: 2rem; color: #999;">
-      No communities match your filters.
+      {{ trans('communities.no_matches') }}
     </div>
   </div>
 </div>

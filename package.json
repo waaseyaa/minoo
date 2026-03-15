@@ -29,6 +29,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.58.2",
-    "husky": "^9.1.7"
+    "@types/node": "^25.5.0",
+    "husky": "^9.1.7",
+    "typescript": "^5.9.3"
   }
 }

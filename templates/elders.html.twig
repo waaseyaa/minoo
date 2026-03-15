@@ -1,66 +1,66 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Elder Support Program — Minoo{% endblock %}
+{% block title %}{{ trans('elders.title') }} — Minoo{% endblock %}
 
 {% block content %}
 <section class="content-section flow-lg">
   <div class="portal-section">
-    <h1>Elder Support Program</h1>
-    <p class="text-secondary">Caring for our Elders is one of the most important things a community can do. Request help for an Elder or volunteer your time. Rides, groceries, yard work, or a friendly visit. A little goes a long way.</p>
+    <h1>{{ trans('elders.title') }}</h1>
+    <p class="text-secondary">{{ trans('elders.subtitle') }}</p>
   </div>
 
   <div class="portal-section flow">
-    <h2>How It Works</h2>
+    <h2>{{ trans('elders.how_heading') }}</h2>
     <div class="how-it-works">
       <div class="how-it-works__step flow">
-        <h3>1. Request Help</h3>
-        <p>An Elder or someone on their behalf submits a request for a ride, groceries, yard work, or a friendly visit.</p>
+        <h3>{{ trans('elders.step1_title') }}</h3>
+        <p>{{ trans('elders.step1_text') }}</p>
       </div>
       <div class="how-it-works__step flow">
-        <h3>2. Get Matched</h3>
-        <p>A community coordinator reviews the request and connects the Elder with a nearby volunteer.</p>
+        <h3>{{ trans('elders.step2_title') }}</h3>
+        <p>{{ trans('elders.step2_text') }}</p>
       </div>
       <div class="how-it-works__step flow">
-        <h3>3. Receive Support</h3>
-        <p>The volunteer reaches out, arranges the details, and helps. The coordinator follows up.</p>
+        <h3>{{ trans('elders.step3_title') }}</h3>
+        <p>{{ trans('elders.step3_text') }}</p>
       </div>
     </div>
   </div>
 
   <div class="how-it-works">
     <div class="how-it-works__step">
-      <h2>For Elders</h2>
-      <p>Need a ride to an appointment? Help with groceries or yard work? Or would you just like someone to visit? You don't have to do everything on your own — our volunteers are happy to help.</p>
+      <h2>{{ trans('elders.for_elders_heading') }}</h2>
+      <p>{{ trans('elders.for_elders_text') }}</p>
       <ol class="how-it-works__list">
-        <li>Submit a request describing what you need</li>
-        <li>A coordinator reviews your request and finds a volunteer</li>
-        <li>The volunteer reaches out to arrange the details</li>
-        <li>After the visit, the coordinator follows up to make sure everything went well</li>
+        <li>{{ trans('elders.for_elders_step1') }}</li>
+        <li>{{ trans('elders.for_elders_step2') }}</li>
+        <li>{{ trans('elders.for_elders_step3') }}</li>
+        <li>{{ trans('elders.for_elders_step4') }}</li>
       </ol>
-      <a href="/elders/request" class="btn btn--primary">Request Help</a>
+      <a href="{{ lang_url('/elders/request') }}" class="btn btn--primary">{{ trans('elders.request_help_button') }}</a>
     </div>
 
     <div class="how-it-works__step">
-      <h2>For Volunteers</h2>
-      <p>Have some time to share? Elders in your community could use a hand. Volunteering connects you to community in a real way — not just for the Elder you help, but for you too. Sign up and a coordinator will match you with requests that fit your schedule.</p>
+      <h2>{{ trans('elders.for_volunteers_heading') }}</h2>
+      <p>{{ trans('elders.for_volunteers_text') }}</p>
       <ol class="how-it-works__list">
-        <li>Sign up with your availability and skills</li>
-        <li>A coordinator assigns you to a request</li>
-        <li>Connect with the Elder and provide support</li>
-        <li>Mark the request complete when you're done</li>
+        <li>{{ trans('elders.for_volunteers_step1') }}</li>
+        <li>{{ trans('elders.for_volunteers_step2') }}</li>
+        <li>{{ trans('elders.for_volunteers_step3') }}</li>
+        <li>{{ trans('elders.for_volunteers_step4') }}</li>
       </ol>
-      <a href="/elders/volunteer" class="btn btn--secondary">Volunteer</a>
+      <a href="{{ lang_url('/elders/volunteer') }}" class="btn btn--secondary">{{ trans('elders.volunteer_button') }}</a>
     </div>
   </div>
 
   <div class="safety-callout">
-    <h2>Your Safety Matters</h2>
-    <p>All volunteers are connected through community coordinators who know your area. You're never obligated to accept help, and you can cancel a request at any time. <a href="/safety">Read our safety guidelines</a>.</p>
+    <h2>{{ trans('elders.safety_heading') }}</h2>
+    <p>{{ trans('elders.safety_text') }} <a href="{{ lang_url('/safety') }}">{{ trans('elders.safety_link') }}</a>.</p>
   </div>
 
   <div class="portal-section">
-    <h2>Prefer to Call?</h2>
-    <p>Reach out to your community's coordinator directly. They can submit a request on your behalf.</p>
+    <h2>{{ trans('elders.prefer_call_heading') }}</h2>
+    <p>{{ trans('elders.prefer_call_text') }}</p>
   </div>
 </section>
 {% endblock %}
