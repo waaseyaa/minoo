@@ -56,6 +56,9 @@ final class TaxonomySeeder
                 ['name' => 'Small Business Owner', 'vid' => 'person_roles'],
                 ['name' => 'Youth Worker', 'vid' => 'person_roles'],
                 ['name' => 'Cedar Harvester', 'vid' => 'person_roles'],
+                ['name' => 'Artist', 'vid' => 'person_roles'],
+                ['name' => 'Web Developer', 'vid' => 'person_roles'],
+                ['name' => 'Healer', 'vid' => 'person_roles'],
             ],
         ];
     }
@@ -76,6 +79,11 @@ final class TaxonomySeeder
                 ['name' => 'Cedar Products', 'vid' => 'person_offerings'],
                 ['name' => 'Beadwork', 'vid' => 'person_offerings'],
                 ['name' => 'Traditional Medicine', 'vid' => 'person_offerings'],
+                ['name' => 'Hair Services', 'vid' => 'person_offerings'],
+                ['name' => 'Esthetics', 'vid' => 'person_offerings'],
+                ['name' => 'Massage', 'vid' => 'person_offerings'],
+                ['name' => 'Nail Services', 'vid' => 'person_offerings'],
+                ['name' => 'Web Development', 'vid' => 'person_offerings'],
             ],
         ];
     }
