@@ -691,6 +691,15 @@
     color: var(--text-secondary);
   }
 
+  .card__community a {
+    color: var(--link);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   .card__body {
     font-size: var(--text-base);
     line-height: var(--leading-normal);
