@@ -31,7 +31,7 @@ Two-zone horizontal layout:
 
 ### 1.3 Background
 
-Forest gradient using existing tokens: `--forest-700` to `--forest-900`.
+Forest gradient: `--color-forest-700` to `oklch(0.25 0.06 155)` (darker forest, not a named token — inline in the gradient only).
 
 ### 1.4 Location Context
 
@@ -86,9 +86,9 @@ Default active tab: **Nearby**.
 
 ### 2.2 Visual Design
 
-- Active tab: bottom border in `--forest-500`, `--earth-900` text
-- Inactive tabs: `--earth-700` text, no border
-- Background: `--earth-50`
+- Active tab: bottom border in `--color-forest-500`, `--color-earth-900` text
+- Inactive tabs: `--color-earth-700` text, no border
+- Background: `--color-earth-50`
 - Sticky: `position: sticky; top: 0; z-index: 10`
 
 ### 2.3 Progressive Enhancement
@@ -109,10 +109,10 @@ Default active tab: **Nearby**.
 **Markup pattern:**
 ```html
 <nav class="homepage-tabs" role="tablist">
-  <a href="/" role="tab" data-tab="nearby" aria-selected="true" class="homepage-tabs__tab homepage-tabs__tab--active">Nearby</a>
-  <a href="/events" role="tab" data-tab="events" aria-selected="false" class="homepage-tabs__tab">Events</a>
-  <a href="/people" role="tab" data-tab="people" aria-selected="false" class="homepage-tabs__tab">People</a>
-  <a href="/groups" role="tab" data-tab="groups" aria-selected="false" class="homepage-tabs__tab">Groups</a>
+  <a href="/" role="tab" data-tab="nearby" aria-selected="true" class="homepage-tab active">Nearby</a>
+  <a href="/events" role="tab" data-tab="events" aria-selected="false" class="homepage-tab">Events</a>
+  <a href="/people" role="tab" data-tab="people" aria-selected="false" class="homepage-tab">People</a>
+  <a href="/groups" role="tab" data-tab="groups" aria-selected="false" class="homepage-tab">Groups</a>
 </nav>
 
 <div role="tabpanel" data-panel="nearby" id="panel-nearby">
@@ -136,9 +136,9 @@ All entity types (business, event, person) use a single card component with a ty
 
 ```html
 <article class="homepage-card homepage-card--{type}">
-  <span class="homepage-card__badge">{Type}</span>
-  <h3 class="homepage-card__title"><a href="{url}">{title/name}</a></h3>
-  <p class="homepage-card__meta">{meta line}</p>
+  <span class="homepage-badge">{Type}</span>
+  <h3 class="homepage-title"><a href="{url}">{title/name}</a></h3>
+  <p class="homepage-meta">{meta line}</p>
 </article>
 ```
 
@@ -146,8 +146,8 @@ All entity types (business, event, person) use a single card component with a ty
 
 | Type | Left border | Badge color |
 |------|------------|-------------|
-| Business/Group | `--forest-500` | `--forest-500` |
-| Event | `--water-600` | `--water-600` |
+| Business/Group | `--color-forest-500` | `--color-forest-500` |
+| Event | `--color-water-600` | `--color-water-600` |
 | Person | `--domain-people` | `--domain-people` |
 
 ### 3.3 Meta Line Content
@@ -160,7 +160,7 @@ All entity types (business, event, person) use a single card component with a ty
 
 ### 3.4 Card Grid
 
-`display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--space-s)`
+`display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: var(--space-sm)`
 
 Up to 6 cards per tab panel. If fewer than 6 available, show what exists.
 
@@ -174,7 +174,7 @@ Up to 6 cards per tab panel. If fewer than 6 available, show what exists.
 
 **Groups tab:** Query groups, sort by proximity, limit to 6.
 
-**Proximity sorting:** Entities are sorted by the distance from the user's location to their associated community. Groups and events have a `community_id` field pointing to a community entity with lat/lon coordinates. People have a `community` string field — match it to a community entity by name to get coordinates. When location is unknown, fall back to: events by date, people/groups alphabetically.
+**Proximity sorting:** Entities are sorted by the distance from the user's location to their associated community. Groups and events have a `community_id` field pointing to a community entity with lat/lon coordinates. People have a `community` string field — match it to a community entity by name to get coordinates. If the name doesn't match any community, that person sorts last (treated as infinite distance). When location is unknown, fall back to: events by date, people/groups alphabetically.
 
 ### 3.6 Empty States
 
@@ -203,7 +203,7 @@ Horizontal row of pill-shaped links below the tab content area.
 
 ### 4.3 Style
 
-Pill style: `--earth-100` background, `--earth-700` text, `border-radius: var(--space-m)`, hover lifts to `--earth-200`.
+Pill style: `--color-earth-100` background, `--color-earth-700` text, `border-radius: var(--radius-lg)`, hover lifts to `--color-earth-200`.
 
 ## 5. What is Minoo
 
@@ -228,7 +228,7 @@ Compact section at the page bottom.
 
 ### 5.4 Style
 
-Background: `--earth-100`. Padding: `var(--space-l)` block.
+Background: `--color-earth-100`. Padding: `var(--space-lg)` block.
 
 ## 6. Server-Side Data Assembly
 
