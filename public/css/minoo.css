@@ -2056,7 +2056,7 @@
   /* ── Homepage ── */
 
   .homepage-hero {
-    background: linear-gradient(135deg, var(--color-forest-700), oklch(0.25 0.06 155));
+    background: linear-gradient(135deg, var(--color-forest-700), #1a3a0a);
     color: #fff;
     padding-block: var(--space-md);
     padding-inline: var(--gutter);
