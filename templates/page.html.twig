@@ -38,8 +38,15 @@
         {% if events is defined and events|length > 0 %}
           <h3>{{ trans('page.upcoming_events') }}</h3>
           <div class="card-grid">
-            {% for event in events %}
-              {% include "components/event-card.html.twig" with {event: event} %}
+            {% for e in events %}
+              {% include "components/event-card.html.twig" with {
+                title: e.get('title'),
+                type: e.get('type')|default('')|capitalize,
+                date: e.get('starts_at')|default(''),
+                location: e.get('location')|default(''),
+                excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
+                url: "/events/" ~ e.get('slug')
+              } only %}
             {% endfor %}
           </div>
         {% endif %}
