@@ -7,6 +7,7 @@
 -- Waaseyaa's entity storage auto-creates columns for NEW tables from
 -- field definitions, but does NOT alter existing tables (schema drift).
 -- These ALTER TABLE statements provision the columns on existing databases.
+-- Tables that don't yet exist are skipped by the migrate runner.
 
 ALTER TABLE event ADD COLUMN consent_public INTEGER NOT NULL DEFAULT 1;
 ALTER TABLE event ADD COLUMN consent_ai_training INTEGER NOT NULL DEFAULT 0;

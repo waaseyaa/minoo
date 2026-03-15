@@ -86,7 +86,26 @@ foreach ($files as $file) {
 
     try {
         $pdo->beginTransaction();
-        $pdo->exec($sql);
+
+        // Run each statement individually so non-fatal errors
+        // (missing tables, duplicate columns) can be skipped.
+        $statements = array_filter(
+            array_map('trim', explode(';', $sql)),
+            static fn(string $s): bool => $s !== '' && !str_starts_with($s, '--'),
+        );
+        foreach ($statements as $statement) {
+            try {
+                $pdo->exec($statement);
+            } catch (\Throwable $stmtErr) {
+                $msg = $stmtErr->getMessage();
+                if (str_contains($msg, 'no such table') || str_contains($msg, 'duplicate column')) {
+                    fwrite(STDERR, "migrate: skipped in {$name}: {$msg}\n");
+                    continue;
+                }
+                throw $stmtErr;
+            }
+        }
+
         $stmt = $pdo->prepare('INSERT INTO schema_migrations (migration) VALUES (?)');
         $stmt->execute([$name]);
         $pdo->commit();
