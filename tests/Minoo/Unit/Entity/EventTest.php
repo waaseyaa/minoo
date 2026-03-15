@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Entity;
 
 use Minoo\Entity\Event;
+use Minoo\Provider\EventServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -46,5 +47,20 @@ final class EventTest extends TestCase
         $this->assertSame('Mille Lacs', $event->get('location'));
         $this->assertSame('2026-06-21 18:00:00', $event->get('ends_at'));
         $this->assertSame('Annual ceremony.', $event->get('description'));
+    }
+
+    #[Test]
+    public function it_defines_community_id_field(): void
+    {
+        $provider = new EventServiceProvider();
+        $provider->register();
+
+        $types = $provider->getEntityTypes();
+        $eventType = array_values(array_filter($types, fn($t) => $t->id() === 'event'))[0];
+        $fields = $eventType->getFieldDefinitions();
+
+        $this->assertArrayHasKey('community_id', $fields);
+        $this->assertSame('entity_reference', $fields['community_id']['type']);
+        $this->assertSame('community', $fields['community_id']['settings']['target_type']);
     }
 }

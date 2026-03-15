@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Entity;
 
 use Minoo\Entity\Teaching;
+use Minoo\Provider\TeachingServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -38,5 +39,20 @@ final class TeachingTest extends TestCase
         ]);
 
         $this->assertSame(42, $teaching->get('cultural_group_id'));
+    }
+
+    #[Test]
+    public function it_defines_community_id_field(): void
+    {
+        $provider = new TeachingServiceProvider();
+        $provider->register();
+
+        $types = $provider->getEntityTypes();
+        $teachingType = array_values(array_filter($types, fn($t) => $t->id() === 'teaching'))[0];
+        $fields = $teachingType->getFieldDefinitions();
+
+        $this->assertArrayHasKey('community_id', $fields);
+        $this->assertSame('entity_reference', $fields['community_id']['type']);
+        $this->assertSame('community', $fields['community_id']['settings']['target_type']);
     }
 }

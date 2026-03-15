@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\CommunityLookup;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -38,9 +39,12 @@ final class EventController
         });
         $events = array_values($events);
 
+        $communities = CommunityLookup::build($this->entityTypeManager, $events);
+
         $html = $this->twig->render('events.html.twig', [
             'path' => '/events',
             'events' => $events,
+            'communities' => $communities,
         ]);
 
         return new SsrResponse(content: $html);

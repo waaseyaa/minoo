@@ -14,7 +14,7 @@ use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
 use Minoo\Support\GeoDistance;
 
-final class CommunityController
+class CommunityController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
@@ -122,9 +122,13 @@ final class CommunityController
 
             $ncId = $community->get('nc_id');
             if ($ncId !== null && $ncId !== '') {
-                $ncClient = $this->createNorthCloudClient();
-                $people = $ncClient->getPeople((string) $ncId);
-                $bandOffice = $ncClient->getBandOffice((string) $ncId);
+                try {
+                    $ncClient = $this->createNorthCloudClient();
+                    $people = $ncClient->getPeople((string) $ncId);
+                    $bandOffice = $ncClient->getBandOffice((string) $ncId);
+                } catch (\Throwable) {
+                    // NorthCloud unavailable — page renders without contact data
+                }
             }
         }
 
@@ -225,7 +229,7 @@ final class CommunityController
         return new JsonResponse($results);
     }
 
-    private function createNorthCloudClient(): NorthCloudClient
+    protected function createNorthCloudClient(): NorthCloudClient
     {
         $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
         $config = file_exists($configPath) ? (require $configPath)['northcloud'] ?? [] : [];

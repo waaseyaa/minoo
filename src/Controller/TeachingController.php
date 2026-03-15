@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\CommunityLookup;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -39,9 +40,12 @@ final class TeachingController
         });
         $teachings = array_values($teachings);
 
+        $communities = CommunityLookup::build($this->entityTypeManager, $teachings);
+
         $html = $this->twig->render('teachings.html.twig', [
             'path' => '/teachings',
             'teachings' => $teachings,
+            'communities' => $communities,
         ]);
 
         return new SsrResponse(content: $html);

@@ -136,6 +136,35 @@ final class CommunityControllerTest extends TestCase
     }
 
     #[Test]
+    public function show_renders_without_contact_data_when_nc_unavailable(): void
+    {
+        $sagamok = new Community([
+            'cid' => 1,
+            'name' => 'Sagamok Anishnawbek',
+            'slug' => 'sagamok-anishnawbek',
+            'community_type' => 'first_nation',
+            'nc_id' => 'nc-uuid-123',
+        ]);
+
+        $this->query->method('execute')->willReturn([1]);
+        $this->storage->method('load')->with(1)->willReturn($sagamok);
+
+        $controller = new class($this->entityTypeManager, $this->twig) extends CommunityController {
+            protected function createNorthCloudClient(): \Minoo\Support\NorthCloudClient
+            {
+                throw new \RuntimeException('NorthCloud unavailable');
+            }
+        };
+
+        $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
+
+        $this->assertSame(200, $response->statusCode);
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
+        $this->assertStringNotContainsString('people:', $response->content);
+        $this->assertStringNotContainsString('office:', $response->content);
+    }
+
+    #[Test]
     public function autocomplete_returns_json_response(): void
     {
         putenv('NORTHCLOUD_API_URL=https://northcloud.one');

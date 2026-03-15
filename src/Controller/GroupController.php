@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\CommunityLookup;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -38,9 +39,12 @@ final class GroupController
         });
         $groups = array_values($groups);
 
+        $communities = CommunityLookup::build($this->entityTypeManager, $groups);
+
         $html = $this->twig->render('groups.html.twig', [
             'path' => '/groups',
             'groups' => $groups,
+            'communities' => $communities,
         ]);
 
         return new SsrResponse(content: $html);
