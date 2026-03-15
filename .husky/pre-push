@@ -1,0 +1,21 @@
+# Run PHPUnit tests before push
+echo "Running PHPUnit tests..."
+vendor/bin/phpunit --testsuite MinooUnit 2>&1
+if [ $? -ne 0 ]; then
+  echo "❌ Unit tests failed — push aborted"
+  exit 1
+fi
+echo "✓ Unit tests passed"
+
+vendor/bin/phpunit --testsuite MinooIntegration 2>&1
+if [ $? -ne 0 ]; then
+  echo "❌ Integration tests failed — push aborted"
+  exit 1
+fi
+echo "✓ Integration tests passed"
+
+# Security audit
+composer audit --no-interaction 2>/dev/null
+if [ $? -ne 0 ]; then
+  echo "⚠ Composer security audit found vulnerabilities (non-blocking)"
+fi

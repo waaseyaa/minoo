@@ -8,7 +8,11 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky",
+    "test": "vendor/bin/phpunit",
+    "test:unit": "vendor/bin/phpunit --testsuite MinooUnit",
+    "test:integration": "vendor/bin/phpunit --testsuite MinooIntegration",
+    "lint": "composer validate --strict --no-check-all && find src -name '*.php' -exec php -l {} \\;"
   },
   "repository": {
     "type": "git",
@@ -24,6 +28,7 @@
   "homepage": "https://github.com/waaseyaa/minoo#readme",
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
-    "@playwright/test": "^1.58.2"
+    "@playwright/test": "^1.58.2",
+    "husky": "^9.1.7"
   }
 }

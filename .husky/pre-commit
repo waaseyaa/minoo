@@ -1,0 +1,21 @@
+# Validate composer.json
+composer validate --strict --no-check-all 2>/dev/null
+if [ $? -ne 0 ]; then
+  echo "❌ composer.json validation failed"
+  exit 1
+fi
+echo "✓ composer.json valid"
+
+# PHP syntax check on staged .php files
+STAGED_PHP=$(git diff --cached --name-only --diff-filter=ACM -- '*.php')
+if [ -n "$STAGED_PHP" ]; then
+  echo "Checking PHP syntax..."
+  for file in $STAGED_PHP; do
+    php -l "$file" > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo "❌ Syntax error in $file"
+      exit 1
+    fi
+  done
+  echo "✓ PHP syntax OK"
+fi
