@@ -103,7 +103,7 @@
         <div class="atlas-nearby-card__name">{{ item.community.get('name') }}</div>
         <div class="atlas-nearby-card__meta">
           {{ item.community.get('is_municipality') ? trans('community.municipality') : item.community.get('nation') ?: trans('community.first_nation') }}
-          · {{ item.distanceKm|number_format(0) }} km
+          · {{ item.distanceKm|number_format(0) }} {{ trans('community.km_away') }}
         </div>
       </a>
       {% endfor %}
