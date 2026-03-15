@@ -75,86 +75,10 @@
     </div>
   </div>
 
-  {# --- Leadership --- #}
-  {% if people is not empty %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.leadership') }}</div>
-    {% for person in people %}
-      {% if person.role == 'chief' %}
-      <div class="atlas-leader-card atlas-leader-card--chief">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div class="atlas-leader-card__role">{{ trans('community.chief') }}</div>
-            <div class="atlas-leader-card__name">{{ person.name }}</div>
-          </div>
-          <div style="font-size: 0.6875rem; color: #999;">{{ trans('community.current') }}</div>
-        </div>
-      </div>
-      {% endif %}
-    {% endfor %}
-    <div class="atlas-councillor-grid">
-      {% for person in people %}
-        {% if person.role == 'councillor' %}
-        <div class="atlas-leader-card">
-          <div class="atlas-leader-card__role">{{ trans('community.councillor') }}</div>
-          <div class="atlas-leader-card__name">{{ person.name }}</div>
-        </div>
-        {% endif %}
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-
-  {# --- Band Office --- #}
-  {% if band_office %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.band_office') }}</div>
-    <div class="atlas-contact-card">
-      <div class="atlas-contact-card__grid">
-        {% if band_office.address_line1 %}
-        <div>
-          <div class="atlas-section__field-label">{{ trans('community.address') }}</div>
-          <div class="atlas-section__field-value">
-            {{ band_office.address_line1 }}
-            {% if band_office.address_line2 %}<br>{{ band_office.address_line2 }}{% endif %}
-            {% if band_office.city %}<br>{{ band_office.city }}, {{ band_office.province }} {{ band_office.postal_code }}{% endif %}
-          </div>
-        </div>
-        {% endif %}
-        {% if band_office.office_hours %}
-        <div>
-          <div class="atlas-section__field-label">{{ trans('community.hours') }}</div>
-          <div class="atlas-section__field-value">{{ band_office.office_hours }}</div>
-        </div>
-        {% endif %}
-        {% if band_office.phone %}
-        <div>
-          <div class="atlas-section__field-label">{{ trans('community.phone') }}</div>
-          <div class="atlas-section__field-value"><a href="tel:{{ band_office.phone }}">{{ band_office.phone }}</a></div>
-        </div>
-        {% endif %}
-        {% if band_office.email %}
-        <div>
-          <div class="atlas-section__field-label">{{ trans('community.email') }}</div>
-          <div class="atlas-section__field-value"><a href="mailto:{{ band_office.email }}">{{ band_office.email }}</a></div>
-        </div>
-        {% endif %}
-        {% if band_office.toll_free %}
-        <div>
-          <div class="atlas-section__field-label">{{ trans('community.toll_free') }}</div>
-          <div class="atlas-section__field-value"><a href="tel:{{ band_office.toll_free }}">{{ band_office.toll_free }}</a></div>
-        </div>
-        {% endif %}
-        {% if band_office.fax %}
-        <div>
-          <div class="atlas-section__field-label">{{ trans('community.fax') }}</div>
-          <div class="atlas-section__field-value">{{ band_office.fax }}</div>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  {% endif %}
+  {% include "components/community-contact-card.html.twig" with {
+    people: people,
+    band_office: band_office
+  } %}
 
   {# --- The Land --- #}
   {% if community.get('latitude') and community.get('longitude') %}
