@@ -42,7 +42,7 @@
               {% include "components/event-card.html.twig" with {
                 title: e.get('title'),
                 type: e.get('type')|default('')|capitalize,
-                date: e.get('starts_at')|default(''),
+                date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
                 location: e.get('location')|default(''),
                 excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
                 url: "/events/" ~ e.get('slug')

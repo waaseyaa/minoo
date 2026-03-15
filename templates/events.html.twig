@@ -23,7 +23,7 @@
             {% include "components/event-card.html.twig" with {
               title: e.get('title'),
               type: e.get('type')|default('')|capitalize,
-              date: e.get('starts_at')|default(''),
+              date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
               location: e.get('location')|default(''),
               excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
               url: "/events/" ~ e.get('slug'),
@@ -49,7 +49,7 @@
         <h1>{{ event.get('title') }}</h1>
         <div class="detail__meta">
           {% if event.get('starts_at') %}
-            <span class="card__date">{{ event.get('starts_at') }}{% if event.get('ends_at') %} – {{ event.get('ends_at') }}{% endif %}</span>
+            <span class="card__date">{{ event.get('starts_at')|date('F j, Y') }}{% if event.get('ends_at') %} – {{ event.get('ends_at')|date('F j, Y') }}{% endif %}</span>
           {% endif %}
           {% if event.get('location') %}
             <span>{{ event.get('location') }}</span>
