@@ -75,48 +75,46 @@
 
 @layer tokens {
   :root {
-    /* Color palette — oklch */
-    --color-earth-900: oklch(0.25 0.02 70);
-    --color-earth-700: oklch(0.35 0.02 70);
-    --color-earth-200: oklch(0.88 0.01 70);
-    --color-earth-100: oklch(0.94 0.01 70);
-    --color-earth-50:  oklch(0.97 0.005 70);
+    /* ── Surfaces ── */
+    --surface-dark: #0a0a0a;
+    --surface-card: #141414;
+    --surface-raised: #1a1a1a;
+    --surface-light: #f5f0eb;
+    --surface-light-card: #fff;
 
-    --color-forest-700: oklch(0.40 0.08 155);
-    --color-forest-500: oklch(0.48 0.10 155);
-    --color-forest-100: oklch(0.92 0.03 155);
+    /* ── Text ── */
+    --text-primary: #f0ece6;
+    --text-secondary: #aaa;
+    --text-muted: #777;
+    --text-dark: #1a1a1a;
+    --text-dark-secondary: #666;
 
-    --color-water-600: oklch(0.50 0.08 230);
-    --color-water-100: oklch(0.92 0.03 230);
+    /* ── Domain accent colors ── */
+    --color-events: #e63946;
+    --color-teachings: #f4a261;
+    --color-language: #2a9d8f;
+    --color-communities: #6a9caf;
+    --color-people: #8338ec;
+    --color-programs: #c77dff;
+    --color-search: #d4a373;
 
-    --color-sun-500: oklch(0.70 0.12 85);
+    /* ── Borders ── */
+    --border-dark: #1e1e1e;
+    --border-subtle: #2a2a2a;
+    --border-light: #e0dbd4;
 
-    --color-berry-100: oklch(0.95 0.03 10);
-    --color-berry-600: oklch(0.50 0.12 10);
-
-    /* Semantic aliases */
-    --text-primary:   var(--color-earth-900);
-    --text-secondary: var(--color-earth-700);
-    --surface:        var(--color-earth-50);
-    --surface-raised: white;
-    --border:         var(--color-earth-200);
-    --accent:         var(--color-forest-500);
-    --accent-surface: var(--color-forest-100);
-    --link:           var(--color-forest-500);
-    --error:          var(--color-berry-600);
-    --warning:        var(--color-sun-500);
-    --info:           var(--color-water-600);
-
-    /* Branding aliases */
-    --color-primary:   var(--color-forest-500);
-    --color-primary-dark: var(--color-forest-700);
-    --color-primary-surface: var(--color-forest-100);
-    --color-accent:    var(--color-sun-500);
-    --color-danger:    var(--color-berry-600);
+    /* ── Semantic aliases ── */
+    --surface:        var(--surface-dark);
+    --border:         var(--border-dark);
+    --accent:         var(--color-events);
+    --link:           var(--color-events);
+    --error:          #ff4d5a;
+    --warning:        var(--color-teachings);
+    --info:           var(--color-communities);
 
     /* Typography */
-    --font-body:    'Atkinson Hyperlegible Next', system-ui, -apple-system, sans-serif;
-    --font-heading: Charter, 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+    --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Fraunces', Charter, 'Bitstream Charter', Cambria, serif;
     --font-mono:    ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
 
     --text-sm:   clamp(0.833rem, 0.816rem + 0.08vw, 0.889rem);
@@ -165,19 +163,13 @@
     --shadow-md: 0 2px 4px oklch(0.25 0.02 70 / 0.08), 0 4px 12px oklch(0.25 0.02 70 / 0.04);
     --shadow-lg: 0 4px 8px oklch(0.25 0.02 70 / 0.08), 0 8px 24px oklch(0.25 0.02 70 / 0.06);
 
-    /* Warm surfaces */
-    --surface-warm:    oklch(0.96 0.01 70);
-    --surface-dark:    var(--color-earth-900);
-    --text-on-dark:    oklch(0.92 0.005 70);
-    --text-muted:      oklch(0.40 0.015 70);
-
     /* Domain accents */
-    --domain-events:    var(--color-water-600);
-    --domain-groups:    var(--color-forest-500);
-    --domain-teachings: var(--color-earth-700);
-    --domain-language:  var(--color-forest-700);
-    --domain-people:    oklch(0.45 0.06 160);
-    --domain-elders:    oklch(0.45 0.10 145);
+    --domain-events:    var(--color-events);
+    --domain-groups:    var(--color-communities);
+    --domain-teachings: var(--color-teachings);
+    --domain-language:  var(--color-language);
+    --domain-people:    var(--color-people);
+    --domain-elders:    var(--color-programs);
 
     /* Motion */
     --ease-out:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
