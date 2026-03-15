@@ -9,9 +9,9 @@
   --atlas-chip-bg: #c8d6c4;
 }
 
-/* --- Page Wrapper (clip Leaflet overflow without breaking vertical scroll) --- */
-[x-data="atlasDiscovery()"] {
-  overflow-x: clip;
+/* --- Full-bleed: remove site-main padding so map goes edge-to-edge --- */
+.site-main:has(.atlas-map) {
+  padding-inline: 0;
 }
 
 /* --- Contextual Header --- */
@@ -370,8 +370,8 @@
     font-size: 1.0625rem;
   }
   .atlas-map {
-    height: 100px;
-    min-height: 100px;
+    height: 30vh;
+    min-height: 180px;
   }
   .atlas-filters {
     padding: 0.75rem 1rem;
