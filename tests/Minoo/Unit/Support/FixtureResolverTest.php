@@ -8,6 +8,7 @@ use Minoo\Support\FixtureResolver;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManagerInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
@@ -51,6 +52,29 @@ final class FixtureResolverTest extends TestCase
         $result = $resolver->resolveCommunity('Nonexistent Town');
 
         $this->assertNull($result);
+    }
+
+    #[Test]
+    public function resolvesCommunityByCaseInsensitiveFallback(): void
+    {
+        $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('condition')->willReturnSelf();
+        $query->method('execute')->willReturnOnConsecutiveCalls([], [5]);
+
+        $entity = $this->createMock(ContentEntityBase::class);
+        $entity->method('get')->with('name')->willReturn('sagamok anishnawbek');
+
+        $storage = $this->createMock(EntityStorageInterface::class);
+        $storage->method('getQuery')->willReturn($query);
+        $storage->method('load')->with(5)->willReturn($entity);
+
+        $etm = $this->createMock(EntityTypeManagerInterface::class);
+        $etm->method('getStorage')->with('community')->willReturn($storage);
+
+        $resolver = new FixtureResolver($etm);
+        $result = $resolver->resolveCommunity('Sagamok Anishnawbek');
+
+        $this->assertSame(5, $result);
     }
 
     #[Test]

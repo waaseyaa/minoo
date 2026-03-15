@@ -124,6 +124,18 @@ final class FixtureLoaderTest extends TestCase
     }
 
     #[Test]
+    public function validateEmailFormatWhenPresent(): void
+    {
+        $loader = new FixtureLoader($this->tempDir);
+        $errors = $loader->validate([
+            ['name' => 'Biz', 'slug' => 'biz', 'type' => 'business', 'community' => 'Town', 'email' => 'not-an-email'],
+        ], 'businesses');
+
+        $this->assertNotEmpty($errors);
+        $this->assertStringContainsString('email', strtolower($errors[0]));
+    }
+
+    #[Test]
     public function validateAcceptsE164Phone(): void
     {
         $loader = new FixtureLoader($this->tempDir);
