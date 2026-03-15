@@ -61,6 +61,7 @@
   body {
     min-block-size: 100dvh;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 }
 
