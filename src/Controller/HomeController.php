@@ -19,6 +19,27 @@ final class HomeController
         private readonly Environment $twig,
     ) {}
 
+    public function explore(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $type = $query['type'] ?? 'all';
+        $q = trim($query['q'] ?? '');
+
+        $targets = [
+            'businesses' => '/groups',
+            'people' => '/people',
+            'events' => '/events',
+            'all' => '/groups',
+        ];
+
+        $target = $targets[$type] ?? '/groups';
+
+        if ($q !== '') {
+            $target .= '?' . http_build_query(['q' => $q]);
+        }
+
+        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $target]);
+    }
+
     public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $config = $this->loadLocationConfig();

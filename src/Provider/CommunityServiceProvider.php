@@ -114,5 +114,14 @@ final class CommunityServiceProvider extends ServiceProvider
                 ->methods('POST')
                 ->build(),
         );
+
+        $router->addRoute(
+            'explore.redirect',
+            RouteBuilder::create('/explore')
+                ->controller('Minoo\\Controller\\HomeController::explore')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
     }
 }
