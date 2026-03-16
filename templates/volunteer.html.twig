@@ -3,6 +3,7 @@
 {% block title %}{{ trans('volunteer_page.title') }} — Minoo{% endblock %}
 
 {% block content %}
+  <div class="content-well content-well--full">
   <div class="flow-lg">
     <section class="hero">
       <h1 class="hero__title">{{ trans('volunteer_page.title') }}</h1>
@@ -47,5 +48,6 @@
       <p>{{ trans('volunteer_page.safety_text') }}</p>
       <p><a href="{{ lang_url('/safety') }}">{{ trans('volunteer_page.safety_link') }}</a></p>
     </div>
+  </div>
   </div>
 {% endblock %}
