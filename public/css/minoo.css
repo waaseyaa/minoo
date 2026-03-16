@@ -208,8 +208,8 @@
 
   a {
     color: var(--link);
-    text-decoration-color: transparent;
-    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
 
     &:hover {
       text-decoration-color: currentColor;
@@ -511,6 +511,11 @@
 
   .site-footer a:hover {
     color: var(--text-primary);
+  }
+
+  .site-footer__license a {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
 
   .site-footer__links {
