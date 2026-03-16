@@ -48,11 +48,13 @@
         <span class="card__badge card__badge--teaching">{{ teaching.get('type')|default('')|capitalize }}</span>
         <h1>{{ teaching.get('title') }}</h1>
       </div>
-      <div class="detail__body flow">
-        {% for paragraph in teaching.get('content')|default('')|split("\n\n") %}
-          <p>{{ paragraph }}</p>
-        {% endfor %}
-      </div>
+      <div class="content-well">
+        <div class="detail__body flow">
+          {% for paragraph in teaching.get('content')|default('')|split("\n\n") %}
+            <p>{{ paragraph }}</p>
+          {% endfor %}
+        </div>
+      </div>{# .content-well #}
     </div>
   {% else %}
     <div class="flow-lg">

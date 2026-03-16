@@ -52,13 +52,15 @@
           <span>{{ entry.get('definition')|default('') }}</span>
         </div>
       </div>
-      <div class="detail__body flow">
-        <p>{{ entry.get('definition')|default('') }}</p>
-      </div>
+      <div class="content-well">
+        <div class="detail__body flow">
+          <p>{{ entry.get('definition')|default('') }}</p>
+        </div>
 
-      <footer class="attribution">
-        <p>{{ trans('language.copyright') }}</p>
-      </footer>
+        <footer class="attribution">
+          <p>{{ trans('language.copyright') }}</p>
+        </footer>
+      </div>{# .content-well #}
     </div>
   {% else %}
     <div class="flow-lg">
