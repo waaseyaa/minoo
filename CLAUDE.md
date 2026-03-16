@@ -56,6 +56,8 @@ minoo/
 | `src/Domain/*` | — | (domain-specific bounded contexts) |
 | `src/Support/*` | — | (cross-cutting utilities) |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
+| `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
+| `src/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
 | GitHub issues, milestones, new features, roadmap | — | `docs/specs/workflow.md` |
 
 For Minoo-level specs, use the Minoo MCP tools:
