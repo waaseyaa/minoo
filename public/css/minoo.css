@@ -519,6 +519,18 @@
     font-size: var(--text-sm);
   }
 
+  /* Ceremony-color ribbon */
+  .ribbon {
+    block-size: 3px;
+    background: linear-gradient(90deg,
+      var(--color-events) 0% 16.6%,
+      var(--color-teachings) 16.6% 33.3%,
+      var(--color-language) 33.3% 50%,
+      var(--color-communities) 50% 66.6%,
+      var(--color-people) 66.6% 83.3%,
+      var(--color-programs) 83.3% 100%);
+  }
+
   /* Mobile nav toggle — hidden above bp-md */
   .nav-toggle {
     display: none;
