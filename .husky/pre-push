@@ -14,6 +14,15 @@ if [ $? -ne 0 ]; then
 fi
 echo "✓ Integration tests passed"
 
+# Playwright smoke tests
+echo "Running Playwright tests..."
+npx playwright test 2>&1
+if [ $? -ne 0 ]; then
+  echo "❌ Playwright tests failed — push aborted"
+  exit 1
+fi
+echo "✓ Playwright tests passed"
+
 # Security audit
 composer audit --no-interaction 2>/dev/null
 if [ $? -ne 0 ]; then

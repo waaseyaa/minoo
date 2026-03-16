@@ -1,3 +1,5 @@
+> **Superseded:** This design was replaced by the Regalia redesign (2026-03-15). See `docs/superpowers/specs/2026-03-15-regalia-redesign-design.md`.
+
 # Minoo Visual Identity & Global Layout Design
 
 Issues: #5 (visual identity), #9 (global navigation and layout)

@@ -56,11 +56,13 @@
           {% endif %}
         </div>
       </div>
-      <div class="detail__body flow">
-        {% for paragraph in event.get('description')|default('')|split("\n\n") %}
-          <p>{{ paragraph }}</p>
-        {% endfor %}
-      </div>
+      <div class="content-well">
+        <div class="detail__body flow">
+          {% for paragraph in event.get('description')|default('')|split("\n\n") %}
+            <p>{{ paragraph }}</p>
+          {% endfor %}
+        </div>
+      </div>{# .content-well #}
     </div>
   {% else %}
     <div class="flow-lg">
