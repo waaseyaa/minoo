@@ -922,17 +922,42 @@
   }
 
   .detail__back {
+    color: var(--text-muted);
     font-size: var(--text-sm);
-    color: var(--text-secondary);
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
 
     &:hover {
-      color: var(--text-primary);
+      color: var(--text-secondary);
     }
 
     &::before {
       content: "\2190\00a0";
     }
+  }
+
+  .detail__badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding-block: 0.2rem;
+    padding-inline: 0.6rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--card-accent, var(--color-events));
+    color: #fff;
+  }
+
+  .detail__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 900;
+    font-variation-settings: 'opsz' 48;
+    color: var(--text-primary);
+    line-height: 1.1;
   }
 
   .detail__header {
@@ -2533,6 +2558,54 @@
     font-size: var(--text-sm);
     color: var(--text-secondary);
     font-style: italic;
+  }
+
+  /* ── Content well (light reading surface on detail pages) ── */
+  .content-well {
+    background-color: var(--surface-light);
+    border-start-start-radius: 0.75rem;
+    border-start-end-radius: 0.75rem;
+    margin-inline: var(--space-sm);
+    padding-block: var(--space-lg) var(--space-xl);
+    padding-inline: var(--space-lg);
+    color: var(--text-dark);
+  }
+
+  .content-well h2,
+  .content-well h3 {
+    font-family: var(--font-heading);
+    color: var(--text-dark);
+  }
+
+  .content-well p {
+    color: var(--text-dark-secondary);
+    line-height: 1.7;
+  }
+
+  .content-well a {
+    color: var(--color-events);
+  }
+
+  /* Info cards inside content well */
+  .content-well .detail__info-card {
+    background-color: var(--surface-light-card);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    border-inline-start: 3px solid var(--card-accent, var(--color-events));
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Tags inside content well */
+  .content-well .tag {
+    background-color: #e8e3dc;
+    color: #666;
+  }
+
+  @media (min-width: 60em) {
+    .content-well {
+      margin-inline: var(--space-md);
+      padding-inline: var(--space-xl);
+    }
   }
 }
 
