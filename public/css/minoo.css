@@ -647,15 +647,17 @@
 @layer components {
   .card {
     container-type: inline-size;
-    background-color: var(--surface-raised);
-    border: 1px solid var(--border);
-    border-inline-start: 3px solid var(--card-accent, var(--border));
-    border-radius: var(--radius-lg);
-    padding: var(--space-md);
-    box-shadow: var(--shadow-sm);
+    background-color: var(--surface-card);
+    border-radius: 0.5rem;
+    padding: var(--space-sm);
+    border-inline-start: 3px solid var(--card-accent, var(--border-subtle));
     max-inline-size: var(--width-card);
-    transition: transform var(--duration-normal) var(--ease-out),
-                box-shadow var(--duration-normal) var(--ease-out);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
 
   .flash-message {
@@ -687,14 +689,19 @@
 
   .card__title {
     font-family: var(--font-heading);
-    font-size: var(--text-xl);
-    line-height: var(--leading-tight);
-    letter-spacing: var(--tracking-tight);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variation-settings: 'opsz' 18;
+  }
+
+  .card__title a {
+    color: var(--text-primary);
   }
 
   .card__meta {
     font-size: var(--text-sm);
-    color: var(--text-secondary);
+    color: var(--text-muted);
   }
 
   .card__community a {
@@ -707,8 +714,9 @@
   }
 
   .card__body {
-    font-size: var(--text-base);
-    line-height: var(--leading-normal);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
   }
 
   .card__tag {
@@ -742,51 +750,31 @@
   .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--width-card)), 1fr));
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
 
   .card__badge {
     display: inline-block;
-    font-size: var(--text-sm);
-    padding: var(--space-3xs) var(--space-2xs);
-    border-radius: var(--radius-full);
-    font-weight: 600;
-    letter-spacing: var(--tracking-wide);
-    text-transform: capitalize;
-  }
-
-  .card__badge--event {
-    background-color: var(--color-water-100);
-    color: var(--color-water-600);
-  }
-
-  .card__badge--group {
-    background-color: var(--accent-surface);
-    color: var(--color-forest-700);
-  }
-
-  .card__badge--teaching {
-    background-color: var(--color-earth-200);
-    color: var(--color-earth-700);
-  }
-
-  .card__badge--language {
-    background-color: var(--color-forest-100);
-    color: var(--color-forest-500);
-  }
-
-  .card__badge--person {
-    background: oklch(0.95 0.02 160);
-    color: oklch(0.35 0.06 160);
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--card-accent, var(--text-secondary));
+    padding-block: 0;
+    padding-inline: 0;
+    background: none;
+    border-radius: 0;
   }
 
   /* Domain card accents */
-  .card--event     { --card-accent: var(--domain-events); }
-  .card--group     { --card-accent: var(--domain-groups); }
-  .card--community { --card-accent: var(--domain-groups); }
-  .card--teaching  { --card-accent: var(--domain-teachings); }
-  .card--language  { --card-accent: var(--domain-language); }
-  .card--elder     { --card-accent: var(--domain-elders); }
+  .card--event     { --card-accent: var(--color-events); }
+  .card--group     { --card-accent: var(--color-communities); }
+  .card--community { --card-accent: var(--color-communities); }
+  .card--teaching  { --card-accent: var(--color-teachings); }
+  .card--language  { --card-accent: var(--color-language); }
+  .card--person    { --card-accent: var(--color-people); }
+  .card--elder     { --card-accent: var(--color-programs); }
 
   .card__date {
     font-family: var(--font-mono);
