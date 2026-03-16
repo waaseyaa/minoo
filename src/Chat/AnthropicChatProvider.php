@@ -57,7 +57,7 @@ final class AnthropicChatProvider implements ChatProviderInterface
             return ChatResponse::fail('API returned HTTP ' . $httpCode);
         }
 
-        $data = json_decode((string) $response, true);
+        $data = json_decode((string) $response, true, 512, JSON_THROW_ON_ERROR);
         $content = $data['content'][0]['text'] ?? '';
 
         if ($content === '') {
