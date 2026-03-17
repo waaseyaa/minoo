@@ -21,7 +21,7 @@ final class FeaturedItemAccessPolicy implements AccessPolicyInterface
             return AccessResult::allowed('Admin permission.');
         }
         return match ($operation) {
-            'view' => ($entity->toArray()['status'] ?? 1) === 1
+            'view' => (int) $entity->get('status') === 1
                 ? AccessResult::allowed('Published featured item.')
                 : AccessResult::neutral('Cannot view unpublished featured item.'),
             default => AccessResult::neutral('Non-admin cannot modify featured items.'),

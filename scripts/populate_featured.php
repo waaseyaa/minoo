@@ -34,7 +34,7 @@ if ($eventIds !== []) {
         ->execute();
 
     if ($existing === []) {
-        $featured = new \Minoo\Entity\FeaturedItem([
+        $featured = $featuredStorage->create([
             'entity_type' => 'event',
             'entity_id' => (int) $eventId,
             'headline' => 'Little NHL 2026',
@@ -67,7 +67,7 @@ if ($personIds !== []) {
         ->execute();
 
     if ($existing === []) {
-        $featured = new \Minoo\Entity\FeaturedItem([
+        $featured = $featuredStorage->create([
             'entity_type' => 'resource_person',
             'entity_id' => (int) $personId,
             'headline' => 'Crystal Shawanda at Little NHL',

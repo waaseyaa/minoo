@@ -13,7 +13,7 @@ final class FeaturedItemServiceProvider extends ServiceProvider
             id: 'featured_item',
             label: 'Featured Item',
             class: FeaturedItem::class,
-            keys: ['id' => 'fid', 'label' => 'headline'],
+            keys: ['id' => 'fid', 'uuid' => 'uuid', 'label' => 'headline'],
             group: 'editorial',
             fieldDefinitions: [
                 'entity_type' => ['type' => 'string', 'label' => 'Entity Type', 'description' => 'Referenced entity type (event, teaching, group, resource_person).', 'weight' => 1],

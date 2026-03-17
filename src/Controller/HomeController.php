@@ -271,9 +271,8 @@ final class HomeController
 
         $items = [];
         foreach ($storage->loadMultiple($ids) as $featured) {
-            $data = $featured->toArray();
-            $entityType = $data['entity_type'] ?? null;
-            $entityId = $data['entity_id'] ?? null;
+            $entityType = $featured->get('entity_type');
+            $entityId = $featured->get('entity_id');
 
             if ($entityType === null || $entityId === null) {
                 continue;
@@ -302,7 +301,7 @@ final class HomeController
             };
 
             $items[] = [
-                'featured' => $data,
+                'featured' => $featured,
                 'entity' => $entity,
                 'url' => $url,
             ];
