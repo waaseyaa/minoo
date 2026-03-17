@@ -177,6 +177,9 @@ return [
     'businesses.empty_body' => "Anishinaabe adaawewinan bi-dagoshinomagadoon waabang.", // "Indigenous businesses are coming soon."
     'businesses.explore_button' => 'Naanaagadawaabandan oodenawinan', // "Explore communities"
 
+    // Featured (Maamawi-gizhendaagwak)
+    'featured.section_title' => 'Maamawi-gizhendaagwak Misi-minis-akiing', // "Important things across Turtle Island"
+
     // Teachings
     'teachings.title' => 'Gikinoo\'amaadiwinan', // dict: gikinoo'amaadiwin: "teaching, education"
     'teachings.subtitle' => "Dibaajimowinan, gikendaasowinan, miinawaa gikinoo'amaadiwinan", // "Stories, knowledge, and teachings"

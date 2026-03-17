@@ -125,6 +125,9 @@ return [
     'businesses.empty_body' => 'Indigenous-owned businesses will appear here as our community grows.',
     'businesses.explore_button' => 'Explore Communities',
 
+    // Featured
+    'featured.section_title' => 'Featured Across Turtle Island',
+
     // Teachings
     'teachings.title' => 'Teachings',
     'teachings.subtitle' => 'Living knowledge passed down through generations, for right now.',

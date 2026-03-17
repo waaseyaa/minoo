@@ -53,6 +53,8 @@ final class HomeController
             'location' => $location,
         ];
 
+        $templateVars['featured_items'] = $this->loadFeaturedItems();
+
         if ($location->hasLocation()) {
             $service->storeInSession($location);
             $service->setCookie($location);
@@ -244,5 +246,68 @@ final class HomeController
         }
         $allConfig = require $configPath;
         return $allConfig['location'] ?? [];
+    }
+
+    /** @return list<array{featured: array<string, mixed>, entity: mixed, url: string}> */
+    private function loadFeaturedItems(): array
+    {
+        try {
+            $storage = $this->entityTypeManager->getStorage('featured_item');
+        } catch (\Throwable) {
+            return [];
+        }
+
+        $now = date('Y-m-d H:i:s');
+        $ids = $storage->getQuery()
+            ->condition('status', 1)
+            ->condition('starts_at', $now, '<=')
+            ->condition('ends_at', $now, '>=')
+            ->sort('weight', 'DESC')
+            ->execute();
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $items = [];
+        foreach ($storage->loadMultiple($ids) as $featured) {
+            $data = $featured->toArray();
+            $entityType = $data['entity_type'] ?? null;
+            $entityId = $data['entity_id'] ?? null;
+
+            if ($entityType === null || $entityId === null) {
+                continue;
+            }
+
+            try {
+                $refStorage = $this->entityTypeManager->getStorage($entityType);
+                $entity = $refStorage->load((int) $entityId);
+            } catch (\Throwable) {
+                continue;
+            }
+
+            if ($entity === null) {
+                continue;
+            }
+
+            $slug = $entity->get('slug') ?? '';
+            $url = match ($entityType) {
+                'event' => '/events/' . $slug,
+                'teaching' => '/teachings/' . $slug,
+                'resource_person' => '/people/' . $slug,
+                'group' => $entity->get('type') === 'business'
+                    ? '/businesses/' . $slug
+                    : '/groups/' . $slug,
+                default => '/',
+            };
+
+            $items[] = [
+                'featured' => $data,
+                'entity' => $entity,
+                'url' => $url,
+            ];
+        }
+
+        return $items;
     }
 }

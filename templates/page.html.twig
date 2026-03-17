@@ -29,6 +29,24 @@
     </div>
   </section>
 
+  {# === Featured Across Turtle Island === #}
+  {% if featured_items is defined and featured_items|length > 0 %}
+    <section class="featured-section">
+      <h2 class="featured-section__title">{{ trans('featured.section_title') }}</h2>
+      <div class="featured-grid">
+        {% for item in featured_items %}
+          <a href="{{ lang_url(item.url) }}" class="featured-card">
+            <span class="featured-card__badge">{{ item.featured.entity_type|default('')|replace({'_': ' '})|capitalize }}</span>
+            <h3 class="featured-card__headline">{{ item.featured.headline|default(item.entity.label()) }}</h3>
+            {% if item.featured.subheadline is defined and item.featured.subheadline %}
+              <p class="featured-card__subheadline">{{ item.featured.subheadline }}</p>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
   {# === Sticky Tab Row === #}
   <nav class="homepage-tabs" role="tablist" aria-label="{{ trans('page.tabs_label') }}">
     <a href="{{ lang_url('/') }}" role="tab" data-tab="nearby" aria-selected="true" tabindex="0" class="homepage-tab active">{{ trans('page.tab_nearby') }}</a>

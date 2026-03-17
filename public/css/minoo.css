@@ -2376,6 +2376,83 @@
     }
   }
 
+  /* Featured Across Turtle Island */
+  .featured-section {
+    padding-block: var(--space-sm);
+    padding-inline: var(--space-sm);
+    background: linear-gradient(135deg, oklch(0.2 0.02 250), oklch(0.15 0.01 200));
+    border-block-end: 1px solid var(--border);
+  }
+
+  .featured-section__title {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-block-end: var(--space-xs);
+  }
+
+  .featured-grid {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-block-end: var(--space-3xs);
+  }
+
+  .featured-card {
+    flex: 0 0 min(80vw, 20rem);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-sm);
+    background-color: var(--surface-card);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    border-inline-start: 3px solid oklch(0.7 0.15 80);
+    transition: transform 0.15s ease;
+  }
+
+  .featured-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .featured-card__badge {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: oklch(0.7 0.15 80);
+    font-weight: 600;
+  }
+
+  .featured-card__headline {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    line-height: 1.2;
+  }
+
+  .featured-card__subheadline {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  @media (min-width: 48rem) {
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+      overflow-x: visible;
+    }
+
+    .featured-card {
+      flex: initial;
+    }
+  }
+
   .homepage-tabs {
     display: flex;
     gap: 0;
