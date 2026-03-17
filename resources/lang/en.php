@@ -138,6 +138,9 @@ return [
     'teachings.not_found' => 'Teaching Not Found',
     'teachings.not_found_message' => 'We couldn\'t find this teaching. It may have been removed or the link may be outdated.',
     'teachings.browse_all' => 'Browse all Teachings',
+    'teachings.related_events' => 'Related Events',
+    'teachings.knowledge_keepers' => 'Knowledge Keepers',
+    'teachings.source_label' => 'Source:',
 
     // Language / Dictionary
     'language.title' => 'Language',

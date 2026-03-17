@@ -2923,6 +2923,56 @@
       padding-inline: var(--space-xl);
     }
   }
+
+  /* Teaching metadata */
+  .teaching-source {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+    padding: var(--space-s) var(--space-m);
+    background: oklch(0.97 0.01 180);
+    border-radius: var(--radius-sm, 4px);
+    margin-block-start: var(--space-m);
+
+    &__label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: oklch(0.45 0.05 180);
+      white-space: nowrap;
+    }
+  }
+
+  /* Related content sections */
+  .related-section {
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-l);
+    border-block-start: 1px solid oklch(0.9 0 0);
+
+    h2 {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-block-end: var(--space-m);
+    }
+  }
+
+  .card-grid--compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+    gap: var(--space-m);
+  }
+
+  .card--compact {
+    padding: var(--space-s) var(--space-m);
+
+    .card__title {
+      font-size: var(--text-base);
+    }
+
+    .card__meta {
+      font-size: var(--text-sm);
+      color: oklch(0.55 0.02 180);
+    }
+  }
 }
 
 @layer utilities {

@@ -74,9 +74,36 @@ final class TeachingController
             }
         }
 
+        $relatedEvents = [];
+        $knowledgeKeepers = [];
+
+        if ($teaching !== null) {
+            $communityId = $teaching->get('community_id');
+
+            if ($communityId !== null && $communityId !== '') {
+                $eventStorage = $this->entityTypeManager->getStorage('event');
+                $eventIds = $eventStorage->getQuery()
+                    ->condition('community_id', $communityId)
+                    ->condition('status', 1)
+                    ->range(0, 4)
+                    ->execute();
+                $relatedEvents = $eventIds !== [] ? array_values($eventStorage->loadMultiple($eventIds)) : [];
+
+                $personStorage = $this->entityTypeManager->getStorage('resource_person');
+                $personIds = $personStorage->getQuery()
+                    ->condition('community', $communityId)
+                    ->condition('status', 1)
+                    ->range(0, 4)
+                    ->execute();
+                $knowledgeKeepers = $personIds !== [] ? array_values($personStorage->loadMultiple($personIds)) : [];
+            }
+        }
+
         $html = $this->twig->render('teachings.html.twig', [
             'path' => '/teachings/' . $slug,
             'teaching' => $teaching,
+            'related_events' => $relatedEvents,
+            'knowledge_keepers' => $knowledgeKeepers,
         ]);
 
         return new SsrResponse(
