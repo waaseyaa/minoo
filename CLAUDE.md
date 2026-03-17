@@ -152,6 +152,9 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **CSS conventions**: logical properties only (`margin-block`, `padding-inline`, never `left`/`right`), `gap` for spacing, native nesting (no BEM), container queries on components, media queries only for page shell
 - **Path-based templates** require framework#189 — `tryRenderPathTemplate()` matches single segments exactly and also falls back to the first segment for multi-segment paths (e.g. `/events/slug` renders `events.html.twig` with `path` set to `/events/slug`)
 - **Listing+detail templates** use path conditionals inside `{% block content %}` — `{% set %}` must be inside the block, and only one `{% block %}` per name (use conditionals inside the block, not multiple blocks in conditionals)
+- **Database path**: Framework resolves to `{projectRoot}/waaseyaa.sqlite` (NOT `storage/waaseyaa.sqlite`). When copying production DB locally, place it at the project root.
+- **`@layer utilities` broken**: The `.visually-hidden` class and other utilities in `@layer utilities` don't apply (#273). Workaround: duplicate styles in `@layer components` where needed.
+- **Homepage nearby fallback**: `buildNearbyMixed()` returns empty when community entities lack `status=1` (most imported communities have NULL status). `buildRecentMixed()` provides a non-proximity fallback so the "Nearby" tab always has content.
 
 ## GitHub Workflow
 
