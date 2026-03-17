@@ -77,6 +77,7 @@ return [
     'page.tab_people' => 'People',
     'page.tab_groups' => 'Groups',
     'page.type_business' => 'Business',
+    'page.type_group' => 'Group',
     'page.type_event' => 'Event',
     'page.type_person' => 'Person',
     'page.empty_state' => "We're just getting started in this area. Know a business, event, or community leader we should include? Let us know.",

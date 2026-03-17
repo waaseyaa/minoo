@@ -43,11 +43,12 @@
       <div class="homepage-grid">
         {% for item in nearby_mixed %}
           {% if item.type == 'group' %}
+            {% set is_business = item.entity.get('type') == 'business' %}
             {% include "components/homepage-card.html.twig" with {
-              type: 'group',
-              type_label: trans('page.type_business'),
+              type: is_business ? 'business' : 'group',
+              type_label: is_business ? trans('page.type_business') : trans('page.type_group'),
               title: item.entity.get('name'),
-              url: lang_url('/groups/' ~ item.entity.get('slug')),
+              url: lang_url((is_business ? '/businesses/' : '/groups/') ~ item.entity.get('slug')),
               meta: (item.entity.get('description')|default('')|length > 60 ? item.entity.get('description')|slice(0, 60) ~ '…' : item.entity.get('description')|default(''))
             } only %}
           {% elseif item.type == 'event' %}
@@ -114,11 +115,12 @@
     {% if tab_groups is defined and tab_groups|length > 0 %}
       <div class="homepage-grid">
         {% for g in tab_groups %}
+          {% set is_business = g.get('type') == 'business' %}
           {% include "components/homepage-card.html.twig" with {
-            type: 'group',
-            type_label: trans('page.type_business'),
+            type: is_business ? 'business' : 'group',
+            type_label: is_business ? trans('page.type_business') : trans('page.type_group'),
             title: g.get('name'),
-            url: lang_url('/groups/' ~ g.get('slug')),
+            url: lang_url((is_business ? '/businesses/' : '/groups/') ~ g.get('slug')),
             meta: (g.get('description')|default('')|length > 60 ? g.get('description')|slice(0, 60) ~ '…' : g.get('description')|default(''))
           } only %}
         {% endfor %}

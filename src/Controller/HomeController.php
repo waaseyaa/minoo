@@ -132,6 +132,7 @@ final class HomeController
         $storage = $this->entityTypeManager->getStorage('group');
         $ids = $storage->getQuery()
             ->condition('status', 1)
+            ->condition('type', 'business', '!=')
             ->range(0, $limit)
             ->execute();
 

@@ -129,6 +129,7 @@ return [
     'page.tab_people' => 'Anishinaabeg', // dict: anishinaabe: "person" (plural)
     'page.tab_groups' => 'Anokiiwinan', // dict: anokiiwin: "work, businesses"
     'page.type_business' => 'Anokiiwin', // dict: anokiiwin: "work, activity, business"
+    'page.type_group' => 'Anokiiwin', // "Group/Organization"
     'page.type_event' => "Maawanji'idiwin", // dict: maawanji'idiwag: "gathering, event"
     'page.type_person' => 'Anishinaabe', // dict: anishinaabe: "a person"
     'page.empty_state' => "Maajii-anokiitaadiyang o'ow akiing. Gikenimaad ina anokiiwin, maawanji'idiwin, gemaa ogimaa ge-dazhindamang? Wiindamawishinaam.", // "We're just getting started in this area. Know a business, event, or leader we should include? Let us know."
