@@ -65,7 +65,8 @@ final class HomeController
 
             $finder = new CommunityFinder();
             $templateVars['nearby_communities'] = $finder->findNearby($lat, $lon, $communities, limit: 6);
-            $templateVars['nearby_mixed'] = $this->buildNearbyMixed($lat, $lon, $communityCoords);
+            $nearbyMixed = $this->buildNearbyMixed($lat, $lon, $communityCoords);
+            $templateVars['nearby_mixed'] = $nearbyMixed !== [] ? $nearbyMixed : $this->buildRecentMixed();
             $templateVars['tab_events'] = $this->sortByProximity(
                 $this->loadUpcomingEventsFiltered(6), 'community_id', $lat, $lon, $communityCoords
             );
@@ -77,10 +78,10 @@ final class HomeController
             );
         } else {
             $templateVars['nearby_communities'] = [];
-            $templateVars['nearby_mixed'] = [];
             $templateVars['tab_events'] = $this->loadUpcomingEventsFiltered(6);
             $templateVars['tab_people'] = $this->loadPublicPeople(6);
             $templateVars['tab_groups'] = $this->loadGroups(6);
+            $templateVars['nearby_mixed'] = $this->buildRecentMixed();
         }
 
         $html = $this->twig->render('page.html.twig', $templateVars);
@@ -189,19 +190,33 @@ final class HomeController
         $events = $this->sortByProximity($this->loadUpcomingEventsFiltered(3), 'community_id', $lat, $lon, $communityCoords);
         $people = $this->sortByProximity($this->loadPublicPeople(3), 'community', $lat, $lon, $communityCoords);
 
+        return $this->interleave($groups, $events, $people);
+    }
+
+    private function buildRecentMixed(): array
+    {
+        return $this->interleave(
+            $this->loadGroups(3),
+            $this->loadUpcomingEventsFiltered(3),
+            $this->loadPublicPeople(3),
+        );
+    }
+
+    private function interleave(array $groups, array $events, array $people, int $limit = 6): array
+    {
         $taggedGroups = array_map(fn($e) => ['entity' => $e, 'type' => 'group'], $groups);
         $taggedEvents = array_map(fn($e) => ['entity' => $e, 'type' => 'event'], $events);
         $taggedPeople = array_map(fn($e) => ['entity' => $e, 'type' => 'person'], $people);
 
         $result = [];
         $sources = [$taggedGroups, $taggedEvents, $taggedPeople];
-        while (count($result) < 6) {
+        while (count($result) < $limit) {
             $added = false;
             foreach ($sources as &$source) {
                 if ($source !== []) {
                     $result[] = array_shift($source);
                     $added = true;
-                    if (count($result) >= 6) break 2;
+                    if (count($result) >= $limit) break 2;
                 }
             }
             unset($source);
