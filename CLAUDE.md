@@ -140,7 +140,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 
 ## Code Style
 
-- PHP 8.3+, `declare(strict_types=1)` in every file
+- PHP 8.4+, `declare(strict_types=1)` in every file
 - Namespace: `Minoo\` for app code, `Minoo\Tests\` for tests
 - PHPUnit 10.5 attributes: `#[Test]`, `#[CoversClass(...)]`, `#[CoversNothing]` for integration
 - `final class` by default

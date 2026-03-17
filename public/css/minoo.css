@@ -2962,6 +2962,66 @@
       color: oklch(0.5 0 0);
     }
   }
+
+  /* Hero sections */
+  .listing-hero {
+    padding-block: var(--space-l) var(--space-m);
+
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    &__subtitle {
+      margin-block-start: var(--space-xs);
+      font-size: var(--text-md);
+      color: oklch(0.55 0 0);
+      max-inline-size: 60ch;
+    }
+  }
+
+  .detail-hero {
+    padding-block: var(--space-m);
+
+    &__back {
+      display: inline-block;
+      margin-block-end: var(--space-xs);
+      font-size: var(--text-sm);
+      color: var(--color-primary);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &__badge {
+      display: inline-block;
+      padding: var(--space-3xs) var(--space-xs);
+      border-radius: var(--radius-sm, 4px);
+      background: oklch(0.95 0.02 250);
+      color: oklch(0.35 0.05 250);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-block-end: var(--space-xs);
+    }
+
+    &__title {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    &__meta {
+      margin-block-start: var(--space-xs);
+      font-size: var(--text-md);
+      color: oklch(0.5 0 0);
+      max-inline-size: 70ch;
+    }
+  }
 }
 
 @layer utilities {

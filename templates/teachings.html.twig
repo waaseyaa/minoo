@@ -16,8 +16,10 @@
 {% block content %}
   {% if path == '/teachings' %}
     <div class="flow-lg">
-      <h1>{{ trans('teachings.title') }}</h1>
-      <p class="hero__subtitle">{{ trans('teachings.subtitle') }}</p>
+      <div class="listing-hero">
+        <h1>{{ trans('teachings.title') }}</h1>
+        <p class="listing-hero__subtitle">{{ trans('teachings.subtitle') }}</p>
+      </div>
 
       {% if teachings is defined and teachings|length > 0 %}
         <div class="card-grid">
@@ -53,9 +55,12 @@
           {label: teaching.get('title')}
         ]
       } %}
-      <div class="detail__header">
-        <span class="card__badge card__badge--teaching">{{ teaching.get('type')|default('')|capitalize }}</span>
-        <h1>{{ teaching.get('title') }}</h1>
+      <div class="detail-hero">
+        <a href="{{ lang_url('/teachings') }}" class="detail-hero__back">{{ trans('teachings.detail_back') }}</a>
+        {% if teaching.get('type') is not empty %}
+          <span class="detail-hero__badge">{{ teaching.get('type')|capitalize }}</span>
+        {% endif %}
+        <h1 class="detail-hero__title">{{ teaching.get('title') }}</h1>
       </div>
       <div class="content-well">
         <div class="detail__body flow">

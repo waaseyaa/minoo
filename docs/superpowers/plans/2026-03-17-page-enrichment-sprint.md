@@ -6,7 +6,7 @@
 
 **Architecture:** Five-phase sprint: data substrate → shared scaffolding → page-by-page relational enrichment → visual polish → QA gate. Each phase builds on the previous, with parallelization within phases where files don't overlap.
 
-**Tech Stack:** PHP 8.3 (Waaseyaa framework), Twig 3, vanilla CSS (`@layer components`), PHPUnit 10.5, Playwright
+**Tech Stack:** PHP 8.4 (Waaseyaa framework), Twig 3, vanilla CSS (`@layer components`), PHPUnit 10.5, Playwright
 
 ---
 
