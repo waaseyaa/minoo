@@ -122,7 +122,7 @@ return [
     'page.search_events' => "Maawanji'idiwinan", // dict: maawanji'idiwag: "they come together, meet"
     'page.search_query' => "Andone'igen", // dict: andone': "search"
     'page.search_placeholder' => "Wegonen nandawaabandaman? m.t., manidoominensikaan, niimi'idiwin", // dict: nandawaabandan: "look for, search for it"
-    'page.search_button' => 'Naanaagadawaabandan', // dict: naanaagadawaabandan: "examine, consider, explore it"
+    'page.search_button' => "Andone'", // dict: andone': "search for, seek" — shorter for button fit
     'page.tabs_label' => 'Naanaagadawaabandan', // "browse/explore content"
     'page.tab_nearby' => 'Besho', // dict: beshowad: "it is near, nearby, close"
     'page.tab_events' => "Maawanji'idiwinan", // dict: maawanji'idiwag: "they come together"
