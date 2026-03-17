@@ -39,7 +39,6 @@ final class CommunityControllerTest extends TestCase
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
         $this->entityTypeManager->method('getStorage')
-            ->with('community')
             ->willReturn($this->storage);
 
         $this->twig = new Environment(new ArrayLoader([

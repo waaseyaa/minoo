@@ -142,6 +142,42 @@ class CommunityController
             );
         }
 
+        // Local content by community_id
+        $communityId = $community->get('cid');
+
+        $eventStorage = $this->entityTypeManager->getStorage('event');
+        $eventIds = $eventStorage->getQuery()
+            ->condition('community_id', $communityId)
+            ->condition('status', 1)
+            ->range(0, 6)
+            ->execute();
+        $localEvents = $eventIds !== [] ? array_values($eventStorage->loadMultiple($eventIds)) : [];
+
+        $teachingStorage = $this->entityTypeManager->getStorage('teaching');
+        $teachingIds = $teachingStorage->getQuery()
+            ->condition('community_id', $communityId)
+            ->condition('status', 1)
+            ->range(0, 6)
+            ->execute();
+        $localTeachings = $teachingIds !== [] ? array_values($teachingStorage->loadMultiple($teachingIds)) : [];
+
+        $groupStorage = $this->entityTypeManager->getStorage('group');
+        $businessIds = $groupStorage->getQuery()
+            ->condition('community_id', $communityId)
+            ->condition('type', 'business')
+            ->condition('status', 1)
+            ->range(0, 6)
+            ->execute();
+        $localBusinesses = $businessIds !== [] ? array_values($groupStorage->loadMultiple($businessIds)) : [];
+
+        $personStorage = $this->entityTypeManager->getStorage('resource_person');
+        $personIds = $personStorage->getQuery()
+            ->condition('community', $community->get('name'))
+            ->condition('status', 1)
+            ->range(0, 6)
+            ->execute();
+        $localPeople = $personIds !== [] ? array_values($personStorage->loadMultiple($personIds)) : [];
+
         $html = $this->twig->render('communities/detail.html.twig', [
             'path' => '/communities/' . $slug,
             'community' => $community,
@@ -150,6 +186,10 @@ class CommunityController
             'people' => $people,
             'band_office' => $bandOffice,
             'distance_from_user' => $distanceFromUser,
+            'local_events' => $localEvents,
+            'local_teachings' => $localTeachings,
+            'local_businesses' => $localBusinesses,
+            'local_people' => $localPeople,
         ]);
 
         return new SsrResponse(content: $html);

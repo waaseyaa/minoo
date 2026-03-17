@@ -250,6 +250,10 @@ return [
     'community.nearby_communities' => 'Nearby Communities',
     'community.km_away' => 'km away',
     'community.pop' => 'Pop.',
+    'community.local_events' => 'Events',
+    'community.local_teachings' => 'Teachings',
+    'community.local_businesses' => 'Businesses',
+    'community.local_people' => 'People',
 
     // About
     'about.title' => 'About Minoo',
