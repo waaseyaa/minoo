@@ -190,6 +190,9 @@ return [
     'teachings.not_found' => "Gikinoo'amaadiwin gaawiin mikanziin", // "Teaching not found"
     'teachings.not_found_message' => "Gikinoo'amaadiwin gaa-nandawaabandaman gaawiin ayaasinoon.", // "The teaching you're looking for doesn't exist."
     'teachings.browse_all' => "Kakina gikinoo'amaadiwinan", // "All teachings"
+    'teachings.related_events' => "Maawanji'idiwinan", // dict: maawanji'idiwag: "gatherings/events"
+    'teachings.knowledge_keepers' => "Gechi-inendaagozijig", // "Knowledge Keepers" (those who are greatly valued)
+    'teachings.source_label' => "Onji:", // dict: onji: "from, source"
 
     // Language / Dictionary
     'language.title' => 'Anishinaabemowin', // dict: Anishinaabemowin: "Ojibwe language"

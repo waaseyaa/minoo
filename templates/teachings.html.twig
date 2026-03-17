@@ -69,6 +69,46 @@
           {% endfor %}
         </div>
       </div>{# .content-well #}
+
+      {% if teaching.get('source') is not empty %}
+        <div class="teaching-source">
+          <span class="teaching-source__label">{{ trans('teachings.source_label') }}</span>
+          <span>{{ teaching.get('source') }}</span>
+        </div>
+      {% endif %}
+
+      {% if related_events is defined and related_events|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('teachings.related_events') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for event in related_events %}
+              <a href="/events/{{ event.get('slug') }}" class="card card--compact">
+                <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
+                <h3 class="card__title">{{ event.get('title') }}</h3>
+                {% if event.get('starts_at') %}
+                  <span class="card__meta">{{ event.get('starts_at')|date('F j, Y') }}</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if knowledge_keepers is defined and knowledge_keepers|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('teachings.knowledge_keepers') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for person in knowledge_keepers %}
+              <a href="/people/{{ person.get('slug') }}" class="card card--compact">
+                <h3 class="card__title">{{ person.get('name') }}</h3>
+                {% if person.get('community') %}
+                  <span class="card__meta">{{ person.get('community') }}</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
     </div>
   {% else %}
     <div class="flow-lg">
