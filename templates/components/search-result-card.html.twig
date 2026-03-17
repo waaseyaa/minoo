@@ -1,6 +1,19 @@
+{% set type_key = content_type ?? 'page' %}
+{% set badge_map = {
+  'event': 'event',
+  'teaching': 'teaching',
+  'group': 'group',
+  'person': 'person',
+  'resource_person': 'person',
+  'business': 'business',
+  'community': 'community',
+} %}
+{% set badge_class = badge_map[type_key] ?? 'page' %}
+{% set badge_label_key = 'search.badge_' ~ (badge_map[type_key] ?? type_key) %}
+
 <article class="card search-result-card">
   <div class="search-result-card__badges">
-    <span class="card__badge card__badge--{{ content_type ?? 'page' }}">{{ content_type ?? 'page' }}</span>
+    <span class="search-result__badge search-result__badge--{{ badge_class }}">{{ trans(badge_label_key) }}</span>
     {% if topics is defined %}
       {% for topic in topics[:3] %}
         <span class="card__tag">{{ topic|replace({'_': ' '}) }}</span>
@@ -18,5 +31,13 @@
   </div>
   {% if highlight %}
     <div class="card__body">{{ highlight|striptags('<em><strong><mark>')|raw }}</div>
+  {% endif %}
+  {# Richer metadata per entity type #}
+  {% if type_key == 'event' and (date is defined and date) %}
+    <div class="search-result__meta">{{ date }}</div>
+  {% elseif type_key in ['person', 'resource_person'] and (community is defined and community) %}
+    <div class="search-result__meta">{{ community }}</div>
+  {% elseif type_key == 'business' and (city is defined and city) %}
+    <div class="search-result__meta">{{ city }}</div>
   {% endif %}
 </article>

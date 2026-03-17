@@ -179,6 +179,13 @@ return [
     'search.pagination_prev' => 'Previous',
     'search.pagination_next' => 'Next',
     'search.search_intro' => 'Enter a search term to discover articles, teachings, events, and community resources from across Indigenous organizations and communities.',
+    'search.badge_event' => 'Event',
+    'search.badge_teaching' => 'Teaching',
+    'search.badge_group' => 'Group',
+    'search.badge_person' => 'Person',
+    'search.badge_business' => 'Business',
+    'search.badge_community' => 'Community',
+    'search.badge_page' => 'Page',
 
     // People
     'people.title' => 'People',
