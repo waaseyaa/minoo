@@ -9,9 +9,16 @@
 {% endblock %}
 
 {% block content %}
+  {% include "components/breadcrumb.html.twig" with {
+    breadcrumbs: [
+      {label: trans('breadcrumb.home'), url: '/'},
+      {label: trans('communities.all_communities'), url: lang_url('/communities')},
+      {label: community.get('name')}
+    ]
+  } %}
+
   {# --- Hero --- #}
   <div class="atlas-detail-hero">
-    <a href="{{ lang_url('/communities') }}" class="atlas-detail-hero__back">{{ trans('community.back_button') }}</a>
     <div class="atlas-detail-hero__badge">
       {{ community.get('is_municipality') ? trans('community.municipality') : trans('community.first_nation') }}
     </div>

@@ -86,7 +86,13 @@
     </div>
   {% elseif person is defined and person %}
     <div class="flow-lg detail">
-      <a href="{{ lang_url('/people') }}" class="detail__back">{{ trans('people.detail_back') }}</a>
+      {% include "components/breadcrumb.html.twig" with {
+        breadcrumbs: [
+          {label: trans('breadcrumb.home'), url: '/'},
+          {label: trans('people.title'), url: lang_url('/people')},
+          {label: person.get('name')}
+        ]
+      } %}
       <div class="detail__header">
         <div class="person-photo person-photo--detail">
           {% if photo_url is defined and photo_url %}
