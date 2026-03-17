@@ -47,6 +47,19 @@
       <div class="detail__header">
         <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
         <h1>{{ event.get('title') }}</h1>
+
+        {% set now = "now"|date("U") %}
+        {% set start = event.get('starts_at') ? event.get('starts_at')|date("U") : null %}
+        {% set end_date = event.get('ends_at') ? event.get('ends_at')|date("U") : null %}
+
+        {% if start and end_date and now >= start and now <= end_date %}
+          <span class="event-status event-status--active">{{ trans('events.status_happening') }}</span>
+        {% elseif start and now < start %}
+          <span class="event-status event-status--upcoming">{{ trans('events.status_upcoming') }}</span>
+        {% elseif end_date and now > end_date %}
+          <span class="event-status event-status--past">{{ trans('events.status_past') }}</span>
+        {% endif %}
+
         <div class="detail__meta">
           {% if event.get('starts_at') %}
             <span class="card__date">{{ event.get('starts_at')|date('F j, Y') }}{% if event.get('ends_at') %} – {{ event.get('ends_at')|date('F j, Y') }}{% endif %}</span>
@@ -63,6 +76,45 @@
           {% endfor %}
         </div>
       </div>{# .content-well #}
+
+      {% if related_teachings is defined and related_teachings|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('events.related_teachings') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for teaching in related_teachings %}
+              <a href="/teachings/{{ teaching.get('slug') }}" class="card card--compact">
+                <span class="card__badge card__badge--teaching">{{ teaching.get('type')|default('')|capitalize }}</span>
+                <h3 class="card__title">{{ teaching.get('title') }}</h3>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if connected_people is defined and connected_people|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('events.people_connected') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for person in connected_people %}
+              <a href="/people/{{ person.get('slug') }}" class="card card--compact">
+                <h3 class="card__title">{{ person.get('name') }}</h3>
+                {% if person.get('community') %}
+                  <span class="card__meta">{{ person.get('community') }}</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if host_community is defined and host_community %}
+        <section class="related-section">
+          <h2>{{ trans('events.host_community') }}</h2>
+          <a href="/communities/{{ host_community.get('slug') }}" class="community-link">
+            {{ host_community.get('name') }}
+          </a>
+        </section>
+      {% endif %}
     </div>
   {% else %}
     <div class="flow-lg">
