@@ -168,5 +168,26 @@ final class GroupServiceProvider extends ServiceProvider
                 ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
                 ->build(),
         );
+
+        $router->addRoute(
+            'businesses.list',
+            RouteBuilder::create('/businesses')
+                ->controller('Minoo\\Controller\\BusinessController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'businesses.show',
+            RouteBuilder::create('/businesses/{slug}')
+                ->controller('Minoo\\Controller\\BusinessController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
     }
 }

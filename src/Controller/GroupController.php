@@ -25,6 +25,7 @@ final class GroupController
         $storage = $this->entityTypeManager->getStorage('group');
         $ids = $storage->getQuery()
             ->condition('status', 1)
+            ->condition('type', 'business', '!=')
             ->sort('name', 'ASC')
             ->execute();
         $groups = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
