@@ -3018,6 +3018,7 @@
     }
   }
 
+<<<<<<< HEAD
   /* Breadcrumb navigation */
   .breadcrumb {
     padding-block: var(--space-xs);
@@ -3292,6 +3293,83 @@
     color: var(--text-secondary);
     margin-block-start: var(--space-3xs);
   }
+=======
+  /* ── Mobile Responsiveness Fixes ── */
+
+  /* Touch targets — minimum 44px for accessible tap areas */
+  @media (max-width: 48em) {
+    .btn,
+    .card a,
+    .breadcrumb a,
+    .detail-hero__back,
+    .community-link,
+    .tag {
+      min-block-size: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  /* Card grids — single column on small screens */
+  @media (max-width: 36em) {
+    .card-grid,
+    .card-grid--compact {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Hero images — reduce max height on mobile */
+  @media (max-width: 48em) {
+    .hero-image__img {
+      max-block-size: 200px;
+    }
+  }
+
+  /* Prevent horizontal overflow on mobile */
+  @media (max-width: 48em) {
+    .listing-hero h1,
+    .detail-hero__title {
+      font-size: var(--text-xl);
+      overflow-wrap: break-word;
+    }
+
+    .tag-list {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .breadcrumb ol {
+      font-size: var(--text-xs);
+    }
+
+    .related-section h2 {
+      font-size: var(--text-md);
+    }
+  }
+
+  /* Search and form inputs — prevent iOS zoom on focus */
+  @media (max-width: 48em) {
+    .search-input,
+    .form__select,
+    input[type="text"],
+    input[type="search"] {
+      font-size: 1rem;
+      inline-size: 100%;
+    }
+  }
+
+  /* Detail page content — tighter padding on mobile */
+  @media (max-width: 48em) {
+    .detail,
+    .business-detail {
+      padding-inline: var(--space-s);
+    }
+
+    .content-well {
+      padding: var(--space-m);
+    }
+  }
+>>>>>>> worktree-agent-aeaa6605
 }
 
 @layer utilities {
