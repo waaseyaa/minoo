@@ -96,6 +96,7 @@
     --color-communities: #6a9caf;
     --color-people: #8338ec;
     --color-programs: #c77dff;
+    --color-businesses: oklch(0.65 0.18 25);
     --color-search: #d4a373;
 
     /* ── Borders ── */
@@ -170,6 +171,7 @@
     --domain-language:  var(--color-language);
     --domain-people:    var(--color-people);
     --domain-elders:    var(--color-programs);
+    --domain-businesses: var(--color-businesses);
 
     /* Motion */
     --ease-out:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -2422,11 +2424,36 @@
   }
 
   .featured-card__badge {
+    display: inline-block;
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: oklch(0.7 0.15 80);
     font-weight: 600;
+    padding-inline: var(--space-2xs);
+    padding-block: 2px;
+    border-radius: var(--radius-sm);
+
+    &.featured-card__badge--event {
+      color: var(--color-events);
+      background: oklch(from var(--color-events) l c h / 0.15);
+    }
+    &.featured-card__badge--teaching {
+      color: var(--color-teachings);
+      background: oklch(from var(--color-teachings) l c h / 0.15);
+    }
+    &.featured-card__badge--group {
+      color: var(--color-communities);
+      background: oklch(from var(--color-communities) l c h / 0.15);
+    }
+    &.featured-card__badge--person, &.featured-card__badge--resource_person {
+      color: var(--color-people);
+      background: oklch(from var(--color-people) l c h / 0.15);
+    }
+    &.featured-card__badge--business {
+      color: var(--color-businesses);
+      background: oklch(from var(--color-businesses) l c h / 0.15);
+    }
   }
 
   .featured-card__headline {
@@ -2526,17 +2553,59 @@
     &.homepage-card--person {
       border-inline-start-color: var(--color-people);
     }
+
+    &.homepage-card--business {
+      border-inline-start-color: var(--color-businesses);
+    }
+
+    &.homepage-card--teaching {
+      border-inline-start-color: var(--color-teachings);
+    }
   }
 
   .homepage-badge {
-    font-size: var(--text-sm);
+    display: inline-block;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     font-weight: 700;
+    padding-inline: var(--space-2xs);
+    padding-block: 2px;
+    border-radius: var(--radius-sm);
+    background: oklch(0.25 0.02 250 / 0.6);
 
-    .homepage-card--group & { color: var(--color-communities); }
-    .homepage-card--event & { color: var(--color-events); }
-    .homepage-card--person & { color: var(--color-people); }
+    .homepage-card--group & {
+      color: var(--color-communities);
+      background: oklch(from var(--color-communities) l c h / 0.12);
+    }
+    .homepage-card--event & {
+      color: var(--color-events);
+      background: oklch(from var(--color-events) l c h / 0.12);
+    }
+    .homepage-card--person & {
+      color: var(--color-people);
+      background: oklch(from var(--color-people) l c h / 0.12);
+    }
+    .homepage-card--business & {
+      color: var(--color-businesses);
+      background: oklch(from var(--color-businesses) l c h / 0.12);
+    }
+    .homepage-card--teaching & {
+      color: var(--color-teachings);
+      background: oklch(from var(--color-teachings) l c h / 0.12);
+    }
+  }
+
+  .homepage-date {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-block: var(--space-3xs) 0;
+  }
+
+  .homepage-community {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-block: var(--space-3xs) 0;
   }
 
   .homepage-title {
