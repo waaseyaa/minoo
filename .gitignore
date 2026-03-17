@@ -17,3 +17,7 @@ test-results/
 playwright-report/
 .superpowers/
 .build/
+data/
+scripts/.venv/
+__pycache__/
+*.pyc
