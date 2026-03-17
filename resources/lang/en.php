@@ -674,6 +674,9 @@ return [
     'volunteer_edit.save_button' => 'Save Changes',
     'volunteer_edit.cancel' => 'Cancel',
 
+    // Breadcrumb
+    'breadcrumb.home' => 'Home',
+
     // Open Graph
     'og.default_description' => 'Connecting Indigenous communities, Elders, and volunteers across Turtle Island.',
 ];

@@ -2923,6 +2923,45 @@
       padding-inline: var(--space-xl);
     }
   }
+
+  /* Breadcrumb navigation */
+  .breadcrumb {
+    padding-block: var(--space-xs);
+
+    ol {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3xs);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: var(--text-sm);
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+
+      &:not(:last-child)::after {
+        content: "\203A";
+        margin-inline-start: var(--space-3xs);
+        color: oklch(0.6 0 0);
+      }
+    }
+
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    [aria-current="page"] {
+      color: oklch(0.5 0 0);
+    }
+  }
 }
 
 @layer utilities {

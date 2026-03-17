@@ -42,7 +42,13 @@
 
   {% elseif business is defined and business %}
     <div class="flow-lg business-detail">
-      <a href="{{ lang_url('/businesses') }}" class="detail__back">{{ trans('businesses.detail_back') }}</a>
+      {% include "components/breadcrumb.html.twig" with {
+        breadcrumbs: [
+          {label: trans('breadcrumb.home'), url: '/'},
+          {label: trans('businesses.title'), url: lang_url('/businesses')},
+          {label: business.get('name')}
+        ]
+      } %}
 
       <div class="business-detail__header">
         <div class="business-detail__info">

@@ -1,0 +1,14 @@
+{# Expects: breadcrumbs = [{label: '...', url: '...'}, ...] where last item has no url (current page) #}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    {% for crumb in breadcrumbs %}
+      <li>
+        {% if crumb.url is defined and crumb.url %}
+          <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+        {% else %}
+          <span aria-current="page">{{ crumb.label }}</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+</nav>

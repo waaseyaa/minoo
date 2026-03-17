@@ -726,6 +726,9 @@ return [
     'volunteer_edit.save_button' => 'Ganawenjigewin', // dict: ganawendan: "take care of, keep"
     'volunteer_edit.cancel' => 'Ishkwaa', // dict: ishkwaa: stop, cease
 
+    // Breadcrumb
+    'breadcrumb.home' => "Waakaa'iganing", // dict: waakaa'igan: "house, home" + locative -ing: "at home"
+
     // Open Graph / SEO
     'og.default_description' => '',
 ];

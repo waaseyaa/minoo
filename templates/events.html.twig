@@ -43,7 +43,13 @@
     </div>
   {% elseif event is defined and event %}
     <div class="flow-lg detail">
-      <a href="{{ lang_url('/events') }}" class="detail__back">{{ trans('events.detail_back') }}</a>
+      {% include "components/breadcrumb.html.twig" with {
+        breadcrumbs: [
+          {label: trans('breadcrumb.home'), url: '/'},
+          {label: trans('events.title'), url: lang_url('/events')},
+          {label: event.get('title')}
+        ]
+      } %}
       <div class="detail__header">
         <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
         <h1>{{ event.get('title') }}</h1>
