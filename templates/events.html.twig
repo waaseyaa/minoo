@@ -10,6 +10,9 @@
   {%- endif -%}
 {% endblock %}
 
+{% block og_type %}{% if path starts with '/events/' and event is defined %}article{% else %}website{% endif %}{% endblock %}
+{% block og_description %}{% if path starts with '/events/' and event is defined %}{{ event.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
 {% block content %}
   {% if path == '/events' %}
     <div class="flow-lg">

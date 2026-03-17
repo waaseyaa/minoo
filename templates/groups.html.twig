@@ -10,6 +10,9 @@
   {%- endif -%}
 {% endblock %}
 
+{% block og_type %}{% if path starts with '/groups/' and group is defined %}article{% else %}website{% endif %}{% endblock %}
+{% block og_description %}{% if path starts with '/groups/' and group is defined %}{{ group.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
 {% block content %}
   {% if path == '/groups' %}
     <div class="flow-lg">
