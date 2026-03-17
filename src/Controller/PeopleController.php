@@ -148,6 +148,8 @@ final class PeopleController
             'path' => '/people/' . $slug,
             'person' => $person,
             'photo_url' => $photoUrl,
+            'image_url' => $photoUrl,
+            'image_credit' => '',
             'linked_business' => $linkedBusiness,
             'community_entity' => $communityEntity,
             'related_events' => $relatedEvents,

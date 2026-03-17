@@ -1,0 +1,9 @@
+{# Hero image for detail pages. Only renders when image_url is provided. #}
+{% if image_url is defined and image_url %}
+  <div class="hero-image">
+    <img src="{{ image_url }}" alt="{{ alt|default('') }}" class="hero-image__img" loading="lazy">
+    {% if credit is defined and credit %}
+      <span class="hero-image__credit">{{ credit }}</span>
+    {% endif %}
+  </div>
+{% endif %}

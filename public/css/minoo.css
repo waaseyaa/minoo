@@ -3037,7 +3037,6 @@
     }
   }
 
-<<<<<<< HEAD
   /* Breadcrumb navigation */
   .breadcrumb {
     padding-block: var(--space-xs);
@@ -3312,7 +3311,34 @@
     color: var(--text-secondary);
     margin-block-start: var(--space-3xs);
   }
-=======
+
+  /* Hero image for detail pages */
+  .hero-image {
+    position: relative;
+    border-radius: var(--radius-md, 8px);
+    overflow: hidden;
+    margin-block-end: var(--space-m);
+
+    &__img {
+      display: block;
+      inline-size: 100%;
+      max-block-size: 400px;
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
+    }
+
+    &__credit {
+      position: absolute;
+      inset-block-end: 0;
+      inset-inline-end: 0;
+      padding: var(--space-3xs) var(--space-xs);
+      background: oklch(0 0 0 / 0.6);
+      color: white;
+      font-size: var(--text-xs);
+      border-start-start-radius: var(--radius-sm, 4px);
+    }
+  }
+
   /* ── Mobile Responsiveness Fixes ── */
 
   /* Touch targets — minimum 44px for accessible tap areas */
@@ -3388,7 +3414,6 @@
       padding: var(--space-m);
     }
   }
->>>>>>> worktree-agent-aeaa6605
 }
 
 @layer utilities {

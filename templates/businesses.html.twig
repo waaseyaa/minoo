@@ -54,6 +54,11 @@
           {label: business.get('name')}
         ]
       } %}
+      {% include "components/hero-image.html.twig" with {
+        image_url: image_url|default(''),
+        alt: business.get('name'),
+        credit: image_credit|default('')
+      } %}
       <div class="detail-hero">
         <a href="{{ lang_url('/businesses') }}" class="detail-hero__back">{{ trans('businesses.detail_back') }}</a>
         <span class="detail-hero__badge">{{ trans('businesses.badge') }}</span>

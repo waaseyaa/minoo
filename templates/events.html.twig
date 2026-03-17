@@ -55,6 +55,11 @@
           {label: event.get('title')}
         ]
       } %}
+      {% include "components/hero-image.html.twig" with {
+        image_url: image_url|default(''),
+        alt: event.get('title'),
+        credit: image_credit|default('')
+      } %}
       <div class="detail-hero">
         <a href="{{ lang_url('/events') }}" class="detail-hero__back">{{ trans('events.detail_back') }}</a>
         {% if event.get('type') is not empty %}

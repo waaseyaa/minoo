@@ -55,6 +55,11 @@
           {label: teaching.get('title')}
         ]
       } %}
+      {% include "components/hero-image.html.twig" with {
+        image_url: image_url|default(''),
+        alt: teaching.get('title'),
+        credit: image_credit|default('')
+      } %}
       <div class="detail-hero">
         <a href="{{ lang_url('/teachings') }}" class="detail-hero__back">{{ trans('teachings.detail_back') }}</a>
         {% if teaching.get('type') is not empty %}

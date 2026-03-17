@@ -95,6 +95,11 @@
           {label: person.get('name')}
         ]
       } %}
+      {% include "components/hero-image.html.twig" with {
+        image_url: image_url|default(''),
+        alt: person.get('name'),
+        credit: image_credit|default('')
+      } %}
       <div class="detail-hero">
         <a href="{{ lang_url('/people') }}" class="detail-hero__back">{{ trans('people.detail_back') }}</a>
         <div class="person-photo person-photo--detail">

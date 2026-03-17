@@ -8,6 +8,7 @@ use Minoo\Support\CommunityLookup;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
 
@@ -104,17 +105,53 @@ final class EventController
             $hostCommunity = $communityIds ? $communityStorage->load(reset($communityIds)) : null;
         }
 
+        $imageUrl = '';
+        $imageCredit = '';
+        if ($event !== null) {
+            $mid = $event->get('media_id');
+            if ($mid !== null && $mid !== '') {
+                $status = $event->get('copyright_status');
+                if (in_array($status, ['community_owned', 'cc_by_nc_sa'], true)) {
+                    $urls = $this->resolvePhotoUrls([(int) $mid]);
+                    $imageUrl = $urls[(int) $mid] ?? '';
+                }
+            }
+        }
+
         $html = $this->twig->render('events.html.twig', [
             'path' => '/events/' . $slug,
             'event' => $event,
             'related_teachings' => $relatedTeachings,
             'connected_people' => $connectedPeople,
             'host_community' => $hostCommunity,
+            'image_url' => $imageUrl,
+            'image_credit' => $imageCredit,
         ]);
 
         return new SsrResponse(
             content: $html,
             statusCode: $event !== null ? 200 : 404,
         );
+    }
+
+    /**
+     * @param int[] $mediaIds
+     * @return array<int, string> Map of media ID to file URL
+     */
+    private function resolvePhotoUrls(array $mediaIds): array
+    {
+        $mediaStorage = $this->entityTypeManager->getStorage('media');
+        $mediaEntities = $mediaStorage->loadMultiple($mediaIds);
+
+        $urls = [];
+        foreach ($mediaEntities as $media) {
+            /** @var EntityInterface $media */
+            $url = $media->get('file_url');
+            if (is_string($url) && $url !== '') {
+                $urls[(int) $media->id()] = $url;
+            }
+        }
+
+        return $urls;
     }
 }
