@@ -10,6 +10,9 @@
   {%- endif -%}
 {% endblock %}
 
+{% block og_type %}{% if path starts with '/businesses/' and business is defined %}article{% else %}website{% endif %}{% endblock %}
+{% block og_description %}{% if path starts with '/businesses/' and business is defined %}{{ business.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
 {% block content %}
   {% if path == '/businesses' %}
     <div class="flow-lg">

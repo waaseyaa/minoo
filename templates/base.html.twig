@@ -11,7 +11,7 @@
   <meta property="og:description" content="{% block og_description %}{{ trans('og.default_description') }}{% endblock %}">
   <meta property="og:image" content="{% block og_image %}https://minoo.live/img/og-default.png{% endblock %}">
   <meta property="og:url" content="https://minoo.live{{ path is defined ? lang_url(path) : lang_url('/') }}">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:site_name" content="Minoo">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="/css/minoo.css?v=9">
