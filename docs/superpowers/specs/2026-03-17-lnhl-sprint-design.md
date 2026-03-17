@@ -171,7 +171,13 @@ Facebook aggressively blocks scrapers and may return login walls. Instagram rate
   "founders": ["Earl Abotossaway"],
   "four_pillars": ["Education", "Citizenship", "Sportsmanship", "Respect"],
   "significance": "Created to counter racism in mainstream hockey...",
-  "notable_alumni": [{ "name": "Ted Nolan", "nation": "Ojibwe", "achievement": "NHL coach" }],
+  "notable_alumni": [{ "name": "Ted Nolan", "nation": "Ojibwe (Garden River)", "achievement": "NHL coach" }],
+  "notable_supporters_2026": [
+    { "name": "Crystal Shawanda", "nation": "Wiikwemkoong", "note": "Ojibwe country/blues musician, drove from Nashville for the tournament" },
+    { "note": "NHL players giving shout outs to teams (identify specific players from social media/coverage)" }
+  ],
+  "ceremonies": ["Flag ceremony (opening, nation flag carriers)"],
+  "participating_communities_observed": ["Sagamok Anishnawbek"],
   "sources": [
     { "url": "https://canadiangeographic.ca/articles/...", "title": "..." },
     { "url": "https://www.nhl.com/news/...", "title": "..." }
