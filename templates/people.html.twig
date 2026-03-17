@@ -92,10 +92,12 @@
             <span class="person-photo__initials">{{ person.get('name')|split(' ')|map(n => n|first|upper)|join('') }}</span>
           {% endif %}
         </div>
-        {% if person.get('roles') is iterable %}
-          {% for r in person.get('roles') %}
-            <span class="card__badge card__badge--person">{{ r }}</span>
-          {% endfor %}
+        {% if person.get('roles') is iterable and person.get('roles')|length > 0 %}
+          <div class="role-badges">
+            {% for r in person.get('roles') %}
+              <span class="role-badge">{{ r }}</span>
+            {% endfor %}
+          </div>
         {% endif %}
         <h1>{{ person.get('name') }}</h1>
         {% if person.get('business_name') %}
@@ -110,11 +112,14 @@
 
       <div class="content-well">
         {% if person.get('offerings') is iterable and person.get('offerings')|length > 0 %}
-          <div class="card__tags">
-            {% for offering in person.get('offerings') %}
-              <span class="card__tag">{{ offering }}</span>
-            {% endfor %}
-          </div>
+          <section class="person-offerings">
+            <h2>{{ trans('people.offerings_title') }}</h2>
+            <div class="tag-list">
+              {% for offering in person.get('offerings') %}
+                <span class="tag">{{ offering }}</span>
+              {% endfor %}
+            </div>
+          </section>
         {% endif %}
 
         {% if person.get('bio') %}
@@ -139,6 +144,40 @@
           </div>
         {% endif %}
       </div>{# .content-well #}
+
+      {% if linked_business is defined and linked_business %}
+        <section class="related-section">
+          <h2>{{ trans('people.linked_business') }}</h2>
+          <a href="/businesses/{{ linked_business.get('slug') }}" class="community-link">
+            {{ linked_business.get('name') }}
+          </a>
+        </section>
+      {% endif %}
+
+      {% if community_entity is defined and community_entity %}
+        <section class="related-section">
+          <h2>{{ trans('people.community') }}</h2>
+          <a href="/communities/{{ community_entity.get('slug') }}" class="community-link">
+            {{ community_entity.get('name') }}
+          </a>
+        </section>
+      {% endif %}
+
+      {% if related_events is defined and related_events|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('people.related_events') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for event in related_events %}
+              <a href="/events/{{ event.get('slug') }}" class="card card--compact">
+                <h3 class="card__title">{{ event.get('title') }}</h3>
+                {% if event.get('starts_at') %}
+                  <span class="card__meta">{{ event.get('starts_at')|date('F j, Y') }}</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
     </div>
   {% else %}
     <div class="flow-lg">

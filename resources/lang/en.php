@@ -185,6 +185,10 @@ return [
     'people.not_found' => 'Person Not Found',
     'people.not_found_message' => 'We couldn\'t find this person. Their profile may have been removed or the link may be outdated.',
     'people.filters_empty' => 'No people match your search or filters.',
+    'people.offerings_title' => 'Services & Offerings',
+    'people.linked_business' => 'Business',
+    'people.community' => 'Community',
+    'people.related_events' => 'Related Events',
 
     // Communities
     'communities.exploring' => 'Exploring',
