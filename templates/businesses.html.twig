@@ -103,6 +103,43 @@
           </div>
         </section>
       {% endif %}
+
+      {% if business.get('address') is not empty or business.get('city') is not empty %}
+        <section class="business-location">
+          <h2>{{ trans('businesses.location') }}</h2>
+          <address class="business-address">
+            {% if business.get('address') is not empty %}
+              <p>{{ business.get('address') }}</p>
+            {% endif %}
+            {% if business.get('city') is not empty %}
+              <p>{{ business.get('city') }}{% if business.get('province') is not empty %}, {{ business.get('province') }}{% endif %}</p>
+            {% endif %}
+            {% if business.get('postal_code') is not empty %}
+              <p>{{ business.get('postal_code') }}</p>
+            {% endif %}
+          </address>
+        </section>
+      {% endif %}
+
+      {% if business.get('services') is not empty %}
+        <section class="business-services">
+          <h2>{{ trans('businesses.services') }}</h2>
+          <div class="tag-list">
+            {% for service in business.get('services') %}
+              <span class="tag">{{ service }}</span>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if community is defined and community %}
+        <section class="related-section">
+          <h2>{{ trans('businesses.community_affiliation') }}</h2>
+          <a href="/communities/{{ community.get('slug') }}" class="community-link">
+            {{ community.get('name') }}
+          </a>
+        </section>
+      {% endif %}
     </div>
 
   {% else %}

@@ -124,6 +124,9 @@ return [
     'businesses.empty_heading' => 'No businesses yet',
     'businesses.empty_body' => 'Indigenous-owned businesses will appear here as our community grows.',
     'businesses.explore_button' => 'Explore Communities',
+    'businesses.location' => 'Location',
+    'businesses.services' => 'Services & Offerings',
+    'businesses.community_affiliation' => 'Community',
 
     // Featured
     'featured.section_title' => 'Featured Across Turtle Island',

@@ -102,11 +102,23 @@ final class BusinessController
             }
         }
 
+        // Load linked community
+        $community = null;
+        if ($business !== null && $business->get('community_id')) {
+            $communityStorage = $this->entityTypeManager->getStorage('community');
+            $communityIds = $communityStorage->getQuery()
+                ->condition('cid', $business->get('community_id'))
+                ->range(0, 1)
+                ->execute();
+            $community = $communityIds ? $communityStorage->load(reset($communityIds)) : null;
+        }
+
         $html = $this->twig->render('businesses.html.twig', [
             'path' => '/businesses/' . $slug,
             'business' => $business,
             'owner' => $owner,
             'social_posts' => $socialPosts,
+            'community' => $community,
         ]);
 
         return new SsrResponse(

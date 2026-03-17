@@ -2923,6 +2923,55 @@
       padding-inline: var(--space-xl);
     }
   }
+
+  /* Business location */
+  .business-location {
+    margin-block-start: var(--space-l);
+  }
+
+  .business-address {
+    font-style: normal;
+    line-height: 1.6;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  /* Services/offerings tags */
+  .business-services {
+    margin-block-start: var(--space-l);
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-s);
+    background: oklch(0.95 0.02 250);
+    color: oklch(0.35 0.05 250);
+    border-radius: 100px;
+    font-size: var(--text-sm);
+  }
+
+  /* Related section / community link */
+  .related-section {
+    margin-block-start: var(--space-l);
+  }
+
+  .community-link {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+
+    &:hover {
+      color: var(--link-hover, var(--link));
+    }
+  }
 }
 
 @layer utilities {
