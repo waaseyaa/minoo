@@ -73,9 +73,44 @@ final class GroupController
             }
         }
 
+        $relatedPeople = [];
+        $relatedEvents = [];
+        $relatedTeachings = [];
+
+        if ($group !== null && $group->get('community_id')) {
+            $communityId = $group->get('community_id');
+
+            $personStorage = $this->entityTypeManager->getStorage('resource_person');
+            $personIds = $personStorage->getQuery()
+                ->condition('community', $communityId)
+                ->condition('status', 1)
+                ->range(0, 4)
+                ->execute();
+            $relatedPeople = $personIds ? array_values($personStorage->loadMultiple($personIds)) : [];
+
+            $eventStorage = $this->entityTypeManager->getStorage('event');
+            $eventIds = $eventStorage->getQuery()
+                ->condition('community_id', $communityId)
+                ->condition('status', 1)
+                ->range(0, 4)
+                ->execute();
+            $relatedEvents = $eventIds ? array_values($eventStorage->loadMultiple($eventIds)) : [];
+
+            $teachingStorage = $this->entityTypeManager->getStorage('teaching');
+            $teachingIds = $teachingStorage->getQuery()
+                ->condition('community_id', $communityId)
+                ->condition('status', 1)
+                ->range(0, 4)
+                ->execute();
+            $relatedTeachings = $teachingIds ? array_values($teachingStorage->loadMultiple($teachingIds)) : [];
+        }
+
         $html = $this->twig->render('groups.html.twig', [
             'path' => '/groups/' . $slug,
             'group' => $group,
+            'related_people' => $relatedPeople,
+            'related_events' => $relatedEvents,
+            'related_teachings' => $relatedTeachings,
         ]);
 
         return new SsrResponse(

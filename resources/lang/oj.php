@@ -160,6 +160,9 @@ return [
     'groups.not_found' => 'Anokiiwin gaawiin mikanziin', // "Business not found"
     'groups.not_found_message' => "Anokiiwin gaa-nandawaabandaman gaawiin ayaasinoon.", // "The business you're looking for doesn't exist."
     'groups.browse_all' => 'Kakina anokiiwinan', // dict: kakina: "all"
+    'groups.related_people' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
+    'groups.related_events' => "Maawanji'idiwinan", // dict: maawanji'idiwag: "they come together, meet"
+    'groups.related_teachings' => "Gikinoo'amaadiwinan", // dict: gikinoo'amaadiwin: "teaching, education"
 
     // Businesses (Adaawewinan)
     'businesses.title' => 'Adaawewinan', // dict: adaawewin: "business, store, trading place"
