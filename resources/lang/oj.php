@@ -283,6 +283,10 @@ return [
     'community.nearby_communities' => 'Besho oodenawinan', // "Nearby communities"
     'community.km_away' => 'km besho', // "km away/nearby"
     'community.pop' => '',
+    'community.local_events' => "Maawanji'idiwinan", // dict: maawanji'idiwag: "they come together, meet"
+    'community.local_teachings' => "Gikinoo'amaadiwinan", // dict: gikinoo'amaadiwin: "teaching, education"
+    'community.local_businesses' => 'Adaawewinan', // dict: adaawewin: "business, store, trading place"
+    'community.local_people' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
 
     // About
     'about.title' => 'Dibaajimowin', // dict: dibaajimowin: "a story; a narrative; a report"

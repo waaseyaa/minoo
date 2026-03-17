@@ -93,6 +93,65 @@
   </div>
   {% endif %}
 
+  {# --- Local Events --- #}
+  {% if local_events is defined and local_events|length > 0 %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">{{ trans('community.local_events') }}</div>
+    <div class="card-grid card-grid--compact">
+      {% for event in local_events %}
+        <a href="{{ lang_url('/events/' ~ event.get('slug')) }}" class="card card--compact">
+          <h3 class="card__title">{{ event.get('title') }}</h3>
+          {% if event.get('starts_at') %}
+            <span class="card__meta">{{ event.get('starts_at')|date('F j, Y') }}</span>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# --- Local Teachings --- #}
+  {% if local_teachings is defined and local_teachings|length > 0 %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">{{ trans('community.local_teachings') }}</div>
+    <div class="card-grid card-grid--compact">
+      {% for teaching in local_teachings %}
+        <a href="{{ lang_url('/teachings/' ~ teaching.get('slug')) }}" class="card card--compact">
+          <h3 class="card__title">{{ teaching.get('title') }}</h3>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# --- Local Businesses --- #}
+  {% if local_businesses is defined and local_businesses|length > 0 %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">{{ trans('community.local_businesses') }}</div>
+    <div class="card-grid card-grid--compact">
+      {% for business in local_businesses %}
+        <a href="{{ lang_url('/businesses/' ~ business.get('slug')) }}" class="card card--compact">
+          <h3 class="card__title">{{ business.get('name') }}</h3>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# --- Local People --- #}
+  {% if local_people is defined and local_people|length > 0 %}
+  <div class="atlas-section">
+    <div class="atlas-section__label">{{ trans('community.local_people') }}</div>
+    <div class="card-grid card-grid--compact">
+      {% for person in local_people %}
+        <a href="{{ lang_url('/people/' ~ person.get('slug')) }}" class="card card--compact">
+          <h3 class="card__title">{{ person.get('name') }}</h3>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
   {# --- Nearby Communities --- #}
   {% if nearby is not empty %}
   <div class="atlas-section">
