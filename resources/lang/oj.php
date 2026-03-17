@@ -216,6 +216,13 @@ return [
     'search.pagination_prev' => '',
     'search.pagination_next' => '',
     'search.search_intro' => '',
+    'search.badge_event' => "Maawanji'idiwin", // dict: maawanji'idiwag: "gathering/event"
+    'search.badge_teaching' => "Gikinoo'amaadiwin", // dict: gikinoo'amaadiwin: "teaching"
+    'search.badge_group' => 'Wiijiiwaagan', // dict: wiijiiwaagan: "companion, group"
+    'search.badge_person' => 'Anishinaabe', // dict: anishinaabe: "person"
+    'search.badge_business' => 'Anokiiwin', // dict: anokiiwin: "work, activity"
+    'search.badge_community' => 'Oodena', // dict: oodena: "town"
+    'search.badge_page' => "Mazina'igan", // dict: mazina'igan: "page, document"
 
     // People
     'people.title' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
