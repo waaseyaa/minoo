@@ -36,7 +36,7 @@
       <div class="featured-grid">
         {% for item in featured_items %}
           <a href="{{ lang_url(item.url) }}" class="featured-card">
-            <span class="featured-card__badge">{{ item.featured.get('entity_type')|default('')|replace({'_': ' '})|capitalize }}</span>
+            <span class="featured-card__badge featured-card__badge--{{ item.featured.get('entity_type')|default('') }}">{{ item.featured.get('entity_type')|default('')|replace({'_': ' '})|capitalize }}</span>
             <h3 class="featured-card__headline">{{ item.featured.get('headline')|default(item.entity.label()) }}</h3>
             {% if item.featured.get('subheadline') %}
               <p class="featured-card__subheadline">{{ item.featured.get('subheadline') }}</p>
@@ -75,7 +75,8 @@
               type_label: trans('page.type_event'),
               title: item.entity.get('title'),
               url: lang_url('/events/' ~ item.entity.get('slug')),
-              meta: (item.entity.get('starts_at') ? item.entity.get('starts_at')|date('F j, Y') : '') ~ (item.entity.get('location') ? ' · ' ~ item.entity.get('location') : '')
+              date: item.entity.get('starts_at') ? item.entity.get('starts_at')|date('F j, Y') : '',
+              meta: item.entity.get('location')|default('')
             } only %}
           {% elseif item.type == 'person' %}
             {% include "components/homepage-card.html.twig" with {
@@ -83,7 +84,8 @@
               type_label: trans('page.type_person'),
               title: item.entity.get('name'),
               url: lang_url('/people/' ~ item.entity.get('slug')),
-              meta: item.entity.get('community')|default('')
+              community_name: item.entity.get('community')|default(''),
+              meta: item.entity.get('role')|default('')
             } only %}
           {% endif %}
         {% endfor %}
@@ -102,7 +104,8 @@
             type_label: trans('page.type_event'),
             title: e.get('title'),
             url: lang_url('/events/' ~ e.get('slug')),
-            meta: (e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '') ~ (e.get('location') ? ' · ' ~ e.get('location') : '')
+            date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
+            meta: e.get('location')|default('')
           } only %}
         {% endfor %}
       </div>
@@ -120,7 +123,8 @@
             type_label: trans('page.type_person'),
             title: p.get('name'),
             url: lang_url('/people/' ~ p.get('slug')),
-            meta: p.get('community')|default('')
+            community_name: p.get('community')|default(''),
+            meta: p.get('role')|default('')
           } only %}
         {% endfor %}
       </div>
