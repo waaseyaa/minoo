@@ -160,6 +160,22 @@ return [
     'groups.not_found_message' => "Anokiiwin gaa-nandawaabandaman gaawiin ayaasinoon.", // "The business you're looking for doesn't exist."
     'groups.browse_all' => 'Kakina anokiiwinan', // dict: kakina: "all"
 
+    // Businesses (Adaawewinan)
+    'businesses.title' => 'Adaawewinan', // dict: adaawewin: "business, store, trading place"
+    'businesses.subtitle' => "Wiidookaw Anishinaabe adaawewinan gidoodenaang.", // "Support Indigenous businesses in your community."
+    'businesses.badge' => 'Adaawewin', // "Business"
+    'businesses.book_now' => 'Ozhitoon', // "Book/Make (an appointment)"
+    'businesses.detail_back' => 'Kakina Adaawewinan', // "All Businesses"
+    'businesses.visit_website' => 'Izhaan mazinaakowebiniganing', // "Go to website"
+    'businesses.owner_heading' => 'Debendang', // "Owner" (one who owns it)
+    'businesses.social_heading' => 'Oshki-dibaajimowinan', // "Latest news/updates"
+    'businesses.not_found' => 'Adaawewin gaawiin mikanziin', // "Business not found"
+    'businesses.not_found_message' => "Adaawewin gaa-nandawaabandaman gaawiin ayaasinoon.", // "The business you're looking for doesn't exist."
+    'businesses.browse_all' => 'Kakina adaawewinan', // "All businesses"
+    'businesses.empty_heading' => 'Adaawewinan gaawiin mikanziinaawaa', // "No businesses found"
+    'businesses.empty_body' => "Anishinaabe adaawewinan bi-dagoshinomagadoon waabang.", // "Indigenous businesses are coming soon."
+    'businesses.explore_button' => 'Naanaagadawaabandan oodenawinan', // "Explore communities"
+
     // Teachings
     'teachings.title' => 'Gikinoo\'amaadiwinan', // dict: gikinoo'amaadiwin: "teaching, education"
     'teachings.subtitle' => "Dibaajimowinan, gikendaasowinan, miinawaa gikinoo'amaadiwinan", // "Stories, knowledge, and teachings"

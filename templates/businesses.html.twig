@@ -1,0 +1,115 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+  {%- if path == '/businesses' -%}
+    {{ trans('businesses.title') }} — Minoo
+  {%- elseif business is defined and business -%}
+    {{ business.get('name') }} — Minoo
+  {%- else -%}
+    {{ trans('businesses.not_found') }} — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% if path == '/businesses' %}
+    <div class="flow-lg">
+      <h1>{{ trans('businesses.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('businesses.subtitle') }}</p>
+
+      {% if businesses is defined and businesses|length > 0 %}
+        <div class="card-grid">
+          {% for b in businesses %}
+            {% set comm = communities[b.get('community_id')]|default({}) %}
+            {% include "components/business-card.html.twig" with {
+              name: b.get('name'),
+              excerpt: b.get('description')|default('')|split("\n\n")|first|length > 120 ? b.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : b.get('description')|default('')|split("\n\n")|first,
+              url: "/businesses/" ~ b.get('slug'),
+              booking_url: b.get('booking_url')|default(''),
+              community_name: comm.name|default(''),
+              community_slug: comm.slug|default('')
+            } %}
+          {% endfor %}
+        </div>
+      {% else %}
+        {% include "components/empty-state.html.twig" with {
+          heading: trans('businesses.empty_heading'),
+          body: trans('businesses.empty_body'),
+          action_url: lang_url('/communities'),
+          action_label: trans('businesses.explore_button')
+        } %}
+      {% endif %}
+    </div>
+
+  {% elseif business is defined and business %}
+    <div class="flow-lg business-detail">
+      <a href="{{ lang_url('/businesses') }}" class="detail__back">{{ trans('businesses.detail_back') }}</a>
+
+      <div class="business-detail__header">
+        <div class="business-detail__info">
+          <span class="card__badge card__badge--business">{{ trans('businesses.badge') }}</span>
+          <h1>{{ business.get('name') }}</h1>
+          <div class="detail__body flow">
+            {% for paragraph in business.get('description')|default('')|split("\n\n") %}
+              <p>{{ paragraph }}</p>
+            {% endfor %}
+          </div>
+        </div>
+        <aside class="business-detail__sidebar">
+          {% if business.get('booking_url') %}
+            <a href="{{ business.get('booking_url') }}" class="btn" target="_blank" rel="noopener">{{ trans('businesses.book_now') }}</a>
+          {% endif %}
+          {% if business.get('phone') %}
+            <p><a href="tel:{{ business.get('phone') }}">{{ business.get('phone') }}</a></p>
+          {% endif %}
+          {% if business.get('email') %}
+            <p><a href="mailto:{{ business.get('email') }}">{{ business.get('email') }}</a></p>
+          {% endif %}
+          {% if business.get('address') %}
+            <p>{{ business.get('address') }}</p>
+          {% endif %}
+          {% if business.get('url') %}
+            <p class="detail__website"><a href="{{ business.get('url') }}" target="_blank" rel="noopener">{{ trans('businesses.visit_website') }}</a></p>
+          {% endif %}
+        </aside>
+      </div>
+
+      {% if owner is defined and owner %}
+        <section class="owner-card">
+          <h2>{{ trans('businesses.owner_heading') }}</h2>
+          <div class="owner-card__content">
+            <div class="owner-card__info">
+              <h3><a href="/people/{{ owner.get('slug') }}">{{ owner.get('name') }}</a></h3>
+              {% if owner.get('bio') %}
+                <p>{{ owner.get('bio')|split("\n\n")|first }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+      {% endif %}
+
+      {% if social_posts is defined and social_posts|length > 0 %}
+        <section class="social-feed">
+          <h2>{{ trans('businesses.social_heading') }}</h2>
+          <div class="social-feed__grid">
+            {% for post in social_posts|slice(0, 6) %}
+              <a href="{{ post.permalink }}" class="social-feed__post" target="_blank" rel="noopener">
+                {% if post.image_url is defined and post.image_url %}
+                  <img src="{{ post.image_url }}" alt="" loading="lazy">
+                {% endif %}
+                <p>{{ post.text|default(post.caption|default(''))|slice(0, 100) }}{% if (post.text|default(post.caption|default('')))|length > 100 %}…{% endif %}</p>
+                <span class="social-feed__meta">{{ post.source|default('') }} · {{ post.date|default('') }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    </div>
+
+  {% else %}
+    <div class="flow-lg">
+      <h1>{{ trans('businesses.not_found') }}</h1>
+      <p>{{ trans('businesses.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/businesses') }}">{{ trans('businesses.browse_all') }}</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

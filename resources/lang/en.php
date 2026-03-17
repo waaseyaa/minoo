@@ -108,6 +108,22 @@ return [
     'groups.not_found_message' => 'We couldn\'t find this group. It may have been removed or the link may be outdated.',
     'groups.browse_all' => 'Browse all groups',
 
+    // Businesses
+    'businesses.title' => 'Indigenous Businesses',
+    'businesses.subtitle' => 'Support Indigenous-owned businesses in your community.',
+    'businesses.badge' => 'Business',
+    'businesses.book_now' => 'Book Now',
+    'businesses.detail_back' => 'All Businesses',
+    'businesses.visit_website' => 'Visit Website',
+    'businesses.owner_heading' => 'Owner',
+    'businesses.social_heading' => 'Latest Updates',
+    'businesses.not_found' => 'Business Not Found',
+    'businesses.not_found_message' => 'The business you\'re looking for isn\'t available.',
+    'businesses.browse_all' => 'Browse all businesses',
+    'businesses.empty_heading' => 'No businesses yet',
+    'businesses.empty_body' => 'Indigenous-owned businesses will appear here as our community grows.',
+    'businesses.explore_button' => 'Explore Communities',
+
     // Teachings
     'teachings.title' => 'Teachings',
     'teachings.subtitle' => 'Living knowledge passed down through generations, for right now.',

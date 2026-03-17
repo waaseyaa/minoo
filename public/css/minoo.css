@@ -785,6 +785,7 @@
   .card--language  { --card-accent: var(--color-language); }
   .card--person    { --card-accent: var(--color-people); }
   .card--elder     { --card-accent: var(--color-programs); }
+  .card--business  { --card-accent: var(--color-programs); }
 
   .card__date {
     font-family: var(--font-mono);
@@ -1596,6 +1597,124 @@
     padding: var(--space-xs) var(--space-sm);
     background: oklch(95% 0.01 80);
     border-radius: var(--radius-sm);
+  }
+
+  /* Business detail */
+  .business-detail {
+    max-inline-size: var(--width-wide);
+  }
+
+  .business-detail__header {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 48rem) {
+    .business-detail__header {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+
+  .business-detail__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    padding: var(--space-sm);
+    background-color: var(--surface-card);
+    border-radius: 0.5rem;
+    align-self: start;
+  }
+
+  .business-detail__sidebar .btn {
+    text-align: center;
+  }
+
+  /* Owner card */
+  .owner-card {
+    padding: var(--space-sm);
+    background-color: var(--surface-card);
+    border-radius: 0.5rem;
+    border-inline-start: 3px solid var(--color-people);
+  }
+
+  .owner-card h2 {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-block-end: var(--space-xs);
+  }
+
+  .owner-card__content {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: start;
+  }
+
+  .owner-card__info h3 {
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+  }
+
+  .owner-card__info h3 a {
+    color: var(--text-primary);
+  }
+
+  .owner-card__info p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-block-start: var(--space-3xs);
+  }
+
+  /* Social feed */
+  .social-feed h2 {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-block-end: var(--space-xs);
+  }
+
+  .social-feed__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-sm);
+  }
+
+  .social-feed__post {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-xs);
+    background-color: var(--surface-card);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    transition: transform 0.15s ease;
+  }
+
+  .social-feed__post:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .social-feed__post img {
+    border-radius: 0.25rem;
+    inline-size: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .social-feed__meta {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   /* -- Dashboards ---------------------------------------- */
