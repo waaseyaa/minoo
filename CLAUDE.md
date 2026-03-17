@@ -53,8 +53,8 @@ minoo/
 | `src/Search/*`, `src/Provider/SearchServiceProvider.php` | `minoo:search` | `docs/specs/search.md` |
 | `src/Controller/*`, route definitions in `src/Provider/` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
-| `src/Domain/*` | — | (domain-specific bounded contexts) |
-| `src/Support/*` | — | (cross-cutting utilities) |
+| `src/Domain/Geo/*` | — | Geo bounded context: CommunityFinder, LocationService, VolunteerRanker, value objects |
+| `src/Support/*` | — | Cross-cutting: GeoDistance, SlugGenerator, NorthCloudClient, MailService, Flash, CommunityLookup |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
 | `src/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
