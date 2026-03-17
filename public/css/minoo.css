@@ -2993,6 +2993,7 @@
     }
   }
 
+<<<<<<< HEAD
   /* Breadcrumb navigation */
   .breadcrumb {
     padding-block: var(--space-xs);
@@ -3189,6 +3190,83 @@
     &:hover {
       color: var(--link-hover, var(--link));
     }
+  }
+
+  /* Event status badges */
+  .event-status {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-xs);
+    border-radius: var(--radius-sm, 4px);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-block-end: var(--space-s);
+
+    &--active {
+      background: oklch(0.92 0.08 145);
+      color: oklch(0.3 0.1 145);
+    }
+
+    &--upcoming {
+      background: oklch(0.92 0.06 250);
+      color: oklch(0.35 0.08 250);
+    }
+
+    &--past {
+      background: oklch(0.93 0 0);
+      color: oklch(0.45 0 0);
+    }
+  }
+
+  /* Search result badges — domain-colored */
+  .search-result__badge {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-xs);
+    border-radius: var(--radius-sm, 4px);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-block-end: var(--space-3xs);
+    background: oklch(0.95 0.02 250);
+    color: oklch(0.35 0.05 250);
+  }
+
+  .search-result__badge--event {
+    color: var(--color-events);
+    background: oklch(from var(--color-events) l c h / 0.15);
+  }
+
+  .search-result__badge--teaching {
+    color: var(--color-teachings);
+    background: oklch(from var(--color-teachings) l c h / 0.15);
+  }
+
+  .search-result__badge--group {
+    color: var(--color-communities);
+    background: oklch(from var(--color-communities) l c h / 0.15);
+  }
+
+  .search-result__badge--person {
+    color: var(--color-people);
+    background: oklch(from var(--color-people) l c h / 0.15);
+  }
+
+  .search-result__badge--business {
+    color: var(--color-businesses, var(--color-programs));
+    background: oklch(from var(--color-businesses, var(--color-programs)) l c h / 0.15);
+  }
+
+  .search-result__badge--community {
+    color: var(--color-communities);
+    background: oklch(from var(--color-communities) l c h / 0.15);
+  }
+
+  .search-result__meta {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-block-start: var(--space-3xs);
   }
 }
 

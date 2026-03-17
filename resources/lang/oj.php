@@ -149,6 +149,12 @@ return [
     'events.not_found' => "Maawanji'idiwin gaawiin mikanziin", // "Event not found"
     'events.not_found_message' => "Maawanji'idiwin gaa-nandawaabandaman gaawiin ayaasinoon.", // "The event you're looking for doesn't exist."
     'events.browse_all' => "Kakina maawanji'idiwinan", // "All events"
+    'events.related_teachings' => "Gikinoo'amaadiwinan", // dict: gikinoo'amaadiwin: "teaching" (plural) — "Related Teachings"
+    'events.people_connected' => "Anishinaabeg o'ow maawanji'idiwining", // "People at this gathering"
+    'events.host_community' => 'Oodena', // dict: oodena: "town/community" — "Host Community"
+    'events.status_happening' => "Noongom izhiwebad", // "Happening now" — noongom: "now" + izhiwebad: "it is happening"
+    'events.status_upcoming' => "Bi-dagoshinomagad", // "Coming/Upcoming" — bi-: "coming" + dagoshinomagad: "it arrives"
+    'events.status_past' => "Gaa-ishkwaa-ayaamagak", // "Past/Finished" — gaa-: past tense + ishkwaa: "finished" + ayaamagad: "it exists"
 
     // Groups (businesses)
     'groups.title' => 'Anokiiwinan', // dict: anokiiwin: "work, activity, business" (plural)
