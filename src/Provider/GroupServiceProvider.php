@@ -112,6 +112,12 @@ final class GroupServiceProvider extends ServiceProvider
                     'description' => 'When this record was last verified.',
                     'weight' => 96,
                 ],
+                'social_posts' => [
+                    'type' => 'text_long',
+                    'label' => 'Social Posts',
+                    'description' => 'JSON array of recent social media posts.',
+                    'weight' => 97,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',

@@ -17,9 +17,10 @@ final class ConfigSeederTest extends TestCase
     {
         $types = ConfigSeeder::eventTypes();
 
-        $this->assertCount(3, $types);
+        $this->assertCount(4, $types);
         $this->assertSame('powwow', $types[0]['type']);
         $this->assertSame('Powwow', $types[0]['name']);
+        $this->assertSame('tournament', $types[3]['type']);
     }
 
     #[Test]

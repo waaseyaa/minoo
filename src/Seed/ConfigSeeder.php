@@ -13,6 +13,7 @@ final class ConfigSeeder
             ['type' => 'powwow', 'name' => 'Powwow', 'description' => 'Traditional gathering with dance and song.'],
             ['type' => 'gathering', 'name' => 'Gathering', 'description' => 'Community gathering or meeting.'],
             ['type' => 'ceremony', 'name' => 'Ceremony', 'description' => 'Sacred or cultural ceremony.'],
+            ['type' => 'tournament', 'name' => 'Tournament', 'description' => 'Sports tournament or competitive event.'],
         ];
     }
 
