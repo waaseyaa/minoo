@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b0bcab25681e8b9ad4e71332195381f",
+    "content-hash": "916b454e68748265d5d7c3a0a8eeb1c3",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3424,6 +3424,55 @@
             "time": "2026-03-17T23:00:52+00:00"
         },
         {
+            "name": "waaseyaa/graphql",
+            "version": "v0.1.0-alpha.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waaseyaa/graphql.git",
+                "reference": "3644b2ed35ecdafaebe518804f811d5fbb777541"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waaseyaa/graphql/zipball/3644b2ed35ecdafaebe518804f811d5fbb777541",
+                "reference": "3644b2ed35ecdafaebe518804f811d5fbb777541",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4",
+                "waaseyaa/access": "@dev",
+                "waaseyaa/api": "@dev",
+                "waaseyaa/entity": "@dev",
+                "waaseyaa/field": "@dev",
+                "waaseyaa/routing": "@dev",
+                "webonyx/graphql-php": "^15.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev",
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\GraphQL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "GraphQL endpoint for Waaseyaa — auto-generated schema from entity types",
+            "support": {
+                "issues": "https://github.com/waaseyaa/graphql/issues",
+                "source": "https://github.com/waaseyaa/graphql/tree/v0.1.0-alpha.14"
+            },
+            "time": "2026-03-16T23:24:21+00:00"
+        },
+        {
             "name": "waaseyaa/i18n",
             "version": "v0.1.0-alpha.14",
             "source": {
@@ -4229,6 +4278,85 @@
                 "source": "https://github.com/waaseyaa/workflows/tree/v0.1.0-alpha.14"
             },
             "time": "2026-03-16T21:50:01+00:00"
+        },
+        {
+            "name": "webonyx/graphql-php",
+            "version": "v15.31.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webonyx/graphql-php.git",
+                "reference": "8b446b55a30680f105eb5c4d25ccbc015926d398"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/8b446b55a30680f105eb5c4d25ccbc015926d398",
+                "reference": "8b446b55a30680f105eb5c4d25ccbc015926d398",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": "^7.4 || ^8"
+            },
+            "require-dev": {
+                "amphp/amp": "^2.6",
+                "amphp/http-server": "^2.1",
+                "dms/phpunit-arraysubset-asserts": "dev-master",
+                "ergebnis/composer-normalize": "^2.28",
+                "friendsofphp/php-cs-fixer": "3.94.2",
+                "mll-lab/php-cs-fixer-config": "5.13.0",
+                "nyholm/psr7": "^1.5",
+                "phpbench/phpbench": "^1.2",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "2.1.40",
+                "phpstan/phpstan-phpunit": "2.0.16",
+                "phpstan/phpstan-strict-rules": "2.0.10",
+                "phpunit/phpunit": "^9.5 || ^10.5.21 || ^11",
+                "psr/http-message": "^1 || ^2",
+                "react/http": "^1.6",
+                "react/promise": "^2.0 || ^3.0",
+                "rector/rector": "^2.0",
+                "symfony/polyfill-php81": "^1.23",
+                "symfony/var-exporter": "^5 || ^6 || ^7 || ^8",
+                "thecodingmachine/safe": "^1.3 || ^2 || ^3",
+                "ticketswap/phpstan-error-formatter": "1.2.6"
+            },
+            "suggest": {
+                "amphp/http-server": "To leverage async resolving with webserver on AMPHP platform",
+                "psr/http-message": "To use standard GraphQL server",
+                "react/promise": "To leverage async resolving on React PHP platform"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GraphQL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A PHP port of GraphQL reference implementation",
+            "homepage": "https://github.com/webonyx/graphql-php",
+            "keywords": [
+                "api",
+                "graphql"
+            ],
+            "support": {
+                "issues": "https://github.com/webonyx/graphql-php/issues",
+                "source": "https://github.com/webonyx/graphql-php/tree/v15.31.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spawnia",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/webonyx-graphql-php",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2026-03-16T15:32:01+00:00"
         }
     ],
     "packages-dev": [
@@ -5956,6 +6084,7 @@
         "waaseyaa/entity-storage": 15,
         "waaseyaa/field": 15,
         "waaseyaa/foundation": 15,
+        "waaseyaa/graphql": 15,
         "waaseyaa/i18n": 15,
         "waaseyaa/mcp": 15,
         "waaseyaa/media": 15,
