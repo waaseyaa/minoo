@@ -71,7 +71,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 - `waaseyaa_get_spec infrastructure` — kernel boot, manifest compiler, providers
 - `waaseyaa_search_specs <query>` — keyword search across all framework specs
 
-## Entity Domains (5 domains, 13 types)
+## Entity Domains (6 domains, 14 types)
 
 | Domain | Entities | Provider | Policy |
 |--------|----------|----------|--------|
@@ -80,6 +80,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 | Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingServiceProvider`, `CulturalCollectionServiceProvider` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
 | Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker` | `LanguageServiceProvider` | `LanguageAccessPolicy` |
 | Ingestion | `ingest_log` | `IngestServiceProvider` | `IngestAccessPolicy` |
+| Editorial | `featured_item` | `FeaturedItemServiceProvider` | `FeaturedItemAccessPolicy` |
 
 ## Frontend / SSR
 
@@ -112,6 +113,11 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 1. Add static method to `TaxonomySeeder` (vocabularies) or `ConfigSeeder` (type configs)
 2. Write unit test in `tests/Minoo/Unit/Seed/`
 3. Return structured arrays — not persisted entities
+
+**Adding a featured item:**
+1. Run `php scripts/populate_featured.php` or create via `$storage->create([...])` with entity_type, entity_id, headline, subheadline, weight, starts_at, ends_at, status
+2. Featured items appear on homepage when `starts_at <= now <= ends_at` and `status = 1`
+3. Higher weight = more prominent positioning
 
 ## Commands
 
@@ -155,6 +161,9 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Database path**: Framework resolves to `{projectRoot}/waaseyaa.sqlite` (NOT `storage/waaseyaa.sqlite`). When copying production DB locally, place it at the project root.
 - **`@layer utilities` broken**: The `.visually-hidden` class and other utilities in `@layer utilities` don't apply (#273). Workaround: duplicate styles in `@layer components` where needed.
 - **Homepage nearby fallback**: `buildNearbyMixed()` returns empty when community entities lack `status=1` (most imported communities have NULL status). `buildRecentMixed()` provides a non-proximity fallback so the "Nearby" tab always has content.
+- **ConfigEntityBase vs ContentEntityBase**: Config entities are seed-based (in-memory), NOT database-persisted. Use `ContentEntityBase` with `'uuid' => 'uuid'` in entityKeys for any entity that needs SQL storage. Config entities (like `EventType`, `GroupType`) come from seeders only.
+- **Entity creation**: Use `$storage->create([...])` then `$storage->save($entity)` — NOT `new Entity([...])`. Direct instantiation won't persist correctly through the storage layer.
+- **Homepage card routing**: Homepage `loadGroups()` filters `type != business`. Card URLs in `page.html.twig` check `is_business` to route to `/businesses/` vs `/groups/`. `loadFeaturedItems()` resolves correct URLs per entity type.
 
 ## GitHub Workflow
 
