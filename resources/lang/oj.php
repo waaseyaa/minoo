@@ -252,6 +252,10 @@ return [
     'people.not_found' => 'Anishinaabe gaawiin mikanziin', // "Person not found"
     'people.not_found_message' => 'Anishinaabe gaa-nandawaabandaman gaawiin ayaasinoon.', // "The person you're looking for doesn't exist."
     'people.filters_empty' => '',
+    'people.offerings_title' => '', // Services & Offerings
+    'people.linked_business' => '', // Business
+    'people.community' => 'Oodena', // Community
+    'people.related_events' => '', // Related Events
 
     // Communities listing
     'communities.exploring' => 'Naanaagadawaabandamang', // "Exploring" (progressive form)
