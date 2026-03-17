@@ -69,7 +69,8 @@
                 "Minoo\\Provider\\MailServiceProvider",
                 "Minoo\\Provider\\AccountServiceProvider",
                 "Minoo\\Provider\\FlashServiceProvider",
-                "Minoo\\Provider\\ChatServiceProvider"
+                "Minoo\\Provider\\ChatServiceProvider",
+                "Minoo\\Provider\\FeaturedItemServiceProvider"
             ]
         }
     },
