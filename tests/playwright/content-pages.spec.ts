@@ -46,7 +46,7 @@ test.describe('Listing page intros follow one-sentence rule', () => {
   for (const { path, intro } of pages) {
     test(`${path} has concise intro`, async ({ page }) => {
       await page.goto(path);
-      const subtitle = page.locator('.hero__subtitle');
+      const subtitle = page.locator('.listing-hero__subtitle');
       await expect(subtitle).toContainText(intro);
     });
   }
