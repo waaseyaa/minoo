@@ -10,13 +10,14 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Waaseyaa\Foundation\HttpKernel;
+use Waaseyaa\Foundation\Kernel\AbstractKernel;
+use Waaseyaa\Foundation\Kernel\HttpKernel;
 
 $kernel = new HttpKernel(dirname(__DIR__));
-$ref = new ReflectionMethod($kernel, 'boot');
-$ref->invoke($kernel);
+$boot = new ReflectionMethod(AbstractKernel::class, 'boot');
+$boot->invoke($kernel);
 
-$entityTypeManager = $kernel->getContainer()->get(Waaseyaa\Entity\EntityTypeManager::class);
+$entityTypeManager = $kernel->getEntityTypeManager();
 
 // Load scraped data
 $eventData = json_decode(file_get_contents(dirname(__DIR__) . '/data/lnhl_event.json'), true);
@@ -46,6 +47,7 @@ $event->set('ends_at', $eventData['dates']['end'] ?? '2026-03-19');
 $event->set('source', 'scrape:lnhl:2026-03-17');
 $event->set('status', 1);
 $event->set('copyright_status', 'community_owned');
+$event->set('consent_public', 1);
 $event->set('created_at', time());
 $event->set('updated_at', time());
 
@@ -73,6 +75,7 @@ $teaching->set('description', $teachingData['body'] ?? '');
 $teaching->set('source', 'scrape:lnhl:2026-03-17');
 $teaching->set('status', 1);
 $teaching->set('copyright_status', 'community_owned');
+$teaching->set('consent_public', 1);
 $teaching->set('created_at', time());
 $teaching->set('updated_at', time());
 

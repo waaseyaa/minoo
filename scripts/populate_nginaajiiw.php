@@ -10,14 +10,15 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Waaseyaa\Foundation\HttpKernel;
+use Waaseyaa\Foundation\Kernel\AbstractKernel;
+use Waaseyaa\Foundation\Kernel\HttpKernel;
 
 // Boot kernel
 $kernel = new HttpKernel(dirname(__DIR__));
-$ref = new ReflectionMethod($kernel, 'boot');
-$ref->invoke($kernel);
+$boot = new ReflectionMethod(AbstractKernel::class, 'boot');
+$boot->invoke($kernel);
 
-$entityTypeManager = $kernel->getContainer()->get(Waaseyaa\Entity\EntityTypeManager::class);
+$entityTypeManager = $kernel->getEntityTypeManager();
 
 // Load scraped data
 $websiteData = json_decode(file_get_contents(dirname(__DIR__) . '/data/nginaajiiw_website.json'), true);
