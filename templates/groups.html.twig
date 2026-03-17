@@ -59,6 +59,51 @@
           {% endfor %}
         </div>
       </div>{# .content-well #}
+
+      {% if related_people is defined and related_people|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('groups.related_people') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for person in related_people %}
+              <a href="/people/{{ person.get('slug') }}" class="card card--compact">
+                <h3 class="card__title">{{ person.get('name') }}</h3>
+                {% if person.get('community') %}
+                  <span class="card__meta">{{ person.get('community') }}</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if related_events is defined and related_events|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('groups.related_events') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for event in related_events %}
+              <a href="/events/{{ event.get('slug') }}" class="card card--compact">
+                <h3 class="card__title">{{ event.get('title') }}</h3>
+                {% if event.get('starts_at') %}
+                  <span class="card__meta">{{ event.get('starts_at')|date('F j, Y') }}</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if related_teachings is defined and related_teachings|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('groups.related_teachings') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for teaching in related_teachings %}
+              <a href="/teachings/{{ teaching.get('slug') }}" class="card card--compact">
+                <h3 class="card__title">{{ teaching.get('title') }}</h3>
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
     </div>
   {% else %}
     <div class="flow-lg">

@@ -108,6 +108,9 @@ return [
     'groups.not_found' => 'Group Not Found',
     'groups.not_found_message' => 'We couldn\'t find this group. It may have been removed or the link may be outdated.',
     'groups.browse_all' => 'Browse all groups',
+    'groups.related_people' => 'People',
+    'groups.related_events' => 'Events',
+    'groups.related_teachings' => 'Teachings',
 
     // Businesses
     'businesses.title' => 'Indigenous Businesses',
