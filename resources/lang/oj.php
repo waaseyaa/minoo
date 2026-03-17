@@ -176,6 +176,9 @@ return [
     'businesses.empty_heading' => 'Adaawewinan gaawiin mikanziinaawaa', // "No businesses found"
     'businesses.empty_body' => "Anishinaabe adaawewinan bi-dagoshinomagadoon waabang.", // "Indigenous businesses are coming soon."
     'businesses.explore_button' => 'Naanaagadawaabandan oodenawinan', // "Explore communities"
+    'businesses.location' => 'Endaad', // dict: endaad: "h/ home; h/ house" (location)
+    'businesses.services' => 'Anokiiwinan miinawaa Miigiweng', // "Services and offerings"
+    'businesses.community_affiliation' => 'Oodena', // dict: oodena: "town, community"
 
     // Featured (Maamawi-gizhendaagwak)
     'featured.section_title' => 'Maamawi-gizhendaagwak Misi-minis-akiing', // "Important things across Turtle Island"
