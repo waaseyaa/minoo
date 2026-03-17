@@ -13,8 +13,10 @@
 {% block content %}
   {% if path == '/people' %}
     <div class="flow-lg">
-      <h1>{{ trans('people.title') }}</h1>
-      <p class="hero__subtitle">{{ trans('people.subtitle') }}</p>
+      <div class="listing-hero">
+        <h1>{{ trans('people.title') }}</h1>
+        <p class="listing-hero__subtitle">{{ trans('people.subtitle') }}</p>
+      </div>
 
       {% if location is defined and location.hasLocation() %}
         <p class="text-secondary">{{ trans('people.nearby_notice', {community: location.communityName}) }} <a href="{{ lang_url('/people') }}?all=1">{{ trans('people.show_all') }}</a></p>
@@ -83,8 +85,8 @@
     </div>
   {% elseif person is defined and person %}
     <div class="flow-lg detail">
-      <a href="{{ lang_url('/people') }}" class="detail__back">{{ trans('people.detail_back') }}</a>
-      <div class="detail__header">
+      <div class="detail-hero">
+        <a href="{{ lang_url('/people') }}" class="detail-hero__back">{{ trans('people.detail_back') }}</a>
         <div class="person-photo person-photo--detail">
           {% if photo_url is defined and photo_url %}
             <img src="{{ photo_url }}" alt="{{ person.get('name') }}" class="person-photo__img">
@@ -94,10 +96,10 @@
         </div>
         {% if person.get('roles') is iterable %}
           {% for r in person.get('roles') %}
-            <span class="card__badge card__badge--person">{{ r }}</span>
+            <span class="detail-hero__badge">{{ r }}</span>
           {% endfor %}
         {% endif %}
-        <h1>{{ person.get('name') }}</h1>
+        <h1 class="detail-hero__title">{{ person.get('name') }}</h1>
         {% if person.get('business_name') %}
           <p class="detail__business">{{ person.get('business_name') }}</p>
         {% endif %}

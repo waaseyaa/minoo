@@ -13,8 +13,10 @@
 {% block content %}
   {% if path == '/groups' %}
     <div class="flow-lg">
-      <h1>{{ trans('groups.title') }}</h1>
-      <p class="hero__subtitle">{{ trans('groups.subtitle') }}</p>
+      <div class="listing-hero">
+        <h1>{{ trans('groups.title') }}</h1>
+        <p class="listing-hero__subtitle">{{ trans('groups.subtitle') }}</p>
+      </div>
 
       {% if groups is defined and groups|length > 0 %}
         <div class="card-grid">
@@ -42,10 +44,12 @@
     </div>
   {% elseif group is defined and group %}
     <div class="flow-lg detail">
-      <a href="{{ lang_url('/groups') }}" class="detail__back">{{ trans('groups.detail_back') }}</a>
-      <div class="detail__header">
-        <span class="card__badge card__badge--group">{{ group.get('type')|default('')|capitalize }}</span>
-        <h1>{{ group.get('name') }}</h1>
+      <div class="detail-hero">
+        <a href="{{ lang_url('/groups') }}" class="detail-hero__back">{{ trans('groups.detail_back') }}</a>
+        {% if group.get('type') is not empty %}
+          <span class="detail-hero__badge">{{ group.get('type')|capitalize }}</span>
+        {% endif %}
+        <h1 class="detail-hero__title">{{ group.get('name') }}</h1>
         <div class="detail__meta">
           {% if group.get('region') %}
             <span>{{ group.get('region') }}</span>

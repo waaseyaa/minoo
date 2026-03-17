@@ -13,8 +13,10 @@
 {% block content %}
   {% if path == '/businesses' %}
     <div class="flow-lg">
-      <h1>{{ trans('businesses.title') }}</h1>
-      <p class="hero__subtitle">{{ trans('businesses.subtitle') }}</p>
+      <div class="listing-hero">
+        <h1>{{ trans('businesses.title') }}</h1>
+        <p class="listing-hero__subtitle">{{ trans('businesses.subtitle') }}</p>
+      </div>
 
       {% if businesses is defined and businesses|length > 0 %}
         <div class="card-grid">
@@ -42,12 +44,14 @@
 
   {% elseif business is defined and business %}
     <div class="flow-lg business-detail">
-      <a href="{{ lang_url('/businesses') }}" class="detail__back">{{ trans('businesses.detail_back') }}</a>
+      <div class="detail-hero">
+        <a href="{{ lang_url('/businesses') }}" class="detail-hero__back">{{ trans('businesses.detail_back') }}</a>
+        <span class="detail-hero__badge">{{ trans('businesses.badge') }}</span>
+        <h1 class="detail-hero__title">{{ business.get('name') }}</h1>
+      </div>
 
       <div class="business-detail__header">
         <div class="business-detail__info">
-          <span class="card__badge card__badge--business">{{ trans('businesses.badge') }}</span>
-          <h1>{{ business.get('name') }}</h1>
           <div class="detail__body flow">
             {% for paragraph in business.get('description')|default('')|split("\n\n") %}
               <p>{{ paragraph }}</p>
