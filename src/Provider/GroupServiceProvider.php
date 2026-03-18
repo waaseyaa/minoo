@@ -22,6 +22,16 @@ final class GroupServiceProvider extends ServiceProvider
             keys: ['id' => 'gid', 'uuid' => 'uuid', 'label' => 'name', 'bundle' => 'type'],
             group: 'community',
             fieldDefinitions: [
+                'name' => [
+                    'type' => 'string',
+                    'label' => 'Name',
+                    'weight' => 0,
+                ],
+                'type' => [
+                    'type' => 'string',
+                    'label' => 'Type',
+                    'weight' => -1,
+                ],
                 'slug' => [
                     'type' => 'string',
                     'label' => 'URL Slug',

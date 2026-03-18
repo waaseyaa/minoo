@@ -21,6 +21,7 @@ final class PeopleServiceProvider extends ServiceProvider
             keys: ['id' => 'rpid', 'uuid' => 'uuid', 'label' => 'name'],
             group: 'people',
             fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'bio' => ['type' => 'text_long', 'label' => 'Biography', 'weight' => 5],
                 'community' => ['type' => 'string', 'label' => 'Community', 'description' => 'Community affiliation (e.g. Sagamok Anishnawbek).', 'weight' => 10],

@@ -21,6 +21,7 @@ final class CommunityServiceProvider extends ServiceProvider
             keys: ['id' => 'cid', 'uuid' => 'uuid', 'label' => 'name'],
             group: 'communities',
             fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'community_type' => ['type' => 'string', 'label' => 'Community Type', 'weight' => 5],
                 'municipality_type' => ['type' => 'string', 'label' => 'Municipality Type', 'weight' => 6],

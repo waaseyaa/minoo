@@ -22,6 +22,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
             keys: ['id' => 'esrid', 'uuid' => 'uuid', 'label' => 'name'],
             group: 'elders',
             fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                 'phone' => ['type' => 'string', 'label' => 'Phone', 'weight' => 1],
                 'community' => ['type' => 'entity_reference', 'label' => 'Community', 'settings' => ['target_type' => 'community'], 'weight' => 5],
                 'type' => ['type' => 'string', 'label' => 'Request Type', 'weight' => 10],
@@ -52,6 +53,7 @@ final class ElderSupportServiceProvider extends ServiceProvider
             keys: ['id' => 'vid', 'uuid' => 'uuid', 'label' => 'name'],
             group: 'elders',
             fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                 'phone' => ['type' => 'string', 'label' => 'Phone', 'weight' => 1],
                 'community' => ['type' => 'entity_reference', 'label' => 'Community', 'settings' => ['target_type' => 'community'], 'weight' => 3],
                 'availability' => ['type' => 'string', 'label' => 'Availability', 'weight' => 5],

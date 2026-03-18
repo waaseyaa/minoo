@@ -19,6 +19,11 @@ final class IngestServiceProvider extends ServiceProvider
             keys: ['id' => 'ilid', 'uuid' => 'uuid', 'label' => 'title'],
             group: 'ingestion',
             fieldDefinitions: [
+                'title' => [
+                    'type' => 'string',
+                    'label' => 'Title',
+                    'weight' => 0,
+                ],
                 'status' => [
                     'type' => 'string',
                     'label' => 'Status',

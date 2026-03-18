@@ -19,6 +19,11 @@ final class CulturalGroupServiceProvider extends ServiceProvider
             keys: ['id' => 'cgid', 'uuid' => 'uuid', 'label' => 'name'],
             group: 'community',
             fieldDefinitions: [
+                'name' => [
+                    'type' => 'string',
+                    'label' => 'Name',
+                    'weight' => 0,
+                ],
                 'slug' => [
                     'type' => 'string',
                     'label' => 'URL Slug',

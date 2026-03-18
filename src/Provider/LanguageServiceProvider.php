@@ -24,6 +24,7 @@ final class LanguageServiceProvider extends ServiceProvider
             keys: ['id' => 'deid', 'uuid' => 'uuid', 'label' => 'word'],
             group: 'language',
             fieldDefinitions: [
+                'word' => ['type' => 'string', 'label' => 'Word', 'weight' => 0],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'definition' => ['type' => 'string', 'label' => 'Definition', 'weight' => 5],
                 'part_of_speech' => ['type' => 'string', 'label' => 'Part of Speech', 'description' => 'Code: ni, na, vai, vti, vta, vii, nad, nid, etc.', 'weight' => 6],
@@ -48,6 +49,7 @@ final class LanguageServiceProvider extends ServiceProvider
             keys: ['id' => 'esid', 'uuid' => 'uuid', 'label' => 'ojibwe_text'],
             group: 'language',
             fieldDefinitions: [
+                'ojibwe_text' => ['type' => 'string', 'label' => 'Ojibwe Text', 'weight' => 0],
                 'english_text' => ['type' => 'string', 'label' => 'English Translation', 'weight' => 5],
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 10],
                 'speaker_id' => ['type' => 'entity_reference', 'label' => 'Speaker', 'settings' => ['target_type' => 'speaker'], 'weight' => 15],
@@ -67,6 +69,7 @@ final class LanguageServiceProvider extends ServiceProvider
             keys: ['id' => 'wpid', 'uuid' => 'uuid', 'label' => 'form'],
             group: 'language',
             fieldDefinitions: [
+                'form' => ['type' => 'string', 'label' => 'Form', 'weight' => 0],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'type' => ['type' => 'string', 'label' => 'Type', 'description' => 'initial, medial, or final.', 'weight' => 5],
                 'definition' => ['type' => 'string', 'label' => 'Definition', 'weight' => 10],
@@ -84,6 +87,7 @@ final class LanguageServiceProvider extends ServiceProvider
             keys: ['id' => 'sid', 'uuid' => 'uuid', 'label' => 'name'],
             group: 'language',
             fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                 'code' => ['type' => 'string', 'label' => 'Speaker Code', 'description' => 'Abbreviation (e.g., es, nj, gh).', 'weight' => 5],
                 'bio' => ['type' => 'text_long', 'label' => 'Biography', 'weight' => 10],

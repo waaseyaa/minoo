@@ -19,6 +19,11 @@ final class CulturalCollectionServiceProvider extends ServiceProvider
             keys: ['id' => 'ccid', 'uuid' => 'uuid', 'label' => 'title'],
             group: 'knowledge',
             fieldDefinitions: [
+                'title' => [
+                    'type' => 'string',
+                    'label' => 'Title',
+                    'weight' => 0,
+                ],
                 'slug' => [
                     'type' => 'string',
                     'label' => 'URL Slug',

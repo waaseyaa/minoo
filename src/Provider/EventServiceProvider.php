@@ -22,6 +22,16 @@ final class EventServiceProvider extends ServiceProvider
             keys: ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
             group: 'events',
             fieldDefinitions: [
+                'title' => [
+                    'type' => 'string',
+                    'label' => 'Title',
+                    'weight' => 0,
+                ],
+                'type' => [
+                    'type' => 'string',
+                    'label' => 'Type',
+                    'weight' => -1,
+                ],
                 'slug' => [
                     'type' => 'string',
                     'label' => 'URL Slug',
