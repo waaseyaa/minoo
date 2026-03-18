@@ -360,6 +360,14 @@
     });
   })();
   </script>
+  <script>
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.related-section').forEach(el => { el.style.opacity = '0'; el.style.transition = 'opacity 0.4s ease'; observer.observe(el); });
+  }
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

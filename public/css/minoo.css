@@ -301,10 +301,28 @@
     text-decoration: none;
     transition: color 0.15s ease;
     padding: var(--space-2xs) var(--space-3xs);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: -2px;
+      block-size: 2px;
+      background: var(--link);
+      transform: scaleX(0);
+      transition: transform var(--duration-fast) var(--ease-out);
+      transform-origin: center;
+    }
 
     &:hover {
       color: var(--text-primary);
       background-color: transparent;
+    }
+
+    &:hover::after,
+    &[aria-current="page"]::after {
+      transform: scaleX(1);
     }
 
     &[aria-current="page"] {
@@ -370,9 +388,15 @@
     padding: var(--space-3xs) 0;
     list-style: none;
     z-index: 10;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity var(--duration-fast) var(--ease-out),
+                transform var(--duration-fast) var(--ease-out);
 
     &.is-open {
       display: block;
+      opacity: 1;
+      transform: translateY(0);
     }
 
     a {
