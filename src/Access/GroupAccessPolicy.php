@@ -25,8 +25,8 @@ final class GroupAccessPolicy implements AccessPolicyInterface
         }
 
         return match ($operation) {
-            'view' => (int) $entity->get('status') === 1 && $account->hasPermission('access content')
-                ? AccessResult::allowed('Published and user has access content.')
+            'view' => (int) $entity->get('status') === 1
+                ? AccessResult::allowed('Published content is publicly viewable.')
                 : AccessResult::neutral('Cannot view unpublished group.'),
             default => AccessResult::neutral('Non-admin cannot modify groups.'),
         };
