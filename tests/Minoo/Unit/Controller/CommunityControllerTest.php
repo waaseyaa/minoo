@@ -6,6 +6,7 @@ namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\CommunityController;
 use Minoo\Entity\Community;
+use Minoo\Support\NorthCloudClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -148,12 +149,13 @@ final class CommunityControllerTest extends TestCase
         $this->query->method('execute')->willReturn([1]);
         $this->storage->method('load')->with(1)->willReturn($sagamok);
 
-        $controller = new class($this->entityTypeManager, $this->twig) extends CommunityController {
-            protected function createNorthCloudClient(): \Minoo\Support\NorthCloudClient
-            {
-                throw new \RuntimeException('NorthCloud unavailable');
-            }
-        };
+        $failingClient = new NorthCloudClient(
+            baseUrl: 'https://invalid.test',
+            timeout: 1,
+            httpClient: static function () { throw new \RuntimeException('NorthCloud unavailable'); },
+        );
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $failingClient);
 
         $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
 
