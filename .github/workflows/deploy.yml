@@ -116,7 +116,7 @@ jobs:
             --exclude='phpunit.xml.dist' \
             --exclude='deploy.php' \
             --exclude='ops/' \
-            --exclude='*.png' \
+            --exclude='tests/screenshots/' \
             minoo/ minoo/.build/
 
       # -----------------------------------------------------------------------

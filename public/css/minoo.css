@@ -2794,22 +2794,58 @@
         border-inline-end: none;
         border-block-end: 1px solid var(--border-subtle);
         inline-size: 100%;
+        padding-block: var(--space-sm);
       }
 
       & .homepage-hero-input {
         flex: 1 1 auto;
+        padding-block: var(--space-sm);
       }
 
       & .homepage-hero-submit {
         border-start-end-radius: 0;
         border-end-start-radius: 0;
         border-end-end-radius: var(--radius-md);
+        inline-size: 100%;
+        padding-block: var(--space-sm);
+        border-end-start-radius: var(--radius-md);
       }
     }
 
     .homepage-tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
       -webkit-mask-image: linear-gradient(to right, black 85%, transparent);
       mask-image: linear-gradient(to right, black 85%, transparent);
+    }
+
+    .homepage-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .homepage-tabs [role="tab"],
+    .homepage-tab {
+      padding-inline: var(--space-sm);
+      font-size: var(--text-sm);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .homepage-title {
+      font-size: var(--text-base);
+    }
+  }
+
+  @media (max-width: 23.4375em) {
+    .homepage-tabs [role="tab"],
+    .homepage-tab {
+      padding-inline: var(--space-xs);
+      font-size: var(--text-xs);
+    }
+
+    .homepage-title {
+      font-size: var(--text-sm);
     }
   }
 }
