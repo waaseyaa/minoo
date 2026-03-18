@@ -21,3 +21,4 @@ data/
 scripts/.venv/
 __pycache__/
 *.pyc
+.worktrees/
