@@ -3,7 +3,6 @@
 {% block title %}{{ community.get('name') }} — Minoo{% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="/css/atlas.min.css?v=6">
   <link rel="stylesheet" href="/css/leaflet.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/css/leaflet.css"></noscript>
 {% endblock %}
@@ -18,17 +17,17 @@
   } %}
 
   {# --- Hero --- #}
-  <div class="atlas-detail-hero">
-    <div class="atlas-detail-hero__badge">
+  <div class="community-detail-hero">
+    <div class="community-detail-hero__badge">
       {{ community.get('is_municipality') ? trans('community.municipality') : trans('community.first_nation') }}
     </div>
-    <h1 class="atlas-detail-hero__name">{{ community.get('name') }}</h1>
-    <div class="atlas-detail-hero__subtitle">
+    <h1 class="community-detail-hero__name">{{ community.get('name') }}</h1>
+    <div class="community-detail-hero__subtitle">
       {% if community.get('nation') %}{{ community.get('nation') }} · {% endif %}
       {% if community.get('treaty') %}{{ community.get('treaty') }} · {% endif %}
       {{ community.get('province') }}
     </div>
-    <div class="atlas-detail-hero__stats">
+    <div class="community-detail-hero__stats">
       {% if community.get('population') %}
         <span>{{ trans('community.pop') }} {{ community.get('population')|number_format }} <span style="opacity:0.5">({{ community.get('population_year') }})</span></span>
       {% endif %}
@@ -40,43 +39,43 @@
   </div>
 
   {# --- About --- #}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.about') }}</div>
-    <div class="atlas-section__grid">
+  <div class="community-section">
+    <div class="community-section__label">{{ trans('community.about') }}</div>
+    <div class="community-section__grid">
       {% if community.get('nation') %}
       <div>
-        <div class="atlas-section__field-label">{{ trans('community.nation') }}</div>
-        <div class="atlas-section__field-value">{{ community.get('nation') }}</div>
+        <div class="community-section__field-label">{{ trans('community.nation') }}</div>
+        <div class="community-section__field-value">{{ community.get('nation') }}</div>
       </div>
       {% endif %}
       {% if community.get('language_group') %}
       <div>
-        <div class="atlas-section__field-label">{{ trans('community.language_group') }}</div>
-        <div class="atlas-section__field-value">{{ community.get('language_group') }}</div>
+        <div class="community-section__field-label">{{ trans('community.language_group') }}</div>
+        <div class="community-section__field-value">{{ community.get('language_group') }}</div>
       </div>
       {% endif %}
       {% if community.get('treaty') %}
       <div>
-        <div class="atlas-section__field-label">{{ trans('community.treaty') }}</div>
-        <div class="atlas-section__field-value">{{ community.get('treaty') }}</div>
+        <div class="community-section__field-label">{{ trans('community.treaty') }}</div>
+        <div class="community-section__field-value">{{ community.get('treaty') }}</div>
       </div>
       {% endif %}
       {% if community.get('reserve_name') %}
       <div>
-        <div class="atlas-section__field-label">{{ trans('community.reserve') }}</div>
-        <div class="atlas-section__field-value">{{ community.get('reserve_name') }}</div>
+        <div class="community-section__field-label">{{ trans('community.reserve') }}</div>
+        <div class="community-section__field-value">{{ community.get('reserve_name') }}</div>
       </div>
       {% endif %}
       {% if community.get('inac_id') %}
       <div>
-        <div class="atlas-section__field-label">{{ trans('community.inac_band_no') }}</div>
-        <div class="atlas-section__field-value">{{ community.get('inac_id') }}</div>
+        <div class="community-section__field-label">{{ trans('community.inac_band_no') }}</div>
+        <div class="community-section__field-value">{{ community.get('inac_id') }}</div>
       </div>
       {% endif %}
       {% if community.get('website') %}
       <div>
-        <div class="atlas-section__field-label">{{ trans('community.website') }}</div>
-        <div class="atlas-section__field-value"><a href="{{ community.get('website') }}" target="_blank" rel="noopener">{{ community.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a></div>
+        <div class="community-section__field-label">{{ trans('community.website') }}</div>
+        <div class="community-section__field-value"><a href="{{ community.get('website') }}" target="_blank" rel="noopener">{{ community.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a></div>
       </div>
       {% endif %}
     </div>
@@ -89,10 +88,10 @@
 
   {# --- The Land --- #}
   {% if community.get('latitude') and community.get('longitude') %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.the_land') }}</div>
-    <div id="atlas-detail-map" class="atlas-detail-map"></div>
-    <div class="atlas-detail-coords">
+  <div class="community-section">
+    <div class="community-section__label">{{ trans('community.the_land') }}</div>
+    <div id="atlas-detail-map" class="community-detail-map"></div>
+    <div class="community-detail-coords">
       <span>{{ community.get('latitude')|number_format(4) }}° {{ community.get('latitude') >= 0 ? 'N' : 'S' }}, {{ community.get('longitude')|abs|number_format(4) }}° {{ community.get('longitude') < 0 ? 'W' : 'E' }}</span>
       <a href="https://www.openstreetmap.org/?mlat={{ community.get('latitude') }}&mlon={{ community.get('longitude') }}#map=13/{{ community.get('latitude') }}/{{ community.get('longitude') }}" target="_blank" rel="noopener">{{ trans('community.openstreetmap') }}</a>
       <a href="https://www.google.com/maps?q={{ community.get('latitude') }},{{ community.get('longitude') }}" target="_blank" rel="noopener">{{ trans('community.google_maps') }}</a>
@@ -102,8 +101,8 @@
 
   {# --- Local Events --- #}
   {% if local_events is defined and local_events|length > 0 %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.local_events') }}</div>
+  <div class="community-section">
+    <div class="community-section__label">{{ trans('community.local_events') }}</div>
     <div class="card-grid card-grid--compact">
       {% for event in local_events %}
         <a href="{{ lang_url('/events/' ~ event.get('slug')) }}" class="card card--compact">
@@ -119,8 +118,8 @@
 
   {# --- Local Teachings --- #}
   {% if local_teachings is defined and local_teachings|length > 0 %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.local_teachings') }}</div>
+  <div class="community-section">
+    <div class="community-section__label">{{ trans('community.local_teachings') }}</div>
     <div class="card-grid card-grid--compact">
       {% for teaching in local_teachings %}
         <a href="{{ lang_url('/teachings/' ~ teaching.get('slug')) }}" class="card card--compact">
@@ -133,8 +132,8 @@
 
   {# --- Local Businesses --- #}
   {% if local_businesses is defined and local_businesses|length > 0 %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.local_businesses') }}</div>
+  <div class="community-section">
+    <div class="community-section__label">{{ trans('community.local_businesses') }}</div>
     <div class="card-grid card-grid--compact">
       {% for business in local_businesses %}
         <a href="{{ lang_url('/businesses/' ~ business.get('slug')) }}" class="card card--compact">
@@ -147,8 +146,8 @@
 
   {# --- Local People --- #}
   {% if local_people is defined and local_people|length > 0 %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.local_people') }}</div>
+  <div class="community-section">
+    <div class="community-section__label">{{ trans('community.local_people') }}</div>
     <div class="card-grid card-grid--compact">
       {% for person in local_people %}
         <a href="{{ lang_url('/people/' ~ person.get('slug')) }}" class="card card--compact">
@@ -161,13 +160,13 @@
 
   {# --- Nearby Communities --- #}
   {% if nearby is not empty %}
-  <div class="atlas-section">
-    <div class="atlas-section__label">{{ trans('community.nearby_communities') }}</div>
-    <div class="atlas-nearby-grid">
+  <div class="community-section">
+    <div class="community-section__label">{{ trans('community.nearby_communities') }}</div>
+    <div class="community-nearby-grid">
       {% for item in nearby %}
-      <a href="{{ lang_url('/communities/' ~ item.community.get('slug')) }}" class="atlas-nearby-card">
-        <div class="atlas-nearby-card__name">{{ item.community.get('name') }}</div>
-        <div class="atlas-nearby-card__meta">
+      <a href="{{ lang_url('/communities/' ~ item.community.get('slug')) }}" class="card card--compact card--community">
+        <div class="card__title">{{ item.community.get('name') }}</div>
+        <div class="card__meta">
           {{ item.community.get('is_municipality') ? trans('community.municipality') : item.community.get('nation') ?: trans('community.first_nation') }}
           · {{ item.distanceKm|number_format(0) }} {{ trans('community.km_away') }}
         </div>
