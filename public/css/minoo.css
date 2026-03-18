@@ -211,11 +211,24 @@
   a {
     color: var(--link);
     text-decoration: underline;
+    text-decoration-color: oklch(0.6 0.15 25 / 0.4);
     text-underline-offset: 0.15em;
+    text-decoration-thickness: 1px;
+    transition: color var(--duration-fast) var(--ease-out);
 
     &:hover {
       text-decoration-color: currentColor;
     }
+  }
+
+  ul, ol {
+    padding-inline-start: 1.5em;
+  }
+  li + li {
+    margin-block-start: var(--space-3xs);
+  }
+  li::marker {
+    color: var(--text-muted);
   }
 
   :focus-visible {
@@ -1011,10 +1024,12 @@
     flex-wrap: wrap;
     gap: var(--space-xs);
     font-size: var(--text-sm);
-    color: var(--text-secondary);
+    color: var(--text-muted);
+    margin-block-start: var(--space-xs);
   }
 
   .detail__body {
+    max-inline-size: var(--width-prose);
     line-height: var(--leading-loose);
   }
 
@@ -2461,6 +2476,8 @@
   .featured-card__headline {
     font-family: var(--font-heading);
     font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text-primary);
     line-height: 1.2;
   }
 
@@ -2522,6 +2539,7 @@
     &[aria-selected="true"] {
       color: var(--color-events);
       border-block-end-color: var(--color-events);
+      font-weight: 600;
     }
   }
 
@@ -3044,18 +3062,20 @@
 
   /* Hero sections */
   .listing-hero {
-    padding-block: var(--space-l) var(--space-m);
+    margin-block-end: var(--space-lg);
 
     h1 {
-      font-size: var(--text-2xl);
+      font-size: var(--text-3xl);
       font-weight: 700;
+      letter-spacing: var(--tracking-tight);
       margin: 0;
+      margin-block-end: var(--space-2xs);
     }
 
     &__subtitle {
-      margin-block-start: var(--space-xs);
-      font-size: var(--text-md);
-      color: oklch(0.55 0 0);
+      font-size: var(--text-lg);
+      color: var(--text-secondary);
+      line-height: var(--leading-normal);
       max-inline-size: 60ch;
     }
   }
@@ -3089,15 +3109,15 @@
     }
 
     &__title {
-      font-size: var(--text-xl);
+      font-size: var(--text-3xl);
       font-weight: 700;
       margin: 0;
     }
 
     &__meta {
       margin-block-start: var(--space-xs);
-      font-size: var(--text-md);
-      color: oklch(0.5 0 0);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
       max-inline-size: 70ch;
     }
   }
@@ -3122,14 +3142,14 @@
 
   /* Related content sections */
   .related-section {
-    margin-block-start: var(--space-xl);
-    padding-block-start: var(--space-l);
-    border-block-start: 1px solid oklch(0.9 0 0);
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-lg);
+    border-block-start: 1px solid var(--border-subtle);
 
     h2 {
       font-size: var(--text-lg);
       font-weight: 600;
-      margin-block-end: var(--space-m);
+      margin-block-end: var(--space-sm);
     }
   }
 
