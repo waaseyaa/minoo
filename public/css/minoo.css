@@ -3171,6 +3171,12 @@
     gap: var(--space-m);
   }
 
+  @media (max-width: 480px) {
+    .card-grid--compact {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .card--compact {
     padding: var(--space-s) var(--space-m);
 
