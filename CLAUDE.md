@@ -128,6 +128,10 @@ php -S localhost:8081 -t public               # Dev server (port 8081)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
+bin/waaseyaa migrate                          # Run pending migrations
+bin/waaseyaa migrate:status                   # Show migration status
+bin/waaseyaa migrate:rollback                 # Rollback last batch
+bin/waaseyaa make:migration <name>            # Generate a new migration file
 bin/waaseyaa schema:check                     # Detect schema drift (missing columns)
 ```
 
@@ -153,7 +157,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **`PackageManifestCompiler`** reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
 - **`LanguageAccessPolicy`** covers all 4 language types via array attribute: `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`
 - **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection, `ilid` for ingest_log)
-- **Schema drift**: Adding a field to `fieldDefinitions` does not ALTER existing SQLite tables — run `bin/waaseyaa schema:check` to detect drift, then manually `ALTER TABLE ... ADD COLUMN` on any environment that already has the table
+- **Schema drift**: Adding a field to `fieldDefinitions` does not ALTER existing SQLite tables. Run `bin/waaseyaa schema:check` to detect drift, then create a migration with `bin/waaseyaa make:migration add_<column>_to_<table>` and run `bin/waaseyaa migrate`. Migration files live in `migrations/` as PHP files returning `Migration` instances (see existing migrations for pattern)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
 - **CSS conventions**: logical properties only (`margin-block`, `padding-inline`, never `left`/`right`), `gap` for spacing, native nesting (no BEM), container queries on components, media queries only for page shell
 - **Path-based templates** require framework#189 — `tryRenderPathTemplate()` matches single segments exactly and also falls back to the first segment for multi-segment paths (e.g. `/events/slug` renders `events.html.twig` with `path` set to `/events/slug`)
