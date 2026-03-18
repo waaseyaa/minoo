@@ -539,16 +539,19 @@
     font-size: var(--text-sm);
   }
 
-  /* Ceremony-color ribbon */
+  /* Editorial ribbon divider */
   .ribbon {
-    block-size: 3px;
-    background: linear-gradient(90deg,
-      var(--color-events) 0% 16.6%,
-      var(--color-teachings) 16.6% 33.3%,
-      var(--color-language) 33.3% 50%,
-      var(--color-communities) 50% 66.6%,
-      var(--color-people) 66.6% 83.3%,
-      var(--color-programs) 83.3% 100%);
+    margin-block: var(--space-lg);
+    display: flex;
+    justify-content: center;
+  }
+  .ribbon::after {
+    content: '';
+    display: block;
+    inline-size: 60%;
+    max-inline-size: 40rem;
+    block-size: 1px;
+    background: linear-gradient(to right, transparent, var(--border-subtle), transparent);
   }
 
   /* Mobile nav toggle — hidden above bp-md */
@@ -2395,6 +2398,7 @@
 
   /* Featured Across Turtle Island */
   .featured-section {
+    margin-block-start: var(--space-xl);
     padding-block: var(--space-sm);
     padding-inline: var(--space-sm);
     background: linear-gradient(135deg, oklch(0.2 0.02 250), oklch(0.15 0.01 200));
@@ -2500,6 +2504,7 @@
   }
 
   .homepage-tabs {
+    margin-block-start: var(--space-xl);
     display: flex;
     gap: 0;
     background: var(--surface-dark);
@@ -2664,6 +2669,7 @@
   }
 
   .homepage-communities {
+    margin-block-start: var(--space-xl);
     padding-block: var(--space-lg);
     padding-inline: var(--gutter);
     max-inline-size: var(--width-content);
@@ -3018,6 +3024,12 @@
     .content-well {
       margin-inline: var(--space-md);
       padding-inline: var(--space-xl);
+    }
+  }
+
+  @media (min-width: 80rem) {
+    .content-well {
+      padding-inline: var(--space-lg);
     }
   }
 
