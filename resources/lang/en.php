@@ -707,6 +707,31 @@ return [
     // Breadcrumb
     'breadcrumb.home' => 'Home',
 
+    // Get Involved
+    'get_involved.title' => 'Get Involved',
+    'get_involved.subtitle' => 'Minoo grows because people show up. There are many ways to contribute — pick the one that fits your time, your skills, and your heart.',
+    'get_involved.intro_heading' => 'How You Can Help',
+    'get_involved.intro_text' => 'Whether you have an afternoon or an ongoing commitment, there\'s a place for you. Every contribution strengthens the community.',
+    'get_involved.elder_title' => 'Start an Elder Support Program',
+    'get_involved.elder_text' => 'Become a coordinator in your region. You\'ll connect Elders who need help with volunteers who can provide it — rides, groceries, yard work, or a friendly visit. Coordinators are the backbone of the program.',
+    'get_involved.elder_link' => 'Learn about Elder Support',
+    'get_involved.volunteer_title' => 'Volunteer for an Existing Program',
+    'get_involved.volunteer_text' => 'If there\'s already a coordinator in your area, sign up as a volunteer. Set your availability, choose the kinds of help you can offer, and a coordinator will match you with an Elder nearby.',
+    'get_involved.volunteer_link' => 'Sign up to volunteer',
+    'get_involved.teachings_title' => 'Share Teachings',
+    'get_involved.teachings_text' => 'If you carry knowledge — culture, history, ceremony, or lived experience — you can share it here. Teachings on Minoo are living knowledge passed down for the next generation. You decide what to share and how.',
+    'get_involved.teachings_link' => 'Sign in to contribute Teachings',
+    'get_involved.language_title' => 'Contribute Language Resources',
+    'get_involved.language_text' => 'Help grow the Anishinaabemowin collection. Add words, phrases, example sentences, or audio recordings. Every entry helps keep the language alive and accessible to learners.',
+    'get_involved.language_link' => 'Sign in to add language entries',
+    'get_involved.events_title' => 'Add Events',
+    'get_involved.events_text' => 'Know about an upcoming powwow, gathering, ceremony, or community program? Add it to Minoo so people in the area can find it. Events help people stay connected to what\'s happening around them.',
+    'get_involved.events_link' => 'Sign in to add events',
+    'get_involved.feedback_title' => 'Give Feedback',
+    'get_involved.feedback_text' => 'Tell us what\'s working and what isn\'t. If something is missing, confusing, or could be better, we want to hear it. Reach out through your community coordinator or email us at hello@minoo.live.',
+    'get_involved.no_wrong_heading' => 'No Wrong Way to Start',
+    'get_involved.no_wrong_text' => 'You don\'t need special skills or a big time commitment. If you care about your community, you\'re already qualified. Start with whatever feels right and go from there.',
+
     // Open Graph
     'og.default_description' => 'Connecting Indigenous communities, Elders, and volunteers across Turtle Island.',
 ];
