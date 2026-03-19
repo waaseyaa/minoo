@@ -8,6 +8,7 @@ use Minoo\Surface\MinooSurfaceHost;
 use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
+use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
 
 final class AdminServiceProvider extends ServiceProvider
@@ -26,5 +27,24 @@ final class AdminServiceProvider extends ServiceProvider
         $host = new MinooSurfaceHost($entityTypeManager);
 
         AdminSurfaceServiceProvider::registerRoutes($router, $host);
+
+        $router->addRoute(
+            'admin.spa',
+            RouteBuilder::create('/admin')
+                ->controller('Minoo\\Controller\\AdminController::spa')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'admin.spa.catchall',
+            RouteBuilder::create('/admin/{path}')
+                ->controller('Minoo\\Controller\\AdminController::spa')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->requirement('path', '.+')
+                ->build(),
+        );
     }
 }
