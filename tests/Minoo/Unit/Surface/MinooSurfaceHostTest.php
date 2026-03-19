@@ -99,6 +99,95 @@ final class MinooSurfaceHostTest extends TestCase
     }
 
     #[Test]
+    public function build_catalog_marks_config_entities_read_only(): void
+    {
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getDefinitions')->willReturn([
+            new EntityType(
+                id: 'event_type',
+                label: 'Event Type',
+                class: \Minoo\Entity\EventType::class,
+                keys: ['id' => 'type'],
+                group: 'events',
+            ),
+        ]);
+
+        $host = new MinooSurfaceHost($etm);
+        $session = new AdminSurfaceSessionData(
+            accountId: '1',
+            accountName: 'Admin',
+            roles: ['administrator'],
+            policies: [],
+        );
+
+        $built = $host->buildCatalog($session)->build();
+
+        $this->assertFalse($built[0]['capabilities']['create']);
+        $this->assertFalse($built[0]['capabilities']['update']);
+        $this->assertFalse($built[0]['capabilities']['delete']);
+        $this->assertTrue($built[0]['capabilities']['list']);
+        $this->assertTrue($built[0]['capabilities']['get']);
+    }
+
+    #[Test]
+    public function build_catalog_marks_ingest_log_read_only(): void
+    {
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getDefinitions')->willReturn([
+            new EntityType(
+                id: 'ingest_log',
+                label: 'Ingestion Log',
+                class: \stdClass::class,
+                keys: ['id' => 'ilid'],
+                group: 'ingestion',
+            ),
+        ]);
+
+        $host = new MinooSurfaceHost($etm);
+        $session = new AdminSurfaceSessionData(
+            accountId: '1',
+            accountName: 'Admin',
+            roles: ['administrator'],
+            policies: [],
+        );
+
+        $built = $host->buildCatalog($session)->build();
+
+        $this->assertFalse($built[0]['capabilities']['create']);
+        $this->assertFalse($built[0]['capabilities']['delete']);
+    }
+
+    #[Test]
+    public function build_catalog_adds_delete_action_for_content_entities(): void
+    {
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getDefinitions')->willReturn([
+            new EntityType(
+                id: 'event',
+                label: 'Event',
+                class: \stdClass::class,
+                keys: ['id' => 'eid'],
+                group: 'events',
+            ),
+        ]);
+
+        $host = new MinooSurfaceHost($etm);
+        $session = new AdminSurfaceSessionData(
+            accountId: '1',
+            accountName: 'Admin',
+            roles: ['administrator'],
+            policies: [],
+        );
+
+        $built = $host->buildCatalog($session)->build();
+
+        $this->assertTrue($built[0]['capabilities']['delete']);
+        $this->assertCount(1, $built[0]['actions']);
+        $this->assertSame('delete', $built[0]['actions'][0]['id']);
+        $this->assertTrue($built[0]['actions'][0]['dangerous']);
+    }
+
+    #[Test]
     public function list_returns_error_for_unknown_type(): void
     {
         $etm = $this->createMock(EntityTypeManager::class);
