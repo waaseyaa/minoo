@@ -25,6 +25,38 @@ jobs:
       - name: Check PHP syntax
         run: find src -name '*.php' -print0 | xargs -0 -n1 php -l
 
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout minoo
+        uses: actions/checkout@v4
+        with:
+          path: minoo
+
+      - name: Checkout waaseyaa framework
+        uses: actions/checkout@v4
+        with:
+          repository: waaseyaa/framework
+          ref: main
+          path: waaseyaa
+          token: ${{ secrets.WAASEYAA_PAT }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, sqlite3, mbstring, xml
+          coverage: none
+
+      - name: Install dependencies
+        working-directory: minoo
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        working-directory: minoo
+        run: ./vendor/bin/phpstan analyse --no-progress
+
   test:
     name: PHPUnit
     runs-on: ubuntu-latest

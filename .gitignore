@@ -7,6 +7,7 @@
 .env
 storage/geoip/
 .phpunit.cache/
+storage/phpstan/
 .playwright-mcp/
 /*.png
 mcp/node_modules/
