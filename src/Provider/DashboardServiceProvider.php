@@ -15,7 +15,7 @@ final class DashboardServiceProvider extends ServiceProvider
         // No entity types.
     }
 
-    public function routes(WaaseyaaRouter $router): void
+    public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
     {
         $router->addRoute(
             'dashboard.volunteer',
