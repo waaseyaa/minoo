@@ -35,7 +35,7 @@ final class AuthController
     public function submitLogin(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $limiter = new RateLimitMiddleware(
-            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/waaseyaa.sqlite'
+            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/storage/waaseyaa.sqlite'
         );
         $ip = $request->getClientIp() ?? '0.0.0.0';
 
@@ -209,7 +209,7 @@ final class AuthController
     public function submitForgotPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $limiter = new RateLimitMiddleware(
-            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/waaseyaa.sqlite'
+            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/storage/waaseyaa.sqlite'
         );
         $ip = $request->getClientIp() ?? '0.0.0.0';
 

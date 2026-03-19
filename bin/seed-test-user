@@ -24,7 +24,7 @@ $entityTypeManager = $kernel->getEntityTypeManager();
 $storage = $entityTypeManager->getStorage('user');
 
 // Clear rate limits so Playwright login attempts don't get throttled.
-$dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/waaseyaa.sqlite';
+$dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/storage/waaseyaa.sqlite';
 $pdo = new PDO('sqlite:' . $dbPath);
 $pdo->exec('CREATE TABLE IF NOT EXISTS rate_limits (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT NOT NULL, path TEXT NOT NULL, created_at INTEGER NOT NULL)');
 $pdo->exec('DELETE FROM rate_limits');
