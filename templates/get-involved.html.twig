@@ -1,0 +1,58 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ trans('get_involved.title') }} — Minoo{% endblock %}
+
+{% block content %}
+  <div class="content-well content-well--full">
+  <div class="flow-lg">
+    <section class="hero">
+      <h1 class="hero__title">{{ trans('get_involved.title') }}</h1>
+      <p class="hero__subtitle">{{ trans('get_involved.subtitle') }}</p>
+    </section>
+
+    <section class="portal-section flow">
+      <h2>{{ trans('get_involved.intro_heading') }}</h2>
+      <p>{{ trans('get_involved.intro_text') }}</p>
+    </section>
+
+    <section class="portal-section flow">
+      <div class="how-it-works">
+        <div class="how-it-works__step flow">
+          <h3>{{ trans('get_involved.elder_title') }}</h3>
+          <p>{{ trans('get_involved.elder_text') }}</p>
+          <p><a href="{{ lang_url('/elders') }}">{{ trans('get_involved.elder_link') }}</a></p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>{{ trans('get_involved.volunteer_title') }}</h3>
+          <p>{{ trans('get_involved.volunteer_text') }}</p>
+          <p><a href="{{ lang_url('/volunteer') }}">{{ trans('get_involved.volunteer_link') }}</a></p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>{{ trans('get_involved.teachings_title') }}</h3>
+          <p>{{ trans('get_involved.teachings_text') }}</p>
+          <p><a href="{{ lang_url('/login') }}">{{ trans('get_involved.teachings_link') }}</a></p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>{{ trans('get_involved.language_title') }}</h3>
+          <p>{{ trans('get_involved.language_text') }}</p>
+          <p><a href="{{ lang_url('/login') }}">{{ trans('get_involved.language_link') }}</a></p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>{{ trans('get_involved.events_title') }}</h3>
+          <p>{{ trans('get_involved.events_text') }}</p>
+          <p><a href="{{ lang_url('/login') }}">{{ trans('get_involved.events_link') }}</a></p>
+        </div>
+        <div class="how-it-works__step flow">
+          <h3>{{ trans('get_involved.feedback_title') }}</h3>
+          <p>{{ trans('get_involved.feedback_text') }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="portal-section flow">
+      <h2>{{ trans('get_involved.no_wrong_heading') }}</h2>
+      <p>{{ trans('get_involved.no_wrong_text') }}</p>
+    </section>
+  </div>
+  </div>
+{% endblock %}
