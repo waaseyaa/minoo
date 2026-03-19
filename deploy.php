@@ -105,9 +105,45 @@ task('deploy', [
     'minoo:clear-manifest',
     'deploy:symlink',
     'deploy:unlock',
-    'deploy:cleanup',
     'php-fpm:reload',
+    'deploy:test',
+    'deploy:cleanup',
 ]);
+
+// ---------------------------------------------------------------------------
+// Health check
+// ---------------------------------------------------------------------------
+
+desc('Verify production is healthy after deploy');
+task('deploy:test', function (): void {
+    $checks = [
+        ['url' => 'https://minoo.live/', 'expect' => 200],
+        ['url' => 'https://minoo.live/admin/surface/session', 'expect' => 401],
+    ];
+
+    foreach ($checks as $check) {
+        $url = $check['url'];
+        $expect = $check['expect'];
+
+        // Use curl on the remote host to avoid local DNS/network differences.
+        $httpCode = (int) run("curl -s -o /dev/null -w '%{http_code}' --max-time 10 " . escapeshellarg($url));
+
+        if ($httpCode !== $expect) {
+            writeln("<error>Health check failed: {$url} returned {$httpCode}, expected {$expect}</error>");
+            invoke('deploy:rollback');
+
+            throw new \RuntimeException("Post-deploy health check failed — rolled back.");
+        }
+
+        writeln("<info>Health check passed: {$url} → {$httpCode}</info>");
+    }
+});
+
+desc('Log health-check failure notification');
+task('deploy:test:notify', function (): void {
+    writeln("<error>[ALERT] Deploy failed health check — rollback was attempted. Check production immediately.</error>");
+});
 
 // Roll back automatically if deploy fails after release symlink is set
 after('deploy:failed', 'deploy:unlock');
+after('deploy:failed', 'deploy:test:notify');
