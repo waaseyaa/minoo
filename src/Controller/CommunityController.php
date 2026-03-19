@@ -280,7 +280,7 @@ final class CommunityController
         $config = file_exists($configPath) ? (require $configPath)['northcloud'] ?? [] : [];
 
         $projectRoot = dirname(__DIR__, 2);
-        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/waaseyaa.sqlite';
+        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/storage/waaseyaa.sqlite';
         $cache = null;
         if (file_exists($dbPath)) {
             $pdo = new \PDO('sqlite:' . $dbPath);

@@ -13,14 +13,13 @@
  *   php bin/migrate --status Show applied/pending migrations without running
  *
  * Environment:
- *   WAASEYAA_DB   Path to the SQLite database file (defaults to waaseyaa.sqlite
- *                 in the project root, same as the application).
+ *   WAASEYAA_DB   Path to the SQLite database file (defaults to storage/waaseyaa.sqlite).
  */
 
 declare(strict_types=1);
 
 $projectRoot = dirname(__DIR__);
-$dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/waaseyaa.sqlite';
+$dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/storage/waaseyaa.sqlite';
 $migrationsDir = $projectRoot . '/migrations';
 $statusOnly = in_array('--status', $argv ?? [], true);
 
