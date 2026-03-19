@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "945fe09bfc285d33eafa975cf90651af",
+    "content-hash": "ad42f8f9dfb8bf12b35d2da645cceea4",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -2854,6 +2854,58 @@
             "support": {
                 "issues": "https://github.com/waaseyaa/access/issues",
                 "source": "https://github.com/waaseyaa/access/tree/v0.1.0-alpha.25"
+            },
+            "time": "2026-03-16T21:50:01+00:00"
+        },
+        {
+            "name": "waaseyaa/admin-surface",
+            "version": "v0.1.0-alpha.29",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waaseyaa/admin-surface.git",
+                "reference": "e1c3f366ea5681d9ed68e7427fc2fbd4dcb5e377"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waaseyaa/admin-surface/zipball/e1c3f366ea5681d9ed68e7427fc2fbd4dcb5e377",
+                "reference": "e1c3f366ea5681d9ed68e7427fc2fbd4dcb5e377",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4",
+                "waaseyaa/access": "@dev",
+                "waaseyaa/entity": "@dev",
+                "waaseyaa/foundation": "@dev",
+                "waaseyaa/routing": "@dev"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "extra": {
+                "waaseyaa": {
+                    "providers": [
+                        "Waaseyaa\\AdminSurface\\AdminSurfaceServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev",
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\AdminSurface\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Canonical integration boundary for the Waaseyaa Admin SPA",
+            "support": {
+                "issues": "https://github.com/waaseyaa/admin-surface/issues",
+                "source": "https://github.com/waaseyaa/admin-surface/tree/v0.1.0-alpha.29"
             },
             "time": "2026-03-16T21:50:01+00:00"
         },
@@ -6076,6 +6128,7 @@
     "minimum-stability": "alpha",
     "stability-flags": {
         "waaseyaa/access": 15,
+        "waaseyaa/admin-surface": 15,
         "waaseyaa/api": 15,
         "waaseyaa/cache": 15,
         "waaseyaa/cli": 15,
@@ -6111,5 +6164,5 @@
         "php": ">=8.4"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
