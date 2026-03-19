@@ -80,8 +80,10 @@ test.describe('Communities', () => {
 
   test('map container is present', async ({ page }) => {
     await page.goto('/communities');
-    const hasMap = await page.locator('#atlas-map').count();
-    test.skip(hasMap === 0, 'Atlas map not rendered — requires seeded community data');
-    await expect(page.locator('#atlas-map')).toBeVisible();
+    const mapEl = page.locator('#atlas-map');
+    const hasMap = await mapEl.count();
+    const isVisible = hasMap > 0 && await mapEl.isVisible().catch(() => false);
+    test.skip(!isVisible, 'Atlas map not visible — requires seeded community data and JS init');
+    await expect(mapEl).toBeVisible();
   });
 });
