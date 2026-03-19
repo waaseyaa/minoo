@@ -34,6 +34,7 @@
         "waaseyaa/typed-data": "^0.1.0-alpha.25",
         "waaseyaa/user": "^0.1.0-alpha.25",
         "waaseyaa/validation": "^0.1.0-alpha.25",
+        "waaseyaa/admin-surface": "^0.1.0-alpha.25",
         "waaseyaa/workflows": "^0.1.0-alpha.25"
     },
     "require-dev": {
@@ -71,7 +72,8 @@
                 "Minoo\\Provider\\AccountServiceProvider",
                 "Minoo\\Provider\\FlashServiceProvider",
                 "Minoo\\Provider\\ChatServiceProvider",
-                "Minoo\\Provider\\FeaturedItemServiceProvider"
+                "Minoo\\Provider\\FeaturedItemServiceProvider",
+                "Minoo\\Provider\\AdminServiceProvider"
             ]
         }
     },
