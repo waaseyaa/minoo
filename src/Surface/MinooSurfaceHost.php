@@ -40,6 +40,8 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
         );
     }
 
+    private const array READ_ONLY_TYPES = ['ingest_log'];
+
     public function buildCatalog(AdminSurfaceSessionData $session): CatalogBuilder
     {
         $catalog = new CatalogBuilder();
@@ -60,9 +62,20 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
                 );
             }
 
-            $entity->action('delete', 'Delete')
-                ->confirm('Are you sure you want to delete this item?')
-                ->dangerous();
+            $isConfig = is_subclass_of($definition->getClass(), \Waaseyaa\Entity\ConfigEntityBase::class);
+            $isReadOnly = $isConfig || in_array($definition->id(), self::READ_ONLY_TYPES, true);
+
+            if ($isReadOnly) {
+                $entity->capabilities([
+                    'create' => false,
+                    'update' => false,
+                    'delete' => false,
+                ]);
+            } else {
+                $entity->action('delete', 'Delete')
+                    ->confirm('Are you sure you want to delete this item?')
+                    ->dangerous();
+            }
         }
 
         return $catalog;
