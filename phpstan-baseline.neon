@@ -1,0 +1,211 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/CulturalCollectionAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/CulturalGroupAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/ElderSupportAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/EventAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/FeaturedItemAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/GroupAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/LanguageAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/PeopleAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/TeachingAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 11
+			path: src/Controller/BusinessController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 17
+			path: src/Controller/CommunityController.php
+
+		-
+			message: '#^Parameter \#1 \$community of method Minoo\\Controller\\CommunityController\:\:findNearbyCommunities\(\) expects Waaseyaa\\Entity\\ContentEntityBase, Waaseyaa\\Entity\\EntityInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/CommunityController.php
+
+		-
+			message: '#^Parameter \#2 \$communities of method Minoo\\Service\\LocationResolver\:\:resolveNearbyCommunities\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/CommunityController.php
+
+		-
+			message: '#^Parameter \#3 \$communities of method Minoo\\Domain\\Geo\\Service\\CommunityFinder\:\:findNearby\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/CommunityController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between Waaseyaa\\Entity\\EntityInterface and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: src/Controller/CommunityController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Controller/CoordinatorDashboardController.php
+
+		-
+			message: '#^Parameter \#1 \$entities of method Minoo\\Controller\\CoordinatorDashboardController\:\:buildCommunityNameMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, array\<int\|string, Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/CoordinatorDashboardController.php
+
+		-
+			message: '#^Parameter \#2 \$openRequests of method Minoo\\Controller\\CoordinatorDashboardController\:\:buildRankedMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/CoordinatorDashboardController.php
+
+		-
+			message: '#^Parameter \#3 \$volunteers of method Minoo\\Controller\\CoordinatorDashboardController\:\:buildRankedMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, array\<int\|string, Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/CoordinatorDashboardController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 8
+			path: src/Controller/ElderSupportWorkflowController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:set\(\)\.$#'
+			identifier: method.notFound
+			count: 22
+			path: src/Controller/ElderSupportWorkflowController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 13
+			path: src/Controller/EventController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: src/Controller/GroupController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: src/Controller/HomeController.php
+
+		-
+			message: '#^Method Minoo\\Controller\\HomeController\:\:loadFeaturedItems\(\) should return list\<array\{featured\: array\<string, mixed\>, entity\: mixed, url\: string\}\> but returns list\<array\{featured\: Waaseyaa\\Entity\\EntityInterface, entity\: Waaseyaa\\Entity\\EntityInterface, url\: non\-falsy\-string\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Controller/HomeController.php
+
+		-
+			message: '#^Property Minoo\\Controller\\LocationController\:\:\$twig is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Controller/LocationController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 15
+			path: src/Controller/PeopleController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 8
+			path: src/Controller/TeachingController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controller/VolunteerDashboardController.php
+
+		-
+			message: '#^Method Minoo\\Controller\\VolunteerDashboardController\:\:findVolunteerByAccount\(\) should return Waaseyaa\\Entity\\ContentEntityBase\|null but returns Waaseyaa\\Entity\\EntityInterface\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Controller/VolunteerDashboardController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: src/Domain/Geo/Service/LocationService.php
+
+		-
+			message: '#^Method Minoo\\Domain\\Geo\\Service\\LocationService\:\:loadAllCommunities\(\) should return array\<Waaseyaa\\Entity\\ContentEntityBase\> but returns array\<int\|string, Waaseyaa\\Entity\\EntityInterface\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Domain/Geo/Service/LocationService.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Domain/Geo/Service/VolunteerRanker.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: src/Support/CommunityLookup.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Support/FixtureResolver.php
