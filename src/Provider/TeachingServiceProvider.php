@@ -117,7 +117,7 @@ final class TeachingServiceProvider extends ServiceProvider
         ));
     }
 
-    public function routes(WaaseyaaRouter $router): void
+    public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
     {
         $router->addRoute(
             'teachings.list',

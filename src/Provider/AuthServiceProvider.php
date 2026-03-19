@@ -15,7 +15,7 @@ final class AuthServiceProvider extends ServiceProvider
         // No entity types — uses framework's User entity.
     }
 
-    public function routes(WaaseyaaRouter $router): void
+    public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
     {
         $router->addRoute(
             'auth.login_form',

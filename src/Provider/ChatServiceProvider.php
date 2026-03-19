@@ -27,7 +27,7 @@ final class ChatServiceProvider extends ServiceProvider
         $twig->addGlobal('chat_enabled', $config['enabled'] ?? false);
     }
 
-    public function routes(WaaseyaaRouter $router): void
+    public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
     {
         $router->addRoute(
             'chat.send',
