@@ -6,16 +6,21 @@ namespace Minoo\Surface;
 
 use Symfony\Component\HttpFoundation\Request;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Access\EntityAccessHandler;
 use Waaseyaa\AdminSurface\Catalog\CatalogBuilder;
 use Waaseyaa\AdminSurface\Host\AbstractAdminSurfaceHost;
 use Waaseyaa\AdminSurface\Host\AdminSurfaceResultData;
 use Waaseyaa\AdminSurface\Host\AdminSurfaceSessionData;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 final class MinooSurfaceHost extends AbstractAdminSurfaceHost
 {
+    private ?AccountInterface $currentAccount = null;
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
+        private readonly ?EntityAccessHandler $accessHandler = null,
     ) {}
 
     public function resolveSession(Request $request): ?AdminSurfaceSessionData
@@ -30,11 +35,15 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
             return null;
         }
 
+        $this->currentAccount = $account;
+
+        $policies = $this->discoverPolicyNames();
+
         return new AdminSurfaceSessionData(
             accountId: (string) $account->id(),
             accountName: 'Admin',
             roles: $account->getRoles(),
-            policies: [],
+            policies: $policies,
             tenantId: 'minoo',
             tenantName: 'Minoo',
         );
@@ -89,7 +98,15 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
 
         $storage = $this->entityTypeManager->getStorage($type);
         $entities = $storage->loadMultiple();
-        $items = array_map(fn($e) => $e->toArray(), $entities);
+
+        if ($this->accessHandler !== null && $this->currentAccount !== null) {
+            $entities = array_filter(
+                $entities,
+                fn($e) => $this->accessHandler->check($e, 'view', $this->currentAccount)->isAllowed(),
+            );
+        }
+
+        $items = array_values(array_map(fn($e) => $e->toArray(), $entities));
 
         return AdminSurfaceResultData::success($items, [
             'type' => $type,
@@ -110,6 +127,12 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
             return AdminSurfaceResultData::error(404, 'Not found', "Entity '{$type}/{$id}' does not exist.");
         }
 
+        if ($this->accessHandler !== null && $this->currentAccount !== null) {
+            if (!$this->accessHandler->check($entity, 'view', $this->currentAccount)->isAllowed()) {
+                return AdminSurfaceResultData::error(403, 'Access denied', 'You do not have permission to view this entity.');
+            }
+        }
+
         return AdminSurfaceResultData::success($entity->toArray());
     }
 
@@ -128,7 +151,7 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
     }
 
     private function handleDelete(
-        \Waaseyaa\Entity\Storage\EntityStorageInterface $storage,
+        EntityStorageInterface $storage,
         string $type,
         array $payload,
     ): AdminSurfaceResultData {
@@ -144,8 +167,37 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
             return AdminSurfaceResultData::error(404, 'Not found', "Entity '{$type}/{$id}' does not exist.");
         }
 
+        if ($this->accessHandler !== null && $this->currentAccount !== null) {
+            if (!$this->accessHandler->check($entity, 'delete', $this->currentAccount)->isAllowed()) {
+                return AdminSurfaceResultData::error(403, 'Access denied', 'You do not have permission to delete this entity.');
+            }
+        }
+
         $storage->delete([$entity]);
 
         return AdminSurfaceResultData::success(['deleted' => true]);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function discoverPolicyNames(): array
+    {
+        $policyDir = dirname(__DIR__) . '/Access';
+
+        if (!is_dir($policyDir)) {
+            return [];
+        }
+
+        $policies = [];
+
+        foreach (glob($policyDir . '/*AccessPolicy.php') as $file) {
+            $class = 'Minoo\\Access\\' . basename($file, '.php');
+            if (class_exists($class)) {
+                $policies[] = $class;
+            }
+        }
+
+        return $policies;
     }
 }
