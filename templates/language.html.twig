@@ -23,6 +23,8 @@
               word: e.get('word'),
               part_of_speech: e.get('part_of_speech')|default(''),
               definition: e.get('definition')|default(''),
+              attribution_source: e.get('attribution_source')|default(''),
+              attribution_url: e.get('attribution_url')|default(''),
               example: '',
               tags: [],
               url: "/language/" ~ e.get('slug')
@@ -58,6 +60,15 @@
         </div>
 
         <footer class="attribution">
+          {% if entry.get('attribution_source') %}
+            <p>
+              {% if entry.get('attribution_url') %}
+                <a href="{{ entry.get('attribution_url') }}" rel="external noopener">{{ entry.get('attribution_source') }}</a>
+              {% else %}
+                {{ entry.get('attribution_source') }}
+              {% endif %}
+            </p>
+          {% endif %}
           <p>{{ trans('language.copyright') }}</p>
         </footer>
       </div>{# .content-well #}
