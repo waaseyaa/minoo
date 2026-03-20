@@ -212,7 +212,7 @@ return [
     'language.empty_heading' => 'Ikidowinan gaawiin mikanziinaawaa', // "No words found"
     'language.empty_body' => 'Anishinaabemowin ikidowinan bi-dagoshinomagadoon waabang.', // "Language words are coming soon."
     'language.explore_teachings' => "Naanaagadawaabandan gikinoo'amaadiwinan", // "Explore teachings"
-    'language.copyright' => '',
+    'language.copyright' => "Ojibwe People's Dictionary onji mazina'iganan, miinawaa <a href=\"https://creativecommons.org/licenses/by-nc-sa/4.0/\" rel=\"external noopener\">CC BY-NC-SA 4.0</a> inaakoniganing aabajichigaadewan.", // dict: onji: "from/source"; mazina'igan: "document/data"; inaakonigan: "agreement/license"
     'language.detail_back' => 'Anishinaabemowin',
     'language.not_found' => 'Ikidowin gaawiin mikanziin', // "Word not found"
     'language.not_found_message' => 'Ikidowin gaa-nandawaabandaman gaawiin ayaasinoon.', // "The word you're looking for doesn't exist."
@@ -223,14 +223,14 @@ return [
     'search.placeholder' => 'Andone\'…', // dict: andone': "search for, seek"
     'search.button' => 'Andone\'', // dict: andone': "search for, seek"
     'search.filters_label' => 'Gashkitoonaanan:',
-    'search.type_heading' => '',
-    'search.sources_heading' => '',
-    'search.scope' => '',
+    'search.type_heading' => 'Izhichigewinan', // dict: izhichigewin: "an activity; a thing done"
+    'search.sources_heading' => 'Onji', // dict: onji: "from, source"
+    'search.scope' => 'Kakina oodenawinan miinawaa anokiiwinan.', // "Across all communities and organizations"
     'search.results_summary' => '{count} ezhichigewinan ({time}s)',
     'search.no_results' => 'Ezhichigewinan gaa-izhi-waabandamaan "{query}".',
-    'search.pagination_prev' => '',
-    'search.pagination_next' => '',
-    'search.search_intro' => '',
+    'search.pagination_prev' => '←',
+    'search.pagination_next' => '→',
+    'search.search_intro' => "Biindigen andone'iganing ji-mikamowad dibaajimowinan, gikinoo'amaadiwinan, maawanji'idiwinan, miinawaa oodena-mazina'iganan.", // "Use search to find stories, teachings, events, and community resources."
     'search.badge_event' => "Maawanji'idiwin", // dict: maawanji'idiwag: "gathering/event"
     'search.badge_teaching' => "Gikinoo'amaadiwin", // dict: gikinoo'amaadiwin: "teaching"
     'search.badge_group' => 'Wiijiiwaagan', // dict: wiijiiwaagan: "companion, group"
@@ -243,26 +243,26 @@ return [
     'people.title' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
     'people.subtitle' => "Gichi-aya'aag, gikendaasowininiwag, miinawaa oodena-niigaanziijig", // "Elders, knowledge keepers, and community leaders"
     'people.browse_all' => 'Kakina anishinaabeg', // "All people"
-    'people.nearby_notice' => '',
+    'people.nearby_notice' => 'Besho {community} ezhi-waabandaman.', // "Showing results near {community}."
     'people.show_all' => 'Kakina',
     'people.search_placeholder' => "Andone' anishinaabeg\u{2026}",
     'people.filter_role' => 'Ogimaawi',
-    'people.filter_offering' => '',
-    'people.filter_all_roles' => '',
-    'people.filter_all_offerings' => '',
-    'people.clear_filters' => '',
-    'people.mentor_callout' => '',
+    'people.filter_offering' => 'Miigiweng', // from existing "services & offerings" usage
+    'people.filter_all_roles' => 'Kakina ogimaawiwinan', // "All roles"
+    'people.filter_all_offerings' => 'Kakina miigiweng', // "All offerings"
+    'people.clear_filters' => 'Aanjitoon', // dict: aanjitoon: "change/reset it"
+    'people.mentor_callout' => 'Nandawenim na gagwe gikinoo\'amaagewin? Aabiding gichi-aya\'aag miinawaa gikendaasowininiwag gagwe wiidookawag oshki-bimaadizijig. Nandawaabam gichi-aya\'aag gemaa gikendaasowininiwag ji-mikamowad awiya besho gidakiing.', // Draft: "Looking for a mentor? ..."
     'people.empty_heading' => 'Anishinaabeg gaawiin mikanziinaawaa', // "No people found"
-    'people.empty_body' => '',
+    'people.empty_body' => 'Gichi-aya\'aag, gikendaasowininiwag, inwewin-ikidowininiwag, oshki-ozhitoojig, miinawaa oodena-niigaanziijig omaa bi-waabanda\'og.', // Draft: "Elders, Knowledge Keepers, language speakers, makers, and leaders will appear here."
     'people.volunteer_button' => 'Wiidookaage',
     'people.detail_back' => 'Anishinaabeg',
     'people.not_found' => 'Anishinaabe gaawiin mikanziin', // "Person not found"
     'people.not_found_message' => 'Anishinaabe gaa-nandawaabandaman gaawiin ayaasinoon.', // "The person you're looking for doesn't exist."
-    'people.filters_empty' => '',
-    'people.offerings_title' => '', // Services & Offerings
-    'people.linked_business' => '', // Business
+    'people.filters_empty' => 'Gaawiin anishinaabeg mikanziinaawaa.', // "No people match your search or filters."
+    'people.offerings_title' => 'Anokiiwinan miinawaa Miigiweng', // Services & Offerings
+    'people.linked_business' => 'Adaawewin', // Business
     'people.community' => 'Oodena', // Community
-    'people.related_events' => '', // Related Events
+    'people.related_events' => "Maawanji'idiwinan", // Related Events
 
     // Communities listing
     'communities.exploring' => 'Naanaagadawaabandamang', // "Exploring" (progressive form)
