@@ -71,14 +71,14 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 - `waaseyaa_get_spec infrastructure` — kernel boot, manifest compiler, providers
 - `waaseyaa_search_specs <query>` — keyword search across all framework specs
 
-## Entity Domains (6 domains, 14 types)
+## Entity Domains (6 domains, 15 types)
 
 | Domain | Entities | Provider | Policy |
 |--------|----------|----------|--------|
 | Events | `event`, `event_type` | `EventServiceProvider` | `EventAccessPolicy` |
 | Groups | `group`, `group_type`, `cultural_group` | `GroupServiceProvider`, `CulturalGroupServiceProvider` | `GroupAccessPolicy`, `CulturalGroupAccessPolicy` |
 | Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingServiceProvider`, `CulturalCollectionServiceProvider` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
-| Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker` | `LanguageServiceProvider` | `LanguageAccessPolicy` |
+| Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker`, `dialect_region` | `LanguageServiceProvider`, `DialectRegionServiceProvider` | `LanguageAccessPolicy` |
 | Ingestion | `ingest_log` | `IngestServiceProvider` | `IngestAccessPolicy` |
 | Editorial | `featured_item` | `FeaturedItemServiceProvider` | `FeaturedItemAccessPolicy` |
 
@@ -197,3 +197,23 @@ All work in this repo follows a GitHub-first workflow. See `docs/specs/workflow.
   - `docs/specs/search.md` — search provider, config, template
   - `docs/specs/frontend-ssr.md` — templates, CSS design system, components
 - **Framework specs:** Use `waaseyaa_*` MCP tools for framework-level context
+
+## Architectural Boundaries
+
+Minoo is the **application layer**. It owns entity types, map-driven UX, dialect-aware content, access policies, templates, and CSS.
+
+**Minoo does NOT own:**
+- Content classification logic (that's North Cloud)
+- Crawl scheduling or source fetching (that's North Cloud)
+- Entity system internals, storage engine, or ingestion envelope contract (that's Waaseyaa)
+
+**Import rules:**
+- Minoo imports from Waaseyaa (framework) — never the reverse
+- Minoo consumes the shared taxonomy contract (`jonesrussell/indigenous-taxonomy`) for category/region/dialect constants
+- Minoo may call North Cloud APIs (via NorthCloudClient) but must not import NC Go packages
+- North Cloud must not contain Minoo-specific entity types or templates
+
+**Shared contracts:**
+- `jonesrussell/indigenous-taxonomy` — categories, regions, dialect codes (PHP package)
+- Waaseyaa ingestion envelope schema — used by Python harvesters to feed Minoo directly
+- NC source-manager API — used by harvesters to register sources

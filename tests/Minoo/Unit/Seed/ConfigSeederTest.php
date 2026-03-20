@@ -63,4 +63,32 @@ final class ConfigSeederTest extends TestCase
         $this->assertCount(3, $types);
         $this->assertSame('culture', $types[0]['type']);
     }
+
+    #[Test]
+    public function it_provides_dialect_regions(): void
+    {
+        $regions = ConfigSeeder::dialectRegions();
+
+        $this->assertNotEmpty($regions);
+
+        // First entry should be Eastern Ojibwe (home dialect)
+        $this->assertSame('oji-east', $regions[0]['code']);
+        $this->assertSame('Nishnaabemwin', $regions[0]['name']);
+        $this->assertSame('Eastern Ojibwe', $regions[0]['display_name']);
+        $this->assertSame('algonquian', $regions[0]['language_family']);
+        $this->assertSame('ojg', $regions[0]['iso_639_3']);
+        $this->assertIsArray($regions[0]['regions']);
+        $this->assertContains('canada:ontario:north-shore-huron', $regions[0]['regions']);
+
+        // All entries must have required keys
+        foreach ($regions as $region) {
+            $this->assertArrayHasKey('code', $region);
+            $this->assertArrayHasKey('name', $region);
+            $this->assertArrayHasKey('display_name', $region);
+            $this->assertArrayHasKey('language_family', $region);
+            $this->assertArrayHasKey('iso_639_3', $region);
+            $this->assertArrayHasKey('regions', $region);
+            $this->assertArrayHasKey('boundary_geojson', $region);
+        }
+    }
 }

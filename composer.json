@@ -75,7 +75,8 @@
                 "Minoo\\Provider\\FlashServiceProvider",
                 "Minoo\\Provider\\ChatServiceProvider",
                 "Minoo\\Provider\\FeaturedItemServiceProvider",
-                "Minoo\\Provider\\AdminServiceProvider"
+                "Minoo\\Provider\\AdminServiceProvider",
+                "Minoo\\Provider\\DialectRegionServiceProvider"
             ]
         }
     },

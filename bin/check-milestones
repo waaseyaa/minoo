@@ -34,5 +34,34 @@ if [ "$PROBLEMS" -eq 0 ]; then
   echo "OK: All open issues are assigned to milestones."
 fi
 
+# --- Boundary drift checks ---
+echo ""
+echo "=== Boundary drift check ==="
+
+# Check: no NC classifier logic in Minoo (Go imports, classification constants)
+if grep -rq 'indigenous_rules\|classifier.*indigenous\|crime_classifier' src/ 2>/dev/null; then
+  echo "WARN: Found North Cloud classifier references in Minoo src/ — this logic belongs in NC"
+  PROBLEMS=$((PROBLEMS + 1))
+fi
+
+# Check: no Minoo entity types in waaseyaa framework packages
+if [ -d "../waaseyaa/packages" ]; then
+  if grep -rq 'Minoo\\\\Entity\|minoo_entity\|MinooEntity' ../waaseyaa/packages/ 2>/dev/null; then
+    echo "WARN: Found Minoo-specific references in waaseyaa packages/ — entities belong in Minoo"
+    PROBLEMS=$((PROBLEMS + 1))
+  fi
+fi
+
+# Check: taxonomy version (when indigenous-taxonomy PHP package is installed)
+if [ -f "vendor/jonesrussell/indigenous-taxonomy/src/TaxonomyVersion.php" ]; then
+  echo "OK: indigenous-taxonomy PHP package installed"
+else
+  echo "INFO: indigenous-taxonomy PHP package not yet installed (expected until Phase 1)"
+fi
+
+if [ "$PROBLEMS" -eq 0 ]; then
+  echo "OK: No boundary violations detected."
+fi
+
 echo ""
 exit 0

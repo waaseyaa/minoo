@@ -10,10 +10,10 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]
+#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker', 'dialect_region'])]
 final class LanguageAccessPolicy implements AccessPolicyInterface
 {
-    private const ENTITY_TYPES = ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'];
+    private const ENTITY_TYPES = ['dictionary_entry', 'example_sentence', 'word_part', 'speaker', 'dialect_region'];
 
     public function appliesTo(string $entityTypeId): bool
     {
