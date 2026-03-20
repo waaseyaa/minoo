@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Entity\DictionaryEntry;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -49,6 +50,9 @@ final class LanguageController
             ->condition('consent_public', 1)
             ->execute();
         $entry = $ids !== [] ? $storage->load(reset($ids)) : null;
+        if (!$entry instanceof DictionaryEntry) {
+            $entry = null;
+        }
 
         $html = $this->twig->render('language.html.twig', [
             'path' => '/language/' . $slug,
