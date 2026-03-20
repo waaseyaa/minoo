@@ -23,6 +23,8 @@
               word: e.get('word'),
               part_of_speech: e.get('part_of_speech')|default(''),
               definition: e.get('definition')|default(''),
+              attribution_source: e.get('attribution_source')|default(''),
+              attribution_url: e.get('attribution_url')|default(''),
               example: '',
               tags: [],
               url: "/language/" ~ e.get('slug')
@@ -48,16 +50,25 @@
       <div class="detail__header">
         <span class="card__badge card__badge--language">{{ entry.get('part_of_speech')|default('') }}</span>
         <h1>{{ entry.get('word') }}</h1>
-        <div class="detail__meta">
-          <span>{{ entry.get('definition')|default('') }}</span>
-        </div>
       </div>
       <div class="content-well">
         <div class="detail__body flow">
           <p>{{ entry.get('definition')|default('') }}</p>
+          {% if inflected_forms is defined and inflected_forms %}
+            <p>{{ inflected_forms|join(' · ') }}</p>
+          {% endif %}
         </div>
 
         <footer class="attribution">
+          {% if entry.get('attribution_source') %}
+            <p>
+              {% if entry.get('attribution_url') %}
+                <a href="{{ entry.get('attribution_url') }}" rel="external noopener">{{ entry.get('attribution_source') }}</a>
+              {% else %}
+                {{ entry.get('attribution_source') }}
+              {% endif %}
+            </p>
+          {% endif %}
           <p>{{ trans('language.copyright') }}</p>
         </footer>
       </div>{# .content-well #}

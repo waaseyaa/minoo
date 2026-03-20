@@ -22,4 +22,13 @@
       {% endfor %}
     </div>
   {% endif %}
+  {% if attribution_source is defined and attribution_source %}
+    <p class="card__meta">
+      {% if attribution_url is defined and attribution_url %}
+        <a href="{{ attribution_url }}" rel="external noopener">{{ attribution_source }}</a>
+      {% else %}
+        {{ attribution_source }}
+      {% endif %}
+    </p>
+  {% endif %}
 </article>
