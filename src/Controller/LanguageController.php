@@ -53,11 +53,44 @@ final class LanguageController
         $html = $this->twig->render('language.html.twig', [
             'path' => '/language/' . $slug,
             'entry' => $entry,
+            'inflected_forms' => $entry !== null ? $this->parseInflectedForms((string) $entry->get('inflected_forms')) : [],
         ]);
 
         return new SsrResponse(
             content: $html,
             statusCode: $entry !== null ? 200 : 404,
         );
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function parseInflectedForms(string $raw): array
+    {
+        if ($raw === '') {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded)) {
+            return [$raw];
+        }
+
+        $items = [];
+        foreach ($decoded as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $form = trim((string) ($item['form'] ?? ''));
+            $label = trim((string) ($item['label'] ?? ''));
+            if ($form === '') {
+                continue;
+            }
+
+            $items[] = $label !== '' ? sprintf('%s: %s', $label, $form) : $form;
+        }
+
+        return $items;
     }
 }

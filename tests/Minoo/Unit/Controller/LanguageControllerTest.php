@@ -42,7 +42,7 @@ final class LanguageControllerTest extends TestCase
             ->willReturn($this->storage);
 
         $this->twig = new Environment(new ArrayLoader([
-            'language.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}',
+            'language.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -103,7 +103,16 @@ final class LanguageControllerTest extends TestCase
     #[Test]
     public function show_returns_200_for_existing_entry(): void
     {
-        $entry = new DictionaryEntry(['deid' => 1, 'word' => 'makwa', 'slug' => 'makwa', 'consent_public' => 1]);
+        $entry = new DictionaryEntry([
+            'deid' => 1,
+            'word' => 'makwa',
+            'slug' => 'makwa',
+            'consent_public' => 1,
+            'inflected_forms' => json_encode([
+                ['form' => 'makwag', 'label' => 'plural'],
+                ['form' => 'makoons', 'label' => 'diminutive'],
+            ], JSON_THROW_ON_ERROR),
+        ]);
 
         $this->query->method('execute')->willReturn([1]);
         $this->storage->method('load')
@@ -115,6 +124,8 @@ final class LanguageControllerTest extends TestCase
 
         $this->assertSame(200, $response->statusCode);
         $this->assertStringContainsString('makwa', $response->content);
+        $this->assertStringContainsString('plural: makwag', $response->content);
+        $this->assertStringContainsString('diminutive: makoons', $response->content);
     }
 
     #[Test]

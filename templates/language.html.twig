@@ -52,11 +52,17 @@
         <h1>{{ entry.get('word') }}</h1>
         <div class="detail__meta">
           <span>{{ entry.get('definition')|default('') }}</span>
+          {% if inflected_forms is defined and inflected_forms %}
+            <span>{{ inflected_forms|join(' · ') }}</span>
+          {% endif %}
         </div>
       </div>
       <div class="content-well">
         <div class="detail__body flow">
           <p>{{ entry.get('definition')|default('') }}</p>
+          {% if inflected_forms is defined and inflected_forms %}
+            <p>{{ inflected_forms|join(' · ') }}</p>
+          {% endif %}
         </div>
 
         <footer class="attribution">
