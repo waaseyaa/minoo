@@ -138,6 +138,9 @@ Active nav via `aria-current`:
 - **CSS `margin` for spacing**: Use `gap` in flex/grid contexts; `.flow` pattern for vertical stacks
 - **Media queries on components**: Use container queries (`@container`) on components; media queries only for page shell
 - **Missing `path` variable**: Every SSR controller must pass `path` to the template context
+- **`@layer` brace mismatch (#273)**: A premature `}` can close `@layer components` early, leaving subsequent styles unlayered (which outranks all layers in the cascade). Always verify brace balance when editing `minoo.css`
+- **Path-based template routing**: `tryRenderPathTemplate()` matches single segments exactly and falls back to the first segment for multi-segment paths (e.g. `/events/slug` renders `events.html.twig` with `path` set to `/events/slug`). Requires framework#189
+- **Listing+detail pattern**: Use path conditionals _inside_ `{% block content %}` — `{% set %}` must be inside the block, and only one `{% block %}` per name (use conditionals inside the block, not multiple blocks in conditionals)
 
 ## Related Specs
 

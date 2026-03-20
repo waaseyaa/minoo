@@ -11,14 +11,14 @@ Minoo and the Waaseyaa Framework version independently.
 
 ## Minoo Milestones
 
-| Milestone | Description | Status |
-|-----------|-------------|--------|
-| v0.2 | Foundation — 13 entity types, ingestion pipeline, search, SSR pages, codified context | Closed (2026-03-07) |
-| v0.3 | Content authoring for all 5 entity domains via admin interface (depends on framework v0.7) | Closed |
-| v0.4 | Resource People directory — entity, provider, policy, taxonomies, SSR listing+detail, admin CRUD | Closed (2026-03-07) |
-| v0.5 | Resource People Enhancements — search, filtering, photo support, web presence fields | Active |
-| v0.6 | Knowledge graph, cultural connections, richer language and teaching features | Future |
-| v1.0 | Content model and UX stable — product ready for public launch | Future |
+| # | Milestone | Description | Status | Issues (open/closed) |
+|---|-----------|-------------|--------|----------------------|
+| 18 | v0.14 — Quality & Polish | Bug fixes, test coverage, copy improvements | Open | 0/10 |
+| 19 | V1 Release | Content model and UX stable — product ready for public launch (due 2026-04-22) | Open | 0/30 |
+| 20 | v1.0 - Admin Surface | Admin UI for content management | Open | 0/4 |
+| 21 | Anishinaabemowin Localization | OPD pipeline, Nishnaabemwin research, string translations | Open | 4/0 |
+
+**Note:** Milestones 18, 19, 20 have no open issues — may be stale or complete. Review before assigning new work.
 
 **Update this table whenever milestones are added, closed, or redescribed.**
 

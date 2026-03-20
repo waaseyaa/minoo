@@ -53,8 +53,9 @@ minoo/
 | `src/Search/*`, `src/Provider/SearchServiceProvider.php` | `minoo:search` | `docs/specs/search.md` |
 | `src/Controller/*`, route definitions in `src/Provider/` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
-| `src/Domain/Geo/*` | — | Geo bounded context: CommunityFinder, LocationService, VolunteerRanker, value objects |
-| `src/Support/*` | — | Cross-cutting: GeoDistance, SlugGenerator, NorthCloudClient, MailService, Flash, CommunityLookup |
+| `src/Domain/Geo/*`, `src/Support/GeoDistance.php`, `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
+| `src/Support/NorthCloudClient.php`, `src/Support/NorthCloudCache.php` | — | `docs/specs/geo-domain.md` (NC client section) |
+| `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, MailService, Flash, FixtureResolver, PasswordResetService |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
 | `src/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
@@ -159,15 +160,10 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection, `ilid` for ingest_log)
 - **Schema drift**: Adding a field to `fieldDefinitions` does not ALTER existing SQLite tables. Run `bin/waaseyaa schema:check` to detect drift, then create a migration with `bin/waaseyaa make:migration add_<column>_to_<table>` and run `bin/waaseyaa migrate`. Migration files live in `migrations/` as PHP files returning `Migration` instances (see existing migrations for pattern)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
-- **CSS conventions**: logical properties only (`margin-block`, `padding-inline`, never `left`/`right`), `gap` for spacing, native nesting (no BEM), container queries on components, media queries only for page shell
-- **Path-based templates** require framework#189 — `tryRenderPathTemplate()` matches single segments exactly and also falls back to the first segment for multi-segment paths (e.g. `/events/slug` renders `events.html.twig` with `path` set to `/events/slug`)
-- **Listing+detail templates** use path conditionals inside `{% block content %}` — `{% set %}` must be inside the block, and only one `{% block %}` per name (use conditionals inside the block, not multiple blocks in conditionals)
 - **Database path**: Minoo config resolves to `{projectRoot}/storage/waaseyaa.sqlite`. Override with `WAASEYAA_DB` env var. When copying production DB locally, place it in `storage/`.
-- **`@layer utilities` fixed (#273)**: Was caused by a premature `}` closing `@layer components` early, leaving subsequent component styles unlayered (which outranks all layers in the cascade). Fixed by removing the extra brace.
 - **Homepage nearby fallback**: `buildNearbyMixed()` returns empty when community entities lack `status=1` (most imported communities have NULL status). `buildRecentMixed()` provides a non-proximity fallback so the "Nearby" tab always has content.
-- **ConfigEntityBase vs ContentEntityBase**: Config entities are seed-based (in-memory), NOT database-persisted. Use `ContentEntityBase` with `'uuid' => 'uuid'` in entityKeys for any entity that needs SQL storage. Config entities (like `EventType`, `GroupType`) come from seeders only.
-- **Entity creation**: Use `$storage->create([...])` then `$storage->save($entity)` — NOT `new Entity([...])`. Direct instantiation won't persist correctly through the storage layer.
-- **Homepage card routing**: Homepage `loadGroups()` filters `type != business`. Card URLs in `page.html.twig` check `is_business` to route to `/businesses/` vs `/groups/`. `loadFeaturedItems()` resolves correct URLs per entity type.
+- **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
+- **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
 ## GitHub Workflow
 
@@ -196,6 +192,7 @@ All work in this repo follows a GitHub-first workflow. See `docs/specs/workflow.
   - `docs/specs/ingestion-pipeline.md` — NorthCloud ingest, mappers, materialization
   - `docs/specs/search.md` — search provider, config, template
   - `docs/specs/frontend-ssr.md` — templates, CSS design system, components
+  - `docs/specs/geo-domain.md` — Geo bounded context, LocationService, NorthCloudClient, volunteer ranking
 - **Framework specs:** Use `waaseyaa_*` MCP tools for framework-level context
 
 ## Architectural Boundaries

@@ -205,6 +205,9 @@ $kernel = new HttpKernel(dirname(__DIR__, 3));
 - **Missing `enforceIsNew()`**: When creating entities with pre-set IDs in tests, call `$entity->enforceIsNew()` before `save()`
 - **Wrong base class**: Content entities use `ContentEntityBase`, config entities use `ConfigEntityBase` — not plain `EntityBase`
 - **Wrong constructor**: Must pass `$this->entityTypeId` and `$this->entityKeys` to parent constructor
+- **ConfigEntityBase vs ContentEntityBase**: Config entities are seed-based (in-memory), NOT database-persisted. Use `ContentEntityBase` with `'uuid' => 'uuid'` in entityKeys for any entity that needs SQL storage. Config entities (like `EventType`, `GroupType`) come from seeders only
+- **Entity creation via storage**: Use `$storage->create([...])` then `$storage->save($entity)` — NOT `new Entity([...])`. Direct instantiation won't persist correctly through the storage layer
+- **Homepage card routing**: `loadGroups()` filters `type != business`. Card URLs in `page.html.twig` check `is_business` to route to `/businesses/` vs `/groups/`. `loadFeaturedItems()` resolves correct URLs per entity type
 
 ## Related Specs
 
