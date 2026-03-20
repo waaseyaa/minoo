@@ -272,13 +272,13 @@ return [
     'communities.all_types' => 'Kakina',
     'communities.first_nations' => 'Anishinaabeg', // dict: anishinaabeg: people (plural)
     'communities.municipalities' => 'Oodenawinan', // dict: oodena: "town" (plural)
-    'communities.province' => '',
+    'communities.province' => 'Aki', // dict: aki: "land, earth, country"
     'communities.nation' => 'Ogimaawi-anishinaabeg',
     'communities.population' => 'Akiing-ogimaawag',
-    'communities.under_500' => '',
-    'communities.pop_500_2000' => '',
-    'communities.pop_2000_5000' => '',
-    'communities.pop_5000_plus' => '',
+    'communities.under_500' => '< 500',
+    'communities.pop_500_2000' => '500 – 2,000',
+    'communities.pop_2000_5000' => '2,000 – 5,000',
+    'communities.pop_5000_plus' => '5,000+',
     'communities.no_matches' => 'Oodenawinan gaawiin mikanziinaawaa.', // "No communities match your filters."
 
     // Community detail
@@ -294,7 +294,7 @@ return [
     'community.website' => "Web-mazina'igan",
     'community.leadership' => 'Ogimaawin', // dict: ogimaa: "chief, leader"
     'community.chief' => 'Ogimaa', // dict: ogimaa: "a chief, a boss"
-    'community.current' => '',
+    'community.current' => 'Noongom', // "Current / now"
     'community.councillor' => '',
     'community.band_office' => '',
     'community.address' => 'Endaad', // dict: endaad: "h/ home; h/ house"
@@ -304,11 +304,11 @@ return [
     'community.toll_free' => '',
     'community.fax' => '',
     'community.the_land' => 'Aki', // dict: aki: "land, earth, country"
-    'community.openstreetmap' => '',
-    'community.google_maps' => '',
+    'community.openstreetmap' => 'OpenStreetMap',
+    'community.google_maps' => 'Google Maps',
     'community.nearby_communities' => 'Besho oodenawinan', // "Nearby communities"
     'community.km_away' => 'km besho', // "km away/nearby"
-    'community.pop' => '',
+    'community.pop' => 'Akiing-ogimaa', // Short population label matching communities.population root
     'community.local_events' => "Maawanji'idiwinan", // dict: maawanji'idiwag: "they come together, meet"
     'community.local_teachings' => "Gikinoo'amaadiwinan", // dict: gikinoo'amaadiwin: "teaching, education"
     'community.local_businesses' => 'Adaawewinan', // dict: adaawewin: "business, store, trading place"
