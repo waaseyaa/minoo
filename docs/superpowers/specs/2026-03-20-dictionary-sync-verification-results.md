@@ -34,12 +34,21 @@ Additional repo-level verification:
   - `GET /api/v1/dictionary/words/:id`
   - `GET /api/v1/dictionary/search`
 - The merged handler returns JSON with `entries`, `total`, `attribution`, `limit`, `size`, and pagination metadata.
+- North Cloud production nginx config does **not** currently proxy any public `/api/dictionary/*` route on `northcloud.one`.
+  - Exposed source-manager routes in `infrastructure/nginx/nginx.conf` are limited to:
+    - `/api/sources` -> `/api/v1/sources`
+    - `/api/cities` -> `/api/v1/cities`
+    - `/api/health/source-manager` -> `/health`
+  - There is no public nginx location for:
+    - `/api/dictionary/entries`
+    - `/api/dictionary/search`
+    - `/api/dictionary/entries/:id`
 
 Conclusion:
 
 - The code contract exists in North Cloud mainline.
-- The live host/path Minoo is configured to call is not currently serving that contract.
-- This is a deployment/routing/base-URL integration mismatch, not evidence of a missing Minoo mapper or template feature.
+- The live host/path Minoo is configured to call is not currently serving that contract because the production reverse proxy does not expose the dictionary routes.
+- This is a deployment/routing exposure problem, not evidence of a missing Minoo mapper or template feature.
 
 ## Dry-Run Sync
 
@@ -101,6 +110,7 @@ Blocked in this pass because no verified live dictionary sync could be performed
 ## Follow-Up Recommendations
 
 1. Confirm the actual deployed base URL for the North Cloud `source-manager` dictionary API and set `NORTHCLOUD_BASE_URL` in Minoo to that value.
+   - Current evidence suggests there may be no public deployed base URL yet because nginx does not expose `/api/dictionary/*` on `northcloud.one`.
 2. Re-run the verification pass once the live base URL returns JSON for:
    - `GET /api/v1/dictionary/entries`
    - `GET /api/v1/dictionary/search`
