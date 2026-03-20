@@ -140,6 +140,29 @@ final class LanguageControllerTest extends TestCase
     }
 
     #[Test]
+    public function show_renders_plain_string_inflected_forms_when_payload_is_not_json(): void
+    {
+        $entry = new DictionaryEntry([
+            'deid' => 1,
+            'word' => 'makwa',
+            'slug' => 'makwa',
+            'consent_public' => 1,
+            'inflected_forms' => 'makwag pl; makoons dim',
+        ]);
+
+        $this->query->method('execute')->willReturn([1]);
+        $this->storage->method('load')
+            ->with(1)
+            ->willReturn($entry);
+
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
+        $response = $controller->show(['slug' => 'makwa'], [], $this->account, $this->request);
+
+        $this->assertSame(200, $response->statusCode);
+        $this->assertStringContainsString('makwag pl; makoons dim', $response->content);
+    }
+
+    #[Test]
     public function show_filters_by_consent_public_via_query(): void
     {
         // An entry without consent_public would not be returned by the query,

@@ -78,6 +78,11 @@ final class LanguageController
 
         $items = [];
         foreach ($decoded as $item) {
+            if (is_string($item) && trim($item) !== '') {
+                $items[] = trim($item);
+                continue;
+            }
+
             if (!is_array($item)) {
                 continue;
             }
