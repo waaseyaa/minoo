@@ -3916,7 +3916,9 @@
   }
 
   .feed-badge--event { background-color: rgba(230, 57, 70, 0.2); color: var(--color-events); }
+  .feed-badge--featured { background-color: rgba(244, 162, 97, 0.2); color: var(--color-teachings); }
   .feed-badge--teaching { background-color: rgba(244, 162, 97, 0.2); color: var(--color-teachings); }
+  .feed-badge--communities { background-color: rgba(106, 156, 175, 0.2); color: var(--color-communities); }
   .feed-badge--group { background-color: rgba(106, 156, 175, 0.2); color: var(--color-communities); }
   .feed-badge--business { background-color: rgba(200, 100, 50, 0.2); color: var(--color-businesses); }
   .feed-badge--contributor { background-color: rgba(131, 56, 236, 0.2); color: var(--color-people); }
