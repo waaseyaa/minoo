@@ -76,9 +76,9 @@ final class IngestPipelineTest extends TestCase
         $this->assertSame('bear', $entry->get('definition'));
         $this->assertSame('na', $entry->get('part_of_speech'));
 
-        // Verify child entities were created (speaker + example_sentence + word_part).
+        // Verify child entities were created (contributor + example_sentence + word_part).
         $types = array_column($result->getCreated(), 'type');
-        $this->assertContains('speaker', $types);
+        $this->assertContains('contributor', $types);
         $this->assertContains('example_sentence', $types);
         $this->assertContains('word_part', $types);
     }

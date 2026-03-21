@@ -6,7 +6,6 @@ namespace Minoo\Tests\Unit\Access;
 
 use Minoo\Access\LanguageAccessPolicy;
 use Minoo\Entity\DictionaryEntry;
-use Minoo\Entity\Speaker;
 use Waaseyaa\Access\AccountInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -23,7 +22,8 @@ final class LanguageAccessPolicyTest extends TestCase
         $this->assertTrue($policy->appliesTo('dictionary_entry'));
         $this->assertTrue($policy->appliesTo('example_sentence'));
         $this->assertTrue($policy->appliesTo('word_part'));
-        $this->assertTrue($policy->appliesTo('speaker'));
+        $this->assertTrue($policy->appliesTo('dialect_region'));
+        $this->assertFalse($policy->appliesTo('speaker'));
         $this->assertFalse($policy->appliesTo('node'));
     }
 
@@ -45,7 +45,7 @@ final class LanguageAccessPolicyTest extends TestCase
     }
 
     #[Test]
-    public function anonymous_cannot_create_speaker(): void
+    public function anonymous_cannot_create_dictionary_entry(): void
     {
         $policy = new LanguageAccessPolicy();
 
@@ -56,7 +56,7 @@ final class LanguageAccessPolicyTest extends TestCase
             public function isAuthenticated(): bool { return false; }
         };
 
-        $result = $policy->createAccess('speaker', '', $account);
+        $result = $policy->createAccess('dictionary_entry', '', $account);
         $this->assertFalse($result->isAllowed());
     }
 }

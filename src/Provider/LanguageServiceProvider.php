@@ -6,7 +6,6 @@ namespace Minoo\Provider;
 
 use Minoo\Entity\DictionaryEntry;
 use Minoo\Entity\ExampleSentence;
-use Minoo\Entity\Speaker;
 use Minoo\Entity\WordPart;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -52,7 +51,7 @@ final class LanguageServiceProvider extends ServiceProvider
                 'ojibwe_text' => ['type' => 'string', 'label' => 'Ojibwe Text', 'weight' => 0],
                 'english_text' => ['type' => 'string', 'label' => 'English Translation', 'weight' => 5],
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 10],
-                'speaker_id' => ['type' => 'entity_reference', 'label' => 'Speaker', 'settings' => ['target_type' => 'speaker'], 'weight' => 15],
+                'contributor_id' => ['type' => 'entity_reference', 'label' => 'Contributor', 'settings' => ['target_type' => 'contributor'], 'weight' => 15],
                 'audio_url' => ['type' => 'uri', 'label' => 'Audio URL', 'weight' => 20],
                 'source_sentence_id' => ['type' => 'string', 'label' => 'Source Sentence ID', 'description' => 'Unique ID from source for dedup across re-crawls.', 'weight' => 22],
                 'language_code' => ['type' => 'string', 'label' => 'Language Code', 'weight' => 25, 'default' => 'oj'],
@@ -80,30 +79,6 @@ final class LanguageServiceProvider extends ServiceProvider
             ],
         ));
 
-        $this->entityType(new EntityType(
-            id: 'speaker',
-            label: 'Speaker',
-            class: Speaker::class,
-            keys: ['id' => 'sid', 'uuid' => 'uuid', 'label' => 'name'],
-            group: 'language',
-            fieldDefinitions: [
-                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
-                'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
-                'code' => ['type' => 'string', 'label' => 'Speaker Code', 'description' => 'Abbreviation (e.g., es, nj, gh).', 'weight' => 5],
-                'bio' => ['type' => 'text_long', 'label' => 'Biography', 'weight' => 10],
-                'media_id' => ['type' => 'entity_reference', 'label' => 'Photo', 'settings' => ['target_type' => 'media'], 'weight' => 20],
-                'copyright_status' => [
-                    'type' => 'string',
-                    'label' => 'Copyright Status',
-                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
-                    'default_value' => 'unknown',
-                    'weight' => 99,
-                ],
-                'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
-                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
-                'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
-            ],
-        ));
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
