@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Minoo\Provider;
 
+use Minoo\Feed\EntityLoaderService;
+use Minoo\Feed\FeedAssembler;
+use Minoo\Feed\FeedAssemblerInterface;
+use Minoo\Feed\FeedItemFactory;
+use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -12,7 +17,16 @@ final class FeedServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // No entity types — this provider handles feed services and routes only
+        $this->singleton(EntityLoaderService::class, fn(): EntityLoaderService => new EntityLoaderService(
+            $this->resolve(EntityTypeManager::class),
+        ));
+
+        $this->singleton(FeedItemFactory::class, fn(): FeedItemFactory => new FeedItemFactory());
+
+        $this->singleton(FeedAssemblerInterface::class, fn(): FeedAssemblerInterface => new FeedAssembler(
+            $this->resolve(EntityLoaderService::class),
+            $this->resolve(FeedItemFactory::class),
+        ));
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void

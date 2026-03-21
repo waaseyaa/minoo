@@ -78,7 +78,8 @@
                 "Minoo\\Provider\\AdminServiceProvider",
                 "Minoo\\Provider\\DialectRegionServiceProvider",
                 "Minoo\\Provider\\OralHistoryServiceProvider",
-                "Minoo\\Provider\\ContributorServiceProvider"
+                "Minoo\\Provider\\ContributorServiceProvider",
+                "Minoo\\Provider\\FeedServiceProvider"
             ]
         }
     },
