@@ -3918,6 +3918,14 @@
     color: var(--text-muted);
   }
 
+  /* Business detail map */
+  .business-detail-map {
+    block-size: 200px;
+    border-radius: var(--radius-md);
+    margin-block-end: var(--space-xs);
+    background: var(--surface-raised);
+  }
+
   /* Community detail map */
   .community-detail-map {
     block-size: 200px;
