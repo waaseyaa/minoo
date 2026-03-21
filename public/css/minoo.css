@@ -1922,7 +1922,6 @@
   .location-bar__inner {
     max-inline-size: var(--width-content);
     margin-inline: auto;
-    padding-inline: var(--gutter);
     padding-block: var(--space-2xs);
     display: flex;
     align-items: center;
@@ -3251,7 +3250,6 @@
     gap: var(--space-md);
     max-inline-size: var(--width-content);
     margin-inline: auto;
-    padding-inline: var(--gutter);
     padding-block-start: var(--space-md);
   }
 
@@ -3299,13 +3297,11 @@
     display: flex;
     align-items: center;
     gap: var(--space-2xs);
-    padding: var(--space-2xs) var(--space-xs);
-    border-radius: var(--radius-md);
+    padding: var(--space-2xs) 0;
     color: var(--text-secondary);
     text-decoration: none;
     font-size: 0.9rem;
-    transition: background-color var(--duration-fast) var(--ease-out),
-                color var(--duration-fast) var(--ease-out);
+    transition: color var(--duration-fast) var(--ease-out);
   }
 
   .sidebar-nav__item:hover {
