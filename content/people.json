@@ -24,10 +24,11 @@
   {
     "name": "Larissa Toulouse",
     "slug": "larissa-toulouse",
-    "bio": "Owner and operator of Nginaajiiw Salon & Spa in Sagamok Anishnawbek, providing hair, esthetics, massage, and nail services.",
+    "bio": "Larissa Toulouse is the founder of Nginaajiiw Salon & Spa in Sagamok Anishnawbek. She brings Indigenous artistry and care to the beauty industry, offering hair services, esthetics, massage, and nails from her salon on Sagamok Road. The name Nginaajiiw is Anishinaabemowin — a reflection of the cultural roots behind everything she does.",
     "roles": ["Small Business Owner"],
-    "offerings": ["Hair Services", "Esthetics"],
+    "offerings": ["Hair Services", "Esthetics", "Massage", "Nail Services"],
     "linked_group": "nginaajiiw-salon-spa",
+    "website": "https://nginaajiiw-salon-spa.square.site",
     "community": "Sagamok Anishnawbek",
     "consent_public": true,
     "source": "manual:russell:2026-03-15",
