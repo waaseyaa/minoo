@@ -128,6 +128,24 @@ final class GroupServiceProvider extends ServiceProvider
                     'description' => 'JSON array of recent social media posts.',
                     'weight' => 97,
                 ],
+                'latitude' => [
+                    'type' => 'float',
+                    'label' => 'Latitude',
+                    'description' => 'Geocoded from address, or community fallback.',
+                    'weight' => 98,
+                ],
+                'longitude' => [
+                    'type' => 'float',
+                    'label' => 'Longitude',
+                    'description' => 'Geocoded from address, or community fallback.',
+                    'weight' => 99,
+                ],
+                'coordinate_source' => [
+                    'type' => 'string',
+                    'label' => 'Coordinate Source',
+                    'description' => 'How coordinates were obtained: address or community.',
+                    'weight' => 100,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',
