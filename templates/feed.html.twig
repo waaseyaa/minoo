@@ -3,40 +3,40 @@
 {% block title %}{{ trans('page.title') }} — Minoo{% endblock %}
 
 {% block content %}
-  {# === Compact Sticky Header === #}
-  <header class="feed-header">
-    <strong class="feed-header__logo">Minoo</strong>
-    <form class="feed-header__search" action="{{ lang_url('/explore') }}" method="get" role="search" aria-label="{{ trans('page.search_label') }}">
-      <label for="feed-q" class="visually-hidden">{{ trans('page.search_query') }}</label>
-      <input id="feed-q" name="q" type="search" class="feed-header__input" placeholder="{{ trans('page.search_placeholder') }}" />
-      <button type="submit" class="feed-header__submit">{{ trans('page.search_button') }}</button>
-    </form>
-  </header>
+  <div class="feed-layout">
+    {% include "components/feed-sidebar-left.html.twig" %}
 
-  {# === Filter Chips === #}
-  <nav class="feed-chips" aria-label="Filter feed">
-    <button class="feed-chip{{ activeFilter == 'all' ? ' feed-chip--active' : '' }}" data-type="all">{{ trans('page.search_all') }}</button>
-    <button class="feed-chip{{ activeFilter == 'event' ? ' feed-chip--active' : '' }}" data-type="event">{{ trans('page.tab_events') }}</button>
-    <button class="feed-chip{{ activeFilter == 'group' ? ' feed-chip--active' : '' }}" data-type="group">{{ trans('page.tab_groups') }}</button>
-    <button class="feed-chip{{ activeFilter == 'business' ? ' feed-chip--active' : '' }}" data-type="business">{{ trans('page.search_businesses') }}</button>
-    <button class="feed-chip{{ activeFilter == 'person' ? ' feed-chip--active' : '' }}" data-type="person">{{ trans('page.tab_people') }}</button>
-  </nav>
+    <div class="feed-main">
+      {% include "components/feed-create-post.html.twig" %}
 
-  {# === Feed Container === #}
-  <div class="feed-container" id="feed" data-next-cursor="{{ nextCursor }}" data-active-filter="{{ activeFilter }}">
-    {% for item in response.items %}
-      {% include "components/feed-card.html.twig" with { item: item } only %}
-    {% endfor %}
-  </div>
+      {# === Filter Chips === #}
+      <nav class="feed-chips" aria-label="Filter feed">
+        <button class="feed-chip{{ activeFilter == 'all' ? ' feed-chip--active' : '' }}" data-type="all">{{ trans('page.search_all') }}</button>
+        <button class="feed-chip{{ activeFilter == 'event' ? ' feed-chip--active' : '' }}" data-type="event">{{ trans('page.tab_events') }}</button>
+        <button class="feed-chip{{ activeFilter == 'group' ? ' feed-chip--active' : '' }}" data-type="group">{{ trans('page.tab_groups') }}</button>
+        <button class="feed-chip{{ activeFilter == 'business' ? ' feed-chip--active' : '' }}" data-type="business">{{ trans('page.search_businesses') }}</button>
+        <button class="feed-chip{{ activeFilter == 'person' ? ' feed-chip--active' : '' }}" data-type="person">{{ trans('page.tab_people') }}</button>
+      </nav>
 
-  {# === Loading Sentinel === #}
-  {% if nextCursor %}
-    <div class="feed-sentinel" id="feed-sentinel">
-      <div class="feed-card feed-card--loading" aria-hidden="true">
-        <div class="feed-card__skeleton"></div>
+      {# === Feed Container === #}
+      <div class="feed-container" id="feed" data-next-cursor="{{ nextCursor }}" data-active-filter="{{ activeFilter }}">
+        {% for item in response.items %}
+          {% include "components/feed-card.html.twig" with { item: item } only %}
+        {% endfor %}
       </div>
+
+      {# === Loading Sentinel === #}
+      {% if nextCursor %}
+        <div class="feed-sentinel" id="feed-sentinel">
+          <div class="feed-card feed-card--loading" aria-hidden="true">
+            <div class="feed-card__skeleton"></div>
+          </div>
+        </div>
+      {% endif %}
     </div>
-  {% endif %}
+
+    {% include "components/feed-sidebar-right.html.twig" %}
+  </div>
 
   {# === Infinite Scroll (Progressive Enhancement) === #}
   <script>
@@ -132,6 +132,142 @@
           .catch(e => { if (e.name !== 'AbortError') console.error(e); });
       });
     });
+  })();
+  </script>
+{% endblock %}
+
+{% block scripts %}
+  {# === Engagement Interactions === #}
+  <script>
+  (function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const headers = { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
+
+    // Reaction toggling
+    document.addEventListener('click', async function(e) {
+      const btn = e.target.closest('[data-action="react"]');
+      if (!btn) return;
+      const type = btn.dataset.type;
+      const id = btn.dataset.id;
+      const isActive = btn.classList.contains('feed-action--active');
+
+      try {
+        if (isActive) {
+          await fetch(`/api/react/${type}/${id}`, { method: 'DELETE', headers });
+          btn.classList.remove('feed-action--active');
+        } else {
+          const reactionType = getReactionType(type);
+          await fetch('/api/react', {
+            method: 'POST', headers,
+            body: JSON.stringify({ target_type: type, target_id: id, reaction_type: reactionType })
+          });
+          btn.classList.add('feed-action--active');
+        }
+      } catch (err) { console.error('Reaction error:', err); }
+    });
+
+    // Comment expansion
+    document.addEventListener('click', async function(e) {
+      const btn = e.target.closest('[data-action="comment"]');
+      if (!btn) return;
+      const card = btn.closest('.feed-card');
+      const section = card.querySelector('.feed-card__comments');
+      if (section.hidden) {
+        section.hidden = false;
+        if (!section.dataset.loaded) {
+          const type = btn.dataset.type;
+          const id = btn.dataset.id;
+          const res = await fetch(`/api/comments/${type}/${id}`);
+          const data = await res.json();
+          section.innerHTML = renderComments(data.comments, type, id);
+          section.dataset.loaded = '1';
+        }
+      } else {
+        section.hidden = true;
+      }
+    });
+
+    // Share
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('[data-action="share"]');
+      if (!btn) return;
+      const url = window.location.origin + btn.dataset.url;
+      if (navigator.share) {
+        navigator.share({ url, title: btn.dataset.title });
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          btn.querySelector('.feed-action__label').textContent = 'Copied!';
+          setTimeout(() => { btn.querySelector('.feed-action__label').textContent = 'Share'; }, 2000);
+        });
+      }
+    });
+
+    // Create post
+    const trigger = document.getElementById('create-post-trigger');
+    const postForm = document.getElementById('create-post-form');
+    if (trigger && postForm) {
+      trigger.addEventListener('click', () => { postForm.hidden = false; trigger.hidden = true; });
+      postForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const body = postForm.querySelector('textarea').value.trim();
+        const communityId = postForm.querySelector('select').value;
+        if (!body) return;
+        try {
+          const res = await fetch('/api/post', {
+            method: 'POST', headers,
+            body: JSON.stringify({ body, community_id: communityId })
+          });
+          if (res.ok) location.reload();
+        } catch (err) { console.error('Post error:', err); }
+      });
+    }
+
+    function getReactionType(entityType) {
+      const map = { event: 'interested', teaching: 'miigwech', business: 'recommend', post: 'miigwech' };
+      return map[entityType] || 'interested';
+    }
+
+    function renderComments(comments, type, id) {
+      let html = '<div class="feed-comments__list">';
+      comments.forEach(c => {
+        html += `<div class="feed-comment"><strong>User</strong> <span class="feed-comment__time">${c.relative_time}</span><p>${escapeHtml(c.body)}</p></div>`;
+      });
+      html += '</div>';
+      html += `<form class="feed-comments__form" data-type="${type}" data-id="${id}">
+        <input type="text" placeholder="Write a comment..." maxlength="2000" required>
+        <button type="submit">Post</button>
+      </form>`;
+      return html;
+    }
+
+    // Comment submission
+    document.addEventListener('submit', async function(e) {
+      const form = e.target.closest('.feed-comments__form');
+      if (!form) return;
+      e.preventDefault();
+      const input = form.querySelector('input');
+      const body = input.value.trim();
+      if (!body) return;
+      try {
+        const res = await fetch('/api/comment', {
+          method: 'POST', headers,
+          body: JSON.stringify({ target_type: form.dataset.type, target_id: form.dataset.id, body })
+        });
+        if (res.ok) {
+          const list = form.previousElementSibling;
+          list.insertAdjacentHTML('beforeend',
+            `<div class="feed-comment"><strong>You</strong> <span class="feed-comment__time">just now</span><p>${escapeHtml(body)}</p></div>`
+          );
+          input.value = '';
+        }
+      } catch (err) { console.error('Comment error:', err); }
+    });
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
   })();
   </script>
 {% endblock %}

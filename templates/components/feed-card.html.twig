@@ -1,4 +1,4 @@
-{# Unified feed card component — all types render through this template #}
+{# Unified feed card — community-attributed hybrid design #}
 {% if item.type == 'welcome' %}
   <article class="feed-card feed-card--welcome" data-id="{{ item.id }}">
     <h3 class="feed-card__title">{{ item.title }}</h3>
@@ -7,6 +7,12 @@
   </article>
 {% elseif item.type == 'communities' %}
   <article class="feed-card feed-card--communities" data-id="{{ item.id }}">
+    <div class="feed-card__attribution">
+      <div class="feed-card__avatar feed-card__avatar--communities">🏘</div>
+      <div class="feed-card__attribution-text">
+        <span class="feed-card__source">{{ trans('feed.communities_near_you') }}</span>
+      </div>
+    </div>
     <h3 class="feed-card__title">{{ item.title }}</h3>
     <div class="feed-pills">
       {% for community in item.payload.communities|default([]) %}
@@ -14,21 +20,40 @@
       {% endfor %}
     </div>
   </article>
-{% elseif item.type == 'featured' %}
-  <article class="feed-card feed-card--featured" data-id="{{ item.id }}">
-    <span class="feed-badge feed-badge--featured">{{ item.badge }}</span>
-    <h3 class="feed-card__title"><a href="{{ lang_url(item.url) }}">{{ item.title }}</a></h3>
-    {% if item.subtitle %}<p class="feed-card__subtitle">{{ item.subtitle }}</p>{% endif %}
+{% elseif item.type == 'post' %}
+  <article class="feed-card feed-card--post" data-id="{{ item.id }}" data-entity-type="post">
+    <div class="feed-card__attribution">
+      <div class="feed-card__avatar">{{ item.communityInitial|default('?') }}</div>
+      <div class="feed-card__attribution-text">
+        <a href="{{ lang_url('/communities/' ~ item.communitySlug|default('')) }}" class="feed-card__source">{{ item.communityName|default('') }}</a>
+        <span class="feed-card__attribution-action">&middot; {{ item.relativeTime|default('') }}</span>
+      </div>
+    </div>
+    <p class="feed-card__body">{{ item.meta|default('') }}</p>
+    {% include "components/feed-engagement.html.twig" with { item: item } only %}
   </article>
 {% else %}
-  <article class="feed-card feed-card--{{ item.type }}" data-id="{{ item.id }}">
-    <div class="feed-card__header">
-      <span class="feed-badge feed-badge--{{ item.type }}">{{ item.badge }}</span>
-      {% if item.distance is not null %}<span class="feed-card__distance">{{ item.distance|round(1) }} km</span>{% endif %}
+  <article class="feed-card feed-card--{{ item.type }}" data-id="{{ item.id }}" data-entity-type="{{ item.type }}">
+    <div class="feed-card__attribution">
+      <div class="feed-card__avatar feed-card__avatar--{{ item.type }}">{{ item.communityInitial|default(item.badge|default('')|slice(0,1)) }}</div>
+      <div class="feed-card__attribution-text">
+        {% if item.communityName|default('') %}
+          <a href="{{ lang_url('/communities/' ~ item.communitySlug|default('')) }}" class="feed-card__source">{{ item.communityName }}</a>
+          <span class="feed-card__attribution-action">{{ trans('feed.posted_' ~ item.type) }} &middot; {{ item.relativeTime|default('') }}</span>
+        {% else %}
+          <span class="feed-card__source">Minoo</span>
+          <span class="feed-card__attribution-action">&middot; {{ item.badge|default('') }} &middot; {{ item.relativeTime|default('') }}</span>
+        {% endif %}
+      </div>
     </div>
     <h3 class="feed-card__title"><a href="{{ lang_url(item.url) }}">{{ item.title }}</a></h3>
-    {% if item.subtitle %}<p class="feed-card__subtitle">{{ item.subtitle }}</p>{% endif %}
-    {% if item.communityName %}<p class="feed-card__community">{{ item.communityName }}</p>{% endif %}
-    {% if item.meta %}<p class="feed-card__meta">{{ item.meta }}</p>{% endif %}
+    {% if item.subtitle|default('') %}<p class="feed-card__subtitle">{{ item.subtitle }}</p>{% endif %}
+    {% if item.meta|default('') %}
+      <div class="feed-card__detail-box">
+        {% if item.date|default('') %}<div class="feed-card__detail">📅 {{ item.date }}</div>{% endif %}
+        {% if item.communityName|default('') and item.type == 'event' %}<div class="feed-card__detail">📍 {{ item.meta }}</div>{% endif %}
+      </div>
+    {% endif %}
+    {% include "components/feed-engagement.html.twig" with { item: item } only %}
   </article>
 {% endif %}

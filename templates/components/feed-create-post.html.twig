@@ -1,26 +1,24 @@
-{# Create-post box — authenticated users see form, guests see CTA #}
 <div class="feed-create">
-  {% if account is defined and account.isAuthenticated() %}
-    <div class="feed-create__prompt">
-      <span class="feed-create__avatar">{{ account_initial|default('?') }}</span>
+  {% if account is defined and account.isAuthenticated() and user_communities is defined and user_communities|length > 0 %}
+    <div class="feed-create__prompt" id="create-post-trigger">
+      <div class="feed-create__avatar">{{ account_initial }}</div>
       <span class="feed-create__placeholder">{{ trans('feed.whats_happening') }}</span>
     </div>
-    <form class="feed-create__form" method="post" action="{{ lang_url('/feed/post') }}" hidden>
-      <textarea class="feed-create__textarea" name="body" rows="3" placeholder="{{ trans('feed.whats_happening') }}" required></textarea>
-      {% if user_communities|default([])|length > 0 %}
-        <select class="feed-create__community" name="community">
-          <option value="">{{ trans('feed.select_community') }}</option>
-          {% for community in user_communities %}
-            <option value="{{ community.slug }}">{{ community.name }}</option>
+    <form class="feed-create__form" id="create-post-form" hidden>
+      <textarea class="feed-create__textarea" name="body" placeholder="{{ trans('feed.whats_happening') }}" maxlength="5000" required></textarea>
+      <div class="feed-create__actions">
+        <select name="community_id" class="feed-create__community" required>
+          {% for community in user_communities|default([]) %}
+            <option value="{{ community.id }}"{% if community.is_default|default(false) %} selected{% endif %}>{{ community.name }}</option>
           {% endfor %}
         </select>
-      {% endif %}
-      <button type="submit" class="btn btn--primary">{{ trans('feed.post') }}</button>
+        <button type="submit" class="btn btn--primary">{{ trans('feed.post') }}</button>
+      </div>
     </form>
   {% else %}
     <div class="feed-create__guest">
-      <p class="feed-create__guest-text">{{ trans('feed.join_conversation') }}</p>
-      <a href="{{ lang_url('/login') }}" class="btn btn--primary">{{ trans('feed.login') }}</a>
+      <p>{{ trans('feed.join_conversation') }}</p>
+      <a href="{{ lang_url('/login') }}" class="btn btn--secondary">{{ trans('nav.login') }}</a>
     </div>
   {% endif %}
 </div>
