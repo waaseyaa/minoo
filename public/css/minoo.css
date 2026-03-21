@@ -3788,14 +3788,6 @@
     color: var(--card-accent, var(--color-events));
   }
 
-  .feed-card__action + .feed-card__action {
-    border-inline-start: 1px solid var(--border-subtle);
-  }
-
-  .feed-card__action__icon {
-    font-size: 1rem;
-  }
-
   /* Inline comments section */
   .feed-card__comments {
     border-block-start: 1px solid var(--border-subtle);
