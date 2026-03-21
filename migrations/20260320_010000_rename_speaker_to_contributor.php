@@ -82,5 +82,14 @@ return new class extends Migration
         if ($schema->hasTable('speaker') && $schema->hasColumn('speaker', 'coid')) {
             $connection->executeStatement('ALTER TABLE speaker RENAME COLUMN coid TO sid');
         }
+
+        // Drop columns added by up() — SQLite 3.35+ supports DROP COLUMN
+        if ($schema->hasTable('speaker')) {
+            foreach (['role', 'community_id', 'consent_public', 'consent_record', 'cultural_group_id', 'clan', 'lineage_notes', 'photo'] as $col) {
+                if ($schema->hasColumn('speaker', $col)) {
+                    $connection->executeStatement(sprintf('ALTER TABLE speaker DROP COLUMN %s', $col));
+                }
+            }
+        }
     }
 };

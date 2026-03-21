@@ -32,6 +32,7 @@ final class IngestImporter
         $mapped = match ($entityType) {
             'dictionary_entry' => (new DictionaryEntryMapper())->map($data, $sourceUrl),
             'speaker' => (new SpeakerMapper())->map($data),
+            'contributor' => (new SpeakerMapper())->map($data),
             'cultural_collection' => (new CulturalCollectionMapper())->map($data, $sourceUrl),
             'leader' => (new LeaderMapper())->map($data, (string) ($data['community_id'] ?? '')),
             default => throw new \LogicException(

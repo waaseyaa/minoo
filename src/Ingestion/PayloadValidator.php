@@ -11,6 +11,7 @@ final class PayloadValidator
     private const array SUPPORTED_ENTITY_TYPES = [
         'dictionary_entry',
         'speaker',
+        'contributor',
         'cultural_collection',
         'leader',
     ];
@@ -67,6 +68,9 @@ final class PayloadValidator
             $errors = [...$errors, ...$this->validateDictionaryEntry($envelope['data'])];
         }
         if ($envelope['entity_type'] === 'speaker') {
+            $errors = [...$errors, ...$this->validateSpeaker($envelope['data'])];
+        }
+        if ($envelope['entity_type'] === 'contributor') {
             $errors = [...$errors, ...$this->validateSpeaker($envelope['data'])];
         }
         if ($envelope['entity_type'] === 'cultural_collection') {
