@@ -64,6 +64,7 @@ return [
     'nav.people' => 'Anishinaabeg', // dict: anishinaabeg: plural of anishinaabe
     'nav.teachings' => 'Gikinoo\'amaadiwinan', // dict: gikinoo'amaadiwin: "teaching, education"
     'nav.events' => 'Maawanji\'idiwinan', // dict: maawanji'idiwag: "they come together, meet"
+    'nav.oral_histories' => 'Gdibaajmowinaanin', // dict: dibaajmowin: "story, narrative"; g- (our) + -aanin plural — "Our Stories"
     'nav.programs' => 'Anokiiwinan', // dict: anokii: "s/he works"; -winan nominal plural
     'nav.elder_support' => 'Gichi-aya\'aa Wiidookaagewin', // dict: gichi-aya'aa: "an elder" + wiidookaagewin: "help, assistance"
     'nav.volunteer' => 'Wiidookaage', // dict: wiidookaage: "s/he helps people"

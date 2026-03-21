@@ -38,6 +38,18 @@ final class ConfigSeeder
         ];
     }
 
+    /** @return list<array{type: string, name: string, description: string}> */
+    public static function oralHistoryTypes(): array
+    {
+        return [
+            ['type' => 'creation_story', 'name' => 'Creation Story', 'description' => 'Origin and creation narratives.'],
+            ['type' => 'historical_account', 'name' => 'Historical Account', 'description' => 'Historical events and experiences.'],
+            ['type' => 'personal_narrative', 'name' => 'Personal Narrative', 'description' => 'Individual life stories and memories.'],
+            ['type' => 'land_teaching', 'name' => 'Land Teaching', 'description' => 'Teachings connected to specific places and the land.'],
+            ['type' => 'family_story', 'name' => 'Family Story', 'description' => 'Stories passed down within families.'],
+        ];
+    }
+
     /** @return list<array{code: string, name: string, display_name: string, language_family: string, iso_639_3: string, regions: list<string>, boundary_geojson: ?string}> */
     public static function dialectRegions(): array
     {

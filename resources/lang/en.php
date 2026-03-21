@@ -12,6 +12,7 @@ return [
     'nav.people' => 'People',
     'nav.teachings' => 'Teachings',
     'nav.events' => 'Events',
+    'nav.oral_histories' => 'Our Stories',
     'nav.programs' => 'Programs',
     'nav.elder_support' => 'Elder Support',
     'nav.volunteer' => 'Volunteer',
