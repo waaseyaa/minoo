@@ -11,6 +11,7 @@ final class FeedAssembler implements FeedAssemblerInterface
     public function __construct(
         private readonly EntityLoaderService $loader,
         private readonly FeedItemFactory $factory,
+        private readonly ?EngagementCounter $engagementCounter = null,
     ) {}
 
     public function assemble(FeedContext $ctx): FeedResponse
@@ -20,11 +21,15 @@ final class FeedAssembler implements FeedAssemblerInterface
         $groups = $this->loader->loadGroups($ctx->limit * 2);
         $businesses = $this->loader->loadBusinesses($ctx->limit * 2);
         $people = $this->loader->loadPublicPeople($ctx->limit * 2);
+        $posts = $this->loader->loadPosts($ctx->limit * 2);
         $featuredRaw = $this->loader->loadFeaturedItems();
         $communities = $this->loader->loadAllCommunities();
 
         // Build community coordinate map for distance calculation
         $communityCoords = $this->buildCommunityCoords($communities);
+
+        // Build community name/slug map for factory lookups
+        $this->factory->setCommunityMap($this->buildCommunityMap($communities));
 
         // 2. Transform — assign typeSlots cyclically for round-robin
         $items = [];
@@ -43,6 +48,7 @@ final class FeedAssembler implements FeedAssemblerInterface
             ['type' => 'group', 'entities' => $groups, 'communityField' => 'community_id'],
             ['type' => 'business', 'entities' => $businesses, 'communityField' => 'community_id'],
             ['type' => 'person', 'entities' => $people, 'communityField' => 'community'],
+            ['type' => 'post', 'entities' => $posts, 'communityField' => 'community_id'],
         ];
 
         foreach ($sources as $sourceIdx => $source) {
@@ -103,6 +109,11 @@ final class FeedAssembler implements FeedAssemblerInterface
         }
 
         $pageItems = array_slice($items, $startIdx, $ctx->limit);
+
+        // 6b. Attach engagement counts only to the page (not all items)
+        if ($this->engagementCounter !== null) {
+            $pageItems = $this->attachEngagementCounts($pageItems);
+        }
 
         $nextCursor = null;
         if ($pageItems !== [] && ($startIdx + $ctx->limit) < count($items)) {
@@ -168,5 +179,63 @@ final class FeedAssembler implements FeedAssemblerInterface
         });
 
         return $communities;
+    }
+
+    /** @return array<int, array{slug: string, name: string}> */
+    private function buildCommunityMap(array $communities): array
+    {
+        $map = [];
+        foreach ($communities as $c) {
+            $id = (int) $c->id();
+            $map[$id] = [
+                'slug' => (string) ($c->get('slug') ?? ''),
+                'name' => (string) ($c->get('name') ?? ''),
+            ];
+        }
+        return $map;
+    }
+
+    /**
+     * Attach reaction and comment counts to feed items via EngagementCounter.
+     * Since FeedItem is readonly, we reconstruct items with engagement data.
+     *
+     * @param list<FeedItem> $items
+     * @return list<FeedItem>
+     */
+    private function attachEngagementCounts(array $items): array
+    {
+        $ids = array_map(fn(FeedItem $item) => $item->id, $items);
+        $counts = $this->engagementCounter->getCounts($ids);
+
+        return array_map(function (FeedItem $item) use ($counts) {
+            $itemCounts = $counts[$item->id] ?? null;
+            if ($itemCounts === null) {
+                return $item;
+            }
+
+            return new FeedItem(
+                id: $item->id,
+                type: $item->type,
+                title: $item->title,
+                url: $item->url,
+                badge: $item->badge,
+                weight: $item->weight,
+                createdAt: $item->createdAt,
+                sortKey: $item->sortKey,
+                entity: $item->entity,
+                subtitle: $item->subtitle,
+                date: $item->date,
+                distance: $item->distance,
+                communityName: $item->communityName,
+                meta: $item->meta,
+                payload: $item->payload,
+                reactionCount: $itemCounts['reactions'] ?? 0,
+                commentCount: $itemCounts['comments'] ?? 0,
+                userReaction: $item->userReaction,
+                relativeTime: $item->relativeTime,
+                communitySlug: $item->communitySlug,
+                communityInitial: $item->communityInitial,
+            );
+        }, $items);
     }
 }

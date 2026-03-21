@@ -88,6 +88,43 @@ return [
     'page.about_cta' => 'Learn more',
     'page.about_compact' => 'Minoo connects Indigenous communities.',
 
+    // Navigation — additional
+    'nav.businesses' => 'Businesses',
+
+    // Feed — social feed homepage
+    'feed.sidebar_nav_label' => 'Feed navigation',
+    'feed.your_communities' => 'Your Communities',
+    'feed.trending' => 'Trending',
+    'feed.upcoming_events' => 'Upcoming Events',
+    'feed.suggested_communities' => 'Suggested Communities',
+    'feed.see_all' => 'See all',
+    'feed.join_conversation' => 'Join the conversation — log in to share with your community',
+    'feed.whats_happening' => "What's happening in your community?",
+    'feed.post' => 'Post',
+    'feed.communities_near_you' => 'Communities near you',
+    'feed.interested' => 'interested',
+    'feed.comments' => 'comments',
+    'feed.comments_count' => 'comments',
+    'feed.comment' => 'Comment',
+    'feed.share' => 'Share',
+    // Feed — domain-specific reaction labels
+    'feed.action_event' => 'Interested',
+    'feed.action_teaching' => 'Miigwech',
+    'feed.action_business' => 'Recommend',
+    'feed.action_group' => 'Interested',
+    'feed.action_featured' => 'Interested',
+    'feed.action_post' => 'Miigwech',
+    'feed.action_person' => 'Connect',
+    'feed.action_contributor' => 'Connect',
+    // Feed — community attribution labels
+    'feed.posted_event' => 'posted an event',
+    'feed.posted_teaching' => 'shared a teaching',
+    'feed.posted_business' => '· local business',
+    'feed.posted_group' => '· community group',
+    'feed.posted_person' => '· community member',
+    'feed.posted_contributor' => '· community member',
+    'feed.posted_featured' => '· featured',
+
     // Events
     'events.title' => 'Events',
     'events.subtitle' => 'Powwows, ceremonies, and community gatherings happening across the region.',

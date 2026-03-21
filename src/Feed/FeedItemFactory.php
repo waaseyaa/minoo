@@ -11,6 +11,19 @@ final class FeedItemFactory
 {
     private const int MAX_META_LENGTH = 60;
 
+    /** @var array<int|string, array{slug: string, name: string}> */
+    private array $communityCache = [];
+
+    /**
+     * Inject community lookup data for slug/initial resolution.
+     *
+     * @param array<int|string, array{slug: string, name: string}> $communities keyed by community ID
+     */
+    public function setCommunityMap(array $communities): void
+    {
+        $this->communityCache = $communities;
+    }
+
     public function fromEntity(
         string $type,
         ContentEntityBase $entity,
@@ -32,6 +45,7 @@ final class FeedItemFactory
             'business' => $this->buildBusiness($entity, $typeSlot, $distance, $createdAt),
             'person' => $this->buildPerson($entity, $typeSlot, $distance, $createdAt),
             'featured' => $this->buildFeatured($entity, $typeSlot, $distance, $createdAt),
+            'post' => $this->buildPost($entity, $typeSlot, $distance, $createdAt),
             default => throw new \InvalidArgumentException("Unknown feed item type: {$type}"),
         };
     }
@@ -89,6 +103,7 @@ final class FeedItemFactory
     {
         $id = 'event:' . $entity->id();
         $startsAt = $entity->get('starts_at');
+        $communityId = $entity->get('community_id');
 
         return new FeedItem(
             id: $id,
@@ -101,15 +116,20 @@ final class FeedItemFactory
             sortKey: $this->buildSortKey(0, $distance, $typeSlot, $createdAt, $id),
             entity: $entity,
             subtitle: $startsAt ? (new \DateTimeImmutable($startsAt))->format('F j, Y \a\t g:i A') : null,
-            date: $startsAt,
+            date: $startsAt ? (new \DateTimeImmutable($startsAt))->format('M j, Y \a\t g:i A') : null,
             distance: $distance,
             meta: $entity->get('location'),
+            communityName: $this->resolveCommunityName($communityId),
+            relativeTime: $this->formatRelativeTime($createdAt),
+            communitySlug: $this->resolveCommunitySlug($communityId),
+            communityInitial: $this->resolveCommunityInitial($communityId),
         );
     }
 
     private function buildGroup(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
     {
         $id = 'group:' . $entity->id();
+        $communityId = $entity->get('community_id');
 
         return new FeedItem(
             id: $id,
@@ -123,12 +143,17 @@ final class FeedItemFactory
             entity: $entity,
             distance: $distance,
             meta: $this->truncate($entity->get('description')),
+            communityName: $this->resolveCommunityName($communityId),
+            relativeTime: $this->formatRelativeTime($createdAt),
+            communitySlug: $this->resolveCommunitySlug($communityId),
+            communityInitial: $this->resolveCommunityInitial($communityId),
         );
     }
 
     private function buildBusiness(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
     {
         $id = 'business:' . $entity->id();
+        $communityId = $entity->get('community_id');
 
         return new FeedItem(
             id: $id,
@@ -142,12 +167,17 @@ final class FeedItemFactory
             entity: $entity,
             distance: $distance,
             meta: $this->truncate($entity->get('description')),
+            communityName: $this->resolveCommunityName($communityId),
+            relativeTime: $this->formatRelativeTime($createdAt),
+            communitySlug: $this->resolveCommunitySlug($communityId),
+            communityInitial: $this->resolveCommunityInitial($communityId),
         );
     }
 
     private function buildPerson(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
     {
         $id = 'person:' . $entity->id();
+        $communityId = $entity->get('community_id');
 
         return new FeedItem(
             id: $id,
@@ -162,6 +192,9 @@ final class FeedItemFactory
             distance: $distance,
             communityName: $entity->get('community'),
             meta: $entity->get('role'),
+            relativeTime: $this->formatRelativeTime($createdAt),
+            communitySlug: $this->resolveCommunitySlug($communityId),
+            communityInitial: $this->resolveCommunityInitial($communityId),
         );
     }
 
@@ -181,6 +214,7 @@ final class FeedItemFactory
             entity: $entity,
             subtitle: $entity->get('subheadline'),
             distance: $distance,
+            relativeTime: $this->formatRelativeTime($createdAt),
         );
     }
 
@@ -205,5 +239,91 @@ final class FeedItemFactory
         }
 
         return mb_substr($text, 0, self::MAX_META_LENGTH) . '…';
+    }
+
+    /**
+     * Format a timestamp as a human-readable relative time string.
+     * Falls back to simple calculation if RelativeTime class is not yet available.
+     */
+    public function formatRelativeTime(\DateTimeImmutable $createdAt): string
+    {
+        if (class_exists(RelativeTime::class)) {
+            return RelativeTime::format($createdAt->getTimestamp());
+        }
+
+        $diff = (new \DateTimeImmutable())->getTimestamp() - $createdAt->getTimestamp();
+
+        return match (true) {
+            $diff < 60 => 'just now',
+            $diff < 3600 => (int) ($diff / 60) . 'm ago',
+            $diff < 86400 => (int) ($diff / 3600) . 'h ago',
+            $diff < 604800 => (int) ($diff / 86400) . 'd ago',
+            default => $createdAt->format('M j'),
+        };
+    }
+
+    /**
+     * Resolve community slug from community ID using the cached map.
+     */
+    public function resolveCommunitySlug(mixed $communityId): ?string
+    {
+        if ($communityId === null) {
+            return null;
+        }
+
+        return $this->communityCache[(int) $communityId]['slug'] ?? null;
+    }
+
+    /**
+     * Resolve community name from community ID using the cached map.
+     */
+    public function resolveCommunityName(mixed $communityId): ?string
+    {
+        if ($communityId === null) {
+            return null;
+        }
+
+        return $this->communityCache[(int) $communityId]['name'] ?? null;
+    }
+
+    /**
+     * Resolve first letter of community name, uppercased, for avatar display.
+     */
+    public function resolveCommunityInitial(mixed $communityId): ?string
+    {
+        if ($communityId === null) {
+            return null;
+        }
+
+        $name = $this->communityCache[(int) $communityId]['name'] ?? null;
+        if ($name === null || $name === '') {
+            return null;
+        }
+
+        return mb_strtoupper(mb_substr($name, 0, 1));
+    }
+
+    private function buildPost(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
+    {
+        $id = 'post:' . $entity->id();
+        $communityId = $entity->get('community_id');
+
+        return new FeedItem(
+            id: $id,
+            type: 'post',
+            title: (string) ($entity->get('title') ?? ''),
+            url: '/posts/' . $entity->get('slug'),
+            badge: 'Post',
+            weight: 0,
+            createdAt: $createdAt,
+            sortKey: $this->buildSortKey(0, $distance, $typeSlot, $createdAt, $id),
+            entity: $entity,
+            distance: $distance,
+            meta: $this->truncate($entity->get('body')),
+            relativeTime: $this->formatRelativeTime($createdAt),
+            communitySlug: $this->resolveCommunitySlug($communityId),
+            communityInitial: $this->resolveCommunityInitial($communityId),
+            communityName: $entity->get('community_name'),
+        );
     }
 }

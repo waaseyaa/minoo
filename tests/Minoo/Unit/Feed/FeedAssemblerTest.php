@@ -34,6 +34,7 @@ final class FeedAssemblerTest extends TestCase
         $this->loader->method('loadGroups')->willReturn([]);
         $this->loader->method('loadBusinesses')->willReturn([]);
         $this->loader->method('loadPublicPeople')->willReturn([]);
+        $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
 
@@ -58,6 +59,7 @@ final class FeedAssemblerTest extends TestCase
         $this->loader->method('loadGroups')->willReturn([$group]);
         $this->loader->method('loadBusinesses')->willReturn([]);
         $this->loader->method('loadPublicPeople')->willReturn([$person]);
+        $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
 
@@ -83,6 +85,7 @@ final class FeedAssemblerTest extends TestCase
         $this->loader->method('loadGroups')->willReturn([$group]);
         $this->loader->method('loadBusinesses')->willReturn([]);
         $this->loader->method('loadPublicPeople')->willReturn([]);
+        $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
 
@@ -106,6 +109,7 @@ final class FeedAssemblerTest extends TestCase
         $this->loader->method('loadGroups')->willReturn([]);
         $this->loader->method('loadBusinesses')->willReturn([]);
         $this->loader->method('loadPublicPeople')->willReturn([]);
+        $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
 
@@ -134,6 +138,7 @@ final class FeedAssemblerTest extends TestCase
         $this->loader->method('loadGroups')->willReturn([]);
         $this->loader->method('loadBusinesses')->willReturn([]);
         $this->loader->method('loadPublicPeople')->willReturn([]);
+        $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
 
@@ -165,6 +170,7 @@ final class FeedAssemblerTest extends TestCase
         $this->loader->method('loadGroups')->willReturn([$group]);
         $this->loader->method('loadBusinesses')->willReturn([]);
         $this->loader->method('loadPublicPeople')->willReturn([$person]);
+        $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
 

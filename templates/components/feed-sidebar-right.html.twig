@@ -1,0 +1,37 @@
+<aside class="feed-sidebar feed-sidebar--right">
+  {% if trending is defined and trending|length > 0 %}
+    <div class="sidebar-widget">
+      <h4 class="sidebar-widget__title">{{ trans('feed.trending') }}</h4>
+      {% for item in trending %}
+        <a href="{{ lang_url(item.url) }}" class="sidebar-widget__item">
+          <span class="feed-badge feed-badge--{{ item.type }}">{{ item.badge }}</span>
+          {{ item.title }}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if upcoming_events is defined and upcoming_events|length > 0 %}
+    <div class="sidebar-widget">
+      <h4 class="sidebar-widget__title">{{ trans('feed.upcoming_events') }}</h4>
+      {% for event in upcoming_events %}
+        <a href="{{ lang_url(event.url) }}" class="sidebar-widget__item">
+          <strong>{{ event.title }}</strong>
+          <span class="sidebar-widget__meta">{{ event.date }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if suggested_communities is defined and suggested_communities|length > 0 %}
+    <div class="sidebar-widget">
+      <h4 class="sidebar-widget__title">{{ trans('feed.suggested_communities') }}</h4>
+      {% for community in suggested_communities %}
+        <a href="{{ lang_url('/communities/' ~ community.slug) }}" class="sidebar-widget__item">
+          {{ community.name }}
+          {% if community.distance %}<span class="sidebar-widget__meta">{{ community.distance|round(1) }} km</span>{% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</aside>
