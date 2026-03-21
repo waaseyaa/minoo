@@ -1,0 +1,34 @@
+{# Unified feed card component — all types render through this template #}
+{% if item.type == 'welcome' %}
+  <article class="feed-card feed-card--welcome" data-id="{{ item.id }}">
+    <h3 class="feed-card__title">{{ item.title }}</h3>
+    <p class="feed-card__meta">{{ trans('page.about_body') }}</p>
+    <a href="{{ lang_url(item.url) }}" class="btn btn--secondary">{{ trans('page.about_cta') }}</a>
+  </article>
+{% elseif item.type == 'communities' %}
+  <article class="feed-card feed-card--communities" data-id="{{ item.id }}">
+    <h3 class="feed-card__title">{{ item.title }}</h3>
+    <div class="feed-pills">
+      {% for community in item.payload.communities|default([]) %}
+        <a href="{{ lang_url('/communities/' ~ community.slug) }}" class="feed-pill">{{ community.name }}</a>
+      {% endfor %}
+    </div>
+  </article>
+{% elseif item.type == 'featured' %}
+  <article class="feed-card feed-card--featured" data-id="{{ item.id }}">
+    <span class="feed-badge feed-badge--featured">{{ item.badge }}</span>
+    <h3 class="feed-card__title"><a href="{{ lang_url(item.url) }}">{{ item.title }}</a></h3>
+    {% if item.subtitle %}<p class="feed-card__subtitle">{{ item.subtitle }}</p>{% endif %}
+  </article>
+{% else %}
+  <article class="feed-card feed-card--{{ item.type }}" data-id="{{ item.id }}">
+    <div class="feed-card__header">
+      <span class="feed-badge feed-badge--{{ item.type }}">{{ item.badge }}</span>
+      {% if item.distance is not null %}<span class="feed-card__distance">{{ item.distance|round(1) }} km</span>{% endif %}
+    </div>
+    <h3 class="feed-card__title"><a href="{{ lang_url(item.url) }}">{{ item.title }}</a></h3>
+    {% if item.subtitle %}<p class="feed-card__subtitle">{{ item.subtitle }}</p>{% endif %}
+    {% if item.communityName %}<p class="feed-card__community">{{ item.communityName }}</p>{% endif %}
+    {% if item.meta %}<p class="feed-card__meta">{{ item.meta }}</p>{% endif %}
+  </article>
+{% endif %}

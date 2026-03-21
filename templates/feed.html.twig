@@ -1,0 +1,137 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ trans('page.title') }} — Minoo{% endblock %}
+
+{% block content %}
+  {# === Compact Sticky Header === #}
+  <header class="feed-header">
+    <strong class="feed-header__logo">Minoo</strong>
+    <form class="feed-header__search" action="{{ lang_url('/explore') }}" method="get" role="search" aria-label="{{ trans('page.search_label') }}">
+      <label for="feed-q" class="visually-hidden">{{ trans('page.search_query') }}</label>
+      <input id="feed-q" name="q" type="search" class="feed-header__input" placeholder="{{ trans('page.search_placeholder') }}" />
+      <button type="submit" class="feed-header__submit">{{ trans('page.search_button') }}</button>
+    </form>
+  </header>
+
+  {# === Filter Chips === #}
+  <nav class="feed-chips" aria-label="Filter feed">
+    <button class="feed-chip{{ activeFilter == 'all' ? ' feed-chip--active' : '' }}" data-type="all">{{ trans('page.search_all') }}</button>
+    <button class="feed-chip{{ activeFilter == 'event' ? ' feed-chip--active' : '' }}" data-type="event">{{ trans('page.tab_events') }}</button>
+    <button class="feed-chip{{ activeFilter == 'group' ? ' feed-chip--active' : '' }}" data-type="group">{{ trans('page.tab_groups') }}</button>
+    <button class="feed-chip{{ activeFilter == 'business' ? ' feed-chip--active' : '' }}" data-type="business">{{ trans('page.search_businesses') }}</button>
+    <button class="feed-chip{{ activeFilter == 'person' ? ' feed-chip--active' : '' }}" data-type="person">{{ trans('page.tab_people') }}</button>
+  </nav>
+
+  {# === Feed Container === #}
+  <div class="feed-container" id="feed" data-next-cursor="{{ nextCursor }}" data-active-filter="{{ activeFilter }}">
+    {% for item in response.items %}
+      {% include "components/feed-card.html.twig" with { item: item } only %}
+    {% endfor %}
+  </div>
+
+  {# === Loading Sentinel === #}
+  {% if nextCursor %}
+    <div class="feed-sentinel" id="feed-sentinel">
+      <div class="feed-card feed-card--loading" aria-hidden="true">
+        <div class="feed-card__skeleton"></div>
+      </div>
+    </div>
+  {% endif %}
+
+  {# === Infinite Scroll (Progressive Enhancement) === #}
+  <script>
+  (function() {
+    const feed = document.getElementById('feed');
+    const sentinel = document.getElementById('feed-sentinel');
+    if (!feed || !sentinel) return;
+
+    let nextCursor = feed.dataset.nextCursor || null;
+    let activeFilter = feed.dataset.activeFilter || 'all';
+    let controller = null;
+    let fetchToken = 0;
+    let loading = false;
+
+    const seenIds = new Set();
+    feed.querySelectorAll('[data-id]').forEach(el => seenIds.add(el.dataset.id));
+
+    async function loadMore() {
+      if (loading || !nextCursor) return;
+      loading = true;
+      const token = ++fetchToken;
+
+      if (controller) controller.abort();
+      controller = new AbortController();
+
+      try {
+        const url = '/api/feed?filter=' + encodeURIComponent(activeFilter)
+          + '&cursor=' + encodeURIComponent(nextCursor);
+        const res = await fetch(url, { signal: controller.signal });
+        if (token !== fetchToken) return;
+        const data = await res.json();
+
+        for (const item of data.items) {
+          if (seenIds.has(item.id)) continue;
+          seenIds.add(item.id);
+          feed.insertAdjacentHTML('beforeend', item.html);
+        }
+
+        nextCursor = data.nextCursor;
+        if (!nextCursor) {
+          sentinel.innerHTML = '<p class="feed-end">You\'re all caught up</p>';
+        }
+      } catch (e) {
+        if (e.name !== 'AbortError') console.error('Feed load error:', e);
+      } finally {
+        loading = false;
+      }
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) loadMore();
+    }, { rootMargin: '200px' });
+    observer.observe(sentinel);
+
+    // Filter chips
+    document.querySelectorAll('.feed-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        const type = this.dataset.type;
+        if (type === activeFilter) return;
+
+        activeFilter = type;
+        nextCursor = null;
+        feed.dataset.activeFilter = type;
+        feed.innerHTML = '';
+        seenIds.clear();
+
+        document.querySelectorAll('.feed-chip').forEach(c => c.classList.remove('feed-chip--active'));
+        this.classList.add('feed-chip--active');
+
+        // Reset sentinel
+        sentinel.innerHTML = '<div class="feed-card feed-card--loading" aria-hidden="true"><div class="feed-card__skeleton"></div></div>';
+
+        // Fetch first page with new filter
+        fetchToken++;
+        if (controller) controller.abort();
+        controller = new AbortController();
+        loading = false;
+
+        fetch('/api/feed?filter=' + encodeURIComponent(activeFilter), { signal: controller.signal })
+          .then(r => r.json())
+          .then(data => {
+            for (const item of data.items) {
+              if (seenIds.has(item.id)) continue;
+              seenIds.add(item.id);
+              feed.insertAdjacentHTML('beforeend', item.html);
+            }
+            nextCursor = data.nextCursor;
+            feed.dataset.nextCursor = nextCursor || '';
+            if (!nextCursor) {
+              sentinel.innerHTML = '<p class="feed-end">You\'re all caught up</p>';
+            }
+          })
+          .catch(e => { if (e.name !== 'AbortError') console.error(e); });
+      });
+    });
+  })();
+  </script>
+{% endblock %}
