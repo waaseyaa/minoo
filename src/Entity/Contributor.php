@@ -6,12 +6,12 @@ namespace Minoo\Entity;
 
 use Waaseyaa\Entity\ContentEntityBase;
 
-final class Speaker extends ContentEntityBase
+final class Contributor extends ContentEntityBase
 {
-    protected string $entityTypeId = 'speaker';
+    protected string $entityTypeId = 'contributor';
 
     protected array $entityKeys = [
-        'id' => 'sid',
+        'id' => 'coid',
         'uuid' => 'uuid',
         'label' => 'name',
     ];
@@ -21,6 +21,12 @@ final class Speaker extends ContentEntityBase
     {
         if (!array_key_exists('status', $values)) {
             $values['status'] = 1;
+        }
+        if (!array_key_exists('consent_public', $values)) {
+            $values['consent_public'] = 0;
+        }
+        if (!array_key_exists('consent_record', $values)) {
+            $values['consent_record'] = 0;
         }
         if (!array_key_exists('created_at', $values)) {
             $values['created_at'] = 0;

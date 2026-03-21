@@ -44,7 +44,7 @@ final class IngestMaterializer
 
         return match ($entityType) {
             'dictionary_entry' => $this->materializeDictionaryEntry($parsedFields, $data, $context, $result, $dryRun),
-            'speaker' => $this->materializeSpeaker($parsedFields, $result, $dryRun),
+            'speaker', 'contributor' => $this->materializeSpeaker($parsedFields, $result, $dryRun),
             'cultural_collection' => $this->materializeCulturalCollection($parsedFields, $result, $dryRun),
             default => throw new \InvalidArgumentException(
                 sprintf('Cannot materialize unsupported entity type: %s', $entityType),
@@ -67,12 +67,12 @@ final class IngestMaterializer
                 $speakerVO = SpeakerMapper::fromCode($code);
                 $speakerFields = $speakerVO->toArray();
                 if ($dryRun) {
-                    $result->addCreated('speaker', $speakerFields);
+                    $result->addCreated('contributor', $speakerFields);
                     $context->setSpeakerId($code, 0);
                 } else {
                     $id = $this->getOrCreateSpeaker($code, $speakerFields);
                     $context->setSpeakerId($code, $id);
-                    $result->addCreated('speaker', $speakerFields, $id);
+                    $result->addCreated('contributor', $speakerFields, $id);
                 }
             }
         }
@@ -140,13 +140,13 @@ final class IngestMaterializer
     private function materializeSpeaker(array $parsedFields, MaterializationResult $result, bool $dryRun): MaterializationResult
     {
         if ($dryRun) {
-            $result->addCreated('speaker', $parsedFields);
+            $result->addCreated('contributor', $parsedFields);
             return $result;
         }
 
         $code = (string) ($parsedFields['code'] ?? '');
         $id = $this->getOrCreateSpeaker($code, $parsedFields);
-        $result->addCreated('speaker', $parsedFields, $id);
+        $result->addCreated('contributor', $parsedFields, $id);
         $result->setPrimaryEntityId($id);
 
         return $result;
@@ -170,7 +170,7 @@ final class IngestMaterializer
 
     private function getOrCreateSpeaker(string $code, array $fields): int
     {
-        $storage = $this->entityTypeManager->getStorage('speaker');
+        $storage = $this->entityTypeManager->getStorage('contributor');
 
         try {
             $ids = $storage->getQuery()->condition('code', $code)->execute();

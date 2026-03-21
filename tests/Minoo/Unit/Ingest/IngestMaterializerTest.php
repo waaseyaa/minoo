@@ -43,7 +43,7 @@ final class IngestMaterializerTest extends TestCase
 
         $types = array_column($result->getCreated(), 'type');
         $this->assertContains('dictionary_entry', $types);
-        $this->assertContains('speaker', $types);
+        $this->assertContains('contributor', $types);
         $this->assertContains('example_sentence', $types);
         $this->assertContains('word_part', $types);
     }

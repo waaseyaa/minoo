@@ -10,14 +10,12 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'dialect_region'])]
-final class LanguageAccessPolicy implements AccessPolicyInterface
+#[PolicyAttribute(entityType: 'contributor')]
+final class ContributorAccessPolicy implements AccessPolicyInterface
 {
-    private const ENTITY_TYPES = ['dictionary_entry', 'example_sentence', 'word_part', 'dialect_region'];
-
     public function appliesTo(string $entityTypeId): bool
     {
-        return in_array($entityTypeId, self::ENTITY_TYPES, true);
+        return $entityTypeId === 'contributor';
     }
 
     public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult
@@ -27,10 +25,10 @@ final class LanguageAccessPolicy implements AccessPolicyInterface
         }
 
         return match ($operation) {
-            'view' => (int) $entity->get('status') === 1
-                ? AccessResult::allowed('Published content is publicly viewable.')
-                : AccessResult::neutral('Cannot view unpublished language content.'),
-            default => AccessResult::neutral('Non-admin cannot modify language content.'),
+            'view' => (int) $entity->get('status') === 1 && (int) $entity->get('consent_public') === 1
+                ? AccessResult::allowed('Published contributor with public consent is viewable.')
+                : AccessResult::neutral('Cannot view contributor without status and public consent.'),
+            default => AccessResult::neutral('Non-admin cannot modify contributors.'),
         };
     }
 
@@ -40,6 +38,6 @@ final class LanguageAccessPolicy implements AccessPolicyInterface
             return AccessResult::allowed('Admin permission.');
         }
 
-        return AccessResult::neutral('Non-admin cannot create language content.');
+        return AccessResult::neutral('Non-admin cannot create contributors.');
     }
 }

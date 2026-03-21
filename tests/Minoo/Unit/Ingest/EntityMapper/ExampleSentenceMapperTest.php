@@ -31,7 +31,7 @@ final class ExampleSentenceMapperTest extends TestCase
         $this->assertSame('Makwa agamiing dago.', $result->ojibweText);
         $this->assertSame('The bear is by the lake.', $result->englishText);
         $this->assertSame(42, $result->dictionaryEntryId);
-        $this->assertSame(7, $result->speakerId);
+        $this->assertSame(7, $result->contributorId);
         $this->assertSame('oj', $result->languageCode);
         $this->assertSame('https://example.com/audio.mp3', $result->audioUrl);
         $this->assertSame('makwa-es-001', $result->sourceSentenceId);
@@ -48,6 +48,6 @@ final class ExampleSentenceMapperTest extends TestCase
 
         $this->assertSame('Test.', $array['ojibwe_text']);
         $this->assertSame(1, $array['dictionary_entry_id']);
-        $this->assertNull($array['speaker_id']);
+        $this->assertNull($array['contributor_id']);
     }
 }

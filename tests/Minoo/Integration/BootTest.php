@@ -72,7 +72,7 @@ final class BootTest extends TestCase
             'cultural_group',
             'teaching', 'teaching_type',
             'cultural_collection',
-            'dictionary_entry', 'example_sentence', 'word_part', 'speaker',
+            'dictionary_entry', 'example_sentence', 'word_part', 'contributor',
             'dialect_region',
             'ingest_log',
             'resource_person',
