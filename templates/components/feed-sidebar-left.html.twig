@@ -1,0 +1,41 @@
+{# Left navigation sidebar for the social feed layout #}
+<aside class="feed-sidebar feed-sidebar--left">
+  <nav class="sidebar-nav" aria-label="{{ trans('feed.navigation') }}">
+    <ul class="sidebar-nav__list">
+      <li class="sidebar-nav__item sidebar-nav__item--events">
+        <a href="{{ lang_url('/events') }}">{{ trans('nav.events') }}</a>
+      </li>
+      <li class="sidebar-nav__item sidebar-nav__item--communities">
+        <a href="{{ lang_url('/communities') }}">{{ trans('nav.communities') }}</a>
+      </li>
+      <li class="sidebar-nav__item sidebar-nav__item--teachings">
+        <a href="{{ lang_url('/teachings') }}">{{ trans('nav.teachings') }}</a>
+      </li>
+      <li class="sidebar-nav__item sidebar-nav__item--people">
+        <a href="{{ lang_url('/people') }}">{{ trans('nav.people') }}</a>
+      </li>
+      <li class="sidebar-nav__item sidebar-nav__item--businesses">
+        <a href="{{ lang_url('/businesses') }}">{{ trans('nav.businesses') }}</a>
+      </li>
+      <li class="sidebar-nav__item sidebar-nav__item--volunteer">
+        <a href="{{ lang_url('/volunteer') }}">{{ trans('nav.volunteer') }}</a>
+      </li>
+      <li class="sidebar-nav__item sidebar-nav__item--elder-support">
+        <a href="{{ lang_url('/elder-support') }}">{{ trans('nav.elder_support') }}</a>
+      </li>
+    </ul>
+  </nav>
+
+  {% if followed_communities|default([])|length > 0 %}
+    <section class="sidebar-communities">
+      <h4 class="sidebar-communities__heading">{{ trans('feed.your_communities') }}</h4>
+      <ul class="sidebar-communities__list">
+        {% for community in followed_communities %}
+          <li class="sidebar-communities__item">
+            <a href="{{ lang_url('/communities/' ~ community.slug) }}">{{ community.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+</aside>
