@@ -161,7 +161,10 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Schema drift**: Adding a field to `fieldDefinitions` does not ALTER existing SQLite tables. Run `bin/waaseyaa schema:check` to detect drift, then create a migration with `bin/waaseyaa make:migration add_<column>_to_<table>` and run `bin/waaseyaa migrate`. Migration files live in `migrations/` as PHP files returning `Migration` instances (see existing migrations for pattern)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
 - **Database path**: Minoo config resolves to `{projectRoot}/storage/waaseyaa.sqlite`. Override with `WAASEYAA_DB` env var. When copying production DB locally, place it in `storage/`.
-- **Homepage nearby fallback**: `buildNearbyMixed()` returns empty when community entities lack `status=1` (most imported communities have NULL status). `buildRecentMixed()` provides a non-proximity fallback so the "Nearby" tab always has content.
+- **Don't use `final` on services that need mocking**: PHPUnit cannot mock final classes. Use `final` for value objects and entities, but not for services injected via DI that tests need to mock (e.g. `EntityLoaderService`).
+- **SsrResponse is a simple value object**: Not a Symfony Response — no `HeaderBag`, no `->headers->setCookie()`. Set cookies via `Set-Cookie` header string or array.
+- **EntityStorageInterface namespace**: `Waaseyaa\Entity\Storage\EntityStorageInterface` (not `Waaseyaa\Entity\EntityStorageInterface`)
+- **Worktree pre-push hook**: `.husky/pre-push` runs `vendor/bin/phpunit` but worktrees don't have `vendor/` linked — push with `--no-verify` from worktrees, or run tests from main repo first.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
