@@ -3250,7 +3250,7 @@
     gap: var(--space-md);
     max-inline-size: var(--width-content);
     margin-inline: auto;
-    padding-block-start: var(--space-md);
+    margin-block-start: calc(-1 * var(--space-sm));
   }
 
   .feed-main {
