@@ -165,6 +165,10 @@ return [
     'language.not_found' => 'Entry Not Found',
     'language.not_found_message' => 'We couldn\'t find this dictionary entry. It may have been removed or the link may be outdated.',
     'language.browse_all' => 'Browse all entries',
+    'language.entries_label' => 'entries',
+    'language.prev' => 'Previous',
+    'language.next' => 'Next',
+    'language.page' => 'Page',
 
     // Search
     'search.title' => 'Search',

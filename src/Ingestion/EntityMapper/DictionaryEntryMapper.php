@@ -24,19 +24,39 @@ final class DictionaryEntryMapper
     {
         $lemma = (string) ($data['lemma'] ?? '');
 
-        // NC API uses "definitions" (string); ingest pipeline uses "definition" (string|array).
+        // NC API uses "definitions" (JSON-encoded array string or plain string);
+        // ingest pipeline uses "definition" (string|array).
         $definition = $data['definitions'] ?? $data['definition'] ?? '';
+        if (is_string($definition) && str_starts_with($definition, '[')) {
+            $decoded = json_decode($definition, true);
+            if (is_array($decoded)) {
+                $definition = $decoded;
+            }
+        }
         if (is_array($definition)) {
             $definition = implode('; ', array_filter($definition, 'is_string'));
         }
 
-        // NC API uses "word_class_normalized"; ingest pipeline uses "part_of_speech".
-        $partOfSpeech = (string) ($data['word_class_normalized'] ?? $data['part_of_speech'] ?? '');
+        // NC API uses "word_class_normalized" or "word_class"; ingest pipeline uses "part_of_speech".
+        $partOfSpeech = (string) ($data['word_class_normalized'] ?? $data['word_class'] ?? $data['part_of_speech'] ?? '');
 
-        // NC API uses "inflections" (JSON string); ingest pipeline uses "inflected_forms" (array).
+        // NC API uses "inflections" (JSON-encoded string or plain string);
+        // ingest pipeline uses "inflected_forms" (array).
         $inflectedForms = '';
         if (isset($data['inflections'])) {
-            $inflectedForms = is_string($data['inflections']) ? $data['inflections'] : json_encode($data['inflections']);
+            $raw = $data['inflections'];
+            if (is_string($raw)) {
+                $decoded = json_decode($raw, true);
+                if ($decoded === null) {
+                    // Plain text inflections (e.g. "makwag pl; makoons dim").
+                    $inflectedForms = $raw;
+                } elseif (is_array($decoded) && $decoded !== []) {
+                    $inflectedForms = json_encode($decoded);
+                }
+                // else: "{}" or "[]" → remains empty string.
+            } else {
+                $inflectedForms = json_encode($raw);
+            }
         } elseif (isset($data['inflected_forms'])) {
             $inflectedForms = json_encode($data['inflected_forms']);
         }

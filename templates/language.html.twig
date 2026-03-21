@@ -17,6 +17,10 @@
       <p class="listing-hero__subtitle">{{ trans('language.subtitle') }}</p>
 
       {% if entries is defined and entries|length > 0 %}
+        {% if total_entries is defined %}
+          <p class="listing-hero__count">{{ total_entries }} {{ trans('language.entries_label') }}</p>
+        {% endif %}
+
         <div class="card-grid">
           {% for e in entries %}
             {% include "components/dictionary-entry-card.html.twig" with {
@@ -31,6 +35,18 @@
             } %}
           {% endfor %}
         </div>
+
+        {% if total_pages is defined and total_pages > 1 %}
+          <nav class="pagination" aria-label="Dictionary pages">
+            {% if current_page > 1 %}
+              <a href="{{ lang_url('/language') }}?page={{ current_page - 1 }}" class="pagination__link">← {{ trans('language.prev') }}</a>
+            {% endif %}
+            <span class="pagination__info">{{ trans('language.page') }} {{ current_page }} / {{ total_pages }}</span>
+            {% if current_page < total_pages %}
+              <a href="{{ lang_url('/language') }}?page={{ current_page + 1 }}" class="pagination__link">{{ trans('language.next') }} →</a>
+            {% endif %}
+          </nav>
+        {% endif %}
       {% else %}
         {% include "components/empty-state.html.twig" with {
           heading: trans('language.empty_heading'),
