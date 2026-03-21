@@ -31,6 +31,7 @@ final class OralHistoryController
         $storyStorage = $this->entityTypeManager->getStorage('oral_history');
         $storyIds = $storyStorage->getQuery()
             ->condition('status', 1)
+            ->condition('consent_public', 1)
             ->sort('created_at', 'DESC')
             ->execute();
         $stories = $storyIds !== [] ? array_values($storyStorage->loadMultiple($storyIds)) : [];
@@ -64,6 +65,7 @@ final class OralHistoryController
             $storyIds = $storyStorage->getQuery()
                 ->condition('collection_id', $collection->id())
                 ->condition('status', 1)
+                ->condition('consent_public', 1)
                 ->sort('story_order', 'ASC')
                 ->execute();
             $stories = $storyIds !== [] ? array_values($storyStorage->loadMultiple($storyIds)) : [];
@@ -97,6 +99,7 @@ final class OralHistoryController
         $storyIds = $storyStorage->getQuery()
             ->condition('slug', $slug)
             ->condition('status', 1)
+            ->condition('consent_public', 1)
             ->execute();
         $story = $storyIds !== [] ? $storyStorage->load(reset($storyIds)) : null;
 
@@ -121,6 +124,7 @@ final class OralHistoryController
                     $siblingIds = $storyStorage->getQuery()
                         ->condition('collection_id', $collectionId)
                         ->condition('status', 1)
+                        ->condition('consent_public', 1)
                         ->sort('story_order', 'ASC')
                         ->execute();
                     $siblings = $siblingIds !== [] ? array_values($storyStorage->loadMultiple($siblingIds)) : [];
