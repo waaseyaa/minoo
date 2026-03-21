@@ -3667,6 +3667,17 @@
     gap: 2px;
   }
 
+  .feed-card__detail {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  .feed-card__detail-icon {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
   .feed-card__detail-row {
     display: flex;
     align-items: center;
