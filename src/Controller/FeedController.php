@@ -220,7 +220,7 @@ final class FeedController
             foreach ($events as $event) {
                 $result[] = [
                     'title' => $event->label(),
-                    'date' => (string) ($event->get('starts_at') ?? ''),
+                    'date' => $this->formatEventDate($event->get('starts_at')),
                     'url' => '/events/' . ($event->get('slug') ?? $event->id()),
                 ];
             }
@@ -228,6 +228,22 @@ final class FeedController
             return $result;
         } catch (\Throwable) {
             return [];
+        }
+    }
+
+    private function formatEventDate(mixed $startsAt): string
+    {
+        if ($startsAt === null || $startsAt === '') {
+            return '';
+        }
+
+        try {
+            $dt = $startsAt instanceof \DateTimeImmutable
+                ? $startsAt
+                : new \DateTimeImmutable((string) $startsAt);
+            return $dt->format('M j, Y \a\t g:i A');
+        } catch (\Throwable) {
+            return (string) $startsAt;
         }
     }
 

@@ -116,9 +116,10 @@ final class FeedItemFactory
             sortKey: $this->buildSortKey(0, $distance, $typeSlot, $createdAt, $id),
             entity: $entity,
             subtitle: $startsAt ? (new \DateTimeImmutable($startsAt))->format('F j, Y \a\t g:i A') : null,
-            date: $startsAt,
+            date: $startsAt ? (new \DateTimeImmutable($startsAt))->format('M j, Y \a\t g:i A') : null,
             distance: $distance,
             meta: $entity->get('location'),
+            communityName: $this->resolveCommunityName($communityId),
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),
@@ -142,6 +143,7 @@ final class FeedItemFactory
             entity: $entity,
             distance: $distance,
             meta: $this->truncate($entity->get('description')),
+            communityName: $this->resolveCommunityName($communityId),
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),
@@ -165,6 +167,7 @@ final class FeedItemFactory
             entity: $entity,
             distance: $distance,
             meta: $this->truncate($entity->get('description')),
+            communityName: $this->resolveCommunityName($communityId),
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),
@@ -245,7 +248,7 @@ final class FeedItemFactory
     public function formatRelativeTime(\DateTimeImmutable $createdAt): string
     {
         if (class_exists(RelativeTime::class)) {
-            return RelativeTime::format($createdAt);
+            return RelativeTime::format($createdAt->getTimestamp());
         }
 
         $diff = (new \DateTimeImmutable())->getTimestamp() - $createdAt->getTimestamp();
@@ -269,6 +272,18 @@ final class FeedItemFactory
         }
 
         return $this->communityCache[(int) $communityId]['slug'] ?? null;
+    }
+
+    /**
+     * Resolve community name from community ID using the cached map.
+     */
+    public function resolveCommunityName(mixed $communityId): ?string
+    {
+        if ($communityId === null) {
+            return null;
+        }
+
+        return $this->communityCache[(int) $communityId]['name'] ?? null;
     }
 
     /**
