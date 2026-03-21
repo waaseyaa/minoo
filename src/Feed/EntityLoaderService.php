@@ -122,6 +122,24 @@ class EntityLoaderService
         return $items;
     }
 
+    public function loadPosts(int $limit): array
+    {
+        try {
+            $storage = $this->entityTypeManager->getStorage('post');
+        } catch (\Throwable) {
+            // Post entity type may not exist yet
+            return [];
+        }
+
+        $ids = $storage->getQuery()
+            ->condition('status', 1)
+            ->sort('created_at', 'DESC')
+            ->range(0, $limit)
+            ->execute();
+
+        return $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+    }
+
     public function loadAllCommunities(): array
     {
         $storage = $this->entityTypeManager->getStorage('community');

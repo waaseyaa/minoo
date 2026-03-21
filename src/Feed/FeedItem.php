@@ -27,6 +27,12 @@ final readonly class FeedItem
         public ?string $communityName = null,
         public ?string $meta = null,
         public array $payload = [],
+        public int $reactionCount = 0,
+        public int $commentCount = 0,
+        public ?string $userReaction = null,
+        public ?string $relativeTime = null,
+        public ?string $communitySlug = null,
+        public ?string $communityInitial = null,
     ) {}
 
     public function isSynthetic(): bool
@@ -66,6 +72,24 @@ final readonly class FeedItem
         }
         if ($this->payload !== []) {
             $data['payload'] = $this->payload;
+        }
+        if ($this->reactionCount > 0) {
+            $data['reactionCount'] = $this->reactionCount;
+        }
+        if ($this->commentCount > 0) {
+            $data['commentCount'] = $this->commentCount;
+        }
+        if ($this->userReaction !== null) {
+            $data['userReaction'] = $this->userReaction;
+        }
+        if ($this->relativeTime !== null) {
+            $data['relativeTime'] = $this->relativeTime;
+        }
+        if ($this->communitySlug !== null) {
+            $data['communitySlug'] = $this->communitySlug;
+        }
+        if ($this->communityInitial !== null) {
+            $data['communityInitial'] = $this->communityInitial;
         }
 
         return $data;
