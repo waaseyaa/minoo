@@ -8,13 +8,13 @@
       <strong>Cultural note:</strong> {{ entity.protocol_notes }}
     </aside>
   {% elseif entity.protocol_level == 'living_record' %}
-    <div class="protocol-notice protocol-notice--living-record">
+    <aside class="protocol-notice protocol-notice--living-record" aria-label="Cultural protocol notice">
       <div class="protocol-notice__icon">🪶</div>
       <div class="protocol-notice__title">This story lives in oral tradition</div>
       <p class="protocol-notice__body">
         This teaching is shared person-to-person, as it has been for generations.
         It is acknowledged here but not recorded digitally, out of respect for the tradition.
       </p>
-    </div>
+    </aside>
   {% endif %}
 {% endif %}

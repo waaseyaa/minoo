@@ -168,14 +168,7 @@
         <h1 class="detail-hero__title">{{ story.get('title') }}</h1>
       </div>
 
-      <div class="protocol-notice protocol-notice--living-record">
-        <div class="protocol-notice__icon">🪶</div>
-        <div class="protocol-notice__title">This story lives in oral tradition</div>
-        <p class="protocol-notice__body">
-          This teaching is shared person-to-person, as it has been for generations.
-          It is acknowledged here but not recorded digitally, out of respect for the tradition.
-        </p>
-      </div>
+      {% include "components/protocol-notice.html.twig" with { entity: story } %}
 
       {% if story.get('summary') %}
         <div class="content-well">
@@ -244,7 +237,7 @@
           {% if story.get('media_type') == 'self_hosted' and story.get('media_path') %}
             {% if story.get('media_format') == 'audio' %}
               <audio controls preload="metadata">
-                <source src="/{{ story.get('media_path') }}" type="audio/mpeg">
+                <source src="/{{ story.get('media_path') }}">
               </audio>
             {% elseif story.get('media_format') == 'video' %}
               <video controls preload="metadata">
@@ -252,7 +245,7 @@
               </video>
             {% endif %}
           {% elseif story.get('media_type') == 'external' and story.get('media_url') %}
-            <iframe src="{{ story.get('media_url') }}" allowfullscreen></iframe>
+            <iframe src="{{ story.get('media_url') }}" title="{{ story.get('title') }}" allowfullscreen></iframe>
           {% endif %}
         </div>
       {% endif %}
