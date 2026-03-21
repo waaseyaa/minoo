@@ -1,0 +1,28 @@
+<article class="card card--collection">
+  <a href="/oral-histories/collections/{{ slug }}" class="card__link">
+    <h3 class="card__title">{{ title }}</h3>
+
+    {% if description is defined and description %}
+      <p class="card__excerpt">{{ description|length > 120 ? description|slice(0, 120) ~ '…' : description }}</p>
+    {% endif %}
+
+    <div class="card__tags">
+      {% if season is defined and season and season != 'all' %}
+        <span class="card__tag card__tag--season">
+          {% if season == 'winter' %}❄️{% elseif season == 'spring' %}🌱{% elseif season == 'summer' %}☀️{% elseif season == 'fall' %}🍂{% endif %}
+          {{ season|capitalize }}
+        </span>
+      {% endif %}
+      {% if protocol_level is defined and protocol_level == 'guidance' %}
+        <span class="card__tag card__tag--protocol">Guidance</span>
+      {% endif %}
+      <span>{{ story_count|default(0) }} stories</span>
+    </div>
+
+    {% if curator_name is defined and curator_name %}
+      <p class="card__meta">Curated by {{ curator_name }}</p>
+    {% endif %}
+
+    <span class="card__action">View collection →</span>
+  </a>
+</article>
