@@ -306,6 +306,13 @@
 
   .site-nav > li {
     display: flex;
+    align-items: stretch;
+    margin: 0;
+  }
+
+  .site-nav a,
+  .site-nav button {
+    display: flex;
     align-items: center;
   }
 
@@ -363,7 +370,7 @@
   }
 
   .site-nav__dropdown-toggle {
-    padding: var(--space-3xs) var(--space-2xs);
+    padding: var(--space-2xs) var(--space-3xs);
     border-radius: var(--radius-sm);
     text-decoration: none;
     font-size: var(--text-sm);
