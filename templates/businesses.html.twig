@@ -10,6 +10,13 @@
   {%- endif -%}
 {% endblock %}
 
+{% block head %}
+  {% if path starts with '/businesses/' and business is defined and business.get('latitude') and business.get('longitude') %}
+    <link rel="stylesheet" href="/css/leaflet.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/css/leaflet.css"></noscript>
+  {% endif %}
+{% endblock %}
+
 {% block og_type %}{% if path starts with '/businesses/' and business is defined %}article{% else %}website{% endif %}{% endblock %}
 {% block og_description %}{% if path starts with '/businesses/' and business is defined %}{{ business.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
 
@@ -126,6 +133,16 @@
       {% if business.get('address') is not empty or business.get('city') is not empty %}
         <section class="business-location">
           <h2>{{ trans('businesses.location') }}</h2>
+          {% if business.get('latitude') and business.get('longitude') %}
+            <div id="business-detail-map"
+                 class="business-detail-map"
+                 data-lat="{{ business.get('latitude') }}"
+                 data-lng="{{ business.get('longitude') }}"
+                 data-name="{{ business.get('name') }}"
+                 data-address="{{ business.get('address') ?? '' }}"
+                 data-precision="{{ business.get('coordinate_source') ?? 'community' }}">
+            </div>
+          {% endif %}
           <address class="business-address">
             {% if business.get('address') is not empty %}
               <p>{{ business.get('address') }}</p>
@@ -158,6 +175,11 @@
             {{ community.get('name') }}
           </a>
         </section>
+      {% endif %}
+
+      {% if business.get('latitude') and business.get('longitude') %}
+        <script src="/js/leaflet.js"></script>
+        <script src="/js/business-map.js"></script>
       {% endif %}
     </div>
 
