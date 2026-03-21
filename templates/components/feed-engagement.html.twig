@@ -1,0 +1,30 @@
+{# Engagement row — included in each feed card for reactions, comments, sharing #}
+<div class="feed-card__engagement">
+  {% if (item.reactionCount is defined and item.reactionCount > 0) or (item.commentCount is defined and item.commentCount > 0) %}
+    <p class="feed-card__counts">
+      {% if item.reactionCount is defined and item.reactionCount > 0 %}
+        <span class="feed-card__count feed-card__count--reactions">{{ item.reactionCount }} {{ trans('feed.interested') }}</span>
+      {% endif %}
+      {% if (item.reactionCount is defined and item.reactionCount > 0) and (item.commentCount is defined and item.commentCount > 0) %}
+        <span class="feed-card__count-separator">&middot;</span>
+      {% endif %}
+      {% if item.commentCount is defined and item.commentCount > 0 %}
+        <span class="feed-card__count feed-card__count--comments">{{ item.commentCount }} {{ trans('feed.comments') }}</span>
+      {% endif %}
+    </p>
+  {% endif %}
+
+  <div class="feed-card__actions">
+    <button type="button" class="feed-card__action feed-card__action--react" data-action="react" data-type="{{ item.type }}" data-id="{{ item.id }}">
+      {{ trans('feed.action_' ~ item.type) }}
+    </button>
+    <button type="button" class="feed-card__action feed-card__action--comment" data-action="comment" data-type="{{ item.type }}" data-id="{{ item.id }}">
+      {{ trans('feed.comment') }}
+    </button>
+    <button type="button" class="feed-card__action feed-card__action--share" data-action="share" data-url="{{ lang_url(item.url) }}" data-title="{{ item.title }}">
+      {{ trans('feed.share') }}
+    </button>
+  </div>
+
+  <div class="feed-card__comments" data-type="{{ item.type }}" data-id="{{ item.id }}" hidden></div>
+</div>
