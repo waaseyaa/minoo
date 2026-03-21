@@ -80,13 +80,14 @@ final class BusinessController
             }
         }
 
-        // Load linked owner (ResourcePerson)
+        // Load linked owner (ResourcePerson) — only if consented
         $owner = null;
         if ($business !== null) {
             $personStorage = $this->entityTypeManager->getStorage('resource_person');
             $ownerIds = $personStorage->getQuery()
                 ->condition('linked_group_id', $business->id())
                 ->condition('status', 1)
+                ->condition('consent_public', 1)
                 ->execute();
             $owner = $ownerIds !== [] ? $personStorage->load(reset($ownerIds)) : null;
         }
