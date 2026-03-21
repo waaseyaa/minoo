@@ -3357,9 +3357,8 @@
 
   .sidebar-widget__item {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-2xs);
+    flex-direction: column;
+    gap: 2px;
     padding: var(--space-2xs) 0;
     color: var(--text-secondary);
     text-decoration: none;
@@ -3379,13 +3378,18 @@
 
   .sidebar-widget__item strong {
     color: var(--text-primary);
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.8125rem;
+  }
+
+  .sidebar-widget__item .feed-badge {
+    align-self: flex-start;
+    margin-block-end: 2px;
   }
 
   .sidebar-widget__meta {
     font-size: 0.75rem;
     color: var(--text-muted);
-    flex-shrink: 0;
   }
 
   .sidebar-widget__link {
