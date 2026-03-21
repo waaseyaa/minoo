@@ -3501,7 +3501,7 @@
     border-radius: var(--radius-md);
     border: 1px solid var(--border-subtle);
     border-block-start: 3px solid var(--card-accent, var(--border-subtle));
-    overflow: hidden;
+    padding: var(--space-sm);
   }
 
   .feed-card--event { --card-accent: var(--color-events); }
@@ -3515,7 +3515,7 @@
   .feed-card--language { --card-accent: var(--color-language); }
 
   .feed-card__body {
-    padding: var(--space-sm);
+    line-height: var(--leading-normal);
   }
 
   /* Attribution row */
@@ -3636,11 +3636,13 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     border-block-start: 1px solid var(--border-subtle);
+    margin-block-start: var(--space-xs);
     margin-inline: calc(-1 * var(--space-sm));
     margin-block-end: calc(-1 * var(--space-sm));
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
   }
 
-  .feed-action {
+  .feed-card__action {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3656,25 +3658,25 @@
                 color var(--duration-fast) var(--ease-out);
   }
 
-  .feed-action:hover {
+  .feed-card__action:hover {
     background-color: var(--surface-raised);
     color: var(--text-primary);
   }
 
-  .feed-action--active {
+  .feed-card__action.is-active {
     color: var(--card-accent, var(--color-events));
     font-weight: 600;
   }
 
-  .feed-action--active:hover {
+  .feed-card__action.is-active:hover {
     color: var(--card-accent, var(--color-events));
   }
 
-  .feed-action + .feed-action {
+  .feed-card__action + .feed-card__action {
     border-inline-start: 1px solid var(--border-subtle);
   }
 
-  .feed-action__icon {
+  .feed-card__action__icon {
     font-size: 1rem;
   }
 
