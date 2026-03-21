@@ -13,12 +13,12 @@ use Waaseyaa\SSR\SsrResponse;
 
 final class LanguageController
 {
+    private const int PAGE_SIZE = 50;
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
     ) {}
-
-    private const int PAGE_SIZE = 50;
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
