@@ -52,6 +52,8 @@ Rename `speaker` → `contributor`. This is the riskiest change and executes fir
 | `consent_record` | boolean | New — default 0. Consent to digital recording |
 | `status` | integer | Unchanged — default 1 |
 
+**Entity keys:** `['id' => 'coid', 'uuid' => 'uuid', 'label' => 'name']`
+
 ### Migration Steps
 
 1. `ALTER TABLE speakers RENAME TO contributors`
@@ -79,9 +81,11 @@ Bundle entity for `oral_history`. Same pattern as `teaching_type`.
 
 | Field | Type | Notes |
 |---|---|---|
-| `type` | key | Entity key — matches convention (`'id' => 'type'`, `'label' => 'name'`) |
+| `type` | key | Entity key |
 | `name` | string | Type label |
 | `description` | text | Optional description |
+
+**Entity keys:** `['id' => 'type', 'label' => 'name']`
 
 **Seed values:** Creation Story, Historical Account, Personal Narrative, Land Teaching, Family Story.
 
@@ -105,6 +109,8 @@ Standard content entity fields (`uuid`, `created_at`, `updated_at`) are inherite
 | `community_id` | integer | Optional FK |
 | `cultural_group_id` | integer | Optional FK |
 | `status` | integer | Default 1 |
+
+**Entity keys:** `['id' => 'ohcid', 'uuid' => 'uuid', 'label' => 'title']`
 
 ### `oral_history` (extends `ContentEntityBase`)
 
@@ -139,9 +145,13 @@ Standard content entity fields (`uuid`, `created_at`, `updated_at`) are inherite
 | `tags` | string | Comma-separated, for filtering |
 | `status` | integer | Default 1 |
 
+**Entity keys:** `['id' => 'ohid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type']`
+
 ### Table Names
 
 Following Minoo's pluralized convention: `oral_histories`, `oral_history_collections`, `oral_history_types`, `contributors`.
+
+**Slug uniqueness:** `slug` fields on `contributor`, `oral_history`, and `oral_history_collection` carry a unique constraint per entity type.
 
 ### Relationships
 
@@ -193,7 +203,8 @@ Routes registered in `register()` — see Section 4 for details.
 
 New provider, replacing `speaker` registration in `LanguageServiceProvider`:
 - Registers `contributor` entity type (content)
-- Routes: `/contributors/{slug}` — GET, allowAll, render (stub profile page for v1)
+- Routes: `/contributors/{slug}` — GET, allowAll, render
+- Template: `templates/contributors.html.twig` (stub profile page for v1 — name, bio, community, role)
 
 **Note:** Contributor profile pages are minimal in v1 — name, bio, community, role. Full profiles are v2.
 
