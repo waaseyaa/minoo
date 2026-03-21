@@ -65,6 +65,24 @@ final class ConfigSeederTest extends TestCase
     }
 
     #[Test]
+    public function it_provides_oral_history_types(): void
+    {
+        $types = ConfigSeeder::oralHistoryTypes();
+
+        $this->assertCount(5, $types);
+        $this->assertSame('creation_story', $types[0]['type']);
+        $this->assertSame('Creation Story', $types[0]['name']);
+        $this->assertSame('family_story', $types[4]['type']);
+
+        // All entries must have required keys
+        foreach ($types as $type) {
+            $this->assertArrayHasKey('type', $type);
+            $this->assertArrayHasKey('name', $type);
+            $this->assertArrayHasKey('description', $type);
+        }
+    }
+
+    #[Test]
     public function it_provides_dialect_regions(): void
     {
         $regions = ConfigSeeder::dialectRegions();

@@ -35,6 +35,7 @@
             <li><a href="{{ lang_url('/people') }}"{% if path is defined and path starts with '/people' %} aria-current="page"{% endif %}>{{ trans('nav.people') }}</a></li>
             <li><a href="{{ lang_url('/teachings') }}"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>{{ trans('nav.teachings') }}</a></li>
             <li><a href="{{ lang_url('/events') }}"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>{{ trans('nav.events') }}</a></li>
+            <li><a href="{{ lang_url('/oral-histories') }}"{% if path is defined and path starts with '/oral-histories' %} aria-current="page"{% endif %}>{{ trans('nav.oral_histories') }}</a></li>
             <li class="site-nav__dropdown">
               <button class="site-nav__dropdown-toggle" aria-expanded="false"{% if path is defined and (path starts with '/elders' or path starts with '/volunteer') %} aria-current="true"{% endif %}>{{ trans('nav.programs') }}</button>
               <ul class="site-nav__dropdown-menu">
