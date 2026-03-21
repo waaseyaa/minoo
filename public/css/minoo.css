@@ -571,19 +571,22 @@
     font-size: var(--text-sm);
   }
 
-  /* Editorial ribbon divider */
+  /* Editorial ribbon divider — thin multi-colored stripe */
   .ribbon {
-    margin-block: var(--space-lg);
-    display: flex;
-    justify-content: center;
-  }
-  .ribbon::after {
-    content: '';
-    display: block;
-    inline-size: 60%;
-    max-inline-size: 40rem;
-    block-size: 1px;
-    background: linear-gradient(to right, transparent, var(--border-subtle), transparent);
+    block-size: 3px;
+    background: linear-gradient(
+      to right,
+      var(--color-events) 0%,
+      var(--color-events) 20%,
+      var(--color-teachings) 20%,
+      var(--color-teachings) 40%,
+      var(--color-language) 40%,
+      var(--color-language) 60%,
+      var(--color-communities) 60%,
+      var(--color-communities) 80%,
+      var(--color-people) 80%,
+      var(--color-people) 100%
+    );
   }
 
   /* Mobile nav toggle — hidden above bp-md */
