@@ -50,16 +50,6 @@ final class CommunityServiceProvider extends ServiceProvider
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
     {
         $router->addRoute(
-            'home',
-            RouteBuilder::create('/')
-                ->controller('Minoo\\Controller\\HomeController::index')
-                ->allowAll()
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
             'communities.list',
             RouteBuilder::create('/communities')
                 ->controller('Minoo\\Controller\\CommunityController::list')
@@ -116,13 +106,5 @@ final class CommunityServiceProvider extends ServiceProvider
                 ->build(),
         );
 
-        $router->addRoute(
-            'explore.redirect',
-            RouteBuilder::create('/explore')
-                ->controller('Minoo\\Controller\\HomeController::explore')
-                ->allowAll()
-                ->methods('GET')
-                ->build(),
-        );
     }
 }
