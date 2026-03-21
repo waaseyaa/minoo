@@ -163,4 +163,88 @@ final class DictionaryEntryMapperTest extends TestCase
 
         $this->assertSame('https://from-entry.com', $result->sourceUrl);
     }
+
+    #[Test]
+    public function it_decodes_json_encoded_definitions(): void
+    {
+        $data = [
+            'lemma' => "'a",
+            'definitions' => '["that (animate singular)"]',
+            'consent_public_display' => true,
+        ];
+
+        $result = $this->mapper->map($data, '');
+
+        $this->assertSame('that (animate singular)', $result->definition);
+    }
+
+    #[Test]
+    public function it_joins_multiple_json_encoded_definitions(): void
+    {
+        $data = [
+            'lemma' => 'makwa',
+            'definitions' => '["bear", "a bear"]',
+            'consent_public_display' => true,
+        ];
+
+        $result = $this->mapper->map($data, '');
+
+        $this->assertSame('bear; a bear', $result->definition);
+    }
+
+    #[Test]
+    public function it_falls_back_to_word_class(): void
+    {
+        $data = [
+            'lemma' => "'a",
+            'definitions' => '["that"]',
+            'word_class' => 'pron dem',
+            'consent_public_display' => true,
+        ];
+
+        $result = $this->mapper->map($data, '');
+
+        $this->assertSame('pron dem', $result->partOfSpeech);
+    }
+
+    #[Test]
+    public function it_treats_empty_json_inflections_as_empty(): void
+    {
+        $data = [
+            'lemma' => "'a",
+            'definitions' => '["that"]',
+            'inflections' => '{}',
+            'consent_public_display' => true,
+        ];
+
+        $result = $this->mapper->map($data, '');
+
+        $this->assertSame('', $result->inflectedForms);
+    }
+
+    #[Test]
+    public function it_maps_real_nc_api_entry(): void
+    {
+        $data = [
+            'id' => '05c79d28-2aa4-4211-91a8-63fd9b4612bc',
+            'lemma' => "'a",
+            'word_class' => 'pron dem',
+            'definitions' => '["that (animate singular)"]',
+            'inflections' => '{}',
+            'examples' => '["animate singular demonstrative"]',
+            'source_url' => 'https://ojibwe.lib.umn.edu/main-entry/a-pron-dem',
+            'attribution' => "Ojibwe People's Dictionary, University of Minnesota",
+            'consent_public_display' => true,
+        ];
+
+        $result = $this->mapper->map($data, '');
+
+        $this->assertSame("'a", $result->word);
+        $this->assertSame('that (animate singular)', $result->definition);
+        $this->assertSame('pron dem', $result->partOfSpeech);
+        $this->assertSame('', $result->inflectedForms);
+        $this->assertSame(1, $result->status);
+        $this->assertSame(1, $result->consentPublic);
+        $this->assertSame("Ojibwe People's Dictionary, University of Minnesota", $result->attributionSource);
+    }
 }

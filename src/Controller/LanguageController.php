@@ -18,21 +18,34 @@ final class LanguageController
         private readonly Environment $twig,
     ) {}
 
+    private const int PAGE_SIZE = 50;
+
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
     public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
+        $page = max(1, (int) ($query['page'] ?? 1));
+        $offset = ($page - 1) * self::PAGE_SIZE;
+
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $storage->getQuery()
+
+        $allIds = $storage->getQuery()
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->sort('word', 'ASC')
             ->execute();
-        $entries = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+
+        $total = count($allIds);
+        $pageIds = array_slice($allIds, $offset, self::PAGE_SIZE);
+        $entries = $pageIds !== [] ? array_values($storage->loadMultiple($pageIds)) : [];
+        $totalPages = (int) ceil($total / self::PAGE_SIZE);
 
         $html = $this->twig->render('language.html.twig', [
             'path' => '/language',
             'entries' => $entries,
+            'current_page' => $page,
+            'total_pages' => $totalPages,
+            'total_entries' => $total,
         ]);
 
         return new SsrResponse(content: $html);

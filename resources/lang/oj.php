@@ -217,6 +217,10 @@ return [
     'language.not_found' => 'Ikidowin gaawiin mikanziin', // "Word not found"
     'language.not_found_message' => 'Ikidowin gaa-nandawaabandaman gaawiin ayaasinoon.', // "The word you're looking for doesn't exist."
     'language.browse_all' => 'Kakina ikidowinan', // "All words"
+    'language.entries_label' => 'ikidowinan', // "words"
+    'language.prev' => 'Ishkweyaang', // "Back/Previous"
+    'language.next' => 'Niigaan', // "Forward/Next"
+    'language.page' => 'Ozhibii\'iganaak', // "Page"
 
     // Search
     'search.title' => 'Andone\'igen', // dict: andone': "search for, seek"
