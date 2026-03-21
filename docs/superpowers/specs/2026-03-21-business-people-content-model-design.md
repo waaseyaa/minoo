@@ -37,6 +37,7 @@ Add two nullable float fields to `GroupServiceProvider`:
 |-------|------|-------|-------------|
 | `latitude` | float, nullable | Latitude | Geocoded from address, or community fallback |
 | `longitude` | float, nullable | Longitude | Geocoded from address, or community fallback |
+| `coordinate_source` | string, nullable | Coordinate Source | How coordinates were obtained: `address` (geocoded) or `community` (fallback). Used to set map zoom level. |
 
 **Migration:** `bin/waaseyaa make:migration add_coordinates_to_group`
 
@@ -90,10 +91,11 @@ GeocodingService
 
 - Calls Nominatim API: `https://nominatim.openstreetmap.org/search`
 - Query params: `q={address}&format=json&limit=1`
-- User-Agent header: `Minoo/1.0 (https://minoo.live)`
+- User-Agent header: `Minoo/1.0 (https://minoo.live; russell@minoo.live)` — Nominatim policy requires app name + contact method
 - Returns `['lat' => float, 'lng' => float]` or `null` on failure
 - Respects 1 request/second rate limit (Nominatim usage policy)
 - No API key required
+- **Error handling:** Returns null on HTTP 4xx/5xx, timeout (10s), empty result array, or malformed JSON. Logs failures at warning level. Retries once on 429/503 with 2-second backoff before returning null.
 
 ### `bin/geocode-businesses`
 
@@ -111,7 +113,7 @@ Idempotent — safe to run multiple times.
 
 ### Integration with `bin/seed-content`
 
-After upserting businesses, geocode any entry that has an address but no lat/lng. Uses the same `GeocodingService`. Skips geocoding in dry-run mode.
+After upserting businesses, geocode any entry that has an address but no lat/lng. Uses the same `GeocodingService`. Skips geocoding in dry-run mode. Both `bin/seed-content` and `bin/geocode-businesses` check for existing lat/lng before geocoding, so running both in sequence is safe — no double-geocoding. `bin/geocode-businesses` is the canonical backfill tool; `bin/seed-content` geocodes opportunistically for newly created entries only.
 
 ## 4. Map on Business Detail Page
 
@@ -127,7 +129,7 @@ Add map container in the Location section, above the address text:
        data-lng="{{ business.longitude }}"
        data-name="{{ business.name }}"
        data-address="{{ business.address ?? '' }}"
-       data-precision="{{ business.latitude != community.latitude ? 'address' : 'community' }}">
+       data-precision="{{ business.coordinate_source ?? 'community' }}">
   </div>
 {% endif %}
 ```
@@ -189,21 +191,36 @@ Leaflet JS/CSS already loaded in `base.html.twig`. Add `business-map.js` via a `
 
 Businesses are public entities — always visible regardless of owner consent status. The **owner card** on the business detail page only renders when the linked person has `consent_public: true`.
 
+### Controller change
+
+`BusinessController` (or the Group controller rendering businesses) filters consent at the query level — a non-consented person is never loaded or passed to the template. This ensures private person data (name, bio, slug) never enters the rendered HTML context.
+
+```php
+// Load linked owner — only if consented
+$owner = null;
+if ($business->get('linked_person_id')) {
+    $ownerIds = $personStorage->getQuery()
+        ->condition('rpid', $business->get('linked_person_id'))
+        ->condition('consent_public', 1)
+        ->execute();
+    if ($ownerIds !== []) {
+        $owner = $personStorage->load(reset($ownerIds));
+    }
+}
+```
+
 ### Template change (`businesses.html.twig`)
 
+The template receives `owner` (or null). No consent check needed in Twig — the controller guarantees only consented people are passed.
+
 ```twig
-{# Owner section — only show consented people #}
-{% if owner and owner.consent_public %}
+{% if owner %}
   <section class="business-owner">
     <h2>{{ t('businesses.owner') }}</h2>
     {% include 'components/person-card.html.twig' with { person: owner } %}
   </section>
 {% endif %}
 ```
-
-### Controller change
-
-`BusinessController` (or the Group controller rendering businesses) passes the linked person entity to the template. The template checks `consent_public` before rendering.
 
 ### Edge cases
 
@@ -218,8 +235,10 @@ For entries without hand-written narrative content, generate baseline descriptio
 ### Business default template
 
 ```
-{name} is a {type} in {community}.
+{name} is a {type_label} in {community}.
 ```
+
+Where `{type_label}` is resolved from the `group_type` config entity (e.g. `business` → `"Business"`, `offline` → `"Community Group"`).
 
 Applied only when `description` is empty or null. Never overwrites existing content.
 
