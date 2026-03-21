@@ -1,0 +1,35 @@
+<article class="card card--oral-history{% if is_living_record|default(false) %} card--living-record{% endif %}">
+  <a href="{{ url }}" class="card__link">
+    {% if is_living_record|default(false) %}
+      <span class="card__badge card__badge--living-record">Living Record</span>
+    {% elseif type is defined and type %}
+      <span class="card__badge">{{ type|capitalize }}</span>
+    {% endif %}
+
+    <h3 class="card__title">{{ title }}</h3>
+
+    {% if narrator_name is defined and narrator_name %}
+      <p class="card__meta">Told by {{ narrator_name }}</p>
+    {% endif %}
+
+    {% if community_name is defined and community_name %}
+      <p class="card__meta">{{ community_name }}</p>
+    {% endif %}
+
+    {% if is_living_record|default(false) %}
+      <p class="card__excerpt card__excerpt--living-record">This story lives in oral tradition</p>
+    {% else %}
+      {% if media_format is defined and media_duration is defined and media_duration %}
+        <p class="card__meta">
+          {% if media_format == 'audio' %}🎵{% else %}🎬{% endif %}
+          {{ (media_duration / 60)|round }} min
+          &middot; {{ media_format|capitalize }}
+        </p>
+      {% endif %}
+
+      {% if summary is defined and summary %}
+        <p class="card__excerpt">{{ summary|length > 120 ? summary|slice(0, 120) ~ '…' : summary }}</p>
+      {% endif %}
+    {% endif %}
+  </a>
+</article>

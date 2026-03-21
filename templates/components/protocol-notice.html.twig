@@ -1,0 +1,20 @@
+{# Protocol notice for oral histories and collections.
+   Input: entity with protocol_level and protocol_notes fields.
+   Renders nothing for protocol_level == 'open'. #}
+
+{% if entity.protocol_level is defined %}
+  {% if entity.protocol_level == 'guidance' and entity.protocol_notes is defined %}
+    <aside class="protocol-notice protocol-notice--guidance">
+      <strong>Cultural note:</strong> {{ entity.protocol_notes }}
+    </aside>
+  {% elseif entity.protocol_level == 'living_record' %}
+    <aside class="protocol-notice protocol-notice--living-record" aria-label="Cultural protocol notice">
+      <div class="protocol-notice__icon">🪶</div>
+      <div class="protocol-notice__title">This story lives in oral tradition</div>
+      <p class="protocol-notice__body">
+        This teaching is shared person-to-person, as it has been for generations.
+        It is acknowledged here but not recorded digitally, out of respect for the tradition.
+      </p>
+    </aside>
+  {% endif %}
+{% endif %}
