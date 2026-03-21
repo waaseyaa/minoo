@@ -297,9 +297,16 @@
 
   .site-nav {
     display: flex;
+    align-items: center;
     gap: var(--space-xs);
     list-style: none;
     padding: 0;
+    margin: 0;
+  }
+
+  .site-nav > li {
+    display: flex;
+    align-items: center;
   }
 
   .site-nav a {
