@@ -18,8 +18,11 @@ require __DIR__ . '/../vendor/autoload.php';
 use Minoo\Entity\Event;
 use Minoo\Entity\Group;
 use Minoo\Entity\ResourcePerson;
+use Minoo\Seed\TaxonomySeeder;
 use Minoo\Support\FixtureLoader;
 use Minoo\Support\FixtureResolver;
+use Waaseyaa\Taxonomy\Term;
+use Waaseyaa\Taxonomy\Vocabulary;
 
 // --- Parse arguments ---
 $apply = in_array('--apply', $argv, true);
@@ -38,6 +41,83 @@ $resolver = new FixtureResolver($etm);
 
 $mode = $apply ? 'APPLY' : 'DRY-RUN';
 fprintf(STDOUT, "Seed Content (%s)\n%s\n", $mode, str_repeat('━', 50));
+
+// --- Seed taxonomy vocabularies + terms (required before people) ---
+if ($fileFilter === null || $fileFilter === 'taxonomy') {
+    $vocabStorage = $etm->getStorage('taxonomy_vocabulary');
+    $termStorage = $etm->getStorage('taxonomy_term');
+
+    $vocabs = [
+        TaxonomySeeder::personRolesVocabulary(),
+        TaxonomySeeder::personOfferingsVocabulary(),
+    ];
+
+    $vocabCreated = 0;
+    $vocabUpdated = 0;
+    $termCreated = 0;
+    $termUpdated = 0;
+
+    foreach ($vocabs as $vocabData) {
+        $vocabDef = $vocabData['vocabulary'];
+        $vid = $vocabDef['vid'];
+
+        // Upsert vocabulary
+        $existing = $vocabStorage->load($vid);
+        if ($existing !== null) {
+            if ($apply) {
+                $existing->set('name', $vocabDef['name']);
+                $existing->set('description', $vocabDef['description']);
+                $vocabStorage->save($existing);
+            }
+            $vocabUpdated++;
+            if ($verbose) {
+                fprintf(STDOUT, "  [UPDATE] vocabulary: %s\n", $vid);
+            }
+        } else {
+            if ($apply) {
+                $vocab = new Vocabulary($vocabDef);
+                $vocabStorage->save($vocab);
+            }
+            $vocabCreated++;
+            if ($verbose) {
+                fprintf(STDOUT, "  [CREATE] vocabulary: %s\n", $vid);
+            }
+        }
+
+        // Upsert terms
+        foreach ($vocabData['terms'] as $termDef) {
+            $existingIds = $termStorage->getQuery()
+                ->condition('name', $termDef['name'])
+                ->condition('vid', $vid)
+                ->execute();
+
+            if ($existingIds !== []) {
+                $termUpdated++;
+                if ($verbose) {
+                    fprintf(STDOUT, "  [UPDATE] term: %s/%s\n", $vid, $termDef['name']);
+                }
+            } else {
+                if ($apply) {
+                    $term = new Term([
+                        'name' => $termDef['name'],
+                        'vid' => $vid,
+                        'status' => 1,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]);
+                    $termStorage->save($term);
+                }
+                $termCreated++;
+                if ($verbose) {
+                    fprintf(STDOUT, "  [CREATE] term: %s/%s\n", $vid, $termDef['name']);
+                }
+            }
+        }
+    }
+
+    fprintf(STDOUT, "\n%-12s %d create  %d update (vocabularies)\n", 'taxonomy:', $vocabCreated, $vocabUpdated);
+    fprintf(STDOUT, "%-12s %d create  %d update (terms)\n", '', $termCreated, $termUpdated);
+}
 
 // --- Seed order: businesses → people → events ---
 $seedTypes = [

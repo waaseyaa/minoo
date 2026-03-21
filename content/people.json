@@ -22,14 +22,14 @@
     "verified_at": "2026-03-15T00:00:00Z"
   },
   {
-    "name": "Nginaajiiw Salon Owner",
-    "slug": "nginaajiiw-salon-owner",
+    "name": "Larissa Toulouse",
+    "slug": "larissa-toulouse",
     "bio": "Owner and operator of Nginaajiiw Salon & Spa in Sagamok Anishnawbek, providing hair, esthetics, massage, and nail services.",
     "roles": ["Small Business Owner"],
-    "offerings": ["Hair Services", "Esthetics", "Massage", "Nail Services"],
+    "offerings": ["Hair Services", "Esthetics"],
     "linked_group": "nginaajiiw-salon-spa",
     "community": "Sagamok Anishnawbek",
-    "consent_public": false,
+    "consent_public": true,
     "source": "manual:russell:2026-03-15",
     "verified_at": "2026-03-15T00:00:00Z"
   },
