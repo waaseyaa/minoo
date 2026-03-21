@@ -18,9 +18,11 @@ require __DIR__ . '/../vendor/autoload.php';
 use Minoo\Entity\Event;
 use Minoo\Entity\Group;
 use Minoo\Entity\ResourcePerson;
+use Minoo\Seed\ConfigSeeder;
 use Minoo\Seed\TaxonomySeeder;
 use Minoo\Support\FixtureLoader;
 use Minoo\Support\FixtureResolver;
+use Minoo\Support\GeocodingService;
 use Waaseyaa\Taxonomy\Term;
 use Waaseyaa\Taxonomy\Vocabulary;
 
@@ -159,7 +161,7 @@ foreach ($seedTypes as $fixtureType => $config) {
         $validTypes = array_map(fn($id) => $etm->getStorage('group_type')->load($id)?->get('type'),
             $etm->getStorage('group_type')->getQuery()->execute());
         if ($validTypes === []) {
-            $validTypes = array_column(\Minoo\Seed\ConfigSeeder::groupTypes(), 'type');
+            $validTypes = array_column(ConfigSeeder::groupTypes(), 'type');
         }
         foreach ($records as $i => $r) {
             if (isset($r['type']) && !in_array($r['type'], $validTypes, true)) {
@@ -170,7 +172,7 @@ foreach ($seedTypes as $fixtureType => $config) {
         $validTypes = array_map(fn($id) => $etm->getStorage('event_type')->load($id)?->get('type'),
             $etm->getStorage('event_type')->getQuery()->execute());
         if ($validTypes === []) {
-            $validTypes = array_column(\Minoo\Seed\ConfigSeeder::eventTypes(), 'type');
+            $validTypes = array_column(ConfigSeeder::eventTypes(), 'type');
         }
         foreach ($records as $i => $r) {
             if (isset($r['type']) && !in_array($r['type'], $validTypes, true)) {
@@ -285,6 +287,133 @@ foreach ($seedTypes as $fixtureType => $config) {
             $created++;
             if ($verbose) {
                 fprintf(STDOUT, "  [CREATE] %s\n", $slug);
+            }
+        }
+    }
+
+    // --- Default bio generation ---
+    if ($fixtureType === 'businesses') {
+        $groupTypeLabelMap = [];
+        foreach (ConfigSeeder::groupTypes() as $gt) {
+            $groupTypeLabelMap[$gt['type']] = $gt['name'];
+        }
+
+        foreach ($records as $record) {
+            $desc = $record['description'] ?? '';
+            if ($desc !== '') {
+                continue;
+            }
+            $type = $record['type'] ?? '';
+            $typeLabel = $groupTypeLabelMap[$type] ?? ucfirst($type);
+            $community = $record['community'] ?? 'the community';
+            $defaultBio = "{$record['name']} is a {$typeLabel} in {$community}.";
+
+            if ($apply) {
+                $existingIds = $storage->getQuery()->condition('slug', $record['slug'])->execute();
+                if ($existingIds !== []) {
+                    $entity = $storage->load(reset($existingIds));
+                    if ($entity !== null && ($entity->get('description') ?? '') === '') {
+                        $entity->set('description', $defaultBio);
+                        $entity->set('updated_at', $now);
+                        $storage->save($entity);
+                    }
+                }
+            }
+            if ($verbose) {
+                fprintf(STDOUT, "  [DEFAULT BIO] %s: %s\n", $record['slug'], $defaultBio);
+            }
+        }
+    }
+
+    if ($fixtureType === 'people') {
+        foreach ($records as $record) {
+            $bio = $record['bio'] ?? '';
+            if ($bio !== '') {
+                continue;
+            }
+            $roles = $record['roles'] ?? [];
+            $community = $record['community'] ?? 'the community';
+            $rolesJoined = $roles !== []
+                ? implode(', ', array_map(fn($r) => is_string($r) ? $r : ($r['name'] ?? ''), $roles))
+                : 'community member';
+            $defaultBio = "{$record['name']} is a {$rolesJoined} from {$community}.";
+
+            if ($apply) {
+                $existingIds = $storage->getQuery()->condition('slug', $record['slug'])->execute();
+                if ($existingIds !== []) {
+                    $entity = $storage->load(reset($existingIds));
+                    if ($entity !== null && ($entity->get('bio') ?? '') === '') {
+                        $entity->set('bio', $defaultBio);
+                        $entity->set('updated_at', $now);
+                        $storage->save($entity);
+                    }
+                }
+            }
+            if ($verbose) {
+                fprintf(STDOUT, "  [DEFAULT BIO] %s: %s\n", $record['slug'], $defaultBio);
+            }
+        }
+    }
+
+    // --- Geocoding integration (businesses only) ---
+    if ($apply && $fixtureType === 'businesses' && class_exists(GeocodingService::class)) {
+        $geocoder = new GeocodingService();
+        foreach ($records as $record) {
+            $slug = $record['slug'];
+            $address = $record['address'] ?? '';
+            if ($address === '') {
+                continue;
+            }
+            $existingIds = $storage->getQuery()->condition('slug', $slug)->execute();
+            if ($existingIds === []) {
+                continue;
+            }
+            $entity = $storage->load(reset($existingIds));
+            if ($entity === null) {
+                continue;
+            }
+            $lat = $entity->get('latitude') ?? $entity->get('lat') ?? null;
+            $lng = $entity->get('longitude') ?? $entity->get('lng') ?? null;
+            if ($lat !== null && $lng !== null) {
+                continue;
+            }
+            $coords = $geocoder->geocode($address);
+            if ($coords !== null) {
+                $entity->set('latitude', $coords['lat']);
+                $entity->set('longitude', $coords['lng']);
+                $entity->set('updated_at', $now);
+                $storage->save($entity);
+                if ($verbose) {
+                    fprintf(STDOUT, "  [GEOCODE] %s: %.4f, %.4f\n", $slug, $coords['lat'], $coords['lng']);
+                }
+            }
+        }
+    }
+
+    // --- Completeness validation ---
+    if ($fixtureType === 'businesses') {
+        foreach ($records as $r) {
+            $desc = $r['description'] ?? '';
+            if (substr_count($desc, '.') < 2) {
+                fprintf(STDOUT, "  ⚠ %s: description under 2 sentences (business completeness)\n", $r['slug']);
+            }
+            if (empty($r['phone']) && empty($r['email']) && empty($r['url'])) {
+                fprintf(STDOUT, "  ⚠ %s: no contact method (business completeness)\n", $r['slug']);
+            }
+        }
+    }
+
+    if ($fixtureType === 'people') {
+        foreach ($records as $r) {
+            if (($r['consent_public'] ?? false) !== true) {
+                continue;
+            }
+            $bio = $r['bio'] ?? '';
+            if (substr_count($bio, '.') < 2) {
+                fprintf(STDOUT, "  ⚠ %s: bio under 2 sentences (person completeness)\n", $r['slug']);
+            }
+            if (empty($r['roles'])) {
+                fprintf(STDOUT, "  ⚠ %s: no roles defined (person completeness)\n", $r['slug']);
             }
         }
     }
