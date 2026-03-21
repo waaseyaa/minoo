@@ -1,0 +1,155 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Geocode business entities that lack coordinates.
+ *
+ * Usage: bin/geocode-businesses [--apply] [--verbose]
+ *
+ * --apply    Write coordinates to the database (default is dry-run).
+ * --verbose  Print detailed progress for each entity.
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Minoo\Support\GeocodingService;
+
+$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
+
+(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+
+$entityTypeManager = $kernel->getEntityTypeManager();
+
+$apply   = in_array('--apply', $argv, true);
+$verbose = in_array('--verbose', $argv, true);
+
+if (!$apply) {
+    fprintf(STDOUT, "DRY RUN — pass --apply to write changes.\n\n");
+}
+
+$geocoder = new GeocodingService();
+$groupStorage = $entityTypeManager->getStorage('group');
+$ids = $groupStorage->getQuery()->execute();
+
+$geocoded = 0;
+$fallback = 0;
+$skipped  = 0;
+$failed   = 0;
+
+// Pre-load community storage for fallback lookups.
+$communityStorage = null;
+try {
+    $communityStorage = $entityTypeManager->getStorage('community');
+} catch (\Throwable) {
+    // Community entity type may not exist in all environments.
+}
+
+foreach ($ids as $id) {
+    $entity = $groupStorage->load($id);
+    if ($entity === null) {
+        continue;
+    }
+
+    $type = (string) ($entity->get('type') ?? '');
+    $status = $entity->get('status');
+
+    // Only geocode published business entities.
+    if ($type !== 'business' || (int) $status !== 1) {
+        continue;
+    }
+
+    $name = (string) ($entity->get('name') ?? '(unnamed)');
+
+    // Skip entities that already have coordinates.
+    $lat = $entity->get('latitude');
+    $lng = $entity->get('longitude');
+    if ($lat !== null && $lng !== null && (float) $lat !== 0.0) {
+        if ($verbose) {
+            fprintf(STDOUT, "  [SKIP] %s — already has coordinates.\n", $name);
+        }
+        $skipped++;
+        continue;
+    }
+
+    // Try geocoding from the address field.
+    $address = (string) ($entity->get('address') ?? '');
+    $coords = null;
+    $source = null;
+
+    if ($address !== '') {
+        $coords = $geocoder->geocode($address);
+        if ($coords !== null) {
+            $source = 'address';
+        }
+        // Rate limit: 1 request per second (Nominatim policy).
+        usleep(1_000_000);
+    }
+
+    // Fallback: use community coordinates.
+    if ($coords === null && $communityStorage !== null) {
+        $communityId = $entity->get('community_id');
+        if ($communityId !== null) {
+            $community = $communityStorage->load((int) $communityId);
+            if ($community !== null) {
+                $cLat = $community->get('latitude');
+                $cLng = $community->get('longitude');
+                if ($cLat !== null && $cLng !== null && (float) $cLat !== 0.0) {
+                    $coords = ['lat' => (float) $cLat, 'lng' => (float) $cLng];
+                    $source = 'community';
+                }
+            }
+        }
+    }
+
+    if ($coords === null) {
+        if ($verbose) {
+            fprintf(STDOUT, "  [FAILED] %s — no address and no community fallback.\n", $name);
+        }
+        $failed++;
+        continue;
+    }
+
+    $tag = $source === 'address' ? 'GEOCODED' : 'FALLBACK';
+
+    if ($verbose) {
+        fprintf(
+            STDOUT,
+            "  [%s] %s — %.4f, %.4f (source: %s)\n",
+            $tag,
+            $name,
+            $coords['lat'],
+            $coords['lng'],
+            $source,
+        );
+    }
+
+    if ($apply) {
+        $entity->set('latitude', $coords['lat']);
+        $entity->set('longitude', $coords['lng']);
+        $entity->set('coordinate_source', $source);
+        $groupStorage->save($entity);
+    }
+
+    if ($source === 'address') {
+        $geocoded++;
+    } else {
+        $fallback++;
+    }
+}
+
+fprintf(STDOUT, "\n");
+
+if (!$apply) {
+    fprintf(STDOUT, "DRY RUN — no changes written.\n");
+}
+
+fprintf(
+    STDOUT,
+    "Done: %d geocoded, %d community fallback, %d skipped, %d failed.\n",
+    $geocoded,
+    $fallback,
+    $skipped,
+    $failed,
+);
