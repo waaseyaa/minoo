@@ -37,7 +37,7 @@ Rename `speaker` → `contributor`. This is the riskiest change and executes fir
 
 | Field | Type | Notes |
 |---|---|---|
-| `coid` | key | Entity key (was `spid`) |
+| `coid` | key | Entity key (was `sid`) |
 | `name` | string | Unchanged from speaker |
 | `slug` | string | New — for URL routing at `/contributors/{slug}` |
 | `community_id` | integer | Unchanged — optional FK |
@@ -55,13 +55,15 @@ Rename `speaker` → `contributor`. This is the riskiest change and executes fir
 ### Migration Steps
 
 1. `ALTER TABLE speakers RENAME TO contributors`
-2. Rename primary key column `spid` → `coid`
-3. Update any foreign key indexes referencing `spid`
+2. Rename primary key column `sid` → `coid`
+3. Update any foreign key indexes referencing `sid`
 4. Add new columns: `slug`, `cultural_group_id`, `clan`, `role`, `lineage_notes`, `photo`, `consent_public`, `consent_record`
 5. Backfill slugs from existing names
 6. Update `LanguageServiceProvider`: register `contributor` instead of `speaker`
-7. Update `LanguageAccessPolicy` attribute: add `'contributor'` to entity type array
+7. Update `LanguageAccessPolicy` attribute: replace `'speaker'` with `'contributor'` — full array becomes `['dictionary_entry', 'example_sentence', 'word_part', 'contributor', 'dialect_region']`
 8. Update language templates: replace speaker references with contributor (field names for `name`, `community_id`, `dialect`, `bio` remain unchanged)
+
+**Note:** `ContributorAccessPolicy` is the sole access policy for the `contributor` entity. `LanguageAccessPolicy` retains `contributor` in its array only because the Language domain still needs to register it as a known entity type — it does NOT duplicate the access gates. If the framework resolves policies per-entity-type (not per-provider), then remove `contributor` from `LanguageAccessPolicy` entirely and rely solely on `ContributorAccessPolicy`.
 
 ### What Does NOT Change
 
@@ -71,20 +73,21 @@ Rename `speaker` → `contributor`. This is the riskiest change and executes fir
 
 ## Section 2: Entity Types
 
-### `oral_history_type` (config entity)
+### `oral_history_type` (config entity — extends `ConfigEntityBase`)
 
 Bundle entity for `oral_history`. Same pattern as `teaching_type`.
 
 | Field | Type | Notes |
 |---|---|---|
-| `ohtid` | key | Entity key |
+| `type` | key | Entity key — matches convention (`'id' => 'type'`, `'label' => 'name'`) |
 | `name` | string | Type label |
 | `description` | text | Optional description |
-| `status` | integer | Default 1 |
 
 **Seed values:** Creation Story, Historical Account, Personal Narrative, Land Teaching, Family Story.
 
-### `oral_history_collection`
+### `oral_history_collection` (extends `ContentEntityBase`)
+
+Standard content entity fields (`uuid`, `created_at`, `updated_at`) are inherited from `ContentEntityBase` and not listed below.
 
 | Field | Type | Notes |
 |---|---|---|
@@ -103,7 +106,9 @@ Bundle entity for `oral_history`. Same pattern as `teaching_type`.
 | `cultural_group_id` | integer | Optional FK |
 | `status` | integer | Default 1 |
 
-### `oral_history`
+### `oral_history` (extends `ContentEntityBase`)
+
+Standard content entity fields (`uuid`, `created_at`, `updated_at`) are inherited from `ContentEntityBase` and not listed below.
 
 | Field | Type | Notes |
 |---|---|---|
@@ -124,7 +129,7 @@ Bundle entity for `oral_history`. Same pattern as `teaching_type`.
 | `protocol_notes` | text_long | Soft guidance text shown to visitors |
 | `is_living_record` | boolean | True = no transcript, no media, placeholder only |
 | `media_type` | string | "self_hosted", "external", null |
-| `media_path` | string | Path to self-hosted file (e.g., `media/oral-histories/{slug}.mp3`) |
+| `media_path` | string | Path to self-hosted file (e.g., `storage/media/oral-histories/{ohid}-{slug}.mp3`) |
 | `media_url` | string | External embed URL |
 | `media_duration` | integer | Duration in seconds, for display |
 | `media_format` | string | "audio" or "video" |
@@ -133,6 +138,10 @@ Bundle entity for `oral_history`. Same pattern as `teaching_type`.
 | `consent_record` | boolean | Narrator consented to digital recording |
 | `tags` | string | Comma-separated, for filtering |
 | `status` | integer | Default 1 |
+
+### Table Names
+
+Following Minoo's pluralized convention: `oral_histories`, `oral_history_collections`, `oral_history_types`, `contributors`.
 
 ### Relationships
 
@@ -169,6 +178,25 @@ Bundle entity for `oral_history`. Same pattern as `teaching_type`.
 
 **Consent-gated visibility:** Contributors must explicitly consent to public visibility. A contributor can exist in the system (referenced by oral histories via `contributor_id`) without being publicly browseable. When an oral history references a contributor with `consent_public === false`, the template shows `narrator_name` text instead of linking to a contributor profile.
 
+## Service Providers
+
+### `OralHistoryServiceProvider`
+
+Registers in its `register()` method:
+- `oral_history` entity type (content)
+- `oral_history_type` entity type (config)
+- `oral_history_collection` entity type (content)
+
+Routes registered in `register()` — see Section 4 for details.
+
+### `ContributorServiceProvider`
+
+New provider, replacing `speaker` registration in `LanguageServiceProvider`:
+- Registers `contributor` entity type (content)
+- Routes: `/contributors/{slug}` — GET, allowAll, render (stub profile page for v1)
+
+**Note:** Contributor profile pages are minimal in v1 — name, bio, community, role. Full profiles are v2.
+
 ## Section 4: Page Templates & Components
 
 All routes handled by a single `oral-histories.html.twig` with conditional branches, matching the teachings pattern.
@@ -184,10 +212,12 @@ All routes handled by a single `oral-histories.html.twig` with conditional branc
 
 ### Route Registration
 
-In `OralHistoryServiceProvider`:
-- `/oral-histories` — GET, allowAll, render
-- `/oral-histories/collections/{slug}` — GET, allowAll, render (slug requirement: `[a-z0-9][a-z0-9-]*[a-z0-9]`)
-- `/oral-histories/{slug}` — GET, allowAll, render (slug requirement: `[a-z0-9][a-z0-9-]*[a-z0-9]`)
+In `OralHistoryServiceProvider` (register more-specific routes first):
+1. `/oral-histories` — GET, allowAll, render
+2. `/oral-histories/collections/{slug}` — GET, allowAll, render (slug requirement: `[a-z0-9][a-z0-9-]*[a-z0-9]`)
+3. `/oral-histories/{slug}` — GET, allowAll, render (slug requirement: `[a-z0-9][a-z0-9-]*[a-z0-9]`)
+
+**Route ordering:** `/oral-histories/collections/{slug}` must be registered before `/oral-histories/{slug}` so the framework matches the literal `collections` segment before falling through to the wildcard slug. The slug "collections" is reserved and must not be used as an oral history slug.
 
 ### Page Descriptions
 
