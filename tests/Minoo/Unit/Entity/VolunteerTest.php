@@ -19,7 +19,14 @@ final class VolunteerTest extends TestCase
 
         $this->assertSame('Anne Birchbark', $volunteer->get('name'));
         $this->assertSame('705-555-0303', $volunteer->get('phone'));
-        $this->assertSame('active', $volunteer->get('status'));
+        $this->assertSame('pending', $volunteer->get('status'));
+    }
+
+    #[Test]
+    public function default_status_is_pending(): void
+    {
+        $volunteer = new Volunteer(['name' => 'Test']);
+        $this->assertSame('pending', $volunteer->get('status'));
     }
 
     #[Test]

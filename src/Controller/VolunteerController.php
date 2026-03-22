@@ -92,7 +92,7 @@ final class VolunteerController
             'availability' => $availability,
             'skills' => $skills,
             'notes' => $notes,
-            'status' => 'active',
+            'status' => 'pending',
             'created_at' => time(),
             'updated_at' => time(),
         ];

@@ -64,5 +64,33 @@ final class DashboardServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        $router->addRoute(
+            'dashboard.coordinator.applications',
+            RouteBuilder::create('/dashboard/coordinator/applications')
+                ->controller('Minoo\Controller\CoordinatorDashboardController::applications')
+                ->requireRole('elder_coordinator')
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'dashboard.coordinator.applications.approve',
+            RouteBuilder::create('/dashboard/coordinator/applications/{uuid}/approve')
+                ->controller('Minoo\Controller\CoordinatorDashboardController::approveApplication')
+                ->requireRole('elder_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'dashboard.coordinator.applications.deny',
+            RouteBuilder::create('/dashboard/coordinator/applications/{uuid}/deny')
+                ->controller('Minoo\Controller\CoordinatorDashboardController::denyApplication')
+                ->requireRole('elder_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
     }
 }

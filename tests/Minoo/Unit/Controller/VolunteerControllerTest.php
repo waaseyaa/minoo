@@ -133,6 +133,36 @@ final class VolunteerControllerTest extends TestCase
     }
 
     #[Test]
+    public function submit_creates_volunteer_with_pending_status(): void
+    {
+        $entity = $this->createMock(EntityInterface::class);
+        $entity->method('uuid')->willReturn('test-uuid');
+
+        $storage = $this->createMock(EntityStorageInterface::class);
+        $storage->expects($this->once())
+            ->method('create')
+            ->with($this->callback(function (array $values): bool {
+                return $values['status'] === 'pending';
+            }))
+            ->willReturn($entity);
+        $storage->method('save');
+
+        $this->entityTypeManager->method('getStorage')
+            ->with('volunteer')
+            ->willReturn($storage);
+
+        $request = HttpRequest::create('/elders/volunteer', 'POST', [
+            'name' => 'Jane',
+            'phone' => '705-555-1234',
+        ]);
+
+        $controller = new VolunteerController($this->entityTypeManager, $this->twig);
+        $response = $controller->submitSignup([], [], $this->account, $request);
+
+        $this->assertSame(302, $response->statusCode);
+    }
+
+    #[Test]
     public function signup_detail_with_valid_uuid_returns_200(): void
     {
         $uuid = '550e8400-e29b-41d4-a716-446655440000';

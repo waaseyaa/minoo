@@ -20,7 +20,7 @@ final class Volunteer extends ContentEntityBase
     public function __construct(array $values = [])
     {
         if (!array_key_exists('status', $values)) {
-            $values['status'] = 'active';
+            $values['status'] = 'pending';
         }
         if (!array_key_exists('created_at', $values)) {
             $values['created_at'] = 0;

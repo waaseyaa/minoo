@@ -7,6 +7,15 @@
   <h1>{{ trans('coordinator.title') }}</h1>
   <p class="text-secondary">{{ trans('coordinator.subtitle') }}</p>
 
+  {% if pending_application_count > 0 %}
+  <div class="card card--dashboard card--highlight">
+    <div class="card__row">
+      <span class="card__badge card__badge--pending">{{ trans('coordinator.pending_applications_count', {count: pending_application_count}) }}</span>
+      <a href="/dashboard/coordinator/applications" class="btn btn--secondary">{{ trans('coordinator.view_applications') }}</a>
+    </div>
+  </div>
+  {% endif %}
+
   <h2>{{ trans('coordinator.open_requests', {count: open_requests|length}) }}</h2>
   {% if open_requests is empty %}
     <p class="dashboard__empty">{{ trans('coordinator.no_open_requests') }}</p>
