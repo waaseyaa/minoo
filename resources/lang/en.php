@@ -485,8 +485,8 @@ return [
 
     // Volunteer Confirmation
     'volunteer_confirm.badge' => 'Volunteer',
-    'volunteer_confirm.title' => 'Thank You for Volunteering',
-    'volunteer_confirm.message' => 'Thank you, {name}. You\'re now part of something that matters to this community. A coordinator will reach out to you at {phone} when an Elder in your area needs support.',
+    'volunteer_confirm.title' => 'Application Received',
+    'volunteer_confirm.message' => 'Thank you, {name}. Your volunteer application has been submitted. A coordinator will review it and reach out to you at {phone} once approved.',
     'volunteer_confirm.availability' => 'Availability',
     'volunteer_confirm.skills' => 'Skills',
     'volunteer_confirm.notes' => 'Notes',
@@ -530,6 +530,16 @@ return [
     'coordinator.no_history' => 'No completed or cancelled requests yet.',
     'coordinator.confirmed' => 'Confirmed',
     'coordinator.cancelled' => 'Cancelled',
+    'coordinator.pending_applications' => 'Pending Applications',
+    'coordinator.pending_applications_count' => '{count} pending|{count} pending',
+    'coordinator.view_applications' => 'Review Applications',
+    'coordinator.applications_title' => 'Volunteer Applications',
+    'coordinator.applications_subtitle' => 'Review and approve volunteer applications. Approved volunteers can be assigned to Elder support requests.',
+    'coordinator.no_applications' => 'No pending applications right now.',
+    'coordinator.submitted' => 'Submitted',
+    'coordinator.approve' => 'Approve',
+    'coordinator.deny' => 'Deny',
+    'coordinator.back_to_dashboard' => 'Back to Dashboard',
 
     // Volunteer Dashboard
     'volunteer_dash.title' => 'My Assignments',

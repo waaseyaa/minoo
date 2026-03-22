@@ -1,0 +1,57 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ trans('coordinator.applications_title') }} — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section flow-lg">
+  <h1>{{ trans('coordinator.applications_title') }}</h1>
+  <p class="text-secondary">{{ trans('coordinator.applications_subtitle') }}</p>
+
+  {% if applications is empty %}
+    <p class="dashboard__empty">{{ trans('coordinator.no_applications') }}</p>
+  {% else %}
+    <div class="dashboard__cards">
+      {% for app in applications %}
+      <article class="card card--dashboard">
+        <span class="card__badge card__badge--pending">Pending</span>
+        <h3 class="card__title">{{ app.get('name') }}</h3>
+        <dl class="card__meta">
+          <dt>{{ trans('coordinator.phone') }}</dt><dd>{{ app.get('phone') }}</dd>
+          {% if app.get('availability') %}
+            <dt>{{ trans('coordinator.availability') }}</dt><dd>{{ app.get('availability') }}</dd>
+          {% endif %}
+          {% if app.get('skills') is iterable and app.get('skills')|length > 0 %}
+            <dt>{{ trans('volunteer_confirm.skills') }}</dt>
+            <dd>
+              <div class="card__tags">
+                {% for skill in app.get('skills') %}
+                  <span class="card__tag">{{ skill }}</span>
+                {% endfor %}
+              </div>
+            </dd>
+          {% endif %}
+          {% if app.get('notes') %}
+            <dt>{{ trans('coordinator.notes') }}</dt><dd>{{ app.get('notes') }}</dd>
+          {% endif %}
+          {% if app.get('created_at') %}
+            <dt>{{ trans('coordinator.submitted') }}</dt><dd>{{ app.get('created_at')|date('M j, Y') }}</dd>
+          {% endif %}
+        </dl>
+        <div class="card__actions">
+          <form method="post" action="/dashboard/coordinator/applications/{{ app.uuid() }}/approve">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn--primary">{{ trans('coordinator.approve') }}</button>
+          </form>
+          <form method="post" action="/dashboard/coordinator/applications/{{ app.uuid() }}/deny">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn--danger">{{ trans('coordinator.deny') }}</button>
+          </form>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <p><a href="/dashboard/coordinator">{{ trans('coordinator.back_to_dashboard') }}</a></p>
+</section>
+{% endblock %}
