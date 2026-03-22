@@ -40,13 +40,18 @@ final class EngagementController
         }
 
         $storage = $this->entityTypeManager->getStorage('reaction');
-        $entity = $storage->create([
-            'reaction_type' => $reactionType,
-            'user_id' => $account->id(),
-            'target_type' => $data['target_type'],
-            'target_id' => (int) $data['target_id'],
-        ]);
-        $storage->save($entity);
+
+        try {
+            $entity = $storage->create([
+                'reaction_type' => $reactionType,
+                'user_id' => $account->id(),
+                'target_type' => $data['target_type'],
+                'target_id' => (int) $data['target_id'],
+            ]);
+            $storage->save($entity);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
+        }
 
         return $this->json(['id' => $entity->id(), 'reaction_type' => $entity->get('reaction_type')], 201);
     }
@@ -88,13 +93,18 @@ final class EngagementController
         }
 
         $storage = $this->entityTypeManager->getStorage('comment');
-        $entity = $storage->create([
-            'body' => $body,
-            'user_id' => $account->id(),
-            'target_type' => $data['target_type'],
-            'target_id' => (int) $data['target_id'],
-        ]);
-        $storage->save($entity);
+
+        try {
+            $entity = $storage->create([
+                'body' => $body,
+                'user_id' => $account->id(),
+                'target_type' => $data['target_type'],
+                'target_id' => (int) $data['target_id'],
+            ]);
+            $storage->save($entity);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
+        }
 
         return $this->json([
             'id' => $entity->id(),
@@ -167,12 +177,17 @@ final class EngagementController
         }
 
         $storage = $this->entityTypeManager->getStorage('follow');
-        $entity = $storage->create([
-            'user_id' => $account->id(),
-            'target_type' => $data['target_type'],
-            'target_id' => (int) $data['target_id'],
-        ]);
-        $storage->save($entity);
+
+        try {
+            $entity = $storage->create([
+                'user_id' => $account->id(),
+                'target_type' => $data['target_type'],
+                'target_id' => (int) $data['target_id'],
+            ]);
+            $storage->save($entity);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
+        }
 
         return $this->json(['id' => $entity->id()], 201);
     }
@@ -210,12 +225,17 @@ final class EngagementController
         }
 
         $storage = $this->entityTypeManager->getStorage('post');
-        $entity = $storage->create([
-            'body' => $body,
-            'user_id' => $account->id(),
-            'community_id' => (int) $data['community_id'],
-        ]);
-        $storage->save($entity);
+
+        try {
+            $entity = $storage->create([
+                'body' => $body,
+                'user_id' => $account->id(),
+                'community_id' => (int) $data['community_id'],
+            ]);
+            $storage->save($entity);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
+        }
 
         return $this->json([
             'id' => $entity->id(),
