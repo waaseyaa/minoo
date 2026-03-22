@@ -17,7 +17,7 @@ test.describe('Light mode visual regression', () => {
         document.documentElement.setAttribute('data-theme', 'dark');
       });
       await page.waitForTimeout(300);
-      await expect(page).toHaveScreenshot(`${name}-dark.png`, { fullPage: true });
+      await expect(page).toHaveScreenshot(`${name}-dark.png`);
     });
 
     test(`${name} — light mode`, async ({ page }) => {
@@ -26,7 +26,7 @@ test.describe('Light mode visual regression', () => {
         document.documentElement.setAttribute('data-theme', 'light');
       });
       await page.waitForTimeout(300);
-      await expect(page).toHaveScreenshot(`${name}-light.png`, { fullPage: true });
+      await expect(page).toHaveScreenshot(`${name}-light.png`);
     });
   }
 });
