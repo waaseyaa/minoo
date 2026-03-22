@@ -16,7 +16,7 @@
         <button type="submit" class="btn btn--primary">{{ trans('feed.post') }}</button>
       </div>
     </form>
-  {% else %}
+  {% elseif account is not defined or not account.isAuthenticated() %}
     <div class="feed-create__guest">
       <p>{{ trans('feed.join_conversation') }}</p>
       <a href="{{ lang_url('/login') }}" class="btn btn--secondary">{{ trans('nav.login') }}</a>
