@@ -8,6 +8,7 @@ use Minoo\Entity\Comment;
 use Minoo\Entity\Follow;
 use Minoo\Entity\Post;
 use Minoo\Entity\Reaction;
+use Minoo\Support\UploadService;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -168,6 +169,10 @@ final class EngagementServiceProvider extends ServiceProvider
                     'weight' => 10,
                 ],
             ],
+        ));
+
+        $this->singleton(UploadService::class, fn(): UploadService => new UploadService(
+            dirname(__DIR__, 2) . '/storage/uploads',
         ));
     }
 

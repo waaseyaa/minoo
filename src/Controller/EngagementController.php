@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Entity\Reaction;
+use Minoo\Support\UploadService;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
@@ -20,6 +21,7 @@ final class EngagementController
 
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
+        private readonly UploadService $uploadService,
     ) {}
 
     public function react(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -213,13 +215,21 @@ final class EngagementController
 
     public function createPost(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
+        // Support both JSON and multipart form data
+        // Try JSON first (existing API), fall back to form data (multipart with images)
         $data = $this->jsonBody($request);
+        if (isset($data['body'])) {
+            $body = trim($data['body']);
+            $communityId = (int) ($data['community_id'] ?? 0);
+        } else {
+            $body = trim((string) $request->request->get('body', ''));
+            $communityId = (int) $request->request->get('community_id', 0);
+        }
 
-        if (!isset($data['body'], $data['community_id'])) {
+        if ($communityId === 0) {
             return $this->json(['error' => 'Missing required fields: body, community_id'], 422);
         }
 
-        $body = trim($data['body']);
         if ($body === '' || mb_strlen($body) > 5000) {
             return $this->json(['error' => 'Body must be 1-5000 characters'], 422);
         }
@@ -230,11 +240,36 @@ final class EngagementController
             $entity = $storage->create([
                 'body' => $body,
                 'user_id' => $account->id(),
-                'community_id' => (int) $data['community_id'],
+                'community_id' => $communityId,
             ]);
             $storage->save($entity);
         } catch (\InvalidArgumentException) {
             return $this->json(['error' => 'Invalid entity data'], 422);
+        }
+
+        // Handle image uploads
+        $uploadedFiles = $request->files->all('images');
+        if (is_array($uploadedFiles) && $uploadedFiles !== []) {
+            $imagePaths = [];
+            foreach (array_slice($uploadedFiles, 0, 4) as $file) {
+                if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
+                    continue;
+                }
+                $fileArray = [
+                    'name' => $file->getClientOriginalName(),
+                    'tmp_name' => $file->getPathname(),
+                    'size' => $file->getSize(),
+                    'type' => $file->getMimeType() ?? '',
+                    'error' => $file->getError(),
+                ];
+                if ($this->uploadService->validateImage($fileArray) === []) {
+                    $imagePaths[] = $this->uploadService->moveUpload($fileArray, 'posts/' . $entity->id());
+                }
+            }
+            if ($imagePaths !== []) {
+                $entity->set('images', json_encode($imagePaths));
+                $storage->save($entity);
+            }
         }
 
         return $this->json([
@@ -259,6 +294,7 @@ final class EngagementController
         }
 
         $storage->delete([$entity]);
+        $this->uploadService->deleteDirectory('posts/' . $id);
 
         return $this->json(['deleted' => true]);
     }
