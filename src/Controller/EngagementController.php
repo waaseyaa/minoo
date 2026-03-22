@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Entity\Reaction;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
@@ -25,30 +26,29 @@ final class EngagementController
     {
         $data = $this->jsonBody($request);
 
-        if (!isset($data['emoji'], $data['target_type'], $data['target_id'])) {
-            return $this->json(['error' => 'Missing required fields: emoji, target_type, target_id'], 422);
+        if (!isset($data['reaction_type'], $data['target_type'], $data['target_id'])) {
+            return $this->json(['error' => 'Missing required fields: reaction_type, target_type, target_id'], 422);
         }
 
         if (!$this->isValidTargetType($data['target_type'])) {
             return $this->json(['error' => 'Invalid target_type'], 422);
         }
 
-        $emoji = trim($data['emoji']);
-        if ($emoji === '' || mb_strlen($emoji) > 10) {
-            return $this->json(['error' => 'Invalid emoji'], 422);
+        $reactionType = trim($data['reaction_type']);
+        if (!in_array($reactionType, Reaction::ALLOWED_REACTION_TYPES, true)) {
+            return $this->json(['error' => 'Invalid reaction_type'], 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('reaction');
         $entity = $storage->create([
-            'emoji' => $emoji,
+            'reaction_type' => $reactionType,
             'user_id' => $account->id(),
             'target_type' => $data['target_type'],
             'target_id' => (int) $data['target_id'],
-            'created_at' => time(),
         ]);
         $storage->save($entity);
 
-        return $this->json(['id' => $entity->id(), 'emoji' => $entity->get('emoji')], 201);
+        return $this->json(['id' => $entity->id(), 'reaction_type' => $entity->get('reaction_type')], 201);
     }
 
     public function deleteReaction(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -93,8 +93,6 @@ final class EngagementController
             'user_id' => $account->id(),
             'target_type' => $data['target_type'],
             'target_id' => (int) $data['target_id'],
-            'status' => 1,
-            'created_at' => time(),
         ]);
         $storage->save($entity);
 
@@ -173,7 +171,6 @@ final class EngagementController
             'user_id' => $account->id(),
             'target_type' => $data['target_type'],
             'target_id' => (int) $data['target_id'],
-            'created_at' => time(),
         ]);
         $storage->save($entity);
 
@@ -203,8 +200,8 @@ final class EngagementController
     {
         $data = $this->jsonBody($request);
 
-        if (!isset($data['body'])) {
-            return $this->json(['error' => 'Missing required field: body'], 422);
+        if (!isset($data['body'], $data['community_id'])) {
+            return $this->json(['error' => 'Missing required fields: body, community_id'], 422);
         }
 
         $body = trim($data['body']);
@@ -216,9 +213,7 @@ final class EngagementController
         $entity = $storage->create([
             'body' => $body,
             'user_id' => $account->id(),
-            'status' => 1,
-            'created_at' => time(),
-            'updated_at' => time(),
+            'community_id' => (int) $data['community_id'],
         ]);
         $storage->save($entity);
 
