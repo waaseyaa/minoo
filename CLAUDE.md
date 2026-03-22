@@ -83,6 +83,8 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 | Ingestion | `ingest_log` | `IngestServiceProvider` | `IngestAccessPolicy` |
 | Editorial | `featured_item` | `FeaturedItemServiceProvider` | `FeaturedItemAccessPolicy` |
 
+**Note:** `post` has its own `PostAccessPolicy` (public-read, auth-create, author+coordinator delete), separate from `EngagementAccessPolicy` which covers `reaction`, `comment`, `follow`.
+
 ## Frontend / SSR
 
 - **CSS:** Single vanilla file `public/css/minoo.css` — no build step, no preprocessor
@@ -165,6 +167,10 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **SsrResponse is a simple value object**: Not a Symfony Response — no `HeaderBag`, no `->headers->setCookie()`. Set cookies via `Set-Cookie` header string or array.
 - **EntityStorageInterface namespace**: `Waaseyaa\Entity\Storage\EntityStorageInterface` (not `Waaseyaa\Entity\EntityStorageInterface`)
 - **Worktree pre-push hook**: `.husky/pre-push` runs `vendor/bin/phpunit` but worktrees don't have `vendor/` linked — push with `--no-verify` from worktrees, or run tests from main repo first.
+- **Worktree autoloader corruption**: After parallel worktree agents complete, run `composer dump-autoload` before running tests or pushing. Worktrees can leave stale paths in `vendor/composer/autoload_classmap.php`.
+- **Squash merge conflict loss**: When squash-merging PRs with overlapping files, the conflict resolution may silently drop one side's changes. Always verify the merged result contains both PRs' intended changes, especially for template/CSS files.
+- **Cross-PR entity field conflicts**: When parallel PRs add required fields to entities (e.g. `community_id` on Post) and other PRs write tests against those entities, the tests will fail after merge. Budget a merge-fix pass when running parallel worktree sprints.
+- **Reaction field rename**: `emoji` was renamed to `reaction_type` with migration `20260322_120000`. Allowed values: `like`, `interested`, `recommend`, `miigwech`, `connect`. All API endpoints, JS, and tests use `reaction_type`.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
