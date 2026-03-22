@@ -32,8 +32,17 @@ test.describe('Light mode visual regression', () => {
 });
 
 test.describe('Theme toggle behavior', () => {
+  // Playwright headless Chromium defaults to prefers-color-scheme: light.
+  // Force dark so the toggle starts in a known state (dark → light).
+  test.use({ colorScheme: 'dark' });
+
   test('theme toggle persists across navigation', async ({ page }) => {
     await page.goto('/');
+    // Ensure dark mode is active before toggling
+    await page.evaluate(() => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('minoo-theme', 'dark');
+    });
     await page.click('.theme-toggle');
     const theme = await page.evaluate(() =>
       document.documentElement.getAttribute('data-theme'),
@@ -49,7 +58,11 @@ test.describe('Theme toggle behavior', () => {
 
   test('theme toggle switches icons', async ({ page }) => {
     await page.goto('/');
-    // Dark mode default — moon icon visible
+    // Set dark mode explicitly so moon icon is visible
+    await page.evaluate(() => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('minoo-theme', 'dark');
+    });
     await expect(page.locator('.theme-toggle__icon--dark')).toBeVisible();
     await expect(page.locator('.theme-toggle__icon--light')).toBeHidden();
 
