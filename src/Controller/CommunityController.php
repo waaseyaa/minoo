@@ -73,6 +73,32 @@ final class CommunityController
             ];
         }
 
+        $businessStorage = $this->entityTypeManager->getStorage('group');
+        $businessIds = $businessStorage->getQuery()
+            ->condition('type', 'business')
+            ->condition('status', 1)
+            ->execute();
+        $businesses = $businessIds !== [] ? array_values($businessStorage->loadMultiple($businessIds)) : [];
+
+        $businessesJson = [];
+        foreach ($businesses as $business) {
+            $lat = $business->get('latitude');
+            $lng = $business->get('longitude');
+            $source = $business->get('coordinate_source');
+            if ($lat === null || $lng === null || $source !== 'address') {
+                continue;
+            }
+            $businessesJson[] = [
+                'id' => $business->id(),
+                'name' => $business->get('name'),
+                'slug' => $business->get('slug'),
+                'lat' => (float) $lat,
+                'lng' => (float) $lng,
+                'community_name' => $business->get('community_name') ?? '',
+                'type' => 'business',
+            ];
+        }
+
         // LocationService::fromRequest() already checks session → cookie → IP GeoIP2
         $locationJson = $location->hasLocation()
             ? ['lat' => $location->latitude, 'lng' => $location->longitude, 'name' => $location->communityName]
@@ -82,6 +108,7 @@ final class CommunityController
             'path' => '/communities',
             'communities_json' => json_encode($communitiesJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
             'location_json' => json_encode($locationJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
+            'businesses_json' => json_encode($businessesJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
         ]);
 
         return new SsrResponse(content: $html);

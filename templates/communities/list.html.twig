@@ -18,6 +18,25 @@
     <div class="community-header__meta" x-text="headerMeta"></div>
   </div>
 
+  {# --- Entity type filters --- #}
+  <div class="atlas-filters" role="group" aria-label="Map entity type filters">
+    <button class="atlas-filter atlas-filter--communities"
+            :class="{ 'is-active': filters.communities }"
+            :aria-pressed="String(filters.communities)"
+            @click="toggleFilter('communities')"
+            type="button">
+      Communities
+    </button>
+    <button class="atlas-filter atlas-filter--businesses"
+            :class="{ 'is-active': filters.businesses }"
+            :aria-pressed="String(filters.businesses)"
+            @click="toggleFilter('businesses')"
+            x-show="businessCount > 0"
+            type="button">
+      Businesses
+    </button>
+  </div>
+
   {# --- Map --- #}
   <div id="atlas-map" class="community-map"></div>
 
@@ -168,6 +187,7 @@
 <script>
   window.__atlas_communities = {{ communities_json|raw }};
   window.__atlas_location = {{ location_json|raw }};
+  window.__atlas_businesses = {{ businesses_json|raw }};
 </script>
 <script src="/js/leaflet.js"></script>
 <script src="/js/leaflet.markercluster.js"></script>
