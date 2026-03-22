@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ trans('auth.check_email_title') }} — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section flow-lg">
+  <h1>{{ trans('auth.check_email_title') }}</h1>
+  <div class="form__success" role="status">
+    <p>{{ trans('auth.check_email_message') }}</p>
+    <p>{{ trans('auth.check_email_note') }}</p>
+  </div>
+  <p class="form__link"><a href="{{ lang_url('/login') }}">{{ trans('auth.back_to_login') }}</a></p>
+</section>
+{% endblock %}

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\AuthController;
+use Minoo\Support\AuthMailer;
+use Minoo\Support\EmailVerificationService;
+use Minoo\Support\PasswordResetService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -22,6 +25,9 @@ final class AuthControllerTest extends TestCase
 {
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
+    private AuthMailer $authMailer;
+    private PasswordResetService $passwordResetService;
+    private EmailVerificationService $emailVerificationService;
     private EntityStorageInterface $userStorage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
@@ -48,7 +54,17 @@ final class AuthControllerTest extends TestCase
         $this->twig = new Environment(new ArrayLoader([
             'auth/login.html.twig' => '{{ errors.email|default("") }}',
             'auth/register.html.twig' => '{{ errors.name|default("") }}{{ errors.email|default("") }}{{ errors.password|default("") }}',
+            'auth/forgot-password.html.twig' => '{% if submitted|default(false) %}submitted{% endif %}',
+            'auth/check-email.html.twig' => 'check-email',
+            'auth/verify-email.html.twig' => '{% if verified %}verified{% else %}{{ error }}{% endif %}',
         ]));
+
+        $this->authMailer = $this->createMock(AuthMailer::class);
+
+        $pdo = new \PDO('sqlite::memory:');
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->passwordResetService = new PasswordResetService($pdo);
+        $this->emailVerificationService = new EmailVerificationService($pdo);
 
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
@@ -60,10 +76,21 @@ final class AuthControllerTest extends TestCase
         putenv('WAASEYAA_DB');
     }
 
+    private function createController(): AuthController
+    {
+        return new AuthController(
+            $this->entityTypeManager,
+            $this->twig,
+            $this->authMailer,
+            $this->passwordResetService,
+            $this->emailVerificationService,
+        );
+    }
+
     #[Test]
     public function submit_login_redirects_to_redirect_param_after_success(): void
     {
-        $user = $this->createSuccessfulUser();
+        $this->createSuccessfulUser();
 
         $this->request = HttpRequest::create('/login', 'POST', [
             'email' => 'mary@example.com',
@@ -71,25 +98,23 @@ final class AuthControllerTest extends TestCase
             'redirect' => '/elders/request/42',
         ]);
 
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitLogin([], [], $this->account, $this->request);
+        $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
         self::assertSame(302, $response->statusCode);
         self::assertSame('/elders/request/42', $response->headers['Location']);
     }
 
     #[Test]
-    public function submit_login_falls_back_to_dashboard_when_no_redirect(): void
+    public function submit_login_falls_back_to_homepage_when_no_redirect(): void
     {
-        $user = $this->createSuccessfulUser();
+        $this->createSuccessfulUser();
 
         $this->request = HttpRequest::create('/login', 'POST', [
             'email' => 'mary@example.com',
             'password' => 'password123',
         ]);
 
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitLogin([], [], $this->account, $this->request);
+        $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
         self::assertSame(302, $response->statusCode);
         self::assertSame('/', $response->headers['Location']);
@@ -98,7 +123,7 @@ final class AuthControllerTest extends TestCase
     #[Test]
     public function submit_login_rejects_absolute_url_redirect(): void
     {
-        $user = $this->createSuccessfulUser();
+        $this->createSuccessfulUser();
 
         $this->request = HttpRequest::create('/login', 'POST', [
             'email' => 'mary@example.com',
@@ -106,8 +131,7 @@ final class AuthControllerTest extends TestCase
             'redirect' => 'https://evil.com/phish',
         ]);
 
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitLogin([], [], $this->account, $this->request);
+        $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
         self::assertSame(302, $response->statusCode);
         self::assertSame('/', $response->headers['Location']);
@@ -116,7 +140,7 @@ final class AuthControllerTest extends TestCase
     #[Test]
     public function submit_login_rejects_protocol_relative_redirect(): void
     {
-        $user = $this->createSuccessfulUser();
+        $this->createSuccessfulUser();
 
         $this->request = HttpRequest::create('/login', 'POST', [
             'email' => 'mary@example.com',
@@ -124,39 +148,24 @@ final class AuthControllerTest extends TestCase
             'redirect' => '//evil.com/phish',
         ]);
 
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitLogin([], [], $this->account, $this->request);
+        $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
         self::assertSame(302, $response->statusCode);
         self::assertSame('/', $response->headers['Location']);
     }
 
     #[Test]
-    public function submit_register_creates_volunteer_entity_for_new_account(): void
+    public function submit_register_creates_inactive_user_and_sends_verification_email(): void
     {
         $this->query->method('execute')->willReturn([]);
 
-        $savedUser = null;
-        $this->userStorage->method('create')->willReturnCallback(function (array $values) use (&$savedUser) {
-            $savedUser = new User($values + ['uid' => 42]);
-            return $savedUser;
+        $this->userStorage->method('create')->willReturnCallback(function (array $values) {
+            return new User($values + ['uid' => 42]);
         });
         $this->userStorage->method('save')->willReturn(42);
 
-        $volStorage = $this->createMock(EntityStorageInterface::class);
-        $volEntity = null;
-        $volStorage->method('create')->willReturnCallback(function (array $values) use (&$volEntity) {
-            $volEntity = $values;
-            $entity = $this->createMock(\Waaseyaa\Entity\ContentEntityBase::class);
-            return $entity;
-        });
-        $volStorage->method('save')->willReturn(1);
-
-        $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
-        $this->entityTypeManager->method('getStorage')->willReturnMap([
-            ['user', $this->userStorage],
-            ['volunteer', $volStorage],
-        ]);
+        $this->authMailer->expects(self::once())
+            ->method('sendEmailVerification');
 
         $this->request = HttpRequest::create('/register', 'POST', [
             'name' => 'Mary',
@@ -165,14 +174,59 @@ final class AuthControllerTest extends TestCase
             'phone' => '705-555-1234',
         ]);
 
-        $controller = new AuthController($this->entityTypeManager, $this->twig);
-        $response = $controller->submitRegister([], [], $this->account, $this->request);
+        $response = $this->createController()->submitRegister([], [], $this->account, $this->request);
 
-        self::assertSame(302, $response->statusCode);
-        self::assertNotNull($volEntity, 'Volunteer entity should be created');
-        self::assertSame(42, $volEntity['account_id']);
-        self::assertSame('Mary', $volEntity['name']);
-        self::assertSame('705-555-1234', $volEntity['phone']);
+        // Should render check-email page, not redirect to dashboard
+        self::assertSame(200, $response->statusCode);
+        self::assertStringContainsString('check-email', $response->content);
+        // Session should NOT be set (no login until verified)
+        self::assertArrayNotHasKey('waaseyaa_uid', $_SESSION);
+    }
+
+    #[Test]
+    public function submit_forgot_password_sends_reset_email_for_valid_user(): void
+    {
+        $user = new User(['uid' => 1, 'name' => 'Mary', 'mail' => 'mary@example.com', 'status' => 1]);
+
+        $this->query->method('execute')->willReturn([1]);
+        $this->userStorage->method('load')->willReturn($user);
+
+        $this->authMailer->expects(self::once())
+            ->method('sendPasswordReset');
+
+        $this->request = HttpRequest::create('/forgot-password', 'POST', ['email' => 'mary@example.com']);
+
+        $response = $this->createController()->submitForgotPassword([], [], $this->account, $this->request);
+
+        self::assertSame(200, $response->statusCode);
+        self::assertStringContainsString('submitted', $response->content);
+    }
+
+    #[Test]
+    public function submit_forgot_password_does_not_send_email_for_unknown_user(): void
+    {
+        $this->query->method('execute')->willReturn([]);
+
+        $this->authMailer->expects(self::never())
+            ->method('sendPasswordReset');
+
+        $this->request = HttpRequest::create('/forgot-password', 'POST', ['email' => 'nobody@example.com']);
+
+        $response = $this->createController()->submitForgotPassword([], [], $this->account, $this->request);
+
+        self::assertSame(200, $response->statusCode);
+        self::assertStringContainsString('submitted', $response->content);
+    }
+
+    #[Test]
+    public function verify_email_with_missing_token_shows_error(): void
+    {
+        $this->request = HttpRequest::create('/verify-email', 'GET');
+
+        $response = $this->createController()->verifyEmail([], [], $this->account, $this->request);
+
+        self::assertSame(200, $response->statusCode);
+        self::assertStringContainsString('invalid or has expired', $response->content);
     }
 
     private function createSuccessfulUser(): User

@@ -373,8 +373,7 @@ return [
     'auth.login_link' => 'Biindigen', // dict: biindige: "enter, go inside"
     'auth.forgot_title' => '',
     'auth.forgot_intro' => '',
-    'auth.reset_link_generated' => '',
-    'auth.reset_submitted' => '',
+    'auth.reset_link_sent' => '',
     'auth.reset_button' => '',
     'auth.back_to_login' => '',
     'auth.reset_title' => '',
@@ -382,6 +381,14 @@ return [
     'auth.new_password' => '',
     'auth.confirm_password' => '',
     'auth.reset_submit' => '',
+    'auth.check_email_title' => '',
+    'auth.check_email_message' => '',
+    'auth.check_email_note' => '',
+    'auth.verify_title' => '',
+    'auth.verify_success' => '',
+    'auth.verify_error_title' => '',
+    'auth.verify_error_invalid' => '',
+    'auth.verify_error_user' => '',
 
     // Account
     'account.welcome' => 'Boozhoo', // dict: boozhoo': "say hello"

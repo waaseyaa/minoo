@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\AuthMailer;
+use Minoo\Support\EmailVerificationService;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -19,6 +21,9 @@ final class AuthController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
+        private readonly AuthMailer $authMailer,
+        private readonly PasswordResetService $passwordResetService,
+        private readonly EmailVerificationService $emailVerificationService,
     ) {}
 
     public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -166,10 +171,10 @@ final class AuthController
         $user = $storage->create([
             'name' => $name,
             'mail' => $email,
-            'status' => true,
+            'status' => false,
             'created' => time(),
-            'roles' => ['volunteer'],
-            'permissions' => ['view own assignments', 'update assignment status'],
+            'roles' => [],
+            'permissions' => [],
         ]);
         $user->setRawPassword($password);
 
@@ -179,22 +184,14 @@ final class AuthController
 
         $storage->save($user);
 
-        $volStorage = $this->entityTypeManager->getStorage('volunteer');
-        $volunteer = $volStorage->create([
-            'name' => $name,
-            'phone' => $phone,
-            'account_id' => $user->id(),
-            'status' => 'active',
-            'created_at' => time(),
-            'updated_at' => time(),
-        ]);
-        $volStorage->save($volunteer);
+        // Send verification email
+        $verifyService = $this->emailVerificationService;
+        $token = $verifyService->createToken($user->id());
+        $this->authMailer->sendEmailVerification($user, $token);
 
-        $_SESSION['waaseyaa_uid'] = $user->id();
+        $html = $this->twig->render('auth/check-email.html.twig', []);
 
-        Flash::success('Welcome to Minoo! Your volunteer account is ready.');
-
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        return new SsrResponse(content: $html);
     }
 
     public function forgotPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -216,7 +213,6 @@ final class AuthController
         if (!$limiter->check($ip, '/forgot-password', 3, 300)) {
             $html = $this->twig->render('auth/forgot-password.html.twig', [
                 'submitted' => true,
-                'reset_url' => null,
                 'values' => [],
             ]);
             return new SsrResponse(content: $html, statusCode: 429);
@@ -225,7 +221,6 @@ final class AuthController
 
         $email = trim((string) $request->request->get('email', ''));
 
-        $resetUrl = null;
         if ($email !== '') {
             $storage = $this->entityTypeManager->getStorage('user');
             $ids = $storage->getQuery()
@@ -235,16 +230,16 @@ final class AuthController
             if ($ids !== []) {
                 $user = $storage->load(reset($ids));
                 if ($user !== null) {
-                    $resetService = $this->createPasswordResetService();
+                    $resetService = $this->passwordResetService;
                     $token = $resetService->createToken($user->id());
-                    $resetUrl = '/reset-password?token=' . $token;
+                    $this->authMailer->sendPasswordReset($user, $token);
                 }
             }
         }
 
+        // Always show the same message (prevents user enumeration)
         $html = $this->twig->render('auth/forgot-password.html.twig', [
             'submitted' => true,
-            'reset_url' => $resetUrl,
             'values' => compact('email'),
         ]);
 
@@ -259,7 +254,7 @@ final class AuthController
         if ($token === '') {
             $tokenError = 'No reset token provided.';
         } else {
-            $resetService = $this->createPasswordResetService();
+            $resetService = $this->passwordResetService;
             $userId = $resetService->validateToken($token);
             if ($userId === null) {
                 $tokenError = 'This reset link is invalid or has expired.';
@@ -281,7 +276,7 @@ final class AuthController
         $password = (string) $request->request->get('password', '');
         $passwordConfirm = (string) $request->request->get('password_confirm', '');
 
-        $resetService = $this->createPasswordResetService();
+        $resetService = $this->passwordResetService;
         $userId = $resetService->validateToken($token);
 
         if ($userId === null) {
@@ -334,6 +329,57 @@ final class AuthController
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/login']);
     }
 
+    public function verifyEmail(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $token = (string) $request->query->get('token', '');
+
+        if ($token === '') {
+            $html = $this->twig->render('auth/verify-email.html.twig', [
+                'verified' => false,
+                'error' => 'This verification link is invalid or has expired.',
+            ]);
+            return new SsrResponse(content: $html);
+        }
+
+        $verifyService = $this->emailVerificationService;
+        $userId = $verifyService->validateToken($token);
+
+        if ($userId === null) {
+            $html = $this->twig->render('auth/verify-email.html.twig', [
+                'verified' => false,
+                'error' => 'This verification link is invalid or has expired.',
+            ]);
+            return new SsrResponse(content: $html);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('user');
+        /** @var User|null $user */
+        $user = $storage->load($userId);
+
+        if ($user === null) {
+            $html = $this->twig->render('auth/verify-email.html.twig', [
+                'verified' => false,
+                'error' => 'User account not found.',
+            ]);
+            return new SsrResponse(content: $html);
+        }
+
+        $user->set('status', true);
+        $storage->save($user);
+        $verifyService->consumeToken($token);
+
+        $this->authMailer->sendWelcome($user);
+
+        $_SESSION['waaseyaa_uid'] = $user->id();
+
+        Flash::success('Your email is verified and your account is active. Welcome to Minoo.');
+
+        $html = $this->twig->render('auth/verify-email.html.twig', [
+            'verified' => true,
+        ]);
+        return new SsrResponse(content: $html);
+    }
+
     public function logout(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         if (session_status() === \PHP_SESSION_ACTIVE) {
@@ -352,13 +398,4 @@ final class AuthController
         return $target;
     }
 
-    private function createPasswordResetService(): PasswordResetService
-    {
-        $projectRoot = dirname(__DIR__, 2);
-        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/waaseyaa.sqlite';
-        $pdo = new \PDO('sqlite:' . $dbPath);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        return new PasswordResetService($pdo);
-    }
 }

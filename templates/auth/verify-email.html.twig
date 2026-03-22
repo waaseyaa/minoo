@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ verified ? trans('auth.verify_title') : trans('auth.verify_error_title') }} — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section flow-lg">
+  {% if verified %}
+    <h1>{{ trans('auth.verify_title') }}</h1>
+    <div class="form__success" role="status">
+      <p>{{ trans('auth.verify_success') }}</p>
+    </div>
+  {% else %}
+    <h1>{{ trans('auth.verify_error_title') }}</h1>
+    <div class="form__error" role="alert">
+      <p>{{ error }}</p>
+    </div>
+    <p class="form__link"><a href="{{ lang_url('/register') }}">{{ trans('auth.register_title') }}</a></p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minoo\Provider;
 
+use Minoo\Support\EmailVerificationService;
+use Minoo\Support\PasswordResetService;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -12,7 +14,23 @@ final class AuthServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // No entity types — uses framework's User entity.
+        $this->singleton(PasswordResetService::class, function () {
+            return new PasswordResetService($this->createPdo());
+        });
+
+        $this->singleton(EmailVerificationService::class, function () {
+            return new EmailVerificationService($this->createPdo());
+        });
+    }
+
+    private function createPdo(): \PDO
+    {
+        $projectRoot = $this->config['app_root'] ?? dirname(__DIR__, 2);
+        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/storage/waaseyaa.sqlite';
+        $pdo = new \PDO('sqlite:' . $dbPath);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
@@ -103,6 +121,16 @@ final class AuthServiceProvider extends ServiceProvider
                 ->allowAll()
                 ->render()
                 ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'auth.verify_email',
+            RouteBuilder::create('/verify-email')
+                ->controller('Minoo\Controller\AuthController::verifyEmail')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
                 ->build(),
         );
     }
