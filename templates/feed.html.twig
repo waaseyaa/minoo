@@ -91,46 +91,63 @@
     }, { rootMargin: '200px' });
     observer.observe(sentinel);
 
-    // Filter chips
-    document.querySelectorAll('.feed-chip').forEach(chip => {
-      chip.addEventListener('click', function() {
-        const type = this.dataset.type;
-        if (type === activeFilter) return;
+    function applyFilter(type) {
+      if (type === activeFilter) return;
 
-        activeFilter = type;
-        nextCursor = null;
-        feed.dataset.activeFilter = type;
-        feed.innerHTML = '';
-        seenIds.clear();
+      activeFilter = type;
+      nextCursor = null;
+      feed.dataset.activeFilter = type;
+      feed.innerHTML = '';
+      seenIds.clear();
+
+      // Reset sentinel
+      sentinel.innerHTML = '<div class="feed-card feed-card--loading" aria-hidden="true"><div class="feed-card__skeleton"></div></div>';
+
+      // Fetch first page with new filter
+      fetchToken++;
+      if (controller) controller.abort();
+      controller = new AbortController();
+      loading = false;
+
+      fetch('/api/feed?filter=' + encodeURIComponent(activeFilter), { signal: controller.signal })
+        .then(r => r.json())
+        .then(data => {
+          for (const item of data.items) {
+            if (seenIds.has(item.id)) continue;
+            seenIds.add(item.id);
+            feed.insertAdjacentHTML('beforeend', item.html);
+          }
+          nextCursor = data.nextCursor;
+          feed.dataset.nextCursor = nextCursor || '';
+          if (!nextCursor) {
+            sentinel.innerHTML = '<p class="feed-end">You\'re all caught up</p>';
+          }
+        })
+        .catch(e => { if (e.name !== 'AbortError') console.error(e); });
+    }
+
+    // Filter chips — pushState for bookmarkable URLs
+    document.querySelectorAll('.feed-chip').forEach(chip => {
+      chip.addEventListener('click', function(e) {
+        e.preventDefault();
+        const type = this.dataset.type;
+
+        history.pushState({ filter: type }, '', '?filter=' + encodeURIComponent(type));
 
         document.querySelectorAll('.feed-chip').forEach(c => c.classList.remove('feed-chip--active'));
         this.classList.add('feed-chip--active');
 
-        // Reset sentinel
-        sentinel.innerHTML = '<div class="feed-card feed-card--loading" aria-hidden="true"><div class="feed-card__skeleton"></div></div>';
-
-        // Fetch first page with new filter
-        fetchToken++;
-        if (controller) controller.abort();
-        controller = new AbortController();
-        loading = false;
-
-        fetch('/api/feed?filter=' + encodeURIComponent(activeFilter), { signal: controller.signal })
-          .then(r => r.json())
-          .then(data => {
-            for (const item of data.items) {
-              if (seenIds.has(item.id)) continue;
-              seenIds.add(item.id);
-              feed.insertAdjacentHTML('beforeend', item.html);
-            }
-            nextCursor = data.nextCursor;
-            feed.dataset.nextCursor = nextCursor || '';
-            if (!nextCursor) {
-              sentinel.innerHTML = '<p class="feed-end">You\'re all caught up</p>';
-            }
-          })
-          .catch(e => { if (e.name !== 'AbortError') console.error(e); });
+        applyFilter(type);
       });
+    });
+
+    // Back/forward navigation restores filter state
+    window.addEventListener('popstate', function(e) {
+      const filter = e.state?.filter || 'all';
+      document.querySelectorAll('.feed-chip').forEach(c => {
+        c.classList.toggle('feed-chip--active', c.dataset.type === filter);
+      });
+      applyFilter(filter);
     });
   })();
   </script>
