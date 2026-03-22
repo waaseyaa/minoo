@@ -176,6 +176,9 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Controller DI**: `SsrPageHandler::resolveControllerInstance()` auto-injects constructor params. It checks a hardcoded `$serviceMap` (EntityTypeManager, Twig, HttpRequest, AccountInterface), then falls back to `serviceResolver` for any type registered as a singleton in a service provider. Register new services in providers and they'll be injected automatically.
 - **Production deploy path**: `/home/deployer/minoo/current` (symlink to `releases/N`). DB at `storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.
 - **EntityStorage::create() calls constructors**: `SqlEntityStorage::instantiateEntity()` uses `new $class(values: $values)` — constructor validation IS invoked. EngagementController wraps create()+save() in try/catch for `InvalidArgumentException` as a safety net returning 422.
+- **Mock `ContentEntityBase`, not `EntityInterface`**: `get()`/`set()` are on `FieldableInterface`/`ContentEntityBase`, not `EntityInterface`. PHPUnit cannot configure methods that don't exist on the mocked type. Use `$this->createMock(ContentEntityBase::class)` for entities that need `get()`/`set()` in tests.
+- **Mock `set()` must return self**: `ContentEntityBase::set()` returns `static` (fluent). Mock callbacks using `willReturnCallback` must `return $mock;` — a void callback causes `TypeError` at runtime.
+- **Playwright tests coupled to i18n strings**: Playwright assertions like `getByRole('heading', { name: '...' })` break when translation strings change. Update `tests/playwright/*.spec.ts` whenever `resources/lang/en.php` heading/title strings change.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
