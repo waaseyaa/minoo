@@ -31,7 +31,7 @@
             :class="{ 'is-active': filters.businesses }"
             :aria-pressed="String(filters.businesses)"
             @click="toggleFilter('businesses')"
-            x-show="businessCount > 0"
+            x-show="allBusinesses.length > 0"
             type="button">
       Businesses
     </button>
