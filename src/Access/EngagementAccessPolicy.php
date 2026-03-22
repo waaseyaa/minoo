@@ -10,11 +10,11 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: ['reaction', 'comment', 'post', 'follow'])]
+#[PolicyAttribute(entityType: ['reaction', 'comment', 'follow'])]
 final class EngagementAccessPolicy implements AccessPolicyInterface
 {
     /** @var list<string> */
-    private const TYPES = ['reaction', 'comment', 'post', 'follow'];
+    private const TYPES = ['reaction', 'comment', 'follow'];
 
     public function appliesTo(string $entityTypeId): bool
     {
