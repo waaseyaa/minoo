@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Homepage', () => {
-  test('shows header with search form', async ({ page }) => {
+  test('shows three-column feed layout', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.feed-header')).toBeVisible();
-    await expect(page.locator('.feed-header__input')).toBeVisible();
-    await expect(page.locator('.feed-header__submit')).toBeVisible();
+    await expect(page.locator('.feed-layout')).toBeVisible();
+    await expect(page.locator('.feed-sidebar--left')).toBeVisible();
+    await expect(page.locator('.feed-container')).toBeVisible();
   });
 
   test('has skip link', async ({ page }) => {
@@ -59,5 +59,17 @@ test.describe('Homepage', () => {
   test('explore redirect routes to section pages', async ({ page }) => {
     const response = await page.goto('/explore?type=events');
     expect(response?.url()).toContain('/events');
+  });
+
+  test('left sidebar has navigation shortcuts', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.sidebar-nav')).toBeVisible();
+    await expect(page.locator('.sidebar-nav__item')).toHaveCount(7);
+  });
+
+  test('feed cards have engagement action buttons', async ({ page }) => {
+    await page.goto('/');
+    const actions = page.locator('.feed-card__actions');
+    await expect(actions.first()).toBeVisible();
   });
 });

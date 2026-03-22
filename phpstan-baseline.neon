@@ -139,18 +139,6 @@ parameters:
 			path: src/Controller/GroupController.php
 
 		-
-			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
-			identifier: method.notFound
-			count: 6
-			path: src/Controller/HomeController.php
-
-		-
-			message: '#^Method Minoo\\Controller\\HomeController\:\:loadFeaturedItems\(\) should return list\<array\{featured\: array\<string, mixed\>, entity\: mixed, url\: string\}\> but returns list\<array\{featured\: Waaseyaa\\Entity\\EntityInterface, entity\: Waaseyaa\\Entity\\EntityInterface, url\: non\-falsy\-string\}\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Controller/HomeController.php
-
-		-
 			message: '#^Property Minoo\\Controller\\LocationController\:\:\$twig is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
