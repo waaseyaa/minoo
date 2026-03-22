@@ -2911,6 +2911,14 @@
   [data-theme="light"] .flash-message--info { background: rgba(106, 156, 175, 0.08); }
   [data-theme="light"] .flash-message--warning { background: rgba(244, 162, 97, 0.08); }
 
+  [data-theme="light"] .atlas-filter {
+    border-color: var(--border-light);
+  }
+
+  [data-theme="light"] .atlas-filter:hover {
+    border-color: var(--text-muted);
+  }
+
   /* ── prefers-color-scheme auto-detection equivalents ── */
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) .feed-pill {
@@ -2923,6 +2931,12 @@
     :root:not([data-theme="dark"]) .flash-message--error { background: rgba(255, 77, 90, 0.08); }
     :root:not([data-theme="dark"]) .flash-message--info { background: rgba(106, 156, 175, 0.08); }
     :root:not([data-theme="dark"]) .flash-message--warning { background: rgba(244, 162, 97, 0.08); }
+    :root:not([data-theme="dark"]) .atlas-filter {
+      border-color: var(--border-light);
+    }
+    :root:not([data-theme="dark"]) .atlas-filter:hover {
+      border-color: var(--text-muted);
+    }
   }
 }
 
@@ -3186,6 +3200,43 @@
   }
   .community-group__label:first-child {
     margin-block-start: 0;
+  }
+
+  /* ── Atlas entity filters ── */
+  .atlas-filters {
+    display: flex;
+    gap: var(--space-2xs);
+    padding-block: var(--space-xs);
+    flex-wrap: wrap;
+  }
+
+  .atlas-filter {
+    padding: var(--space-3xs) var(--space-sm);
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    background: none;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .atlas-filter:hover {
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+  }
+
+  .atlas-filter.is-active {
+    color: #fff;
+    border-color: transparent;
+  }
+
+  .atlas-filter--communities.is-active {
+    background: var(--color-communities);
+  }
+
+  .atlas-filter--businesses.is-active {
+    background: var(--color-businesses);
   }
 
   /* Community map container (replaces atlas-map) */
