@@ -28,12 +28,22 @@ function atlasDiscovery() {
     markers: null,
     markerMap: {},
 
+    // Businesses
+    allBusinesses: [],
+
+    // Entity type filters
+    filters: {
+      communities: true,
+      businesses: true
+    },
+
     // Header
     headerTitle: 'All Communities',
     headerMeta: '',
 
     init() {
       this.allCommunities = window.__atlas_communities || [];
+      this.allBusinesses = window.__atlas_businesses || [];
       const loc = window.__atlas_location;
 
       // Extract available filter values
@@ -224,9 +234,14 @@ function atlasDiscovery() {
         }).addTo(this.map).bindPopup('Your location');
       }
 
-      // Marker cluster group
-      this.markers = L.markerClusterGroup();
-      this.map.addLayer(this.markers);
+      // Per-type cluster layers
+      this.communityLayer = L.markerClusterGroup();
+      this.businessLayer = L.markerClusterGroup({ maxClusterRadius: 40 });
+      this.map.addLayer(this.communityLayer);
+      this.map.addLayer(this.businessLayer);
+
+      // Keep backward compat for markerMap highlight
+      this.markers = this.communityLayer;
 
       this.updateMapMarkers();
 
@@ -238,8 +253,13 @@ function atlasDiscovery() {
     },
 
     updateMapMarkers() {
-      if (!this.markers) return;
-      this.markers.clearLayers();
+      this.updateCommunityMarkers();
+      this.updateBusinessMarkers();
+    },
+
+    updateCommunityMarkers() {
+      if (!this.communityLayer) return;
+      this.communityLayer.clearLayers();
       this.markerMap = {};
       var self = this;
       this.filteredCommunities.forEach(function(c) {
@@ -251,8 +271,29 @@ function atlasDiscovery() {
         marker.on('click', function() {
           window.location.href = '/communities/' + c.slug;
         });
-        self.markers.addLayer(marker);
+        self.communityLayer.addLayer(marker);
         self.markerMap[c.id] = marker;
+      });
+    },
+
+    updateBusinessMarkers() {
+      if (!this.businessLayer) return;
+      this.businessLayer.clearLayers();
+      var self = this;
+      this.allBusinesses.forEach(function(b) {
+        if (!b.lat || !b.lng) return;
+        var marker = L.circleMarker([b.lat, b.lng], {
+          radius: 6,
+          fillColor: '#b0643c',
+          color: '#b0643c',
+          fillOpacity: 0.8,
+          weight: 1
+        }).bindPopup('<strong>' + b.name + '</strong>' +
+          (b.community_name ? '<br>' + b.community_name : ''));
+        marker.on('click', function() {
+          window.location.href = '/businesses/' + b.slug;
+        });
+        self.businessLayer.addLayer(marker);
       });
     },
 
@@ -266,6 +307,18 @@ function atlasDiscovery() {
       });
       if (this.hasLocation) {
         this.buildProximityGroups(this.filteredCommunities);
+      }
+    },
+
+    toggleFilter(type) {
+      this.filters[type] = !this.filters[type];
+      var layers = { communities: this.communityLayer, businesses: this.businessLayer };
+      var layer = layers[type];
+      if (!layer) return;
+      if (this.filters[type]) {
+        this.map.addLayer(layer);
+      } else {
+        this.map.removeLayer(layer);
       }
     },
 
