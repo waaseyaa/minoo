@@ -11,11 +11,12 @@
 
       {# === Filter Chips === #}
       <nav class="feed-chips" aria-label="Filter feed">
-        <button class="feed-chip{{ activeFilter == 'all' ? ' feed-chip--active' : '' }}" data-type="all">{{ trans('page.search_all') }}</button>
-        <button class="feed-chip{{ activeFilter == 'event' ? ' feed-chip--active' : '' }}" data-type="event">{{ trans('page.tab_events') }}</button>
-        <button class="feed-chip{{ activeFilter == 'group' ? ' feed-chip--active' : '' }}" data-type="group">{{ trans('page.tab_groups') }}</button>
-        <button class="feed-chip{{ activeFilter == 'business' ? ' feed-chip--active' : '' }}" data-type="business">{{ trans('page.search_businesses') }}</button>
-        <button class="feed-chip{{ activeFilter == 'person' ? ' feed-chip--active' : '' }}" data-type="person">{{ trans('page.tab_people') }}</button>
+        {% set filters = {all: trans('page.search_all'), event: trans('page.tab_events'), group: trans('page.tab_groups'), business: trans('page.search_businesses'), person: trans('page.tab_people')} %}
+        {% for key, label in filters %}
+          <a href="?filter={{ key }}"
+             class="feed-chip{% if activeFilter == key %} feed-chip--active{% endif %}"
+             data-filter="{{ key }}">{{ label }}</a>
+        {% endfor %}
       </nav>
 
       {# === Feed Container === #}
@@ -91,10 +92,11 @@
     }, { rootMargin: '200px' });
     observer.observe(sentinel);
 
-    // Filter chips
+    // Filter chips (progressive enhancement — intercept link clicks)
     document.querySelectorAll('.feed-chip').forEach(chip => {
-      chip.addEventListener('click', function() {
-        const type = this.dataset.type;
+      chip.addEventListener('click', function(e) {
+        e.preventDefault();
+        const type = this.dataset.filter;
         if (type === activeFilter) return;
 
         activeFilter = type;
