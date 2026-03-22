@@ -171,6 +171,10 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Squash merge conflict loss**: When squash-merging PRs with overlapping files, the conflict resolution may silently drop one side's changes. Always verify the merged result contains both PRs' intended changes, especially for template/CSS files.
 - **Cross-PR entity field conflicts**: When parallel PRs add required fields to entities (e.g. `community_id` on Post) and other PRs write tests against those entities, the tests will fail after merge. Budget a merge-fix pass when running parallel worktree sprints.
 - **Reaction field rename**: `emoji` was renamed to `reaction_type` with migration `20260322_120000`. Allowed values: `like`, `interested`, `recommend`, `miigwech`, `connect`. All API endpoints, JS, and tests use `reaction_type`.
+- **AuthMailer requires `isConfigured()` guard**: All `AuthMailer` methods check `MailService::isConfigured()` before sending. Without a valid `SENDGRID_API_KEY`, SendGrid returns HTTP 401 and throws — crashing registration and password reset flows. CI and local dev typically have no API key.
+- **PHPStan baseline drift**: After adding new files that call `EntityInterface::get()`, regenerate the baseline with `./vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon`. The baseline won't auto-update when new files are added.
+- **Controller DI**: `SsrPageHandler::resolveControllerInstance()` auto-injects constructor params. It checks a hardcoded `$serviceMap` (EntityTypeManager, Twig, HttpRequest, AccountInterface), then falls back to `serviceResolver` for any type registered as a singleton in a service provider. Register new services in providers and they'll be injected automatically.
+- **Production deploy path**: `/home/deployer/minoo/current` (symlink to `releases/N`). DB at `storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
