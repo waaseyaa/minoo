@@ -105,7 +105,7 @@ final class AuthController
 
         $redirect = $this->safeRedirect(
             (string) $request->request->get('redirect', ''),
-            $this->dashboardRedirect($user),
+            '/',
         );
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $redirect]);
@@ -360,20 +360,5 @@ final class AuthController
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         return new PasswordResetService($pdo);
-    }
-
-    private function dashboardRedirect(User $user): string
-    {
-        $roles = $user->getRoles();
-
-        if (in_array('elder_coordinator', $roles, true)) {
-            return '/dashboard/coordinator';
-        }
-
-        if (in_array('volunteer', $roles, true)) {
-            return '/dashboard/volunteer';
-        }
-
-        return '/account';
     }
 }

@@ -92,7 +92,7 @@ final class AuthControllerTest extends TestCase
         $response = $controller->submitLogin([], [], $this->account, $this->request);
 
         self::assertSame(302, $response->statusCode);
-        self::assertSame('/dashboard/volunteer', $response->headers['Location']);
+        self::assertSame('/', $response->headers['Location']);
     }
 
     #[Test]
@@ -110,7 +110,7 @@ final class AuthControllerTest extends TestCase
         $response = $controller->submitLogin([], [], $this->account, $this->request);
 
         self::assertSame(302, $response->statusCode);
-        self::assertSame('/dashboard/volunteer', $response->headers['Location']);
+        self::assertSame('/', $response->headers['Location']);
     }
 
     #[Test]
@@ -128,7 +128,7 @@ final class AuthControllerTest extends TestCase
         $response = $controller->submitLogin([], [], $this->account, $this->request);
 
         self::assertSame(302, $response->statusCode);
-        self::assertSame('/dashboard/volunteer', $response->headers['Location']);
+        self::assertSame('/', $response->headers['Location']);
     }
 
     #[Test]
