@@ -18,12 +18,12 @@ test.describe('Social Feed', () => {
     await page.goto('/');
     const chips = page.locator('.feed-chips .feed-chip');
     await expect(chips.first()).toBeVisible();
-    await expect(page.locator('.feed-chip[data-type="all"]')).toBeVisible();
+    await expect(page.locator('.feed-chip[data-filter="all"]')).toBeVisible();
   });
 
   test('clicking filter chip updates feed', async ({ page }) => {
     await page.goto('/');
-    const eventChip = page.locator('.feed-chip[data-type="event"]');
+    const eventChip = page.locator('.feed-chip[data-filter="event"]');
     await expect(eventChip).toBeVisible();
     await eventChip.click();
     await expect(page.locator('.feed-container')).toBeVisible();

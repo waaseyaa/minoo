@@ -22,7 +22,7 @@
   {% block head %}{% endblock %}
 </head>
 <body>
-  <script>(function(){var t=localStorage.getItem('minoo-theme');if(t)document.documentElement.setAttribute('data-theme',t);})()</script>
+  <script>(function(){var t=localStorage.getItem('minoo-theme')||((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);})()</script>
   <a href="#main-content" class="skip-link">{{ trans('base.skip_link') }}</a>
   <div class="site">
     <header class="site-header">

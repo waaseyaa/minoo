@@ -18,15 +18,15 @@ test.describe('Homepage', () => {
     await page.goto('/');
     const chips = page.locator('.feed-chips .feed-chip');
     await expect(chips.first()).toBeVisible();
-    await expect(page.locator('.feed-chip[data-type="all"]')).toBeVisible();
-    await expect(page.locator('.feed-chip[data-type="event"]')).toBeVisible();
-    await expect(page.locator('.feed-chip[data-type="business"]')).toBeVisible();
-    await expect(page.locator('.feed-chip[data-type="person"]')).toBeVisible();
+    await expect(page.locator('.feed-chip[data-filter="all"]')).toBeVisible();
+    await expect(page.locator('.feed-chip[data-filter="event"]')).toBeVisible();
+    await expect(page.locator('.feed-chip[data-filter="business"]')).toBeVisible();
+    await expect(page.locator('.feed-chip[data-filter="person"]')).toBeVisible();
   });
 
   test('feed filter switching works', async ({ page }) => {
     await page.goto('/');
-    const allChip = page.locator('.feed-chip[data-type="all"]');
+    const allChip = page.locator('.feed-chip[data-filter="all"]');
     await expect(allChip).toBeVisible();
     await allChip.click();
     await expect(page.locator('.feed-container')).toBeVisible();
