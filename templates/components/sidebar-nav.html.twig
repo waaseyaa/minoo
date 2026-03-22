@@ -1,0 +1,46 @@
+<nav class="sidebar-nav" id="sidebar-nav" aria-label="Main navigation">
+  <div class="sidebar-nav__group">
+    <div class="sidebar-nav__label">{{ trans('sidebar.navigate') }}</div>
+    <a href="{{ lang_url('/') }}" class="sidebar-nav__item{% if path is defined and path == '/' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('sidebar.home') }}</span>
+    </a>
+    <a href="{{ lang_url('/communities') }}" class="sidebar-nav__item{% if path is defined and path starts with '/communities' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.communities') }}</span>
+    </a>
+    <a href="{{ lang_url('/events') }}" class="sidebar-nav__item{% if path is defined and path starts with '/events' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.events') }}</span>
+    </a>
+    <a href="{{ lang_url('/teachings') }}" class="sidebar-nav__item{% if path is defined and path starts with '/teachings' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.teachings') }}</span>
+    </a>
+    <a href="{{ lang_url('/people') }}" class="sidebar-nav__item{% if path is defined and path starts with '/people' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.people') }}</span>
+    </a>
+    <a href="/?filter=business" class="sidebar-nav__item">
+      <span class="sidebar-nav__text">{{ trans('nav.businesses') }}</span>
+    </a>
+    <a href="{{ lang_url('/oral-histories') }}" class="sidebar-nav__item{% if path is defined and path starts with '/oral-histories' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.oral_histories') }}</span>
+    </a>
+  </div>
+  <div class="sidebar-nav__group">
+    <div class="sidebar-nav__label">{{ trans('sidebar.programs') }}</div>
+    <a href="{{ lang_url('/elders/request') }}" class="sidebar-nav__item{% if path is defined and path starts with '/elders' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.elder_support') }}</span>
+    </a>
+    <a href="{{ lang_url('/elders/volunteer') }}" class="sidebar-nav__item{% if path is defined and path starts with '/volunteer' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.volunteer') }}</span>
+    </a>
+  </div>
+  {% if account is defined and account.isAuthenticated() and user_communities is defined and user_communities|length > 0 %}
+  <div class="sidebar-nav__group">
+    <div class="sidebar-nav__label">{{ trans('sidebar.your_communities') }}</div>
+    {% for community in user_communities %}
+    <a href="/communities/{{ community.slug }}" class="sidebar-nav__item">
+      <span class="sidebar-nav__community-avatar">{{ community.name|first }}</span>
+      <span class="sidebar-nav__text">{{ community.name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+</nav>

@@ -27,74 +27,43 @@
   <div class="site">
     <header class="site-header">
       <div class="site-header__inner">
-        <a href="{{ lang_url('/') }}" class="site-name" aria-label="{{ trans('base.home_label') }}">
-          <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-name__wordmark" width="100" height="28" fetchpriority="high">
-        </a>
-        <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="{{ trans('base.menu') }}">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </button>
-        <nav id="main-nav" aria-label="{{ trans('base.nav_main') }}">
-          <ul class="site-nav">
-            <li><a href="{{ lang_url('/communities') }}"{% if path is defined and path starts with '/communities' %} aria-current="page"{% endif %}>{{ trans('nav.communities') }}</a></li>
-            <li><a href="{{ lang_url('/people') }}"{% if path is defined and path starts with '/people' %} aria-current="page"{% endif %}>{{ trans('nav.people') }}</a></li>
-            <li><a href="{{ lang_url('/teachings') }}"{% if path is defined and path starts with '/teachings' %} aria-current="page"{% endif %}>{{ trans('nav.teachings') }}</a></li>
-            <li><a href="{{ lang_url('/events') }}"{% if path is defined and path starts with '/events' %} aria-current="page"{% endif %}>{{ trans('nav.events') }}</a></li>
-            <li><a href="{{ lang_url('/oral-histories') }}"{% if path is defined and path starts with '/oral-histories' %} aria-current="page"{% endif %}>{{ trans('nav.oral_histories') }}</a></li>
-            <li class="site-nav__dropdown">
-              <button class="site-nav__dropdown-toggle" aria-expanded="false"{% if path is defined and (path starts with '/elders' or path starts with '/volunteer') %} aria-current="true"{% endif %}>{{ trans('nav.programs') }}</button>
-              <ul class="site-nav__dropdown-menu">
-                <li><a href="{{ lang_url('/elders') }}"{% if path is defined and path starts with '/elders' %} aria-current="page"{% endif %}>{{ trans('nav.elder_support') }}</a></li>
-                <li><a href="{{ lang_url('/volunteer') }}"{% if path is defined and path starts with '/volunteer' %} aria-current="page"{% endif %}>{{ trans('nav.volunteer') }}</a></li>
-              </ul>
-            </li>
-            <li class="site-nav__utility"><a href="{{ lang_url('/search') }}"{% if path is defined and path starts with '/search' %} aria-current="page"{% endif %}>{{ trans('nav.search') }}</a></li>
-            {% if account is defined and account.isAuthenticated() %}
-              {% if 'elder_coordinator' in account.getRoles() %}
-                <li class="site-nav__utility"><a href="{{ lang_url('/dashboard/coordinator') }}"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>{{ trans('nav.dashboard') }}</a></li>
-              {% elseif 'volunteer' in account.getRoles() %}
-                <li class="site-nav__utility"><a href="{{ lang_url('/dashboard/volunteer') }}"{% if path is defined and path starts with '/dashboard' %} aria-current="page"{% endif %}>{{ trans('nav.my_dashboard') }}</a></li>
-              {% endif %}
-              <li class="site-nav__utility"><a href="{{ lang_url('/account') }}"{% if path is defined and path starts with '/account' %} aria-current="page"{% endif %}>{{ trans('nav.account') }}</a></li>
-              <li class="site-nav__utility"><a href="{{ lang_url('/logout') }}">{{ trans('nav.logout') }}</a></li>
-            {% else %}
-              <li class="site-nav__utility"><a href="{{ lang_url('/login') }}"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>{{ trans('nav.login') }}</a></li>
-            {% endif %}
-            <li class="site-nav__utility site-nav__theme">
-              {% include "components/theme-toggle.html.twig" %}
-            </li>
-            <li class="site-nav__utility site-nav__lang">
-              <div class="lang-switcher">
-                <button class="lang-switcher__toggle" aria-expanded="false" aria-haspopup="true" aria-label="{{ trans('language_switcher.label') }}">
-                  {{ current_language().label }}
-                </button>
-                <ul class="lang-switcher__menu" role="menu">
-                  {% for lang in available_languages() %}
-                    <li role="menuitem">
-                      {% if lang.is_current %}
-                        <span class="lang-switcher__item lang-switcher__item--active" aria-current="true">{{ lang.label }}</span>
-                      {% else %}
-                        <a class="lang-switcher__item" href="{{ lang_switch_url(lang.id, path is defined ? path : '/') }}">{{ lang.label }}</a>
-                      {% endif %}
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </nav>
+        <div class="site-header__left">
+          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle navigation" aria-expanded="false">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 5h14M3 10h14M3 15h14"/>
+            </svg>
+          </button>
+          <a href="{{ lang_url('/') }}" class="site-header__logo" aria-label="{{ trans('base.home_label') }}">
+            <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-header__wordmark" width="100" height="28" fetchpriority="high">
+          </a>
+        </div>
+        <div class="site-header__center">
+          <form class="header-search" action="{{ lang_url('/search') }}" method="get">
+            <svg class="header-search__icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
+            <input class="header-search__input" type="search" name="q" placeholder="{{ trans('search.placeholder') }}" autocomplete="off">
+          </form>
+        </div>
+        <div class="site-header__right">
+          {% include "components/user-menu.html.twig" %}
+        </div>
       </div>
     </header>
 
     <div class="ribbon" aria-hidden="true"></div>
 
-    {% include "components/location-bar.html.twig" %}
-
-    <main class="site-main" id="main-content">
-      <div class="site-main__inner">
+    <div class="app-layout{% if hide_sidebar is defined and hide_sidebar %} app-layout--no-sidebar{% endif %}">
+      {% if hide_sidebar is not defined or not hide_sidebar %}
+        <aside class="app-sidebar" id="app-sidebar">
+          {% include "components/sidebar-nav.html.twig" %}
+        </aside>
+        <div class="app-sidebar__overlay" id="sidebar-overlay"></div>
+      {% endif %}
+      <main class="app-main" id="main-content">
+        {% include "components/location-bar.html.twig" %}
         {% include "components/flash-messages.html.twig" %}
         {% block content %}{% endblock %}
-      </div>
-    </main>
+      </main>
+    </div>
 
     <div class="ribbon" aria-hidden="true"></div>
 
@@ -119,44 +88,45 @@
     </footer>
   </div>
   <script>
-    document.querySelector('.nav-toggle')?.addEventListener('click', function() {
-      const nav = document.getElementById('main-nav')?.querySelector('.site-nav');
-      const open = nav?.classList.toggle('is-open');
-      this.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-    document.querySelectorAll('.site-nav__dropdown-toggle').forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const menu = this.nextElementSibling;
-        const isOpen = menu.classList.toggle('is-open');
-        this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      });
-    });
-    document.addEventListener('click', function() {
-      document.querySelectorAll('.site-nav__dropdown-menu.is-open').forEach(function(m) {
-        m.classList.remove('is-open');
-        m.previousElementSibling.setAttribute('aria-expanded', 'false');
-      });
-    });
-    // Language switcher dropdown
+    // User menu toggle
     (function() {
-      const toggle = document.querySelector('.lang-switcher__toggle');
-      if (!toggle) return;
-      const menu = toggle.nextElementSibling;
-      toggle.addEventListener('click', function(e) {
+      var trigger = document.querySelector('.user-menu__trigger');
+      var dropdown = document.getElementById('user-menu-dropdown');
+      if (!trigger || !dropdown) return;
+      trigger.addEventListener('click', function(e) {
         e.stopPropagation();
-        const isOpen = menu.classList.toggle('is-open');
-        this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        var open = dropdown.hidden;
+        dropdown.hidden = !open;
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
-      document.addEventListener('click', function() {
-        menu.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('#user-menu')) {
+          dropdown.hidden = true;
+          trigger.setAttribute('aria-expanded', 'false');
+        }
       });
     })();
-    // Theme toggle
+    // Sidebar toggle (mobile)
     (function() {
-      var btn = document.querySelector('.theme-toggle');
-      if (!btn) return;
+      var btn = document.getElementById('sidebar-toggle');
+      var sidebar = document.getElementById('app-sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+      if (!btn || !sidebar) return;
+      btn.addEventListener('click', function() {
+        var open = sidebar.classList.toggle('app-sidebar--open');
+        if (overlay) overlay.classList.toggle('app-sidebar__overlay--visible', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      if (overlay) {
+        overlay.addEventListener('click', function() {
+          sidebar.classList.remove('app-sidebar--open');
+          overlay.classList.remove('app-sidebar__overlay--visible');
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+    })();
+    // Theme toggle (user menu + standalone)
+    (function() {
       function current() {
         return document.documentElement.getAttribute('data-theme') ||
           (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
@@ -164,10 +134,25 @@
       function apply(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('minoo-theme', theme);
+        var label = document.getElementById('user-menu-theme-value');
+        if (label) label.textContent = theme === 'dark' ? 'Dark' : 'Light';
       }
-      btn.addEventListener('click', function() {
-        apply(current() === 'dark' ? 'light' : 'dark');
-      });
+      // User menu theme button
+      var menuBtn = document.getElementById('user-menu-theme-toggle');
+      if (menuBtn) {
+        var label = document.getElementById('user-menu-theme-value');
+        if (label) label.textContent = current() === 'dark' ? 'Dark' : 'Light';
+        menuBtn.addEventListener('click', function() {
+          apply(current() === 'dark' ? 'light' : 'dark');
+        });
+      }
+      // Standalone theme toggle (if present)
+      var btn = document.querySelector('.theme-toggle');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          apply(current() === 'dark' ? 'light' : 'dark');
+        });
+      }
     })();
   </script>
   <script>

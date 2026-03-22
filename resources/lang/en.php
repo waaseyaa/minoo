@@ -791,6 +791,22 @@ return [
     'get_involved.no_wrong_heading' => 'No Wrong Way to Start',
     'get_involved.no_wrong_text' => 'You don\'t need special skills or a big time commitment. If you care about your community, you\'re already qualified. Start with whatever feels right and go from there.',
 
+    // User Menu
+    'usermenu.profile' => 'My Profile',
+    'usermenu.dashboard' => 'Dashboard',
+    'usermenu.theme' => 'Theme',
+    'usermenu.language' => 'Language',
+    'usermenu.sign_out' => 'Sign Out',
+    'usermenu.log_in' => 'Log In',
+    'search.placeholder' => 'Search...',
+
+    // Sidebar Navigation
+    'sidebar.navigate' => 'Navigate',
+    'sidebar.programs' => 'Programs',
+    'sidebar.your_communities' => 'Your Communities',
+    'sidebar.home' => 'Home',
+    'nav.businesses' => 'Businesses',
+
     // Open Graph
     'og.default_description' => 'Connecting Indigenous communities, Elders, and volunteers across Turtle Island.',
 ];
