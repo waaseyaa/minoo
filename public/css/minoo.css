@@ -2896,6 +2896,34 @@
     :root:not([data-theme="dark"]) .theme-toggle__icon--dark { display: none; }
     :root:not([data-theme="dark"]) .theme-toggle__icon--light { display: block; }
   }
+
+  /* ── Light mode component overrides ── */
+  [data-theme="light"] .feed-pill {
+    background: rgba(106, 156, 175, 0.08);
+  }
+
+  [data-theme="light"] .community-pill {
+    background: rgba(106, 156, 175, 0.1);
+  }
+
+  [data-theme="light"] .flash-message--success { background: rgba(42, 157, 143, 0.08); }
+  [data-theme="light"] .flash-message--error { background: rgba(255, 77, 90, 0.08); }
+  [data-theme="light"] .flash-message--info { background: rgba(106, 156, 175, 0.08); }
+  [data-theme="light"] .flash-message--warning { background: rgba(244, 162, 97, 0.08); }
+
+  /* ── prefers-color-scheme auto-detection equivalents ── */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .feed-pill {
+      background: rgba(106, 156, 175, 0.08);
+    }
+    :root:not([data-theme="dark"]) .community-pill {
+      background: rgba(106, 156, 175, 0.1);
+    }
+    :root:not([data-theme="dark"]) .flash-message--success { background: rgba(42, 157, 143, 0.08); }
+    :root:not([data-theme="dark"]) .flash-message--error { background: rgba(255, 77, 90, 0.08); }
+    :root:not([data-theme="dark"]) .flash-message--info { background: rgba(106, 156, 175, 0.08); }
+    :root:not([data-theme="dark"]) .flash-message--warning { background: rgba(244, 162, 97, 0.08); }
+  }
 }
 
 @layer utilities {
@@ -4143,32 +4171,4 @@
     flex-direction: column;
     gap: var(--space-xs);
   }
-}
-
-/* ── Light mode component overrides ── */
-[data-theme="light"] .feed-pill {
-  background: rgba(106, 156, 175, 0.08);
-}
-
-[data-theme="light"] .community-pill {
-  background: rgba(106, 156, 175, 0.1);
-}
-
-[data-theme="light"] .flash-message--success { background: rgba(42, 157, 143, 0.08); }
-[data-theme="light"] .flash-message--error { background: rgba(255, 77, 90, 0.08); }
-[data-theme="light"] .flash-message--info { background: rgba(106, 156, 175, 0.08); }
-[data-theme="light"] .flash-message--warning { background: rgba(244, 162, 97, 0.08); }
-
-/* ── prefers-color-scheme auto-detection equivalents ── */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) .feed-pill {
-    background: rgba(106, 156, 175, 0.08);
-  }
-  :root:not([data-theme="dark"]) .community-pill {
-    background: rgba(106, 156, 175, 0.1);
-  }
-  :root:not([data-theme="dark"]) .flash-message--success { background: rgba(42, 157, 143, 0.08); }
-  :root:not([data-theme="dark"]) .flash-message--error { background: rgba(255, 77, 90, 0.08); }
-  :root:not([data-theme="dark"]) .flash-message--info { background: rgba(106, 156, 175, 0.08); }
-  :root:not([data-theme="dark"]) .flash-message--warning { background: rgba(244, 162, 97, 0.08); }
 }
