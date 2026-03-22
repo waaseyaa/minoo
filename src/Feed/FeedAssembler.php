@@ -204,11 +204,11 @@ final class FeedAssembler implements FeedAssemblerInterface
      */
     private function attachEngagementCounts(array $items): array
     {
-        $ids = array_map(fn(FeedItem $item) => $item->id, $items);
+        $ids = array_map(fn(FeedItem $item) => ['type' => $item->type, 'id' => (int) $item->id], $items);
         $counts = $this->engagementCounter->getCounts($ids);
 
         return array_map(function (FeedItem $item) use ($counts) {
-            $itemCounts = $counts[$item->id] ?? null;
+            $itemCounts = $counts[$item->type . ':' . $item->id] ?? null;
             if ($itemCounts === null) {
                 return $item;
             }

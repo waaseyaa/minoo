@@ -25,7 +25,8 @@ final class FeedController
 
     public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $ctx = $this->buildContext($request, $query, $account);
+        $resolved = self::resolveFilter($query['filter'] ?? 'all');
+        $ctx = $this->buildContext($request, $query, $account, $resolved['filter']);
         $response = $this->assembler->assemble($ctx);
 
         $trending = $this->buildTrending($response);
@@ -41,6 +42,7 @@ final class FeedController
             'response' => $response,
             'nextCursor' => $response->nextCursor,
             'activeFilter' => $response->activeFilter,
+            'filterParam' => $resolved['filterParam'],
             'csrf_token' => $this->generateCsrfToken($request),
             'trending' => $trending,
             'upcoming_events' => $upcomingEvents,
@@ -164,14 +166,18 @@ final class FeedController
                                         'url' => '/' . $type . 's/' . ($entity->get('slug') ?? $entity->id()),
                                     ];
                                 }
-                            } catch (\Throwable) {
-                                // Entity missing — skip
+                            } catch (\PDOException $e) {
+                                error_log(sprintf('[FeedController::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
+                            } catch (\RuntimeException $e) {
+                                error_log(sprintf('[FeedController::%s] Runtime error: %s', __FUNCTION__, $e->getMessage()));
                             }
                         }
                     }
                 }
-            } catch (\Throwable) {
-                // Reaction storage unavailable — fall through to fallback
+            } catch (\PDOException $e) {
+                error_log(sprintf('[FeedController::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
+            } catch (\RuntimeException $e) {
+                error_log(sprintf('[FeedController::%s] Runtime error: %s', __FUNCTION__, $e->getMessage()));
             }
         }
 
@@ -226,7 +232,11 @@ final class FeedController
             }
 
             return $result;
-        } catch (\Throwable) {
+        } catch (\PDOException $e) {
+            error_log(sprintf('[FeedController::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
+            return [];
+        } catch (\RuntimeException $e) {
+            error_log(sprintf('[FeedController::%s] Runtime error: %s', __FUNCTION__, $e->getMessage()));
             return [];
         }
     }
@@ -294,7 +304,11 @@ final class FeedController
             usort($withDistance, fn(array $a, array $b): int => $a['distance'] <=> $b['distance']);
 
             return array_slice($withDistance, 0, 6);
-        } catch (\Throwable) {
+        } catch (\PDOException $e) {
+            error_log(sprintf('[FeedController::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
+            return [];
+        } catch (\RuntimeException $e) {
+            error_log(sprintf('[FeedController::%s] Runtime error: %s', __FUNCTION__, $e->getMessage()));
             return [];
         }
     }
@@ -345,7 +359,11 @@ final class FeedController
             }
 
             return $result;
-        } catch (\Throwable) {
+        } catch (\PDOException $e) {
+            error_log(sprintf('[FeedController::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
+            return [];
+        } catch (\RuntimeException $e) {
+            error_log(sprintf('[FeedController::%s] Runtime error: %s', __FUNCTION__, $e->getMessage()));
             return [];
         }
     }
@@ -409,7 +427,38 @@ final class FeedController
         return '?';
     }
 
-    private function buildContext(HttpRequest $request, array $query, ?AccountInterface $account = null): FeedContext
+    /**
+     * URL-friendly filter names mapped to internal entity type identifiers.
+     *
+     * @var array<string, string>
+     */
+    private const FILTER_MAP = [
+        'all' => 'all',
+        'event' => 'event',
+        'group' => 'group',
+        'business' => 'business',
+        'people' => 'resource_person',
+        'person' => 'resource_person',
+    ];
+
+    /**
+     * Resolve and validate the ?filter= query parameter.
+     *
+     * @return array{filterParam: string, filter: string} URL-facing param and internal entity type
+     */
+    public static function resolveFilter(string $filterParam): array
+    {
+        if (!array_key_exists($filterParam, self::FILTER_MAP)) {
+            $filterParam = 'all';
+        }
+
+        return [
+            'filterParam' => $filterParam,
+            'filter' => self::FILTER_MAP[$filterParam],
+        ];
+    }
+
+    private function buildContext(HttpRequest $request, array $query, ?AccountInterface $account = null, ?string $resolvedFilter = null): FeedContext
     {
         $locationCookie = $request->cookies->get('minoo_loc');
         $lat = null;
@@ -427,10 +476,12 @@ final class FeedController
 
         $isFirstVisit = $request->cookies->get('minoo_fv') === null;
 
+        $activeFilter = $resolvedFilter ?? self::resolveFilter($query['filter'] ?? 'all')['filter'];
+
         return new FeedContext(
             latitude: $lat,
             longitude: $lon,
-            activeFilter: $query['filter'] ?? 'all',
+            activeFilter: $activeFilter,
             cursor: $query['cursor'] ?? null,
             limit: min((int) ($query['limit'] ?? 20), 50),
             isFirstVisit: $isFirstVisit,

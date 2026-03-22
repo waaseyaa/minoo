@@ -43,7 +43,7 @@ final class EngagementControllerTest extends TestCase
     {
         $controller = $this->makeController();
         $request = $this->jsonRequest('POST', [
-            'emoji' => "\u{2764}\u{FE0F}",
+            'reaction_type' => 'like',
             'target_type' => 'malicious_type',
             'target_id' => 1,
         ]);
@@ -102,14 +102,14 @@ final class EngagementControllerTest extends TestCase
         $this->assertStringContainsString('Invalid target_type', $response->content);
     }
 
-    // --- Emoji validation ---
+    // --- Reaction type validation ---
 
     #[Test]
-    public function react_rejects_empty_emoji(): void
+    public function react_rejects_invalid_reaction_type(): void
     {
         $controller = $this->makeController();
         $request = $this->jsonRequest('POST', [
-            'emoji' => '   ',
+            'reaction_type' => 'invalid_type',
             'target_type' => 'event',
             'target_id' => 1,
         ]);
@@ -117,23 +117,7 @@ final class EngagementControllerTest extends TestCase
         $response = $controller->react([], [], $this->authedAccount(), $request);
 
         $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid emoji', $response->content);
-    }
-
-    #[Test]
-    public function react_rejects_oversized_emoji(): void
-    {
-        $controller = $this->makeController();
-        $request = $this->jsonRequest('POST', [
-            'emoji' => str_repeat("\u{1F600}", 11),
-            'target_type' => 'event',
-            'target_id' => 1,
-        ]);
-
-        $response = $controller->react([], [], $this->authedAccount(), $request);
-
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid emoji', $response->content);
+        $this->assertStringContainsString('Invalid reaction_type', $response->content);
     }
 
     // --- Missing fields ---
@@ -142,7 +126,7 @@ final class EngagementControllerTest extends TestCase
     public function react_rejects_missing_fields(): void
     {
         $controller = $this->makeController();
-        $request = $this->jsonRequest('POST', ['emoji' => "\u{2764}\u{FE0F}"]);
+        $request = $this->jsonRequest('POST', ['reaction_type' => 'like']);
 
         $response = $controller->react([], [], $this->authedAccount(), $request);
 
@@ -166,7 +150,7 @@ final class EngagementControllerTest extends TestCase
     public function createPost_rejects_empty_body(): void
     {
         $controller = $this->makeController();
-        $request = $this->jsonRequest('POST', ['body' => '   ']);
+        $request = $this->jsonRequest('POST', ['body' => '   ', 'community_id' => 1]);
 
         $response = $controller->createPost([], [], $this->authedAccount(), $request);
 
@@ -178,7 +162,7 @@ final class EngagementControllerTest extends TestCase
     public function createPost_rejects_oversized_body(): void
     {
         $controller = $this->makeController();
-        $request = $this->jsonRequest('POST', ['body' => str_repeat('a', 5001)]);
+        $request = $this->jsonRequest('POST', ['body' => str_repeat('a', 5001), 'community_id' => 1]);
 
         $response = $controller->createPost([], [], $this->authedAccount(), $request);
 

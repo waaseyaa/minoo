@@ -22,12 +22,12 @@ final class EngagementServiceProvider extends ServiceProvider
             id: 'reaction',
             label: 'Reaction',
             class: Reaction::class,
-            keys: ['id' => 'rid', 'uuid' => 'uuid', 'label' => 'emoji'],
+            keys: ['id' => 'rid', 'uuid' => 'uuid', 'label' => 'reaction_type'],
             group: 'engagement',
             fieldDefinitions: [
-                'emoji' => [
+                'reaction_type' => [
                     'type' => 'string',
-                    'label' => 'Emoji',
+                    'label' => 'Reaction Type',
                     'weight' => 0,
                 ],
                 'user_id' => [
@@ -110,6 +110,11 @@ final class EngagementServiceProvider extends ServiceProvider
                     'type' => 'integer',
                     'label' => 'User ID',
                     'weight' => 1,
+                ],
+                'community_id' => [
+                    'type' => 'integer',
+                    'label' => 'Community ID',
+                    'weight' => 2,
                 ],
                 'status' => [
                     'type' => 'boolean',

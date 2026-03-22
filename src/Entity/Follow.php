@@ -19,8 +19,14 @@ final class Follow extends ContentEntityBase
     /** @param array<string, mixed> $values */
     public function __construct(array $values = [])
     {
+        foreach (['user_id', 'target_type', 'target_id'] as $field) {
+            if (!isset($values[$field])) {
+                throw new \InvalidArgumentException("Missing required field: {$field}");
+            }
+        }
+
         if (!array_key_exists('created_at', $values)) {
-            $values['created_at'] = 0;
+            $values['created_at'] = time();
         }
 
         parent::__construct($values, $this->entityTypeId, $this->entityKeys);
