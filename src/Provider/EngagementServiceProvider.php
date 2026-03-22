@@ -116,6 +116,11 @@ final class EngagementServiceProvider extends ServiceProvider
                     'label' => 'Community ID',
                     'weight' => 2,
                 ],
+                'images' => [
+                    'type' => 'text_long',
+                    'label' => 'Images',
+                    'weight' => 3,
+                ],
                 'status' => [
                     'type' => 'boolean',
                     'label' => 'Published',
