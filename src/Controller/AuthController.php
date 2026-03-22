@@ -160,10 +160,19 @@ final class AuthController
             ->execute();
 
         if ($existing !== []) {
-            $html = $this->twig->render('auth/register.html.twig', [
-                'errors' => ['email' => 'This email is already registered.'],
-                'values' => compact('name', 'email', 'phone'),
-            ]);
+            /** @var User|null $existingUser */
+            $existingUser = $storage->load(reset($existing));
+
+            // If inactive (unverified), re-send verification email instead of revealing existence
+            if ($existingUser !== null && !$existingUser->isActive()) {
+                $token = $this->emailVerificationService->createToken($existingUser->id());
+                $this->authMailer->sendEmailVerification($existingUser, $token);
+                $html = $this->twig->render('auth/check-email.html.twig', []);
+                return new SsrResponse(content: $html);
+            }
+
+            // Active account — show generic check-email page to prevent enumeration
+            $html = $this->twig->render('auth/check-email.html.twig', []);
             return new SsrResponse(content: $html);
         }
 
@@ -185,8 +194,7 @@ final class AuthController
         $storage->save($user);
 
         // Send verification email
-        $verifyService = $this->emailVerificationService;
-        $token = $verifyService->createToken($user->id());
+        $token = $this->emailVerificationService->createToken($user->id());
         $this->authMailer->sendEmailVerification($user, $token);
 
         $html = $this->twig->render('auth/check-email.html.twig', []);
@@ -211,11 +219,12 @@ final class AuthController
         $ip = $request->getClientIp() ?? '0.0.0.0';
 
         if (!$limiter->check($ip, '/forgot-password', 3, 300)) {
+            // Return 200 even when rate-limited to prevent enumeration via status codes
             $html = $this->twig->render('auth/forgot-password.html.twig', [
                 'submitted' => true,
                 'values' => [],
             ]);
-            return new SsrResponse(content: $html, statusCode: 429);
+            return new SsrResponse(content: $html);
         }
         $limiter->record($ip, '/forgot-password');
 
@@ -338,18 +347,17 @@ final class AuthController
                 'verified' => false,
                 'error' => 'This verification link is invalid or has expired.',
             ]);
-            return new SsrResponse(content: $html);
+            return new SsrResponse(content: $html, statusCode: 400);
         }
 
-        $verifyService = $this->emailVerificationService;
-        $userId = $verifyService->validateToken($token);
+        $userId = $this->emailVerificationService->validateToken($token);
 
         if ($userId === null) {
             $html = $this->twig->render('auth/verify-email.html.twig', [
                 'verified' => false,
                 'error' => 'This verification link is invalid or has expired.',
             ]);
-            return new SsrResponse(content: $html);
+            return new SsrResponse(content: $html, statusCode: 400);
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
@@ -361,12 +369,12 @@ final class AuthController
                 'verified' => false,
                 'error' => 'User account not found.',
             ]);
-            return new SsrResponse(content: $html);
+            return new SsrResponse(content: $html, statusCode: 404);
         }
 
         $user->set('status', true);
         $storage->save($user);
-        $verifyService->consumeToken($token);
+        $this->emailVerificationService->consumeToken($token);
 
         $this->authMailer->sendWelcome($user);
 

@@ -219,14 +219,100 @@ final class AuthControllerTest extends TestCase
     }
 
     #[Test]
-    public function verify_email_with_missing_token_shows_error(): void
+    public function verify_email_with_missing_token_returns_400(): void
     {
         $this->request = HttpRequest::create('/verify-email', 'GET');
 
         $response = $this->createController()->verifyEmail([], [], $this->account, $this->request);
 
-        self::assertSame(200, $response->statusCode);
+        self::assertSame(400, $response->statusCode);
         self::assertStringContainsString('invalid or has expired', $response->content);
+    }
+
+    #[Test]
+    public function verify_email_with_valid_token_activates_user_and_sends_welcome(): void
+    {
+        $user = new User([
+            'uid' => 99,
+            'name' => 'New User',
+            'mail' => 'new@example.com',
+            'status' => 0,
+        ]);
+
+        // Create a real token in the in-memory DB
+        $token = $this->emailVerificationService->createToken('99');
+
+        $this->query->method('execute')->willReturn([99]);
+        $this->userStorage->method('load')->with('99')->willReturn($user);
+        $this->userStorage->expects(self::once())->method('save');
+
+        $this->authMailer->expects(self::once())
+            ->method('sendWelcome')
+            ->with($user);
+
+        $this->request = HttpRequest::create('/verify-email?token=' . $token, 'GET', ['token' => $token]);
+
+        $response = $this->createController()->verifyEmail([], [], $this->account, $this->request);
+
+        self::assertSame(200, $response->statusCode);
+        self::assertStringContainsString('verified', $response->content);
+        self::assertSame(99, $_SESSION['waaseyaa_uid']);
+    }
+
+    #[Test]
+    public function register_with_existing_inactive_email_resends_verification(): void
+    {
+        $existingUser = new User([
+            'uid' => 50,
+            'name' => 'Inactive',
+            'mail' => 'inactive@example.com',
+            'status' => 0,
+        ]);
+
+        $this->query->method('execute')->willReturn([50]);
+        $this->userStorage->method('load')->with(50)->willReturn($existingUser);
+
+        $this->authMailer->expects(self::once())
+            ->method('sendEmailVerification');
+
+        $this->request = HttpRequest::create('/register', 'POST', [
+            'name' => 'Inactive',
+            'email' => 'inactive@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response = $this->createController()->submitRegister([], [], $this->account, $this->request);
+
+        self::assertSame(200, $response->statusCode);
+        self::assertStringContainsString('check-email', $response->content);
+    }
+
+    #[Test]
+    public function register_with_existing_active_email_shows_check_email_page(): void
+    {
+        $activeUser = new User([
+            'uid' => 51,
+            'name' => 'Active',
+            'mail' => 'active@example.com',
+            'status' => 1,
+        ]);
+
+        $this->query->method('execute')->willReturn([51]);
+        $this->userStorage->method('load')->with(51)->willReturn($activeUser);
+
+        $this->authMailer->expects(self::never())
+            ->method('sendEmailVerification');
+
+        $this->request = HttpRequest::create('/register', 'POST', [
+            'name' => 'Active',
+            'email' => 'active@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response = $this->createController()->submitRegister([], [], $this->account, $this->request);
+
+        self::assertSame(200, $response->statusCode);
+        self::assertStringContainsString('check-email', $response->content);
     }
 
     private function createSuccessfulUser(): User
