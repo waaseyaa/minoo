@@ -5,6 +5,7 @@
       <span class="feed-create__placeholder">{{ trans('feed.whats_happening') }}</span>
     </div>
     <form class="feed-create__form" id="create-post-form" action="/api/engagement/post" method="post" hidden>
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <textarea class="feed-create__textarea" name="body" placeholder="{{ trans('feed.whats_happening') }}" maxlength="5000" required></textarea>
       <div class="feed-create__actions">
         <select name="community_id" class="feed-create__community" required>
