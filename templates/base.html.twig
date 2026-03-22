@@ -17,11 +17,12 @@
   {% if csrf_token is defined %}
     <meta name="csrf-token" content="{{ csrf_token }}">
   {% endif %}
-  <link rel="stylesheet" href="/css/minoo.css?v=10">
+  <link rel="stylesheet" href="/css/minoo.css?v=11">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   {% block head %}{% endblock %}
 </head>
 <body>
+  <script>(function(){var t=localStorage.getItem('minoo-theme');if(t)document.documentElement.setAttribute('data-theme',t);})()</script>
   <a href="#main-content" class="skip-link">{{ trans('base.skip_link') }}</a>
   <div class="site">
     <header class="site-header">
@@ -58,6 +59,9 @@
             {% else %}
               <li class="site-nav__utility"><a href="{{ lang_url('/login') }}"{% if path is defined and path == '/login' %} aria-current="page"{% endif %}>{{ trans('nav.login') }}</a></li>
             {% endif %}
+            <li class="site-nav__utility site-nav__theme">
+              {% include "components/theme-toggle.html.twig" %}
+            </li>
             <li class="site-nav__utility site-nav__lang">
               <div class="lang-switcher">
                 <button class="lang-switcher__toggle" aria-expanded="false" aria-haspopup="true" aria-label="{{ trans('language_switcher.label') }}">
@@ -147,6 +151,22 @@
       document.addEventListener('click', function() {
         menu.classList.remove('is-open');
         toggle.setAttribute('aria-expanded', 'false');
+      });
+    })();
+    // Theme toggle
+    (function() {
+      var btn = document.querySelector('.theme-toggle');
+      if (!btn) return;
+      function current() {
+        return document.documentElement.getAttribute('data-theme') ||
+          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      }
+      function apply(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('minoo-theme', theme);
+      }
+      btn.addEventListener('click', function() {
+        apply(current() === 'dark' ? 'light' : 'dark');
       });
     })();
   </script>
