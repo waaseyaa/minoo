@@ -25,6 +25,9 @@ final class Post extends ContentEntityBase
             }
         }
 
+        if (!array_key_exists('images', $values)) {
+            $values['images'] = '[]';
+        }
         if (!array_key_exists('status', $values)) {
             $values['status'] = 1;
         }
