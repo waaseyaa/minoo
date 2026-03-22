@@ -35,23 +35,31 @@ final class EngagementCounter
         $reactionStorage = $this->entityTypeManager->getStorage('reaction');
         $commentStorage = $this->entityTypeManager->getStorage('comment');
 
+        // Group targets by type for structured iteration (prepares for future IN-clause batching)
+        $byType = [];
         foreach ($targets as $target) {
-            $key = $target['type'] . ':' . $target['id'];
+            $byType[$target['type']][] = $target['id'];
+        }
 
-            $reactionIds = $reactionStorage->getQuery()
-                ->condition('target_type', $target['type'])
-                ->condition('target_id', $target['id'])
-                ->count()
-                ->execute();
-            $result[$key]['reactions'] = count($reactionIds);
+        foreach ($byType as $type => $ids) {
+            foreach ($ids as $id) {
+                $key = $type . ':' . $id;
 
-            $commentIds = $commentStorage->getQuery()
-                ->condition('target_type', $target['type'])
-                ->condition('target_id', $target['id'])
-                ->condition('status', 1)
-                ->count()
-                ->execute();
-            $result[$key]['comments'] = count($commentIds);
+                $reactionIds = $reactionStorage->getQuery()
+                    ->condition('target_type', $type)
+                    ->condition('target_id', $id)
+                    ->count()
+                    ->execute();
+                $result[$key]['reactions'] = count($reactionIds);
+
+                $commentIds = $commentStorage->getQuery()
+                    ->condition('target_type', $type)
+                    ->condition('target_id', $id)
+                    ->condition('status', 1)
+                    ->count()
+                    ->execute();
+                $result[$key]['comments'] = count($commentIds);
+            }
         }
 
         return $result;
