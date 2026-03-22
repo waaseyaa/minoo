@@ -239,11 +239,65 @@
       }
     });
 
-    // Create post
+    // Create post (with image upload support)
     const trigger = document.getElementById('create-post-trigger');
     const postForm = document.getElementById('create-post-form');
     if (trigger && postForm) {
+      const imageInput = document.getElementById('post-image-input');
+      const previewsContainer = document.getElementById('post-image-previews');
+      const photoBtn = document.getElementById('post-photo-btn');
+      const imageError = document.getElementById('post-image-error');
+      const MAX_IMAGES = 4;
+      const MAX_SIZE = 5 * 1024 * 1024;
+      let selectedFiles = [];
+
       trigger.addEventListener('click', () => { postForm.hidden = false; trigger.hidden = true; });
+
+      if (photoBtn && imageInput) {
+        photoBtn.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', () => {
+          imageError.hidden = true;
+          const newFiles = Array.from(imageInput.files || []);
+          for (const file of newFiles) {
+            if (selectedFiles.length >= MAX_IMAGES) {
+              imageError.textContent = 'Maximum ' + MAX_IMAGES + ' images allowed';
+              imageError.hidden = false;
+              break;
+            }
+            if (file.size > MAX_SIZE) {
+              imageError.textContent = file.name + ' is too large (max 5 MB)';
+              imageError.hidden = false;
+              continue;
+            }
+            selectedFiles.push(file);
+          }
+          imageInput.value = '';
+          renderPreviews();
+        });
+      }
+
+      function renderPreviews() {
+        previewsContainer.querySelectorAll('img').forEach(img => URL.revokeObjectURL(img.src));
+        previewsContainer.innerHTML = '';
+        previewsContainer.hidden = selectedFiles.length === 0;
+        selectedFiles.forEach((file, i) => {
+          const url = URL.createObjectURL(file);
+          const wrapper = document.createElement('div');
+          wrapper.className = 'feed-create__preview';
+          wrapper.innerHTML = '<img src="' + url + '" alt=""><button type="button" class="feed-create__preview-remove" data-index="' + i + '" aria-label="Remove image">&times;</button>';
+          previewsContainer.appendChild(wrapper);
+        });
+      }
+
+      previewsContainer.addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('.feed-create__preview-remove');
+        if (!removeBtn) return;
+        const idx = parseInt(removeBtn.dataset.index, 10);
+        selectedFiles.splice(idx, 1);
+        imageError.hidden = true;
+        renderPreviews();
+      });
+
       postForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = postForm.querySelector('button[type="submit"]');
@@ -254,11 +308,15 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Posting...';
         try {
-          const payload = { body };
-          if (communitySelect) payload.community_id = communitySelect.value;
+          const fd = new FormData();
+          fd.append('body', body);
+          if (communitySelect) fd.append('community_id', communitySelect.value);
+          fd.append('_csrf_token', postForm.querySelector('[name="_csrf_token"]').value);
+          selectedFiles.forEach(f => fd.append('images[]', f));
           const res = await fetch('/api/engagement/post', {
-            method: 'POST', headers,
-            body: JSON.stringify(payload)
+            method: 'POST',
+            headers: { 'X-CSRF-Token': csrfToken },
+            body: fd
           });
           if (res.ok) {
             location.reload();

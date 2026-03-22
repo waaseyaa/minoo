@@ -30,6 +30,14 @@
       </div>
     </div>
     <p class="feed-card__body">{{ item.meta|default('') }}</p>
+    {% set post_images = item.payload.images|default([]) %}
+    {% if post_images|length > 0 %}
+      <div class="feed-card__images feed-card__images--{{ min(post_images|length, 4) }}">
+        {% for img in post_images|slice(0, 4) %}
+          <img src="/uploads/{{ img }}" alt="" class="feed-card__image" loading="lazy">
+        {% endfor %}
+      </div>
+    {% endif %}
     {% include "components/feed-engagement.html.twig" with { item: item } only %}
   </article>
 {% else %}

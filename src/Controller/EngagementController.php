@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Entity\Reaction;
+use Minoo\Support\UploadService;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
@@ -18,8 +19,11 @@ final class EngagementController
         'oral_history', 'dictionary_entry', 'cultural_collection',
     ];
 
+    private const MAX_IMAGES = 4;
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
+        private readonly UploadService $uploadService,
     ) {}
 
     public function react(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -213,15 +217,28 @@ final class EngagementController
 
     public function createPost(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $data = $this->jsonBody($request);
+        $contentType = $request->headers->get('Content-Type', '');
+        if (str_contains($contentType, 'application/json')) {
+            $data = $this->jsonBody($request);
+            $body = trim((string) ($data['body'] ?? ''));
+            $communityId = $data['community_id'] ?? null;
+            $uploadedFiles = [];
+        } else {
+            $body = trim((string) $request->request->get('body', ''));
+            $communityId = $request->request->get('community_id');
+            $uploadedFiles = $request->files->all('images') ?: [];
+        }
 
-        if (!isset($data['body'], $data['community_id'])) {
+        if ($body === '' || $communityId === null || $communityId === '') {
             return $this->json(['error' => 'Missing required fields: body, community_id'], 422);
         }
 
-        $body = trim($data['body']);
-        if ($body === '' || mb_strlen($body) > 5000) {
+        if (mb_strlen($body) > 5000) {
             return $this->json(['error' => 'Body must be 1-5000 characters'], 422);
+        }
+
+        if (count($uploadedFiles) > self::MAX_IMAGES) {
+            return $this->json(['error' => 'Maximum ' . self::MAX_IMAGES . ' images allowed'], 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('post');
@@ -230,16 +247,38 @@ final class EngagementController
             $entity = $storage->create([
                 'body' => $body,
                 'user_id' => $account->id(),
-                'community_id' => (int) $data['community_id'],
+                'community_id' => (int) $communityId,
             ]);
             $storage->save($entity);
         } catch (\InvalidArgumentException) {
             return $this->json(['error' => 'Invalid entity data'], 422);
         }
 
+        // Process uploaded images after entity creation (need entity ID for directory)
+        $imagePaths = [];
+        foreach ($uploadedFiles as $file) {
+            $fileArray = [
+                'name' => $file->getClientOriginalName(),
+                'tmp_name' => $file->getPathname(),
+                'size' => $file->getSize(),
+                'type' => $file->getMimeType(),
+                'error' => $file->getError(),
+            ];
+
+            if ($this->uploadService->validateImage($fileArray) === []) {
+                $imagePaths[] = $this->uploadService->moveUpload($fileArray, 'posts/' . $entity->id());
+            }
+        }
+
+        if ($imagePaths !== []) {
+            $entity->set('images', json_encode($imagePaths, JSON_THROW_ON_ERROR));
+            $storage->save($entity);
+        }
+
         return $this->json([
             'id' => $entity->id(),
             'body' => $entity->get('body'),
+            'images' => $imagePaths,
             'created_at' => $entity->get('created_at'),
         ], 201);
     }
@@ -259,6 +298,7 @@ final class EngagementController
         }
 
         $storage->delete([$entity]);
+        $this->uploadService->deleteDirectory('posts/' . $id);
 
         return $this->json(['deleted' => true]);
     }

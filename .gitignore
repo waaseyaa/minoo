@@ -6,6 +6,7 @@
 *.sqlite.*.bak
 .env
 storage/geoip/
+storage/uploads/
 .phpunit.cache/
 storage/phpstan/
 .playwright-mcp/

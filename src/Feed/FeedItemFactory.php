@@ -308,6 +308,22 @@ final class FeedItemFactory
         $id = 'post:' . $entity->id();
         $communityId = $entity->get('community_id');
 
+        $images = [];
+        $imagesJson = $entity->get('images');
+        if ($imagesJson !== null && $imagesJson !== '') {
+            try {
+                $decoded = json_decode((string) $imagesJson, true, 4, JSON_THROW_ON_ERROR);
+                $images = is_array($decoded) ? $decoded : [];
+            } catch (\JsonException) {
+                // Ignore malformed JSON
+            }
+        }
+
+        $payload = [];
+        if ($images !== []) {
+            $payload['images'] = $images;
+        }
+
         return new FeedItem(
             id: $id,
             type: 'post',
@@ -324,6 +340,7 @@ final class FeedItemFactory
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),
             communityName: $entity->get('community_name'),
+            payload: $payload,
         );
     }
 }

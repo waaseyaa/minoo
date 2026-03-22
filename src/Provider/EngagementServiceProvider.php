@@ -8,6 +8,7 @@ use Minoo\Entity\Comment;
 use Minoo\Entity\Follow;
 use Minoo\Entity\Post;
 use Minoo\Entity\Reaction;
+use Minoo\Support\UploadService;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -18,6 +19,11 @@ final class EngagementServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->singleton(UploadService::class, function (): UploadService {
+            $projectRoot = $this->config['app_root'] ?? dirname(__DIR__, 2);
+            return new UploadService($projectRoot . '/storage/uploads');
+        });
+
         $this->entityType(new EntityType(
             id: 'reaction',
             label: 'Reaction',
@@ -126,6 +132,11 @@ final class EngagementServiceProvider extends ServiceProvider
                     'type' => 'timestamp',
                     'label' => 'Created',
                     'weight' => 10,
+                ],
+                'images' => [
+                    'type' => 'text_long',
+                    'label' => 'Images',
+                    'weight' => 6,
                 ],
                 'updated_at' => [
                     'type' => 'timestamp',
