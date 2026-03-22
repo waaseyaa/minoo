@@ -79,7 +79,7 @@ jobs:
 
       - name: Run Playwright smoke tests
         working-directory: minoo
-        run: npx playwright test --ignore-pattern='light-mode.spec.ts'
+        run: npx playwright test --ignore-snapshots
 
       # -----------------------------------------------------------------------
       # Install production-only dependencies for the artifact
