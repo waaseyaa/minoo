@@ -117,7 +117,13 @@ parameters:
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
 			identifier: method.notFound
-			count: 2
+			count: 5
+			path: src/Controller/CoordinatorDashboardController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:set\(\)\.$#'
+			identifier: method.notFound
+			count: 4
 			path: src/Controller/CoordinatorDashboardController.php
 
 		-
