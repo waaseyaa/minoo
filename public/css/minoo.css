@@ -3988,6 +3988,30 @@
     gap: var(--space-3xs);
   }
 
+  .feed-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+  }
+
+  .feed-pill {
+    display: inline-block;
+    font-size: 0.8125rem;
+    padding: var(--space-3xs) var(--space-xs);
+    background-color: rgba(106, 156, 175, 0.12);
+    color: var(--color-communities);
+    border: 1px solid rgba(106, 156, 175, 0.2);
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  .feed-pill:hover {
+    background-color: rgba(106, 156, 175, 0.22);
+    border-color: var(--color-communities);
+    transform: translateY(-1px);
+  }
+
   .community-pill {
     display: inline-block;
     padding: var(--space-3xs) var(--space-2xs);
