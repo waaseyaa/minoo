@@ -15,19 +15,22 @@ final class CommentTest extends TestCase
     #[Test]
     public function it_creates_with_defaults(): void
     {
+        $before = time();
         $comment = new Comment([
             'body' => 'Great event!',
             'user_id' => 1,
             'target_type' => 'event',
             'target_id' => 42,
         ]);
+        $after = time();
 
         $this->assertSame('Great event!', $comment->get('body'));
         $this->assertSame(1, $comment->get('user_id'));
         $this->assertSame('event', $comment->get('target_type'));
         $this->assertSame(42, $comment->get('target_id'));
         $this->assertSame(1, $comment->get('status'));
-        $this->assertSame(0, $comment->get('created_at'));
+        $this->assertGreaterThanOrEqual($before, $comment->get('created_at'));
+        $this->assertLessThanOrEqual($after, $comment->get('created_at'));
     }
 
     #[Test]
@@ -50,5 +53,39 @@ final class CommentTest extends TestCase
         ]);
 
         $this->assertSame(0, $comment->get('status'));
+    }
+
+    #[Test]
+    public function constructor_requires_required_fields(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Comment([]);
+    }
+
+    #[Test]
+    public function constructor_requires_body(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Comment([
+            'user_id' => 1,
+            'target_type' => 'event',
+            'target_id' => 42,
+        ]);
+    }
+
+    #[Test]
+    public function created_at_defaults_to_current_time(): void
+    {
+        $before = time();
+        $comment = new Comment([
+            'body' => 'Test',
+            'user_id' => 1,
+            'target_type' => 'event',
+            'target_id' => 42,
+        ]);
+        $after = time();
+
+        $this->assertGreaterThanOrEqual($before, $comment->get('created_at'));
+        $this->assertLessThanOrEqual($after, $comment->get('created_at'));
     }
 }

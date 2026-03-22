@@ -15,16 +15,19 @@ final class FollowTest extends TestCase
     #[Test]
     public function it_creates_with_defaults(): void
     {
+        $before = time();
         $follow = new Follow([
             'user_id' => 1,
             'target_type' => 'group',
             'target_id' => 10,
         ]);
+        $after = time();
 
         $this->assertSame(1, $follow->get('user_id'));
         $this->assertSame('group', $follow->get('target_type'));
         $this->assertSame(10, $follow->get('target_id'));
-        $this->assertSame(0, $follow->get('created_at'));
+        $this->assertGreaterThanOrEqual($before, $follow->get('created_at'));
+        $this->assertLessThanOrEqual($after, $follow->get('created_at'));
     }
 
     #[Test]
@@ -46,5 +49,37 @@ final class FollowTest extends TestCase
         ]);
 
         $this->assertSame(1711000000, $follow->get('created_at'));
+    }
+
+    #[Test]
+    public function constructor_requires_required_fields(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Follow([]);
+    }
+
+    #[Test]
+    public function constructor_requires_target_type(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new Follow([
+            'user_id' => 1,
+            'target_id' => 10,
+        ]);
+    }
+
+    #[Test]
+    public function created_at_defaults_to_current_time(): void
+    {
+        $before = time();
+        $follow = new Follow([
+            'user_id' => 1,
+            'target_type' => 'group',
+            'target_id' => 10,
+        ]);
+        $after = time();
+
+        $this->assertGreaterThanOrEqual($before, $follow->get('created_at'));
+        $this->assertLessThanOrEqual($after, $follow->get('created_at'));
     }
 }
