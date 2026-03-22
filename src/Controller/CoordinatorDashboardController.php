@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Domain\Geo\Service\VolunteerRanker;
+use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
 
@@ -76,6 +78,88 @@ final class CoordinatorDashboardController
         ]);
 
         return new SsrResponse(content: $html);
+    }
+
+    /** @param array<string, mixed> $params */
+    public function applications(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $storage = $this->entityTypeManager->getStorage('volunteer');
+        $ids = $storage->getQuery()
+            ->condition('status', 'pending')
+            ->sort('created_at', 'DESC')
+            ->execute();
+
+        $applications = $ids !== [] ? $storage->loadMultiple($ids) : [];
+
+        $html = $this->twig->render('dashboard/coordinator-applications.html.twig', [
+            'applications' => $applications,
+        ]);
+
+        return new SsrResponse(content: $html);
+    }
+
+    /** @param array<string, mixed> $params */
+    public function approveApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $volunteer = $this->loadVolunteerByUuid($params['uuid'] ?? '');
+
+        if ($volunteer === null || $volunteer->get('status') !== 'pending') {
+            Flash::error('Application not found or already processed.');
+            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+        }
+
+        $volunteer->set('status', 'active');
+        $volunteer->set('updated_at', time());
+        $this->entityTypeManager->getStorage('volunteer')->save($volunteer);
+
+        // Grant volunteer role to linked user account
+        $accountId = $volunteer->get('account_id');
+        if ($accountId !== null && $accountId !== '' && is_numeric($accountId)) {
+            $userStorage = $this->entityTypeManager->getStorage('user');
+            /** @var \Waaseyaa\User\User|null $user */
+            $user = $userStorage->load((int) $accountId);
+            if ($user !== null) {
+                $user->addRole('volunteer');
+                $userStorage->save($user);
+            }
+        }
+
+        Flash::success('Volunteer application approved.');
+        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+    }
+
+    /** @param array<string, mixed> $params */
+    public function denyApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $volunteer = $this->loadVolunteerByUuid($params['uuid'] ?? '');
+
+        if ($volunteer === null || $volunteer->get('status') !== 'pending') {
+            Flash::error('Application not found or already processed.');
+            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+        }
+
+        $volunteer->set('status', 'denied');
+        $volunteer->set('updated_at', time());
+        $this->entityTypeManager->getStorage('volunteer')->save($volunteer);
+
+        Flash::info('Volunteer application denied.');
+        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+    }
+
+    private function loadVolunteerByUuid(string $uuid): ?EntityInterface
+    {
+        if ($uuid === '') {
+            return null;
+        }
+
+        $storage = $this->entityTypeManager->getStorage('volunteer');
+        $ids = $storage->getQuery()->condition('uuid', $uuid)->execute();
+
+        if ($ids === []) {
+            return null;
+        }
+
+        return $storage->load(reset($ids));
     }
 
     /**
