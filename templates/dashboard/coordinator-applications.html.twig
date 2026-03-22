@@ -13,7 +13,7 @@
     <div class="dashboard__cards">
       {% for app in applications %}
       <article class="card card--dashboard">
-        <span class="card__badge card__badge--pending">Pending</span>
+        <span class="card__badge card__badge--pending">{{ trans('coordinator.pending_applications') }}</span>
         <h3 class="card__title">{{ app.get('name') }}</h3>
         <dl class="card__meta">
           <dt>{{ trans('coordinator.phone') }}</dt><dd>{{ app.get('phone') }}</dd>

@@ -10,7 +10,7 @@
   {% if pending_application_count > 0 %}
   <div class="card card--dashboard card--highlight">
     <div class="card__row">
-      <span class="card__badge card__badge--pending">{{ pending_application_count }} pending</span>
+      <span class="card__badge card__badge--pending">{{ trans('coordinator.pending_applications_count', {count: pending_application_count}) }}</span>
       <a href="/dashboard/coordinator/applications" class="btn btn--secondary">{{ trans('coordinator.view_applications') }}</a>
     </div>
   </div>
