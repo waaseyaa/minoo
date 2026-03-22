@@ -3736,6 +3736,94 @@
     font-family: var(--font-body);
   }
 
+  .feed-create__actions-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .feed-create__photo-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    padding: var(--space-3xs) var(--space-2xs);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+
+    &:hover { color: var(--text-primary); background: var(--surface); }
+  }
+
+  .feed-create__previews {
+    display: flex;
+    gap: var(--space-xs);
+    padding-block: var(--space-xs);
+    flex-wrap: wrap;
+  }
+
+  .feed-create__preview {
+    position: relative;
+    inline-size: 5rem;
+    block-size: 4rem;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .feed-create__preview img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .feed-create__preview-remove {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-end: 2px;
+    background: oklch(0 0 0 / 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feed-create__image-error {
+    color: oklch(0.65 0.15 25);
+    font-size: var(--text-sm);
+    margin: 0;
+    padding-block: var(--space-3xs);
+  }
+
+  /* Post image grid */
+  .feed-card__images {
+    display: grid;
+    gap: 2px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-block-start: var(--space-sm);
+  }
+
+  .feed-card__images--1 { grid-template-columns: 1fr; }
+  .feed-card__images--2 { grid-template-columns: 1fr 1fr; }
+  .feed-card__images--3 { grid-template-columns: 1fr 1fr; }
+  .feed-card__images--4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+  .feed-card__image {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    max-block-size: 300px;
+  }
+
   .feed-create__guest {
     display: flex;
     align-items: center;

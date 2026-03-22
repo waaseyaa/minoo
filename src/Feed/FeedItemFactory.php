@@ -308,6 +308,8 @@ final class FeedItemFactory
         $id = 'post:' . $entity->id();
         $communityId = $entity->get('community_id');
 
+        $images = json_decode($entity->get('images') ?? '[]', true);
+
         return new FeedItem(
             id: $id,
             type: 'post',
@@ -320,6 +322,7 @@ final class FeedItemFactory
             entity: $entity,
             distance: $distance,
             meta: $this->truncate($entity->get('body')),
+            payload: is_array($images) && $images !== [] ? ['images' => $images] : [],
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),

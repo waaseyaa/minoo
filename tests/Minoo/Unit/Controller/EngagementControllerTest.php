@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\EngagementController;
+use Minoo\Support\UploadService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +24,7 @@ final class EngagementControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->etm = $this->createMock(EntityTypeManager::class);
-        $this->controller = new EngagementController($this->etm);
+        $this->controller = new EngagementController($this->etm, new UploadService(sys_get_temp_dir() . '/minoo-test-uploads'));
     }
 
     private function mockAccount(int $id = 1, bool $isAdmin = false): AccountInterface

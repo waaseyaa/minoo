@@ -237,11 +237,59 @@
       }
     });
 
-    // Create post
+    // Create post with image upload
     const trigger = document.getElementById('create-post-trigger');
     const postForm = document.getElementById('create-post-form');
     if (trigger && postForm) {
+      const photoBtn = document.getElementById('post-photo-btn');
+      const fileInput = document.getElementById('post-image-input');
+      const previewsEl = document.getElementById('post-image-previews');
+      const errorEl = document.getElementById('post-image-error');
+      let selectedFiles = [];
+
       trigger.addEventListener('click', () => { postForm.hidden = false; trigger.hidden = true; });
+
+      // Photo button triggers file input
+      photoBtn?.addEventListener('click', () => fileInput?.click());
+
+      // Handle file selection
+      fileInput?.addEventListener('change', () => {
+        const newFiles = Array.from(fileInput.files);
+        errorEl.hidden = true;
+        for (const file of newFiles) {
+          if (selectedFiles.length >= 4) {
+            errorEl.textContent = '{{ trans("feed.max_images") }}';
+            errorEl.hidden = false;
+            break;
+          }
+          if (file.size > 5 * 1024 * 1024) {
+            errorEl.textContent = '{{ trans("feed.image_too_large") }}';
+            errorEl.hidden = false;
+            continue;
+          }
+          selectedFiles.push(file);
+        }
+        fileInput.value = '';
+        renderPreviews();
+      });
+
+      function renderPreviews() {
+        previewsEl.innerHTML = '';
+        previewsEl.hidden = selectedFiles.length === 0;
+        selectedFiles.forEach((file, i) => {
+          const url = URL.createObjectURL(file);
+          const div = document.createElement('div');
+          div.className = 'feed-create__preview';
+          div.innerHTML = `<img src="${url}" alt=""><button type="button" class="feed-create__preview-remove" data-index="${i}">&times;</button>`;
+          div.querySelector('button').addEventListener('click', () => {
+            URL.revokeObjectURL(url);
+            selectedFiles.splice(i, 1);
+            renderPreviews();
+          });
+          previewsEl.appendChild(div);
+        });
+      }
+
       postForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = postForm.querySelector('button[type="submit"]');
@@ -252,13 +300,19 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Posting...';
         try {
-          const payload = { body };
-          if (communitySelect) payload.community_id = communitySelect.value;
+          const fd = new FormData();
+          fd.append('body', body);
+          fd.append('_csrf_token', csrfToken);
+          if (communitySelect) fd.append('community_id', communitySelect.value);
+          selectedFiles.forEach(f => fd.append('images[]', f));
           const res = await fetch('/api/engagement/post', {
-            method: 'POST', headers,
-            body: JSON.stringify(payload)
+            method: 'POST',
+            headers: { 'X-CSRF-Token': csrfToken },
+            body: fd
           });
           if (res.ok) {
+            selectedFiles.forEach(f => { const u = URL.createObjectURL(f); URL.revokeObjectURL(u); });
+            selectedFiles = [];
             location.reload();
           } else {
             const err = await res.json().catch(() => ({}));
