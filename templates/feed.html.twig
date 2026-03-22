@@ -143,6 +143,14 @@
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const headers = { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
 
+    function showFeedback(btn, message, isError) {
+      const label = btn.querySelector('.feed-action__label') || btn;
+      const original = label.textContent;
+      label.textContent = message;
+      if (isError) btn.classList.add('feed-action--error');
+      setTimeout(() => { label.textContent = original; btn.classList.remove('feed-action--error'); }, 2000);
+    }
+
     // Reaction toggling
     document.addEventListener('click', async function(e) {
       const btn = e.target.closest('[data-action="react"]');
@@ -152,18 +160,27 @@
       const isActive = btn.classList.contains('feed-action--active');
 
       try {
-        if (isActive) {
-          await fetch(`/api/react/${type}/${id}`, { method: 'DELETE', headers });
+        if (isActive && btn.dataset.reactionId) {
+          const res = await fetch(`/api/engagement/react/${btn.dataset.reactionId}`, { method: 'DELETE', headers });
+          if (!res.ok) { showFeedback(btn, 'Error', true); return; }
           btn.classList.remove('feed-action--active');
+          delete btn.dataset.reactionId;
         } else {
-          const reactionType = getReactionType(type);
-          await fetch('/api/react', {
+          const emoji = getReactionEmoji(type);
+          const res = await fetch('/api/engagement/react', {
             method: 'POST', headers,
-            body: JSON.stringify({ target_type: type, target_id: id, reaction_type: reactionType })
+            body: JSON.stringify({ target_type: type, target_id: id, emoji: emoji })
           });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            showFeedback(btn, err.error || 'Error', true);
+            return;
+          }
+          const data = await res.json();
           btn.classList.add('feed-action--active');
+          btn.dataset.reactionId = data.id;
         }
-      } catch (err) { console.error('Reaction error:', err); }
+      } catch (err) { showFeedback(btn, 'Network error', true); }
     });
 
     // Comment expansion
@@ -177,10 +194,13 @@
         if (!section.dataset.loaded) {
           const type = btn.dataset.type;
           const id = btn.dataset.id;
-          const res = await fetch(`/api/comments/${type}/${id}`);
-          const data = await res.json();
-          section.innerHTML = renderComments(data.comments, type, id);
-          section.dataset.loaded = '1';
+          try {
+            const res = await fetch(`/api/engagement/comments/${type}/${id}`);
+            if (!res.ok) { section.innerHTML = '<p class="feed-comments__error">Could not load comments.</p>'; return; }
+            const data = await res.json();
+            section.innerHTML = renderComments(data.comments || [], type, id);
+            section.dataset.loaded = '1';
+          } catch (err) { section.innerHTML = '<p class="feed-comments__error">Could not load comments.</p>'; }
         }
       } else {
         section.hidden = true;
@@ -196,8 +216,7 @@
         navigator.share({ url, title: btn.dataset.title });
       } else {
         navigator.clipboard.writeText(url).then(() => {
-          btn.querySelector('.feed-action__label').textContent = 'Copied!';
-          setTimeout(() => { btn.querySelector('.feed-action__label').textContent = 'Share'; }, 2000);
+          showFeedback(btn, 'Copied!', false);
         });
       }
     });
@@ -209,28 +228,45 @@
       trigger.addEventListener('click', () => { postForm.hidden = false; trigger.hidden = true; });
       postForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const body = postForm.querySelector('textarea').value.trim();
-        const communityId = postForm.querySelector('select').value;
+        const submitBtn = postForm.querySelector('button[type="submit"]');
+        const textarea = postForm.querySelector('textarea');
+        const communitySelect = postForm.querySelector('select[name="community_id"]');
+        const body = textarea.value.trim();
         if (!body) return;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Posting...';
         try {
-          const res = await fetch('/api/post', {
+          const payload = { body };
+          if (communitySelect) payload.community_id = communitySelect.value;
+          const res = await fetch('/api/engagement/post', {
             method: 'POST', headers,
-            body: JSON.stringify({ body, community_id: communityId })
+            body: JSON.stringify(payload)
           });
-          if (res.ok) location.reload();
-        } catch (err) { console.error('Post error:', err); }
+          if (res.ok) {
+            location.reload();
+          } else {
+            const err = await res.json().catch(() => ({}));
+            submitBtn.textContent = err.error || 'Error — try again';
+            submitBtn.disabled = false;
+            setTimeout(() => { submitBtn.textContent = 'Post'; }, 2000);
+          }
+        } catch (err) {
+          submitBtn.textContent = 'Network error';
+          submitBtn.disabled = false;
+          setTimeout(() => { submitBtn.textContent = 'Post'; }, 2000);
+        }
       });
     }
 
-    function getReactionType(entityType) {
-      const map = { event: 'interested', teaching: 'miigwech', business: 'recommend', post: 'miigwech' };
+    function getReactionEmoji(entityType) {
+      const map = { event: 'interested', teaching: 'miigwech', group: 'recommend', post: 'miigwech' };
       return map[entityType] || 'interested';
     }
 
     function renderComments(comments, type, id) {
       let html = '<div class="feed-comments__list">';
       comments.forEach(c => {
-        html += `<div class="feed-comment"><strong>User</strong> <span class="feed-comment__time">${c.relative_time}</span><p>${escapeHtml(c.body)}</p></div>`;
+        html += `<div class="feed-comment"><strong>User</strong> <span class="feed-comment__time">${c.relative_time || ''}</span><p>${escapeHtml(c.body)}</p></div>`;
       });
       html += '</div>';
       html += `<form class="feed-comments__form" data-type="${type}" data-id="${id}">
@@ -248,8 +284,10 @@
       const input = form.querySelector('input');
       const body = input.value.trim();
       if (!body) return;
+      const submitBtn = form.querySelector('button');
+      submitBtn.disabled = true;
       try {
-        const res = await fetch('/api/comment', {
+        const res = await fetch('/api/engagement/comment', {
           method: 'POST', headers,
           body: JSON.stringify({ target_type: form.dataset.type, target_id: form.dataset.id, body })
         });
@@ -259,8 +297,17 @@
             `<div class="feed-comment"><strong>You</strong> <span class="feed-comment__time">just now</span><p>${escapeHtml(body)}</p></div>`
           );
           input.value = '';
+        } else {
+          const err = await res.json().catch(() => ({}));
+          input.value = '';
+          input.placeholder = err.error || 'Error — try again';
+          setTimeout(() => { input.placeholder = 'Write a comment...'; }, 2000);
         }
-      } catch (err) { console.error('Comment error:', err); }
+      } catch (err) {
+        input.placeholder = 'Network error';
+        setTimeout(() => { input.placeholder = 'Write a comment...'; }, 2000);
+      }
+      submitBtn.disabled = false;
     });
 
     function escapeHtml(str) {
