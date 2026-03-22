@@ -80,7 +80,11 @@ class EntityLoaderService
     {
         try {
             $storage = $this->entityTypeManager->getStorage('featured_item');
-        } catch (\Throwable) {
+        } catch (\PDOException $e) {
+            error_log(sprintf('[EntityLoaderService::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
+            return [];
+        } catch (\RuntimeException $e) {
+            error_log(sprintf('[EntityLoaderService::%s] Runtime error: %s', __FUNCTION__, $e->getMessage()));
             return [];
         }
 
@@ -108,7 +112,11 @@ class EntityLoaderService
             try {
                 $refStorage = $this->entityTypeManager->getStorage($entityType);
                 $entity = $refStorage->load((int) $entityId);
-            } catch (\Throwable) {
+            } catch (\PDOException $e) {
+                error_log(sprintf('[EntityLoaderService::%s] Database error loading %s:%s: %s', __FUNCTION__, $entityType, $entityId, $e->getMessage()));
+                continue;
+            } catch (\RuntimeException $e) {
+                error_log(sprintf('[EntityLoaderService::%s] Runtime error loading %s:%s: %s', __FUNCTION__, $entityType, $entityId, $e->getMessage()));
                 continue;
             }
 
@@ -126,8 +134,12 @@ class EntityLoaderService
     {
         try {
             $storage = $this->entityTypeManager->getStorage('post');
-        } catch (\Throwable) {
+        } catch (\PDOException $e) {
+            error_log(sprintf('[EntityLoaderService::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
+            return [];
+        } catch (\RuntimeException $e) {
             // Post entity type may not exist yet
+            error_log(sprintf('[EntityLoaderService::%s] Runtime error: %s', __FUNCTION__, $e->getMessage()));
             return [];
         }
 
