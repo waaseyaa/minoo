@@ -53,6 +53,7 @@ In `resources/lang/en.php`, after the coordinator section, add:
 'usermenu.language' => 'Language',
 'usermenu.sign_out' => 'Sign Out',
 'usermenu.log_in' => 'Log In',
+'search.placeholder' => 'Search...',
 ```
 
 - [ ] **Step 2: Create user-menu.html.twig**
@@ -83,7 +84,11 @@ In `resources/lang/en.php`, after the coordinator section, add:
         {{ trans('usermenu.theme') }}
         <span class="user-menu__value" id="user-menu-theme-value">Dark</span>
       </button>
-      {% include "components/lang-switcher-inline.html.twig" ignore missing %}
+      {# Reuse existing language switcher markup from base.html.twig, extracted into inline format #}
+      <a href="#" class="user-menu__item" id="user-menu-lang-toggle">
+        {{ trans('usermenu.language') }}
+        <span class="user-menu__value">{{ current_lang|default('EN')|upper }}</span>
+      </a>
     </div>
     <div class="user-menu__section">
       <a href="/logout" class="user-menu__item user-menu__item--danger">{{ trans('usermenu.sign_out') }}</a>
@@ -207,7 +212,22 @@ Three groups: Navigate (Home, Communities, Events, Teachings, People, Oral Histo
       {# Grid icon SVG #}
       <span class="sidebar-nav__text">{{ trans('nav.communities') }}</span>
     </a>
-    {# ... Events, Teachings, People, Oral Histories with same pattern #}
+    {# Events, Teachings, People, Businesses, Oral Histories with same pattern #}
+    <a href="{{ lang_url('/events') }}" class="sidebar-nav__item{% if current_path starts with '/events' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.events') }}</span>
+    </a>
+    <a href="{{ lang_url('/teachings') }}" class="sidebar-nav__item{% if current_path starts with '/teachings' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.teachings') }}</span>
+    </a>
+    <a href="{{ lang_url('/people') }}" class="sidebar-nav__item{% if current_path starts with '/people' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.people') }}</span>
+    </a>
+    <a href="/?filter=business" class="sidebar-nav__item">
+      <span class="sidebar-nav__text">{{ trans('nav.businesses') }}</span>
+    </a>
+    <a href="{{ lang_url('/oral-histories') }}" class="sidebar-nav__item{% if current_path starts with '/oral-histories' %} sidebar-nav__item--active{% endif %}">
+      <span class="sidebar-nav__text">{{ trans('nav.oral_histories') }}</span>
+    </a>
   </div>
   <div class="sidebar-nav__group">
     <div class="sidebar-nav__label">{{ trans('sidebar.programs') }}</div>
@@ -475,11 +495,39 @@ git commit -m "feat(#480): add images field to post entity"
 
 - [ ] **Step 1: Write failing test for multipart post with images**
 
-Test that `createPost` accepts multipart form data and stores image paths.
+```php
+#[Test]
+public function create_post_with_images_stores_paths(): void
+{
+    // Mock UploadService to return predictable paths
+    $uploadService = $this->createMock(UploadService::class);
+    $uploadService->method('validateImage')->willReturn([]);
+    $uploadService->method('moveUpload')->willReturn('posts/1/photo.jpg');
+
+    // Mock storage to capture create() args
+    $entity = $this->createMock(ContentEntityBase::class);
+    $entity->method('id')->willReturn(1);
+    $entity->method('set')->willReturnSelf();
+
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->expects($this->once())->method('create')->willReturn($entity);
+    $storage->expects($this->atLeastOnce())->method('save');
+
+    // Build multipart request with a fake uploaded file
+    $file = new UploadedFile(tempnam(sys_get_temp_dir(), 'img'), 'photo.jpg', 'image/jpeg', UPLOAD_ERR_OK, true);
+    $request = new HttpRequest([], ['body' => 'Hello', 'community_id' => '1'], [], [], ['images' => [$file]], ['REQUEST_METHOD' => 'POST']);
+
+    // ... controller call and assertions
+}
+```
 
 - [ ] **Step 2: Update EngagementController::createPost()**
 
 Switch from `jsonBody()` to `$request->request->get('body')` and `$request->files->all('images')`. After creating the post entity, call `UploadService::moveUpload()` for each valid image, collect paths, set `images` field as JSON, save again.
+
+- [ ] **Step 2b: Wire post deletion cleanup**
+
+In `EngagementController::deletePost()`, after deleting the entity, call `$this->uploadService->deleteDirectory('posts/' . $postId)` to remove uploaded images. Add `UploadService` as a constructor dependency.
 
 - [ ] **Step 3: Run tests**
 
@@ -548,19 +596,19 @@ git commit -m "feat(#480): post form UI with image upload and preview"
 
 In feed-card.html.twig, inside the post card block, after the body text:
 
+**Note:** Twig has no built-in `json_decode` filter. The `FeedController` must decode the `images` JSON string and pass it as a PHP array in the template context (e.g., add `'images' => json_decode($post->get('images') ?? '[]', true)` to each post's card data). The template then uses the array directly:
+
 ```twig
-{% set images = item.get('images')|default('[]') %}
-{% if images is not same as('[]') %}
-  {% set image_list = images|json_decode %}
-  {% if image_list|length > 0 %}
-    <div class="feed-card__images feed-card__images--{{ image_list|length|min(4) }}">
-      {% for img in image_list|slice(0, 4) %}
-        <img src="/uploads/{{ img }}" alt="" class="feed-card__image" loading="lazy">
-      {% endfor %}
-    </div>
-  {% endif %}
+{% if item_images is defined and item_images|length > 0 %}
+  <div class="feed-card__images feed-card__images--{{ item_images|length|min(4) }}">
+    {% for img in item_images|slice(0, 4) %}
+      <img src="/uploads/{{ img }}" alt="" class="feed-card__image" loading="lazy">
+    {% endfor %}
+  </div>
 {% endif %}
 ```
+
+Update `FeedController` to decode images for post-type feed items and pass as `item_images` alongside each card include.
 
 - [ ] **Step 2: Add image grid CSS**
 
@@ -593,24 +641,38 @@ git commit -m "feat(#480): render post images in feed cards"
 
 ---
 
-### Task 10: Full regression + PHPStan baseline
+### Task 10: Full regression, Playwright, Deployer, PHPStan
 
 - [ ] **Step 1: Run full test suite**
 
 Run: `./vendor/bin/phpunit`
 Expected: All pass
 
-- [ ] **Step 2: Regenerate PHPStan baseline**
+- [ ] **Step 2: Update Playwright tests**
+
+The sidebar change removes `.feed-sidebar--left` and replaces with `.app-sidebar`. Update any Playwright tests that assert on the old sidebar selectors. Check `tests/playwright/*.spec.ts` for references to `feed-sidebar`, `site-nav`, or `nav-toggle`.
+
+- [ ] **Step 3: Update Deployer recipe for uploads symlink**
+
+In `deploy.php`, add a shared directory or symlink task:
+```php
+// In deploy.php shared_dirs or after deploy:symlink
+task('deploy:uploads', function () {
+    run('ln -sfn {{deploy_path}}/shared/storage/uploads {{release_path}}/public/uploads');
+});
+```
+
+- [ ] **Step 4: Regenerate PHPStan baseline**
 
 Run: `./vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon`
 
-- [ ] **Step 3: Visual smoke test all pages**
+- [ ] **Step 5: Visual smoke test all pages**
 
 Check: homepage feed, communities, events, teachings, login (no sidebar), mobile responsive, post with images.
 
-- [ ] **Step 4: Commit any cleanup**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add phpstan-baseline.neon
-git commit -m "chore: regenerate PHPStan baseline after UX refresh"
+git add phpstan-baseline.neon deploy.php tests/playwright/
+git commit -m "chore: regression fixes — Playwright, Deployer, PHPStan baseline"
 ```
