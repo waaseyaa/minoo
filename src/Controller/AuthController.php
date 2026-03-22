@@ -237,10 +237,10 @@ final class AuthController
                 ->execute();
 
             if ($ids !== []) {
+                /** @var User|null $user */
                 $user = $storage->load(reset($ids));
                 if ($user !== null) {
-                    $resetService = $this->passwordResetService;
-                    $token = $resetService->createToken($user->id());
+                    $token = $this->passwordResetService->createToken($user->id());
                     $this->authMailer->sendPasswordReset($user, $token);
                 }
             }

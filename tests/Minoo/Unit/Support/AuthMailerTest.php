@@ -23,6 +23,7 @@ final class AuthMailerTest extends TestCase
     protected function setUp(): void
     {
         $this->mailService = $this->createMock(MailService::class);
+        $this->mailService->method('isConfigured')->willReturn(true);
         $this->twig = new Environment(new ArrayLoader([
             'email/password-reset.html.twig' => '<p>Reset: {{ reset_url }}</p>',
             'email/password-reset.txt.twig' => 'Reset: {{ reset_url }}',

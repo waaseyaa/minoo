@@ -15,8 +15,17 @@ class AuthMailer
         private readonly string $baseUrl,
     ) {}
 
+    public function isConfigured(): bool
+    {
+        return $this->mail->isConfigured();
+    }
+
     public function sendPasswordReset(User $user, string $token): void
     {
+        if (!$this->mail->isConfigured()) {
+            return;
+        }
+
         $vars = [
             'user_name' => $user->get('name'),
             'reset_url' => $this->baseUrl . '/reset-password?token=' . $token,
@@ -35,6 +44,10 @@ class AuthMailer
 
     public function sendEmailVerification(User $user, string $token): void
     {
+        if (!$this->mail->isConfigured()) {
+            return;
+        }
+
         $vars = [
             'user_name' => $user->get('name'),
             'verify_url' => $this->baseUrl . '/verify-email?token=' . $token,
@@ -53,6 +66,10 @@ class AuthMailer
 
     public function sendWelcome(User $user): void
     {
+        if (!$this->mail->isConfigured()) {
+            return;
+        }
+
         $vars = [
             'user_name' => $user->get('name'),
             'home_url' => $this->baseUrl,
