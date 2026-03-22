@@ -1,5 +1,5 @@
+{% if account is defined and account.isAuthenticated() and user_communities is defined and user_communities|length > 0 %}
 <div class="feed-create">
-  {% if account is defined and account.isAuthenticated() and user_communities is defined and user_communities|length > 0 %}
     <div class="feed-create__prompt" id="create-post-trigger">
       <div class="feed-create__avatar">{{ account_initial }}</div>
       <span class="feed-create__placeholder">{{ trans('feed.whats_happening') }}</span>
@@ -16,10 +16,12 @@
         <button type="submit" class="btn btn--primary">{{ trans('feed.post') }}</button>
       </div>
     </form>
-  {% elseif account is not defined or not account.isAuthenticated() %}
+</div>
+{% elseif account is not defined or not account.isAuthenticated() %}
+<div class="feed-create">
     <div class="feed-create__guest">
       <p>{{ trans('feed.join_conversation') }}</p>
       <a href="{{ lang_url('/login') }}" class="btn btn--secondary">{{ trans('nav.login') }}</a>
     </div>
-  {% endif %}
 </div>
+{% endif %}
