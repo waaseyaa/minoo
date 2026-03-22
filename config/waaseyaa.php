@@ -86,6 +86,7 @@ return [
         'sendgrid_api_key' => getenv('SENDGRID_API_KEY') ?: '',
         'from_address' => getenv('MAIL_FROM_ADDRESS') ?: 'hello@minoo.live',
         'from_name' => getenv('MAIL_FROM_NAME') ?: 'Minoo',
+        'base_url' => getenv('MINOO_BASE_URL') ?: 'https://minoo.live',
     ],
 
     // AI embedding pipeline configuration.

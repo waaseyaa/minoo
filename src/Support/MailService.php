@@ -7,7 +7,7 @@ namespace Minoo\Support;
 use SendGrid;
 use SendGrid\Mail\Mail;
 
-final class MailService
+class MailService
 {
     private SendGrid $client;
     private string $apiKey;
