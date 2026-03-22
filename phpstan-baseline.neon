@@ -3,6 +3,12 @@ parameters:
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
 			identifier: method.notFound
+			count: 2
+			path: src/Access/ContributorAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Access/CulturalCollectionAccessPolicy.php
 
@@ -17,6 +23,12 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: src/Access/ElderSupportAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/EngagementAccessPolicy.php
 
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
@@ -41,6 +53,12 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: src/Access/LanguageAccessPolicy.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Access/OralHistoryAccessPolicy.php
 
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
@@ -129,8 +147,38 @@ parameters:
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
 			identifier: method.notFound
+			count: 12
+			path: src/Controller/EngagementController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Controller/EngagementController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 13
 			path: src/Controller/EventController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 12
+			path: src/Controller/FeedController.php
+
+		-
+			message: '#^Parameter \#1 \$array of function usort contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: src/Controller/FeedController.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function usort contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: src/Controller/FeedController.php
 
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
@@ -143,6 +191,12 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: src/Controller/LocationController.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: src/Controller/OralHistoryController.php
 
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
@@ -189,6 +243,36 @@ parameters:
 		-
 			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
 			identifier: method.notFound
+			count: 4
+			path: src/Feed/EntityLoaderService.php
+
+		-
+			message: '#^Method Minoo\\Feed\\EntityLoaderService\:\:loadFeaturedItems\(\) should return list\<array\{featured\: mixed, entity\: mixed, url\: string\}\> but returns list\<array\{featured\: Waaseyaa\\Entity\\EntityInterface, entity\: Waaseyaa\\Entity\\EntityInterface\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Feed/EntityLoaderService.php
+
+		-
+			message: '#^Offset ''comments'' on array\{reactions\: int, comments\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Feed/FeedAssembler.php
+
+		-
+			message: '#^Offset ''reactions'' on array\{reactions\: int, comments\: int\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Feed/FeedAssembler.php
+
+		-
+			message: '#^Parameter \#1 \$targets of method Minoo\\Feed\\EngagementCounter\:\:getCounts\(\) expects list\<array\{type\: string, id\: int\}\>, list\<string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Feed/FeedAssembler.php
+
+		-
+			message: '#^Call to an undefined method Waaseyaa\\Entity\\EntityInterface\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 3
 			path: src/Support/CommunityLookup.php
 
@@ -197,3 +281,9 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: src/Support/FixtureResolver.php
+
+		-
+			message: '#^Variable \$http_response_header on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: src/Support/GeocodingService.php

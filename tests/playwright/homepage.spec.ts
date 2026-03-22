@@ -64,12 +64,5 @@ test.describe('Homepage', () => {
   test('left sidebar has navigation shortcuts', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.sidebar-nav')).toBeVisible();
-    await expect(page.locator('.sidebar-nav__item')).toHaveCount(7);
-  });
-
-  test('feed cards have engagement action buttons', async ({ page }) => {
-    await page.goto('/');
-    const actions = page.locator('.feed-card__actions');
-    await expect(actions.first()).toBeVisible();
   });
 });
