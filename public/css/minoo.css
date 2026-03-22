@@ -4089,13 +4089,17 @@
   }
 
   .feed-chip {
+    display: inline-block;
     padding: var(--space-3xs) var(--space-xs);
     border-radius: var(--radius-full);
     background-color: var(--surface-raised);
     border: 1px solid var(--border-subtle);
     color: var(--text-secondary);
+    font-family: var(--font-body);
     font-size: 0.8rem;
+    font-weight: 500;
     text-decoration: none;
+    cursor: pointer;
     transition: background-color var(--duration-fast) var(--ease-out),
                 color var(--duration-fast) var(--ease-out),
                 border-color var(--duration-fast) var(--ease-out);
@@ -4222,4 +4226,87 @@
     flex-direction: column;
     gap: var(--space-xs);
   }
+
+  /* ══════════════════════════════════════════════════════════
+     Social Feed — Responsive Polish
+     ══════════════════════════════════════════════════════════ */
+
+  /* ── Action button touch targets (all viewports) ── */
+  .feed-card__action {
+    min-block-size: 44px;
+  }
+
+  /* ── Engagement counts row polish ── */
+  .feed-card__counts {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .feed-card__count-separator {
+    color: var(--text-muted);
+  }
+
+  /* ── Two-column breakpoint (right sidebar hidden) ── */
+  @media (max-width: 1199px) {
+    .feed-card__attribution {
+      gap: var(--space-2xs);
+    }
+  }
+
+  /* ── Single-column breakpoint (both sidebars hidden) ── */
+  @media (max-width: 1023px) {
+    /* Filter chips: horizontal scroll on narrow viewports */
+    .feed-chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-block: var(--space-3xs);
+    }
+
+    .feed-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .feed-chip {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Stack engagement row vertically on narrow viewports */
+    .feed-card__engagement {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    /* Slightly larger action text for touch */
+    .feed-card__action {
+      font-size: 0.875rem;
+      padding: var(--space-xs) var(--space-3xs);
+    }
+
+    /* Prevent horizontal overflow on narrow viewports */
+    .feed-card__source {
+      max-inline-size: 180px;
+    }
+
+    .feed-pills {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      scrollbar-width: none;
+    }
+
+    .feed-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .feed-pill {
+      flex-shrink: 0;
+    }
+  }
+
 }
