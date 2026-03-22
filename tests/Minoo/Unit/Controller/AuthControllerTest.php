@@ -321,7 +321,7 @@ final class AuthControllerTest extends TestCase
             'uid' => 1,
             'name' => 'Mary',
             'mail' => 'mary@example.com',
-            'roles' => ['volunteer'],
+            'roles' => [],
             'status' => 1,
         ]);
         $user->setRawPassword('password123');
