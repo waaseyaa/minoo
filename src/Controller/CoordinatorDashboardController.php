@@ -62,6 +62,11 @@ final class CoordinatorDashboardController
         $ranker = new VolunteerRanker($this->entityTypeManager);
         $rankedByRequest = $this->buildRankedMap($ranker, array_merge($open, $assigned), $volunteers);
 
+        $pendingApplicationIds = $volunteerStorage->getQuery()
+            ->condition('status', 'pending')
+            ->execute();
+        $pendingApplicationCount = count($pendingApplicationIds);
+
         $communityNames = $this->buildCommunityNameMap(
             array_merge($allRequests, array_values($volunteers)),
         );
@@ -75,6 +80,7 @@ final class CoordinatorDashboardController
             'ranked_by_request' => $rankedByRequest,
             'cancelled_requests' => $cancelled,
             'community_names' => $communityNames,
+            'pending_application_count' => $pendingApplicationCount,
         ]);
 
         return new SsrResponse(content: $html);

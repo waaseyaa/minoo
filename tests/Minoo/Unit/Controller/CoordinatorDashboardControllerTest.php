@@ -68,7 +68,7 @@ final class CoordinatorDashboardControllerTest extends TestCase
         );
 
         $this->twig = new Environment(new ArrayLoader([
-            'dashboard/coordinator.html.twig' => '{% for r in open_requests %}|{{ r.get("name") }}{% endfor %}{% for rv in ranked_by_request[open_requests[0].id()] ?? [] %}|{{ rv.volunteer.get("name") }}{% if rv.hasDistance() %}:{{ rv.formattedDistance() }}{% endif %}{% endfor %}',
+            'dashboard/coordinator.html.twig' => 'pending:{{ pending_application_count }}{% for r in open_requests %}|{{ r.get("name") }}{% endfor %}{% for rv in ranked_by_request[open_requests[0].id()] ?? [] %}|{{ rv.volunteer.get("name") }}{% if rv.hasDistance() %}:{{ rv.formattedDistance() }}{% endif %}{% endfor %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -99,6 +99,8 @@ final class CoordinatorDashboardControllerTest extends TestCase
         $this->assertSame(200, $response->statusCode);
         $this->assertStringContainsString('Elder Mary', $response->content);
         $this->assertStringContainsString('John Helper', $response->content);
+        // pending_application_count should be an integer, not empty
+        $this->assertMatchesRegularExpression('/pending:\d+/', $response->content);
     }
 
     #[Test]
