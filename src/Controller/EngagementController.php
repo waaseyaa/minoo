@@ -11,6 +11,12 @@ use Waaseyaa\SSR\SsrResponse;
 
 final class EngagementController
 {
+    /** @var list<string> Entity types that can be reaction/comment/follow targets */
+    private const ALLOWED_TARGET_TYPES = [
+        'event', 'group', 'teaching', 'community', 'post',
+        'oral_history', 'dictionary_entry', 'cultural_collection',
+    ];
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
@@ -23,9 +29,18 @@ final class EngagementController
             return $this->json(['error' => 'Missing required fields: emoji, target_type, target_id'], 422);
         }
 
+        if (!$this->isValidTargetType($data['target_type'])) {
+            return $this->json(['error' => 'Invalid target_type'], 422);
+        }
+
+        $emoji = trim($data['emoji']);
+        if ($emoji === '' || mb_strlen($emoji) > 10) {
+            return $this->json(['error' => 'Invalid emoji'], 422);
+        }
+
         $storage = $this->entityTypeManager->getStorage('reaction');
         $entity = $storage->create([
-            'emoji' => $data['emoji'],
+            'emoji' => $emoji,
             'user_id' => $account->id(),
             'target_type' => $data['target_type'],
             'target_id' => (int) $data['target_id'],
@@ -61,6 +76,10 @@ final class EngagementController
 
         if (!isset($data['body'], $data['target_type'], $data['target_id'])) {
             return $this->json(['error' => 'Missing required fields: body, target_type, target_id'], 422);
+        }
+
+        if (!$this->isValidTargetType($data['target_type'])) {
+            return $this->json(['error' => 'Invalid target_type'], 422);
         }
 
         $body = trim($data['body']);
@@ -108,6 +127,10 @@ final class EngagementController
     public function getComments(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $targetType = $params['target_type'] ?? '';
+        if (!$this->isValidTargetType($targetType)) {
+            return $this->json(['error' => 'Invalid target_type'], 422);
+        }
+
         $targetId = (int) ($params['target_id'] ?? 0);
         $limit = min((int) ($query['limit'] ?? 20), 50);
         $offset = max((int) ($query['offset'] ?? 0), 0);
@@ -139,6 +162,10 @@ final class EngagementController
 
         if (!isset($data['target_type'], $data['target_id'])) {
             return $this->json(['error' => 'Missing required fields: target_type, target_id'], 422);
+        }
+
+        if (!$this->isValidTargetType($data['target_type'])) {
+            return $this->json(['error' => 'Invalid target_type'], 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('follow');
@@ -235,6 +262,11 @@ final class EngagementController
         } catch (\JsonException) {
             return [];
         }
+    }
+
+    private function isValidTargetType(string $type): bool
+    {
+        return in_array($type, self::ALLOWED_TARGET_TYPES, true);
     }
 
     /** @param array<string, mixed> $data */
