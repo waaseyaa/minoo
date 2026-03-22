@@ -391,6 +391,60 @@ final class EngagementControllerTest extends TestCase
 
         $this->assertSame(422, $response->statusCode);
         $json = json_decode($response->content, true);
-        $this->assertSame('Bad data', $json['error']);
+        $this->assertSame('Invalid entity data', $json['error']);
+    }
+
+    #[Test]
+    public function comment_catches_constructor_invalid_argument_exception(): void
+    {
+        $account = $this->mockAccount(42);
+        $storage = $this->mockStorage('comment');
+        $storage->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
+
+        $request = $this->jsonRequest('POST', [
+            'body' => 'A valid comment', 'target_type' => 'event', 'target_id' => 1,
+        ]);
+
+        $response = $this->controller->comment([], [], $account, $request);
+
+        $this->assertSame(422, $response->statusCode);
+        $json = json_decode($response->content, true);
+        $this->assertSame('Invalid entity data', $json['error']);
+    }
+
+    #[Test]
+    public function follow_catches_constructor_invalid_argument_exception(): void
+    {
+        $account = $this->mockAccount(42);
+        $storage = $this->mockStorage('follow');
+        $storage->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
+
+        $request = $this->jsonRequest('POST', [
+            'target_type' => 'event', 'target_id' => 1,
+        ]);
+
+        $response = $this->controller->follow([], [], $account, $request);
+
+        $this->assertSame(422, $response->statusCode);
+        $json = json_decode($response->content, true);
+        $this->assertSame('Invalid entity data', $json['error']);
+    }
+
+    #[Test]
+    public function createPost_catches_constructor_invalid_argument_exception(): void
+    {
+        $account = $this->mockAccount(42);
+        $storage = $this->mockStorage('post');
+        $storage->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
+
+        $request = $this->jsonRequest('POST', [
+            'body' => 'A valid post body', 'community_id' => 1,
+        ]);
+
+        $response = $this->controller->createPost([], [], $account, $request);
+
+        $this->assertSame(422, $response->statusCode);
+        $json = json_decode($response->content, true);
+        $this->assertSame('Invalid entity data', $json['error']);
     }
 }

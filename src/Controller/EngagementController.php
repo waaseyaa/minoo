@@ -49,8 +49,8 @@ final class EngagementController
                 'target_id' => (int) $data['target_id'],
             ]);
             $storage->save($entity);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], 422);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
         }
 
         return $this->json(['id' => $entity->id(), 'reaction_type' => $entity->get('reaction_type')], 201);
@@ -102,8 +102,8 @@ final class EngagementController
                 'target_id' => (int) $data['target_id'],
             ]);
             $storage->save($entity);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], 422);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
         }
 
         return $this->json([
@@ -185,8 +185,8 @@ final class EngagementController
                 'target_id' => (int) $data['target_id'],
             ]);
             $storage->save($entity);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], 422);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
         }
 
         return $this->json(['id' => $entity->id()], 201);
@@ -233,8 +233,8 @@ final class EngagementController
                 'community_id' => (int) $data['community_id'],
             ]);
             $storage->save($entity);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], 422);
+        } catch (\InvalidArgumentException) {
+            return $this->json(['error' => 'Invalid entity data'], 422);
         }
 
         return $this->json([
