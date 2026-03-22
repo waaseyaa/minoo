@@ -75,6 +75,34 @@ final class EngagementCounterTest extends TestCase
     }
 
     #[Test]
+    public function getCountsReturnsCorrectKeysForMultipleTargets(): void
+    {
+        $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('condition')->willReturnSelf();
+        $query->method('count')->willReturnSelf();
+        $query->method('execute')->willReturn([]);
+
+        $storage = $this->createMock(EntityStorageInterface::class);
+        $storage->method('getQuery')->willReturn($query);
+
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getStorage')->willReturn($storage);
+
+        $counter = new EngagementCounter($etm);
+        $targets = [
+            ['type' => 'event', 'id' => 1],
+            ['type' => 'event', 'id' => 2],
+            ['type' => 'business', 'id' => 3],
+        ];
+        $counts = $counter->getCounts($targets);
+
+        $this->assertCount(3, $counts);
+        $this->assertArrayHasKey('event:1', $counts);
+        $this->assertArrayHasKey('event:2', $counts);
+        $this->assertArrayHasKey('business:3', $counts);
+    }
+
+    #[Test]
     public function it_returns_counts_for_single_target(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
