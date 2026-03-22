@@ -8,18 +8,21 @@ test.beforeAll(() => {
 test.describe('Account Home — member user', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('non-volunteer login redirects to /account', async ({ page }) => {
+  test('member login redirects to homepage then account page works', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'member@minoo.test');
     await page.fill('input[name="password"]', 'MemberPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/account');
+    await page.waitForURL('/');
+
+    // Navigate to account page
+    await page.goto('/account');
     await expect(page.locator('h1')).toContainText('Welcome back');
 
     // Verify welcoming description
     await expect(page.locator('.text-secondary').first()).toContainText('your home on Minoo');
 
-    // Also verify within same session: sign out link, no volunteer links, nav
+    // Verify sign out link, no volunteer links, nav
     await expect(page.locator('.account-home a[href="/logout"]')).toBeVisible();
     await expect(page.locator('.account-home a[href="/dashboard/volunteer"]')).not.toBeVisible();
     await expect(page.locator('.account-home a[href="/dashboard/coordinator"]')).not.toBeVisible();
@@ -30,12 +33,12 @@ test.describe('Account Home — member user', () => {
 });
 
 test.describe('Account Home — volunteer user', () => {
-  test('volunteer login redirects to /dashboard/volunteer', async ({ page }) => {
+  test('volunteer login redirects to homepage', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/dashboard/volunteer');
+    await page.waitForURL('/');
 
     // Navigate to account page and verify volunteer links appear
     await page.goto('/account');

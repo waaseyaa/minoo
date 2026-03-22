@@ -11,7 +11,7 @@ test.describe('Flash messages', () => {
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/dashboard/volunteer');
+    await page.waitForURL('/');
 
     // Flash message should be visible after login
     const flash = page.locator('.flash-message--success');
@@ -32,7 +32,7 @@ test.describe('Flash messages', () => {
     await page.fill('input[name="email"]', 'member@minoo.test');
     await page.fill('input[name="password"]', 'MemberPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/account');
+    await page.waitForURL('/');
 
     // Member user gets flash on login too
     const flash = page.locator('.flash-message--success');
