@@ -38,11 +38,9 @@ test.describe('Theme toggle behavior', () => {
 
   test('theme toggle persists across navigation', async ({ page }) => {
     await page.goto('/');
-    // Ensure dark mode is active before toggling
-    await page.evaluate(() => {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('minoo-theme', 'dark');
-    });
+    // colorScheme: 'dark' triggers prefers-color-scheme: dark,
+    // which the app's theme init JS reads to set data-theme="dark"
+    await page.waitForSelector('[data-theme="dark"]');
     await page.click('.theme-toggle');
     const theme = await page.evaluate(() =>
       document.documentElement.getAttribute('data-theme'),
@@ -58,11 +56,9 @@ test.describe('Theme toggle behavior', () => {
 
   test('theme toggle switches icons', async ({ page }) => {
     await page.goto('/');
-    // Set dark mode explicitly so moon icon is visible
-    await page.evaluate(() => {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('minoo-theme', 'dark');
-    });
+    // colorScheme: 'dark' triggers prefers-color-scheme: dark,
+    // which the app's theme init JS reads to set data-theme="dark"
+    await page.waitForSelector('[data-theme="dark"]');
     await expect(page.locator('.theme-toggle__icon--dark')).toBeVisible();
     await expect(page.locator('.theme-toggle__icon--light')).toBeHidden();
 
