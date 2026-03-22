@@ -109,7 +109,7 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount();
         $request = $this->jsonRequest('/api/engagement/react', 'POST', [
-            'emoji' => "\u{1F44D}", 'target_type' => 'invalid_type', 'target_id' => 1,
+            'reaction_type' => 'interested', 'target_type' => 'invalid_type', 'target_id' => 1,
         ]);
 
         $response = $this->controller->react([], [], $account, $request);
@@ -119,18 +119,18 @@ final class EngagementControllerTest extends TestCase
     }
 
     #[Test]
-    public function react_rejects_invalid_emoji(): void
+    public function react_rejects_invalid_reaction_type(): void
     {
         $account = $this->mockAccount();
         $this->mockStorage('reaction');
         $request = $this->jsonRequest('/api/engagement/react', 'POST', [
-            'emoji' => '', 'target_type' => 'event', 'target_id' => 1,
+            'reaction_type' => '', 'target_type' => 'event', 'target_id' => 1,
         ]);
 
         $response = $this->controller->react([], [], $account, $request);
 
         $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid emoji', $response->content);
+        $this->assertStringContainsString('Invalid reaction_type', $response->content);
     }
 
     #[Test]
@@ -151,12 +151,12 @@ final class EngagementControllerTest extends TestCase
     public function react_creates_reaction_and_returns_201(): void
     {
         $account = $this->mockAccount(42);
-        $entity = $this->mockEntity(['emoji' => "\u{1F44D}"], 1);
+        $entity = $this->mockEntity(['reaction_type' => 'interested'], 1);
         $storage = $this->mockStorage('reaction');
         $storage->method('create')->willReturn($entity);
 
         $request = $this->jsonRequest('/api/engagement/react', 'POST', [
-            'emoji' => "\u{1F44D}", 'target_type' => 'event', 'target_id' => 10,
+            'reaction_type' => 'interested', 'target_type' => 'event', 'target_id' => 10,
         ]);
 
         $response = $this->controller->react([], [], $account, $request);
@@ -260,7 +260,7 @@ final class EngagementControllerTest extends TestCase
         $storage = $this->mockStorage('post');
         $storage->method('create')->willReturn($entity);
 
-        $request = $this->jsonRequest('/api/engagement/post', 'POST', ['body' => 'Hello community!']);
+        $request = $this->jsonRequest('/api/engagement/post', 'POST', ['body' => 'Hello community!', 'community_id' => 1]);
 
         $response = $this->controller->createPost([], [], $account, $request);
 
@@ -274,7 +274,7 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount();
         $request = $this->jsonRequest('/api/engagement/post', 'POST', [
-            'body' => str_repeat('x', 5001),
+            'body' => str_repeat('x', 5001), 'community_id' => 1,
         ]);
 
         $response = $this->controller->createPost([], [], $account, $request);

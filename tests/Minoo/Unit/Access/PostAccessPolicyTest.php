@@ -19,7 +19,7 @@ final class PostAccessPolicyTest extends TestCase
     public function anonymous_can_view_post(): void
     {
         $policy = new PostAccessPolicy();
-        $post = new Post(['body' => 'Hello community', 'user_id' => 42]);
+        $post = new Post(['body' => 'Hello community', 'user_id' => 42, 'community_id' => 1]);
         $account = $this->createAnonymousAccount();
 
         $result = $policy->access($post, 'view', $account);
@@ -53,7 +53,7 @@ final class PostAccessPolicyTest extends TestCase
     public function author_can_edit_own_post(): void
     {
         $policy = new PostAccessPolicy();
-        $post = new Post(['body' => 'My post', 'user_id' => 10]);
+        $post = new Post(['body' => 'My post', 'user_id' => 10, 'community_id' => 1]);
         $account = $this->createAuthenticatedAccount(10);
 
         $result = $policy->access($post, 'update', $account);
@@ -65,7 +65,7 @@ final class PostAccessPolicyTest extends TestCase
     public function non_author_cannot_edit_post(): void
     {
         $policy = new PostAccessPolicy();
-        $post = new Post(['body' => 'Their post', 'user_id' => 10]);
+        $post = new Post(['body' => 'Their post', 'user_id' => 10, 'community_id' => 1]);
         $account = $this->createAuthenticatedAccount(99);
 
         $result = $policy->access($post, 'update', $account);
@@ -77,7 +77,7 @@ final class PostAccessPolicyTest extends TestCase
     public function author_can_delete_own_post(): void
     {
         $policy = new PostAccessPolicy();
-        $post = new Post(['body' => 'My post', 'user_id' => 10]);
+        $post = new Post(['body' => 'My post', 'user_id' => 10, 'community_id' => 1]);
         $account = $this->createAuthenticatedAccount(10);
 
         $result = $policy->access($post, 'delete', $account);
@@ -89,7 +89,7 @@ final class PostAccessPolicyTest extends TestCase
     public function non_author_cannot_delete_post(): void
     {
         $policy = new PostAccessPolicy();
-        $post = new Post(['body' => 'Their post', 'user_id' => 10]);
+        $post = new Post(['body' => 'Their post', 'user_id' => 10, 'community_id' => 1]);
         $account = $this->createAuthenticatedAccount(99);
 
         $result = $policy->access($post, 'delete', $account);
@@ -101,7 +101,7 @@ final class PostAccessPolicyTest extends TestCase
     public function coordinator_can_delete_any_post(): void
     {
         $policy = new PostAccessPolicy();
-        $post = new Post(['body' => 'Their post', 'user_id' => 10]);
+        $post = new Post(['body' => 'Their post', 'user_id' => 10, 'community_id' => 1]);
         $account = $this->createCoordinatorAccount(99);
 
         $result = $policy->access($post, 'delete', $account);
