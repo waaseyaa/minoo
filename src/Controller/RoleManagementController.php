@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\ElderIdentity;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -75,7 +76,7 @@ final class RoleManagementController
 
         try {
             if ($role === 'elder') {
-                $user->setElder($action === 'grant');
+                ElderIdentity::setElder($user, $action === 'grant');
             } else {
                 if ($action === 'grant') {
                     $user->addRole($role);
@@ -160,7 +161,7 @@ final class RoleManagementController
                 'name' => $user->getName(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
-                'is_elder' => $user->isElder(),
+                'is_elder' => ElderIdentity::isElder($user),
             ];
         }
 

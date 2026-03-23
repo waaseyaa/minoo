@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\RoleManagementController;
-use Minoo\Support\Flash;
+use Minoo\Support\ElderIdentity;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -104,7 +104,7 @@ final class RoleManagementControllerTest extends TestCase
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
         $this->assertSame(302, $response->statusCode);
-        $this->assertTrue($targetUser->isElder());
+        $this->assertTrue(ElderIdentity::isElder($targetUser));
     }
 
     #[Test]
@@ -121,7 +121,7 @@ final class RoleManagementControllerTest extends TestCase
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
         $this->assertSame(302, $response->statusCode);
-        $this->assertFalse($targetUser->isElder());
+        $this->assertFalse(ElderIdentity::isElder($targetUser));
     }
 
     #[Test]
