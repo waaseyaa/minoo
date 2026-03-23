@@ -44,7 +44,7 @@ final class FeedController
             'nextCursor' => $response->nextCursor,
             'activeFilter' => $response->activeFilter,
             'filterParam' => $resolved['filterParam'],
-            'csrf_token' => $this->generateCsrfToken($request),
+            'csrf_token' => CsrfMiddleware::token(),
             'trending' => $trending,
             'upcoming_events' => $upcomingEvents,
             'suggested_communities' => $suggestedCommunities,
@@ -106,11 +106,6 @@ final class FeedController
         }
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $target]);
-    }
-
-    private function generateCsrfToken(HttpRequest $request): string
-    {
-        return CsrfMiddleware::token();
     }
 
     /**
