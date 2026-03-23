@@ -37,6 +37,19 @@
     {% include "components/feed-sidebar-right.html.twig" %}
   </div>
 
+  {# === Edit Post Modal === #}
+  <dialog class="edit-post-modal" id="edit-post-modal">
+    <form class="edit-post-modal__form" id="edit-post-form">
+      <h3 class="edit-post-modal__title">Edit post</h3>
+      <textarea class="edit-post-modal__textarea" id="edit-post-body" rows="4" maxlength="5000" required></textarea>
+      <div class="edit-post-modal__actions">
+        <button type="button" class="btn btn--ghost" id="edit-post-cancel">Cancel</button>
+        <button type="submit" class="btn btn--primary" id="edit-post-save">Save</button>
+      </div>
+      <input type="hidden" id="edit-post-id">
+    </form>
+  </dialog>
+
   {# === Infinite Scroll (Progressive Enhancement) === #}
   <script>
   (function() {
@@ -153,6 +166,130 @@
 {% endblock %}
 
 {% block scripts %}
+  {# === GraphQL Helper + Post Management === #}
+  <script>
+  // === GraphQL Helper ===
+  async function graphqlRequest(query, variables = {}) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const res = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+    const json = await res.json();
+    if (json.errors?.length) {
+      throw new Error(json.errors[0].message);
+    }
+    return json.data;
+  }
+
+  // === Kebab Menu Toggle ===
+  function closeAllMenus() {
+    document.querySelectorAll('.feed-card__menu-dropdown').forEach(d => {
+      d.hidden = true;
+      d.previousElementSibling?.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.feed-card__menu')) {
+      closeAllMenus();
+      return;
+    }
+    const trigger = e.target.closest('[data-action="toggle-menu"]');
+    if (trigger) {
+      const dropdown = trigger.nextElementSibling;
+      const wasHidden = dropdown.hidden;
+      closeAllMenus();
+      dropdown.hidden = !wasHidden;
+      trigger.setAttribute('aria-expanded', String(!wasHidden === false));
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeAllMenus();
+  });
+
+  // === Delete Post ===
+  document.addEventListener('click', async function(e) {
+    const btn = e.target.closest('[data-action="delete-post"]');
+    if (!btn) return;
+    if (!confirm('Delete this post?')) return;
+    const id = btn.dataset.id;
+    btn.disabled = true;
+    btn.textContent = 'Deleting...';
+    try {
+      await graphqlRequest(
+        'mutation DeletePost($id: ID!) { deletePost(id: $id) { deleted } }',
+        { id }
+      );
+      const card = btn.closest('.feed-card');
+      card.remove();
+    } catch (err) {
+      alert('Could not delete post: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = 'Delete';
+    }
+  });
+
+  // === Edit Post ===
+  const editModal = document.getElementById('edit-post-modal');
+  const editBody = document.getElementById('edit-post-body');
+  const editId = document.getElementById('edit-post-id');
+
+  document.addEventListener('click', async function(e) {
+    const btn = e.target.closest('[data-action="edit-post"]');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    closeAllMenus();
+    try {
+      const data = await graphqlRequest(
+        'query GetPost($id: ID!) { post(id: $id) { body } }',
+        { id }
+      );
+      editId.value = id;
+      editBody.value = data.post.body;
+      editModal.showModal();
+    } catch (err) {
+      alert('Could not load post: ' + err.message);
+    }
+  });
+
+  document.getElementById('edit-post-cancel')?.addEventListener('click', () => editModal.close());
+
+  document.getElementById('edit-post-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const id = editId.value;
+    const body = editBody.value.trim();
+    if (!body) return;
+    const saveBtn = document.getElementById('edit-post-save');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+    try {
+      const data = await graphqlRequest(
+        `mutation UpdatePost($id: ID!, $input: PostUpdateInput!) {
+          updatePost(id: $id, input: $input) { pid body }
+        }`,
+        { id, input: { body } }
+      );
+      const card = document.querySelector(`[data-entity-type="post"][data-id="post:${id}"]`);
+      if (card) {
+        const bodyEl = card.querySelector('.feed-card__body');
+        if (bodyEl) bodyEl.textContent = data.updatePost.body;
+      }
+      editModal.close();
+    } catch (err) {
+      alert('Could not update post: ' + err.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save';
+    }
+  });
+  </script>
+
   {# === Engagement Interactions === #}
   <script>
   (function() {

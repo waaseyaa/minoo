@@ -3030,6 +3030,58 @@
       border-color: var(--text-muted);
     }
   }
+
+  /* Edit post modal */
+  .edit-post-modal {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0;
+    max-inline-size: min(32rem, 90vw);
+    inline-size: 100%;
+    box-shadow: 0 8px 32px oklch(0% 0 0 / 0.2);
+    background: var(--surface-card);
+    color: var(--text-primary);
+  }
+
+  .edit-post-modal::backdrop {
+    background: oklch(0% 0 0 / 0.5);
+  }
+
+  .edit-post-modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  .edit-post-modal__title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .edit-post-modal__textarea {
+    font-family: inherit;
+    font-size: var(--text-base);
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background: var(--surface-input, var(--surface-base));
+    color: var(--text-primary);
+    resize: vertical;
+    min-block-size: 5rem;
+  }
+
+  .edit-post-modal__textarea:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -1px;
+  }
+
+  .edit-post-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-xs);
+  }
 }
 
 @layer utilities {
