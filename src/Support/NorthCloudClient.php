@@ -132,7 +132,7 @@ final class NorthCloudClient
      */
     public function getRecentContent(array $topics = ['indigenous'], int $limit = 20, ?string $since = null): ?array
     {
-        $query = 'page_size=' . $limit;
+        $query = 'size=' . $limit;
         foreach ($topics as $topic) {
             $query .= '&topics[]=' . urlencode($topic);
         }
