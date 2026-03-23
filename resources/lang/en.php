@@ -388,6 +388,24 @@ return [
     'account.coordinator_text' => 'Manage Elder Support requests and coordinate volunteers in your community.',
     'account.coordinator_dashboard' => 'Coordinator Dashboard',
 
+    // Role Management
+    'coordinator.users_title' => 'Community Members',
+    'coordinator.users_subtitle' => 'Manage volunteer and Elder roles for community members.',
+    'admin.users_title' => 'Manage Users',
+    'admin.users_subtitle' => 'View and manage user roles across the community.',
+    'roles.grant_volunteer' => 'Grant Volunteer',
+    'roles.revoke_volunteer' => 'Revoke Volunteer',
+    'roles.grant_elder' => 'Grant Elder',
+    'roles.revoke_elder' => 'Revoke Elder',
+    'roles.grant_coordinator' => 'Grant Coordinator',
+    'roles.revoke_coordinator' => 'Revoke Coordinator',
+    'roles.badge_volunteer' => 'Volunteer',
+    'roles.badge_elder' => 'Elder',
+    'roles.badge_coordinator' => 'Coordinator',
+    'roles.badge_admin' => 'Admin',
+    'roles.no_users' => 'No users found.',
+    'roles.manage_members' => 'Manage Members',
+
     // Elders
     'elders.title' => 'Elder Support Program',
     'elders.subtitle' => 'Caring for our Elders is one of the most important things a community can do. Request help for an Elder or volunteer your time. Rides, groceries, yard work, or a friendly visit. A little goes a long way.',
