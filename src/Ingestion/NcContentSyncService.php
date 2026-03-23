@@ -9,7 +9,7 @@ use Minoo\Ingestion\EntityMapper\NcArticleToTeachingMapper;
 use Minoo\Support\NorthCloudClient;
 use Waaseyaa\Entity\EntityTypeManager;
 
-final class NcContentSyncService
+class NcContentSyncService
 {
     public function __construct(
         private readonly NorthCloudClient $client,
