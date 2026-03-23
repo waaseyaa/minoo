@@ -4,7 +4,7 @@ test.describe('Volunteer Portal', () => {
   test('volunteer landing page loads', async ({ page }) => {
     await page.goto('/volunteer');
     await expect(page.locator('.hero__title')).toBeVisible();
-    await expect(page.locator('a[href="/elders/volunteer"]')).toBeVisible();
+    await expect(page.locator('.hero a[href="/elders/volunteer"]')).toBeVisible();
   });
 
   test('volunteer signup form loads', async ({ page }) => {

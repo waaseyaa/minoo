@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Homepage', () => {
-  test('shows three-column feed layout', async ({ page }) => {
+  test('shows feed layout with sidebar', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.feed-layout')).toBeVisible();
-    await expect(page.locator('.feed-sidebar--left')).toBeVisible();
+    await expect(page.locator('.app-sidebar')).toBeVisible();
     await expect(page.locator('.feed-container')).toBeVisible();
   });
 
@@ -32,22 +32,20 @@ test.describe('Homepage', () => {
     await expect(page.locator('.feed-container')).toBeVisible();
   });
 
-  test('navigation has Programs dropdown', async ({ page }) => {
+  test('sidebar has Programs section with elder and volunteer links', async ({ page }) => {
     await page.goto('/');
-    const programsBtn = page.locator('.site-nav__dropdown-toggle');
-    await expect(programsBtn).toHaveText(/Programs/);
-    await programsBtn.click();
-    await expect(page.locator('.site-nav__dropdown-menu')).toBeVisible();
-    await expect(page.locator('.site-nav__dropdown-menu a[href="/elders"]')).toBeVisible();
-    await expect(page.locator('.site-nav__dropdown-menu a[href="/volunteer"]')).toBeVisible();
+    const sidebar = page.locator('.sidebar-nav');
+    await expect(sidebar.locator('a[href="/elders/request"]')).toBeVisible();
+    await expect(sidebar.locator('a[href="/elders/volunteer"]')).toBeVisible();
   });
 
-  test('navigation shows primary items', async ({ page }) => {
+  test('sidebar shows primary navigation items', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.site-nav a[href="/communities"]')).toBeVisible();
-    await expect(page.locator('.site-nav a[href="/people"]')).toBeVisible();
-    await expect(page.locator('.site-nav a[href="/teachings"]')).toBeVisible();
-    await expect(page.locator('.site-nav a[href="/events"]')).toBeVisible();
+    const sidebar = page.locator('.sidebar-nav');
+    await expect(sidebar.locator('a[href="/communities"]')).toBeVisible();
+    await expect(sidebar.locator('a[href="/people"]')).toBeVisible();
+    await expect(sidebar.locator('a[href="/teachings"]')).toBeVisible();
+    await expect(sidebar.locator('a[href="/events"]')).toBeVisible();
   });
 
   test('feed shows content cards', async ({ page }) => {

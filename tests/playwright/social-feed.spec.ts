@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Social Feed', () => {
-  test('renders three-column layout', async ({ page }) => {
+  test('renders feed layout with sidebar', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.feed-layout')).toBeVisible();
-    await expect(page.locator('.feed-sidebar--left')).toBeVisible();
+    await expect(page.locator('.app-sidebar')).toBeVisible();
     await expect(page.locator('.feed-container')).toBeVisible();
   });
 
@@ -39,14 +39,13 @@ test.describe('Social Feed', () => {
     }
   });
 
-  test('both sidebars hidden on mobile', async ({ page }) => {
-    await page.goto('/');
+  test('sidebar is off-screen on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await expect(page.locator('.feed-sidebar--left')).not.toBeVisible();
-    const rightSidebar = page.locator('.feed-sidebar--right');
-    if (await rightSidebar.count() > 0) {
-      await expect(rightSidebar).not.toBeVisible();
-    }
+    await page.goto('/');
+    // Sidebar uses transform: translateX(-100%) on mobile — off-screen but still in DOM
+    const box = await page.locator('.app-sidebar').boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.x + box!.width).toBeLessThanOrEqual(0);
   });
 
   test('left sidebar has navigation shortcuts', async ({ page }) => {

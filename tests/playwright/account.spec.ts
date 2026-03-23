@@ -22,13 +22,10 @@ test.describe('Account Home — member user', () => {
     // Verify welcoming description
     await expect(page.locator('.text-secondary').first()).toContainText('your home on Minoo');
 
-    // Verify sign out link, no volunteer links, nav
+    // Verify sign out link, no volunteer links
     await expect(page.locator('.account-home a[href="/logout"]')).toBeVisible();
     await expect(page.locator('.account-home a[href="/dashboard/volunteer"]')).not.toBeVisible();
     await expect(page.locator('.account-home a[href="/dashboard/coordinator"]')).not.toBeVisible();
-    await expect(page.locator('nav a[href="/account"]')).toBeVisible();
-    await expect(page.locator('nav a[href="/dashboard/volunteer"]')).not.toBeVisible();
-    await expect(page.locator('nav a[href="/dashboard/coordinator"]')).not.toBeVisible();
   });
 });
 

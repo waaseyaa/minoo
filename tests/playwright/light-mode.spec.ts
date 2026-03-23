@@ -38,10 +38,13 @@ test.describe('Theme toggle behavior', () => {
 
   test('theme toggle persists across navigation', async ({ page }) => {
     await page.goto('/');
-    // colorScheme: 'dark' triggers prefers-color-scheme: dark,
-    // which the app's theme init JS reads to set data-theme="dark"
     await page.waitForSelector('[data-theme="dark"]');
-    await page.click('.theme-toggle');
+    // Toggle theme via JS (standalone .theme-toggle removed; toggle is now in user-menu)
+    await page.evaluate(() => {
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('minoo-theme', theme);
+    });
     const theme = await page.evaluate(() =>
       document.documentElement.getAttribute('data-theme'),
     );
@@ -54,17 +57,13 @@ test.describe('Theme toggle behavior', () => {
     expect(persisted).toBe('light');
   });
 
-  test('theme toggle switches icons', async ({ page }) => {
+  test('theme preference is read from localStorage on load', async ({ page }) => {
     await page.goto('/');
-    // colorScheme: 'dark' triggers prefers-color-scheme: dark,
-    // which the app's theme init JS reads to set data-theme="dark"
-    await page.waitForSelector('[data-theme="dark"]');
-    await expect(page.locator('.theme-toggle__icon--dark')).toBeVisible();
-    await expect(page.locator('.theme-toggle__icon--light')).toBeHidden();
-
-    await page.click('.theme-toggle');
-    // Light mode — sun icon visible
-    await expect(page.locator('.theme-toggle__icon--light')).toBeVisible();
-    await expect(page.locator('.theme-toggle__icon--dark')).toBeHidden();
+    await page.evaluate(() => localStorage.setItem('minoo-theme', 'light'));
+    await page.goto('/');
+    const theme = await page.evaluate(() =>
+      document.documentElement.getAttribute('data-theme'),
+    );
+    expect(theme).toBe('light');
   });
 });

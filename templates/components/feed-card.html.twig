@@ -31,7 +31,7 @@
     </div>
     <p class="feed-card__body">{{ item.meta|default('') }}</p>
     {% if item.payload.images is defined and item.payload.images|length > 0 %}
-      <div class="feed-card__images feed-card__images--{{ item.payload.images|length|min(4) }}">
+      <div class="feed-card__images feed-card__images--{{ min(item.payload.images|length, 4) }}">
         {% for img in item.payload.images|slice(0, 4) %}
           <img src="/uploads/{{ img }}" alt="" class="feed-card__image" loading="lazy">
         {% endfor %}
