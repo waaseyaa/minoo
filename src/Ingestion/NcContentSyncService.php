@@ -20,12 +20,10 @@ final class NcContentSyncService
 
     /**
      * Pull recent indigenous content from NC Search API and create Minoo entities.
-     *
-     * @param list<string> $topics
      */
-    public function sync(int $limit = 20, ?string $since = null, bool $dryRun = false, array $topics = ['indigenous']): NcSyncResult
+    public function sync(int $limit = 20, ?string $since = null, bool $dryRun = false): NcSyncResult
     {
-        $response = $this->client->getRecentContent($topics, $limit, $since);
+        $response = $this->client->getRecentContent($limit, $since);
 
         if ($response === null) {
             error_log('NcContentSyncService: failed to fetch content from NorthCloud');
