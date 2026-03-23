@@ -125,18 +125,17 @@ final class NorthCloudClient
     /**
      * Fetch recent content from NorthCloud Search API.
      *
-     * Uses text query by default (q=indigenous) with optional topic filter.
-     * When NC adds an 'indigenous' topic to the classifier, pass topics=['indigenous']
-     * to switch from text search to topic filter.
+     * Defaults to topic filter (topics[]=indigenous). Falls back to text query
+     * if topics are empty. Both can be combined for narrower results.
      *
      * @param int $limit Maximum results
      * @param string|null $since ISO date (YYYY-MM-DD) to fetch content from
-     * @param string $searchQuery Text query (default: 'indigenous')
-     * @param list<string> $topics Optional topic filters
+     * @param string $searchQuery Optional text query (empty by default)
+     * @param list<string> $topics Topic filters (default: ['indigenous'])
      * @param int $minQuality Minimum quality score (default: 60)
      * @return array{hits: list<array<string, mixed>>, total_hits: int}|null
      */
-    public function getRecentContent(int $limit = 20, ?string $since = null, string $searchQuery = 'indigenous', array $topics = [], int $minQuality = 60): ?array
+    public function getRecentContent(int $limit = 20, ?string $since = null, string $searchQuery = '', array $topics = ['indigenous'], int $minQuality = 60): ?array
     {
         $query = 'size=' . $limit . '&min_quality=' . $minQuality;
         if ($searchQuery !== '') {
