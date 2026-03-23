@@ -26,7 +26,14 @@
       </div>
     </form>
 </div>
-{% elseif account is not defined or not account.isAuthenticated() %}
+{% elseif account is defined and account.isAuthenticated() %}
+<div class="feed-create">
+    <div class="feed-create__guest">
+      <p>{{ trans('feed.join_community_to_post') }}</p>
+      <a href="/communities" class="btn btn--secondary">{{ trans('feed.explore_communities') }}</a>
+    </div>
+</div>
+{% else %}
 <div class="feed-create">
     <div class="feed-create__guest">
       <p>{{ trans('feed.join_conversation') }}</p>
