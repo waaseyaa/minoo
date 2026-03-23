@@ -1,0 +1,22 @@
+# Minoo NC Content Sync Worker
+# Install: sudo cp deploy/minoo-nc-sync.service /etc/systemd/system/
+#          sudo systemctl daemon-reload
+#          sudo systemctl enable --now minoo-nc-sync
+
+[Unit]
+Description=Minoo NC Content Sync
+After=network.target
+
+[Service]
+Type=simple
+User=deployer
+WorkingDirectory=/home/deployer/minoo/current
+ExecStart=/usr/bin/php scripts/nc-sync-worker.php
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
