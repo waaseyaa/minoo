@@ -155,7 +155,7 @@ final class AuthControllerTest extends TestCase
     }
 
     #[Test]
-    public function submit_register_creates_inactive_user_and_sends_verification_email(): void
+    public function submit_register_creates_active_user_and_auto_logins(): void
     {
         $this->query->method('execute')->willReturn([]);
 
@@ -176,11 +176,11 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitRegister([], [], $this->account, $this->request);
 
-        // Should render check-email page, not redirect to dashboard
-        self::assertSame(200, $response->statusCode);
-        self::assertStringContainsString('check-email', $response->content);
-        // Session should NOT be set (no login until verified)
-        self::assertArrayNotHasKey('waaseyaa_uid', $_SESSION);
+        // Should auto-login and redirect to home
+        self::assertSame(302, $response->statusCode);
+        self::assertSame('/', $response->headers['Location']);
+        // Session should be set (auto-login)
+        self::assertSame(42, $_SESSION['waaseyaa_uid']);
     }
 
     #[Test]

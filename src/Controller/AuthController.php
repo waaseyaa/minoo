@@ -180,7 +180,7 @@ final class AuthController
         $user = $storage->create([
             'name' => $name,
             'mail' => $email,
-            'status' => false,
+            'status' => true,
             'created' => time(),
             'roles' => [],
             'permissions' => [],
@@ -193,13 +193,16 @@ final class AuthController
 
         $storage->save($user);
 
-        // Send verification email
+        // Send welcome email (non-blocking — account is already active)
         $token = $this->emailVerificationService->createToken($user->id());
         $this->authMailer->sendEmailVerification($user, $token);
 
-        $html = $this->twig->render('auth/check-email.html.twig', []);
+        // Auto-login
+        $_SESSION['waaseyaa_uid'] = $user->id();
 
-        return new SsrResponse(content: $html);
+        Flash::success('Welcome to Minoo, ' . $name . '.');
+
+        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/']);
     }
 
     public function forgotPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
