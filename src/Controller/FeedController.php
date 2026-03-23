@@ -13,6 +13,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
+use Waaseyaa\User\Middleware\CsrfMiddleware;
 use Waaseyaa\User\User;
 
 final class FeedController
@@ -107,21 +108,9 @@ final class FeedController
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $target]);
     }
 
-    /**
-     * HMAC-SHA256 derived from session ID for stability across page reloads.
-     * Falls back to a random token for anonymous/cookieless visitors.
-     */
     private function generateCsrfToken(HttpRequest $request): string
     {
-        $sessionId = $request->cookies->get('PHPSESSID', '');
-
-        if ($sessionId === '') {
-            return bin2hex(random_bytes(32));
-        }
-
-        $secret = getenv('APP_SECRET') ?: 'minoo-csrf-fallback-key';
-
-        return hash_hmac('sha256', $sessionId, $secret);
+        return CsrfMiddleware::token();
     }
 
     /**
@@ -295,6 +284,7 @@ final class FeedController
 
                 $distance = GeoDistance::haversine($lat, $lon, (float) $cLat, (float) $cLon);
                 $withDistance[] = [
+                    'entity_id' => $community->id(),
                     'name' => $community->get('name') ?? $community->label(),
                     'slug' => (string) ($community->get('slug') ?? ''),
                     'distance' => round($distance, 1),
@@ -353,6 +343,7 @@ final class FeedController
 
             foreach ($communities as $community) {
                 $result[] = [
+                    'entity_id' => $community->id(),
                     'name' => $community->get('name') ?? $community->label(),
                     'slug' => (string) ($community->get('slug') ?? ''),
                 ];
@@ -390,7 +381,7 @@ final class FeedController
 
         foreach ($source as $community) {
             $result[] = [
-                'id' => $community['slug'],
+                'id' => $community['entity_id'],
                 'name' => $community['name'],
                 'is_default' => $first,
             ];
@@ -460,15 +451,15 @@ final class FeedController
 
     private function buildContext(HttpRequest $request, array $query, ?AccountInterface $account = null, ?string $resolvedFilter = null): FeedContext
     {
-        $locationCookie = $request->cookies->get('minoo_loc');
+        $locationCookie = $request->cookies->get('minoo_location');
         $lat = null;
         $lon = null;
 
         if ($locationCookie !== null) {
             try {
                 $loc = json_decode($locationCookie, true, 4, JSON_THROW_ON_ERROR);
-                $lat = isset($loc['lat']) ? (float) $loc['lat'] : null;
-                $lon = isset($loc['lon']) ? (float) $loc['lon'] : null;
+                $lat = isset($loc['latitude']) ? (float) $loc['latitude'] : null;
+                $lon = isset($loc['longitude']) ? (float) $loc['longitude'] : null;
             } catch (\JsonException) {
                 // Invalid cookie — ignore
             }
