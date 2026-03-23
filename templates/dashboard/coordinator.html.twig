@@ -6,6 +6,7 @@
 <section class="content-section flow-lg">
   <h1>{{ trans('coordinator.title') }}</h1>
   <p class="text-secondary">{{ trans('coordinator.subtitle') }}</p>
+  <a href="{{ lang_url('/dashboard/coordinator/users') }}" class="btn btn--outline">{{ trans('roles.manage_members') }}</a>
 
   {% if pending_application_count > 0 %}
   <div class="card card--dashboard card--highlight">

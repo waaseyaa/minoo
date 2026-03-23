@@ -35,5 +35,15 @@
     </ul>
   </div>
   {% endif %}
+
+  {% if 'admin' in roles %}
+  <div class="actions">
+    <h2>{{ trans('admin.users_title') }}</h2>
+    <p class="text-secondary">{{ trans('admin.users_subtitle') }}</p>
+    <ul class="links">
+      <li><a href="{{ lang_url('/admin/users') }}">{{ trans('admin.users_title') }}</a></li>
+    </ul>
+  </div>
+  {% endif %}
 </section>
 {% endblock %}
