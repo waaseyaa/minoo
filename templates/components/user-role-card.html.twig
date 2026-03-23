@@ -1,0 +1,64 @@
+<div class="card card--dashboard">
+  <h3 class="card__title">{{ user.name }}</h3>
+  {% if user.email %}<p class="card__meta">{{ user.email }}</p>{% endif %}
+  <div class="card__meta">
+    {% if 'volunteer' in user.roles %}<span class="card__badge">{{ trans('roles.badge_volunteer') }}</span>{% endif %}
+    {% if user.is_elder %}<span class="card__badge">{{ trans('roles.badge_elder') }}</span>{% endif %}
+    {% if 'elder_coordinator' in user.roles %}<span class="card__badge">{{ trans('roles.badge_coordinator') }}</span>{% endif %}
+    {% if 'admin' in user.roles %}<span class="card__badge">{{ trans('roles.badge_admin') }}</span>{% endif %}
+  </div>
+
+  {% if 'admin' not in user.roles %}
+  <div class="card__actions">
+    {% if 'volunteer' not in user.roles %}
+      <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="grant">
+        <input type="hidden" name="role" value="volunteer">
+        <button type="submit" class="btn btn--sm btn--primary">{{ trans('roles.grant_volunteer') }}</button>
+      </form>
+    {% else %}
+      <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="revoke">
+        <input type="hidden" name="role" value="volunteer">
+        <button type="submit" class="btn btn--sm btn--outline">{{ trans('roles.revoke_volunteer') }}</button>
+      </form>
+    {% endif %}
+
+    {% if not user.is_elder %}
+      <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="grant">
+        <input type="hidden" name="role" value="elder">
+        <button type="submit" class="btn btn--sm btn--primary">{{ trans('roles.grant_elder') }}</button>
+      </form>
+    {% else %}
+      <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="revoke">
+        <input type="hidden" name="role" value="elder">
+        <button type="submit" class="btn btn--sm btn--outline">{{ trans('roles.revoke_elder') }}</button>
+      </form>
+    {% endif %}
+
+    {% if can_manage_coordinator|default(false) %}
+      {% if 'coordinator' not in user.roles %}
+        <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="grant">
+          <input type="hidden" name="role" value="coordinator">
+          <button type="submit" class="btn btn--sm btn--primary">{{ trans('roles.grant_coordinator') }}</button>
+        </form>
+      {% else %}
+        <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="revoke">
+          <input type="hidden" name="role" value="coordinator">
+          <button type="submit" class="btn btn--sm btn--outline">{{ trans('roles.revoke_coordinator') }}</button>
+        </form>
+      {% endif %}
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
