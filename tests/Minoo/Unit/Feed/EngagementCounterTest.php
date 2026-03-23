@@ -57,8 +57,9 @@ final class EngagementCounterTest extends TestCase
         $callCount = 0;
         $query->method('execute')->willReturnCallback(function () use (&$callCount) {
             $callCount++;
-            // First call = reactions (3 IDs), second call = comments (1 ID)
-            return $callCount === 1 ? [1, 2, 3] : [10];
+            // count()->execute() returns [N] where N is the count
+            // First call = reactions (3), second call = comments (1)
+            return $callCount === 1 ? [3] : [1];
         });
 
         $storage = $this->createMock(EntityStorageInterface::class);
