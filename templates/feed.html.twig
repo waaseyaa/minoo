@@ -179,6 +179,9 @@
       },
       body: JSON.stringify({ query, variables }),
     });
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status}`);
+    }
     const json = await res.json();
     if (json.errors?.length) {
       throw new Error(json.errors[0].message);
@@ -205,7 +208,7 @@
       const wasHidden = dropdown.hidden;
       closeAllMenus();
       dropdown.hidden = !wasHidden;
-      trigger.setAttribute('aria-expanded', String(!wasHidden === false));
+      trigger.setAttribute('aria-expanded', String(wasHidden));
     }
   });
 
@@ -217,6 +220,7 @@
   document.addEventListener('click', async function(e) {
     const btn = e.target.closest('[data-action="delete-post"]');
     if (!btn) return;
+    closeAllMenus();
     if (!confirm('Delete this post?')) return;
     const id = btn.dataset.id;
     btn.disabled = true;
