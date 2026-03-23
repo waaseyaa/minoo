@@ -24,7 +24,8 @@ final class NcSyncWorkerLoop
                 $result = $this->syncService->sync(limit: $this->limit);
             } catch (\Throwable $e) {
                 $result = new NcSyncResult(fetchFailed: true);
-                fprintf(STDERR, "[%s] Sync exception: %s\n", date('Y-m-d H:i:s'), $e->getMessage());
+                fprintf(STDERR, "[%s] Sync exception (%s): %s\n%s\n",
+                    date('Y-m-d H:i:s'), $e::class, $e->getMessage(), $e->getTraceAsString());
             }
             ++$this->cycleCount;
 
@@ -46,18 +47,28 @@ final class NcSyncWorkerLoop
 
     private function writeStatus(NcSyncResult $result): void
     {
-        $data = json_encode([
-            'last_sync' => date('c'),
-            'created' => $result->created,
-            'skipped' => $result->skipped,
-            'failed' => $result->failed,
-            'fetch_failed' => $result->fetchFailed,
-            'cycles' => $this->cycleCount,
-        ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        try {
+            $data = json_encode([
+                'last_sync' => date('c'),
+                'created' => $result->created,
+                'skipped' => $result->skipped,
+                'failed' => $result->failed,
+                'fetch_failed' => $result->fetchFailed,
+                'cycles' => $this->cycleCount,
+            ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        } catch (\JsonException $e) {
+            fprintf(STDERR, "[%s] WARNING: failed to encode status JSON: %s\n", date('Y-m-d H:i:s'), $e->getMessage());
+            return;
+        }
 
         $tmp = $this->statusPath . '.tmp';
-        file_put_contents($tmp, $data);
-        rename($tmp, $this->statusPath);
+        if (file_put_contents($tmp, $data) === false) {
+            fprintf(STDERR, "[%s] WARNING: failed to write status file %s\n", date('Y-m-d H:i:s'), $tmp);
+            return;
+        }
+        if (!rename($tmp, $this->statusPath)) {
+            fprintf(STDERR, "[%s] WARNING: failed to rename status file %s -> %s\n", date('Y-m-d H:i:s'), $tmp, $this->statusPath);
+        }
     }
 
     private function log(NcSyncResult $result): void

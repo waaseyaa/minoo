@@ -11,6 +11,7 @@ After=network.target
 Type=simple
 User=deployer
 WorkingDirectory=/home/deployer/minoo/current
+EnvironmentFile=/home/deployer/minoo/shared/.env
 ExecStart=/usr/bin/php scripts/nc-sync-worker.php
 Restart=on-failure
 RestartSec=30
