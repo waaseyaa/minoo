@@ -43,18 +43,18 @@
     {% endif %}
 
     {% if can_manage_coordinator|default(false) %}
-      {% if 'coordinator' not in user.roles %}
+      {% if 'elder_coordinator' not in user.roles %}
         <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="action" value="grant">
-          <input type="hidden" name="role" value="coordinator">
+          <input type="hidden" name="role" value="elder_coordinator">
           <button type="submit" class="btn btn--sm btn--primary">{{ trans('roles.grant_coordinator') }}</button>
         </form>
       {% else %}
         <form method="post" action="/api/users/{{ user.uid }}/roles" style="display:inline">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" name="action" value="revoke">
-          <input type="hidden" name="role" value="coordinator">
+          <input type="hidden" name="role" value="elder_coordinator">
           <button type="submit" class="btn btn--sm btn--outline">{{ trans('roles.revoke_coordinator') }}</button>
         </form>
       {% endif %}

@@ -41,7 +41,7 @@ final class RoleManagementServiceProvider extends ServiceProvider
             'api.users.roles',
             RouteBuilder::create('/api/users/{uid}/roles')
                 ->controller('Minoo\Controller\RoleManagementController::changeRole')
-                ->requireAuthentication()
+                ->requireRole('elder_coordinator')
                 ->methods('POST')
                 ->build(),
         );

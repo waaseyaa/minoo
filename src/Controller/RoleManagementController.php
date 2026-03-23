@@ -15,7 +15,7 @@ use Waaseyaa\User\User;
 final class RoleManagementController
 {
     private const ALLOWED_ACTIONS = ['grant', 'revoke'];
-    private const ALLOWED_ROLES = ['volunteer', 'elder', 'coordinator'];
+    private const ALLOWED_ROLES = ['volunteer', 'elder', 'elder_coordinator'];
 
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
@@ -27,7 +27,7 @@ final class RoleManagementController
         $targetUid = (int) $params['uid'];
         $action = $request->request->get('action', '');
         $role = $request->request->get('role', '');
-        $referrer = $request->headers->get('Referer', '/account');
+        $referrer = self::safeReferrer($request);
 
         if (!in_array($action, self::ALLOWED_ACTIONS, true)
             || !in_array($role, self::ALLOWED_ROLES, true)) {
@@ -47,10 +47,12 @@ final class RoleManagementController
         $isAdmin = in_array('admin', $actorRoles, true);
 
         if (!$isCoordinator && !$isAdmin) {
-            return new SsrResponse(content: '', statusCode: 403);
+            Flash::error('You do not have permission to manage roles.');
+
+            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/account']);
         }
 
-        if ($role === 'coordinator' && !$isAdmin) {
+        if ($role === 'elder_coordinator' && !$isAdmin) {
             Flash::error('Only admins can manage coordinator roles.');
 
             return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
@@ -59,13 +61,11 @@ final class RoleManagementController
         $storage = $this->entityTypeManager->getStorage('user');
         $user = $storage->load($targetUid);
 
-        if ($user === null) {
+        if (!$user instanceof User) {
             Flash::error('User not found.');
 
             return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
         }
-
-        \assert($user instanceof User);
 
         if (in_array('admin', $user->getRoles(), true)) {
             Flash::error('Admin accounts cannot be modified.');
@@ -73,19 +73,27 @@ final class RoleManagementController
             return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
         }
 
-        if ($role === 'elder') {
-            $user->setElder($action === 'grant');
-        } else {
-            if ($action === 'grant') {
-                $user->addRole($role);
+        try {
+            if ($role === 'elder') {
+                $user->setElder($action === 'grant');
             } else {
-                $user->removeRole($role);
+                if ($action === 'grant') {
+                    $user->addRole($role);
+                } else {
+                    $user->removeRole($role);
+                }
             }
-        }
-        $storage->save($user);
+            $storage->save($user);
+        } catch (\Throwable $e) {
+            error_log(sprintf('[RoleManagementController::changeRole] Error: %s', $e->getMessage()));
+            Flash::error('Unable to update role. Please try again.');
 
+            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+        }
+
+        $label = $role === 'elder_coordinator' ? 'Coordinator' : ucfirst($role);
         $verb = $action === 'grant' ? 'granted to' : 'revoked from';
-        Flash::success(ucfirst($role) . " role {$verb} " . $user->getName() . '.');
+        Flash::success("{$label} role {$verb} " . $user->getName() . '.');
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
     }
@@ -123,11 +131,17 @@ final class RoleManagementController
      */
     private function loadUserRows(AccountInterface $account): array
     {
-        $storage = $this->entityTypeManager->getStorage('user');
-        $ids = $storage->getQuery()
-            ->condition('status', 1)
-            ->sort('name', 'ASC')
-            ->execute();
+        try {
+            $storage = $this->entityTypeManager->getStorage('user');
+            $ids = $storage->getQuery()
+                ->condition('status', 1)
+                ->sort('name', 'ASC')
+                ->execute();
+        } catch (\Throwable $e) {
+            error_log(sprintf('[RoleManagementController::loadUserRows] Error: %s', $e->getMessage()));
+
+            return [];
+        }
 
         if ($ids === []) {
             return [];
@@ -137,9 +151,7 @@ final class RoleManagementController
         $rows = [];
 
         foreach ($users as $user) {
-            \assert($user instanceof User);
-
-            if ($user->id() === $account->id()) {
+            if (!$user instanceof User || $user->id() === $account->id()) {
                 continue;
             }
 
@@ -153,5 +165,16 @@ final class RoleManagementController
         }
 
         return $rows;
+    }
+
+    private static function safeReferrer(HttpRequest $request): string
+    {
+        $referrer = $request->headers->get('Referer', '/account');
+
+        if (!is_string($referrer) || !str_starts_with($referrer, '/') || str_starts_with($referrer, '//')) {
+            return '/account';
+        }
+
+        return $referrer;
     }
 }

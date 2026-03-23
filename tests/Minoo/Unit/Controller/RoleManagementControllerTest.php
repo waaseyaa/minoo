@@ -128,6 +128,8 @@ final class RoleManagementControllerTest extends TestCase
     public function changeRole_rejects_self_modification(): void
     {
         $account = $this->mockAccount(5, ['elder_coordinator']);
+        $storage = $this->mockStorage();
+        $storage->expects($this->never())->method('save');
 
         $request = $this->changeRoleRequest('grant', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '5'], [], $account, $request);
@@ -139,8 +141,10 @@ final class RoleManagementControllerTest extends TestCase
     public function changeRole_rejects_coordinator_grant_by_non_admin(): void
     {
         $account = $this->mockAccount(1, ['elder_coordinator']);
+        $storage = $this->mockStorage();
+        $storage->expects($this->never())->method('save');
 
-        $request = $this->changeRoleRequest('grant', 'coordinator');
+        $request = $this->changeRoleRequest('grant', 'elder_coordinator');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
         $this->assertSame(302, $response->statusCode);
@@ -156,11 +160,11 @@ final class RoleManagementControllerTest extends TestCase
         $storage->method('load')->with(2)->willReturn($targetUser);
         $storage->expects($this->once())->method('save');
 
-        $request = $this->changeRoleRequest('grant', 'coordinator');
+        $request = $this->changeRoleRequest('grant', 'elder_coordinator');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
         $this->assertSame(302, $response->statusCode);
-        $this->assertContains('coordinator', $targetUser->getRoles());
+        $this->assertContains('elder_coordinator', $targetUser->getRoles());
     }
 
     #[Test]
@@ -198,7 +202,32 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(302, $response->statusCode);
+    }
+
+    #[Test]
+    public function changeRole_rejects_invalid_role(): void
+    {
+        $account = $this->mockAccount(1, ['admin']);
+
+        $request = $this->changeRoleRequest('grant', 'superuser');
+        $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
+
+        $this->assertSame(302, $response->statusCode);
+    }
+
+    #[Test]
+    public function changeRole_handles_null_user(): void
+    {
+        $account = $this->mockAccount(1, ['elder_coordinator']);
+        $storage = $this->mockStorage();
+        $storage->method('load')->with(999)->willReturn(null);
+        $storage->expects($this->never())->method('save');
+
+        $request = $this->changeRoleRequest('grant', 'volunteer');
+        $response = $this->controller->changeRole(['uid' => '999'], [], $account, $request);
+
+        $this->assertSame(302, $response->statusCode);
     }
 
     #[Test]
