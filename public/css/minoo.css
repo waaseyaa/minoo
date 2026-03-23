@@ -3486,13 +3486,11 @@
      Social Feed — Three-Column Layout
      ══════════════════════════════════════════════════════════ */
 
-  /* ── Feed Layout (three-column grid) ── */
+  /* ── Feed Layout (main + right sidebar) ── */
   .feed-layout {
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr) 260px;
+    grid-template-columns: minmax(0, 1fr) 260px;
     gap: var(--space-md);
-    max-inline-size: var(--width-content);
-    margin-inline: auto;
     margin-block-start: calc(-1 * var(--space-sm));
   }
 
@@ -3511,20 +3509,11 @@
     overflow-y: auto;
   }
 
-  @media (max-width: 1199px) {
-    .feed-layout {
-      grid-template-columns: 220px minmax(0, 1fr);
-    }
-    .feed-sidebar--right {
-      display: none;
-    }
-  }
-
   @media (max-width: 1023px) {
     .feed-layout {
       grid-template-columns: 1fr;
     }
-    .feed-sidebar--left {
+    .feed-sidebar--right {
       display: none;
     }
   }
