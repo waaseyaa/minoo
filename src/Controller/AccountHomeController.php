@@ -37,12 +37,15 @@ final class AccountHomeController
         $storage = $this->entityTypeManager->getStorage('user');
         $user = $storage->load($account->id());
 
+        if (!$user instanceof User) {
+            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/account']);
+        }
+
         $isElder = ElderIdentity::isElder($user);
         ElderIdentity::setElder($user, !$isElder);
         $storage->save($user);
 
-        $message = $isElder ? 'Elder status removed.' : 'You have identified as an Elder. Miigwech.';
-        Flash::success($message);
+        Flash::success($isElder ? 'Elder status removed.' : 'You have identified as an Elder. Miigwech.');
 
         return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/account']);
     }

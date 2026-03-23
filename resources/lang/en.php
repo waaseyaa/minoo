@@ -392,6 +392,8 @@ return [
     'account.elder_question' => 'Are you an Elder in your community?',
     'account.elder_identify' => 'I am an Elder',
     'account.elder_remove' => 'Remove Elder status',
+    'account.elder_set_flash' => 'You have identified as an Elder. Miigwech.',
+    'account.elder_removed_flash' => 'Elder status removed.',
 
     // Elders
     'elders.title' => 'Elder Support Program',
