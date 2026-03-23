@@ -3843,7 +3843,71 @@
   .feed-card--group { --card-accent: var(--color-communities); }
   .feed-card--contributor { --card-accent: var(--color-people); }
   .feed-card--featured { --card-accent: var(--color-teachings); }
-  .feed-card--post { --card-accent: var(--color-communities); }
+  .feed-card--post {
+    --card-accent: var(--color-communities);
+    position: relative;
+  }
+
+  .feed-card__menu {
+    position: absolute;
+    inset-block-start: var(--space-sm);
+    inset-inline-end: var(--space-sm);
+  }
+
+  .feed-card__menu-trigger {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--space-2xs) var(--space-xs);
+    border-radius: var(--radius-sm);
+    line-height: 1;
+  }
+
+  .feed-card__menu-trigger:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+  }
+
+  .feed-card__menu-dropdown {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 100%;
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 12px oklch(0% 0 0 / 0.15);
+    min-inline-size: 8rem;
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .feed-card__menu-item {
+    display: block;
+    inline-size: 100%;
+    padding: var(--space-xs) var(--space-sm);
+    background: none;
+    border: none;
+    text-align: start;
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .feed-card__menu-item:hover {
+    background: var(--surface-hover);
+  }
+
+  .feed-card__menu-item--danger {
+    color: var(--color-error, #dc2626);
+  }
+
+  .feed-card__menu-item--danger:hover {
+    background: oklch(0.95 0.05 25);
+  }
+
   .feed-card--communities { --card-accent: var(--color-communities); }
   .feed-card--language { --card-accent: var(--color-language); }
 
