@@ -85,6 +85,19 @@ task('php-fpm:reload', function (): void {
     run('sudo systemctl reload php8.4-fpm');
 });
 
+desc('Restart NC sync worker to pick up new release');
+task('nc-sync:restart', function (): void {
+    // deployer must have passwordless sudo for this command.
+    // Add to /etc/sudoers.d/minoo-nc-sync on the server:
+    //   deployer ALL=(ALL) NOPASSWD: /bin/systemctl restart minoo-nc-sync
+    $result = run('sudo systemctl restart minoo-nc-sync 2>&1; echo "EXIT:$?"');
+    if (str_contains($result, 'EXIT:0')) {
+        writeln('<info>NC sync worker restarted.</info>');
+    } else {
+        writeln('<comment>WARNING: NC sync worker restart failed — worker may not be running.</comment>');
+    }
+});
+
 // ---------------------------------------------------------------------------
 // Deploy flow
 //
@@ -106,6 +119,7 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'php-fpm:reload',
+    'nc-sync:restart',
     'deploy:test',
     'deploy:cleanup',
 ]);
