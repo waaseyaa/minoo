@@ -12,6 +12,11 @@ class EntityLoaderService
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
+    public function getEntityTypeManager(): EntityTypeManager
+    {
+        return $this->entityTypeManager;
+    }
+
     public function loadUpcomingEvents(int $limit): array
     {
         $storage = $this->entityTypeManager->getStorage('event');

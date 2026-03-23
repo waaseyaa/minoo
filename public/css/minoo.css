@@ -3998,6 +3998,17 @@
     min-inline-size: 0;
   }
 
+  .feed-card__author {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+  }
+
+  .feed-card__author + .feed-card__source::before {
+    content: " · ";
+    color: var(--text-muted);
+  }
+
   .feed-card__source {
     font-weight: 600;
     font-size: 0.875rem;

@@ -34,7 +34,12 @@
     <div class="feed-card__attribution">
       <div class="feed-card__avatar">{{ item.communityInitial|default('?') }}</div>
       <div class="feed-card__attribution-text">
-        <a href="{{ lang_url('/communities/' ~ item.communitySlug|default('')) }}" class="feed-card__source">{{ item.communityName|default('') }}</a>
+        {% if item.authorName|default('') %}
+          <span class="feed-card__author">{{ item.authorName }}</span>
+        {% endif %}
+        {% if item.communityName|default('') %}
+          <a href="{{ lang_url('/communities/' ~ item.communitySlug|default('')) }}" class="feed-card__source">{{ item.communityName }}</a>
+        {% endif %}
         <span class="feed-card__attribution-action">&middot; {{ item.relativeTime|default('') }}</span>
       </div>
     </div>

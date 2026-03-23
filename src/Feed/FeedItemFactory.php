@@ -14,6 +14,9 @@ final class FeedItemFactory
     /** @var array<int|string, array{slug: string, name: string}> */
     private array $communityCache = [];
 
+    /** @var array<int|string, string> user ID => display name */
+    private array $userCache = [];
+
     /**
      * Inject community lookup data for slug/initial resolution.
      *
@@ -24,6 +27,16 @@ final class FeedItemFactory
         $this->communityCache = $communities;
     }
 
+    /**
+     * Inject user name lookup data for author attribution.
+     *
+     * @param array<int|string, string> $users keyed by user ID
+     */
+    public function setUserMap(array $users): void
+    {
+        $this->userCache = $users;
+    }
+
     public function fromEntity(
         string $type,
         ContentEntityBase $entity,
@@ -32,6 +45,7 @@ final class FeedItemFactory
         ?float $lon = null,
         ?float $entityLat = null,
         ?float $entityLon = null,
+        int $weight = 0,
     ): FeedItem {
         $distance = ($lat !== null && $lon !== null && $entityLat !== null && $entityLon !== null)
             ? GeoDistance::haversine($lat, $lon, $entityLat, $entityLon)
@@ -45,7 +59,7 @@ final class FeedItemFactory
             'business' => $this->buildBusiness($entity, $typeSlot, $distance, $createdAt),
             'person' => $this->buildPerson($entity, $typeSlot, $distance, $createdAt),
             'featured' => $this->buildFeatured($entity, $typeSlot, $distance, $createdAt),
-            'post' => $this->buildPost($entity, $typeSlot, $distance, $createdAt),
+            'post' => $this->buildPost($entity, $typeSlot, $distance, $createdAt, $weight),
             default => throw new \InvalidArgumentException("Unknown feed item type: {$type}"),
         };
     }
@@ -303,12 +317,19 @@ final class FeedItemFactory
         return mb_strtoupper(mb_substr($name, 0, 1));
     }
 
-    private function buildPost(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
+    private function buildPost(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt, int $weight = 0): FeedItem
     {
         $id = 'post:' . $entity->id();
         $communityId = $entity->get('community_id');
+        $userId = $entity->get('user_id');
 
         $images = json_decode($entity->get('images') ?? '[]', true);
+
+        // Author name: prefer stored value, fall back to user map
+        $authorName = $entity->get('author_name');
+        if (($authorName === null || $authorName === '') && $userId !== null) {
+            $authorName = $this->userCache[(int) $userId] ?? null;
+        }
 
         return new FeedItem(
             id: $id,
@@ -316,12 +337,12 @@ final class FeedItemFactory
             title: (string) ($entity->get('title') ?? ''),
             url: '/posts/' . $entity->get('slug'),
             badge: 'Post',
-            weight: 0,
+            weight: $weight,
             createdAt: $createdAt,
-            sortKey: $this->buildSortKey(0, $distance, $typeSlot, $createdAt, $id),
+            sortKey: $this->buildSortKey($weight, $distance, $typeSlot, $createdAt, $id),
             entity: $entity,
             distance: $distance,
-            meta: $this->truncate($entity->get('body')),
+            meta: $entity->get('body'),
             payload: array_filter([
                 'images' => is_array($images) && $images !== [] ? $images : null,
                 'authorId' => $entity->get('user_id') !== null ? (int) $entity->get('user_id') : null,
@@ -329,7 +350,8 @@ final class FeedItemFactory
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),
-            communityName: $entity->get('community_name'),
+            communityName: $this->resolveCommunityName($communityId),
+            authorName: $authorName,
         );
     }
 }

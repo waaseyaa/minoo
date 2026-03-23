@@ -236,11 +236,18 @@ final class EngagementController
 
         $storage = $this->entityTypeManager->getStorage('post');
 
+        // Resolve author display name for feed attribution
+        $authorName = '';
+        if ($account instanceof \Waaseyaa\User\User) {
+            $authorName = $account->getName();
+        }
+
         try {
             $entity = $storage->create([
                 'body' => $body,
                 'user_id' => $account->id(),
                 'community_id' => $communityId,
+                'author_name' => $authorName,
             ]);
             $storage->save($entity);
         } catch (\InvalidArgumentException) {

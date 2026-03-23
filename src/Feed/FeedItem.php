@@ -33,6 +33,7 @@ final readonly class FeedItem
         public ?string $relativeTime = null,
         public ?string $communitySlug = null,
         public ?string $communityInitial = null,
+        public ?string $authorName = null,
     ) {}
 
     public function isSynthetic(): bool
@@ -90,6 +91,9 @@ final readonly class FeedItem
         }
         if ($this->communityInitial !== null) {
             $data['communityInitial'] = $this->communityInitial;
+        }
+        if ($this->authorName !== null) {
+            $data['authorName'] = $this->authorName;
         }
 
         return $data;

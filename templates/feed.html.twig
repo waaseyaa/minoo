@@ -9,10 +9,10 @@
 
       {# === Filter Chips === #}
       <nav class="feed-chips" aria-label="Filter feed">
-        {% set filters = {all: trans('page.search_all'), event: trans('page.tab_events'), group: trans('page.tab_groups'), business: trans('page.search_businesses'), person: trans('page.tab_people')} %}
+        {% set filters = {all: trans('page.search_all'), post: trans('page.tab_posts'), event: trans('page.tab_events'), group: trans('page.tab_groups'), business: trans('page.search_businesses'), person: trans('page.tab_people')} %}
         {% for key, label in filters %}
           <a href="?filter={{ key }}"
-             class="feed-chip{% if activeFilter == key %} feed-chip--active{% endif %}"
+             class="feed-chip{% if filterParam == key %} feed-chip--active{% endif %}"
              data-filter="{{ key }}">{{ label }}</a>
         {% endfor %}
       </nav>

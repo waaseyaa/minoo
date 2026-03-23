@@ -74,6 +74,7 @@ return [
     'page.search_button' => 'Explore',
     'page.tabs_label' => 'Browse content',
     'page.tab_nearby' => 'Nearby',
+    'page.tab_posts' => 'Posts',
     'page.tab_events' => 'Events',
     'page.tab_people' => 'People',
     'page.tab_groups' => 'Groups',

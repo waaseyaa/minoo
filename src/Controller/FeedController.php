@@ -420,6 +420,7 @@ final class FeedController
      */
     private const FILTER_MAP = [
         'all' => 'all',
+        'post' => 'post',
         'event' => 'event',
         'group' => 'group',
         'business' => 'business',

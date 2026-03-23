@@ -31,6 +31,9 @@ final class FeedAssembler implements FeedAssemblerInterface
         // Build community name/slug map for factory lookups
         $this->factory->setCommunityMap($this->buildCommunityMap($communities));
 
+        // Build user name map for post author attribution
+        $this->factory->setUserMap($this->buildUserMap($posts));
+
         // 2. Transform — assign typeSlots cyclically for round-robin
         $items = [];
         $slotCounter = 0;
@@ -43,12 +46,29 @@ final class FeedAssembler implements FeedAssemblerInterface
             );
         }
 
+        // Posts first with a weight boost so they appear before other content
+        $postCount = 0;
+        foreach ($posts as $entity) {
+            $coords = $this->resolveEntityCoords($entity, 'community_id', $communityCoords);
+            $weight = $postCount < 2 ? 50 : 0;
+            $items[] = $this->factory->fromEntity(
+                'post',
+                $entity,
+                typeSlot: 0,
+                lat: $ctx->latitude,
+                lon: $ctx->longitude,
+                entityLat: $coords['lat'] ?? null,
+                entityLon: $coords['lon'] ?? null,
+                weight: $weight,
+            );
+            $postCount++;
+        }
+
         $sources = [
             ['type' => 'event', 'entities' => $events, 'communityField' => 'community_id'],
             ['type' => 'group', 'entities' => $groups, 'communityField' => 'community_id'],
             ['type' => 'business', 'entities' => $businesses, 'communityField' => 'community_id'],
             ['type' => 'person', 'entities' => $people, 'communityField' => 'community'],
-            ['type' => 'post', 'entities' => $posts, 'communityField' => 'community_id'],
         ];
 
         foreach ($sources as $sourceIdx => $source) {
@@ -57,7 +77,7 @@ final class FeedAssembler implements FeedAssemblerInterface
                 $items[] = $this->factory->fromEntity(
                     $source['type'],
                     $entity,
-                    typeSlot: $sourceIdx,
+                    typeSlot: $sourceIdx + 1,
                     lat: $ctx->latitude,
                     lon: $ctx->longitude,
                     entityLat: $coords['lat'] ?? null,
@@ -181,6 +201,38 @@ final class FeedAssembler implements FeedAssemblerInterface
         return $communities;
     }
 
+    /**
+     * Build user ID → display name map from post entities.
+     *
+     * @return array<int, string>
+     */
+    private function buildUserMap(array $posts): array
+    {
+        $userIds = array_unique(array_filter(array_map(
+            fn($p) => $p->get('user_id') !== null ? (int) $p->get('user_id') : null,
+            $posts,
+        )));
+
+        if ($userIds === []) {
+            return [];
+        }
+
+        try {
+            $storage = $this->loader->getEntityTypeManager()->getStorage('user');
+            $users = $storage->loadMultiple($userIds);
+            $map = [];
+            foreach ($users as $user) {
+                $name = $user->get('name') ?? $user->get('display_name') ?? '';
+                if ($name !== '') {
+                    $map[(int) $user->id()] = (string) $name;
+                }
+            }
+            return $map;
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
     /** @return array<int, array{slug: string, name: string}> */
     private function buildCommunityMap(array $communities): array
     {
@@ -235,6 +287,7 @@ final class FeedAssembler implements FeedAssemblerInterface
                 relativeTime: $item->relativeTime,
                 communitySlug: $item->communitySlug,
                 communityInitial: $item->communityInitial,
+                authorName: $item->authorName,
             );
         }, $items);
     }

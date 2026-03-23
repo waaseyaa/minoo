@@ -126,6 +126,7 @@ return [
     'page.search_button' => "Andone'", // dict: andone': "search for, seek" — shorter for button fit
     'page.tabs_label' => 'Naanaagadawaabandan', // "browse/explore content"
     'page.tab_nearby' => 'Besho', // dict: beshowad: "it is near, nearby, close"
+    'page.tab_posts' => 'Mazinibiiganan', // dict: mazinibiigan: "writing, a post" (plural)
     'page.tab_events' => "Maawanji'idiwinan", // dict: maawanji'idiwag: "they come together"
     'page.tab_people' => 'Anishinaabeg', // dict: anishinaabe: "person" (plural)
     'page.tab_groups' => 'Anokiiwinan', // dict: anokiiwin: "work, businesses"
