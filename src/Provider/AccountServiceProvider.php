@@ -26,5 +26,14 @@ final class AccountServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        $router->addRoute(
+            'account.elder_toggle',
+            RouteBuilder::create('/account/elder-toggle')
+                ->controller('Minoo\Controller\AccountHomeController::toggleElder')
+                ->requireAuthentication()
+                ->methods('POST')
+                ->build(),
+        );
     }
 }

@@ -16,6 +16,23 @@
     </ul>
   </div>
 
+  <div class="actions">
+    <h2>{{ trans('account.elder_status') }}</h2>
+    {% if is_elder %}
+      <p class="text-secondary">{{ trans('account.elder_identified') }}</p>
+      <form method="post" action="/account/elder-toggle">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn--outline">{{ trans('account.elder_remove') }}</button>
+      </form>
+    {% else %}
+      <p class="text-secondary">{{ trans('account.elder_question') }}</p>
+      <form method="post" action="/account/elder-toggle">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn--primary">{{ trans('account.elder_identify') }}</button>
+      </form>
+    {% endif %}
+  </div>
+
   {% if 'volunteer' in roles %}
   <div class="actions">
     <h2>{{ trans('account.elder_support') }}</h2>
