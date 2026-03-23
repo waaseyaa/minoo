@@ -249,7 +249,7 @@ final class EngagementController
 
         // Handle image uploads
         $uploadedFiles = $request->files->all('images');
-        if (is_array($uploadedFiles) && $uploadedFiles !== []) {
+        if ($uploadedFiles !== []) {
             $imagePaths = [];
             foreach (array_slice($uploadedFiles, 0, 4) as $file) {
                 if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {

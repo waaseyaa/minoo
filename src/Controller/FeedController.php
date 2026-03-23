@@ -244,7 +244,7 @@ final class FeedController
     /**
      * Up to 6 communities near the user's location.
      *
-     * @return list<array{name: string, slug: string, distance: float}>
+     * @return list<array{entity_id: int|string|null, name: string, slug: string, distance: float}>
      */
     private function buildSuggestedCommunities(?float $lat, ?float $lon): array
     {
@@ -301,7 +301,7 @@ final class FeedController
     /**
      * Communities the authenticated user follows.
      *
-     * @return list<array{name: string, slug: string}>
+     * @return list<array{entity_id: int|string|null, name: string, slug: string}>
      */
     private function buildFollowedCommunities(AccountInterface $account): array
     {
