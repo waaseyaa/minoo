@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Minoo\Provider;
 
 use Minoo\Entity\IngestLog;
+use Minoo\Ingestion\NcContentSyncService;
+use Minoo\Support\Command\NcSyncCommand;
+use Minoo\Support\NorthCloudClient;
 use Waaseyaa\Entity\EntityType;
+use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 
 final class IngestServiceProvider extends ServiceProvider
@@ -90,5 +94,21 @@ final class IngestServiceProvider extends ServiceProvider
                 ],
             ],
         ));
+    }
+
+    public function commands(
+        EntityTypeManager $entityTypeManager,
+        \Waaseyaa\Database\DatabaseInterface $database,
+        \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher,
+    ): array {
+        $ncConfig = $this->config['northcloud'] ?? [];
+        $baseUrl = $ncConfig['base_url'] ?? '';
+
+        $client = new NorthCloudClient(baseUrl: $baseUrl);
+        $syncService = new NcContentSyncService($client, $entityTypeManager);
+
+        return [
+            new NcSyncCommand($syncService),
+        ];
     }
 }
