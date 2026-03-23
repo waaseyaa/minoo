@@ -116,6 +116,7 @@ jobs:
             --exclude='deploy.php' \
             --exclude='ops/' \
             --exclude='tests/screenshots/' \
+            --exclude='storage/uploads/' \
             minoo/ minoo/.build/
 
       # -----------------------------------------------------------------------
