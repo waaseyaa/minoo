@@ -322,7 +322,10 @@ final class FeedItemFactory
             entity: $entity,
             distance: $distance,
             meta: $this->truncate($entity->get('body')),
-            payload: is_array($images) && $images !== [] ? ['images' => $images] : [],
+            payload: array_filter([
+                'images' => is_array($images) && $images !== [] ? $images : null,
+                'authorId' => $entity->get('user_id') !== null ? (int) $entity->get('user_id') : null,
+            ], fn($v) => $v !== null),
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),
