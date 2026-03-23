@@ -14,41 +14,41 @@ use Waaseyaa\User\User;
 final class ElderIdentityTest extends TestCase
 {
     #[Test]
-    public function isElder_defaults_false(): void
+    public function defaultsToFalse(): void
     {
-        $user = new User(['uid' => 1]);
+        $user = new User();
         $this->assertFalse(ElderIdentity::isElder($user));
     }
 
     #[Test]
-    public function setElder_true(): void
+    public function setElderTrue(): void
     {
-        $user = new User(['uid' => 1]);
+        $user = new User();
         ElderIdentity::setElder($user, true);
         $this->assertTrue(ElderIdentity::isElder($user));
     }
 
     #[Test]
-    public function setElder_false_after_true(): void
+    public function setElderFalseAfterTrue(): void
     {
-        $user = new User(['uid' => 1]);
+        $user = new User();
         ElderIdentity::setElder($user, true);
         ElderIdentity::setElder($user, false);
         $this->assertFalse(ElderIdentity::isElder($user));
     }
 
     #[Test]
-    public function setElder_returns_user(): void
+    public function setElderReturnsUser(): void
     {
-        $user = new User(['uid' => 1]);
+        $user = new User();
         $result = ElderIdentity::setElder($user, true);
         $this->assertSame($user, $result);
     }
 
     #[Test]
-    public function isElder_via_constructor(): void
+    public function isElderViaConstructor(): void
     {
-        $user = new User(['uid' => 1, 'is_elder' => 1]);
+        $user = new User(['is_elder' => 1]);
         $this->assertTrue(ElderIdentity::isElder($user));
     }
 }
