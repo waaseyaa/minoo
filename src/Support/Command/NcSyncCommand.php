@@ -40,6 +40,11 @@ final class NcSyncCommand extends Command
 
         $result = $this->syncService->sync($limit, $since, $dryRun);
 
+        if ($result->fetchFailed) {
+            $output->writeln('<error>Failed to fetch content from NorthCloud. Check NORTHCLOUD_BASE_URL and network connectivity.</error>');
+            return self::FAILURE;
+        }
+
         $output->writeln(sprintf(
             '<info>Done.</info> Created: %d | Skipped (duplicate): %d | Failed: %d',
             $result->created,

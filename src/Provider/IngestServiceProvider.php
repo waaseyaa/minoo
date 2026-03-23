@@ -104,10 +104,6 @@ final class IngestServiceProvider extends ServiceProvider
         $ncConfig = $this->config['northcloud'] ?? [];
         $baseUrl = $ncConfig['base_url'] ?? '';
 
-        if ($baseUrl === '') {
-            return [];
-        }
-
         $client = new NorthCloudClient(baseUrl: $baseUrl);
         $syncService = new NcContentSyncService($client, $entityTypeManager);
 

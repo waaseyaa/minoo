@@ -29,7 +29,7 @@ final class NcContentSyncService
 
         if ($response === null) {
             error_log('NcContentSyncService: failed to fetch content from NorthCloud');
-            return new NcSyncResult();
+            return (new NcSyncResult())->withFetchFailed();
         }
 
         $result = new NcSyncResult();
@@ -73,7 +73,7 @@ final class NcContentSyncService
             $entity = $storage->create($fields);
             $storage->save($entity);
             return $result->withCreated();
-        } catch (\Throwable $e) {
+        } catch (\RuntimeException|\InvalidArgumentException $e) {
             error_log(sprintf('NcContentSyncService: failed to create %s from %s: %s', $entityType, $sourceUrl, $e->getMessage()));
             return $result->withFailed();
         }

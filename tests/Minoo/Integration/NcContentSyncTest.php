@@ -184,5 +184,22 @@ final class NcContentSyncTest extends TestCase
         $this->assertSame(0, $result->created);
         $this->assertSame(0, $result->skipped);
         $this->assertSame(0, $result->failed);
+        $this->assertFalse($result->fetchFailed);
+    }
+
+    #[Test]
+    public function sync_reports_fetch_failed_when_nc_unreachable(): void
+    {
+        // Return false to simulate a failed HTTP request (null response from client)
+        $httpClient = static fn(string $url): bool => false;
+        $client = new NorthCloudClient(baseUrl: 'https://unreachable.example.com', httpClient: $httpClient);
+        $service = new NcContentSyncService($client, self::$etm);
+
+        $result = $service->sync(limit: 10);
+
+        $this->assertTrue($result->fetchFailed);
+        $this->assertSame(0, $result->created);
+        $this->assertSame(0, $result->skipped);
+        $this->assertSame(0, $result->failed);
     }
 }

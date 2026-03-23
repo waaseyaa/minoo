@@ -132,15 +132,15 @@ final class NorthCloudClient
      */
     public function getRecentContent(array $topics = ['indigenous'], int $limit = 20, ?string $since = null): ?array
     {
-        $params = ['page_size' => (string) $limit];
+        $query = 'page_size=' . $limit;
         foreach ($topics as $topic) {
-            $params['topics[]'] = $topic;
+            $query .= '&topics[]=' . urlencode($topic);
         }
         if ($since !== null) {
-            $params['from_date'] = $since;
+            $query .= '&from_date=' . urlencode($since);
         }
 
-        $url = rtrim($this->baseUrl, '/') . '/api/v1/search?' . http_build_query($params);
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/search?' . $query;
         $json = $this->doRequest($url);
 
         if ($json === null) {
