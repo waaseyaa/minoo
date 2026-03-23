@@ -324,7 +324,7 @@ final class FeedItemFactory
             meta: $this->truncate($entity->get('body')),
             payload: array_filter([
                 'images' => is_array($images) && $images !== [] ? $images : null,
-                'authorId' => $entity->get('user_id'),
+                'authorId' => $entity->get('user_id') !== null ? (int) $entity->get('user_id') : null,
             ], fn($v) => $v !== null),
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),

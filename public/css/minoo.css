@@ -3901,7 +3901,7 @@
   }
 
   .feed-card__menu-item--danger {
-    color: var(--color-error, #dc2626);
+    color: var(--color-error, oklch(0.55 0.22 25));
   }
 
   .feed-card__menu-item--danger:hover {

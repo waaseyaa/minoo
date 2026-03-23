@@ -32,7 +32,7 @@ final class GraphQlEndpointTest extends TestCase
         $kernel = new HttpKernel(self::$projectRoot);
         $boot = new \ReflectionMethod(AbstractKernel::class, 'boot');
         $boot->invoke($kernel);
-        self::$entityTypeManager = (new \ReflectionProperty(AbstractKernel::class, 'entityTypeManager'))->getValue($kernel);
+        self::$entityTypeManager = $kernel->getEntityTypeManager();
         self::$accessHandler = (new \ReflectionProperty(AbstractKernel::class, 'accessHandler'))->getValue($kernel);
     }
 
@@ -123,5 +123,7 @@ final class GraphQlEndpointTest extends TestCase
         ]), []);
         self::assertSame(200, $result['statusCode']);
         self::assertNotEmpty($result['body']['errors'] ?? []);
+        $errorMessage = $result['body']['errors'][0]['message'] ?? '';
+        self::assertStringContainsString('introspection', strtolower($errorMessage));
     }
 }
