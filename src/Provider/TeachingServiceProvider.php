@@ -68,6 +68,12 @@ final class TeachingServiceProvider extends ServiceProvider
                     'settings' => ['target_type' => 'media'],
                     'weight' => 20,
                 ],
+                'source_url' => [
+                    'type' => 'string',
+                    'label' => 'Source URL',
+                    'description' => 'Canonical URL of the original content (for NC deduplication).',
+                    'weight' => 50,
+                ],
                 'copyright_status' => [
                     'type' => 'string',
                     'label' => 'Copyright Status',

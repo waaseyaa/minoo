@@ -93,6 +93,12 @@ final class EventServiceProvider extends ServiceProvider
                     'weight' => 29,
                     'default' => 0,
                 ],
+                'source_url' => [
+                    'type' => 'string',
+                    'label' => 'Source URL',
+                    'description' => 'Canonical URL of the original content (for NC deduplication).',
+                    'weight' => 50,
+                ],
                 'source' => [
                     'type' => 'string',
                     'label' => 'Source',

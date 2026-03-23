@@ -123,6 +123,43 @@ final class NorthCloudClient
     }
 
     /**
+     * Fetch recent content from NorthCloud Search API.
+     *
+     * @param list<string> $topics Topics to filter by (default: indigenous)
+     * @param int $limit Maximum results
+     * @param string|null $since ISO date (YYYY-MM-DD) to fetch content from
+     * @return array{hits: list<array<string, mixed>>, total_hits: int}|null
+     */
+    public function getRecentContent(array $topics = ['indigenous'], int $limit = 20, ?string $since = null): ?array
+    {
+        $params = ['page_size' => (string) $limit];
+        foreach ($topics as $topic) {
+            $params['topics[]'] = $topic;
+        }
+        if ($since !== null) {
+            $params['from_date'] = $since;
+        }
+
+        $url = rtrim($this->baseUrl, '/') . '/api/v1/search?' . http_build_query($params);
+        $json = $this->doRequest($url);
+
+        if ($json === null) {
+            return null;
+        }
+
+        $data = json_decode($json, true);
+        if (!is_array($data) || !isset($data['hits']) || !is_array($data['hits'])) {
+            error_log('NorthCloud search response malformed');
+            return null;
+        }
+
+        return [
+            'hits' => $data['hits'],
+            'total_hits' => (int) ($data['total_hits'] ?? 0),
+        ];
+    }
+
+    /**
      * Link community sources via NorthCloud API.
      *
      * Requires authentication (api_token).
