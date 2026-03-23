@@ -185,6 +185,7 @@
 
   [data-theme="light"] {
     --surface:           var(--surface-light);
+    --surface-dark:      var(--surface-light);
     --surface-card:      var(--surface-light-card);
     --surface-raised:    #eae5df;
     --text-primary:      var(--text-dark);
@@ -201,6 +202,7 @@
   @media (prefers-color-scheme: light) {
     :root:not([data-theme="dark"]) {
       --surface:           var(--surface-light);
+      --surface-dark:      var(--surface-light);
       --surface-card:      var(--surface-light-card);
       --surface-raised:    #eae5df;
       --text-primary:      var(--text-dark);
@@ -2308,7 +2310,7 @@
 
   .btn--accent {
     background-color: var(--color-teachings);
-    color: var(--surface-dark);
+    color: #0a0a0a;
   }
   .btn--accent:hover { background-color: oklch(from var(--color-teachings) calc(l - 0.05) c h); }
 
@@ -3242,7 +3244,7 @@
   }
   .community-chip--active {
     background: var(--color-communities);
-    color: var(--surface-dark);
+    color: #0a0a0a;
     border-color: var(--color-communities);
   }
   .community-chip-dropdown {
