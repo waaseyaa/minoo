@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\ElderIdentity;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -24,7 +25,7 @@ final class AccountHomeController
         $html = $this->twig->render('account/home.html.twig', [
             'account' => $account,
             'roles' => $account->getRoles(),
-            'is_elder' => $account instanceof User && $account->isElder(),
+            'is_elder' => $account instanceof User && ElderIdentity::isElder($account),
             'path' => '/account',
         ]);
 
@@ -36,8 +37,8 @@ final class AccountHomeController
         $storage = $this->entityTypeManager->getStorage('user');
         $user = $storage->load($account->id());
 
-        $isElder = $user->isElder();
-        $user->setElder(!$isElder);
+        $isElder = ElderIdentity::isElder($user);
+        ElderIdentity::setElder($user, !$isElder);
         $storage->save($user);
 
         $message = $isElder ? 'Elder status removed.' : 'You have identified as an Elder. Miigwech.';

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\AccountHomeController;
+use Minoo\Support\ElderIdentity;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -126,7 +127,7 @@ final class AccountHomeControllerTest extends TestCase
         $storage = $this->createMock(EntityStorageInterface::class);
 
         $user = new User(['uid' => 1, 'name' => 'Test']);
-        $this->assertFalse($user->isElder());
+        $this->assertFalse(ElderIdentity::isElder($user));
 
         $etm->method('getStorage')->with('user')->willReturn($storage);
         $storage->method('load')->with(1)->willReturn($user);
@@ -140,7 +141,7 @@ final class AccountHomeControllerTest extends TestCase
 
         $this->assertSame(302, $response->statusCode);
         $this->assertSame('/account', $response->headers['Location']);
-        $this->assertTrue($user->isElder());
+        $this->assertTrue(ElderIdentity::isElder($user));
     }
 
     #[Test]
@@ -150,7 +151,7 @@ final class AccountHomeControllerTest extends TestCase
         $storage = $this->createMock(EntityStorageInterface::class);
 
         $user = new User(['uid' => 1, 'name' => 'Test', 'is_elder' => 1]);
-        $this->assertTrue($user->isElder());
+        $this->assertTrue(ElderIdentity::isElder($user));
 
         $etm->method('getStorage')->with('user')->willReturn($storage);
         $storage->method('load')->with(1)->willReturn($user);
@@ -163,6 +164,6 @@ final class AccountHomeControllerTest extends TestCase
         $response = $controller->toggleElder([], [], $account, HttpRequest::create('/account/elder-toggle', 'POST'));
 
         $this->assertSame(302, $response->statusCode);
-        $this->assertFalse($user->isElder());
+        $this->assertFalse(ElderIdentity::isElder($user));
     }
 }
