@@ -387,6 +387,11 @@ return [
     'account.coordination' => 'Coordination',
     'account.coordinator_text' => 'Manage Elder Support requests and coordinate volunteers in your community.',
     'account.coordinator_dashboard' => 'Coordinator Dashboard',
+    'account.elder_status' => 'Elder Status',
+    'account.elder_identified' => 'You have identified as an Elder.',
+    'account.elder_question' => 'Are you an Elder in your community?',
+    'account.elder_identify' => 'I am an Elder',
+    'account.elder_remove' => 'Remove Elder status',
 
     // Elders
     'elders.title' => 'Elder Support Program',
