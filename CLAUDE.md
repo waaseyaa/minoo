@@ -127,7 +127,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests (208 tests, 501 assertions)
+./vendor/bin/phpunit                          # All tests (680 tests, 2063 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
@@ -136,6 +136,9 @@ bin/waaseyaa migrate:status                   # Show migration status
 bin/waaseyaa migrate:rollback                 # Rollback last batch
 bin/waaseyaa make:migration <name>            # Generate a new migration file
 bin/waaseyaa schema:check                     # Detect schema drift (missing columns)
+bin/waaseyaa ingest:nc-sync --limit=10        # Pull NC indigenous content as teachings/events
+bin/waaseyaa ingest:nc-sync --dry-run         # Preview what would sync without persisting
+php scripts/populate_engagement.php           # Seed feed with users, posts, reactions, comments
 ```
 
 ## Content Tone
@@ -179,6 +182,11 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Mock `ContentEntityBase`, not `EntityInterface`**: `get()`/`set()` are on `FieldableInterface`/`ContentEntityBase`, not `EntityInterface`. PHPUnit cannot configure methods that don't exist on the mocked type. Use `$this->createMock(ContentEntityBase::class)` for entities that need `get()`/`set()` in tests.
 - **Mock `set()` must return self**: `ContentEntityBase::set()` returns `static` (fluent). Mock callbacks using `willReturnCallback` must `return $mock;` — a void callback causes `TypeError` at runtime.
 - **Playwright tests coupled to i18n strings**: Playwright assertions like `getByRole('heading', { name: '...' })` break when translation strings change. Update `tests/playwright/*.spec.ts` whenever `resources/lang/en.php` heading/title strings change.
+- **`SqlEntityStorage::delete()` takes an array**: `$storage->delete([$entity])` not `$storage->delete($entity)`. Single entity causes TypeError.
+- **`count()->execute()` returns `[N]`**: A single-element array with the count as value. Use `$result[0]` not `count($result)` to get the actual count.
+- **NorthCloudClient timeout**: Default 5s is too tight for full-text search (ES queries take 5+ seconds). Use `search.timeout` config (15s) when constructing client for search operations.
+- **NC Search API param**: Uses `size` for pagination, not `page_size` (that's the communities endpoint only).
+- **ConsoleKernel broken on production** (#493): Missing `SqliteEmbeddingStorage` class crashes all CLI commands. Workaround: boot `HttpKernel` via reflection in one-liner scripts (same pattern as `scripts/populate_featured.php`).
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
