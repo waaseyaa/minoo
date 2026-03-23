@@ -100,6 +100,8 @@ return [
     'feed.suggested_communities' => 'Suggested Communities',
     'feed.see_all' => 'See all',
     'feed.join_conversation' => 'Join the conversation — log in to share with your community',
+    'feed.join_community_to_post' => 'Join a community to start posting',
+    'feed.explore_communities' => 'Explore communities',
     'feed.whats_happening' => "What's happening in your community?",
     'feed.post' => 'Post',
     'feed.communities_near_you' => 'Communities near you',
