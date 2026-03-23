@@ -104,7 +104,8 @@ final class IngestServiceProvider extends ServiceProvider
         $ncConfig = $this->config['northcloud'] ?? [];
         $baseUrl = $ncConfig['base_url'] ?? '';
 
-        $client = new NorthCloudClient(baseUrl: $baseUrl);
+        $searchTimeout = (int) ($this->config['search']['timeout'] ?? 15);
+        $client = new NorthCloudClient(baseUrl: $baseUrl, timeout: $searchTimeout);
         $syncService = new NcContentSyncService($client, $entityTypeManager);
 
         return [
