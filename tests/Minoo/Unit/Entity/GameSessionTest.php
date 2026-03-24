@@ -1,0 +1,105 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minoo\Tests\Unit\Entity;
+
+use Minoo\Entity\GameSession;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+
+#[CoversClass(GameSession::class)]
+final class GameSessionTest extends TestCase
+{
+    #[Test]
+    public function it_creates_with_defaults(): void
+    {
+        $before = time();
+        $session = new GameSession([
+            'mode' => 'daily',
+            'direction' => 'english_to_ojibwe',
+            'dictionary_entry_id' => 42,
+        ]);
+        $after = time();
+
+        $this->assertSame('game_session', $session->getEntityTypeId());
+        $this->assertSame('daily', $session->get('mode'));
+        $this->assertSame('english_to_ojibwe', $session->get('direction'));
+        $this->assertSame(42, $session->get('dictionary_entry_id'));
+        $this->assertSame('in_progress', $session->get('status'));
+        $this->assertSame(0, $session->get('wrong_count'));
+        $this->assertSame('[]', $session->get('guesses'));
+        $this->assertSame('easy', $session->get('difficulty_tier'));
+        $this->assertNull($session->get('user_id'));
+        $this->assertNull($session->get('daily_date'));
+        $this->assertGreaterThanOrEqual($before, $session->get('created_at'));
+        $this->assertLessThanOrEqual($after, $session->get('updated_at'));
+    }
+
+    #[Test]
+    public function it_requires_mode(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new GameSession(['direction' => 'english_to_ojibwe', 'dictionary_entry_id' => 1]);
+    }
+
+    #[Test]
+    public function it_requires_direction(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new GameSession(['mode' => 'daily', 'dictionary_entry_id' => 1]);
+    }
+
+    #[Test]
+    public function it_requires_dictionary_entry_id(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new GameSession(['mode' => 'daily', 'direction' => 'english_to_ojibwe']);
+    }
+
+    #[Test]
+    public function it_validates_mode(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new GameSession([
+            'mode' => 'invalid',
+            'direction' => 'english_to_ojibwe',
+            'dictionary_entry_id' => 1,
+        ]);
+    }
+
+    #[Test]
+    public function it_validates_direction(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        new GameSession([
+            'mode' => 'daily',
+            'direction' => 'invalid',
+            'dictionary_entry_id' => 1,
+        ]);
+    }
+
+    #[Test]
+    public function it_accepts_all_fields(): void
+    {
+        $session = new GameSession([
+            'mode' => 'streak',
+            'direction' => 'ojibwe_to_english',
+            'dictionary_entry_id' => 99,
+            'user_id' => 7,
+            'daily_date' => '2026-03-23',
+            'difficulty_tier' => 'hard',
+            'guesses' => '["a","b"]',
+            'wrong_count' => 2,
+            'status' => 'won',
+        ]);
+
+        $this->assertSame(7, $session->get('user_id'));
+        $this->assertSame('2026-03-23', $session->get('daily_date'));
+        $this->assertSame('hard', $session->get('difficulty_tier'));
+        $this->assertSame('["a","b"]', $session->get('guesses'));
+        $this->assertSame(2, $session->get('wrong_count'));
+        $this->assertSame('won', $session->get('status'));
+    }
+}
