@@ -52,7 +52,7 @@
   var state = {
     mode: 'daily',
     direction: 'english_to_ojibwe',
-    sessionId: null,
+    sessionToken: null,
     maxWrong: 7,
     guesses: [],
     wrongGuesses: [],
@@ -87,11 +87,17 @@
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    }).then(function (r) { return r.json(); });
+    }).then(function (r) {
+      if (!r.ok) throw new Error('API error: ' + r.status);
+      return r.json();
+    });
   }
 
   function apiGet(path) {
-    return fetch(apiBase + path).then(function (r) { return r.json(); });
+    return fetch(apiBase + path).then(function (r) {
+      if (!r.ok) throw new Error('API error: ' + r.status);
+      return r.json();
+    });
   }
 
   // ── Rendering ──
@@ -160,6 +166,7 @@
         btn.dataset.letter = letter.toLowerCase();
         btn.textContent = letter;
         btn.type = 'button';
+        btn.setAttribute('aria-label', letter === '\u02BC' ? 'glottal stop' : letter);
 
         var lower = letter.toLowerCase();
         if (state.wrongGuesses.indexOf(lower) !== -1) {
@@ -194,7 +201,7 @@
 
   function handleServerGuess(letter) {
     api('/guess', {
-      session_id: state.sessionId,
+      session_token: state.sessionToken,
       letter: letter
     }).then(function (data) {
       if (data.error) return;
@@ -260,7 +267,7 @@
 
   function completeGame(status) {
     api('/complete', {
-      session_id: state.sessionId,
+      session_token: state.sessionToken,
       status: status,
       guesses: state.guesses.concat(state.wrongGuesses)
     }).then(function (data) {
@@ -353,12 +360,18 @@
     shareBtn.addEventListener('click', function () { shareResult(won, shareBtn); });
     actionsEl.appendChild(shareBtn);
 
-    if (state.mode !== 'daily') {
+    if (state.mode === 'practice' || (state.mode === 'streak' && won)) {
       var nextBtn = document.createElement('button');
       nextBtn.className = 'ishkode__btn ishkode__btn--primary';
-      nextBtn.textContent = state.mode === 'streak' ? 'Next Word' : 'Play Again';
+      nextBtn.textContent = 'Next Word';
       nextBtn.addEventListener('click', function () { startGame(); });
       actionsEl.appendChild(nextBtn);
+    } else if (state.mode === 'streak' && !won) {
+      var replayBtn = document.createElement('button');
+      replayBtn.className = 'ishkode__btn ishkode__btn--primary';
+      replayBtn.textContent = 'Streak Over \u2014 Play Again';
+      replayBtn.addEventListener('click', function () { startGame(); });
+      actionsEl.appendChild(replayBtn);
     }
   }
 
@@ -376,13 +389,25 @@
   }
 
   function shareResult(won, btn) {
-    var fire = '';
-    for (var i = 0; i < state.maxWrong; i++) {
-      fire += i < (state.maxWrong - state.wrongGuesses.length) ? '\uD83D\uDD25' : '\u2B1B';
-    }
-    var text = 'Ishkode ' + (won ? '\u2705' : '\u274C') + ' ' + fire +
-      '\n' + state.guesses.length + ' guesses' +
-      '\nhttps://minoo.live/ishkode';
+    // Build guess-by-guess emoji sequence per spec
+    var allGuesses = state.guesses.concat(state.wrongGuesses);
+    var emojis = '';
+    var guessOrder = [];
+    // Reconstruct guess order from state (guesses were pushed in order)
+    // We need the original order — interleaved correct + wrong
+    // Use the combined list stored in completeGame
+    allGuesses.forEach(function (letter) {
+      emojis += state.guesses.indexOf(letter) !== -1 ? '\uD83D\uDD25' : '\uD83E\uDEA8';
+    });
+    var total = allGuesses.length;
+    var outcome = won ? 'fire still burning' : 'fire went out';
+    var dirLabel = state.direction === 'english_to_ojibwe' ? 'English \u2192 Ojibwe' : 'Ojibwe \u2192 English';
+    var date = state.mode === 'daily' ? new Date().toISOString().slice(0, 10) : 'Practice';
+    var text = '\uD83D\uDD25 Ishkode \u2014 ' + (state.mode === 'daily' ? 'Daily Challenge' : state.mode.charAt(0).toUpperCase() + state.mode.slice(1)) +
+      '\n' + date + ' \u00B7 ' + dirLabel +
+      '\n' + emojis +
+      '\n' + total + ' guesses \u00B7 ' + outcome +
+      '\nhttps://minoo.live/games/ishkode';
 
     if (navigator.share) {
       navigator.share({ text: text }).catch(function () { /* cancelled */ });
@@ -472,7 +497,7 @@
   // ── Start game ──
   function startGame() {
     // Reset state
-    state.sessionId = null;
+    state.sessionToken = null;
     state.guesses = [];
     state.wrongGuesses = [];
     state.revealedPositions = [];
@@ -498,20 +523,18 @@
           revealWordEl.textContent = '';
           teachingEl.innerHTML = '<p>Come back tomorrow for a new word.</p>';
           var stats = loadStats();
-          statsEl.innerHTML =
-            '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.games_played + '</div><div class="ishkode__stat-label">Played</div></div>' +
-            '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.wins + '</div><div class="ishkode__stat-label">Won</div></div>' +
-            '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.current_streak + '</div><div class="ishkode__stat-label">Streak</div></div>' +
-            '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.best_streak + '</div><div class="ishkode__stat-label">Best</div></div>';
+          statsEl.innerHTML = renderStatsHtml(stats);
           actionsEl.innerHTML = '';
           return;
         }
       } catch (_) { /* no localStorage */ }
     }
 
-    // Fetch challenge
-    var endpoint = '/challenge?mode=' + encodeURIComponent(state.mode) +
-      '&direction=' + encodeURIComponent(state.direction);
+    // Fetch word data
+    var endpoint = state.mode === 'daily'
+      ? '/daily'
+      : '/word?mode=' + encodeURIComponent(state.mode) +
+        '&direction=' + encodeURIComponent(state.direction);
 
     apiGet(endpoint).then(function (data) {
       if (data.error) {
@@ -521,15 +544,15 @@
         return;
       }
 
-      state.sessionId = data.session_id;
+      state.sessionToken = data.session_token;
       state.wordLength = data.word_length;
       state.maxWrong = data.max_wrong || 7;
       state.challengeData = data;
 
       // For practice/streak, decode the word from base64
-      if (state.mode !== 'daily' && data.word_encoded) {
+      if (state.mode !== 'daily' && data.word_data) {
         try {
-          state.word = atob(data.word_encoded);
+          state.word = atob(data.word_data);
         } catch (_) {
           state.word = null;
         }
@@ -557,7 +580,7 @@
       showLoading(false);
       if (loadingEl) {
         loadingEl.hidden = false;
-        loadingEl.textContent = 'Could not load challenge. Please try again.';
+        loadingEl.textContent = 'Could not load word. Please try again.';
       }
     });
   }
