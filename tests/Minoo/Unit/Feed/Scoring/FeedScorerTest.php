@@ -15,7 +15,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Cache\Backend\MemoryBackend;
-use Waaseyaa\Database\DBALDatabase;
+use Waaseyaa\Entity\EntityTypeManagerInterface;
+use Waaseyaa\Entity\Storage\EntityQueryInterface;
+use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(FeedScorer::class)]
 final class FeedScorerTest extends TestCase
@@ -24,12 +26,11 @@ final class FeedScorerTest extends TestCase
 
     protected function setUp(): void
     {
-        $db = DBALDatabase::createSqlite();
-        $this->createTables($db);
+        $etm = $this->createEmptyEntityTypeManager();
 
         $this->scorer = new FeedScorer(
-            affinity: new AffinityCalculator($db, new AffinityCache(new MemoryBackend())),
-            engagement: new EngagementCalculator($db),
+            affinity: new AffinityCalculator($etm, new AffinityCache(new MemoryBackend())),
+            engagement: new EngagementCalculator($etm),
             decay: new DecayCalculator(96.0),
             reranker: new DiversityReranker(3, 5),
             featuredBoost: 100.0,
@@ -40,7 +41,6 @@ final class FeedScorerTest extends TestCase
     public function scores_items_with_positive_values(): void
     {
         $items = [$this->item('post:1', 'post', time())];
-
         $result = $this->scorer->score($items, null, null, null, null, ['post:1' => 'user:10']);
 
         self::assertCount(1, $result);
@@ -52,10 +52,9 @@ final class FeedScorerTest extends TestCase
     public function anonymous_user_gets_engagement_and_decay_only(): void
     {
         $items = [$this->item('post:1', 'post', time())];
-
         $result = $this->scorer->score($items, null, null, null, null, ['post:1' => 'user:10']);
 
-        // Anonymous: affinity = 1.0, engagement = 1.0, decay ≈ 1.0
+        // Anonymous: affinity=1.0, engagement=1.0, decay≈1.0
         self::assertEqualsWithDelta(1.0, $result[0]->score, 0.1);
     }
 
@@ -66,13 +65,11 @@ final class FeedScorerTest extends TestCase
             $this->item('post:1', 'post', time()),
             $this->item('featured:1', 'featured', time(), weight: 1000),
         ];
-
         $result = $this->scorer->score($items, null, null, null, null, [
             'post:1' => 'user:10',
             'featured:1' => 'user:10',
         ]);
 
-        // Featured should rank first (score ≈ 100 vs ≈ 1)
         self::assertSame('featured:1', $result[0]->id);
         self::assertGreaterThan($result[1]->score, $result[0]->score);
     }
@@ -86,7 +83,6 @@ final class FeedScorerTest extends TestCase
             createdAt: new \DateTimeImmutable(), sortKey: '',
         );
         $items = [$this->item('post:1', 'post', time()), $welcome];
-
         $result = $this->scorer->score($items, null, null, null, null, ['post:1' => 'user:10']);
 
         self::assertSame('welcome:0', $result[0]->id);
@@ -97,16 +93,14 @@ final class FeedScorerTest extends TestCase
     {
         $now = time();
         $items = [
-            $this->item('post:1', 'post', $now - (7 * 86400)), // 7 days old
-            $this->item('post:2', 'post', $now),                // brand new
+            $this->item('post:1', 'post', $now - (7 * 86400)),
+            $this->item('post:2', 'post', $now),
         ];
-
         $result = $this->scorer->score($items, null, null, null, null, [
             'post:1' => 'user:10',
             'post:2' => 'user:10',
         ]);
 
-        // Newer should rank first
         self::assertSame('post:2', $result[0]->id);
     }
 
@@ -114,10 +108,8 @@ final class FeedScorerTest extends TestCase
     public function engagement_counts_attached_to_scored_items(): void
     {
         $items = [$this->item('post:1', 'post', time())];
-
         $result = $this->scorer->score($items, null, null, null, null, ['post:1' => 'user:10']);
 
-        // With empty DB, counts should be 0
         self::assertSame(0, $result[0]->reactionCount);
         self::assertSame(0, $result[0]->commentCount);
     }
@@ -126,10 +118,8 @@ final class FeedScorerTest extends TestCase
     public function sort_key_updated_with_score(): void
     {
         $items = [$this->item('post:1', 'post', time())];
-
         $result = $this->scorer->score($items, null, null, null, null, ['post:1' => 'user:10']);
 
-        // Sort key should contain the item ID
         self::assertStringContainsString('post:1', $result[0]->sortKey);
     }
 
@@ -143,40 +133,22 @@ final class FeedScorerTest extends TestCase
         );
     }
 
-    private function createTables(DBALDatabase $db): void
+    private function createEmptyEntityTypeManager(): EntityTypeManagerInterface
     {
-        $schema = $db->schema();
-        foreach (['reaction', 'comment'] as $table) {
-            $fields = [
-                ($table === 'reaction' ? 'rid' : 'cid') => ['type' => 'serial', 'not null' => true],
-                'user_id' => ['type' => 'int', 'not null' => true],
-                'target_type' => ['type' => 'varchar', 'length' => 64],
-                'target_id' => ['type' => 'int', 'not null' => true],
-                'created_at' => ['type' => 'int', 'not null' => true],
-                '_data' => ['type' => 'text', 'not null' => true, 'default' => '{}'],
-            ];
-            if ($table === 'reaction') {
-                $fields['reaction_type'] = ['type' => 'varchar', 'length' => 32];
-            } else {
-                $fields['body'] = ['type' => 'text'];
-                $fields['status'] = ['type' => 'int', 'not null' => true, 'default' => '1'];
-            }
-            $schema->createTable($table, [
-                'fields' => $fields,
-                'primary key' => [$table === 'reaction' ? 'rid' : 'cid'],
-            ]);
-        }
+        $etm = $this->createMock(EntityTypeManagerInterface::class);
 
-        $schema->createTable('follow', [
-            'fields' => [
-                'fid' => ['type' => 'serial', 'not null' => true],
-                'user_id' => ['type' => 'int', 'not null' => true],
-                'target_type' => ['type' => 'varchar', 'length' => 64],
-                'target_id' => ['type' => 'int', 'not null' => true],
-                'created_at' => ['type' => 'int', 'not null' => true],
-                '_data' => ['type' => 'text', 'not null' => true, 'default' => '{}'],
-            ],
-            'primary key' => ['fid'],
-        ]);
+        $etm->method('getStorage')->willReturnCallback(function () {
+            $storage = $this->createMock(EntityStorageInterface::class);
+            $query = $this->createMock(EntityQueryInterface::class);
+            $query->method('condition')->willReturnSelf();
+            $query->method('count')->willReturnSelf();
+            $query->method('execute')->willReturn([]);
+            $storage->method('getQuery')->willReturn($query);
+            $storage->method('loadMultiple')->willReturn([]);
+
+            return $storage;
+        });
+
+        return $etm;
     }
 }

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Minoo\Feed\Scoring;
 
 use Minoo\Support\GeoDistance;
-use Waaseyaa\Database\DatabaseInterface;
+use Waaseyaa\Entity\EntityTypeManagerInterface;
 
 final class AffinityCalculator
 {
     public function __construct(
-        private readonly DatabaseInterface $database,
+        private readonly EntityTypeManagerInterface $entityTypeManager,
         private readonly AffinityCache $cache,
         private readonly float $baseAffinity = 1.0,
         private readonly float $followPoints = 4.0,
@@ -27,14 +27,10 @@ final class AffinityCalculator
     ) {}
 
     /**
-     * Compute affinity scores for a user against a set of source keys.
-     *
-     * @param int|null $userId Null for anonymous users
-     * @param string[] $sourceKeys Source identifiers to score
-     * @param int|null $userCommunityId User's community for same-community bonus
-     * @param array{lat: float, lon: float}|null $userLocation User's location
-     * @param array<string, array{lat: float, lon: float, community_id?: int}>|null $sourceLocations Source locations keyed by source key
-     * @return array<string, float>|null Null for anonymous users, otherwise sourceKey => score
+     * @param string[] $sourceKeys
+     * @param array{lat: float, lon: float}|null $userLocation
+     * @param array<string, array{lat: float, lon: float, community_id?: int}>|null $sourceLocations
+     * @return array<string, float>|null Null for anonymous users
      */
     public function computeBatch(
         ?int $userId,
@@ -51,15 +47,14 @@ final class AffinityCalculator
             return [];
         }
 
-        // Check cache — return cached scores if all requested keys are present.
         $cached = $this->cache->get($userId);
         if ($cached !== null && $this->allKeysPresent($cached, $sourceKeys)) {
             return array_intersect_key($cached, array_flip($sourceKeys));
         }
 
         $follows = $this->queryFollows($userId);
-        $reactionCounts = $this->queryGroupedCounts('reaction', $userId);
-        $commentCounts = $this->queryGroupedCounts('comment', $userId);
+        $reactionCounts = $this->queryInteractionCounts('reaction', $userId);
+        $commentCounts = $this->queryInteractionCounts('comment', $userId);
 
         $scores = [];
         foreach ($sourceKeys as $key) {
@@ -102,17 +97,13 @@ final class AffinityCalculator
             $scores[$key] = $score;
         }
 
-        // Merge with any existing cached scores and store.
         $toCache = $cached !== null ? array_merge($cached, $scores) : $scores;
         $this->cache->set($userId, $toCache);
 
         return $scores;
     }
 
-    /**
-     * @param array<string, float> $cached
-     * @param string[] $sourceKeys
-     */
+    /** @param array<string, float> $cached */
     private function allKeysPresent(array $cached, array $sourceKeys): bool
     {
         foreach ($sourceKeys as $key) {
@@ -125,46 +116,66 @@ final class AffinityCalculator
     }
 
     /**
-     * Query follow relationships for the user (all time).
-     *
-     * @return array<string, true> Followed source keys as keys
+     * @return array<string, true> "target_type:target_id" => true
      */
     private function queryFollows(int $userId): array
     {
-        $rows = $this->database->select('follow', 'f')
-            ->fields('f', ['target_type', 'target_id'])
-            ->condition('f.user_id', $userId)
-            ->execute();
+        try {
+            $storage = $this->entityTypeManager->getStorage('follow');
+            $ids = $storage->getQuery()
+                ->condition('user_id', $userId)
+                ->execute();
 
-        $follows = [];
-        foreach ($rows as $row) {
-            $follows[$row['target_type'] . ':' . $row['target_id']] = true;
+            if ($ids === []) {
+                return [];
+            }
+
+            $follows = [];
+            foreach ($storage->loadMultiple($ids) as $follow) {
+                $type = $follow->get('target_type');
+                $id = $follow->get('target_id');
+                if ($type !== null && $id !== null) {
+                    $follows[$type . ':' . $id] = true;
+                }
+            }
+
+            return $follows;
+        } catch (\Throwable) {
+            return [];
         }
-
-        return $follows;
     }
 
     /**
-     * Query grouped counts per target within the lookback window.
-     *
      * @return array<string, int> "target_type:target_id" => count
      */
-    private function queryGroupedCounts(string $table, int $userId): array
+    private function queryInteractionCounts(string $entityType, int $userId): array
     {
-        $cutoff = time() - ($this->lookbackDays * 86400);
+        try {
+            $storage = $this->entityTypeManager->getStorage($entityType);
+            $cutoff = time() - ($this->lookbackDays * 86400);
 
-        $rows = $this->database->select($table, 't')
-            ->fields('t', ['target_type', 'target_id'])
-            ->condition('t.user_id', $userId)
-            ->condition('t.created_at', $cutoff, '>=')
-            ->execute();
+            $ids = $storage->getQuery()
+                ->condition('user_id', $userId)
+                ->condition('created_at', $cutoff, '>=')
+                ->execute();
 
-        $counts = [];
-        foreach ($rows as $row) {
-            $key = $row['target_type'] . ':' . $row['target_id'];
-            $counts[$key] = ($counts[$key] ?? 0) + 1;
+            if ($ids === []) {
+                return [];
+            }
+
+            $counts = [];
+            foreach ($storage->loadMultiple($ids) as $entity) {
+                $type = $entity->get('target_type');
+                $id = $entity->get('target_id');
+                if ($type !== null && $id !== null) {
+                    $key = $type . ':' . $id;
+                    $counts[$key] = ($counts[$key] ?? 0) + 1;
+                }
+            }
+
+            return $counts;
+        } catch (\Throwable) {
+            return [];
         }
-
-        return $counts;
     }
 }

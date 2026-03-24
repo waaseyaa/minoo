@@ -113,17 +113,24 @@ final class FeedAssembler implements FeedAssemblerInterface
         }
 
         // 5. Score + Sort + Diversify (or fallback to static sort)
+        $scored = false;
         if ($this->scorer !== null) {
-            $sourceMap = $this->buildSourceMap($items);
-            $items = $this->scorer->score(
-                $items,
-                $ctx->userId,
-                $this->resolveUserCommunityId($ctx),
-                $ctx->hasLocation() ? ['lat' => $ctx->latitude, 'lon' => $ctx->longitude] : null,
-                $this->buildSourceLocations($communityCoords),
-                $sourceMap,
-            );
-        } else {
+            try {
+                $sourceMap = $this->buildSourceMap($items);
+                $items = $this->scorer->score(
+                    $items,
+                    $ctx->userId,
+                    $this->resolveUserCommunityId($ctx),
+                    $ctx->hasLocation() ? ['lat' => $ctx->latitude, 'lon' => $ctx->longitude] : null,
+                    $this->buildSourceLocations($communityCoords),
+                    $sourceMap,
+                );
+                $scored = true;
+            } catch (\Throwable $e) {
+                error_log('[FeedAssembler] Scorer failed, falling back to static sort: ' . $e->getMessage());
+            }
+        }
+        if (!$scored) {
             usort($items, fn(FeedItem $a, FeedItem $b) => strcmp($a->sortKey, $b->sortKey));
         }
 

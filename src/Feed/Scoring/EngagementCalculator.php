@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Minoo\Feed\Scoring;
 
-use Waaseyaa\Database\DatabaseInterface;
+use Waaseyaa\Entity\EntityTypeManagerInterface;
 
 final class EngagementCalculator
 {
     public function __construct(
-        private readonly DatabaseInterface $database,
+        private readonly EntityTypeManagerInterface $entityTypeManager,
         private readonly float $reactionWeight = 1.0,
         private readonly float $commentWeight = 3.0,
     ) {}
@@ -31,13 +31,12 @@ final class EngagementCalculator
             $result[$key] = ['weight' => 1.0, 'reactions' => 0, 'comments' => 0];
         }
 
-        $reactionCounts = $this->countByTarget('reaction', $targetKeys);
-        $commentCounts = $this->countByTarget('comment', $targetKeys, statusFilter: true);
-
+        // Count reactions and comments per target using entity queries
         foreach ($targetKeys as $key => $target) {
             $targetKey = $target['type'] . ':' . $target['id'];
-            $reactions = $reactionCounts[$targetKey] ?? 0;
-            $comments = $commentCounts[$targetKey] ?? 0;
+
+            $reactions = $this->countForTarget('reaction', $target['type'], $target['id']);
+            $comments = $this->countForTarget('comment', $target['type'], $target['id'], statusFilter: true);
 
             $result[$key]['reactions'] = $reactions;
             $result[$key]['comments'] = $comments;
@@ -49,34 +48,23 @@ final class EngagementCalculator
         return $result;
     }
 
-    /**
-     * @param array<string, array{type: string, id: int}> $targetKeys
-     * @return array<string, int>  "type:id" => count
-     */
-    private function countByTarget(string $table, array $targetKeys, bool $statusFilter = false): array
+    private function countForTarget(string $entityType, string $targetType, int $targetId, bool $statusFilter = false): int
     {
-        $types = [];
-        $ids = [];
-        foreach ($targetKeys as $target) {
-            $types[$target['type']] = true;
-            $ids[$target['id']] = true;
+        try {
+            $query = $this->entityTypeManager->getStorage($entityType)->getQuery()
+                ->condition('target_type', $targetType)
+                ->condition('target_id', $targetId)
+                ->count();
+
+            if ($statusFilter) {
+                $query->condition('status', 1);
+            }
+
+            $result = $query->execute();
+
+            return (int) ($result[0] ?? 0);
+        } catch (\Throwable) {
+            return 0;
         }
-
-        $query = $this->database->select($table, 't')
-            ->fields('t', ['target_type', 'target_id'])
-            ->condition('t.target_type', array_keys($types), 'IN')
-            ->condition('t.target_id', array_keys($ids), 'IN');
-
-        if ($statusFilter) {
-            $query->condition('t.status', 1);
-        }
-
-        $counts = [];
-        foreach ($query->execute() as $row) {
-            $key = $row['target_type'] . ':' . $row['target_id'];
-            $counts[$key] = ($counts[$key] ?? 0) + 1;
-        }
-
-        return $counts;
     }
 }

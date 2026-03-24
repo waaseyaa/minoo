@@ -11,7 +11,7 @@ use Minoo\Feed\Scoring\DiversityReranker;
 use Minoo\Feed\Scoring\EngagementCalculator;
 use Minoo\Feed\Scoring\FeedScorer;
 use Waaseyaa\Cache\Backend\MemoryBackend;
-use Waaseyaa\Database\DatabaseInterface;
+use Waaseyaa\Entity\EntityTypeManagerInterface;
 use Waaseyaa\Entity\Event\EntityEvent;
 use Waaseyaa\Entity\Event\EntityEvents;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -34,14 +34,14 @@ final class FeedScoringServiceProvider extends ServiceProvider
 
         $interactionWeights = $config['interaction_weights'] ?? [];
         $this->singleton(EngagementCalculator::class, fn(): EngagementCalculator => new EngagementCalculator(
-            database: $this->resolve(DatabaseInterface::class),
+            entityTypeManager: $this->resolve(EntityTypeManagerInterface::class),
             reactionWeight: (float) ($interactionWeights['reaction'] ?? 1.0),
             commentWeight: (float) ($interactionWeights['comment'] ?? 3.0),
         ));
 
         $affinityConfig = $config['affinity_signals'] ?? [];
         $this->singleton(AffinityCalculator::class, fn(): AffinityCalculator => new AffinityCalculator(
-            database: $this->resolve(DatabaseInterface::class),
+            entityTypeManager: $this->resolve(EntityTypeManagerInterface::class),
             cache: $this->resolve(AffinityCache::class),
             baseAffinity: (float) ($config['base_affinity'] ?? 1.0),
             followPoints: (float) ($affinityConfig['follows_source'] ?? 4.0),
