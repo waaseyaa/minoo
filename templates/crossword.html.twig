@@ -1,0 +1,86 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Crossword — Minoo Games{% endblock %}
+
+{% block content %}
+<div class="crossword" data-game="crossword">
+    {# Breadcrumb #}
+    <nav class="crossword__breadcrumb" aria-label="Breadcrumb">
+        <a href="/games">Games</a> › <span>Crossword</span>
+    </nav>
+
+    {# Mode tabs #}
+    <div class="crossword__tabs" role="tablist">
+        <button class="crossword__tab crossword__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily</button>
+        <button class="crossword__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
+        <button class="crossword__tab" role="tab" data-mode="themes" aria-selected="false">Themes</button>
+    </div>
+
+    {# Difficulty selector (practice mode) #}
+    <div class="crossword__difficulty" hidden>
+        <button class="crossword__tier crossword__tier--active" data-tier="easy">Easy</button>
+        <button class="crossword__tier" data-tier="medium">Medium</button>
+        <button class="crossword__tier" data-tier="hard">Hard</button>
+    </div>
+
+    {# Theme selector (themes mode) #}
+    <div class="crossword__themes" hidden>
+        <div class="crossword__themes-list"></div>
+    </div>
+
+    {# Game area #}
+    <div class="crossword__game" hidden>
+        <div class="crossword__layout">
+            {# Left: Clues #}
+            <div class="crossword__clues">
+                <div class="crossword__clues-across">
+                    <h4 class="crossword__clues-heading">Across</h4>
+                    <div class="crossword__clues-list" data-direction="across"></div>
+                </div>
+                <div class="crossword__clues-down">
+                    <h4 class="crossword__clues-heading">Down</h4>
+                    <div class="crossword__clues-list" data-direction="down"></div>
+                </div>
+            </div>
+
+            {# Center: Grid #}
+            <div class="crossword__grid-area">
+                <div class="crossword__grid" role="grid" aria-label="Crossword grid"></div>
+                <div class="crossword__active-clue"></div>
+            </div>
+
+            {# Right: Word bank #}
+            <div class="crossword__word-bank">
+                <h4 class="crossword__word-bank-heading">Word Bank</h4>
+                <div class="crossword__word-bank-list"></div>
+                <div class="crossword__difficulty-badge"></div>
+            </div>
+        </div>
+
+        {# Keyboard #}
+        <div class="crossword__keyboard">
+            <div class="crossword__keyboard-row" data-row="1"></div>
+            <div class="crossword__keyboard-row" data-row="2"></div>
+            <div class="crossword__keyboard-row" data-row="3"></div>
+        </div>
+    </div>
+
+    {# Completion screen #}
+    <div class="crossword__complete" hidden>
+        <h2 class="crossword__complete-title"></h2>
+        <div class="crossword__complete-stats"></div>
+        <div class="crossword__complete-teachings"></div>
+        <div class="crossword__complete-actions">
+            <button class="crossword__btn crossword__btn--primary" data-action="next">Next Puzzle</button>
+            <button class="crossword__btn" data-action="share">Share</button>
+        </div>
+    </div>
+
+    {# Loading #}
+    <div class="crossword__loading">
+        <p>Loading puzzle...</p>
+    </div>
+</div>
+
+<script src="/js/crossword.js"></script>
+{% endblock %}
