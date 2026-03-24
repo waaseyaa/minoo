@@ -55,6 +55,12 @@ parameters:
 			path: src/Controller/FeedController.php
 
 		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Controller/IshkodeController.php
+
+		-
 			message: '#^Property Minoo\\Controller\\LocationController\:\:\$twig is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
