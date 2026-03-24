@@ -314,10 +314,12 @@
     // Show reveal screen
     showReveal(won, data, stats);
 
-    // Trigger animation
+    // Trigger animation — override fire state for win/loss
     if (won) {
+      fireEl.dataset.fireState = 'win';
       spawnSparks();
     } else {
+      fireEl.dataset.fireState = '0';
       spawnSmoke();
     }
   }
@@ -466,15 +468,34 @@
   }
 
   function initDirection() {
-    var btns = game.querySelectorAll('.ishkode__dir-btn');
-    btns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        btns.forEach(function (b) { b.classList.remove('ishkode__dir-btn--active'); });
-        btn.classList.add('ishkode__dir-btn--active');
-        state.direction = btn.dataset.direction;
-        startGame();
-      });
+    var swapBtn = document.getElementById('ishkode-dir-swap');
+    var fromLabel = document.getElementById('ishkode-dir-from');
+    var toLabel = document.getElementById('ishkode-dir-to');
+    if (!swapBtn) return;
+
+    function updateLabels() {
+      if (state.direction === 'english_to_ojibwe') {
+        fromLabel.textContent = 'English';
+        toLabel.textContent = 'Ojibwe';
+        fromLabel.classList.add('ishkode__dir-label--active');
+        toLabel.classList.remove('ishkode__dir-label--active');
+      } else {
+        fromLabel.textContent = 'Ojibwe';
+        toLabel.textContent = 'English';
+        fromLabel.classList.add('ishkode__dir-label--active');
+        toLabel.classList.remove('ishkode__dir-label--active');
+      }
+    }
+
+    swapBtn.addEventListener('click', function () {
+      state.direction = state.direction === 'english_to_ojibwe'
+        ? 'ojibwe_to_english'
+        : 'english_to_ojibwe';
+      updateLabels();
+      startGame();
     });
+
+    updateLabels();
   }
 
   // ── Physical keyboard ──

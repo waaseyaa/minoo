@@ -3186,6 +3186,8 @@
     flex-direction: column;
     align-items: center;
     gap: var(--space-md);
+    min-height: calc(100vh - 120px);
+    min-height: calc(100dvh - 120px);
   }
 
   /* Tabs */
@@ -3218,13 +3220,50 @@
     }
   }
 
-  /* Direction toggle */
+  /* Direction swap toggle */
   .ishkode__direction {
     display: flex;
+    align-items: center;
     gap: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
   }
 
+  .ishkode__dir-label {
+    transition: color 0.2s;
+  }
+
+  .ishkode__dir-label--active {
+    color: var(--ishkode-correct);
+    font-weight: 600;
+  }
+
+  .ishkode__dir-swap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s, transform 0.3s;
+
+    &:hover {
+      color: var(--ishkode-correct);
+      border-color: var(--ishkode-correct);
+    }
+
+    &:active {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* Legacy dir-btn (keep for backward compat, hidden if swap present) */
   .ishkode__dir-btn {
+    display: none;
     padding: var(--space-2xs) var(--space-xs);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -3326,6 +3365,48 @@
   [data-fire-state="0"] .ishkode__flame { transform: scaleY(0); opacity: 0; }
   [data-fire-state="0"] .ishkode__glow { opacity: 0; }
   [data-fire-state="0"] .ishkode__ember { opacity: 1; }
+
+  /* Win state: fire roars back */
+  [data-fire-state="win"] .ishkode__flame {
+    transform: scaleY(1.15);
+    opacity: 1;
+    filter: brightness(1.2);
+    animation: ishkode-flicker 0.8s ease-in-out infinite alternate;
+  }
+  [data-fire-state="win"] .ishkode__glow {
+    opacity: 0.45;
+    animation: ishkode-glow-pulse 1s ease-in-out infinite alternate;
+  }
+  [data-fire-state="win"] .ishkode__flame--outer { fill: var(--ishkode-fire-full); }
+  [data-fire-state="win"] .ishkode__flame--mid { fill: var(--ishkode-fire-mid); }
+  [data-fire-state="win"] .ishkode__flame--inner { fill: oklch(0.92 0.15 85); }
+
+  /* Subtle idle flame flicker — always active when fire is burning */
+  .ishkode__flame--inner {
+    animation: ishkode-flicker 2.5s ease-in-out infinite alternate;
+  }
+  .ishkode__flame--mid {
+    animation: ishkode-flicker 3s ease-in-out infinite alternate-reverse;
+  }
+  .ishkode__flame--outer {
+    animation: ishkode-flicker 3.5s ease-in-out infinite alternate;
+  }
+  [data-fire-state="0"] .ishkode__flame--inner,
+  [data-fire-state="0"] .ishkode__flame--mid,
+  [data-fire-state="0"] .ishkode__flame--outer {
+    animation: none;
+  }
+
+  @keyframes ishkode-flicker {
+    0% { transform: scaleY(1) scaleX(1); }
+    50% { transform: scaleY(1.04) scaleX(0.97); }
+    100% { transform: scaleY(0.97) scaleX(1.02); }
+  }
+
+  @keyframes ishkode-glow-pulse {
+    0% { opacity: 0.35; }
+    100% { opacity: 0.5; }
+  }
 
   /* Clue box */
   .ishkode__clue {
