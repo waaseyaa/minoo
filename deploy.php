@@ -61,6 +61,19 @@ task('deploy:upload', function (): void {
     ]);
 });
 
+desc('Backup SQLite database before migrations');
+task('minoo:backup-db', function (): void {
+    $backupDir = '{{deploy_path}}/shared/storage/backups';
+    run("mkdir -p {$backupDir}");
+    $timestamp = date('Y-m-d_His');
+    run("set -a && . {{deploy_path}}/shared/.env && set +a && "
+        . "cp \"\${WAASEYAA_DB:-{{deploy_path}}/shared/storage/waaseyaa.sqlite}\" "
+        . "{$backupDir}/waaseyaa_{$timestamp}.sqlite");
+    // Keep only the last 10 backups
+    run("ls -t {$backupDir}/waaseyaa_*.sqlite 2>/dev/null | tail -n +11 | xargs -r rm --");
+    writeln('<info>Database backed up.</info>');
+});
+
 desc('Run pending schema migrations against the shared SQLite database');
 task('minoo:migrate', function (): void {
     // WAASEYAA_DB is defined in shared/.env and is not present in the deploy
@@ -114,6 +127,7 @@ task('deploy', [
     'deploy:upload',
     'deploy:shared',
     'deploy:writable',
+    'minoo:backup-db',
     'minoo:migrate',
     'minoo:clear-manifest',
     'deploy:symlink',
