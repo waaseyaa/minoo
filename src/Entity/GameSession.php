@@ -16,24 +16,39 @@ final class GameSession extends ContentEntityBase
         'label' => 'mode',
     ];
 
-    private const VALID_MODES = ['daily', 'practice', 'streak'];
+    public const VALID_GAME_TYPES = ['shkoda', 'crossword'];
+    private const VALID_MODES = ['daily', 'practice', 'streak', 'themed'];
     private const VALID_DIRECTIONS = ['ojibwe_to_english', 'english_to_ojibwe'];
-    private const VALID_STATUSES = ['in_progress', 'won', 'lost'];
+    private const VALID_STATUSES = ['in_progress', 'won', 'lost', 'completed', 'abandoned'];
     private const VALID_TIERS = ['easy', 'medium', 'hard'];
 
     /** @param array<string, mixed> $values */
     public function __construct(array $values = [])
     {
-        foreach (['mode', 'direction', 'dictionary_entry_id'] as $field) {
-            if (!isset($values[$field])) {
-                throw new \InvalidArgumentException("Missing required field: {$field}");
+        if (!array_key_exists('game_type', $values)) {
+            $values['game_type'] = 'shkoda';
+        }
+
+        if (!in_array($values['game_type'], self::VALID_GAME_TYPES, true)) {
+            throw new \InvalidArgumentException("Invalid game_type: {$values['game_type']}");
+        }
+
+        if (!isset($values['mode'])) {
+            throw new \InvalidArgumentException('Missing required field: mode');
+        }
+
+        if ($values['game_type'] === 'shkoda') {
+            foreach (['direction', 'dictionary_entry_id'] as $field) {
+                if (!isset($values[$field])) {
+                    throw new \InvalidArgumentException("Missing required field: {$field}");
+                }
             }
         }
 
         if (!in_array($values['mode'], self::VALID_MODES, true)) {
             throw new \InvalidArgumentException("Invalid mode: {$values['mode']}");
         }
-        if (!in_array($values['direction'], self::VALID_DIRECTIONS, true)) {
+        if (isset($values['direction']) && !in_array($values['direction'], self::VALID_DIRECTIONS, true)) {
             throw new \InvalidArgumentException("Invalid direction: {$values['direction']}");
         }
         if (isset($values['status']) && !in_array($values['status'], self::VALID_STATUSES, true)) {
@@ -60,6 +75,15 @@ final class GameSession extends ContentEntityBase
         }
         if (!array_key_exists('difficulty_tier', $values)) {
             $values['difficulty_tier'] = 'easy';
+        }
+        if (!array_key_exists('puzzle_id', $values)) {
+            $values['puzzle_id'] = null;
+        }
+        if (!array_key_exists('grid_state', $values)) {
+            $values['grid_state'] = null;
+        }
+        if (!array_key_exists('hints_used', $values)) {
+            $values['hints_used'] = 0;
         }
         if (!array_key_exists('created_at', $values)) {
             $values['created_at'] = time();
