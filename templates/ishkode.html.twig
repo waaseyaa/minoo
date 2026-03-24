@@ -1,0 +1,73 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Ishkode — Word Game{% endblock %}
+
+{% block content %}
+<div class="ishkode" id="ishkode-game" data-api-base="/api/games/ishkode">
+    {# Mode tabs #}
+    <nav class="ishkode__tabs" role="tablist">
+        <button class="ishkode__tab ishkode__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily Challenge</button>
+        <button class="ishkode__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
+        <button class="ishkode__tab" role="tab" data-mode="streak" aria-selected="false">Streak</button>
+    </nav>
+
+    {# Direction toggle #}
+    <div class="ishkode__direction">
+        <button class="ishkode__dir-btn ishkode__dir-btn--active" data-direction="english_to_ojibwe">English → Ojibwe</button>
+        <button class="ishkode__dir-btn" data-direction="ojibwe_to_english">Ojibwe → English</button>
+    </div>
+
+    {# Campfire SVG #}
+    <div class="ishkode__fire" id="ishkode-fire" data-fire-state="7">
+        <svg viewBox="0 0 120 120" width="120" height="120" aria-label="Campfire" role="img">
+            {# Glow #}
+            <ellipse class="ishkode__glow" cx="60" cy="100" rx="40" ry="15" />
+            {# Flames — 3 layers #}
+            <path class="ishkode__flame ishkode__flame--outer" d="M60 20 C40 50, 30 80, 40 95 Q50 105, 60 100 Q70 105, 80 95 C90 80, 80 50, 60 20Z" />
+            <path class="ishkode__flame ishkode__flame--mid" d="M60 35 C45 55, 38 78, 45 92 Q52 98, 60 95 Q68 98, 75 92 C82 78, 75 55, 60 35Z" />
+            <path class="ishkode__flame ishkode__flame--inner" d="M60 50 C50 65, 46 80, 50 90 Q55 95, 60 92 Q65 95, 70 90 C74 80, 70 65, 60 50Z" />
+            {# Logs #}
+            <rect class="ishkode__log" x="30" y="98" width="60" height="8" rx="4" />
+            <rect class="ishkode__log ishkode__log--cross" x="35" y="95" width="50" height="6" rx="3" transform="rotate(-8, 60, 98)" />
+            {# Embers (visible on loss) #}
+            <circle class="ishkode__ember" cx="50" cy="90" r="2" />
+            <circle class="ishkode__ember" cx="65" cy="88" r="1.5" />
+            <circle class="ishkode__ember" cx="55" cy="85" r="1" />
+        </svg>
+        <div class="ishkode__remaining" id="ishkode-remaining">7 guesses remaining</div>
+    </div>
+
+    {# Clue box #}
+    <div class="ishkode__clue" id="ishkode-clue">
+        <div class="ishkode__clue-label">Guess the Ojibwe word for:</div>
+        <div class="ishkode__clue-word" id="ishkode-clue-word"></div>
+        <div class="ishkode__clue-detail" id="ishkode-clue-detail"></div>
+    </div>
+
+    {# Word blanks #}
+    <div class="ishkode__blanks" id="ishkode-blanks" aria-live="polite"></div>
+
+    {# Wrong guesses #}
+    <div class="ishkode__wrong" id="ishkode-wrong">
+        <span class="ishkode__wrong-label">Wrong guesses:</span>
+        <div class="ishkode__wrong-letters" id="ishkode-wrong-letters"></div>
+    </div>
+
+    {# On-screen keyboard #}
+    <div class="ishkode__keyboard" id="ishkode-keyboard"></div>
+
+    {# Reveal screen (hidden by default) #}
+    <div class="ishkode__reveal" id="ishkode-reveal" hidden>
+        <div class="ishkode__reveal-message" id="ishkode-reveal-message"></div>
+        <div class="ishkode__reveal-word" id="ishkode-reveal-word"></div>
+        <div class="ishkode__teaching" id="ishkode-teaching"></div>
+        <div class="ishkode__stats" id="ishkode-stats"></div>
+        <div class="ishkode__actions" id="ishkode-actions"></div>
+    </div>
+
+    {# Loading state #}
+    <div class="ishkode__loading" id="ishkode-loading">Loading...</div>
+</div>
+
+<script src="/js/ishkode.js" defer></script>
+{% endblock %}
