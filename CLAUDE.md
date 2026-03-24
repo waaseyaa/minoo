@@ -158,6 +158,10 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 
 ## Gotchas
 
+- **Entity fields live in `_data` JSON blob**: `target_type`, `target_id`, `user_id`, `created_at` on engagement entities (reaction, comment, follow) are NOT real SQL columns. Raw SQL queries against them fail. Use entity queries (`getQuery()->condition()`) which handle `_data` extraction. See #520 for adding real columns.
+- **`HttpKernel` has no `resolve()` method**: Use `$kernel->getEntityTypeManager()` for ETM access in scripts. The `resolve()` method is on `ServiceProvider`, not the kernel.
+- **DI resolves `EntityTypeManager` (concrete), not the interface**: Providers must use `$this->resolve(EntityTypeManager::class)`, not `EntityTypeManagerInterface::class`. The kernel registers the concrete class only.
+- **Parallel worktree agents diverge on APIs**: When spawning leaf + integration worktree agents, the integration agent writes its own class versions with potentially different signatures. Always reconcile the integration PR after leaf PRs merge.
 - **`dirname(__DIR__, 3)`** from `tests/Minoo/Integration/` to reach project root (3 levels up, not 2)
 - **Stale manifest cache**: `storage/framework/packages.php` can prevent new providers/policies from being discovered — delete it when adding new providers
 - **`PackageManifestCompiler`** reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
