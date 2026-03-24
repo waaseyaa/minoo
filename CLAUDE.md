@@ -193,6 +193,9 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Vendor packages are versioned, not symlinked**: `vendor/waaseyaa/*` is installed from version tags (e.g. `^0.1.0-alpha.52`), not path repositories. Framework changes require: tag new release in waaseyaa → `composer update` in Minoo. Editing `vendor/` directly is lost on next update.
 - **`ServiceProvider::boot()` takes no parameters**: Cannot inject via `boot()` signature. Use `$this->resolve(EventDispatcherInterface::class)` inside `boot()` body.
 - **Feed scoring config**: All ranking constants (decay half-life, affinity signals, engagement weights, diversity thresholds) are in `config/feed_scoring.php`. Tunable without code changes.
+- **Conditional grid columns**: Use `:has()` when grid layouts have optional children (e.g. `.search-layout:has(.search-filters)`). Without it, empty grid columns waste space.
+- **Worktree agent simplify leakage**: The `/simplify` skill dispatched inside a worktree agent may modify files in the main repo's working directory instead of the worktree. Stash main repo changes before merging worktree branches.
+- **"Did you mean" suggestion slot**: Template and CSS exist in `search.html.twig` but `SearchResult` has no `suggestion` field yet. See #519 for backend wiring.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
