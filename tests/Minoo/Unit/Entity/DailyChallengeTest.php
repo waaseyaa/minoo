@@ -40,4 +40,48 @@ final class DailyChallengeTest extends TestCase
         $this->assertSame('ojibwe_to_english', $challenge->get('direction'));
         $this->assertSame('hard', $challenge->get('difficulty_tier'));
     }
+
+    #[Test]
+    public function it_requires_date(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing required field: date');
+
+        new DailyChallenge(['dictionary_entry_id' => 42]);
+    }
+
+    #[Test]
+    public function it_requires_dictionary_entry_id(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Missing required field: dictionary_entry_id');
+
+        new DailyChallenge(['date' => '2026-03-23']);
+    }
+
+    #[Test]
+    public function it_validates_direction(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid direction: backwards');
+
+        new DailyChallenge([
+            'date' => '2026-03-23',
+            'dictionary_entry_id' => 42,
+            'direction' => 'backwards',
+        ]);
+    }
+
+    #[Test]
+    public function it_validates_difficulty_tier(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid difficulty_tier: impossible');
+
+        new DailyChallenge([
+            'date' => '2026-03-23',
+            'dictionary_entry_id' => 42,
+            'difficulty_tier' => 'impossible',
+        ]);
+    }
 }
