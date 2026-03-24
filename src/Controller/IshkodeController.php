@@ -83,6 +83,7 @@ final class IshkodeController
             'difficulty' => $tier,
             'max_wrong' => IshkodeEngine::maxWrongGuesses($tier),
             'date' => $today,
+            'free_positions' => $this->findFreePositions($word),
         ]);
     }
 
@@ -379,11 +380,38 @@ final class IshkodeController
         $len = mb_strlen($word);
         for ($i = 0; $i < $len; $i++) {
             $char = mb_substr($word, $i, 1);
+            // Skip non-guessable characters (punctuation, hyphens, spaces)
+            if (!$this->isGuessableLetter($char)) {
+                continue;
+            }
             if (!in_array($char, $guesses, true)) {
                 return false;
             }
         }
         return true;
+    }
+
+    /** Check if a character is a guessable letter (not punctuation/symbol). */
+    private function isGuessableLetter(string $char): bool
+    {
+        return preg_match('/[\p{L}]/u', $char) === 1;
+    }
+
+    /**
+     * Find positions of non-guessable characters to auto-reveal.
+     * @return list<array{index: int, char: string}>
+     */
+    private function findFreePositions(string $word): array
+    {
+        $positions = [];
+        $len = mb_strlen($word);
+        for ($i = 0; $i < $len; $i++) {
+            $char = mb_substr($word, $i, 1);
+            if (!$this->isGuessableLetter($char)) {
+                $positions[] = ['index' => $i, 'char' => $char];
+            }
+        }
+        return $positions;
     }
 
     /** @return array<string, mixed> */

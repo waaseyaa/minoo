@@ -125,6 +125,22 @@
     }
   }
 
+  /** Auto-reveal punctuation, symbols, hyphens, apostrophes — like free spaces in Wheel of Fortune. */
+  function autoRevealFreeCharacters(freePositions) {
+    if (!freePositions || freePositions.length === 0) return;
+    freePositions.forEach(function (pos) {
+      if (state.revealedPositions.indexOf(pos.index) === -1) {
+        state.revealedPositions.push(pos.index);
+      }
+      var cell = blanksEl.querySelector('[data-index="' + pos.index + '"]');
+      if (cell) {
+        cell.textContent = pos.char;
+        cell.classList.add('ishkode__blank--revealed');
+        cell.classList.add('ishkode__blank--free');
+      }
+    });
+  }
+
   function revealLetterPositions(letter, positions) {
     positions.forEach(function (pos) {
       if (state.revealedPositions.indexOf(pos) === -1) {
@@ -595,6 +611,22 @@
       showGameUI(true);
       updateFire();
       renderBlanks();
+
+      // Auto-reveal non-letter characters (punctuation, hyphens, apostrophes)
+      var freePositions = [];
+      if (data.free_positions) {
+        // Server-provided (daily mode)
+        freePositions = data.free_positions;
+      } else if (state.word) {
+        // Client-derived (practice/streak)
+        for (var fi = 0; fi < state.word.length; fi++) {
+          var ch = state.word[fi];
+          if (!VALID_LETTERS.has(ch.toLowerCase())) {
+            freePositions.push({ index: fi, char: ch });
+          }
+        }
+      }
+      autoRevealFreeCharacters(freePositions);
       renderKeyboard();
       renderWrongGuesses();
     }).catch(function () {
