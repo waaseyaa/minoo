@@ -84,8 +84,7 @@ final class AffinityCalculator
                 $score += $this->sameCommunityPoints;
             }
 
-            if ($sourceMeta !== null && $userLocation !== null
-                && isset($sourceMeta['lat'], $sourceMeta['lon'])) {
+            if ($sourceMeta !== null && $userLocation !== null) {
                 $distance = GeoDistance::haversine(
                     $userLocation['lat'],
                     $userLocation['lon'],
@@ -133,35 +132,37 @@ final class AffinityCalculator
     private function queryFollows(int $userId): array
     {
         $rows = $this->database->select('follow', 'f')
-            ->fields('f', ['target_key'])
-            ->condition('user_id', $userId)
+            ->fields('f', ['target_type', 'target_id'])
+            ->condition('f.user_id', $userId)
             ->execute();
 
         $follows = [];
         foreach ($rows as $row) {
-            $follows[$row['target_key']] = true;
+            $follows[$row['target_type'] . ':' . $row['target_id']] = true;
         }
 
         return $follows;
     }
 
     /**
-     * Query grouped counts per source key within the lookback window.
+     * Query grouped counts per target within the lookback window.
      *
-     * @return array<string, int> sourceKey => count
+     * @return array<string, int> "target_type:target_id" => count
      */
     private function queryGroupedCounts(string $table, int $userId): array
     {
-        $cutoff = date('Y-m-d H:i:s', time() - ($this->lookbackDays * 86400));
+        $cutoff = time() - ($this->lookbackDays * 86400);
 
-        $rows = $this->database->query(
-            "SELECT source_key, COUNT(*) AS cnt FROM {$table} WHERE user_id = ? AND created_at >= ? GROUP BY source_key",
-            [$userId, $cutoff],
-        );
+        $rows = $this->database->select($table, 't')
+            ->fields('t', ['target_type', 'target_id'])
+            ->condition('t.user_id', $userId)
+            ->condition('t.created_at', $cutoff, '>=')
+            ->execute();
 
         $counts = [];
         foreach ($rows as $row) {
-            $counts[$row['source_key']] = (int) $row['cnt'];
+            $key = $row['target_type'] . ':' . $row['target_id'];
+            $counts[$key] = ($counts[$key] ?? 0) + 1;
         }
 
         return $counts;

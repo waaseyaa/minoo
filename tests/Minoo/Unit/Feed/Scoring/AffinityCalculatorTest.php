@@ -32,32 +32,78 @@ final class AffinityCalculatorTest extends TestCase
 
         $schema->createTable('follow', [
             'fields' => [
-                'id' => ['type' => 'serial', 'not null' => true],
+                'fid' => ['type' => 'serial', 'not null' => true],
                 'user_id' => ['type' => 'int', 'not null' => true],
-                'target_key' => ['type' => 'varchar', 'length' => 255, 'not null' => true],
+                'target_type' => ['type' => 'varchar', 'length' => 64, 'not null' => true],
+                'target_id' => ['type' => 'int', 'not null' => true],
+                'created_at' => ['type' => 'int', 'not null' => true],
+                '_data' => ['type' => 'text', 'not null' => true, 'default' => '{}'],
             ],
-            'primary key' => ['id'],
+            'primary key' => ['fid'],
         ]);
 
         $schema->createTable('reaction', [
             'fields' => [
-                'id' => ['type' => 'serial', 'not null' => true],
+                'rid' => ['type' => 'serial', 'not null' => true],
                 'user_id' => ['type' => 'int', 'not null' => true],
-                'source_key' => ['type' => 'varchar', 'length' => 255, 'not null' => true],
-                'created_at' => ['type' => 'varchar', 'length' => 32, 'not null' => true],
+                'target_type' => ['type' => 'varchar', 'length' => 64, 'not null' => true],
+                'target_id' => ['type' => 'int', 'not null' => true],
+                'reaction_type' => ['type' => 'varchar', 'length' => 32],
+                'created_at' => ['type' => 'int', 'not null' => true],
+                '_data' => ['type' => 'text', 'not null' => true, 'default' => '{}'],
             ],
-            'primary key' => ['id'],
+            'primary key' => ['rid'],
         ]);
 
         $schema->createTable('comment', [
             'fields' => [
-                'id' => ['type' => 'serial', 'not null' => true],
+                'cid' => ['type' => 'serial', 'not null' => true],
                 'user_id' => ['type' => 'int', 'not null' => true],
-                'source_key' => ['type' => 'varchar', 'length' => 255, 'not null' => true],
-                'created_at' => ['type' => 'varchar', 'length' => 32, 'not null' => true],
+                'target_type' => ['type' => 'varchar', 'length' => 64, 'not null' => true],
+                'target_id' => ['type' => 'int', 'not null' => true],
+                'body' => ['type' => 'text'],
+                'status' => ['type' => 'int', 'not null' => true, 'default' => '1'],
+                'created_at' => ['type' => 'int', 'not null' => true],
+                '_data' => ['type' => 'text', 'not null' => true, 'default' => '{}'],
             ],
-            'primary key' => ['id'],
+            'primary key' => ['cid'],
         ]);
+    }
+
+    private function insertFollow(int $userId, string $targetType, int $targetId): void
+    {
+        $this->db->insert('follow')->values([
+            'user_id' => $userId,
+            'target_type' => $targetType,
+            'target_id' => $targetId,
+            'created_at' => time(),
+            '_data' => '{}',
+        ])->execute();
+    }
+
+    private function insertReaction(int $userId, string $targetType, int $targetId): void
+    {
+        $this->db->insert('reaction')->values([
+            'user_id' => $userId,
+            'target_type' => $targetType,
+            'target_id' => $targetId,
+            'reaction_type' => 'like',
+            'created_at' => time(),
+            '_data' => '{}',
+        ])->execute();
+    }
+
+    private function insertComment(int $userId, string $targetType, int $targetId): void
+    {
+        $this->db->insert('comment')->values([
+            'user_id' => $userId,
+            'target_type' => $targetType,
+            'target_id' => $targetId,
+            'body' => 'test',
+            'status' => 1,
+            'created_at' => time(),
+            '_data' => '{}',
+        ])->execute();
     }
 
     private function makeCalculator(): AffinityCalculator
@@ -70,7 +116,7 @@ final class AffinityCalculatorTest extends TestCase
     {
         $calc = $this->makeCalculator();
 
-        $result = $calc->computeBatch(null, ['source_a'], null, null);
+        $result = $calc->computeBatch(null, ['user:99'], null, null);
 
         $this->assertNull($result);
     }
@@ -80,70 +126,57 @@ final class AffinityCalculatorTest extends TestCase
     {
         $calc = $this->makeCalculator();
 
-        $result = $calc->computeBatch(1, ['source_a'], null, null);
+        $result = $calc->computeBatch(1, ['user:99'], null, null);
 
         $this->assertNotNull($result);
-        $this->assertSame(1.0, $result['source_a']);
+        $this->assertSame(1.0, $result['user:99']);
     }
 
     #[Test]
     public function follow_adds_points(): void
     {
-        $this->db->insert('follow')
-            ->fields(['user_id', 'target_key'])
-            ->values([1, 'source_a'])
-            ->execute();
+        $this->insertFollow(1, 'user', 10);
 
         $calc = $this->makeCalculator();
-        $result = $calc->computeBatch(1, ['source_a', 'source_b'], null, null);
+        $result = $calc->computeBatch(1, ['user:10', 'user:20'], null, null);
 
         $this->assertNotNull($result);
-        // source_a: base(1) + follow(4) = 5
-        $this->assertSame(5.0, $result['source_a']);
-        // source_b: base(1) only
-        $this->assertSame(1.0, $result['source_b']);
+        // user:10: base(1) + follow(4) = 5
+        $this->assertSame(5.0, $result['user:10']);
+        // user:20: base(1) only
+        $this->assertSame(1.0, $result['user:20']);
     }
 
     #[Test]
     public function reactions_add_capped_points(): void
     {
-        $now = date('Y-m-d H:i:s');
-
-        // Add 7 reactions — should be capped at reactionMax (5.0)
+        // Add 7 reactions targeting user:10's content
         for ($i = 0; $i < 7; $i++) {
-            $this->db->insert('reaction')
-                ->fields(['user_id', 'source_key', 'created_at'])
-                ->values([1, 'source_a', $now])
-                ->execute();
+            $this->insertReaction(1, 'user', 10);
         }
 
         $calc = $this->makeCalculator();
-        $result = $calc->computeBatch(1, ['source_a'], null, null);
+        $result = $calc->computeBatch(1, ['user:10'], null, null);
 
         $this->assertNotNull($result);
         // base(1) + min(7*1, 5) = 6.0
-        $this->assertSame(6.0, $result['source_a']);
+        $this->assertSame(6.0, $result['user:10']);
     }
 
     #[Test]
     public function comments_add_capped_points(): void
     {
-        $now = date('Y-m-d H:i:s');
-
-        // Add 5 comments — should be capped at commentMax (6.0)
+        // Add 5 comments targeting community:5
         for ($i = 0; $i < 5; $i++) {
-            $this->db->insert('comment')
-                ->fields(['user_id', 'source_key', 'created_at'])
-                ->values([1, 'source_a', $now])
-                ->execute();
+            $this->insertComment(1, 'community', 5);
         }
 
         $calc = $this->makeCalculator();
-        $result = $calc->computeBatch(1, ['source_a'], null, null);
+        $result = $calc->computeBatch(1, ['community:5'], null, null);
 
         $this->assertNotNull($result);
         // base(1) + min(5*2, 6) = 7.0
-        $this->assertSame(7.0, $result['source_a']);
+        $this->assertSame(7.0, $result['community:5']);
     }
 
     #[Test]
@@ -152,17 +185,17 @@ final class AffinityCalculatorTest extends TestCase
         $calc = $this->makeCalculator();
 
         $sourceLocations = [
-            'source_a' => ['lat' => 46.0, 'lon' => -81.0, 'community_id' => 10],
-            'source_b' => ['lat' => 46.0, 'lon' => -81.0, 'community_id' => 20],
+            'community:10' => ['lat' => 46.0, 'lon' => -81.0, 'community_id' => 10],
+            'community:20' => ['lat' => 46.0, 'lon' => -81.0, 'community_id' => 20],
         ];
 
-        $result = $calc->computeBatch(1, ['source_a', 'source_b'], 10, null, $sourceLocations);
+        $result = $calc->computeBatch(1, ['community:10', 'community:20'], 10, null, $sourceLocations);
 
         $this->assertNotNull($result);
-        // source_a: base(1) + sameCommunity(3) = 4
-        $this->assertSame(4.0, $result['source_a']);
-        // source_b: base(1) only (different community)
-        $this->assertSame(1.0, $result['source_b']);
+        // community:10: base(1) + sameCommunity(3) = 4
+        $this->assertSame(4.0, $result['community:10']);
+        // community:20: base(1) only (different community)
+        $this->assertSame(1.0, $result['community:20']);
     }
 
     #[Test]
@@ -170,17 +203,16 @@ final class AffinityCalculatorTest extends TestCase
     {
         $calc = $this->makeCalculator();
 
-        // Two points ~11 km apart (within 50 km)
         $userLocation = ['lat' => 46.0, 'lon' => -81.0];
         $sourceLocations = [
-            'source_a' => ['lat' => 46.1, 'lon' => -81.0],
+            'community:1' => ['lat' => 46.1, 'lon' => -81.0],
         ];
 
-        $result = $calc->computeBatch(1, ['source_a'], null, $userLocation, $sourceLocations);
+        $result = $calc->computeBatch(1, ['community:1'], null, $userLocation, $sourceLocations);
 
         $this->assertNotNull($result);
         // base(1) + geoClose(2) = 3
-        $this->assertSame(3.0, $result['source_a']);
+        $this->assertSame(3.0, $result['community:1']);
     }
 
     #[Test]
@@ -188,17 +220,16 @@ final class AffinityCalculatorTest extends TestCase
     {
         $calc = $this->makeCalculator();
 
-        // Two points ~111 km apart (between 50 and 150 km)
         $userLocation = ['lat' => 46.0, 'lon' => -81.0];
         $sourceLocations = [
-            'source_a' => ['lat' => 47.0, 'lon' => -81.0],
+            'community:1' => ['lat' => 47.0, 'lon' => -81.0],
         ];
 
-        $result = $calc->computeBatch(1, ['source_a'], null, $userLocation, $sourceLocations);
+        $result = $calc->computeBatch(1, ['community:1'], null, $userLocation, $sourceLocations);
 
         $this->assertNotNull($result);
         // base(1) + geoMid(1) = 2
-        $this->assertSame(2.0, $result['source_a']);
+        $this->assertSame(2.0, $result['community:1']);
     }
 
     #[Test]
@@ -206,40 +237,35 @@ final class AffinityCalculatorTest extends TestCase
     {
         $calc = $this->makeCalculator();
 
-        // Two points ~555 km apart (beyond 150 km)
         $userLocation = ['lat' => 46.0, 'lon' => -81.0];
         $sourceLocations = [
-            'source_a' => ['lat' => 51.0, 'lon' => -81.0],
+            'community:1' => ['lat' => 51.0, 'lon' => -81.0],
         ];
 
-        $result = $calc->computeBatch(1, ['source_a'], null, $userLocation, $sourceLocations);
+        $result = $calc->computeBatch(1, ['community:1'], null, $userLocation, $sourceLocations);
 
         $this->assertNotNull($result);
         // base(1) only
-        $this->assertSame(1.0, $result['source_a']);
+        $this->assertSame(1.0, $result['community:1']);
     }
 
     #[Test]
     public function cache_is_used_on_second_call(): void
     {
-        $this->db->insert('follow')
-            ->fields(['user_id', 'target_key'])
-            ->values([1, 'source_a'])
-            ->execute();
+        $this->insertFollow(1, 'user', 10);
 
         $calc = $this->makeCalculator();
 
-        // First call populates cache.
-        $result1 = $calc->computeBatch(1, ['source_a'], null, null);
-        $this->assertSame(5.0, $result1['source_a']);
+        $result1 = $calc->computeBatch(1, ['user:10'], null, null);
+        $this->assertSame(5.0, $result1['user:10']);
 
         // Remove the follow row — second call should still return cached value.
         $this->db->delete('follow')
             ->condition('user_id', 1)
             ->execute();
 
-        $result2 = $calc->computeBatch(1, ['source_a'], null, null);
-        $this->assertSame(5.0, $result2['source_a']);
+        $result2 = $calc->computeBatch(1, ['user:10'], null, null);
+        $this->assertSame(5.0, $result2['user:10']);
     }
 
     #[Test]

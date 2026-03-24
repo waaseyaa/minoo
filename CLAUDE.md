@@ -127,7 +127,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests (680 tests, 2063 assertions)
+./vendor/bin/phpunit                          # All tests (746 tests, 2185 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
@@ -191,6 +191,8 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **App-specific identity fields belong in Minoo, not framework**: Use `ElderIdentity::isElder($user)` / `ElderIdentity::setElder($user, bool)` from `src/Support/ElderIdentity.php`. Never add Minoo domain concepts to the framework `User` class.
 - **Validate Referer before redirecting**: `$request->headers->get('Referer')` can be an external URL. Use `RoleManagementController::safeReferrer()` pattern — reject anything that doesn't start with `/` or starts with `//`.
 - **Vendor packages are versioned, not symlinked**: `vendor/waaseyaa/*` is installed from version tags (e.g. `^0.1.0-alpha.52`), not path repositories. Framework changes require: tag new release in waaseyaa → `composer update` in Minoo. Editing `vendor/` directly is lost on next update.
+- **`ServiceProvider::boot()` takes no parameters**: Cannot inject via `boot()` signature. Use `$this->resolve(EventDispatcherInterface::class)` inside `boot()` body.
+- **Feed scoring config**: All ranking constants (decay half-life, affinity signals, engagement weights, diversity thresholds) are in `config/feed_scoring.php`. Tunable without code changes.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 

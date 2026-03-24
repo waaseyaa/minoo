@@ -81,7 +81,8 @@
                 "Minoo\\Provider\\OralHistoryServiceProvider",
                 "Minoo\\Provider\\ContributorServiceProvider",
                 "Minoo\\Provider\\EngagementServiceProvider",
-                "Minoo\\Provider\\FeedServiceProvider"
+                "Minoo\\Provider\\FeedServiceProvider",
+                "Minoo\\Provider\\FeedScoringServiceProvider"
             ]
         }
     },
