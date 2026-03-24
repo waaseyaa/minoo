@@ -143,5 +143,98 @@ final class GameServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        // --- Crossword routes ---
+
+        $router->addRoute(
+            'games.crossword',
+            RouteBuilder::create('/games/crossword')
+                ->controller('Minoo\\Controller\\CrosswordController::page')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.daily',
+            RouteBuilder::create('/api/games/crossword/daily')
+                ->controller('Minoo\\Controller\\CrosswordController::daily')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.random',
+            RouteBuilder::create('/api/games/crossword/random')
+                ->controller('Minoo\\Controller\\CrosswordController::random')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.themes',
+            RouteBuilder::create('/api/games/crossword/themes')
+                ->controller('Minoo\\Controller\\CrosswordController::themes')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.theme',
+            RouteBuilder::create('/api/games/crossword/theme/{slug}')
+                ->controller('Minoo\\Controller\\CrosswordController::theme')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.check',
+            RouteBuilder::create('/api/games/crossword/check')
+                ->controller('Minoo\\Controller\\CrosswordController::check')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.complete',
+            RouteBuilder::create('/api/games/crossword/complete')
+                ->controller('Minoo\\Controller\\CrosswordController::complete')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.hint',
+            RouteBuilder::create('/api/games/crossword/hint')
+                ->controller('Minoo\\Controller\\CrosswordController::hint')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.abandon',
+            RouteBuilder::create('/api/games/crossword/abandon')
+                ->controller('Minoo\\Controller\\CrosswordController::abandon')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.crossword.stats',
+            RouteBuilder::create('/api/games/crossword/stats')
+                ->controller('Minoo\\Controller\\CrosswordController::stats')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->build(),
+        );
     }
 }
