@@ -11,33 +11,45 @@
 {% set badge_class = badge_map[type_key] ?? 'page' %}
 {% set badge_label_key = 'search.badge_' ~ (badge_map[type_key] ?? type_key) %}
 
-<article class="card search-result-card">
-  <div class="search-result-card__badges">
-    <span class="search-result__badge search-result__badge--{{ badge_class }}">{{ trans(badge_label_key) }}</span>
-    {% if topics is defined %}
-      {% for topic in topics[:3] %}
-        <span class="card__tag">{{ topic|replace({'_': ' '}) }}</span>
-      {% endfor %}
+<article class="card search-result-card card--{{ badge_class }}">
+  <div class="search-result-card__layout">
+    {% if og_image is defined and og_image %}
+      <div class="search-result-card__image">
+        <img src="{{ og_image }}" alt="" loading="lazy" decoding="async">
+      </div>
     {% endif %}
+    <div class="search-result-card__content">
+      <div class="search-result-card__badges">
+        {% if badge_class != 'page' %}
+          <span class="search-result__badge search-result__badge--{{ badge_class }}">{{ trans(badge_label_key) }}</span>
+        {% endif %}
+        {% if topics is defined %}
+          {% for topic in topics[:3] %}
+            <span class="card__tag">{{ topic|replace({'_': ' '}) }}</span>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <h3 class="card__title">
+        <a href="{{ url }}" rel="noopener noreferrer" target="_blank">{{ title }}</a>
+      </h3>
+      <div class="card__meta">
+        <span>{{ source_name|replace({'_': ' '}) }}</span>
+        {% if crawled_at %}
+          <span class="card__meta-sep" aria-hidden="true">&middot;</span>
+          <span class="card__date">{{ crawled_at[:10] }}</span>
+        {% endif %}
+      </div>
+      {% if highlight %}
+        <div class="card__body">{{ highlight|striptags('<em><strong><mark>')|raw }}</div>
+      {% endif %}
+      {# Richer metadata per entity type #}
+      {% if type_key == 'event' and (date is defined and date) %}
+        <div class="search-result__meta">{{ date }}</div>
+      {% elseif type_key in ['person', 'resource_person'] and (community is defined and community) %}
+        <div class="search-result__meta">{{ community }}</div>
+      {% elseif type_key == 'business' and (city is defined and city) %}
+        <div class="search-result__meta">{{ city }}</div>
+      {% endif %}
+    </div>
   </div>
-  <h3 class="card__title">
-    <a href="{{ url }}" rel="noopener noreferrer" target="_blank">{{ title }}</a>
-  </h3>
-  <div class="card__meta">
-    <span>{{ source_name|replace({'_': ' '}) }}</span>
-    {% if crawled_at %}
-      <span class="card__date">{{ crawled_at[:10] }}</span>
-    {% endif %}
-  </div>
-  {% if highlight %}
-    <div class="card__body">{{ highlight|striptags('<em><strong><mark>')|raw }}</div>
-  {% endif %}
-  {# Richer metadata per entity type #}
-  {% if type_key == 'event' and (date is defined and date) %}
-    <div class="search-result__meta">{{ date }}</div>
-  {% elseif type_key in ['person', 'resource_person'] and (community is defined and community) %}
-    <div class="search-result__meta">{{ community }}</div>
-  {% elseif type_key == 'business' and (city is defined and city) %}
-    <div class="search-result__meta">{{ city }}</div>
-  {% endif %}
 </article>

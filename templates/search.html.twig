@@ -43,6 +43,13 @@
         </div>
       {% endif %}
 
+      {% if results.suggestion is defined and results.suggestion %}
+        <p class="search-suggestion">
+          {{ trans('search.did_you_mean') }}
+          <a href="{{ lang_url('/search') }}?q={{ results.suggestion|url_encode }}">{{ results.suggestion }}</a>?
+        </p>
+      {% endif %}
+
       <div class="search-layout">
         {# Sidebar: facet filters #}
         {% if results.facets %}
@@ -50,7 +57,7 @@
             {% set typesFacet = results.getFacet('content_types') %}
             {% if typesFacet and typesFacet.buckets %}
               <div class="search-filters__group">
-                <h2 class="search-filters__heading">{{ trans('search.type_heading') }}</h3>
+                <h2 class="search-filters__heading">{{ trans('search.type_heading') }}</h2>
                 <ul class="search-filters__list">
                   {% for bucket in typesFacet.buckets %}
                     <li>
@@ -68,7 +75,7 @@
             {% set sourcesFacet = results.getFacet('sources') %}
             {% if sourcesFacet and sourcesFacet.buckets %}
               <div class="search-filters__group">
-                <h2 class="search-filters__heading">{{ trans('search.sources_heading') }}</h3>
+                <h2 class="search-filters__heading">{{ trans('search.sources_heading') }}</h2>
                 <ul class="search-filters__list">
                   {% for bucket in sourcesFacet.buckets[:20] %}
                     <li>
