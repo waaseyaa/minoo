@@ -34,6 +34,7 @@ final readonly class FeedItem
         public ?string $communitySlug = null,
         public ?string $communityInitial = null,
         public ?string $authorName = null,
+        public ?float $score = null,
     ) {}
 
     public function isSynthetic(): bool
@@ -94,6 +95,9 @@ final readonly class FeedItem
         }
         if ($this->authorName !== null) {
             $data['authorName'] = $this->authorName;
+        }
+        if ($this->score !== null) {
+            $data['score'] = round($this->score, 4);
         }
 
         return $data;
