@@ -72,13 +72,22 @@ final class IshkodeController
         ]);
         $sessionStorage->save($session);
 
-        $clue = $this->cleanDefinition((string) $entry->get('definition'));
+        // English→Ojibwe: clue = definition (active recall)
+        // Ojibwe→English: clue = POS hint only (spelling practice, meaning revealed at end)
+        $pos = (string) $entry->get('part_of_speech');
+        if ($direction === 'english_to_ojibwe') {
+            $clue = $this->cleanDefinition((string) $entry->get('definition'));
+            $clueDetail = $pos;
+        } else {
+            $clue = $pos !== '' ? $pos : 'Ojibwe word';
+            $clueDetail = mb_strlen($word) . ' letters';
+        }
 
         return $this->json([
             'session_token' => $session->get('uuid'),
             'word_length' => mb_strlen($word),
             'clue' => $clue,
-            'clue_detail' => (string) $entry->get('part_of_speech'),
+            'clue_detail' => $clueDetail,
             'direction' => $direction,
             'difficulty' => $tier,
             'max_wrong' => IshkodeEngine::maxWrongGuesses($tier),
@@ -124,14 +133,21 @@ final class IshkodeController
         ]);
         $sessionStorage->save($session);
 
-        $clue = $this->cleanDefinition((string) $entry->get('definition'));
+        $pos = (string) $entry->get('part_of_speech');
+        if ($direction === 'english_to_ojibwe') {
+            $clue = $this->cleanDefinition((string) $entry->get('definition'));
+            $clueDetail = $pos;
+        } else {
+            $clue = $pos !== '' ? $pos : 'Ojibwe word';
+            $clueDetail = mb_strlen($word) . ' letters';
+        }
 
         return $this->json([
             'session_token' => $session->get('uuid'),
             'word_length' => mb_strlen($word),
             'word_data' => base64_encode($word),
             'clue' => $clue,
-            'clue_detail' => (string) $entry->get('part_of_speech'),
+            'clue_detail' => $clueDetail,
             'direction' => $direction,
             'difficulty' => $tier,
             'max_wrong' => IshkodeEngine::maxWrongGuesses($tier),

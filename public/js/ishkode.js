@@ -599,11 +599,10 @@
       var clueLabel = game.querySelector('.ishkode__clue-label');
       if (state.direction === 'english_to_ojibwe') {
         if (clueLabel) clueLabel.textContent = 'Guess the Ojibwe word for:';
-        clueWordEl.textContent = data.clue || '';
       } else {
-        if (clueLabel) clueLabel.textContent = 'Guess the English word for:';
-        clueWordEl.textContent = data.clue || '';
+        if (clueLabel) clueLabel.textContent = 'Uncover the Ojibwe word:';
       }
+      clueWordEl.textContent = data.clue || '';
       clueDetailEl.textContent = data.clue_detail || '';
 
       // Show game UI
