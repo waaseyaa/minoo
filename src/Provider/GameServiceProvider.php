@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Provider;
 
+use Minoo\Entity\CrosswordPuzzle;
 use Minoo\Entity\DailyChallenge;
 use Minoo\Entity\GameSession;
 use Waaseyaa\Entity\EntityType;
@@ -31,6 +32,10 @@ final class GameServiceProvider extends ServiceProvider
                 'status' => ['type' => 'string', 'label' => 'Status', 'weight' => 15, 'default' => 'in_progress'],
                 'daily_date' => ['type' => 'string', 'label' => 'Daily Date', 'weight' => 16],
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 17, 'default' => 'easy'],
+                'game_type' => ['type' => 'string', 'label' => 'Game Type', 'weight' => 18, 'default' => 'shkoda'],
+                'puzzle_id' => ['type' => 'string', 'label' => 'Puzzle ID', 'weight' => 19],
+                'grid_state' => ['type' => 'text_long', 'label' => 'Grid State', 'description' => 'JSON crossword grid fill state.', 'weight' => 20],
+                'hints_used' => ['type' => 'integer', 'label' => 'Hints Used', 'weight' => 21, 'default' => 0],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
@@ -47,6 +52,21 @@ final class GameServiceProvider extends ServiceProvider
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 5],
                 'direction' => ['type' => 'string', 'label' => 'Direction', 'weight' => 10, 'default' => 'english_to_ojibwe'],
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 15, 'default' => 'easy'],
+            ],
+        ));
+
+        $this->entityType(new EntityType(
+            id: 'crossword_puzzle',
+            label: 'Crossword Puzzle',
+            class: CrosswordPuzzle::class,
+            keys: ['id' => 'id', 'label' => 'id'],
+            group: 'games',
+            fieldDefinitions: [
+                'grid_size' => ['type' => 'integer', 'label' => 'Grid Size', 'weight' => 0],
+                'words' => ['type' => 'text_long', 'label' => 'Words', 'description' => 'JSON array of word placements.', 'weight' => 5],
+                'clues' => ['type' => 'text_long', 'label' => 'Clues', 'description' => 'JSON map of word index to clue data.', 'weight' => 10],
+                'theme' => ['type' => 'string', 'label' => 'Theme', 'weight' => 15],
+                'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 20, 'default' => 'easy'],
             ],
         ));
     }

@@ -10,10 +10,10 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: ['game_session', 'daily_challenge'])]
+#[PolicyAttribute(entityType: ['game_session', 'daily_challenge', 'crossword_puzzle'])]
 final class GameAccessPolicy implements AccessPolicyInterface
 {
-    private const ENTITY_TYPES = ['game_session', 'daily_challenge'];
+    private const ENTITY_TYPES = ['game_session', 'daily_challenge', 'crossword_puzzle'];
 
     public function appliesTo(string $entityTypeId): bool
     {
