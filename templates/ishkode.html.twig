@@ -4,6 +4,17 @@
 
 {% block content %}
 <div class="ishkode" id="ishkode-game" data-api-base="/api/games/ishkode">
+    {# Breadcrumb + title #}
+    <div class="ishkode__header">
+        <nav class="ishkode__breadcrumb" aria-label="Breadcrumb">
+            <a href="/games">Games</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Ishkode</span>
+        </nav>
+        <h1 class="ishkode__title">Ishkode</h1>
+        <p class="ishkode__tagline">Keep the fire burning</p>
+    </div>
+
     {# Mode tabs #}
     <nav class="ishkode__tabs" role="tablist">
         <button class="ishkode__tab ishkode__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily Challenge</button>

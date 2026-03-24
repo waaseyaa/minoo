@@ -3178,19 +3178,249 @@
   }
 
   /* ══════════════════════════════════════════════
+     Games Hub
+     ══════════════════════════════════════════════ */
+
+  .games-hub {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: var(--space-md) var(--space-md) var(--space-xl);
+  }
+
+  .games-hub__header {
+    padding: var(--space-lg) 0 var(--space-md);
+    border-block-end: 1px solid var(--border);
+    margin-block-end: var(--space-lg);
+  }
+
+  .games-hub__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-block-end: var(--space-2xs);
+  }
+
+  .games-hub__subtitle {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Featured game card */
+  .game-card--featured {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg, 12px);
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, oklch(from var(--ishkode-fire-full) l c h / 0.06), transparent 60%);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.3s var(--ease-out), border-color 0.3s var(--ease-out), transform 0.2s var(--ease-out);
+  }
+
+  .game-card--featured:hover {
+    border-color: var(--ishkode-fire-full);
+    box-shadow: 0 4px 24px oklch(from var(--ishkode-fire-full) l c h / 0.15);
+    transform: translateY(-2px);
+  }
+
+  .game-card--featured:hover .game-card__flame--outer {
+    animation: game-card-flicker 1.5s ease-in-out infinite alternate;
+  }
+
+  .game-card__icon {
+    flex-shrink: 0;
+  }
+
+  .game-card__glow {
+    fill: var(--ishkode-fire-full);
+    opacity: 0.25;
+  }
+
+  .game-card__flame--outer { fill: var(--ishkode-fire-full); }
+  .game-card__flame--mid { fill: var(--ishkode-fire-mid); }
+  .game-card__flame--inner { fill: oklch(0.90 0.15 85); }
+  .game-card__log { fill: oklch(0.35 0.05 60); }
+  .game-card__log--cross { fill: oklch(0.30 0.04 55); }
+
+  @keyframes game-card-flicker {
+    0% { transform: scaleY(1) scaleX(1); }
+    50% { transform: scaleY(1.06) scaleX(0.96); }
+    100% { transform: scaleY(0.96) scaleX(1.03); }
+  }
+
+  .game-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .game-card__badge {
+    display: inline-block;
+    width: fit-content;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: var(--space-3xs) var(--space-2xs);
+    border-radius: var(--radius-full);
+    background: oklch(from var(--color-language) l c h / 0.15);
+    color: var(--color-language);
+  }
+
+  .game-card__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .game-card__description {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .game-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ishkode-fire-full);
+    margin-block-start: var(--space-2xs);
+  }
+
+  .game-card__cta::after {
+    content: "\2192";
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .game-card--featured:hover .game-card__cta::after {
+    transform: translateX(4px);
+  }
+
+  /* Coming soon section */
+  .games-hub__coming {
+    margin-block-start: var(--space-xl);
+  }
+
+  .games-hub__section-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-block-end: var(--space-sm);
+  }
+
+  .games-hub__coming-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-sm);
+  }
+
+  .game-card--placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    opacity: 0.45;
+    text-align: center;
+  }
+
+  .game-card__placeholder-icon {
+    color: var(--text-muted);
+  }
+
+  .game-card__placeholder-label {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) {
+    .game-card--featured {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+      padding: var(--space-md);
+    }
+
+    .game-card__cta {
+      justify-content: center;
+    }
+  }
+
+  /* ══════════════════════════════════════════════
      Ishkode Word Game
      ══════════════════════════════════════════════ */
 
   .ishkode {
     max-width: 600px;
     margin: 0 auto;
-    padding: var(--space-md);
+    padding: var(--space-sm) var(--space-md) var(--space-md);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--space-md);
     min-height: calc(100vh - 120px);
     min-height: calc(100dvh - 120px);
+  }
+
+  /* Header with breadcrumb and title */
+  .ishkode__header {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ishkode__breadcrumb {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-block-end: var(--space-2xs);
+  }
+
+  .ishkode__breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .ishkode__breadcrumb a:hover {
+    color: var(--ishkode-correct);
+  }
+
+  .ishkode__breadcrumb span[aria-hidden] {
+    margin-inline: var(--space-3xs);
+    opacity: 0.5;
+  }
+
+  .ishkode__breadcrumb span[aria-current] {
+    color: var(--text-secondary);
+  }
+
+  .ishkode__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .ishkode__tagline {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-style: italic;
+    margin-block-start: var(--space-3xs);
   }
 
   /* Tabs */
@@ -3450,22 +3680,26 @@
   }
 
   .ishkode__blank {
-    width: clamp(2rem, 8vw, 2.75rem);
-    height: clamp(2.5rem, 10vw, 3.25rem);
+    width: clamp(2.25rem, 9vw, 3rem);
+    height: clamp(2.75rem, 11vw, 3.5rem);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: var(--text-lg);
     font-weight: 700;
     color: var(--text-primary);
-    border-block-end: 3px solid var(--border);
+    border-block-end: 3px solid oklch(from var(--border) calc(l + 0.1) c h);
+    background: oklch(from var(--surface) calc(l + 0.04) c h / 0.5);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
     text-transform: uppercase;
-    transition: border-color 0.3s, color 0.3s;
+    transition: border-color 0.3s, color 0.3s, background-color 0.3s, transform 0.2s;
   }
 
   .ishkode__blank--revealed {
     border-color: var(--ishkode-correct);
     color: var(--ishkode-correct);
+    background: oklch(from var(--ishkode-correct) l c h / 0.08);
+    transform: scale(1.05);
   }
 
   /* Wrong guesses */
@@ -3695,8 +3929,17 @@
 
   /* Light mode overrides */
   :root:not([data-theme="dark"]) .ishkode {
-    --ishkode-key-bg: oklch(0.92 0.01 250);
-    --ishkode-key-hover: oklch(0.87 0.01 250);
+    --ishkode-key-bg: oklch(0.88 0.01 250);
+    --ishkode-key-hover: oklch(0.82 0.02 250);
+  }
+
+  :root:not([data-theme="dark"]) .ishkode__blank {
+    background: oklch(0.94 0.005 250 / 0.6);
+    border-color: oklch(0.78 0.01 250);
+  }
+
+  :root:not([data-theme="dark"]) .ishkode__clue {
+    background: oklch(0.96 0.005 250 / 0.4);
   }
 }
 
