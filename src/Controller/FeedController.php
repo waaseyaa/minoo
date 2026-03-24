@@ -473,6 +473,7 @@ final class FeedController
             limit: min((int) ($query['limit'] ?? 20), 50),
             isFirstVisit: $isFirstVisit,
             isAuthenticated: $account?->isAuthenticated() ?? false,
+            userId: $account?->isAuthenticated() ? (int) $account->id() : null,
         );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Feed;
 
+use Minoo\Feed\Scoring\FeedScorer;
 use Minoo\Support\GeoDistance;
 
 final class FeedAssembler implements FeedAssemblerInterface
@@ -12,6 +13,7 @@ final class FeedAssembler implements FeedAssemblerInterface
         private readonly EntityLoaderService $loader,
         private readonly FeedItemFactory $factory,
         private readonly ?EngagementCounter $engagementCounter = null,
+        private readonly ?FeedScorer $scorer = null,
     ) {}
 
     public function assemble(FeedContext $ctx): FeedResponse
@@ -110,15 +112,26 @@ final class FeedAssembler implements FeedAssemblerInterface
             }));
         }
 
-        // 5. Sort
-        usort($items, fn(FeedItem $a, FeedItem $b) => strcmp($a->sortKey, $b->sortKey));
+        // 5. Score + Sort + Diversify (or fallback to static sort)
+        if ($this->scorer !== null) {
+            $sourceMap = $this->buildSourceMap($items);
+            $items = $this->scorer->score(
+                $items,
+                $ctx->userId,
+                $this->resolveUserCommunityId($ctx),
+                $ctx->hasLocation() ? ['lat' => $ctx->latitude, 'lon' => $ctx->longitude] : null,
+                $this->buildSourceLocations($communityCoords),
+                $sourceMap,
+            );
+        } else {
+            usort($items, fn(FeedItem $a, FeedItem $b) => strcmp($a->sortKey, $b->sortKey));
+        }
 
         // 6. Paginate
         $startIdx = 0;
         if ($ctx->cursor !== null) {
             $cursorData = FeedCursor::decode($ctx->cursor);
             if ($cursorData !== null) {
-                // Find position after cursor
                 foreach ($items as $idx => $item) {
                     if ($item->sortKey === $cursorData['lastSortKey'] && $item->id === $cursorData['lastId']) {
                         $startIdx = $idx + 1;
@@ -130,8 +143,8 @@ final class FeedAssembler implements FeedAssemblerInterface
 
         $pageItems = array_slice($items, $startIdx, $ctx->limit);
 
-        // 6b. Attach engagement counts only to the page (not all items)
-        if ($this->engagementCounter !== null) {
+        // 6b. Attach engagement counts (skipped when scorer already provided them)
+        if ($this->scorer === null && $this->engagementCounter !== null) {
             $pageItems = $this->attachEngagementCounts($pageItems);
         }
 
@@ -245,6 +258,78 @@ final class FeedAssembler implements FeedAssemblerInterface
             ];
         }
         return $map;
+    }
+
+    /**
+     * Build a map of item ID → source key for affinity scoring.
+     *
+     * @param FeedItem[] $items
+     * @return array<string, string>
+     */
+    private function buildSourceMap(array $items): array
+    {
+        $map = [];
+        foreach ($items as $item) {
+            if ($item->isSynthetic()) {
+                continue;
+            }
+
+            $entity = $item->entity;
+            $sourceKey = match ($item->type) {
+                'post' => $entity !== null && $entity->get('user_id') !== null
+                    ? 'user:' . $entity->get('user_id')
+                    : 'post:' . $item->id,
+                'event', 'teaching' => $entity !== null && $entity->get('community_id') !== null
+                    ? 'community:' . $entity->get('community_id')
+                    : $item->type . ':' . $item->id,
+                'featured' => $entity !== null && $entity->get('user_id') !== null
+                    ? 'user:' . $entity->get('user_id')
+                    : 'featured:' . $item->id,
+                default => $item->type . ':' . $item->id,
+            };
+
+            $map[$item->id] = $sourceKey;
+        }
+
+        return $map;
+    }
+
+    /**
+     * Build source locations map from community coordinates.
+     *
+     * @return array<string, array{lat: float, lon: float, community_id?: int}>
+     */
+    private function buildSourceLocations(array $communityCoords): array
+    {
+        $locations = [];
+        foreach ($communityCoords as $key => $coords) {
+            if (is_int($key)) {
+                $locations['community:' . $key] = [
+                    'lat' => $coords['lat'],
+                    'lon' => $coords['lon'],
+                    'community_id' => $key,
+                ];
+            }
+        }
+
+        return $locations;
+    }
+
+    private function resolveUserCommunityId(FeedContext $ctx): ?int
+    {
+        if ($ctx->userId === null) {
+            return null;
+        }
+
+        try {
+            $user = $this->loader->getEntityTypeManager()->getStorage('user')->load($ctx->userId);
+
+            return $user !== null && $user->get('community_id') !== null
+                ? (int) $user->get('community_id')
+                : null;
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**
