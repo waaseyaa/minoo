@@ -91,13 +91,14 @@ test.describe('Auth flows', () => {
     await expect(page.getByText('Check Your Email')).toBeVisible();
   });
 
-  test('registration success shows check-email page', async ({ page }) => {
+  test('registration success auto-logs in and redirects to homepage', async ({ page }) => {
     await page.goto('/register');
     await page.fill('input[name="name"]', 'New Test User');
     await page.fill('input[name="email"]', `newuser-${Date.now()}@minoo.test`);
     await page.fill('input[name="password"]', 'NewUserPass123!');
     await page.click('.form button[type="submit"]');
-    await expect(page.getByText('Check Your Email')).toBeVisible();
+    await page.waitForURL('/');
+    await expect(page.locator('.flash-message--success')).toContainText('Welcome to Minoo');
   });
 
   // ── Logout ─────────────────────────────────────────────────────────
