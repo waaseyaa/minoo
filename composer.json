@@ -82,7 +82,8 @@
                 "Minoo\\Provider\\ContributorServiceProvider",
                 "Minoo\\Provider\\EngagementServiceProvider",
                 "Minoo\\Provider\\FeedServiceProvider",
-                "Minoo\\Provider\\FeedScoringServiceProvider"
+                "Minoo\\Provider\\FeedScoringServiceProvider",
+                "Minoo\\Provider\\GameServiceProvider"
             ]
         }
     },
