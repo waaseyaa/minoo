@@ -84,8 +84,7 @@ final class AffinityCalculator
                 $score += $this->sameCommunityPoints;
             }
 
-            if ($sourceMeta !== null && $userLocation !== null
-                && isset($sourceMeta['lat'], $sourceMeta['lon'])) {
+            if ($sourceMeta !== null && $userLocation !== null) {
                 $distance = GeoDistance::haversine(
                     $userLocation['lat'],
                     $userLocation['lon'],

@@ -131,7 +131,7 @@ final class FeedScorer
         $parts = explode(':', $item->id, 2);
 
         return [
-            'type' => $parts[0] ?? $item->type,
+            'type' => $parts[0],
             'id' => (int) ($parts[1] ?? 0),
         ];
     }
