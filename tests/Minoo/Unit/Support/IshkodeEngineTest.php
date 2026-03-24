@@ -31,6 +31,14 @@ final class IshkodeEngineTest extends TestCase
     }
 
     #[Test]
+    public function difficulty_tier_falls_back_to_length_when_pos_empty(): void
+    {
+        $this->assertSame('easy', IshkodeEngine::difficultyTier('makwa', ''));
+        $this->assertSame('medium', IshkodeEngine::difficultyTier('bimosed', ''));
+        $this->assertSame('hard', IshkodeEngine::difficultyTier('ishkodewaaboo', ''));
+    }
+
+    #[Test]
     public function max_wrong_guesses_per_tier(): void
     {
         $this->assertSame(7, IshkodeEngine::maxWrongGuesses('easy'));

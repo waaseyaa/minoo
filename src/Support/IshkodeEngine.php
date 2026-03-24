@@ -14,13 +14,24 @@ final class IshkodeEngine
     {
         $len = mb_strlen($word);
 
-        if ($len <= 5 && in_array($partOfSpeech, self::EASY_POS, true)) {
-            return 'easy';
-        }
-        if ($len <= 8 && in_array($partOfSpeech, self::MEDIUM_POS, true)) {
-            return 'medium';
+        // When POS is available, use both length + POS for tier
+        if ($partOfSpeech !== '') {
+            if ($len <= 5 && in_array($partOfSpeech, self::EASY_POS, true)) {
+                return 'easy';
+            }
+            if ($len <= 8 && in_array($partOfSpeech, self::MEDIUM_POS, true)) {
+                return 'medium';
+            }
+            return 'hard';
         }
 
+        // Fallback: word length only (most OPD entries lack POS — see #533)
+        if ($len <= 5) {
+            return 'easy';
+        }
+        if ($len <= 8) {
+            return 'medium';
+        }
         return 'hard';
     }
 
