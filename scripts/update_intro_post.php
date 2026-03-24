@@ -44,7 +44,7 @@ if (!copy($dbPath, $backupPath)) {
 echo "Backed up database to {$backupPath}\n";
 
 // 2. Find Russell's post
-$entityTypeManager = $kernel->resolve(\Waaseyaa\Entity\EntityTypeManager::class);
+$entityTypeManager = $kernel->getEntityTypeManager();
 $postStorage = $entityTypeManager->getStorage('post');
 
 $postIds = $postStorage->getQuery()
