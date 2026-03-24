@@ -4429,6 +4429,136 @@
       width: 100%;
     }
   }
+
+  /* ── Mobile game layout ── */
+  @media (max-width: 600px) {
+    .shkoda {
+      gap: var(--space-xs);
+      padding: var(--space-2xs) var(--space-xs) 0;
+      min-height: calc(100dvh - 60px);
+      padding-block-end: 0;
+    }
+
+    /* Hide breadcrumb on mobile — title is enough */
+    .shkoda__breadcrumb {
+      display: none;
+    }
+
+    .shkoda__title {
+      font-size: var(--text-lg);
+    }
+
+    .shkoda__tagline {
+      display: none;
+    }
+
+    /* Compact mode tabs — smaller, inline */
+    .shkoda__tabs {
+      gap: var(--space-2xs);
+    }
+
+    .shkoda__tab {
+      padding: var(--space-2xs) var(--space-xs);
+      font-size: var(--text-xs);
+    }
+
+    /* Compact fire — small inline bar instead of big SVG */
+    .shkoda__fire {
+      flex-direction: row;
+      gap: var(--space-xs);
+      align-items: center;
+    }
+
+    .shkoda__fire svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    .shkoda__remaining {
+      font-size: var(--text-xs);
+    }
+
+    /* Compact clue */
+    .shkoda__clue {
+      padding: var(--space-xs) var(--space-sm);
+    }
+
+    .shkoda__clue-word {
+      font-size: var(--text-md);
+    }
+
+    /* Hide separate wrong guesses — keyboard shows state */
+    .shkoda__wrong {
+      display: none;
+    }
+
+    /* Sticky keyboard pinned to bottom */
+    .shkoda__keyboard {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 0;
+      z-index: 50;
+      background: var(--surface);
+      padding: var(--space-2xs) var(--space-2xs) max(var(--space-xs), env(safe-area-inset-bottom));
+      border-block-start: 1px solid var(--border);
+      width: 100%;
+      max-width: none;
+    }
+
+    /* Bigger tap targets — full width rows */
+    .shkoda__kb-row {
+      gap: 3px;
+      padding-inline: 2px;
+    }
+
+    .shkoda__key {
+      min-width: 0;
+      flex: 1 1 0;
+      height: 44px;
+      font-size: var(--text-sm);
+      border-radius: var(--radius-sm);
+      padding-inline: 0;
+    }
+
+    /* Space below content so keyboard doesn't overlap */
+    .shkoda__blanks {
+      margin-block-end: 180px;
+    }
+
+    /* Direction toggle — smaller */
+    .shkoda__direction {
+      font-size: var(--text-xs);
+    }
+
+    .shkoda__dir-swap {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  /* Correct letter pop animation */
+  @keyframes shkoda-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1.05); }
+  }
+
+  .shkoda__blank--revealed {
+    animation: shkoda-pop 0.3s ease;
+  }
+
+  /* Wrong guess shake on fire */
+  @keyframes shkoda-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+
+  .shkoda__fire--shake {
+    animation: shkoda-shake 0.4s ease;
+  }
 }
 
 @layer utilities {

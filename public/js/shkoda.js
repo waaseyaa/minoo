@@ -164,11 +164,19 @@
     });
   }
 
-  function updateFire() {
+  function updateFire(wasWrong) {
     var remaining = state.maxWrong - state.wrongGuesses.length;
     if (remaining < 0) remaining = 0;
     fireEl.dataset.fireState = remaining;
     remainingEl.textContent = remaining + ' guess' + (remaining !== 1 ? 'es' : '') + ' remaining';
+
+    // Shake fire on wrong guess
+    if (wasWrong) {
+      fireEl.classList.remove('shkoda__fire--shake');
+      // Force reflow to restart animation
+      void fireEl.offsetWidth;
+      fireEl.classList.add('shkoda__fire--shake');
+    }
   }
 
   function renderKeyboard() {
@@ -229,7 +237,7 @@
         state.wrongGuesses.push(letter);
       }
 
-      updateFire();
+      updateFire(!data.correct);
       renderKeyboard();
       renderWrongGuesses();
 
@@ -255,13 +263,14 @@
       }
     }
 
-    if (positions.length > 0) {
+    var isWrong = positions.length === 0;
+    if (!isWrong) {
       revealLetterPositions(letter, positions);
     } else {
       state.wrongGuesses.push(letter);
     }
 
-    updateFire();
+    updateFire(isWrong);
     renderKeyboard();
     renderWrongGuesses();
 
