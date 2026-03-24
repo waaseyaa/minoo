@@ -95,12 +95,14 @@ final class IshkodeEngine
         }
 
         $emojis = '';
-        $wrongCount = 0;
         foreach ($guesses as $letter) {
             $letter = mb_strtolower($letter);
-            $hit = in_array($letter, $wordChars, true);
-            $emojis .= $hit ? "\u{1F525}" : "\u{1FAA8}";
-            if (!$hit) {
+            $emojis .= in_array($letter, $wordChars, true) ? "\xF0\x9F\x94\xA5" : "\xF0\x9F\xAA\xA8";
+        }
+
+        $wrongCount = 0;
+        foreach ($guesses as $letter) {
+            if (!in_array(mb_strtolower($letter), $wordChars, true)) {
                 $wrongCount++;
             }
         }
@@ -109,14 +111,14 @@ final class IshkodeEngine
         $maxWrong = self::maxWrongGuesses($tier);
         $outcome = $wrongCount >= $maxWrong ? 'fire went out' : 'fire still burning';
 
-        $dirLabel = $direction === 'english_to_ojibwe' ? "English \u{2192} Ojibwe" : "Ojibwe \u{2192} English";
+        $dirLabel = $direction === 'english_to_ojibwe' ? "English \xE2\x86\x92 Ojibwe" : "Ojibwe \xE2\x86\x92 English";
         $dateLabel = $date !== '' ? $date : 'Practice';
 
         $lines = [
-            "\u{1F525} Ishkode \u{2014} Daily Challenge",
-            "{$dateLabel} \u{00B7} {$dirLabel}",
+            "\xF0\x9F\x94\xA5 Ishkode \xE2\x80\x94 Daily Challenge",
+            "{$dateLabel} \xC2\xB7 {$dirLabel}",
             $emojis,
-            "{$totalGuesses} guesses \u{00B7} {$outcome}",
+            "{$totalGuesses} guesses \xC2\xB7 {$outcome}",
             "minoo.live/games/ishkode",
         ];
 
