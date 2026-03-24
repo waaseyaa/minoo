@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Minoo\Feed\Scoring;
 
 use Minoo\Support\GeoDistance;
-use Waaseyaa\Entity\EntityTypeManagerInterface;
+use Waaseyaa\Entity\EntityTypeManager;
 
 final class AffinityCalculator
 {
     public function __construct(
-        private readonly EntityTypeManagerInterface $entityTypeManager,
+        private readonly EntityTypeManager $entityTypeManager,
         private readonly AffinityCache $cache,
         private readonly float $baseAffinity = 1.0,
         private readonly float $followPoints = 4.0,

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Minoo\Feed\Scoring;
 
-use Waaseyaa\Entity\EntityTypeManagerInterface;
+use Waaseyaa\Entity\EntityTypeManager;
 
 final class EngagementCalculator
 {
     public function __construct(
-        private readonly EntityTypeManagerInterface $entityTypeManager,
+        private readonly EntityTypeManager $entityTypeManager,
         private readonly float $reactionWeight = 1.0,
         private readonly float $commentWeight = 3.0,
     ) {}

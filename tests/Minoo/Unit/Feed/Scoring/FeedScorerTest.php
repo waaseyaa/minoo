@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Cache\Backend\MemoryBackend;
-use Waaseyaa\Entity\EntityTypeManagerInterface;
+use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
@@ -133,9 +133,9 @@ final class FeedScorerTest extends TestCase
         );
     }
 
-    private function createEmptyEntityTypeManager(): EntityTypeManagerInterface
+    private function createEmptyEntityTypeManager(): EntityTypeManager
     {
-        $etm = $this->createMock(EntityTypeManagerInterface::class);
+        $etm = $this->createMock(EntityTypeManager::class);
 
         $etm->method('getStorage')->willReturnCallback(function () {
             $storage = $this->createMock(EntityStorageInterface::class);

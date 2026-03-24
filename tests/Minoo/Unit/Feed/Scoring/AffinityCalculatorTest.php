@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Cache\Backend\MemoryBackend;
 use Waaseyaa\Entity\ContentEntityBase;
-use Waaseyaa\Entity\EntityTypeManagerInterface;
+use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
@@ -143,7 +143,7 @@ final class AffinityCalculatorTest extends TestCase
         array $comments = [],
         ?AffinityCache $cache = null,
     ): AffinityCalculator {
-        $etm = $this->createMock(EntityTypeManagerInterface::class);
+        $etm = $this->createMock(EntityTypeManager::class);
 
         $etm->method('getStorage')->willReturnCallback(
             function (string $type) use ($follows, $reactions, $comments) {

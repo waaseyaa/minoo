@@ -8,7 +8,7 @@ use Minoo\Feed\Scoring\EngagementCalculator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Waaseyaa\Entity\EntityTypeManagerInterface;
+use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
@@ -67,7 +67,7 @@ final class EngagementCalculatorTest extends TestCase
 
     private function makeCalculator(int $reactionCount, int $commentCount): EngagementCalculator
     {
-        $etm = $this->createMock(EntityTypeManagerInterface::class);
+        $etm = $this->createMock(EntityTypeManager::class);
 
         $etm->method('getStorage')->willReturnCallback(function (string $type) use ($reactionCount, $commentCount) {
             $count = $type === 'reaction' ? $reactionCount : $commentCount;
