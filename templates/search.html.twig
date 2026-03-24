@@ -43,6 +43,13 @@
         </div>
       {% endif %}
 
+      {% if results.suggestion is defined and results.suggestion %}
+        <p class="search-suggestion">
+          {{ trans('search.did_you_mean') }}
+          <a href="{{ lang_url('/search') }}?q={{ results.suggestion|url_encode }}">{{ results.suggestion }}</a>?
+        </p>
+      {% endif %}
+
       <div class="search-layout">
         {# Sidebar: facet filters #}
         {% if results.facets %}

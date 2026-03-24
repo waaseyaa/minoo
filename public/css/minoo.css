@@ -1435,8 +1435,9 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: var(--space-3xs);
-    margin-block-start: var(--space-md);
+    margin-block-start: var(--space-lg);
   }
 
   .pagination__link {
@@ -1467,6 +1468,44 @@
   .pagination__ellipsis {
     padding: var(--space-3xs);
     color: var(--text-secondary);
+  }
+
+  /* "Did you mean" suggestion */
+  .search-suggestion {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .search-suggestion a {
+    color: var(--color-language);
+    font-style: normal;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Search results two-column grid */
+  .search-results .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 48em) {
+    .search-results .card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Mobile responsive: full-width search form + touch-friendly pagination */
+  @media (max-width: 47.999em) {
+    .search-form {
+      max-inline-size: none;
+    }
+
+    .pagination__link {
+      min-height: 44px;
+      min-width: 44px;
+    }
   }
 
   /* ── Forms ──────────────────────────────────────── */
