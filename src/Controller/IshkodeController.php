@@ -72,9 +72,7 @@ final class IshkodeController
         ]);
         $sessionStorage->save($session);
 
-        $clue = $direction === 'english_to_ojibwe'
-            ? (string) $entry->get('definition')
-            : $word;
+        $clue = (string) $entry->get('definition');
 
         return $this->json([
             'session_token' => $session->get('uuid'),
@@ -125,9 +123,7 @@ final class IshkodeController
         ]);
         $sessionStorage->save($session);
 
-        $clue = $direction === 'english_to_ojibwe'
-            ? (string) $entry->get('definition')
-            : $word;
+        $clue = (string) $entry->get('definition');
 
         return $this->json([
             'session_token' => $session->get('uuid'),
@@ -155,6 +151,10 @@ final class IshkodeController
         $session = $this->loadSessionByToken($token);
         if ($session === null) {
             return $this->json(['error' => 'Invalid session'], 404);
+        }
+
+        if ($session->get('mode') !== 'daily') {
+            return $this->json(['error' => 'Guess endpoint is only for daily challenge mode'], 400);
         }
 
         if ($session->get('status') !== 'in_progress') {
@@ -233,6 +233,12 @@ final class IshkodeController
             return $this->json(['error' => 'Invalid session'], 404);
         }
 
+        // Verify session ownership for authenticated users
+        if ($account->isAuthenticated() && $session->get('user_id') !== null
+            && (int) $session->get('user_id') !== (int) $account->id()) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
         // For practice/streak, accept client-reported result
         if ($session->get('mode') !== 'daily' && isset($data['result'])) {
             $result = $data['result'] === 'won' ? 'won' : 'lost';
@@ -297,7 +303,7 @@ final class IshkodeController
             ->condition('status', 1)
             ->condition('consent_public', 1);
 
-        $ids = $query->execute();
+        $ids = $query->range(0, 500)->execute();
 
         if ($ids === []) {
             return null;
@@ -335,6 +341,9 @@ final class IshkodeController
             return null;
         }
 
+        // Shuffle to maintain randomness even with the 500 cap
+        shuffle($filtered);
+
         // Deterministic selection for daily, random for practice
         if ($seed !== '') {
             $index = crc32($seed) % count($filtered);
@@ -359,7 +368,8 @@ final class IshkodeController
             return null;
         }
 
-        return $storage->load(reset($ids));
+        $entity = $storage->load(reset($ids));
+        return $entity instanceof GameSession ? $entity : null;
     }
 
     /** @param list<string> $guesses */
