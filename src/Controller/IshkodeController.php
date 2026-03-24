@@ -72,7 +72,7 @@ final class IshkodeController
         ]);
         $sessionStorage->save($session);
 
-        $clue = (string) $entry->get('definition');
+        $clue = $this->cleanDefinition((string) $entry->get('definition'));
 
         return $this->json([
             'session_token' => $session->get('uuid'),
@@ -123,7 +123,7 @@ final class IshkodeController
         ]);
         $sessionStorage->save($session);
 
-        $clue = (string) $entry->get('definition');
+        $clue = $this->cleanDefinition((string) $entry->get('definition'));
 
         return $this->json([
             'session_token' => $session->get('uuid'),
@@ -278,7 +278,7 @@ final class IshkodeController
 
         return $this->json([
             'word' => $word,
-            'definition' => (string) $entry->get('definition'),
+            'definition' => $this->cleanDefinition((string) $entry->get('definition')),
             'part_of_speech' => (string) $entry->get('part_of_speech'),
             'stem' => (string) $entry->get('stem'),
             'slug' => $slug,
@@ -461,6 +461,19 @@ final class IshkodeController
         } catch (\JsonException) {
             return [];
         }
+    }
+
+    /** Extract a clean definition string from a field that may be JSON-encoded. */
+    private function cleanDefinition(string $raw): string
+    {
+        if ($raw === '') {
+            return '';
+        }
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded)) {
+            return implode('; ', array_filter(array_map('trim', $decoded)));
+        }
+        return $raw;
     }
 
     /** @param array<string, mixed> $data */
