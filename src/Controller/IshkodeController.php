@@ -515,8 +515,17 @@ final class IshkodeController
         }
         $decoded = json_decode($raw, true);
         if (is_array($decoded)) {
-            return implode('; ', array_filter(array_map('trim', $decoded)));
+            $raw = implode('; ', array_filter(array_map('trim', $decoded)));
         }
+
+        // Expand OPD linguistic abbreviations for readability
+        // Order matters: longer patterns first to avoid partial replacement
+        $raw = str_replace(
+            ['h/self', 's/he', 'h/', 's.t.', 's.o.'],
+            ['himself/herself', 'she/he', 'him/her', 'something', 'someone'],
+            $raw,
+        );
+
         return $raw;
     }
 
