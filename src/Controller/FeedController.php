@@ -465,6 +465,12 @@ final class FeedController
 
         $activeFilter = $resolvedFilter ?? self::resolveFilter($query['filter'] ?? 'all')['filter'];
 
+        $userId = null;
+        if ($account !== null && $account->isAuthenticated()) {
+            $id = $account->id();
+            $userId = $id !== null ? (int) $id : null;
+        }
+
         return new FeedContext(
             latitude: $lat,
             longitude: $lon,
@@ -473,6 +479,7 @@ final class FeedController
             limit: min((int) ($query['limit'] ?? 20), 50),
             isFirstVisit: $isFirstVisit,
             isAuthenticated: $account?->isAuthenticated() ?? false,
+            userId: $userId,
         );
     }
 }

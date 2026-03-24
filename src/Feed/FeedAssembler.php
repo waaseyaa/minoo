@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Feed;
 
+use Minoo\Feed\Scoring\FeedScorer;
 use Minoo\Support\GeoDistance;
 
 final class FeedAssembler implements FeedAssemblerInterface
@@ -12,6 +13,7 @@ final class FeedAssembler implements FeedAssemblerInterface
         private readonly EntityLoaderService $loader,
         private readonly FeedItemFactory $factory,
         private readonly ?EngagementCounter $engagementCounter = null,
+        private readonly ?FeedScorer $scorer = null,
     ) {}
 
     public function assemble(FeedContext $ctx): FeedResponse
@@ -110,8 +112,12 @@ final class FeedAssembler implements FeedAssemblerInterface
             }));
         }
 
-        // 5. Sort
-        usort($items, fn(FeedItem $a, FeedItem $b) => strcmp($a->sortKey, $b->sortKey));
+        // 5. Score or Sort
+        if ($this->scorer !== null) {
+            $items = $this->scorer->score($items, $ctx->userId);
+        } else {
+            usort($items, fn(FeedItem $a, FeedItem $b) => strcmp($a->sortKey, $b->sortKey));
+        }
 
         // 6. Paginate
         $startIdx = 0;
@@ -131,7 +137,8 @@ final class FeedAssembler implements FeedAssemblerInterface
         $pageItems = array_slice($items, $startIdx, $ctx->limit);
 
         // 6b. Attach engagement counts only to the page (not all items)
-        if ($this->engagementCounter !== null) {
+        // Skip if scorer already attached engagement counts
+        if ($this->scorer === null && $this->engagementCounter !== null) {
             $pageItems = $this->attachEngagementCounts($pageItems);
         }
 

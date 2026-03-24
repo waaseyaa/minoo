@@ -8,6 +8,7 @@ use Minoo\Feed\EntityLoaderService;
 use Minoo\Feed\FeedAssembler;
 use Minoo\Feed\FeedAssemblerInterface;
 use Minoo\Feed\FeedItemFactory;
+use Minoo\Feed\Scoring\FeedScorer;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -23,10 +24,20 @@ final class FeedServiceProvider extends ServiceProvider
 
         $this->singleton(FeedItemFactory::class, fn(): FeedItemFactory => new FeedItemFactory());
 
-        $this->singleton(FeedAssemblerInterface::class, fn(): FeedAssemblerInterface => new FeedAssembler(
-            $this->resolve(EntityLoaderService::class),
-            $this->resolve(FeedItemFactory::class),
-        ));
+        $this->singleton(FeedAssemblerInterface::class, function (): FeedAssemblerInterface {
+            $scorer = null;
+            try {
+                $scorer = $this->resolve(FeedScorer::class);
+            } catch (\Throwable) {
+                // FeedScoringServiceProvider may not be registered
+            }
+
+            return new FeedAssembler(
+                $this->resolve(EntityLoaderService::class),
+                $this->resolve(FeedItemFactory::class),
+                scorer: $scorer,
+            );
+        });
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
