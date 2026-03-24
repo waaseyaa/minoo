@@ -3087,6 +3087,11 @@
     background: rgba(106, 156, 175, 0.1);
   }
 
+  [data-theme="light"] .site-name__wordmark,
+  [data-theme="light"] .site-footer__wordmark {
+    filter: brightness(0) invert(0);
+  }
+
   [data-theme="light"] .flash-message--success { background: rgba(42, 157, 143, 0.08); }
   [data-theme="light"] .flash-message--error { background: rgba(255, 77, 90, 0.08); }
   [data-theme="light"] .flash-message--info { background: rgba(106, 156, 175, 0.08); }

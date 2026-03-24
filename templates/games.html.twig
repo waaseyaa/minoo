@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Games — Minoo{% endblock %}
+
+{% block content %}
+<div class="content-well flow-lg">
+    <h1>Games</h1>
+    <p class="text-secondary">Learn Ojibwe through play. Each game pulls words directly from our dictionary.</p>
+
+    <div class="card-grid">
+        <a href="/games/ishkode" class="card card--link">
+            <div class="card__badge" style="background: var(--color-language);">Word Game</div>
+            <div class="card__body">
+                <h3 class="card__title">Ishkode</h3>
+                <p>Guess Ojibwe words letter by letter while keeping the campfire burning. Daily challenges, practice mode, and streaks.</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}
