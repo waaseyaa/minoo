@@ -16,7 +16,7 @@ return new class extends Migration
             return;
         }
 
-        $schema->getConnection()->executeStatement('
+        $schema->getConnection()->executeStatement("
             CREATE TABLE game_session (
                 gsid INTEGER PRIMARY KEY AUTOINCREMENT,
                 uuid TEXT NOT NULL,
@@ -24,15 +24,15 @@ return new class extends Migration
                 direction TEXT NOT NULL,
                 dictionary_entry_id INTEGER NOT NULL,
                 user_id INTEGER DEFAULT NULL,
-                guesses TEXT DEFAULT "[]",
+                guesses TEXT DEFAULT '[]',
                 wrong_count INTEGER DEFAULT 0,
-                status TEXT DEFAULT "in_progress",
+                status TEXT DEFAULT 'in_progress',
                 daily_date TEXT DEFAULT NULL,
-                difficulty_tier TEXT DEFAULT "easy",
+                difficulty_tier TEXT DEFAULT 'easy',
                 created_at INTEGER NOT NULL,
                 updated_at INTEGER NOT NULL
             )
-        ');
+        ");
 
         $schema->getConnection()->executeStatement(
             'CREATE INDEX idx_game_session_user ON game_session (user_id)',

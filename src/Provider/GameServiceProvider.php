@@ -24,7 +24,7 @@ final class GameServiceProvider extends ServiceProvider
             fieldDefinitions: [
                 'mode' => ['type' => 'string', 'label' => 'Mode', 'weight' => 0],
                 'direction' => ['type' => 'string', 'label' => 'Direction', 'weight' => 1],
-                'dictionary_entry_id' => ['type' => 'integer', 'label' => 'Dictionary Entry', 'weight' => 5],
+                'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 5],
                 'user_id' => ['type' => 'integer', 'label' => 'User', 'weight' => 6],
                 'guesses' => ['type' => 'text_long', 'label' => 'Guesses', 'description' => 'JSON array of letters guessed.', 'weight' => 10],
                 'wrong_count' => ['type' => 'integer', 'label' => 'Wrong Count', 'weight' => 11, 'default' => 0],
@@ -44,7 +44,7 @@ final class GameServiceProvider extends ServiceProvider
             group: 'games',
             fieldDefinitions: [
                 'date' => ['type' => 'string', 'label' => 'Date', 'weight' => 0],
-                'dictionary_entry_id' => ['type' => 'integer', 'label' => 'Dictionary Entry', 'weight' => 5],
+                'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 5],
                 'direction' => ['type' => 'string', 'label' => 'Direction', 'weight' => 10, 'default' => 'english_to_ojibwe'],
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 15, 'default' => 'easy'],
             ],
