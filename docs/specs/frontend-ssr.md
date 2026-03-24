@@ -12,12 +12,15 @@
 | `templates/teachings.html.twig` | Teachings listing + detail (extends base) |
 | `templates/language.html.twig` | Language demo page (extends base) |
 | `templates/search.html.twig` | Search page with facets + pagination (extends base) |
+| `templates/games.html.twig` | Games hub — featured game cards + "coming soon" grid (extends base) |
+| `templates/ishkode.html.twig` | Ishkode word game — campfire, keyboard, reveal screen (extends base) |
 | `templates/components/event-card.html.twig` | Event card partial |
 | `templates/components/group-card.html.twig` | Group card partial |
 | `templates/components/teaching-card.html.twig` | Teaching card partial |
 | `templates/components/dictionary-entry-card.html.twig` | Dictionary entry card partial |
 | `templates/components/search-result-card.html.twig` | Search result card partial |
-| `public/css/minoo.css` | Design system: tokens, layout, components (656 lines) |
+| `public/css/minoo.css` | Design system: tokens, layout, components (~5500 lines) |
+| `public/js/ishkode.js` | Ishkode game engine: modes, keyboard, campfire state, share |
 
 ## Template Architecture
 
