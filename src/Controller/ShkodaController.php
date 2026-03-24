@@ -446,6 +446,7 @@ final class ShkodaController
         $storage = $this->entityTypeManager->getStorage('game_session');
         $allIds = $storage->getQuery()
             ->condition('user_id', $account->id())
+            ->condition('game_type', 'shkoda')
             ->execute();
 
         if ($allIds === []) {
