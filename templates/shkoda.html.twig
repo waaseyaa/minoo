@@ -1,0 +1,87 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Shkoda — Word Game{% endblock %}
+
+{% block content %}
+<div class="shkoda" id="shkoda-game" data-api-base="/api/games/shkoda">
+    {# Breadcrumb + title #}
+    <div class="shkoda__header">
+        <nav class="shkoda__breadcrumb" aria-label="Breadcrumb">
+            <a href="/games">Games</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Shkoda</span>
+        </nav>
+        <h1 class="shkoda__title">Shkoda</h1>
+        <p class="shkoda__tagline">Keep the fire burning</p>
+    </div>
+
+    {# Mode tabs #}
+    <nav class="shkoda__tabs" role="tablist">
+        <button class="shkoda__tab shkoda__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily Challenge</button>
+        <button class="shkoda__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
+        <button class="shkoda__tab" role="tab" data-mode="streak" aria-selected="false">Streak</button>
+    </nav>
+
+    {# Direction toggle #}
+    <div class="shkoda__direction" id="shkoda-direction">
+        <span class="shkoda__dir-label shkoda__dir-label--active" id="shkoda-dir-from">English</span>
+        <button class="shkoda__dir-swap" id="shkoda-dir-swap" aria-label="Swap direction" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+        </button>
+        <span class="shkoda__dir-label" id="shkoda-dir-to">Ojibwe</span>
+    </div>
+
+    {# Campfire SVG #}
+    <div class="shkoda__fire" id="shkoda-fire" data-fire-state="7">
+        <svg viewBox="0 0 120 120" width="120" height="120" aria-label="Campfire" role="img">
+            {# Glow #}
+            <ellipse class="shkoda__glow" cx="60" cy="100" rx="40" ry="15" />
+            {# Flames — 3 layers #}
+            <path class="shkoda__flame shkoda__flame--outer" d="M60 20 C40 50, 30 80, 40 95 Q50 105, 60 100 Q70 105, 80 95 C90 80, 80 50, 60 20Z" />
+            <path class="shkoda__flame shkoda__flame--mid" d="M60 35 C45 55, 38 78, 45 92 Q52 98, 60 95 Q68 98, 75 92 C82 78, 75 55, 60 35Z" />
+            <path class="shkoda__flame shkoda__flame--inner" d="M60 50 C50 65, 46 80, 50 90 Q55 95, 60 92 Q65 95, 70 90 C74 80, 70 65, 60 50Z" />
+            {# Logs #}
+            <rect class="shkoda__log" x="30" y="98" width="60" height="8" rx="4" />
+            <rect class="shkoda__log shkoda__log--cross" x="35" y="95" width="50" height="6" rx="3" transform="rotate(-8, 60, 98)" />
+            {# Embers (visible on loss) #}
+            <circle class="shkoda__ember" cx="50" cy="90" r="2" />
+            <circle class="shkoda__ember" cx="65" cy="88" r="1.5" />
+            <circle class="shkoda__ember" cx="55" cy="85" r="1" />
+        </svg>
+        <div class="shkoda__remaining" id="shkoda-remaining">7 guesses remaining</div>
+    </div>
+
+    {# Clue box #}
+    <div class="shkoda__clue" id="shkoda-clue">
+        <div class="shkoda__clue-label">Guess the Ojibwe word for:</div>
+        <div class="shkoda__clue-word" id="shkoda-clue-word"></div>
+        <div class="shkoda__clue-detail" id="shkoda-clue-detail"></div>
+    </div>
+
+    {# Word blanks #}
+    <div class="shkoda__blanks" id="shkoda-blanks" aria-live="polite"></div>
+
+    {# Wrong guesses #}
+    <div class="shkoda__wrong" id="shkoda-wrong">
+        <span class="shkoda__wrong-label">Wrong guesses:</span>
+        <div class="shkoda__wrong-letters" id="shkoda-wrong-letters"></div>
+    </div>
+
+    {# On-screen keyboard #}
+    <div class="shkoda__keyboard" id="shkoda-keyboard"></div>
+
+    {# Reveal screen (hidden by default) #}
+    <div class="shkoda__reveal" id="shkoda-reveal" hidden>
+        <div class="shkoda__reveal-message" id="shkoda-reveal-message"></div>
+        <div class="shkoda__reveal-word" id="shkoda-reveal-word"></div>
+        <div class="shkoda__teaching" id="shkoda-teaching"></div>
+        <div class="shkoda__stats" id="shkoda-stats"></div>
+        <div class="shkoda__actions" id="shkoda-actions"></div>
+    </div>
+
+    {# Loading state #}
+    <div class="shkoda__loading" id="shkoda-loading">Loading...</div>
+</div>
+
+<script src="/js/shkoda.js" defer></script>
+{% endblock %}

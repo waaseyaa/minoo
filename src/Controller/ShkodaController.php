@@ -5,31 +5,37 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Entity\GameSession;
-use Minoo\Support\IshkodeEngine;
+use Minoo\Support\ShkodaEngine;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
 
-final class IshkodeController
+final class ShkodaController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
     ) {}
 
+    /** Redirect legacy /games/ishkode URL to /games/shkoda. */
+    public function redirectLegacy(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        return new SsrResponse(content: '', statusCode: 301, headers: ['Location' => '/games/shkoda']);
+    }
+
     /** Render the game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('ishkode.html.twig', [
-            'path' => '/games/ishkode',
+        $html = $this->twig->render('shkoda.html.twig', [
+            'path' => '/games/shkoda',
         ]);
 
         return new SsrResponse(content: $html);
     }
 
-    /** GET /api/games/ishkode/daily — today's challenge metadata. */
+    /** GET /api/games/shkoda/daily — today's challenge metadata. */
     public function daily(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $today = date('Y-m-d');
@@ -45,7 +51,7 @@ final class IshkodeController
             $tier = (string) $challenge->get('difficulty_tier');
         } else {
             // Fallback: deterministic random selection seeded by date
-            $tier = IshkodeEngine::dailyTier($dayOfWeek);
+            $tier = ShkodaEngine::dailyTier($dayOfWeek);
             $direction = $dayOfWeek % 2 === 0 ? 'english_to_ojibwe' : 'ojibwe_to_english';
             $entryId = $this->selectRandomWord($tier, $today);
             if ($entryId === null) {
@@ -90,13 +96,13 @@ final class IshkodeController
             'clue_detail' => $clueDetail,
             'direction' => $direction,
             'difficulty' => $tier,
-            'max_wrong' => IshkodeEngine::maxWrongGuesses($tier),
+            'max_wrong' => ShkodaEngine::maxWrongGuesses($tier),
             'date' => $today,
             'free_positions' => $this->findFreePositions($word),
         ]);
     }
 
-    /** GET /api/games/ishkode/word — random word for practice/streak. */
+    /** GET /api/games/shkoda/word — random word for practice/streak. */
     public function word(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $mode = ($query['mode'] ?? 'practice') === 'streak' ? 'streak' : 'practice';
@@ -150,11 +156,11 @@ final class IshkodeController
             'clue_detail' => $clueDetail,
             'direction' => $direction,
             'difficulty' => $tier,
-            'max_wrong' => IshkodeEngine::maxWrongGuesses($tier),
+            'max_wrong' => ShkodaEngine::maxWrongGuesses($tier),
         ]);
     }
 
-    /** POST /api/games/ishkode/guess — validate a letter (daily mode only). */
+    /** POST /api/games/shkoda/guess — validate a letter (daily mode only). */
     public function guess(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $data = $this->jsonBody($request);
@@ -188,7 +194,7 @@ final class IshkodeController
         $word = (string) $entry->get('word');
         $previousGuesses = json_decode((string) $session->get('guesses'), true) ?: [];
 
-        $result = IshkodeEngine::processGuess($word, $letter, $previousGuesses);
+        $result = ShkodaEngine::processGuess($word, $letter, $previousGuesses);
 
         if (!empty($result['already_guessed'])) {
             return $this->json(['error' => 'Letter already guessed', 'already_guessed' => true], 400);
@@ -201,7 +207,7 @@ final class IshkodeController
             $wrongCount++;
         }
 
-        $maxWrong = IshkodeEngine::maxWrongGuesses((string) $session->get('difficulty_tier'));
+        $maxWrong = ShkodaEngine::maxWrongGuesses((string) $session->get('difficulty_tier'));
         $allRevealed = $this->isWordFullyRevealed($word, $previousGuesses);
         $gameOver = $wrongCount >= $maxWrong || $allRevealed;
 
@@ -235,7 +241,7 @@ final class IshkodeController
         return $this->json($response);
     }
 
-    /** POST /api/games/ishkode/complete — submit completed game, get teaching data + stats. */
+    /** POST /api/games/shkoda/complete — submit completed game, get teaching data + stats. */
     public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $data = $this->jsonBody($request);
@@ -305,7 +311,7 @@ final class IshkodeController
         ]);
     }
 
-    /** GET /api/games/ishkode/stats — player stats (auth required). */
+    /** GET /api/games/shkoda/stats — player stats (auth required). */
     public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         return $this->json($this->buildStats($account));
@@ -338,7 +344,7 @@ final class IshkodeController
                 continue;
             }
 
-            $entryTier = IshkodeEngine::difficultyTier($word, $pos);
+            $entryTier = ShkodaEngine::difficultyTier($word, $pos);
             if ($entryTier === $tier) {
                 $filtered[] = $entry->id();
             }

@@ -4,52 +4,52 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Support;
 
-use Minoo\Support\IshkodeEngine;
+use Minoo\Support\ShkodaEngine;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(IshkodeEngine::class)]
-final class IshkodeEngineTest extends TestCase
+#[CoversClass(ShkodaEngine::class)]
+final class ShkodaEngineTest extends TestCase
 {
     #[Test]
     public function difficulty_tier_for_short_noun(): void
     {
-        $this->assertSame('easy', IshkodeEngine::difficultyTier('makwa', 'na'));
+        $this->assertSame('easy', ShkodaEngine::difficultyTier('makwa', 'na'));
     }
 
     #[Test]
     public function difficulty_tier_for_medium_verb(): void
     {
-        $this->assertSame('medium', IshkodeEngine::difficultyTier('bimosed', 'vai'));
+        $this->assertSame('medium', ShkodaEngine::difficultyTier('bimosed', 'vai'));
     }
 
     #[Test]
     public function difficulty_tier_for_long_word(): void
     {
-        $this->assertSame('hard', IshkodeEngine::difficultyTier('ishkodewaaboo', 'ni'));
+        $this->assertSame('hard', ShkodaEngine::difficultyTier('ishkodewaaboo', 'ni'));
     }
 
     #[Test]
     public function difficulty_tier_falls_back_to_length_when_pos_empty(): void
     {
-        $this->assertSame('easy', IshkodeEngine::difficultyTier('makwa', ''));
-        $this->assertSame('medium', IshkodeEngine::difficultyTier('bimosed', ''));
-        $this->assertSame('hard', IshkodeEngine::difficultyTier('ishkodewaaboo', ''));
+        $this->assertSame('easy', ShkodaEngine::difficultyTier('makwa', ''));
+        $this->assertSame('medium', ShkodaEngine::difficultyTier('bimosed', ''));
+        $this->assertSame('hard', ShkodaEngine::difficultyTier('ishkodewaaboo', ''));
     }
 
     #[Test]
     public function max_wrong_guesses_per_tier(): void
     {
-        $this->assertSame(7, IshkodeEngine::maxWrongGuesses('easy'));
-        $this->assertSame(6, IshkodeEngine::maxWrongGuesses('medium'));
-        $this->assertSame(5, IshkodeEngine::maxWrongGuesses('hard'));
+        $this->assertSame(7, ShkodaEngine::maxWrongGuesses('easy'));
+        $this->assertSame(6, ShkodaEngine::maxWrongGuesses('medium'));
+        $this->assertSame(5, ShkodaEngine::maxWrongGuesses('hard'));
     }
 
     #[Test]
     public function process_correct_guess(): void
     {
-        $result = IshkodeEngine::processGuess('ishkode', 'i', []);
+        $result = ShkodaEngine::processGuess('ishkode', 'i', []);
         $this->assertTrue($result['correct']);
         $this->assertSame([0], $result['positions']);
     }
@@ -57,7 +57,7 @@ final class IshkodeEngineTest extends TestCase
     #[Test]
     public function process_wrong_guess(): void
     {
-        $result = IshkodeEngine::processGuess('ishkode', 'z', []);
+        $result = ShkodaEngine::processGuess('ishkode', 'z', []);
         $this->assertFalse($result['correct']);
         $this->assertSame([], $result['positions']);
     }
@@ -66,7 +66,7 @@ final class IshkodeEngineTest extends TestCase
     public function process_guess_finds_multiple_positions(): void
     {
         // "baabaa" has 'a' at positions 1, 2, 4, 5 (0-indexed)
-        $result = IshkodeEngine::processGuess('baabaa', 'a', []);
+        $result = ShkodaEngine::processGuess('baabaa', 'a', []);
         $this->assertTrue($result['correct']);
         $this->assertSame([1, 2, 4, 5], $result['positions']);
     }
@@ -74,7 +74,7 @@ final class IshkodeEngineTest extends TestCase
     #[Test]
     public function process_guess_is_case_insensitive(): void
     {
-        $result = IshkodeEngine::processGuess('Makwa', 'm', []);
+        $result = ShkodaEngine::processGuess('Makwa', 'm', []);
         $this->assertTrue($result['correct']);
         $this->assertSame([0], $result['positions']);
     }
@@ -82,7 +82,7 @@ final class IshkodeEngineTest extends TestCase
     #[Test]
     public function duplicate_guess_returns_already_guessed(): void
     {
-        $result = IshkodeEngine::processGuess('ishkode', 'i', ['i']);
+        $result = ShkodaEngine::processGuess('ishkode', 'i', ['i']);
         $this->assertArrayHasKey('already_guessed', $result);
         $this->assertTrue($result['already_guessed']);
     }
@@ -91,13 +91,13 @@ final class IshkodeEngineTest extends TestCase
     public function daily_tier_for_day_of_week(): void
     {
         // Monday = easy
-        $this->assertSame('easy', IshkodeEngine::dailyTier(1));
+        $this->assertSame('easy', ShkodaEngine::dailyTier(1));
         // Tuesday = medium
-        $this->assertSame('medium', IshkodeEngine::dailyTier(2));
+        $this->assertSame('medium', ShkodaEngine::dailyTier(2));
         // Saturday = hard
-        $this->assertSame('hard', IshkodeEngine::dailyTier(6));
+        $this->assertSame('hard', ShkodaEngine::dailyTier(6));
         // Sunday = hard
-        $this->assertSame('hard', IshkodeEngine::dailyTier(0));
+        $this->assertSame('hard', ShkodaEngine::dailyTier(0));
     }
 
     #[Test]
@@ -105,9 +105,9 @@ final class IshkodeEngineTest extends TestCase
     {
         $guesses = ['i', 's', 'r', 'h', 'k', 'l', 'o', 'd', 'e'];
         $word = 'ishkode';
-        $text = IshkodeEngine::generateShareText($word, $guesses, 'english_to_ojibwe', 'easy', '2026-03-23');
+        $text = ShkodaEngine::generateShareText($word, $guesses, 'english_to_ojibwe', 'easy', '2026-03-23');
 
-        $this->assertStringContainsString('Ishkode', $text);
+        $this->assertStringContainsString('Shkoda', $text);
         $this->assertStringContainsString('2026-03-23', $text);
         $this->assertStringContainsString("\u{1F525}", $text);
         $this->assertStringContainsString("\u{1FAA8}", $text);

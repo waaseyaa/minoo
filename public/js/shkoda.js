@@ -1,5 +1,5 @@
 /**
- * Ishkode — Ojibwe Word Game
+ * Shkoda — Ojibwe Word Game
  *
  * Client-side game engine. Handles:
  * - Mode switching (daily/practice/streak)
@@ -7,9 +7,9 @@
  * - Keyboard rendering and input (on-screen + physical)
  * - Campfire state management (data-fire-state attribute)
  * - Letter blank rendering and reveal
- * - Daily mode: server-validated per guess (POST /api/games/ishkode/guess)
+ * - Daily mode: server-validated per guess (POST /api/games/shkoda/guess)
  * - Practice/streak: client-validated (word decoded from base64)
- * - Game completion (POST /api/games/ishkode/complete)
+ * - Game completion (POST /api/games/shkoda/complete)
  * - Reveal screen with teaching data
  * - Share text generation (clipboard)
  * - localStorage for anonymous stats + daily completion tracking
@@ -24,29 +24,29 @@
     ['S', 'T', 'W', 'Y', 'Z', '\u02BC'] // ʼ = glottal stop
   ];
   var VALID_LETTERS = new Set(KEYBOARD_ROWS.flat().map(function (k) { return k.toLowerCase(); }));
-  var STATS_KEY = 'ishkode-stats';
+  var STATS_KEY = 'shkoda-stats';
 
   // ── DOM refs ──
-  var game = document.getElementById('ishkode-game');
+  var game = document.getElementById('shkoda-game');
   if (!game) return;
 
-  var apiBase = game.dataset.apiBase || '/api/games/ishkode';
-  var fireEl = document.getElementById('ishkode-fire');
-  var remainingEl = document.getElementById('ishkode-remaining');
-  var clueWordEl = document.getElementById('ishkode-clue-word');
-  var clueDetailEl = document.getElementById('ishkode-clue-detail');
-  var blanksEl = document.getElementById('ishkode-blanks');
-  var wrongLettersEl = document.getElementById('ishkode-wrong-letters');
-  var keyboardEl = document.getElementById('ishkode-keyboard');
-  var revealEl = document.getElementById('ishkode-reveal');
-  var revealMessageEl = document.getElementById('ishkode-reveal-message');
-  var revealWordEl = document.getElementById('ishkode-reveal-word');
-  var teachingEl = document.getElementById('ishkode-teaching');
-  var statsEl = document.getElementById('ishkode-stats');
-  var actionsEl = document.getElementById('ishkode-actions');
-  var loadingEl = document.getElementById('ishkode-loading');
-  var clueEl = document.getElementById('ishkode-clue');
-  var wrongEl = document.getElementById('ishkode-wrong');
+  var apiBase = game.dataset.apiBase || '/api/games/shkoda';
+  var fireEl = document.getElementById('shkoda-fire');
+  var remainingEl = document.getElementById('shkoda-remaining');
+  var clueWordEl = document.getElementById('shkoda-clue-word');
+  var clueDetailEl = document.getElementById('shkoda-clue-detail');
+  var blanksEl = document.getElementById('shkoda-blanks');
+  var wrongLettersEl = document.getElementById('shkoda-wrong-letters');
+  var keyboardEl = document.getElementById('shkoda-keyboard');
+  var revealEl = document.getElementById('shkoda-reveal');
+  var revealMessageEl = document.getElementById('shkoda-reveal-message');
+  var revealWordEl = document.getElementById('shkoda-reveal-word');
+  var teachingEl = document.getElementById('shkoda-teaching');
+  var statsEl = document.getElementById('shkoda-stats');
+  var actionsEl = document.getElementById('shkoda-actions');
+  var loadingEl = document.getElementById('shkoda-loading');
+  var clueEl = document.getElementById('shkoda-clue');
+  var wrongEl = document.getElementById('shkoda-wrong');
 
   // ── State ──
   var state = {
@@ -65,7 +65,7 @@
 
   // ── Helpers ──
   function todayKey() {
-    return 'ishkode-daily-' + new Date().toISOString().slice(0, 10);
+    return 'shkoda-daily-' + new Date().toISOString().slice(0, 10);
   }
 
   function loadStats() {
@@ -115,11 +115,11 @@
     blanksEl.innerHTML = '';
     for (var i = 0; i < state.wordLength; i++) {
       var cell = document.createElement('span');
-      cell.className = 'ishkode__blank';
+      cell.className = 'shkoda__blank';
       cell.dataset.index = i;
       if (state.revealedPositions.indexOf(i) !== -1) {
         cell.textContent = state.word ? state.word[i] : '';
-        cell.classList.add('ishkode__blank--revealed');
+        cell.classList.add('shkoda__blank--revealed');
       }
       blanksEl.appendChild(cell);
     }
@@ -135,8 +135,8 @@
       var cell = blanksEl.querySelector('[data-index="' + pos.index + '"]');
       if (cell) {
         cell.textContent = pos.char;
-        cell.classList.add('ishkode__blank--revealed');
-        cell.classList.add('ishkode__blank--free');
+        cell.classList.add('shkoda__blank--revealed');
+        cell.classList.add('shkoda__blank--free');
       }
     });
   }
@@ -149,7 +149,7 @@
       var cell = blanksEl.querySelector('[data-index="' + pos + '"]');
       if (cell) {
         cell.textContent = letter;
-        cell.classList.add('ishkode__blank--revealed');
+        cell.classList.add('shkoda__blank--revealed');
       }
     });
   }
@@ -158,7 +158,7 @@
     wrongLettersEl.innerHTML = '';
     state.wrongGuesses.forEach(function (letter) {
       var badge = document.createElement('span');
-      badge.className = 'ishkode__wrong-letter';
+      badge.className = 'shkoda__wrong-letter';
       badge.textContent = letter;
       wrongLettersEl.appendChild(badge);
     });
@@ -175,10 +175,10 @@
     keyboardEl.innerHTML = '';
     KEYBOARD_ROWS.forEach(function (row) {
       var rowDiv = document.createElement('div');
-      rowDiv.className = 'ishkode__kb-row';
+      rowDiv.className = 'shkoda__kb-row';
       row.forEach(function (letter) {
         var btn = document.createElement('button');
-        btn.className = 'ishkode__key';
+        btn.className = 'shkoda__key';
         btn.dataset.letter = letter.toLowerCase();
         btn.textContent = letter;
         btn.type = 'button';
@@ -186,10 +186,10 @@
 
         var lower = letter.toLowerCase();
         if (state.wrongGuesses.indexOf(lower) !== -1) {
-          btn.classList.add('ishkode__key--wrong');
+          btn.classList.add('shkoda__key--wrong');
           btn.disabled = true;
         } else if (state.guesses.indexOf(lower) !== -1) {
-          btn.classList.add('ishkode__key--correct');
+          btn.classList.add('shkoda__key--correct');
           btn.disabled = true;
         }
 
@@ -321,7 +321,7 @@
     if (!won && data.word) {
       for (var i = 0; i < data.word.length; i++) {
         var cell = blanksEl.querySelector('[data-index="' + i + '"]');
-        if (cell && !cell.classList.contains('ishkode__blank--revealed')) {
+        if (cell && !cell.classList.contains('shkoda__blank--revealed')) {
           cell.textContent = data.word[i];
         }
       }
@@ -345,7 +345,7 @@
     keyboardEl.style.display = 'none';
 
     revealMessageEl.textContent = won ? 'Miigwech! You got it!' : 'The fire has gone out.';
-    revealMessageEl.style.color = won ? 'var(--ishkode-correct)' : 'var(--ishkode-wrong)';
+    revealMessageEl.style.color = won ? 'var(--shkoda-correct)' : 'var(--shkoda-wrong)';
 
     var word = data.word || (state.word ? state.word : '');
     revealWordEl.textContent = word;
@@ -373,20 +373,20 @@
     actionsEl.innerHTML = '';
 
     var shareBtn = document.createElement('button');
-    shareBtn.className = 'ishkode__btn';
+    shareBtn.className = 'shkoda__btn';
     shareBtn.textContent = 'Share';
     shareBtn.addEventListener('click', function () { shareResult(won, shareBtn); });
     actionsEl.appendChild(shareBtn);
 
     if (state.mode === 'practice' || (state.mode === 'streak' && won)) {
       var nextBtn = document.createElement('button');
-      nextBtn.className = 'ishkode__btn ishkode__btn--primary';
+      nextBtn.className = 'shkoda__btn shkoda__btn--primary';
       nextBtn.textContent = 'Next Word';
       nextBtn.addEventListener('click', function () { startGame(); });
       actionsEl.appendChild(nextBtn);
     } else if (state.mode === 'streak' && !won) {
       var replayBtn = document.createElement('button');
-      replayBtn.className = 'ishkode__btn ishkode__btn--primary';
+      replayBtn.className = 'shkoda__btn shkoda__btn--primary';
       replayBtn.textContent = 'Streak Over \u2014 Play Again';
       replayBtn.addEventListener('click', function () { startGame(); });
       actionsEl.appendChild(replayBtn);
@@ -394,10 +394,10 @@
   }
 
   function renderStatsHtml(stats) {
-    return '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.games_played + '</div><div class="ishkode__stat-label">Played</div></div>' +
-      '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.wins + '</div><div class="ishkode__stat-label">Won</div></div>' +
-      '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.current_streak + '</div><div class="ishkode__stat-label">Streak</div></div>' +
-      '<div class="ishkode__stat"><div class="ishkode__stat-value">' + stats.best_streak + '</div><div class="ishkode__stat-label">Best</div></div>';
+    return '<div class="shkoda__stat"><div class="shkoda__stat-value">' + stats.games_played + '</div><div class="shkoda__stat-label">Played</div></div>' +
+      '<div class="shkoda__stat"><div class="shkoda__stat-value">' + stats.wins + '</div><div class="shkoda__stat-label">Won</div></div>' +
+      '<div class="shkoda__stat"><div class="shkoda__stat-value">' + stats.current_streak + '</div><div class="shkoda__stat-label">Streak</div></div>' +
+      '<div class="shkoda__stat"><div class="shkoda__stat-value">' + stats.best_streak + '</div><div class="shkoda__stat-label">Best</div></div>';
   }
 
   function escapeHtml(str) {
@@ -421,11 +421,11 @@
     var outcome = won ? 'fire still burning' : 'fire went out';
     var dirLabel = state.direction === 'english_to_ojibwe' ? 'English \u2192 Ojibwe' : 'Ojibwe \u2192 English';
     var date = state.mode === 'daily' ? new Date().toISOString().slice(0, 10) : 'Practice';
-    var text = '\uD83D\uDD25 Ishkode \u2014 ' + (state.mode === 'daily' ? 'Daily Challenge' : state.mode.charAt(0).toUpperCase() + state.mode.slice(1)) +
+    var text = '\uD83D\uDD25 Shkoda \u2014 ' + (state.mode === 'daily' ? 'Daily Challenge' : state.mode.charAt(0).toUpperCase() + state.mode.slice(1)) +
       '\n' + date + ' \u00B7 ' + dirLabel +
       '\n' + emojis +
       '\n' + total + ' guesses \u00B7 ' + outcome +
-      '\nhttps://minoo.live/games/ishkode';
+      '\nhttps://minoo.live/games/shkoda';
 
     if (navigator.share) {
       navigator.share({ text: text }).catch(function () { /* cancelled */ });
@@ -443,7 +443,7 @@
     var rect = fireEl.getBoundingClientRect();
     for (var i = 0; i < 8; i++) {
       var spark = document.createElement('div');
-      spark.className = 'ishkode__spark';
+      spark.className = 'shkoda__spark';
       spark.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 40) + 'px';
       spark.style.top = (rect.top + 20) + 'px';
       spark.style.position = 'fixed';
@@ -456,7 +456,7 @@
     var rect = fireEl.getBoundingClientRect();
     for (var i = 0; i < 4; i++) {
       var puff = document.createElement('div');
-      puff.className = 'ishkode__smoke';
+      puff.className = 'shkoda__smoke';
       puff.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 20) + 'px';
       puff.style.top = (rect.top + 30) + 'px';
       puff.style.position = 'fixed';
@@ -468,14 +468,14 @@
 
   // ── Tabs and direction ──
   function initTabs() {
-    var tabs = game.querySelectorAll('.ishkode__tab');
+    var tabs = game.querySelectorAll('.shkoda__tab');
     tabs.forEach(function (tab) {
       tab.addEventListener('click', function () {
         tabs.forEach(function (t) {
-          t.classList.remove('ishkode__tab--active');
+          t.classList.remove('shkoda__tab--active');
           t.setAttribute('aria-selected', 'false');
         });
-        tab.classList.add('ishkode__tab--active');
+        tab.classList.add('shkoda__tab--active');
         tab.setAttribute('aria-selected', 'true');
         state.mode = tab.dataset.mode;
         startGame();
@@ -484,22 +484,22 @@
   }
 
   function initDirection() {
-    var swapBtn = document.getElementById('ishkode-dir-swap');
-    var fromLabel = document.getElementById('ishkode-dir-from');
-    var toLabel = document.getElementById('ishkode-dir-to');
+    var swapBtn = document.getElementById('shkoda-dir-swap');
+    var fromLabel = document.getElementById('shkoda-dir-from');
+    var toLabel = document.getElementById('shkoda-dir-to');
     if (!swapBtn) return;
 
     function updateLabels() {
       if (state.direction === 'english_to_ojibwe') {
         fromLabel.textContent = 'English';
         toLabel.textContent = 'Ojibwe';
-        fromLabel.classList.add('ishkode__dir-label--active');
-        toLabel.classList.remove('ishkode__dir-label--active');
+        fromLabel.classList.add('shkoda__dir-label--active');
+        toLabel.classList.remove('shkoda__dir-label--active');
       } else {
         fromLabel.textContent = 'Ojibwe';
         toLabel.textContent = 'English';
-        fromLabel.classList.add('ishkode__dir-label--active');
-        toLabel.classList.remove('ishkode__dir-label--active');
+        fromLabel.classList.add('shkoda__dir-label--active');
+        toLabel.classList.remove('shkoda__dir-label--active');
       }
     }
 
@@ -555,7 +555,7 @@
         if (localStorage.getItem(todayKey())) {
           showLoading(false);
           revealEl.hidden = false;
-          revealMessageEl.textContent = 'You already played today\'s Ishkode!';
+          revealMessageEl.textContent = 'You already played today\'s Shkoda!';
           revealMessageEl.style.color = 'var(--text-secondary)';
           revealWordEl.textContent = '';
           teachingEl.innerHTML = '<p>Come back tomorrow for a new word.</p>';
@@ -596,7 +596,7 @@
       }
 
       // Update clue
-      var clueLabel = game.querySelector('.ishkode__clue-label');
+      var clueLabel = game.querySelector('.shkoda__clue-label');
       if (state.direction === 'english_to_ojibwe') {
         if (clueLabel) clueLabel.textContent = 'Guess the Ojibwe word for:';
       } else {

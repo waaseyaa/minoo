@@ -53,11 +53,21 @@ final class GameServiceProvider extends ServiceProvider
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
     {
+        // Legacy redirect: /games/ishkode → /games/shkoda (#535)
+        $router->addRoute(
+            'games.ishkode.redirect',
+            RouteBuilder::create('/games/ishkode')
+                ->controller('Minoo\\Controller\\ShkodaController::redirectLegacy')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
         // Game page
         $router->addRoute(
-            'games.ishkode',
-            RouteBuilder::create('/games/ishkode')
-                ->controller('Minoo\\Controller\\IshkodeController::page')
+            'games.shkoda',
+            RouteBuilder::create('/games/shkoda')
+                ->controller('Minoo\\Controller\\ShkodaController::page')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -66,9 +76,9 @@ final class GameServiceProvider extends ServiceProvider
 
         // API: get daily challenge
         $router->addRoute(
-            'api.games.ishkode.daily',
-            RouteBuilder::create('/api/games/ishkode/daily')
-                ->controller('Minoo\\Controller\\IshkodeController::daily')
+            'api.games.shkoda.daily',
+            RouteBuilder::create('/api/games/shkoda/daily')
+                ->controller('Minoo\\Controller\\ShkodaController::daily')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -76,9 +86,9 @@ final class GameServiceProvider extends ServiceProvider
 
         // API: get random word for practice/streak
         $router->addRoute(
-            'api.games.ishkode.word',
-            RouteBuilder::create('/api/games/ishkode/word')
-                ->controller('Minoo\\Controller\\IshkodeController::word')
+            'api.games.shkoda.word',
+            RouteBuilder::create('/api/games/shkoda/word')
+                ->controller('Minoo\\Controller\\ShkodaController::word')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -86,9 +96,9 @@ final class GameServiceProvider extends ServiceProvider
 
         // API: submit guess (daily challenge only)
         $router->addRoute(
-            'api.games.ishkode.guess',
-            RouteBuilder::create('/api/games/ishkode/guess')
-                ->controller('Minoo\\Controller\\IshkodeController::guess')
+            'api.games.shkoda.guess',
+            RouteBuilder::create('/api/games/shkoda/guess')
+                ->controller('Minoo\\Controller\\ShkodaController::guess')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -96,9 +106,9 @@ final class GameServiceProvider extends ServiceProvider
 
         // API: complete game
         $router->addRoute(
-            'api.games.ishkode.complete',
-            RouteBuilder::create('/api/games/ishkode/complete')
-                ->controller('Minoo\\Controller\\IshkodeController::complete')
+            'api.games.shkoda.complete',
+            RouteBuilder::create('/api/games/shkoda/complete')
+                ->controller('Minoo\\Controller\\ShkodaController::complete')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -106,9 +116,9 @@ final class GameServiceProvider extends ServiceProvider
 
         // API: player stats (auth required)
         $router->addRoute(
-            'api.games.ishkode.stats',
-            RouteBuilder::create('/api/games/ishkode/stats')
-                ->controller('Minoo\\Controller\\IshkodeController::stats')
+            'api.games.shkoda.stats',
+            RouteBuilder::create('/api/games/shkoda/stats')
+                ->controller('Minoo\\Controller\\ShkodaController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),

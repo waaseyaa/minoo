@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Support;
 
-final class IshkodeEngine
+final class ShkodaEngine
 {
     private const EASY_POS = ['ni', 'na', 'nad', 'nid'];
     private const MEDIUM_POS = ['ni', 'na', 'nad', 'nid', 'vai', 'vii'];
@@ -126,11 +126,11 @@ final class IshkodeEngine
         $dateLabel = $date !== '' ? $date : 'Practice';
 
         $lines = [
-            "\xF0\x9F\x94\xA5 Ishkode \xE2\x80\x94 Daily Challenge",
+            "\xF0\x9F\x94\xA5 Shkoda \xE2\x80\x94 Daily Challenge",
             "{$dateLabel} \xC2\xB7 {$dirLabel}",
             $emojis,
             "{$totalGuesses} guesses \xC2\xB7 {$outcome}",
-            "minoo.live/games/ishkode",
+            "minoo.live/games/shkoda",
         ];
 
         return implode("\n", $lines);
