@@ -203,6 +203,8 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Migration tables must use `_data` CLOB schema**: Content entities use `{id} INTEGER PRIMARY KEY AUTOINCREMENT, uuid CLOB, bundle CLOB, {label} CLOB, langcode CLOB, _data CLOB`. Config entities use `{id} TEXT PRIMARY KEY, bundle CLOB, langcode CLOB, _data CLOB`. All field values are stored in the `_data` JSON blob — do NOT create individual columns for fields. `SqlEntityStorage` will error with "no column named _data" if the schema is wrong.
 - **Dictionary `definition` field is JSON-wrapped**: Values like `["bear"]` need `json_decode()` before display. Use `cleanDefinition()` pattern in controllers.
 - **New providers must be registered in `composer.json`**: Add to `extra.waaseyaa.providers[]` then run `php bin/waaseyaa optimize:manifest`. Without this, routes and entity types are not discovered.
+- **Vendor symlink goes circular after worktree cleanup**: `git checkout -- vendor` or `composer install` from a worktree can replace the symlink with a self-referencing one (`vendor -> /home/jones/dev/minoo/vendor`). Fix: `rm vendor && ln -s ../waaseyaa/vendor vendor`.
+- **CSS cache bust is manual**: Bump `?v=N` in `base.html.twig` after CSS changes. Stale CSS on production is the #1 cause of "it looks broken after deploy."
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 
