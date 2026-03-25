@@ -1,0 +1,508 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Word Match — Minoo{% endblock %}
+
+{% block content %}
+<div class="matcher" data-game="matcher">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/games">Games</a> <span aria-hidden="true">›</span> <span>Word Match</span>
+    </nav>
+
+    {# Mode tabs #}
+    <div class="matcher__tabs" role="tablist" aria-label="Game mode">
+        <button role="tab" class="game-btn game-btn--tab" data-mode="daily" aria-selected="true">Daily</button>
+        <button role="tab" class="game-btn game-btn--tab" data-mode="practice" aria-selected="false">Practice</button>
+    </div>
+
+    {# Practice controls (hidden in daily mode) #}
+    <div class="matcher__controls" data-show-mode="practice" hidden>
+        <div class="matcher__difficulty" role="group" aria-label="Difficulty">
+            <button class="game-btn game-btn--sm" data-difficulty="easy" aria-pressed="true">Easy (4)</button>
+            <button class="game-btn game-btn--sm" data-difficulty="medium" aria-pressed="false">Medium (6)</button>
+            <button class="game-btn game-btn--sm" data-difficulty="hard" aria-pressed="false">Hard (8)</button>
+        </div>
+        <div class="matcher__direction" role="group" aria-label="Direction">
+            <button class="game-btn game-btn--sm" data-direction="ojibwe_to_english" aria-pressed="true">Ojibwe → English</button>
+            <button class="game-btn game-btn--sm" data-direction="english_to_ojibwe" aria-pressed="false">English → Ojibwe</button>
+        </div>
+    </div>
+
+    {# Game board #}
+    <div class="matcher__board" aria-label="Matching game board">
+        <div class="matcher__column matcher__column--left" data-side="left"></div>
+        <svg class="matcher__svg" aria-hidden="true"></svg>
+        <div class="matcher__column matcher__column--right" data-side="right"></div>
+    </div>
+
+    {# Stats row #}
+    <div class="matcher__status">
+        <div class="game-stat">
+            <span class="game-stat__value" data-stat="time">0:00</span>
+            <span class="game-stat__label">Time</span>
+        </div>
+        <div class="game-stat">
+            <span class="game-stat__value" data-stat="matched">0</span>
+            <span class="game-stat__label">Matched</span>
+        </div>
+        <div class="game-stat">
+            <span class="game-stat__value" data-stat="wrong">0</span>
+            <span class="game-stat__label">Wrong</span>
+        </div>
+    </div>
+
+    {# Completion overlay #}
+    <div class="matcher__complete" hidden>
+        <div class="matcher__complete-card">
+            <h2 class="matcher__complete-title">All matched!</h2>
+            <div class="matcher__complete-stats">
+                <div class="game-stat">
+                    <span class="game-stat__value" data-result="time"></span>
+                    <span class="game-stat__label">Time</span>
+                </div>
+                <div class="game-stat">
+                    <span class="game-stat__value" data-result="attempts"></span>
+                    <span class="game-stat__label">Attempts</span>
+                </div>
+                <div class="game-stat">
+                    <span class="game-stat__value" data-result="accuracy"></span>
+                    <span class="game-stat__label">Accuracy</span>
+                </div>
+            </div>
+            <div class="matcher__complete-actions">
+                <button class="game-btn game-btn--primary" data-action="play-again">Play Again</button>
+                <button class="game-btn" data-action="share">Share</button>
+            </div>
+        </div>
+    </div>
+
+    {# Toast for feedback #}
+    <div class="game-toast" role="status" aria-live="polite" hidden></div>
+
+    {# Screen reader announcements #}
+    <div class="visually-hidden" aria-live="polite" data-sr-announce></div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    const root = document.querySelector('[data-game="matcher"]');
+    const board = root.querySelector('.matcher__board');
+    const leftCol = root.querySelector('[data-side="left"]');
+    const rightCol = root.querySelector('[data-side="right"]');
+    const svg = root.querySelector('.matcher__svg');
+    const completeOverlay = root.querySelector('.matcher__complete');
+    const toast = root.querySelector('.game-toast');
+    const srAnnounce = root.querySelector('[data-sr-announce]');
+
+    let state = {
+        token: null,
+        pairs: null,       // {left: [{id, text}], right: [{id, text}]}
+        mode: 'daily',
+        difficulty: 'easy',
+        direction: 'ojibwe_to_english',
+        selected: null,     // {side, id, el} — currently selected word
+        matched: new Set(),  // Set of matched IDs
+        wrongCount: 0,
+        matchCount: 0,
+        totalPairs: 0,
+        timerStart: null,
+        timerInterval: null,
+        dragLine: null,      // active SVG line during drag
+        isDragging: false,
+        isMobile: 'ontouchstart' in window,
+    };
+
+    // --- Init ---
+
+    function init() {
+        bindTabs();
+        bindControls();
+        loadGame();
+    }
+
+    // --- Tab / control handlers ---
+
+    function bindTabs() {
+        root.querySelectorAll('[data-mode]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.mode = btn.dataset.mode;
+                root.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-selected', 'false'));
+                btn.setAttribute('aria-selected', 'true');
+
+                const practiceControls = root.querySelector('[data-show-mode="practice"]');
+                practiceControls.hidden = state.mode !== 'practice';
+
+                loadGame();
+            });
+        });
+    }
+
+    function bindControls() {
+        root.querySelectorAll('[data-difficulty]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.difficulty = btn.dataset.difficulty;
+                root.querySelectorAll('[data-difficulty]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+                btn.setAttribute('aria-pressed', 'true');
+                loadGame();
+            });
+        });
+
+        root.querySelectorAll('[data-direction]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.direction = btn.dataset.direction;
+                root.querySelectorAll('[data-direction]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+                btn.setAttribute('aria-pressed', 'true');
+                loadGame();
+            });
+        });
+
+        root.querySelector('[data-action="play-again"]').addEventListener('click', loadGame);
+        root.querySelector('[data-action="share"]').addEventListener('click', shareResult);
+    }
+
+    // --- API ---
+
+    async function loadGame() {
+        resetState();
+        completeOverlay.hidden = true;
+
+        try {
+            const url = state.mode === 'daily'
+                ? '/api/games/matcher/daily'
+                : `/api/games/matcher/practice?difficulty=${state.difficulty}&direction=${state.direction}`;
+
+            const res = await fetch(url);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                showToast(err.error || 'Failed to load game');
+                return;
+            }
+
+            const data = await res.json();
+            state.token = data.session_token;
+            state.pairs = data.pairs;
+            state.totalPairs = data.pairs.left.length;
+            state.direction = data.direction;
+            state.difficulty = data.difficulty;
+
+            renderBoard();
+            announce('Game loaded. Match the words.');
+        } catch (e) {
+            showToast('Failed to load game');
+        }
+    }
+
+    async function submitMatch(leftId, rightId) {
+        try {
+            const res = await fetch('/api/games/matcher/match', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_token: state.token,
+                    left_id: String(leftId),
+                    right_id: String(rightId),
+                }),
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                showToast(err.error || 'Error');
+                return null;
+            }
+
+            return await res.json();
+        } catch (e) {
+            showToast('Connection error');
+            return null;
+        }
+    }
+
+    async function submitComplete() {
+        try {
+            const res = await fetch('/api/games/matcher/complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_token: state.token }),
+            });
+            if (res.ok) return await res.json();
+        } catch (e) { /* ignore */ }
+        return null;
+    }
+
+    // --- Rendering ---
+
+    function renderBoard() {
+        leftCol.innerHTML = '';
+        rightCol.innerHTML = '';
+        svg.innerHTML = '';
+
+        state.pairs.left.forEach(item => {
+            leftCol.appendChild(createWordEl(item, 'left'));
+        });
+
+        state.pairs.right.forEach(item => {
+            rightCol.appendChild(createWordEl(item, 'right'));
+        });
+
+        updateStats();
+    }
+
+    function createWordEl(item, side) {
+        const el = document.createElement('button');
+        el.className = 'matcher-word';
+        el.textContent = item.text;
+        el.dataset.id = item.id;
+        el.dataset.side = side;
+        el.setAttribute('type', 'button');
+
+        if (state.isMobile) {
+            el.addEventListener('click', () => handleTap(el, side, item.id));
+        } else {
+            el.addEventListener('mousedown', (e) => handleDragStart(e, el, side, item.id));
+        }
+
+        return el;
+    }
+
+    // --- Interaction: Tap (mobile) ---
+
+    function handleTap(el, side, id) {
+        if (state.matched.has(id + '-' + side)) return;
+
+        if (!state.selected) {
+            state.selected = { side, id, el };
+            el.classList.add('matcher-word--active');
+            startTimer();
+            return;
+        }
+
+        if (state.selected.side === side) {
+            // Same side — swap selection
+            state.selected.el.classList.remove('matcher-word--active');
+            state.selected = { side, id, el };
+            el.classList.add('matcher-word--active');
+            return;
+        }
+
+        // Different side — attempt match
+        const leftId = side === 'left' ? id : state.selected.id;
+        const rightId = side === 'right' ? id : state.selected.id;
+        const leftEl = side === 'left' ? el : state.selected.el;
+        const rightEl = side === 'right' ? el : state.selected.el;
+
+        state.selected.el.classList.remove('matcher-word--active');
+        state.selected = null;
+
+        attemptMatch(leftId, rightId, leftEl, rightEl);
+    }
+
+    // --- Interaction: Drag (desktop) ---
+
+    function handleDragStart(e, el, side, id) {
+        if (state.matched.has(id + '-' + side)) return;
+        e.preventDefault();
+        startTimer();
+
+        state.isDragging = true;
+        state.selected = { side, id, el };
+        el.classList.add('matcher-word--active');
+
+        const rect = el.getBoundingClientRect();
+        const boardRect = board.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2 - boardRect.left;
+        const startY = rect.top + rect.height / 2 - boardRect.top;
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', startX);
+        line.setAttribute('y1', startY);
+        line.setAttribute('x2', startX);
+        line.setAttribute('y2', startY);
+        line.classList.add('matcher-line', 'matcher-line--drawing');
+        svg.appendChild(line);
+        state.dragLine = line;
+
+        function onMove(e2) {
+            const x = (e2.clientX || e2.touches?.[0]?.clientX) - boardRect.left;
+            const y = (e2.clientY || e2.touches?.[0]?.clientY) - boardRect.top;
+            line.setAttribute('x2', x);
+            line.setAttribute('y2', y);
+        }
+
+        function onUp(e2) {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            state.isDragging = false;
+            el.classList.remove('matcher-word--active');
+
+            // Find target
+            const target = document.elementFromPoint(e2.clientX, e2.clientY);
+            const targetWord = target?.closest?.('.matcher-word');
+
+            if (targetWord && targetWord.dataset.side !== side) {
+                const targetId = parseInt(targetWord.dataset.id);
+                const leftId = side === 'left' ? id : targetId;
+                const rightId = side === 'right' ? id : targetId;
+                const leftEl2 = side === 'left' ? el : targetWord;
+                const rightEl2 = side === 'right' ? el : targetWord;
+
+                line.remove();
+                state.dragLine = null;
+                state.selected = null;
+                attemptMatch(leftId, rightId, leftEl2, rightEl2);
+            } else {
+                line.remove();
+                state.dragLine = null;
+                state.selected = null;
+            }
+        }
+
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    // --- Match logic ---
+
+    async function attemptMatch(leftId, rightId, leftEl, rightEl) {
+        const result = await submitMatch(leftId, rightId);
+        if (!result) return;
+
+        if (result.correct) {
+            state.matched.add(leftId + '-left');
+            state.matched.add(rightId + '-right');
+            state.matchCount++;
+
+            leftEl.classList.add('matcher-word--matched');
+            rightEl.classList.add('matcher-word--matched');
+            leftEl.disabled = true;
+            rightEl.disabled = true;
+
+            drawLockedLine(leftEl, rightEl);
+            announce(`Correct! ${state.matchCount} of ${state.totalPairs} matched.`);
+
+            if (state.matchCount === state.totalPairs) {
+                stopTimer();
+                const result2 = await submitComplete();
+                showComplete(result2);
+            }
+        } else {
+            state.wrongCount++;
+            leftEl.classList.add('matcher-word--wrong');
+            rightEl.classList.add('matcher-word--wrong');
+            announce('Incorrect match. Try again.');
+
+            setTimeout(() => {
+                leftEl.classList.remove('matcher-word--wrong');
+                rightEl.classList.remove('matcher-word--wrong');
+            }, 600);
+        }
+
+        updateStats();
+    }
+
+    function drawLockedLine(leftEl, rightEl) {
+        const boardRect = board.getBoundingClientRect();
+        const lr = leftEl.getBoundingClientRect();
+        const rr = rightEl.getBoundingClientRect();
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', lr.left + lr.width / 2 - boardRect.left);
+        line.setAttribute('y1', lr.top + lr.height / 2 - boardRect.top);
+        line.setAttribute('x2', rr.left + rr.width / 2 - boardRect.left);
+        line.setAttribute('y2', rr.top + rr.height / 2 - boardRect.top);
+        line.classList.add('matcher-line', 'matcher-line--locked');
+        svg.appendChild(line);
+    }
+
+    // --- Timer ---
+
+    function startTimer() {
+        if (state.timerStart) return;
+        state.timerStart = Date.now();
+        state.timerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - state.timerStart) / 1000);
+            const min = Math.floor(elapsed / 60);
+            const sec = String(elapsed % 60).padStart(2, '0');
+            root.querySelector('[data-stat="time"]').textContent = `${min}:${sec}`;
+        }, 1000);
+    }
+
+    function stopTimer() {
+        if (state.timerInterval) {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+        }
+    }
+
+    // --- Completion ---
+
+    function showComplete(data) {
+        if (data) {
+            root.querySelector('[data-result="time"]').textContent = formatTime(data.time_seconds);
+            root.querySelector('[data-result="attempts"]').textContent = data.attempts;
+            root.querySelector('[data-result="accuracy"]').textContent = data.accuracy + '%';
+        }
+        completeOverlay.hidden = false;
+        announce('All pairs matched! Game complete.');
+    }
+
+    function shareResult() {
+        const time = root.querySelector('[data-result="time"]').textContent;
+        const accuracy = root.querySelector('[data-result="accuracy"]').textContent;
+        const text = [
+            '\u{1F517} Word Match \u2014 Minoo',
+            `${state.mode === 'daily' ? new Date().toISOString().slice(0, 10) : 'Practice'} \u00B7 ${state.difficulty}`,
+            `${time} \u00B7 ${accuracy} accuracy`,
+            'minoo.live/games/matcher',
+        ].join('\n');
+
+        if (navigator.share) {
+            navigator.share({ text }).catch(() => {});
+        } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+        }
+    }
+
+    // --- Utilities ---
+
+    function resetState() {
+        stopTimer();
+        state.token = null;
+        state.pairs = null;
+        state.selected = null;
+        state.matched = new Set();
+        state.wrongCount = 0;
+        state.matchCount = 0;
+        state.totalPairs = 0;
+        state.timerStart = null;
+        leftCol.innerHTML = '';
+        rightCol.innerHTML = '';
+        svg.innerHTML = '';
+        updateStats();
+    }
+
+    function updateStats() {
+        root.querySelector('[data-stat="matched"]').textContent = state.matchCount;
+        root.querySelector('[data-stat="wrong"]').textContent = state.wrongCount;
+    }
+
+    function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = String(seconds % 60).padStart(2, '0');
+        return `${min}:${sec}`;
+    }
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.hidden = false;
+        setTimeout(() => { toast.hidden = true; }, 3700);
+    }
+
+    function announce(msg) {
+        srAnnounce.textContent = msg;
+    }
+
+    init();
+})();
+</script>
+{% endblock %}
