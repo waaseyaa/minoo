@@ -74,6 +74,7 @@
   var apiGet = g.apiGet;
   var escapeHtml = g.escapeHtml;
   var announce = g.announce;
+  var showError = g.showError;
 
   function themeKey(slug) {
     return 'crossword-theme-' + slug;
@@ -676,7 +677,7 @@
         markWordWrong(state.selectedWordIndex, data.wrong_positions || []);
       }
     }).catch(function () {
-      // Network error — allow retry
+      showError('Connection lost — try checking again');
     });
   }
 
@@ -775,7 +776,7 @@
         }
       }
     }).catch(function () {
-      // Network error — allow retry
+      showError('Connection lost — hint not applied');
     });
   }
 
@@ -792,6 +793,7 @@
     }).then(function (data) {
       endGame(data);
     }).catch(function () {
+      showError('Could not save result — showing locally');
       endGame({});
     });
   }
@@ -981,6 +983,7 @@
       renderThemes(data.themes || []);
     }).catch(function () {
       showLoading(false);
+      showError('Could not load themes — please try again');
       themesListEl.innerHTML = '<p>Could not load themes. Please try again.</p>';
     });
   }
@@ -1107,6 +1110,7 @@
       }
     }).catch(function () {
       showLoading(false);
+      showError('Could not load puzzle — please try again');
       if (loadingEl) {
         loadingEl.hidden = false;
         var p = loadingEl.querySelector('p');

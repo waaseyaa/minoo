@@ -92,6 +92,20 @@ var MinooGames = (function () {
         '<div class="game-stat"><div class="game-stat__value">' + stats.best_streak + '</div><div class="game-stat__label">Best</div></div>';
     }
 
+    /** Show a brief error toast at the bottom of the screen. Auto-dismisses after 4s. */
+    function showError(msg) {
+      // Remove any existing toast
+      var existing = document.querySelector('.game-toast');
+      if (existing) existing.remove();
+
+      var toast = document.createElement('div');
+      toast.className = 'game-toast';
+      toast.textContent = msg || 'Connection lost — try again';
+      toast.setAttribute('role', 'alert');
+      document.body.appendChild(toast);
+      setTimeout(function () { toast.remove(); }, 4000);
+    }
+
     return {
       todayKey: todayKey,
       loadStats: loadStats,
@@ -100,7 +114,8 @@ var MinooGames = (function () {
       apiGet: apiGet,
       renderStatsHtml: renderStatsHtml,
       escapeHtml: escapeHtml,
-      announce: announce
+      announce: announce,
+      showError: showError
     };
   }
 
