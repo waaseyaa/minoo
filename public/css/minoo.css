@@ -3188,6 +3188,57 @@
   }
 
   /* ══════════════════════════════════════════════
+     Shared Game Components
+     ══════════════════════════════════════════════ */
+
+  /* Game accent — set by each game's container */
+  .shkoda     { --game-accent: var(--shkoda-correct); }
+  .crossword  { --game-accent: var(--crossword-correct); }
+
+  /* Shared stat block (used in reveal/completion screens) */
+  .game-stat {
+    text-align: center;
+  }
+
+  .game-stat__value {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--game-accent, var(--text-primary));
+  }
+
+  .game-stat__label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  /* Shared game button */
+  .game-btn {
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+
+    &:hover {
+      border-color: var(--game-accent);
+      color: var(--game-accent);
+    }
+  }
+
+  .game-btn--primary {
+    background: var(--game-accent);
+    border-color: var(--game-accent);
+    color: #fff;
+
+    &:hover {
+      background: oklch(from var(--game-accent) calc(l - 0.05) c h);
+    }
+  }
+
+  /* ══════════════════════════════════════════════
      Games Hub
      ══════════════════════════════════════════════ */
 
@@ -3842,51 +3893,10 @@
     margin-block-end: var(--space-md);
   }
 
-  .shkoda__stat {
-    text-align: center;
-
-    & .shkoda__stat-value {
-      font-size: var(--text-lg);
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    & .shkoda__stat-label {
-      font-size: var(--text-xs);
-      color: var(--text-muted);
-    }
-  }
-
   .shkoda__actions {
     display: flex;
     gap: var(--space-xs);
     justify-content: center;
-  }
-
-  .shkoda__btn {
-    padding: var(--space-xs) var(--space-md);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: var(--text-sm);
-    transition: background-color 0.2s, border-color 0.2s;
-
-    &:hover {
-      border-color: var(--shkoda-correct);
-      color: var(--shkoda-correct);
-    }
-
-    &--primary {
-      background: var(--shkoda-correct);
-      border-color: var(--shkoda-correct);
-      color: #fff;
-
-      &:hover {
-        background: oklch(from var(--shkoda-correct) calc(l - 0.05) c h);
-      }
-    }
   }
 
   /* Loading state */
@@ -4147,7 +4157,7 @@
     50% { box-shadow: 0 0 4px oklch(from var(--crossword-active) l c h / 0.2); }
   }
 
-  /* Active clue bar below grid */
+  /* Active clue bar below grid — fixed height prevents layout shift */
   .crossword__active-clue {
     border-left: 3px solid var(--crossword-active);
     background: oklch(1 0 0 / 0.05);
@@ -4156,6 +4166,7 @@
     margin-block: var(--space-sm);
     font-size: var(--text-sm);
     color: var(--text-secondary);
+    min-height: 2.5rem;
 
     & strong {
       color: var(--text-primary);
@@ -4163,10 +4174,13 @@
     }
   }
 
-  /* Clue panels */
+  /* Clue panels — scrollable to prevent page-level scrollIntoView shifts */
   .crossword__clues {
     font-size: var(--text-sm);
     line-height: 1.5;
+    max-height: 50vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .crossword__clues-heading {
@@ -4335,51 +4349,10 @@
     margin-block-end: var(--space-md);
   }
 
-  .crossword__stat {
-    text-align: center;
-
-    & .crossword__stat-value {
-      font-size: var(--text-lg);
-      font-weight: 700;
-      color: var(--crossword-correct);
-    }
-
-    & .crossword__stat-label {
-      font-size: var(--text-xs);
-      color: var(--text-muted);
-    }
-  }
-
   .crossword__actions {
     display: flex;
     gap: var(--space-xs);
     justify-content: center;
-  }
-
-  .crossword__btn {
-    padding: var(--space-xs) var(--space-md);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: var(--text-sm);
-    transition: background-color 0.2s, border-color 0.2s;
-
-    &:hover {
-      border-color: var(--crossword-correct);
-      color: var(--crossword-correct);
-    }
-
-    &--primary {
-      background: var(--crossword-correct);
-      border-color: var(--crossword-correct);
-      color: #fff;
-
-      &:hover {
-        background: oklch(from var(--crossword-correct) calc(l - 0.05) c h);
-      }
-    }
   }
 
   /* Theme browser card grid */

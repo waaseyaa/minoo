@@ -77,11 +77,10 @@ var MinooGames = (function () {
     }
 
     function renderStatsHtml(stats) {
-      var p = cssPrefix;
-      return '<div class="' + p + '__stat"><div class="' + p + '__stat-value">' + stats.games_played + '</div><div class="' + p + '__stat-label">Played</div></div>' +
-        '<div class="' + p + '__stat"><div class="' + p + '__stat-value">' + stats.wins + '</div><div class="' + p + '__stat-label">Won</div></div>' +
-        '<div class="' + p + '__stat"><div class="' + p + '__stat-value">' + stats.current_streak + '</div><div class="' + p + '__stat-label">Streak</div></div>' +
-        '<div class="' + p + '__stat"><div class="' + p + '__stat-value">' + stats.best_streak + '</div><div class="' + p + '__stat-label">Best</div></div>';
+      return '<div class="game-stat"><div class="game-stat__value">' + stats.games_played + '</div><div class="game-stat__label">Played</div></div>' +
+        '<div class="game-stat"><div class="game-stat__value">' + stats.wins + '</div><div class="game-stat__label">Won</div></div>' +
+        '<div class="game-stat"><div class="game-stat__value">' + stats.current_streak + '</div><div class="game-stat__label">Streak</div></div>' +
+        '<div class="game-stat"><div class="game-stat__value">' + stats.best_streak + '</div><div class="game-stat__label">Best</div></div>';
     }
 
     return {
