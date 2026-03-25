@@ -179,6 +179,18 @@ final class GameSessionTest extends TestCase
     }
 
     #[Test]
+    public function matcher_game_type_is_valid(): void
+    {
+        $session = new GameSession([
+            'game_type' => 'matcher',
+            'mode' => 'daily',
+            'direction' => 'ojibwe_to_english',
+        ]);
+
+        $this->assertSame('matcher', $session->get('game_type'));
+    }
+
+    #[Test]
     public function shkoda_still_requires_direction_and_entry(): void
     {
         $this->expectException(\InvalidArgumentException::class);
