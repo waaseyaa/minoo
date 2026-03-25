@@ -64,6 +64,7 @@
   var saveStats = g.saveStats;
   var api = g.api;
   var apiGet = g.apiGet;
+  var showError = g.showError;
 
   // ── Rendering ──
   function showLoading(show) {
@@ -212,7 +213,7 @@
         endGame(false, data);
       }
     }).catch(function () {
-      // Network error — allow retry
+      showError('Connection lost — try your guess again');
     });
   }
 
@@ -263,7 +264,7 @@
     }).then(function (data) {
       endGame(status === 'won', data);
     }).catch(function () {
-      // Still show reveal locally
+      showError('Could not save result — showing locally');
       endGame(status === 'won', {});
     });
   }
@@ -596,6 +597,7 @@
       renderWrongGuesses();
     }).catch(function () {
       showLoading(false);
+      showError('Could not load word — please try again');
       if (loadingEl) {
         loadingEl.hidden = false;
         loadingEl.textContent = 'Could not load word. Please try again.';

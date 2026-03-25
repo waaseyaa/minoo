@@ -3238,6 +3238,34 @@
     }
   }
 
+  /* Game error toast — auto-dismiss, fixed bottom */
+  .game-toast {
+    position: fixed;
+    bottom: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    background: oklch(from var(--color-events) l c h / 0.95);
+    color: #fff;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    z-index: 200;
+    box-shadow: 0 4px 16px oklch(0% 0 0 / 0.3);
+    animation: game-toast-in 0.3s ease, game-toast-out 0.3s ease 3.7s forwards;
+    pointer-events: none;
+  }
+
+  @keyframes game-toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  @keyframes game-toast-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
   /* ══════════════════════════════════════════════
      Games Hub
      ══════════════════════════════════════════════ */
