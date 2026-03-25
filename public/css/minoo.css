@@ -4619,6 +4619,175 @@
     animation: shkoda-shake 0.4s ease;
   }
 
+  /* ── Matcher ── */
+
+  .matcher {
+      --matcher-accent: oklch(0.75 0.15 280);
+      max-width: 48rem;
+      margin: 0 auto;
+      padding: var(--space-m);
+  }
+
+  .matcher__tabs {
+      display: flex;
+      gap: var(--space-xs);
+      margin-block-end: var(--space-m);
+  }
+
+  .matcher__controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-s);
+      margin-block-end: var(--space-m);
+  }
+
+  .matcher__difficulty,
+  .matcher__direction {
+      display: flex;
+      gap: var(--space-xs);
+  }
+
+  .matcher__board {
+      position: relative;
+      display: flex;
+      gap: var(--space-l);
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 20rem;
+      margin-block-end: var(--space-m);
+  }
+
+  .matcher__column {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-s);
+      flex: 0 1 14rem;
+      z-index: 1;
+  }
+
+  .matcher__svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+  }
+
+  .matcher-word {
+      padding: var(--space-xs) var(--space-s);
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-m);
+      color: var(--text-1);
+      font-size: var(--step-0);
+      text-align: center;
+      cursor: grab;
+      transition: border-color 0.15s, opacity 0.3s, transform 0.15s;
+      user-select: none;
+  }
+
+  .matcher-word:hover:not(:disabled) {
+      border-color: var(--matcher-accent);
+  }
+
+  .matcher-word--active {
+      border-color: var(--matcher-accent);
+      box-shadow: 0 0 0 3px oklch(0.75 0.15 280 / 0.3);
+  }
+
+  .matcher-word--matched {
+      border-color: var(--color-correct);
+      opacity: 0.6;
+      cursor: default;
+  }
+
+  .matcher-word--wrong {
+      border-color: var(--color-wrong);
+      animation: matcher-shake 0.4s ease-in-out;
+  }
+
+  @keyframes matcher-shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+  }
+
+  .matcher-line--drawing {
+      stroke: var(--matcher-accent);
+      stroke-width: 2;
+      stroke-dasharray: 6 4;
+      opacity: 0.7;
+  }
+
+  .matcher-line--locked {
+      stroke: var(--color-correct);
+      stroke-width: 2.5;
+      opacity: 0.5;
+  }
+
+  .matcher__status {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-l);
+  }
+
+  .matcher__complete {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: oklch(0 0 0 / 0.6);
+      z-index: 100;
+  }
+
+  .matcher__complete-card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-l);
+      padding: var(--space-l);
+      text-align: center;
+      max-width: 24rem;
+      width: 90%;
+  }
+
+  .matcher__complete-title {
+      font-size: var(--step-2);
+      margin-block-end: var(--space-m);
+  }
+
+  .matcher__complete-stats {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-l);
+      margin-block-end: var(--space-m);
+  }
+
+  .matcher__complete-actions {
+      display: flex;
+      gap: var(--space-s);
+      justify-content: center;
+  }
+
+  /* Matcher mobile */
+  @media (max-width: 40em) {
+      .matcher__board {
+          gap: var(--space-s);
+      }
+
+      .matcher__column {
+          flex: 1;
+      }
+
+      .matcher-word {
+          font-size: var(--step--1);
+          padding: var(--space-xs);
+      }
+  }
+
   /* ── Reduced motion: disable game animations ── */
   @media (prefers-reduced-motion: reduce) {
     .shkoda__flame,
@@ -4655,6 +4824,10 @@
 
     .game-card__cta::after {
       transition: none;
+    }
+
+    .matcher-word--wrong {
+      animation: none;
     }
   }
 }
