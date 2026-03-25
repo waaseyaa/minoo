@@ -18,9 +18,9 @@
 
   // ── Constants ──
   var KEYBOARD_ROWS = [
-    ['A', 'B', 'C', 'D', 'E', 'G', 'H', 'I'],
-    ['K', 'M', 'N', 'O', 'P', 'S', 'W', 'Z'],
-    ['\u02BC'] // ʼ = glottal stop; HINT, DEL, CHECK added programmatically
+    ['A', 'B', 'C', 'D', 'E', 'G', 'H', 'I', 'J'],
+    ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'],
+    ['S', 'T', 'W', 'Y', 'Z', '\u02BC'] // ʼ = glottal stop; HINT, DEL, CHECK added programmatically
   ];
   var VALID_LETTERS = new Set(KEYBOARD_ROWS.flat().map(function (k) { return k.toLowerCase(); }));
   var STATS_KEY = 'crossword-stats';

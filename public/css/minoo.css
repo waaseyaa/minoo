@@ -4264,36 +4264,52 @@
     margin: var(--space-sm) auto 0;
   }
 
-  .crossword__kb-row {
+  .crossword__keyboard-row {
     display: flex;
     justify-content: center;
     gap: var(--space-2xs);
   }
 
-  .crossword__button {
+  .crossword__key {
     min-width: clamp(1.75rem, 7vw, 2.5rem);
     height: clamp(2.25rem, 9vw, 3rem);
     border: none;
     border-radius: var(--radius-sm);
-    background: var(--crossword-cell-bg);
+    background: var(--crossword-key-bg, oklch(0.22 0.01 260));
     color: var(--text-primary);
     font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.15s, transform 0.1s;
+    transition: background-color 0.15s, transform 0.1s, color 0.15s;
     text-transform: uppercase;
 
     &:hover {
-      background: oklch(0.25 0.01 260);
+      background: var(--crossword-key-hover, oklch(0.28 0.02 260));
     }
 
     &:active {
       transform: scale(0.95);
     }
 
-    &--backspace {
-      min-width: clamp(3rem, 12vw, 4rem);
+    &--action {
+      min-width: clamp(3rem, 12vw, 4.5rem);
       font-size: var(--text-xs);
+      letter-spacing: 0.03em;
+      background: oklch(from var(--crossword-active) l c h / 0.15);
+      color: var(--crossword-active);
+
+      &:hover {
+        background: oklch(from var(--crossword-active) l c h / 0.25);
+      }
+    }
+
+    &--check {
+      background: oklch(from var(--crossword-correct) l c h / 0.15);
+      color: var(--crossword-correct);
+
+      &:hover {
+        background: oklch(from var(--crossword-correct) l c h / 0.25);
+      }
     }
   }
 
@@ -4403,6 +4419,11 @@
     background: oklch(0.96 0.005 250 / 0.4);
   }
 
+  :root:not([data-theme="dark"]) .crossword__key {
+    --crossword-key-bg: oklch(0.88 0.01 250);
+    --crossword-key-hover: oklch(0.82 0.02 250);
+  }
+
   /* Mobile responsive */
   @media (max-width: 768px) {
     .crossword__layout {
@@ -4492,7 +4513,43 @@
       display: none;
     }
 
-    /* Sticky keyboard pinned to bottom */
+    /* Crossword: hide breadcrumb on mobile */
+    .crossword__breadcrumb {
+      display: none;
+    }
+
+    /* Crossword: sticky keyboard pinned to bottom */
+    .crossword__keyboard {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 0;
+      z-index: 50;
+      background: var(--surface);
+      padding: var(--space-2xs) var(--space-2xs) max(var(--space-xs), env(safe-area-inset-bottom));
+      border-block-start: 1px solid var(--border);
+      width: 100%;
+      max-width: none;
+    }
+
+    .crossword__keyboard-row {
+      gap: 3px;
+      padding-inline: 2px;
+    }
+
+    .crossword__key {
+      min-width: 0;
+      flex: 1 1 0;
+      height: 44px;
+      font-size: var(--text-sm);
+      border-radius: var(--radius-sm);
+      padding-inline: 0;
+    }
+
+    .crossword__key--action {
+      flex: 1.5 1 0;
+    }
+
+    /* Shkoda: sticky keyboard pinned to bottom */
     .shkoda__keyboard {
       position: fixed;
       inset-inline: 0;
