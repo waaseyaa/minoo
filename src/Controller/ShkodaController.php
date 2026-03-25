@@ -222,7 +222,6 @@ final class ShkodaController
         $session->set('guesses', json_encode($previousGuesses));
         $session->set('wrong_count', $wrongCount);
         $session->set('status', $status);
-        $session->set('updated_at', time());
         $sessionStorage->save($session);
 
         $response = [
@@ -272,7 +271,6 @@ final class ShkodaController
             $session->set('status', $result);
             $session->set('guesses', json_encode($guesses));
             $session->set('wrong_count', $wrongCount);
-            $session->set('updated_at', time());
             $sessionStorage->save($session);
         }
 
