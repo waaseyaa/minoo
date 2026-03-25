@@ -4559,6 +4559,45 @@
   .shkoda__fire--shake {
     animation: shkoda-shake 0.4s ease;
   }
+
+  /* ── Reduced motion: disable game animations ── */
+  @media (prefers-reduced-motion: reduce) {
+    .shkoda__flame,
+    .shkoda__flame--inner,
+    .shkoda__flame--mid,
+    .shkoda__flame--outer,
+    .shkoda__glow,
+    .shkoda__blank--revealed,
+    .shkoda__fire--shake,
+    .shkoda__spark,
+    .shkoda__smoke,
+    .shkoda__reveal,
+    .game-card--featured:hover .game-card__flame--outer {
+      animation: none;
+    }
+
+    [data-fire-state="win"] .shkoda__flame,
+    [data-fire-state="win"] .shkoda__glow {
+      animation: none;
+    }
+
+    .crossword__cell--cursor {
+      animation: none;
+      box-shadow: 0 0 8px oklch(from var(--crossword-active) l c h / 0.4);
+    }
+
+    .shkoda__blank--revealed {
+      transform: none;
+    }
+
+    .game-card--featured:hover {
+      transform: none;
+    }
+
+    .game-card__cta::after {
+      transition: none;
+    }
+  }
 }
 
 @layer utilities {

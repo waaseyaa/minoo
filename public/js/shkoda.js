@@ -528,6 +528,8 @@
     document.addEventListener('keydown', function (e) {
       if (state.gameOver) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
+      // Don't capture when focus is outside the game
+      if (!game.contains(document.activeElement) && document.activeElement !== document.body) return;
 
       var key = e.key.toLowerCase();
       // Map apostrophe to glottal stop

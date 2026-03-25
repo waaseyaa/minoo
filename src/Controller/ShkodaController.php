@@ -78,6 +78,7 @@ final class ShkodaController
         // Create server-side session for validation
         $sessionStorage = $this->entityTypeManager->getStorage('game_session');
         $session = $sessionStorage->create([
+            'game_type' => 'shkoda',
             'mode' => 'daily',
             'direction' => $direction,
             'dictionary_entry_id' => $entryId,
@@ -140,6 +141,7 @@ final class ShkodaController
         // For practice/streak, include word (base64 obfuscated, client-side validation)
         $sessionStorage = $this->entityTypeManager->getStorage('game_session');
         $session = $sessionStorage->create([
+            'game_type' => 'shkoda',
             'mode' => $mode,
             'direction' => $direction,
             'dictionary_entry_id' => $entryId,

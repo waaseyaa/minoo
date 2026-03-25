@@ -9,6 +9,7 @@ use Minoo\Support\GameStatsCalculator;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
 
@@ -19,6 +20,7 @@ final class CrosswordController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
+        private readonly GateInterface $gate,
     ) {}
 
     private function getEntityTypeManager(): EntityTypeManager
@@ -257,6 +259,10 @@ final class CrosswordController
             return $this->json(['error' => 'Invalid session'], 404);
         }
 
+        if ($this->gate->denies('update', $session, $account)) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
         $puzzleId = (string) $session->get('puzzle_id');
         $puzzle = $this->entityTypeManager->getStorage('crossword_puzzle')->load($puzzleId);
         if ($puzzle === null) {
@@ -331,6 +337,10 @@ final class CrosswordController
         $session = $this->loadSessionByToken($token);
         if ($session === null) {
             return $this->json(['error' => 'Invalid session'], 404);
+        }
+
+        if ($this->gate->denies('update', $session, $account)) {
+            return $this->json(['error' => 'Forbidden'], 403);
         }
 
         if ($session->get('status') !== 'completed') {
@@ -426,6 +436,10 @@ final class CrosswordController
             return $this->json(['error' => 'Invalid session'], 404);
         }
 
+        if ($this->gate->denies('update', $session, $account)) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
         $tier = (string) $session->get('difficulty_tier');
         $maxHints = CrosswordEngine::maxHints($tier);
         $hintsUsed = (int) $session->get('hints_used');
@@ -474,6 +488,10 @@ final class CrosswordController
         $session = $this->loadSessionByToken($token);
         if ($session === null) {
             return $this->json(['error' => 'Invalid session'], 404);
+        }
+
+        if ($this->gate->denies('update', $session, $account)) {
+            return $this->json(['error' => 'Forbidden'], 403);
         }
 
         if ($session->get('status') !== 'in_progress') {

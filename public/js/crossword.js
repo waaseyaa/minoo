@@ -1153,12 +1153,8 @@
   }
 
   // ── Init ──
-  function init() {
-    initTabs();
-    initDifficulty();
-    initPhysicalKeyboard();
-    startGame();
-  }
-
-  document.addEventListener('DOMContentLoaded', init);
+  initTabs();
+  initDifficulty();
+  initPhysicalKeyboard();
+  startGame();
 })();

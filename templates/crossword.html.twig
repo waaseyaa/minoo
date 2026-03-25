@@ -4,10 +4,16 @@
 
 {% block content %}
 <div class="crossword" data-game="crossword">
-    {# Breadcrumb #}
-    <nav class="crossword__breadcrumb" aria-label="Breadcrumb">
-        <a href="/games">Games</a> › <span>Crossword</span>
-    </nav>
+    {# Breadcrumb + title #}
+    <div class="crossword__header">
+        <nav class="crossword__breadcrumb" aria-label="Breadcrumb">
+            <a href="/games">Games</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Crossword</span>
+        </nav>
+        <h1 class="crossword__title">Crossword</h1>
+        <p class="crossword__tagline">Fill the grid with Ojibwe words</p>
+    </div>
 
     {# Mode tabs #}
     <div class="crossword__tabs" role="tablist">
@@ -82,5 +88,5 @@
     </div>
 </div>
 
-<script src="/js/crossword.js"></script>
+<script src="/js/crossword.js" defer></script>
 {% endblock %}
