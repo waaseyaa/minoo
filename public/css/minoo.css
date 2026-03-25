@@ -4766,7 +4766,7 @@
 
   /* ── Community sections (replaces atlas-section) ── */
   .community-section {
-    padding: var(--space-md) 0;
+    padding: var(--space-sm) 0;
     border-block-end: 1px solid var(--border-subtle);
   }
   .community-section:last-child {
@@ -4778,7 +4778,7 @@
     letter-spacing: 0.09rem;
     color: var(--color-communities);
     font-weight: 600;
-    margin-block-end: var(--space-xs);
+    margin-block-end: var(--space-2xs);
   }
   .community-section__grid {
     display: grid;
@@ -4907,16 +4907,64 @@
   .community-list {
     padding: var(--space-sm) var(--gutter);
   }
+
+  /* Compact community rows in the list view */
+  .community-list .card--community {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: 0;
+    border-inline-start: 3px solid var(--color-communities);
+    border-block-end: 1px solid var(--border-subtle);
+    box-shadow: none;
+    gap: var(--space-sm);
+
+    &:hover {
+      background: oklch(from var(--color-communities) l c h / 0.04);
+      box-shadow: none;
+      transform: none;
+      border-inline-start-color: oklch(from var(--color-communities) calc(l + 0.1) c h);
+    }
+
+    & > *:first-child {
+      flex: 1;
+      min-width: 0;
+    }
+
+    & > *:last-child {
+      flex-shrink: 0;
+      text-align: end;
+      white-space: nowrap;
+    }
+
+    & .card__title {
+      font-size: var(--text-sm);
+    }
+
+    & .card__meta {
+      font-size: var(--text-xs);
+    }
+
+    & .card__badge {
+      font-size: 0.6rem;
+    }
+  }
+
   .community-group__label {
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.09rem;
     color: var(--text-muted);
     font-weight: 600;
-    margin: var(--space-md) 0 var(--space-xs);
+    margin: var(--space-sm) 0 var(--space-2xs);
+    padding-block-start: var(--space-xs);
+    border-block-start: 1px solid var(--border-subtle);
   }
   .community-group__label:first-child {
     margin-block-start: 0;
+    border-block-start: none;
+    padding-block-start: 0;
   }
 
   /* ── Atlas entity filters ── */
@@ -5010,16 +5058,8 @@
 
   /* ── Community detail (replaces atlas-detail-hero) ── */
   .community-detail-hero {
-    padding: var(--space-lg) var(--gutter) var(--space-md);
+    padding: var(--space-md) var(--gutter) var(--space-sm);
     background: var(--surface-dark);
-  }
-  .community-detail-hero__back {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-decoration: none;
-  }
-  .community-detail-hero__back:hover {
-    color: var(--text-primary);
   }
   .community-detail-hero__badge {
     display: inline-block;
@@ -5031,26 +5071,42 @@
     letter-spacing: 0.06rem;
     color: var(--color-communities);
     font-weight: 600;
-    margin-block-start: var(--space-sm);
   }
   .community-detail-hero__name {
     font-family: var(--font-heading);
     font-size: var(--text-3xl);
     font-weight: 700;
     color: var(--text-primary);
-    margin-block-start: var(--space-2xs);
+    margin-block-start: var(--space-3xs);
   }
   .community-detail-hero__subtitle {
     font-size: var(--text-sm);
     color: var(--text-secondary);
     margin-block-start: var(--space-3xs);
   }
-  .community-detail-hero__stats {
-    display: flex;
-    gap: var(--space-sm);
-    margin-block-start: var(--space-sm);
-    font-size: var(--text-sm);
+  .community-detail-hero__sep {
     color: var(--text-muted);
+    margin-inline: var(--space-3xs);
+  }
+  .community-detail-hero__inline-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-xs);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+
+    & a {
+      color: var(--color-communities);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    & span + span::before {
+      content: "·";
+      margin-inline-end: var(--space-xs);
+      color: var(--border);
+    }
   }
 
   /* Business detail map */

@@ -23,62 +23,29 @@
     </div>
     <h1 class="community-detail-hero__name">{{ community.get('name') }}</h1>
     <div class="community-detail-hero__subtitle">
-      {% if community.get('nation') %}{{ community.get('nation') }} · {% endif %}
-      {% if community.get('treaty') %}{{ community.get('treaty') }} · {% endif %}
-      {{ community.get('province') }}
-    </div>
-    <div class="community-detail-hero__stats">
+      {% set subtitle_parts = [] %}
+      {% if community.get('nation') %}{% set subtitle_parts = subtitle_parts|merge([community.get('nation')]) %}{% endif %}
+      {% if community.get('treaty') %}{% set subtitle_parts = subtitle_parts|merge([community.get('treaty')]) %}{% endif %}
+      {% set subtitle_parts = subtitle_parts|merge([community.get('province')]) %}
+      {{ subtitle_parts|join(' · ') }}
       {% if community.get('population') %}
-        <span>{{ trans('community.pop') }} {{ community.get('population')|number_format }} <span style="opacity:0.5">({{ community.get('population_year') }})</span></span>
+        <span class="community-detail-hero__sep">·</span>
+        <span>{{ trans('community.pop') }} {{ community.get('population')|number_format }}</span>
       {% endif %}
       {% if distance_from_user %}
-        <span>·</span>
+        <span class="community-detail-hero__sep">·</span>
         <span>{{ distance_from_user|number_format(0) }} {{ trans('community.km_away') }}</span>
       {% endif %}
     </div>
-  </div>
-
-  {# --- About --- #}
-  <div class="community-section">
-    <div class="community-section__label">{{ trans('community.about') }}</div>
-    <div class="community-section__grid">
-      {% if community.get('nation') %}
-      <div>
-        <div class="community-section__field-label">{{ trans('community.nation') }}</div>
-        <div class="community-section__field-value">{{ community.get('nation') }}</div>
-      </div>
-      {% endif %}
-      {% if community.get('language_group') %}
-      <div>
-        <div class="community-section__field-label">{{ trans('community.language_group') }}</div>
-        <div class="community-section__field-value">{{ community.get('language_group') }}</div>
-      </div>
-      {% endif %}
-      {% if community.get('treaty') %}
-      <div>
-        <div class="community-section__field-label">{{ trans('community.treaty') }}</div>
-        <div class="community-section__field-value">{{ community.get('treaty') }}</div>
-      </div>
-      {% endif %}
-      {% if community.get('reserve_name') %}
-      <div>
-        <div class="community-section__field-label">{{ trans('community.reserve') }}</div>
-        <div class="community-section__field-value">{{ community.get('reserve_name') }}</div>
-      </div>
-      {% endif %}
-      {% if community.get('inac_id') %}
-      <div>
-        <div class="community-section__field-label">{{ trans('community.inac_band_no') }}</div>
-        <div class="community-section__field-value">{{ community.get('inac_id') }}</div>
-      </div>
-      {% endif %}
-      {% if community.get('website') %}
-      <div>
-        <div class="community-section__field-label">{{ trans('community.website') }}</div>
-        <div class="community-section__field-value"><a href="{{ community.get('website') }}" target="_blank" rel="noopener">{{ community.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a></div>
-      </div>
-      {% endif %}
+    {# Inline metadata when About would be sparse #}
+    {% if community.get('inac_id') or community.get('reserve_name') or community.get('language_group') or community.get('website') %}
+    <div class="community-detail-hero__inline-meta">
+      {% if community.get('language_group') %}<span>{{ community.get('language_group') }}</span>{% endif %}
+      {% if community.get('reserve_name') %}<span>{{ community.get('reserve_name') }}</span>{% endif %}
+      {% if community.get('inac_id') %}<span>Band #{{ community.get('inac_id') }}</span>{% endif %}
+      {% if community.get('website') %}<a href="{{ community.get('website') }}" target="_blank" rel="noopener">{{ community.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a>{% endif %}
     </div>
+    {% endif %}
   </div>
 
   {% include "components/community-contact-card.html.twig" with {
