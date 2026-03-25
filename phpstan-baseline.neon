@@ -46,6 +46,12 @@ parameters:
 			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
+			path: src/Controller/CrosswordController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
 			path: src/Controller/EngagementController.php
 
 		-
@@ -55,16 +61,16 @@ parameters:
 			path: src/Controller/FeedController.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Controller/ShkodaController.php
-
-		-
 			message: '#^Property Minoo\\Controller\\LocationController\:\:\$twig is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: src/Controller/LocationController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Controller/ShkodaController.php
 
 		-
 			message: '#^Method Minoo\\Controller\\VolunteerDashboardController\:\:findVolunteerByAccount\(\) should return Waaseyaa\\Entity\\ContentEntityBase\|null but returns Waaseyaa\\Entity\\EntityInterface\|null\.$#'
@@ -95,6 +101,18 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: src/Feed/FeedAssembler.php
+
+		-
+			message: '#^Offset ''auto'' on array\{auto\: string, elder\: string\|null, elder_author\: string\|null\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Support/CrosswordEngine.php
+
+		-
+			message: '#^Parameter &\$grid by\-ref type of method Minoo\\Support\\CrosswordEngine\:\:placeWordOnGrid\(\) expects list\<list\<string\|null\>\>, non\-empty\-list\<non\-empty\-array\<int, string\|null\>\> given\.$#'
+			identifier: parameterByRef.type
+			count: 1
+			path: src/Support/CrosswordEngine.php
 
 		-
 			message: '#^Variable \$http_response_header on left side of \?\? always exists and is not nullable\.$#'
