@@ -4,20 +4,29 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Entity\GameSession;
+use Minoo\Support\GameStatsCalculator;
 use Minoo\Support\ShkodaEngine;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
 
 final class ShkodaController
 {
+    use GameControllerTrait;
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
+        private readonly GateInterface $gate,
     ) {}
+
+    private function getEntityTypeManager(): EntityTypeManager
+    {
+        return $this->entityTypeManager;
+    }
 
     /** Redirect legacy /games/ishkode URL to /games/shkoda. */
     public function redirectLegacy(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -51,7 +60,7 @@ final class ShkodaController
             $tier = (string) $challenge->get('difficulty_tier');
         } else {
             // Fallback: deterministic random selection seeded by date
-            $tier = ShkodaEngine::dailyTier($dayOfWeek);
+            $tier = \Minoo\Support\GameDifficulty::dailyTier($dayOfWeek);
             $direction = $dayOfWeek % 2 === 0 ? 'english_to_ojibwe' : 'ojibwe_to_english';
             $entryId = $this->selectRandomWord($tier, $today);
             if ($entryId === null) {
@@ -255,9 +264,8 @@ final class ShkodaController
             return $this->json(['error' => 'Invalid session'], 404);
         }
 
-        // Verify session ownership for authenticated users
-        if ($account->isAuthenticated() && $session->get('user_id') !== null
-            && (int) $session->get('user_id') !== (int) $account->id()) {
+        // Verify session ownership via access policy
+        if ($this->gate->denies('update', $session, $account)) {
             return $this->json(['error' => 'Forbidden'], 403);
         }
 
@@ -295,7 +303,7 @@ final class ShkodaController
         $example = $exampleIds !== [] ? $exampleStorage->load(reset($exampleIds)) : null;
 
         // Build stats for authenticated users
-        $stats = $this->buildStats($account);
+        $stats = GameStatsCalculator::build($this->entityTypeManager, $account, 'shkoda');
 
         return $this->json([
             'word' => $word,
@@ -312,7 +320,7 @@ final class ShkodaController
     /** GET /api/games/shkoda/stats — player stats (auth required). */
     public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        return $this->json($this->buildStats($account));
+        return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'shkoda'));
     }
 
     // --- Private helpers ---
@@ -377,22 +385,6 @@ final class ShkodaController
         return $filtered[array_rand($filtered)];
     }
 
-    private function loadSessionByToken(string $uuid): ?GameSession
-    {
-        $storage = $this->entityTypeManager->getStorage('game_session');
-        $ids = $storage->getQuery()
-            ->condition('uuid', $uuid)
-            ->range(0, 1)
-            ->execute();
-
-        if ($ids === []) {
-            return null;
-        }
-
-        $entity = $storage->load(reset($ids));
-        return $entity instanceof GameSession ? $entity : null;
-    }
-
     /** @param list<string> $guesses */
     private function isWordFullyRevealed(string $word, array $guesses): bool
     {
@@ -434,113 +426,4 @@ final class ShkodaController
         return $positions;
     }
 
-    /** @return array<string, mixed> */
-    private function buildStats(AccountInterface $account): array
-    {
-        if (!$account->isAuthenticated()) {
-            return ['authenticated' => false];
-        }
-
-        $storage = $this->entityTypeManager->getStorage('game_session');
-        $allIds = $storage->getQuery()
-            ->condition('user_id', $account->id())
-            ->condition('game_type', 'shkoda')
-            ->execute();
-
-        if ($allIds === []) {
-            return [
-                'authenticated' => true,
-                'games_played' => 0,
-                'win_rate' => 0.0,
-                'current_streak' => 0,
-                'best_streak' => 0,
-            ];
-        }
-
-        $sessions = array_values($storage->loadMultiple($allIds));
-
-        // Sort by created_at DESC for streak calculation
-        usort($sessions, fn($a, $b) => (int) $b->get('created_at') - (int) $a->get('created_at'));
-
-        $completed = array_filter($sessions, fn($s) => $s->get('status') !== 'in_progress');
-        $wins = array_filter($completed, fn($s) => $s->get('status') === 'won');
-        $gamesPlayed = count($completed);
-        $winRate = $gamesPlayed > 0 ? round(count($wins) / $gamesPlayed, 2) : 0.0;
-
-        // Current streak
-        $currentStreak = 0;
-        foreach ($sessions as $s) {
-            if ($s->get('status') === 'won') {
-                $currentStreak++;
-            } elseif ($s->get('status') === 'lost') {
-                break;
-            }
-        }
-
-        // Best streak
-        $bestStreak = 0;
-        $streak = 0;
-        foreach ($sessions as $s) {
-            if ($s->get('status') === 'won') {
-                $streak++;
-                $bestStreak = max($bestStreak, $streak);
-            } elseif ($s->get('status') === 'lost') {
-                $streak = 0;
-            }
-        }
-
-        return [
-            'authenticated' => true,
-            'games_played' => $gamesPlayed,
-            'win_rate' => $winRate,
-            'current_streak' => $currentStreak,
-            'best_streak' => $bestStreak,
-        ];
-    }
-
-    /** @return array<string, mixed> */
-    private function jsonBody(HttpRequest $request): array
-    {
-        $content = $request->getContent();
-        if ($content === '' || $content === false) {
-            return [];
-        }
-        try {
-            return (array) json_decode((string) $content, true, 16, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
-            return [];
-        }
-    }
-
-    /** Extract a clean definition string from a field that may be JSON-encoded. */
-    private function cleanDefinition(string $raw): string
-    {
-        if ($raw === '') {
-            return '';
-        }
-        $decoded = json_decode($raw, true);
-        if (is_array($decoded)) {
-            $raw = implode('; ', array_filter(array_map('trim', $decoded)));
-        }
-
-        // Expand OPD linguistic abbreviations for readability
-        // Order matters: longer patterns first to avoid partial replacement
-        $raw = str_replace(
-            ['h/self', 's/he', 'h/', 's.t.', 's.o.'],
-            ['himself/herself', 'she/he', 'him/her', 'something', 'someone'],
-            $raw,
-        );
-
-        return $raw;
-    }
-
-    /** @param array<string, mixed> $data */
-    private function json(array $data, int $status = 200): SsrResponse
-    {
-        return new SsrResponse(
-            content: json_encode($data, JSON_THROW_ON_ERROR),
-            statusCode: $status,
-            headers: ['Content-Type' => 'application/json'],
-        );
-    }
 }
