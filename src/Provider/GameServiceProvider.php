@@ -8,6 +8,8 @@ use Minoo\Entity\CrosswordPuzzle;
 use Minoo\Entity\DailyChallenge;
 use Minoo\Entity\GameSession;
 use Waaseyaa\Entity\EntityType;
+use Waaseyaa\Entity\Event\EntityEvent;
+use Waaseyaa\Entity\Event\EntityEvents;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -69,6 +71,17 @@ final class GameServiceProvider extends ServiceProvider
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 20, 'default' => 'easy'],
             ],
         ));
+    }
+
+    public function boot(): void
+    {
+        $dispatcher = $this->resolve(\Symfony\Contracts\EventDispatcher\EventDispatcherInterface::class);
+
+        $dispatcher->addListener(EntityEvents::PRE_SAVE->value, static function (EntityEvent $event): void {
+            if ($event->entity->getEntityTypeId() === 'game_session') {
+                $event->entity->set('updated_at', time());
+            }
+        });
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void

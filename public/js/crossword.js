@@ -251,7 +251,8 @@
       var num = cell.number;
       if (num === null) return;
 
-      var clueText = state.clues[idx] || '';
+      var clueObj = state.clues[idx] || {};
+      var clueText = typeof clueObj === 'string' ? clueObj : (clueObj.text || '');
       var li = document.createElement('div');
       li.className = 'crossword__clue';
       li.dataset.wordIndex = idx;
@@ -274,11 +275,15 @@
     wordBankListEl.innerHTML = '';
     if (!state.wordBank) return;
 
-    state.wordBank.forEach(function (word, idx) {
+    state.wordBank.forEach(function (item, idx) {
       var span = document.createElement('span');
       span.className = 'crossword__word-bank-item';
       span.dataset.bankIndex = idx;
-      span.textContent = word;
+      var label = typeof item === 'string' ? item : (item.word || '');
+      if (typeof item === 'object' && item.meaning) {
+        label += ' — ' + item.meaning;
+      }
+      span.textContent = label;
       if (state.completedWords.has(idx)) {
         span.classList.add('crossword__word-bank-item--found');
       }
@@ -395,7 +400,8 @@
     // Show active clue text
     var num = state.grid[placement.row][placement.col].number;
     var dir = placement.direction === 'across' ? 'A' : 'D';
-    var clueText = state.clues[state.selectedWordIndex] || '';
+    var clueObj = state.clues[state.selectedWordIndex] || {};
+    var clueText = typeof clueObj === 'string' ? clueObj : (clueObj.text || '');
     activeClueEl.textContent = num + dir + ': ' + clueText;
   }
 

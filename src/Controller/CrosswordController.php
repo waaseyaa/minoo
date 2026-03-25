@@ -44,48 +44,18 @@ final class CrosswordController
             }
         }
 
-        $tier = (string) $puzzle->get('difficulty_tier');
-        $words = json_decode((string) $puzzle->get('words'), true) ?: [];
-        $cluesData = json_decode((string) $puzzle->get('clues'), true) ?: [];
-
-        // Resolve clues (elder preferred over auto)
-        $clues = [];
-        foreach ($cluesData as $idx => $clueData) {
-            $clues[$idx] = CrosswordEngine::resolveClue($clueData);
-        }
-
-        // Build word bank (Ojibwe word + English meaning from dictionary)
-        $wordBank = $this->buildWordBank($words, $tier);
-
-        // Create game session
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
-        $session = $sessionStorage->create([
-            'game_type' => 'crossword',
-            'mode' => 'daily',
-            'puzzle_id' => $puzzleId,
-            'user_id' => $account->isAuthenticated() ? $account->id() : null,
-            'daily_date' => $today,
-            'difficulty_tier' => $tier,
-        ]);
-        $sessionStorage->save($session);
-
-        // Strip answers from placements before sending to client
-        $clientPlacements = array_map(fn($w) => [
-            'row' => $w['row'],
-            'col' => $w['col'],
-            'direction' => $w['direction'],
-            'length' => mb_strlen($w['word']),
-        ], $words);
+        $payload = $this->loadPuzzlePayload($puzzle);
+        $session = $this->createGameSession('daily', $puzzleId, $payload['tier'], $account, $today);
 
         return $this->json([
             'session_token' => $session->get('uuid'),
             'puzzle_id' => $puzzleId,
             'grid_size' => (int) $puzzle->get('grid_size'),
-            'placements' => $clientPlacements,
-            'clues' => $clues,
-            'word_bank' => $wordBank,
-            'difficulty' => $tier,
-            'max_hints' => CrosswordEngine::maxHints($tier),
+            'placements' => $this->buildClientPlacements($payload['words']),
+            'clues' => $payload['clues'],
+            'word_bank' => $payload['word_bank'],
+            'difficulty' => $payload['tier'],
+            'max_hints' => CrosswordEngine::maxHints($payload['tier']),
             'date' => $today,
         ]);
     }
@@ -122,40 +92,16 @@ final class CrosswordController
             return $this->json(['error' => 'Puzzle not found'], 503);
         }
 
-        $words = json_decode((string) $puzzle->get('words'), true) ?: [];
-        $cluesData = json_decode((string) $puzzle->get('clues'), true) ?: [];
-
-        $clues = [];
-        foreach ($cluesData as $idx => $clueData) {
-            $clues[$idx] = CrosswordEngine::resolveClue($clueData);
-        }
-
-        $wordBank = $this->buildWordBank($words, $tier);
-
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
-        $session = $sessionStorage->create([
-            'game_type' => 'crossword',
-            'mode' => 'practice',
-            'puzzle_id' => (string) $puzzleId,
-            'user_id' => $account->isAuthenticated() ? $account->id() : null,
-            'difficulty_tier' => $tier,
-        ]);
-        $sessionStorage->save($session);
-
-        $clientPlacements = array_map(fn($w) => [
-            'row' => $w['row'],
-            'col' => $w['col'],
-            'direction' => $w['direction'],
-            'length' => mb_strlen($w['word']),
-        ], $words);
+        $payload = $this->loadPuzzlePayload($puzzle);
+        $session = $this->createGameSession('practice', (string) $puzzleId, $tier, $account);
 
         return $this->json([
             'session_token' => $session->get('uuid'),
             'puzzle_id' => (string) $puzzleId,
             'grid_size' => (int) $puzzle->get('grid_size'),
-            'placements' => $clientPlacements,
-            'clues' => $clues,
-            'word_bank' => $wordBank,
+            'placements' => $this->buildClientPlacements($payload['words']),
+            'clues' => $payload['clues'],
+            'word_bank' => $payload['word_bank'],
             'difficulty' => $tier,
             'max_hints' => CrosswordEngine::maxHints($tier),
         ]);
@@ -270,43 +216,18 @@ final class CrosswordController
             return $this->json(['error' => 'Puzzle not found'], 503);
         }
 
-        $tier = (string) $puzzle->get('difficulty_tier');
-        $words = json_decode((string) $puzzle->get('words'), true) ?: [];
-        $cluesData = json_decode((string) $puzzle->get('clues'), true) ?: [];
-
-        $clues = [];
-        foreach ($cluesData as $idx => $clueData) {
-            $clues[$idx] = CrosswordEngine::resolveClue($clueData);
-        }
-
-        $wordBank = $this->buildWordBank($words, $tier);
-
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
-        $session = $sessionStorage->create([
-            'game_type' => 'crossword',
-            'mode' => 'themed',
-            'puzzle_id' => (string) $nextId,
-            'user_id' => $account->isAuthenticated() ? $account->id() : null,
-            'difficulty_tier' => $tier,
-        ]);
-        $sessionStorage->save($session);
-
-        $clientPlacements = array_map(fn($w) => [
-            'row' => $w['row'],
-            'col' => $w['col'],
-            'direction' => $w['direction'],
-            'length' => mb_strlen($w['word']),
-        ], $words);
+        $payload = $this->loadPuzzlePayload($puzzle);
+        $session = $this->createGameSession('themed', (string) $nextId, $payload['tier'], $account);
 
         return $this->json([
             'session_token' => $session->get('uuid'),
             'puzzle_id' => (string) $nextId,
             'grid_size' => (int) $puzzle->get('grid_size'),
-            'placements' => $clientPlacements,
-            'clues' => $clues,
-            'word_bank' => $wordBank,
-            'difficulty' => $tier,
-            'max_hints' => CrosswordEngine::maxHints($tier),
+            'placements' => $this->buildClientPlacements($payload['words']),
+            'clues' => $payload['clues'],
+            'word_bank' => $payload['word_bank'],
+            'difficulty' => $payload['tier'],
+            'max_hints' => CrosswordEngine::maxHints($payload['tier']),
             'theme' => $slug,
         ]);
     }
@@ -349,7 +270,6 @@ final class CrosswordController
             $gridState["word_{$wordIndex}"] = 'completed';
         }
         $session->set('grid_state', json_encode($gridState));
-        $session->set('updated_at', time());
 
         // Check if all words completed
         $allComplete = true;
@@ -523,7 +443,6 @@ final class CrosswordController
         $letter = mb_substr(mb_strtolower($word), $position, 1);
 
         $session->set('hints_used', $hintsUsed + 1);
-        $session->set('updated_at', time());
         $this->entityTypeManager->getStorage('game_session')->save($session);
 
         return $this->json([
@@ -554,13 +473,76 @@ final class CrosswordController
         }
 
         $session->set('status', 'abandoned');
-        $session->set('updated_at', time());
         $this->entityTypeManager->getStorage('game_session')->save($session);
 
         return $this->json(['abandoned' => true]);
     }
 
     // --- Private helpers ---
+
+    /**
+     * Decode puzzle words/clues, resolve clues, and build word bank.
+     * @return array{words: list<array>, clues: array<string, mixed>, word_bank: list<array>|null, tier: string}
+     */
+    private function loadPuzzlePayload(object $puzzle): array
+    {
+        $tier = (string) $puzzle->get('difficulty_tier');
+        $words = json_decode((string) $puzzle->get('words'), true) ?: [];
+        $cluesData = json_decode((string) $puzzle->get('clues'), true) ?: [];
+
+        $clues = [];
+        foreach ($cluesData as $idx => $clueData) {
+            $clues[$idx] = CrosswordEngine::resolveClue($clueData);
+        }
+
+        return [
+            'words' => $words,
+            'clues' => $clues,
+            'word_bank' => $this->buildWordBank($words, $tier),
+            'tier' => $tier,
+        ];
+    }
+
+    /**
+     * Create and persist a crossword game session.
+     */
+    private function createGameSession(
+        string $mode,
+        string $puzzleId,
+        string $tier,
+        AccountInterface $account,
+        ?string $dailyDate = null,
+    ): object {
+        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
+        $values = [
+            'game_type' => 'crossword',
+            'mode' => $mode,
+            'puzzle_id' => $puzzleId,
+            'user_id' => $account->isAuthenticated() ? $account->id() : null,
+            'difficulty_tier' => $tier,
+        ];
+        if ($dailyDate !== null) {
+            $values['daily_date'] = $dailyDate;
+        }
+        $session = $sessionStorage->create($values);
+        $sessionStorage->save($session);
+        return $session;
+    }
+
+    /**
+     * Strip answer data from word placements for client consumption.
+     * @param list<array{row: int, col: int, direction: string, word: string}> $words
+     * @return list<array{row: int, col: int, direction: string, length: int}>
+     */
+    private function buildClientPlacements(array $words): array
+    {
+        return array_map(fn($w) => [
+            'row' => $w['row'],
+            'col' => $w['col'],
+            'direction' => $w['direction'],
+            'length' => mb_strlen($w['word']),
+        ], $words);
+    }
 
     /**
      * Generate a fallback daily puzzle when cron missed a run.

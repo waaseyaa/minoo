@@ -162,14 +162,14 @@ final class CrosswordEngine
      */
     public static function validateWord(array $submittedLetters, string $correctWord): array
     {
-        $correctWord = mb_strtolower($correctWord);
+        $correctWord = self::normalizeGlottalStop(mb_strtolower($correctWord));
         $correctPositions = [];
         $wrongPositions = [];
         $len = mb_strlen($correctWord);
 
         for ($i = 0; $i < $len; $i++) {
             $expected = mb_substr($correctWord, $i, 1);
-            $submitted = isset($submittedLetters[$i]) ? mb_strtolower($submittedLetters[$i]) : '';
+            $submitted = isset($submittedLetters[$i]) ? self::normalizeGlottalStop(mb_strtolower($submittedLetters[$i])) : '';
             if ($submitted === $expected) {
                 $correctPositions[] = $i;
             } else {
@@ -349,5 +349,18 @@ final class CrosswordEngine
             }
         }
         return $count;
+    }
+
+    /**
+     * Normalize glottal stop characters to a single form (ASCII apostrophe).
+     * OPD dictionary uses ' (U+0027), keyboard sends ʼ (U+02BC).
+     */
+    private static function normalizeGlottalStop(string $input): string
+    {
+        return str_replace(
+            ["\xCA\xBC", "\xE2\x80\x99", "\xE2\x80\x98"],
+            "'",
+            $input,
+        );
     }
 }
