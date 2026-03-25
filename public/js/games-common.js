@@ -76,6 +76,15 @@ var MinooGames = (function () {
       });
     }
 
+    /** Announce text to screen readers via the game's aria-live region. */
+    var announcerEl = document.getElementById(cssPrefix + '-announcer');
+    function announce(text) {
+      if (!announcerEl) return;
+      // Clear then set — forces re-announcement even if same text
+      announcerEl.textContent = '';
+      setTimeout(function () { announcerEl.textContent = text; }, 50);
+    }
+
     function renderStatsHtml(stats) {
       return '<div class="game-stat"><div class="game-stat__value">' + stats.games_played + '</div><div class="game-stat__label">Played</div></div>' +
         '<div class="game-stat"><div class="game-stat__value">' + stats.wins + '</div><div class="game-stat__label">Won</div></div>' +
@@ -105,6 +114,7 @@ var MinooGames = (function () {
       apiGet: apiGet,
       renderStatsHtml: renderStatsHtml,
       escapeHtml: escapeHtml,
+      announce: announce,
       showError: showError
     };
   }
