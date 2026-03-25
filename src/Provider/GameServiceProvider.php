@@ -249,5 +249,62 @@ final class GameServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        // --- Matcher routes ---
+
+        $router->addRoute(
+            'games.matcher',
+            RouteBuilder::create('/games/matcher')
+                ->controller('Minoo\\Controller\\MatcherController::page')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.matcher.daily',
+            RouteBuilder::create('/api/games/matcher/daily')
+                ->controller('Minoo\\Controller\\MatcherController::daily')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.matcher.practice',
+            RouteBuilder::create('/api/games/matcher/practice')
+                ->controller('Minoo\\Controller\\MatcherController::practice')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.matcher.match',
+            RouteBuilder::create('/api/games/matcher/match')
+                ->controller('Minoo\\Controller\\MatcherController::match')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.matcher.complete',
+            RouteBuilder::create('/api/games/matcher/complete')
+                ->controller('Minoo\\Controller\\MatcherController::complete')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.matcher.stats',
+            RouteBuilder::create('/api/games/matcher/stats')
+                ->controller('Minoo\\Controller\\MatcherController::stats')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->build(),
+        );
     }
 }

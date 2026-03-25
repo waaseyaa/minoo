@@ -16,7 +16,7 @@ final class GameSession extends ContentEntityBase
         'label' => 'mode',
     ];
 
-    public const VALID_GAME_TYPES = ['shkoda', 'crossword'];
+    public const VALID_GAME_TYPES = ['shkoda', 'crossword', 'matcher'];
     private const VALID_MODES = ['daily', 'practice', 'streak', 'themed'];
     private const VALID_DIRECTIONS = ['ojibwe_to_english', 'english_to_ojibwe'];
     private const VALID_STATUSES = ['in_progress', 'won', 'lost', 'completed', 'abandoned'];
