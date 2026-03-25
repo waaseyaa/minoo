@@ -10,14 +10,14 @@ Minoo is a **thin application** — custom entity types, access policies, servic
 minoo/
 ├── src/
 │   ├── Access/        # 10 access policy classes
-│   ├── Controller/    # 10 HTTP controllers
+│   ├── Controller/    # 11 HTTP controllers (incl. CrosswordController)
 │   ├── Domain/        # Bounded contexts (Geo/)
 │   ├── Entity/        # 17 custom entity classes
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
 │   ├── Provider/      # 13 service providers
 │   ├── Search/        # Search providers, autocomplete
 │   ├── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
-│   └── Support/       # Cross-cutting utilities (GeoDistance, SlugGenerator)
+│   └── Support/       # Cross-cutting utilities (GeoDistance, SlugGenerator, CrosswordEngine)
 ├── tests/Minoo/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
@@ -80,6 +80,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 | Groups | `group`, `group_type`, `cultural_group` | `GroupServiceProvider`, `CulturalGroupServiceProvider` | `GroupAccessPolicy`, `CulturalGroupAccessPolicy` |
 | Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingServiceProvider`, `CulturalCollectionServiceProvider` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
 | Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker`, `dialect_region` | `LanguageServiceProvider`, `DialectRegionServiceProvider` | `LanguageAccessPolicy` |
+| Games | `game_session`, `crossword_puzzle` | `GameServiceProvider` | — |
 | Ingestion | `ingest_log` | `IngestServiceProvider` | `IngestAccessPolicy` |
 | Editorial | `featured_item` | `FeaturedItemServiceProvider` | `FeaturedItemAccessPolicy` |
 
@@ -207,6 +208,8 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **New providers must be registered in `composer.json`**: Add to `extra.waaseyaa.providers[]` then run `php bin/waaseyaa optimize:manifest`. Without this, routes and entity types are not discovered.
 - **Vendor symlink goes circular after worktree cleanup**: `git checkout -- vendor` or `composer install` from a worktree can replace the symlink with a self-referencing one (`vendor -> /home/jones/dev/minoo/vendor`). Fix: `rm vendor && ln -s ../waaseyaa/vendor vendor`.
 - **CSS cache bust is manual**: Bump `?v=N` in `base.html.twig` after CSS changes. Stale CSS on production is the #1 cause of "it looks broken after deploy."
+- **Crossword puzzle tiers**: Only easy-tier puzzles exist in the database. Practice mode for medium/hard returns 500. Generate puzzles via CLI before testing those tiers. See #558, #560.
+- **Crossword themes tab**: No themed puzzle packs exist yet. The tab renders blank with no empty state message. See #559.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
 - **`NORTHCLOUD_BASE_URL` on production**: Must be `http://localhost:8050` (source-manager), NOT `https://northcloud.one` (that's Minoo itself). The `NorthCloudClient` uses this for people/band-office lookups on community detail pages.
