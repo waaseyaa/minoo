@@ -4734,6 +4734,10 @@
       gap: var(--space-l);
   }
 
+  .matcher__complete[hidden] {
+      display: none;
+  }
+
   .matcher__complete {
       position: fixed;
       inset: 0;

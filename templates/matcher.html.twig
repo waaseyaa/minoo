@@ -256,11 +256,7 @@
         el.dataset.side = side;
         el.setAttribute('type', 'button');
 
-        if (state.isMobile) {
-            el.addEventListener('click', () => handleTap(el, side, item.id));
-        } else {
-            el.addEventListener('mousedown', (e) => handleDragStart(e, el, side, item.id));
-        }
+        el.addEventListener('click', () => handleTap(el, side, item.id));
 
         return el;
     }
@@ -268,6 +264,7 @@
     // --- Interaction: Tap (mobile) ---
 
     function handleTap(el, side, id) {
+        if (state.isDragging) return;
         if (state.matched.has(id + '-' + side)) return;
 
         if (!state.selected) {
