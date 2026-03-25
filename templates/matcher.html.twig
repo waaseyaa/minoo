@@ -4,18 +4,18 @@
 
 {% block content %}
 <div class="matcher" data-game="matcher">
-    <div class="matcher__header">
-        <nav class="breadcrumb" aria-label="Breadcrumb">
-            <a href="/games">Games</a> / Word Match
-        </nav>
-        <h1>Word Match</h1>
-        <p class="matcher__tagline">Connect words to meanings</p>
-    </div>
-
-    {# Mode tabs #}
-    <div class="matcher__tabs" role="tablist" aria-label="Game mode">
-        <button role="tab" class="game-btn game-btn--tab" data-mode="daily" aria-selected="true">Daily</button>
-        <button role="tab" class="game-btn game-btn--tab" data-mode="practice" aria-selected="false">Practice</button>
+    {# Compact header: breadcrumb + title + tabs on one row #}
+    <div class="game-header">
+        <div class="game-header__title">
+            <nav class="game-header__breadcrumb" aria-label="Breadcrumb">
+                <a href="/games">Games</a> /
+            </nav>
+            <h1>Word Match</h1>
+        </div>
+        <div class="game-header__tabs" role="tablist" aria-label="Game mode">
+            <button role="tab" class="game-btn game-btn--tab" data-mode="daily" aria-selected="true">Daily</button>
+            <button role="tab" class="game-btn game-btn--tab" data-mode="practice" aria-selected="false">Practice</button>
+        </div>
     </div>
 
     {# Practice controls (hidden in daily mode) #}

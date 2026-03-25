@@ -3191,6 +3191,41 @@
      Shared Game Components
      ══════════════════════════════════════════════ */
 
+  /* Compact game header: breadcrumb + h1 left, tabs right */
+  .game-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-m);
+    margin-block-end: var(--space-s);
+  }
+
+  .game-header__title {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+  }
+
+  .game-header__title h1 {
+    font-size: var(--step-1);
+    margin: 0;
+  }
+
+  .game-header__breadcrumb {
+    font-size: var(--step--1);
+    color: var(--text-2);
+  }
+
+  .game-header__breadcrumb a {
+    color: var(--text-2);
+  }
+
+  .game-header__tabs {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
   /* Game accent — set by each game's container */
   .shkoda     { --game-accent: var(--shkoda-correct); }
   .crossword  { --game-accent: var(--crossword-correct); }
@@ -4628,25 +4663,7 @@
       padding: var(--space-m);
   }
 
-  .matcher__header {
-      text-align: center;
-      margin-block-end: var(--space-m);
-  }
-
-  .matcher__header h1 {
-      font-size: var(--step-3);
-      margin-block: var(--space-2xs) 0;
-  }
-
-  .matcher__tagline {
-      font-style: italic;
-      color: var(--text-2);
-      margin-block: var(--space-3xs) var(--space-s);
-  }
-
-  .matcher__tabs {
-      display: flex;
-      gap: var(--space-xs);
+  .matcher__controls {
       margin-block-end: var(--space-m);
   }
 

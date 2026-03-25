@@ -4,23 +4,20 @@
 
 {% block content %}
 <div class="shkoda" id="shkoda-game" data-api-base="/api/games/shkoda">
-    {# Breadcrumb + title #}
-    <div class="shkoda__header">
-        <nav class="shkoda__breadcrumb" aria-label="Breadcrumb">
-            <a href="/games">Games</a>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">Shkoda</span>
+    {# Compact header: breadcrumb + title + tabs on one row #}
+    <div class="game-header">
+        <div class="game-header__title">
+            <nav class="game-header__breadcrumb" aria-label="Breadcrumb">
+                <a href="/games">Games</a> /
+            </nav>
+            <h1>Shkoda</h1>
+        </div>
+        <nav class="game-header__tabs" role="tablist">
+            <button class="shkoda__tab shkoda__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily</button>
+            <button class="shkoda__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
+            <button class="shkoda__tab" role="tab" data-mode="streak" aria-selected="false">Streak</button>
         </nav>
-        <h1 class="shkoda__title">Shkoda</h1>
-        <p class="shkoda__tagline">Keep the fire burning</p>
     </div>
-
-    {# Mode tabs #}
-    <nav class="shkoda__tabs" role="tablist">
-        <button class="shkoda__tab shkoda__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily Challenge</button>
-        <button class="shkoda__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
-        <button class="shkoda__tab" role="tab" data-mode="streak" aria-selected="false">Streak</button>
-    </nav>
 
     {# Direction toggle #}
     <div class="shkoda__direction" id="shkoda-direction">

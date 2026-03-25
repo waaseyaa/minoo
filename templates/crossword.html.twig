@@ -4,22 +4,19 @@
 
 {% block content %}
 <div class="crossword" data-game="crossword">
-    {# Breadcrumb + title #}
-    <div class="crossword__header">
-        <nav class="crossword__breadcrumb" aria-label="Breadcrumb">
-            <a href="/games">Games</a>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">Crossword</span>
-        </nav>
-        <h1 class="crossword__title">Crossword</h1>
-        <p class="crossword__tagline">Fill the grid with Ojibwe words</p>
-    </div>
-
-    {# Mode tabs #}
-    <div class="crossword__tabs" role="tablist">
-        <button class="crossword__tab crossword__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily</button>
-        <button class="crossword__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
-        <button class="crossword__tab" role="tab" data-mode="themes" aria-selected="false">Themes</button>
+    {# Compact header: breadcrumb + title + tabs on one row #}
+    <div class="game-header">
+        <div class="game-header__title">
+            <nav class="game-header__breadcrumb" aria-label="Breadcrumb">
+                <a href="/games">Games</a> /
+            </nav>
+            <h1>Crossword</h1>
+        </div>
+        <div class="game-header__tabs" role="tablist">
+            <button class="crossword__tab crossword__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily</button>
+            <button class="crossword__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
+            <button class="crossword__tab" role="tab" data-mode="themes" aria-selected="false">Themes</button>
+        </div>
     </div>
 
     {# Difficulty selector (practice mode) #}
