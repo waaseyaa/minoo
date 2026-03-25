@@ -871,11 +871,11 @@
     var html = g.renderStatsHtml(stats);
 
     if (elapsed !== undefined) {
-      html += '<div class="crossword__stat"><div class="crossword__stat-value">' + formatTime(elapsed) + '</div><div class="crossword__stat-label">Time</div></div>';
+      html += '<div class="game-stat"><div class="game-stat__value">' + formatTime(elapsed) + '</div><div class="game-stat__label">Time</div></div>';
     }
 
     if (state.hintsUsed > 0) {
-      html += '<div class="crossword__stat"><div class="crossword__stat-value">' + state.hintsUsed + '</div><div class="crossword__stat-label">Hints</div></div>';
+      html += '<div class="game-stat"><div class="game-stat__value">' + state.hintsUsed + '</div><div class="game-stat__label">Hints</div></div>';
     }
 
     return html;

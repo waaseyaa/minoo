@@ -347,20 +347,20 @@
     actionsEl.innerHTML = '';
 
     var shareBtn = document.createElement('button');
-    shareBtn.className = 'shkoda__btn';
+    shareBtn.className = 'game-btn';
     shareBtn.textContent = 'Share';
     shareBtn.addEventListener('click', function () { shareResult(won, shareBtn); });
     actionsEl.appendChild(shareBtn);
 
     if (state.mode === 'practice' || (state.mode === 'streak' && won)) {
       var nextBtn = document.createElement('button');
-      nextBtn.className = 'shkoda__btn shkoda__btn--primary';
+      nextBtn.className = 'game-btn game-btn--primary';
       nextBtn.textContent = 'Next Word';
       nextBtn.addEventListener('click', function () { startGame(); });
       actionsEl.appendChild(nextBtn);
     } else if (state.mode === 'streak' && !won) {
       var replayBtn = document.createElement('button');
-      replayBtn.className = 'shkoda__btn shkoda__btn--primary';
+      replayBtn.className = 'game-btn game-btn--primary';
       replayBtn.textContent = 'Streak Over \u2014 Play Again';
       replayBtn.addEventListener('click', function () { startGame(); });
       actionsEl.appendChild(replayBtn);
