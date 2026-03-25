@@ -77,14 +77,10 @@ final class ShkodaEngine
         ];
     }
 
-    /** Get difficulty tier for a day of the week (0=Sun, 1=Mon, etc.). */
+    /** @deprecated Use GameDifficulty::dailyTier() directly. */
     public static function dailyTier(int $dayOfWeek): string
     {
-        return match ($dayOfWeek) {
-            1, 3, 5 => 'easy',    // Mon, Wed, Fri
-            2, 4 => 'medium',     // Tue, Thu
-            default => 'hard',    // Sat, Sun
-        };
+        return GameDifficulty::dailyTier($dayOfWeek);
     }
 
     /**

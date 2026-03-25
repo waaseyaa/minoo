@@ -147,10 +147,10 @@ final class CrosswordEngine
         ];
     }
 
-    /** Reuse Shkoda's day-of-week difficulty pattern. */
+    /** @deprecated Use GameDifficulty::dailyTier() directly. */
     public static function dailyTier(int $dayOfWeek): string
     {
-        return ShkodaEngine::dailyTier($dayOfWeek);
+        return GameDifficulty::dailyTier($dayOfWeek);
     }
 
     /**

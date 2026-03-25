@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\CrosswordEngine;
+use Minoo\Support\GameStatsCalculator;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -13,10 +14,17 @@ use Waaseyaa\SSR\SsrResponse;
 
 final class CrosswordController
 {
+    use GameControllerTrait;
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
     ) {}
+
+    private function getEntityTypeManager(): EntityTypeManager
+    {
+        return $this->entityTypeManager;
+    }
 
     /** Render the crossword game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -381,7 +389,7 @@ final class CrosswordController
             $wordTeachings[] = $teaching;
         }
 
-        $stats = $this->buildStats($account);
+        $stats = GameStatsCalculator::build($this->entityTypeManager, $account, 'crossword', ['abandoned'], ['completed']);
 
         // Compute time from session creation to now
         $timeSeconds = time() - (int) $session->get('created_at');
@@ -398,7 +406,7 @@ final class CrosswordController
     /** GET /api/games/crossword/stats — player stats (auth required). */
     public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        return $this->json($this->buildStats($account));
+        return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'crossword', ['abandoned'], ['completed']));
     }
 
     /** POST /api/games/crossword/hint — reveal a letter (tracked server-side). */
@@ -551,7 +559,7 @@ final class CrosswordController
     private function generateFallbackDaily(string $puzzleId, string $today): ?object
     {
         $dayOfWeek = (int) date('w', strtotime($today));
-        $tier = CrosswordEngine::dailyTier($dayOfWeek);
+        $tier = \Minoo\Support\GameDifficulty::dailyTier($dayOfWeek);
 
         // Load dictionary words with definitions
         $dictStorage = $this->entityTypeManager->getStorage('dictionary_entry');
@@ -653,123 +661,4 @@ final class CrosswordController
         return $bank;
     }
 
-    private function loadSessionByToken(string $uuid): ?object
-    {
-        $storage = $this->entityTypeManager->getStorage('game_session');
-        $ids = $storage->getQuery()
-            ->condition('uuid', $uuid)
-            ->range(0, 1)
-            ->execute();
-
-        if ($ids === []) {
-            return null;
-        }
-
-        return $storage->load(reset($ids));
-    }
-
-    /** @return array<string, mixed> */
-    private function buildStats(AccountInterface $account): array
-    {
-        if (!$account->isAuthenticated()) {
-            return ['authenticated' => false];
-        }
-
-        $storage = $this->entityTypeManager->getStorage('game_session');
-        $allIds = $storage->getQuery()
-            ->condition('user_id', $account->id())
-            ->condition('game_type', 'crossword')
-            ->execute();
-
-        if ($allIds === []) {
-            return [
-                'authenticated' => true,
-                'puzzles_completed' => 0,
-                'current_streak' => 0,
-                'best_streak' => 0,
-            ];
-        }
-
-        $sessions = array_values($storage->loadMultiple($allIds));
-        usort($sessions, fn($a, $b) => (int) $b->get('created_at') - (int) $a->get('created_at'));
-
-        $completed = array_filter($sessions, fn($s) => $s->get('status') === 'completed');
-
-        // Streak = consecutive daily completions
-        $currentStreak = 0;
-        foreach ($sessions as $s) {
-            if ($s->get('status') === 'completed') {
-                $currentStreak++;
-            } else {
-                break;
-            }
-        }
-
-        $bestStreak = 0;
-        $streak = 0;
-        foreach ($sessions as $s) {
-            if ($s->get('status') === 'completed') {
-                $streak++;
-                $bestStreak = max($bestStreak, $streak);
-            } elseif ($s->get('status') === 'abandoned') {
-                $streak = 0;
-            }
-        }
-
-        // Average completion time
-        $totalTime = 0;
-        foreach ($completed as $s) {
-            $totalTime += (int) $s->get('updated_at') - (int) $s->get('created_at');
-        }
-        $avgTime = count($completed) > 0 ? (int) round($totalTime / count($completed)) : 0;
-
-        return [
-            'authenticated' => true,
-            'puzzles_completed' => count($completed),
-            'avg_time' => $avgTime,
-            'current_streak' => $currentStreak,
-            'best_streak' => $bestStreak,
-        ];
-    }
-
-    private function cleanDefinition(string $raw): string
-    {
-        if ($raw === '') {
-            return '';
-        }
-        $decoded = json_decode($raw, true);
-        if (is_array($decoded)) {
-            $raw = implode('; ', array_filter(array_map('trim', $decoded)));
-        }
-        $raw = str_replace(
-            ['h/self', 's/he', 'h/', 's.t.', 's.o.'],
-            ['himself/herself', 'she/he', 'him/her', 'something', 'someone'],
-            $raw,
-        );
-        return $raw;
-    }
-
-    /** @return array<string, mixed> */
-    private function jsonBody(HttpRequest $request): array
-    {
-        $content = $request->getContent();
-        if ($content === '' || $content === false) {
-            return [];
-        }
-        try {
-            return (array) json_decode((string) $content, true, 16, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
-            return [];
-        }
-    }
-
-    /** @param array<string, mixed> $data */
-    private function json(array $data, int $status = 200): SsrResponse
-    {
-        return new SsrResponse(
-            content: json_encode($data, JSON_THROW_ON_ERROR),
-            statusCode: $status,
-            headers: ['Content-Type' => 'application/json'],
-        );
-    }
 }
