@@ -4209,6 +4209,7 @@
     max-height: 50vh;
     overflow-y: auto;
     overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
 
   .crossword__clues-heading {
