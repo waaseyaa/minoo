@@ -4,9 +4,13 @@
 
 {% block content %}
 <div class="matcher" data-game="matcher">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="/games">Games</a> <span aria-hidden="true">›</span> <span>Word Match</span>
-    </nav>
+    <div class="matcher__header">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="/games">Games</a> / Word Match
+        </nav>
+        <h1>Word Match</h1>
+        <p class="matcher__tagline">Connect words to meanings</p>
+    </div>
 
     {# Mode tabs #}
     <div class="matcher__tabs" role="tablist" aria-label="Game mode">

@@ -4628,6 +4628,22 @@
       padding: var(--space-m);
   }
 
+  .matcher__header {
+      text-align: center;
+      margin-block-end: var(--space-m);
+  }
+
+  .matcher__header h1 {
+      font-size: var(--step-3);
+      margin-block: var(--space-2xs) 0;
+  }
+
+  .matcher__tagline {
+      font-style: italic;
+      color: var(--text-2);
+      margin-block: var(--space-3xs) var(--space-s);
+  }
+
   .matcher__tabs {
       display: flex;
       gap: var(--space-xs);
