@@ -73,6 +73,7 @@
   var api = g.api;
   var apiGet = g.apiGet;
   var escapeHtml = g.escapeHtml;
+  var announce = g.announce;
 
   function themeKey(slug) {
     return 'crossword-theme-' + slug;
@@ -697,6 +698,9 @@
       clueEl.classList.add('crossword__clue--complete');
     }
 
+    // Announce
+    announce('Correct! Word ' + (state.completedWords.size) + ' of ' + state.placements.length + ' completed.');
+
     // Move to next incomplete word
     selectNextWord();
   }
@@ -722,6 +726,7 @@
         }, 600, el);
       }
     });
+    announce('Not quite. Some letters are wrong. Try again.');
   }
 
   function markWordBankFound(bankIndex) {
@@ -795,6 +800,7 @@
   function endGame(data) {
     state.gameOver = true;
     data = data || {};
+    announce('Puzzle complete! All ' + state.placements.length + ' words solved.');
 
     var stats = loadStats();
     stats.games_played++;

@@ -64,6 +64,7 @@
   var saveStats = g.saveStats;
   var api = g.api;
   var apiGet = g.apiGet;
+  var announce = g.announce;
 
   // ── Rendering ──
   function showLoading(show) {
@@ -198,8 +199,12 @@
 
       if (data.correct) {
         revealLetterPositions(letter, data.positions);
+        var remaining = state.maxWrong - state.wrongGuesses.length;
+        announce('Correct! ' + letter.toUpperCase() + ' is in the word. ' + remaining + ' guesses remaining.');
       } else {
         state.wrongGuesses.push(letter);
+        var remaining2 = state.maxWrong - state.wrongGuesses.length;
+        announce('Wrong. ' + letter.toUpperCase() + ' is not in the word. ' + remaining2 + ' guesses remaining.');
       }
 
       updateFire(!data.correct);
@@ -231,8 +236,12 @@
     var isWrong = positions.length === 0;
     if (!isWrong) {
       revealLetterPositions(letter, positions);
+      var rem = state.maxWrong - state.wrongGuesses.length;
+      announce('Correct! ' + letter.toUpperCase() + ' is in the word. ' + rem + ' guesses remaining.');
     } else {
       state.wrongGuesses.push(letter);
+      var rem2 = state.maxWrong - state.wrongGuesses.length;
+      announce('Wrong. ' + letter.toUpperCase() + ' is not in the word. ' + rem2 + ' guesses remaining.');
     }
 
     updateFire(isWrong);
@@ -271,6 +280,10 @@
   function endGame(won, data) {
     state.gameOver = true;
     data = data || {};
+    var word = data.word || (state.word ? state.word : '');
+    announce(won
+      ? 'You won! The word was ' + word + '.'
+      : 'Game over. The word was ' + word + '.');
 
     // Update stats
     var stats = loadStats();
