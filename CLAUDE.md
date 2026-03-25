@@ -209,6 +209,12 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **CSS cache bust is manual**: Bump `?v=N` in `base.html.twig` after CSS changes. Stale CSS on production is the #1 cause of "it looks broken after deploy."
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
+- **`NORTHCLOUD_BASE_URL` on production**: Must be `http://localhost:8050` (source-manager), NOT `https://northcloud.one` (that's Minoo itself). The `NorthCloudClient` uses this for people/band-office lookups on community detail pages.
+- **`api.northcloud.one` is the public read-only proxy**: Caddy reverse proxy to source-manager port 8050. GET-only, explicit path allowlist. Deployed via `northcloud-ansible` role `north-cloud`.
+- **ISC sub-pages have direct URLs**: `FNGovernance.aspx?BAND_NUMBER={band}&lang=eng` (chief/council + election dates), `FNReserves.aspx?BAND_NUMBER={band}&lang=eng` (reserve names + hectares), `FNRegPopulation.aspx?BAND_NUMBER={band}&lang=eng` (registered population breakdown). No ASP.NET postback needed.
+- **ISC profiles have no email field**: No sub-page contains band office email. Email must come from community website scraping.
+- **Website leadership scraping is unreliable**: NC Go scraper's `ExtractLeaders` has ~80% false positive rate — role context bleeds across entire pages, matching nav links and headings as names. Use ISC Governance sub-page for authoritative leadership data instead. See indigenous-harvesters#2.
+- **SSH to razor-crest rate-limits**: fail2ban blocks rapid SSH connections. Add 10-15s delays between SSH commands. Use SSH tunnels (`-f -N -L`) for sustained API access.
 
 ## GitHub Workflow
 
