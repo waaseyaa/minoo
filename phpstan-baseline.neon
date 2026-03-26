@@ -46,12 +46,6 @@ parameters:
 			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
-			path: src/Controller/CrosswordController.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
 			path: src/Controller/EngagementController.php
 
 		-
@@ -65,12 +59,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: src/Controller/LocationController.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Controller/ShkodaController.php
 
 		-
 			message: '#^Method Minoo\\Controller\\VolunteerDashboardController\:\:findVolunteerByAccount\(\) should return Waaseyaa\\Entity\\ContentEntityBase\|null but returns Waaseyaa\\Entity\\EntityInterface\|null\.$#'
