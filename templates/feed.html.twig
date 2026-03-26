@@ -323,10 +323,10 @@
           btn.classList.remove('feed-action--active');
           delete btn.dataset.reactionId;
         } else {
-          const emoji = getReactionEmoji(type);
+          const reactionType = getReactionEmoji(type);
           const res = await fetch('/api/engagement/react', {
             method: 'POST', headers,
-            body: JSON.stringify({ target_type: type, target_id: id, emoji: emoji })
+            body: JSON.stringify({ target_type: type, target_id: id, reaction_type: reactionType })
           });
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
