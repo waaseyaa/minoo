@@ -11,8 +11,9 @@ final class DiversityReranker
     private const SCAN_LIMIT = 10;
 
     public function __construct(
-        private readonly int $maxConsecutiveType = 3,
-        private readonly int $maxConsecutiveCommunity = 5,
+        private readonly int $maxConsecutiveType = 2,
+        private readonly int $maxConsecutiveCommunity = 2,
+        private readonly int $postGuaranteeSlot = 3,
     ) {}
 
     /**
@@ -76,6 +77,78 @@ final class DiversityReranker
                 }
             }
         }
+
+        return $this->guaranteePost($items);
+    }
+
+    /**
+     * Ensure at least one post appears in the first N non-synthetic slots.
+     *
+     * @param FeedItem[] $items
+     * @return FeedItem[]
+     */
+    private function guaranteePost(array $items): array
+    {
+        if ($this->postGuaranteeSlot <= 0) {
+            return $items;
+        }
+
+        $nonSyntheticSeen = 0;
+        $hasPost = false;
+
+        foreach ($items as $item) {
+            if ($item->isSynthetic()) {
+                continue;
+            }
+            $nonSyntheticSeen++;
+            if ($item->type === 'post') {
+                $hasPost = true;
+                break;
+            }
+            if ($nonSyntheticSeen >= $this->postGuaranteeSlot) {
+                break;
+            }
+        }
+
+        if ($hasPost) {
+            return $items;
+        }
+
+        // Find the first post anywhere in the list
+        $postIdx = null;
+        foreach ($items as $idx => $item) {
+            if (!$item->isSynthetic() && $item->type === 'post') {
+                $postIdx = $idx;
+                break;
+            }
+        }
+
+        if ($postIdx === null) {
+            return $items; // No posts at all
+        }
+
+        // Find the target slot (the Nth non-synthetic position)
+        $targetIdx = null;
+        $nonSyntheticSeen = 0;
+        foreach ($items as $idx => $item) {
+            if ($item->isSynthetic()) {
+                continue;
+            }
+            $nonSyntheticSeen++;
+            if ($nonSyntheticSeen === $this->postGuaranteeSlot) {
+                $targetIdx = $idx;
+                break;
+            }
+        }
+
+        if ($targetIdx === null || $postIdx <= $targetIdx) {
+            return $items;
+        }
+
+        // Pull the post into the target slot
+        $post = $items[$postIdx];
+        array_splice($items, $postIdx, 1);
+        array_splice($items, $targetIdx, 0, [$post]);
 
         return $items;
     }
