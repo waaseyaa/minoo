@@ -318,6 +318,46 @@ final class EngagementControllerTest extends TestCase
         $this->assertSame(3, $json['id']);
     }
 
+    #[Test]
+    public function create_post_rejects_spoofed_client_mime_type_image_upload(): void
+    {
+        $account = $this->mockAccount(42);
+        $entity = $this->createMock(ContentEntityInterface::class);
+        $entity->method('id')->willReturn(3);
+        $entity->method('get')->willReturnMap([
+            ['body', 'Hello community!'],
+            ['created_at', 1700000000],
+        ]);
+        $entity->expects($this->never())->method('set');
+
+        $storage = $this->mockStorage('post');
+        $storage->method('create')->willReturn($entity);
+        $storage->expects($this->once())->method('save')->with($entity);
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'php');
+        file_put_contents($tmpFile, '<?php echo "not an image";');
+        $upload = new UploadedFile(
+            path: $tmpFile,
+            originalName: 'shell.php',
+            mimeType: 'image/jpeg',
+            error: UPLOAD_ERR_OK,
+            test: true,
+        );
+
+        $request = HttpRequest::create(
+            uri: '/api/engagement/post',
+            method: 'POST',
+            parameters: ['body' => 'Hello community!', 'community_id' => 1],
+            files: ['images' => $upload],
+        );
+
+        $response = $this->controller->createPost([], [], $account, $request);
+
+        $this->assertSame(201, $response->statusCode);
+        $json = json_decode($response->content, true);
+        $this->assertSame(3, $json['id']);
+    }
+
     // --- Delete tests ---
 
     #[Test]

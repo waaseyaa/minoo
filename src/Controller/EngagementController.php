@@ -260,11 +260,12 @@ final class EngagementController
         if ($uploadedFiles !== []) {
             $imagePaths = [];
             foreach ($uploadedFiles as $file) {
+                $detectedMimeType = $file->getMimeType();
                 $fileArray = [
                     'name' => $file->getClientOriginalName(),
                     'tmp_name' => $file->getPathname(),
                     'size' => $file->getSize(),
-                    'type' => $file->getClientMimeType(),
+                    'type' => is_string($detectedMimeType) ? $detectedMimeType : '',
                     'error' => $file->getError(),
                 ];
                 if ($this->uploadService->validateImage($fileArray) === []) {
