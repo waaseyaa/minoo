@@ -4,25 +4,27 @@
 
 | File | Purpose |
 |------|---------|
-| `src/Ingest/PayloadValidator.php` | Validates NorthCloud envelope structure and entity-specific data |
-| `src/Ingest/ValidationResult.php` | Immutable result: `errors` list + `isValid()` |
-| `src/Ingest/IngestImporter.php` | Validates envelope, maps to entity fields, returns `IngestLog` |
-| `src/Ingest/IngestMaterializer.php` | Creates real entities from approved `IngestLog` records |
-| `src/Ingest/IngestStatus.php` | Enum: `PendingReview`, `Approved`, `Failed` |
-| `src/Ingest/MaterializationContext.php` | Tracks speaker/word-part IDs during materialization (dedup) |
-| `src/Ingest/MaterializationResult.php` | Collects created/skipped/updated entities from materialization |
-| `src/Ingest/SlugGenerator.php` | `generate(string): string` — lowercase, alphanumeric, hyphens |
-| `src/Ingest/ValueObject/DictionaryEntryFields.php` | Readonly VO for dictionary entry entity fields |
-| `src/Ingest/ValueObject/SpeakerFields.php` | Readonly VO for speaker entity fields |
-| `src/Ingest/ValueObject/WordPartFields.php` | Readonly VO for word part entity fields |
-| `src/Ingest/ValueObject/ExampleSentenceFields.php` | Readonly VO for example sentence entity fields |
-| `src/Ingest/ValueObject/CulturalCollectionFields.php` | Readonly VO for cultural collection entity fields |
-| `src/Ingest/EntityMapper/DictionaryEntryMapper.php` | Maps NorthCloud dictionary payload to `DictionaryEntryFields` |
-| `src/Ingest/EntityMapper/SpeakerMapper.php` | Maps speaker payload to `SpeakerFields` + `fromCode()` factory |
-| `src/Ingest/EntityMapper/WordPartMapper.php` | Maps word part payload to `WordPartFields` (null if invalid role) |
-| `src/Ingest/EntityMapper/ExampleSentenceMapper.php` | Maps sentence payload to `ExampleSentenceFields` |
-| `src/Ingest/EntityMapper/CulturalCollectionMapper.php` | Maps cultural collection payload to `CulturalCollectionFields` |
+| `src/Ingestion/PayloadValidator.php` | Validates NorthCloud envelope structure and entity-specific data |
+| `src/Ingestion/ValidationResult.php` | Immutable result: `errors` list + `isValid()` |
+| `src/Ingestion/IngestImporter.php` | Validates envelope, maps to entity fields, returns `IngestLog` |
+| `src/Ingestion/IngestMaterializer.php` | Creates real entities from approved `IngestLog` records |
+| `src/Ingestion/IngestStatus.php` | Enum: `PendingReview`, `Approved`, `Failed` |
+| `src/Ingestion/MaterializationContext.php` | Tracks speaker/word-part IDs during materialization (dedup) |
+| `src/Ingestion/MaterializationResult.php` | Collects created/skipped/updated entities from materialization |
+| `src/Ingestion/ValueObject/DictionaryEntryFields.php` | Readonly VO for dictionary entry entity fields |
+| `src/Ingestion/ValueObject/SpeakerFields.php` | Readonly VO for speaker entity fields |
+| `src/Ingestion/ValueObject/WordPartFields.php` | Readonly VO for word part entity fields |
+| `src/Ingestion/ValueObject/ExampleSentenceFields.php` | Readonly VO for example sentence entity fields |
+| `src/Ingestion/ValueObject/CulturalCollectionFields.php` | Readonly VO for cultural collection entity fields |
+| `src/Ingestion/EntityMapper/DictionaryEntryMapper.php` | Maps NorthCloud dictionary payload to `DictionaryEntryFields` |
+| `src/Ingestion/EntityMapper/SpeakerMapper.php` | Maps speaker payload to `SpeakerFields` + `fromCode()` factory |
+| `src/Ingestion/EntityMapper/WordPartMapper.php` | Maps word part payload to `WordPartFields` (null if invalid role) |
+| `src/Ingestion/EntityMapper/ExampleSentenceMapper.php` | Maps sentence payload to `ExampleSentenceFields` |
+| `src/Ingestion/EntityMapper/CulturalCollectionMapper.php` | Maps cultural collection payload to `CulturalCollectionFields` |
 | `src/Provider/IngestServiceProvider.php` | Registers `ingest_log` entity type |
+| `src/Ingestion/NcContentSyncService.php` | Pulls NC Search API content and creates `teaching`/`event` entities |
+| `src/Ingestion/NcSyncWorkerLoop.php` | Runs recurring sync and writes `storage/nc-sync-status.json` |
+| `scripts/nc-sync-worker.php` | Worker entrypoint for systemd-managed NC sync |
 | `src/Entity/IngestLog.php` | IngestLog entity — stores raw + parsed payloads |
 
 ## Supported Entity Types
@@ -31,6 +33,16 @@ The pipeline currently handles three entity types from NorthCloud:
 - `dictionary_entry` — Ojibwe dictionary words with example sentences, speakers, and word parts
 - `speaker` — Language speaker profiles
 - `cultural_collection` — Cultural artifact collections from ojibwe.lib.umn.edu
+
+## Dual North Cloud Paths
+
+Minoo currently has two North Cloud ingestion paths:
+
+1. **Envelope pipeline** (this spec's primary flow): envelope payloads are validated and stored as `ingest_log`, then reviewed/materialized into language/cultural entities.
+2. **NC Search sync pipeline**: `NcContentSyncService` fetches North Cloud Search API content and creates `teaching`/`event` entities directly.
+
+The NC Search worker writes status to `storage/nc-sync-status.json` with keys:
+`last_sync`, `created`, `skipped`, `failed`, `fetch_failed`, `cycles`.
 
 ## Data Flow
 

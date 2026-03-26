@@ -20,6 +20,74 @@ use Waaseyaa\Entity\Storage\EntityStorageInterface;
 final class IngestionDashboardControllerTest extends TestCase
 {
     #[Test]
+    public function index_reads_nc_sync_status_file_when_present(): void
+    {
+        $recentQuery = $this->queryMockReturning([], allowCondition: true);
+        $pendingCountQuery = $this->queryMockReturning([0], count: true, allowCondition: true);
+        $approvedCountQuery = $this->queryMockReturning([0], count: true, allowCondition: true);
+        $rejectedCountQuery = $this->queryMockReturning([0], count: true, allowCondition: true);
+        $failedCountQuery = $this->queryMockReturning([0], count: true, allowCondition: true);
+        $totalCountQuery = $this->queryMockReturning([0], count: true);
+        $lastSyncQuery = $this->queryMockReturning([]);
+
+        $storage = $this->createMock(EntityStorageInterface::class);
+        $storage->method('getQuery')->willReturnOnConsecutiveCalls(
+            $recentQuery,
+            $pendingCountQuery,
+            $approvedCountQuery,
+            $rejectedCountQuery,
+            $failedCountQuery,
+            $totalCountQuery,
+            $lastSyncQuery,
+        );
+        $storage->method('loadMultiple')->willReturn([]);
+        $storage->method('load')->willReturn(null);
+
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getStorage')->with('ingest_log')->willReturn($storage);
+
+        $root = dirname(__DIR__, 4);
+        $statusPath = $root . '/storage/nc-sync-status.json';
+        $backupPath = null;
+        if (is_file($statusPath)) {
+            $backupPath = $statusPath . '.bak-' . uniqid();
+            rename($statusPath, $backupPath);
+        }
+        file_put_contents($statusPath, json_encode([
+            'last_sync' => '2026-03-26T12:00:00+00:00',
+            'created' => 2,
+            'skipped' => 3,
+            'failed' => 1,
+            'fetch_failed' => false,
+            'cycles' => 7,
+        ], JSON_THROW_ON_ERROR));
+
+        try {
+            $twig = $this->createMock(Environment::class);
+            $twig->expects($this->once())
+                ->method('render')
+                ->with(
+                    'admin/ingestion.html.twig',
+                    $this->callback(fn (array $vars): bool => is_array($vars['nc_sync']) && ($vars['nc_sync']['created'] ?? null) === 2),
+                )
+                ->willReturn('<html>ok</html>');
+
+            $controller = new IngestionDashboardController($etm, $twig);
+            $account = $this->createMock(AccountInterface::class);
+            $request = new HttpRequest();
+            $response = $controller->index([], [], $account, $request);
+            $this->assertSame(200, $response->statusCode);
+        } finally {
+            if (is_file($statusPath)) {
+                unlink($statusPath);
+            }
+            if ($backupPath !== null && is_file($backupPath)) {
+                rename($backupPath, $statusPath);
+            }
+        }
+    }
+
+    #[Test]
     public function index_renders_with_empty_logs(): void
     {
         $recentQuery = $this->queryMockReturning([], allowCondition: true);
@@ -54,7 +122,8 @@ final class IngestionDashboardControllerTest extends TestCase
                 $this->callback(function (array $vars): bool {
                     return $vars['logs'] === []
                         && $vars['total_count'] === 0
-                        && $vars['last_sync'] === null
+                        && $vars['last_envelope_log'] === null
+                        && $vars['nc_sync'] === null
                         && $vars['status_filter'] === null
                         && $vars['status_counts'] === [
                             'pending_review' => 0,
@@ -115,7 +184,7 @@ final class IngestionDashboardControllerTest extends TestCase
             ->method('render')
             ->with(
                 'admin/ingestion.html.twig',
-                $this->callback(fn (array $vars): bool => $vars['status_filter'] === 'failed' && $vars['total_count'] === 10 && $vars['last_sync'] === 1711468800 && count($vars['logs']) === 1),
+                $this->callback(fn (array $vars): bool => $vars['status_filter'] === 'failed' && $vars['total_count'] === 10 && $vars['last_envelope_log'] === 1711468800 && count($vars['logs']) === 1),
             )
             ->willReturn('<html>ok</html>');
 

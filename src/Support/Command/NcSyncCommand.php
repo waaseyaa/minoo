@@ -52,6 +52,33 @@ final class NcSyncCommand extends Command
             $result->failed,
         ));
 
+        $this->writeStatusFile($result);
+
         return $result->failed > 0 ? self::FAILURE : self::SUCCESS;
+    }
+
+    private function writeStatusFile(\Minoo\Ingestion\NcSyncResult $result): void
+    {
+        $statusPath = dirname(__DIR__, 3) . '/storage/nc-sync-status.json';
+
+        try {
+            $data = json_encode([
+                'last_sync' => date('c'),
+                'created' => $result->created,
+                'skipped' => $result->skipped,
+                'failed' => $result->failed,
+                'fetch_failed' => $result->fetchFailed,
+                'cycles' => 1,
+                'last_manual_run' => date('c'),
+            ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        } catch (\JsonException) {
+            return;
+        }
+
+        $tmp = $statusPath . '.tmp';
+        if (file_put_contents($tmp, $data) === false) {
+            return;
+        }
+        rename($tmp, $statusPath);
     }
 }

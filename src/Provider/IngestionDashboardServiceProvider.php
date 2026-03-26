@@ -27,5 +27,53 @@ final class IngestionDashboardServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        $router->addRoute(
+            'admin.ingestion.status',
+            RouteBuilder::create('/api/admin/nc-sync-status')
+                ->controller('Minoo\Controller\IngestionApiController::status')
+                ->requirePermission('administer content')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'admin.ingestion.envelope',
+            RouteBuilder::create('/api/ingestion/envelope')
+                ->controller('Minoo\Controller\IngestionApiController::ingestEnvelope')
+                ->requirePermission('administer content')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'admin.ingestion.approve',
+            RouteBuilder::create('/api/admin/ingestion/{id}/approve')
+                ->controller('Minoo\Controller\IngestionApiController::approve')
+                ->requirePermission('administer content')
+                ->methods('POST')
+                ->requirement('id', '\\d+')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'admin.ingestion.reject',
+            RouteBuilder::create('/api/admin/ingestion/{id}/reject')
+                ->controller('Minoo\Controller\IngestionApiController::reject')
+                ->requirePermission('administer content')
+                ->methods('POST')
+                ->requirement('id', '\\d+')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'admin.ingestion.materialize',
+            RouteBuilder::create('/api/admin/ingestion/{id}/materialize')
+                ->controller('Minoo\Controller\IngestionApiController::materialize')
+                ->requirePermission('administer content')
+                ->methods('POST')
+                ->requirement('id', '\\d+')
+                ->build(),
+        );
     }
 }

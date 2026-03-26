@@ -8,12 +8,22 @@
 
   <div class="ingest-summary">
     <div class="ingest-summary__card">
-      <span class="ingest-summary__label">Last Sync</span>
+      <span class="ingest-summary__label">Last Envelope Log</span>
       <span class="ingest-summary__value">
-        {% if last_sync %}
-          {{ last_sync|date('Y-m-d H:i') }}
+        {% if last_envelope_log %}
+          {{ last_envelope_log|date('Y-m-d H:i') }}
         {% else %}
-          No sync data
+          No envelope logs yet
+        {% endif %}
+      </span>
+    </div>
+    <div class="ingest-summary__card">
+      <span class="ingest-summary__label">NC Search Last Sync</span>
+      <span class="ingest-summary__value">
+        {% if nc_sync and nc_sync.last_sync|default('') %}
+          {{ nc_sync.last_sync }}
+        {% else %}
+          No NC sync status
         {% endif %}
       </span>
     </div>
@@ -36,6 +46,18 @@
     <div class="ingest-summary__card ingest-summary__card--rejected">
       <span class="ingest-summary__label">Rejected</span>
       <span class="ingest-summary__value">{{ status_counts.rejected }}</span>
+    </div>
+    <div class="ingest-summary__card">
+      <span class="ingest-summary__label">NC Created</span>
+      <span class="ingest-summary__value">{{ nc_sync.created|default(0) }}</span>
+    </div>
+    <div class="ingest-summary__card">
+      <span class="ingest-summary__label">NC Skipped</span>
+      <span class="ingest-summary__value">{{ nc_sync.skipped|default(0) }}</span>
+    </div>
+    <div class="ingest-summary__card ingest-summary__card--failed">
+      <span class="ingest-summary__label">NC Failed</span>
+      <span class="ingest-summary__value">{{ nc_sync.failed|default(0) }}</span>
     </div>
   </div>
 
@@ -80,6 +102,24 @@
                     <span class="ingest-row__cell ingest-row__cell--error">{{ log.get('error_message')|default('')|slice(0, 80) }}{% if log.get('error_message')|default('')|length > 80 %}…{% endif %}</span>
                   </summary>
                   <div class="ingest-row__detail">
+                    <div class="ingest-row__section">
+                      <h4>Actions</h4>
+                      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        {% if log.get('status') == 'pending_review' %}
+                          <form method="post" action="/api/admin/ingestion/{{ log.id() }}/approve">
+                            <button type="submit" class="btn btn-secondary">Approve</button>
+                          </form>
+                          <form method="post" action="/api/admin/ingestion/{{ log.id() }}/reject">
+                            <button type="submit" class="btn btn-secondary">Reject</button>
+                          </form>
+                        {% endif %}
+                        {% if log.get('status') == 'approved' %}
+                          <form method="post" action="/api/admin/ingestion/{{ log.id() }}/materialize">
+                            <button type="submit" class="btn btn-primary">Materialize</button>
+                          </form>
+                        {% endif %}
+                      </div>
+                    </div>
                     {% if log.get('error_message') %}
                       <div class="ingest-row__section">
                         <h4>Error</h4>

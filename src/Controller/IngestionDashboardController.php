@@ -33,7 +33,8 @@ final class IngestionDashboardController
             'logs' => $logs,
             'total_count' => $this->countLogs($storage),
             'status_counts' => $statusCounts,
-            'last_sync' => $this->loadLastSync($storage),
+            'last_envelope_log' => $this->loadLastSync($storage),
+            'nc_sync' => $this->loadNcSyncStatus(),
             'status_filter' => $statusFilter,
             'hide_sidebar' => true,
         ]);
@@ -104,5 +105,27 @@ final class IngestionDashboardController
 
         $createdAt = $latest->get('created_at');
         return is_numeric($createdAt) ? (int) $createdAt : null;
+    }
+
+    /** @return array<string, mixed>|null */
+    private function loadNcSyncStatus(): ?array
+    {
+        $statusPath = dirname(__DIR__, 2) . '/storage/nc-sync-status.json';
+        if (!is_file($statusPath)) {
+            return null;
+        }
+
+        $raw = file_get_contents($statusPath);
+        if ($raw === false || $raw === '') {
+            return null;
+        }
+
+        try {
+            $decoded = json_decode($raw, true, 16, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return null;
+        }
+
+        return is_array($decoded) ? $decoded : null;
     }
 }
