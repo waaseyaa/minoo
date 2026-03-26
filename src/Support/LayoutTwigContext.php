@@ -18,7 +18,7 @@ final class LayoutTwigContext
      */
     public static function withAccount(AccountInterface $account, array $context, bool $includeCsrf = true): array
     {
-        $merged = array_merge(['account' => $account], $context);
+        $merged = array_merge($context, ['account' => $account]);
         if ($includeCsrf) {
             $merged['csrf_token'] = CsrfMiddleware::token();
         }
