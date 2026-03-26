@@ -322,14 +322,14 @@
       if (!btn) return;
       const type = btn.dataset.type;
       const id = btn.dataset.id;
-      const isActive = btn.classList.contains('feed-action--active');
+      const isActive = btn.classList.contains('is-active');
 
       try {
         if (isActive && btn.dataset.reactionId) {
           const res = await fetch(`/api/engagement/react/${btn.dataset.reactionId}`, { method: 'DELETE', headers });
           if (requireAuth(res)) return;
           if (!res.ok) { showFeedback(btn, 'Error', true); return; }
-          btn.classList.remove('feed-action--active');
+          btn.classList.remove('is-active');
           delete btn.dataset.reactionId;
         } else {
           const reactionType = getReactionEmoji(type);
@@ -344,7 +344,7 @@
             return;
           }
           const data = await res.json();
-          btn.classList.add('feed-action--active');
+          btn.classList.add('is-active');
           btn.dataset.reactionId = data.id;
         }
       } catch (err) { showFeedback(btn, 'Network error', true); }
