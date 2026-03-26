@@ -59,8 +59,9 @@ final class FeedScoringServiceProvider extends ServiceProvider
 
         $diversity = $config['diversity'] ?? [];
         $this->singleton(DiversityReranker::class, fn(): DiversityReranker => new DiversityReranker(
-            maxConsecutiveType: (int) ($diversity['max_consecutive_type'] ?? 3),
-            maxConsecutiveCommunity: (int) ($diversity['max_consecutive_community'] ?? 5),
+            maxConsecutiveType: (int) ($diversity['max_consecutive_type'] ?? 2),
+            maxConsecutiveCommunity: (int) ($diversity['max_consecutive_community'] ?? 2),
+            postGuaranteeSlot: (int) ($diversity['post_guarantee_slot'] ?? 3),
         ));
 
         $this->singleton(FeedScorer::class, fn(): FeedScorer => new FeedScorer(

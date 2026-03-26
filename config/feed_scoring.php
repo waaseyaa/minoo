@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'decay_half_life_hours' => 96,
-    'featured_boost' => 100.0,
+    'featured_boost' => 15.0,
     'affinity_cache_ttl' => 900,
     'interaction_weights' => [
         'reaction' => 1.0,
@@ -25,8 +25,9 @@ return [
     ],
     'base_affinity' => 1.0,
     'diversity' => [
-        'max_consecutive_type' => 3,
-        'max_consecutive_community' => 5,
+        'max_consecutive_type' => 2,
+        'max_consecutive_community' => 2,
+        'post_guarantee_slot' => 3,
     ],
     'lookback_days' => 30,
 ];
