@@ -74,6 +74,7 @@ return [
     'nav.account' => 'Nindizhinikaazowin', // dict: nind- (my) + izhinikaazowin (name/identity) — "my account"
     'nav.logout' => 'Zaaga\'an', // dict: zaaga'am: "s/he goes out, exits"
     'nav.login' => 'Biindigen', // dict: biindige: "enter, go inside"
+    'nav.messages' => 'Mazina\'iganan', // dict: mazina'igan: letter/message/document
 
     // Footer
     'footer.tagline' => "Bimaadiziwin oodena-mazina'igan", // "A living community-map" — natural Ojibwe word order (modifier before noun)
@@ -110,6 +111,22 @@ return [
     'chat.disclaimer' => '',
     'chat.thinking' => '',
     'chat.error' => '',
+
+    // Messaging
+    'messages.title' => 'Mazina\'iganan',
+    'messages.heading' => 'Mazina\'iganan',
+    'messages.subheading' => '',
+    'messages.inbox' => '',
+    'messages.select_thread' => '',
+    'messages.untitled_thread' => '',
+    'messages.no_messages_yet' => '',
+    'messages.empty_inbox' => '',
+    'messages.auth_required_title' => '',
+    'messages.auth_required_body' => '',
+    'messages.compose_label' => '',
+    'messages.compose_placeholder' => '',
+    'messages.send' => 'Izhinizha\'an', // dict: send it
+    'messages.load_error' => '',
 
     // Home page
     'page.title' => "Gikinoo'amaadiwin Mazina'igan O'ow Akiing",

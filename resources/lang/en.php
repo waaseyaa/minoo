@@ -22,6 +22,7 @@ return [
     'nav.account' => 'Account',
     'nav.logout' => 'Logout',
     'nav.login' => 'Login',
+    'nav.messages' => 'Messages',
 
     // Base layout - Footer
     'footer.tagline' => 'A living map of community',
@@ -127,6 +128,22 @@ return [
     'feed.posted_person' => '· community member',
     'feed.posted_contributor' => '· community member',
     'feed.posted_featured' => '· featured',
+
+    // Messaging
+    'messages.title' => 'Messages',
+    'messages.heading' => 'Messages',
+    'messages.subheading' => 'Start private and group conversations with community members.',
+    'messages.inbox' => 'Inbox',
+    'messages.select_thread' => 'Select a thread to read and reply.',
+    'messages.untitled_thread' => 'Conversation',
+    'messages.no_messages_yet' => 'No messages yet.',
+    'messages.empty_inbox' => 'No conversations yet. Start one from a member profile.',
+    'messages.auth_required_title' => 'Sign in to view messages',
+    'messages.auth_required_body' => 'Messaging is available to signed-in community members.',
+    'messages.compose_label' => 'Write a message',
+    'messages.compose_placeholder' => 'Write your message…',
+    'messages.send' => 'Send',
+    'messages.load_error' => 'Could not load your inbox right now.',
 
     // Events
     'events.title' => 'Events',

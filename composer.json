@@ -82,6 +82,7 @@
                 "Minoo\\Provider\\OralHistoryServiceProvider",
                 "Minoo\\Provider\\ContributorServiceProvider",
                 "Minoo\\Provider\\EngagementServiceProvider",
+                "Minoo\\Provider\\MessagingServiceProvider",
                 "Minoo\\Provider\\FeedServiceProvider",
                 "Minoo\\Provider\\FeedScoringServiceProvider",
                 "Minoo\\Provider\\GameServiceProvider"

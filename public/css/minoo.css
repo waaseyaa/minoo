@@ -6,6 +6,114 @@
   font-display: swap;
 }
 
+@layer components {
+  .messages-page {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .messages-page__header p {
+    color: var(--text-secondary);
+    margin-block-start: var(--space-2xs);
+  }
+
+  .messages-layout {
+    display: grid;
+    grid-template-columns: minmax(16rem, 22rem) 1fr;
+    gap: var(--space-sm);
+    align-items: start;
+  }
+
+  .messages-sidebar,
+  .messages-main {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-sm);
+  }
+
+  .messages-thread-list {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-top: var(--space-xs);
+  }
+
+  .messages-thread-list__item {
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-xs);
+    color: inherit;
+    cursor: pointer;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .messages-thread-list__item--active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .messages-thread-list__title {
+    font-weight: 600;
+  }
+
+  .messages-thread-list__preview {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .messages-message-list {
+    display: grid;
+    gap: var(--space-xs);
+    max-height: 45dvh;
+    overflow: auto;
+    margin-bottom: var(--space-sm);
+  }
+
+  .messages-message {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-xs);
+    background: var(--surface-raised);
+  }
+
+  .messages-message__meta {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    margin-bottom: 0.25rem;
+  }
+
+  .messages-send-form {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .messages-send-form textarea {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: inherit;
+    padding: var(--space-xs);
+    resize: vertical;
+  }
+
+  .messages-send-form button {
+    justify-self: end;
+  }
+
+  .messages-empty-note {
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 56rem) {
+    .messages-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
 @font-face {
   font-family: 'Fraunces';
   src: url('/fonts/fraunces-italic-variable.woff2') format('woff2');

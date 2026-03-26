@@ -28,6 +28,11 @@
 | `src/Access/TeachingAccessPolicy.php` | Access for `teaching` type |
 | `src/Access/CulturalCollectionAccessPolicy.php` | Access for `cultural_collection` type |
 | `src/Access/LanguageAccessPolicy.php` | Access for all 4 language types |
+| `src/Entity/MessageThread.php` | Message thread entity |
+| `src/Entity/ThreadParticipant.php` | Thread participant entity |
+| `src/Entity/ThreadMessage.php` | Thread message entity |
+| `src/Provider/MessagingServiceProvider.php` | Registers message thread entities + routes |
+| `src/Access/MessagingAccessPolicy.php` | Access for messaging thread entities |
 | `src/Seed/TaxonomySeeder.php` | Gallery + teaching_tags vocabulary definitions |
 | `src/Seed/ConfigSeeder.php` | Event, group, teaching type definitions |
 
@@ -228,6 +233,47 @@ Entity keys: `['id' => 'sid', 'uuid' => 'uuid', 'label' => 'name']`
 | created_at | timestamp | |
 | updated_at | timestamp | |
 
+### Messaging Domain
+
+**message_thread** (`ContentEntityBase`) — Primary key: `mtid`
+Entity keys: `['id' => 'mtid', 'uuid' => 'uuid', 'label' => 'title']`
+
+| Field | Widget/Type | Notes |
+|-------|-------------|-------|
+| mtid | (auto) | Auto-increment PK |
+| uuid | (auto) | UUID v4 |
+| title | text | Optional thread title |
+| created_by | integer | Thread creator (account uid) |
+| created_at | timestamp | Created |
+| updated_at | timestamp | Updated on new messages |
+
+**thread_participant** (`ContentEntityBase`) — Primary key: `tpid`
+Entity keys: `['id' => 'tpid', 'uuid' => 'uuid', 'label' => 'role']`
+
+| Field | Widget/Type | Notes |
+|-------|-------------|-------|
+| tpid | (auto) | Auto-increment PK |
+| uuid | (auto) | UUID v4 |
+| thread_id | integer | Parent thread (message_thread) id |
+| user_id | integer | Participant account uid |
+| thread_creator_id | integer | Denormalized `message_thread.created_by` for access checks |
+| role | string | `owner` or `member` |
+| joined_at | timestamp | When participant joined |
+| last_read_at | timestamp | Optional read tracking |
+
+**thread_message** (`ContentEntityBase`) — Primary key: `tmid`
+Entity keys: `['id' => 'tmid', 'uuid' => 'uuid', 'label' => 'body']`
+
+| Field | Widget/Type | Notes |
+|-------|-------------|-------|
+| tmid | (auto) | Auto-increment PK |
+| uuid | (auto) | UUID v4 |
+| thread_id | integer | Parent thread (message_thread) id |
+| sender_id | integer | Sending account uid |
+| body | text_long | Message body |
+| status | boolean | Optional moderation state |
+| created_at | timestamp | Message created |
+
 ## Access Control
 
 All 6 policies use identical logic:
@@ -246,6 +292,7 @@ Policy-to-type mapping:
 - `TeachingAccessPolicy` → `teaching`
 - `CulturalCollectionAccessPolicy` → `cultural_collection`
 - `LanguageAccessPolicy` → `dictionary_entry`, `example_sentence`, `word_part`, `speaker`
+- `MessagingAccessPolicy` → `message_thread`, `thread_participant`, `thread_message`
 
 Config entity types (`event_type`, `group_type`, `teaching_type`) inherit framework default access.
 

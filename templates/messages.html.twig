@@ -1,0 +1,157 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ trans('messages.title') }}{% endblock %}
+
+{% block content %}
+  <section class="messages-page">
+    <header class="messages-page__header">
+      <h1>{{ trans('messages.heading') }}</h1>
+      <p>{{ trans('messages.subheading') }}</p>
+    </header>
+
+    {% if account is not defined or not account.isAuthenticated() %}
+      <div class="messages-empty">
+        <h2>{{ trans('messages.auth_required_title') }}</h2>
+        <p>{{ trans('messages.auth_required_body') }}</p>
+      </div>
+    {% else %}
+      <div class="messages-layout" id="messages-app">
+        <aside class="messages-sidebar">
+          <h2>{{ trans('messages.inbox') }}</h2>
+          <div id="messages-thread-list" class="messages-thread-list"></div>
+        </aside>
+        <main class="messages-main">
+          <div id="messages-thread-view" class="messages-thread-view">
+            <p class="messages-thread-view__placeholder">{{ trans('messages.select_thread') }}</p>
+          </div>
+        </main>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  {{ parent() }}
+  {% if account is defined and account.isAuthenticated() %}
+  <script>
+    (function () {
+      const listEl = document.getElementById('messages-thread-list');
+      const viewEl = document.getElementById('messages-thread-view');
+      if (!listEl || !viewEl) return;
+
+      let currentThreadId = null;
+
+      function escapeHtml(text) {
+        return String(text)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      async function loadThreads() {
+        const response = await fetch('/api/messaging/threads');
+        if (!response.ok) throw new Error('Failed to load threads');
+        const json = await response.json();
+        return Array.isArray(json.threads) ? json.threads : [];
+      }
+
+      function renderThreads(threads) {
+        if (threads.length === 0) {
+          listEl.innerHTML = '<p class="messages-empty-note">{{ trans('messages.empty_inbox')|e('js') }}</p>';
+          return;
+        }
+
+        listEl.innerHTML = threads.map((thread) => {
+          const title = thread.title && thread.title.trim() !== '' ? thread.title : '{{ trans('messages.untitled_thread')|e('js') }} #' + thread.id;
+          const preview = thread.last_message && thread.last_message.body
+            ? thread.last_message.body
+            : '{{ trans('messages.no_messages_yet')|e('js') }}';
+          const activeClass = currentThreadId === thread.id ? 'messages-thread-list__item--active' : '';
+          return '<button class="messages-thread-list__item ' + activeClass + '" data-thread-id="' + thread.id + '">' +
+            '<span class="messages-thread-list__title">' + escapeHtml(title) + '</span>' +
+            '<span class="messages-thread-list__preview">' + escapeHtml(preview) + '</span>' +
+          '</button>';
+        }).join('');
+      }
+
+      async function loadThreadMessages(threadId) {
+        const response = await fetch('/api/messaging/threads/' + threadId + '/messages?limit=100');
+        if (!response.ok) throw new Error('Failed to load messages');
+        const json = await response.json();
+        return Array.isArray(json.messages) ? json.messages : [];
+      }
+
+      function renderMessages(messages) {
+        if (messages.length === 0) {
+          viewEl.innerHTML = '<p class="messages-empty-note">{{ trans('messages.no_messages_yet')|e('js') }}</p>';
+          return;
+        }
+
+        viewEl.innerHTML =
+          '<div class="messages-message-list">' +
+          messages.map((message) => {
+            return '<article class="messages-message">' +
+              '<header class="messages-message__meta">#' + message.id + ' · ' + new Date(message.created_at * 1000).toLocaleString() + '</header>' +
+              '<p class="messages-message__body">' + escapeHtml(message.body || '') + '</p>' +
+            '</article>';
+          }).join('') +
+          '</div>' +
+          '<form id="messages-send-form" class="messages-send-form">' +
+            '<label for="messages-body" class="visually-hidden">{{ trans('messages.compose_label')|e('js') }}</label>' +
+            '<textarea id="messages-body" rows="3" maxlength="2000" placeholder="{{ trans('messages.compose_placeholder')|e('js') }}" required></textarea>' +
+            '<button type="submit">{{ trans('messages.send')|e('js') }}</button>' +
+          '</form>';
+
+        const form = document.getElementById('messages-send-form');
+        const bodyInput = document.getElementById('messages-body');
+        if (form && bodyInput) {
+          form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const body = bodyInput.value.trim();
+            if (!body || !currentThreadId) return;
+
+            const response = await fetch('/api/messaging/threads/' + currentThreadId + '/messages', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ body }),
+            });
+
+            if (!response.ok) return;
+            bodyInput.value = '';
+            await openThread(currentThreadId);
+            await refresh();
+          });
+        }
+      }
+
+      async function openThread(threadId) {
+        currentThreadId = Number(threadId);
+        const messages = await loadThreadMessages(currentThreadId);
+        renderMessages(messages);
+
+        const items = listEl.querySelectorAll('[data-thread-id]');
+        items.forEach((item) => {
+          item.classList.toggle('messages-thread-list__item--active', Number(item.dataset.threadId) === currentThreadId);
+        });
+      }
+
+      async function refresh() {
+        const threads = await loadThreads();
+        renderThreads(threads);
+      }
+
+      listEl.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-thread-id]');
+        if (!button) return;
+        await openThread(button.dataset.threadId);
+      });
+
+      refresh().catch(() => {
+        listEl.innerHTML = '<p class="messages-empty-note">{{ trans('messages.load_error')|e('js') }}</p>';
+      });
+    })();
+  </script>
+  {% endif %}
+{% endblock %}
