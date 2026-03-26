@@ -14,18 +14,9 @@ if [ $? -ne 0 ]; then
 fi
 echo "✓ Integration tests passed"
 
-# Playwright smoke tests (skip in pre-push — requires running server; runs in CI)
-if [[ -n "${CI:-}" ]]; then
-  echo "Running Playwright tests..."
-  npx playwright test 2>&1
-  if [ $? -ne 0 ]; then
-    echo "❌ Playwright tests failed — push aborted"
-    exit 1
-  fi
-  echo "✓ Playwright tests passed"
-else
-  echo "⏭ Playwright tests skipped (no server available; runs in CI)"
-fi
+# Playwright runs in .github/workflows/ci.yml only — not in pre-push (slow; needs server;
+# some environments set CI=1 which wrongly triggered the old hook).
+echo "⏭ Playwright skipped in pre-push (see ci.yml)"
 
 # Security audit
 composer audit --no-interaction 2>/dev/null
