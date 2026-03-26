@@ -1,0 +1,113 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Ingestion Dashboard — Minoo{% endblock %}
+
+{% block content %}
+<section class="content-section flow-lg">
+  <h1 class="section-title">Ingestion Dashboard</h1>
+
+  <div class="ingest-summary">
+    <div class="ingest-summary__card">
+      <span class="ingest-summary__label">Last Sync</span>
+      <span class="ingest-summary__value">
+        {% if last_sync %}
+          {{ last_sync|date('Y-m-d H:i') }}
+        {% else %}
+          No sync data
+        {% endif %}
+      </span>
+    </div>
+    <div class="ingest-summary__card">
+      <span class="ingest-summary__label">Total Logs</span>
+      <span class="ingest-summary__value">{{ total_count }}</span>
+    </div>
+    <div class="ingest-summary__card ingest-summary__card--approved">
+      <span class="ingest-summary__label">Approved</span>
+      <span class="ingest-summary__value">{{ status_counts.approved }}</span>
+    </div>
+    <div class="ingest-summary__card ingest-summary__card--pending">
+      <span class="ingest-summary__label">Pending Review</span>
+      <span class="ingest-summary__value">{{ status_counts.pending_review }}</span>
+    </div>
+    <div class="ingest-summary__card ingest-summary__card--failed">
+      <span class="ingest-summary__label">Failed</span>
+      <span class="ingest-summary__value">{{ status_counts.failed }}</span>
+    </div>
+    <div class="ingest-summary__card ingest-summary__card--rejected">
+      <span class="ingest-summary__label">Rejected</span>
+      <span class="ingest-summary__value">{{ status_counts.rejected }}</span>
+    </div>
+  </div>
+
+  <nav class="ingest-filters" aria-label="Filter by status">
+    <a href="/admin/ingestion" class="feed-chip{% if not status_filter %} feed-chip--active{% endif %}">All</a>
+    <a href="/admin/ingestion?status=pending_review" class="feed-chip{% if status_filter == 'pending_review' %} feed-chip--active{% endif %}">Pending</a>
+    <a href="/admin/ingestion?status=approved" class="feed-chip{% if status_filter == 'approved' %} feed-chip--active{% endif %}">Approved</a>
+    <a href="/admin/ingestion?status=failed" class="feed-chip{% if status_filter == 'failed' %} feed-chip--active{% endif %}">Failed</a>
+    <a href="/admin/ingestion?status=rejected" class="feed-chip{% if status_filter == 'rejected' %} feed-chip--active{% endif %}">Rejected</a>
+  </nav>
+
+  {% if logs|length > 0 %}
+    <div class="ingest-table-wrap">
+      <table class="ingest-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Source</th>
+            <th>Target Type</th>
+            <th>Title</th>
+            <th>Created</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td colspan="6">
+                <details class="ingest-row">
+                  <summary class="ingest-row__summary">
+                    <span class="ingest-badge ingest-badge--{{ log.get('status') }}">{{ log.get('status')|replace({'_': ' '}) }}</span>
+                    <span class="ingest-row__cell">{{ log.get('source')|default('—') }}</span>
+                    <span class="ingest-row__cell">{{ log.get('entity_type_target')|default('—') }}</span>
+                    <span class="ingest-row__cell ingest-row__cell--title">{{ log.label()|default('—') }}</span>
+                    <span class="ingest-row__cell ingest-row__cell--date">
+                      {% if log.get('created_at') %}
+                        {{ log.get('created_at')|date('Y-m-d H:i') }}
+                      {% else %}
+                        —
+                      {% endif %}
+                    </span>
+                    <span class="ingest-row__cell ingest-row__cell--error">{{ log.get('error_message')|default('')|slice(0, 80) }}{% if log.get('error_message')|default('')|length > 80 %}…{% endif %}</span>
+                  </summary>
+                  <div class="ingest-row__detail">
+                    {% if log.get('error_message') %}
+                      <div class="ingest-row__section">
+                        <h4>Error</h4>
+                        <pre>{{ log.get('error_message') }}</pre>
+                      </div>
+                    {% endif %}
+                    {% if log.get('payload_raw') %}
+                      <div class="ingest-row__section">
+                        <h4>Raw Payload</h4>
+                        <pre>{{ log.get('payload_raw') }}</pre>
+                      </div>
+                    {% endif %}
+                    {% if log.get('payload_parsed') %}
+                      <div class="ingest-row__section">
+                        <h4>Parsed Payload</h4>
+                        <pre>{{ log.get('payload_parsed') }}</pre>
+                      </div>
+                    {% endif %}
+                  </div>
+                </details>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="dashboard__empty">No ingest logs found{% if status_filter %} with status "{{ status_filter }}"{% endif %}.</p>
+  {% endif %}
+</section>
+{% endblock %}

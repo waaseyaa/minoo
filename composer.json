@@ -70,6 +70,7 @@
                 "Minoo\\Provider\\CommunityServiceProvider",
                 "Minoo\\Provider\\AuthServiceProvider",
                 "Minoo\\Provider\\DashboardServiceProvider",
+                "Minoo\\Provider\\IngestionDashboardServiceProvider",
                 "Minoo\\Provider\\MailServiceProvider",
                 "Minoo\\Provider\\AccountServiceProvider",
                 "Minoo\\Provider\\FlashServiceProvider",

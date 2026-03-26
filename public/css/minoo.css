@@ -6558,6 +6558,162 @@
   }
 
   /* ══════════════════════════════════════════════════════════
+     Ingestion Dashboard
+     ══════════════════════════════════════════════════════════ */
+
+  .ingest-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-xs);
+  }
+
+  .ingest-summary__card {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .ingest-summary__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
+  .ingest-summary__value {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .ingest-summary__card--approved { border-inline-start: 3px solid var(--color-language); }
+  .ingest-summary__card--pending { border-inline-start: 3px solid var(--color-teachings); }
+  .ingest-summary__card--failed { border-inline-start: 3px solid var(--color-events); }
+  .ingest-summary__card--rejected { border-inline-start: 3px solid var(--text-muted); }
+
+  .ingest-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+  }
+
+  .ingest-table-wrap {
+    overflow-x: auto;
+  }
+
+  .ingest-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .ingest-table thead {
+    display: none;
+  }
+
+  .ingest-table td {
+    padding: 0;
+    border-block-end: 1px solid var(--border-subtle);
+  }
+
+  .ingest-row summary {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr 1fr 2fr 8rem 2fr;
+    gap: var(--space-xs);
+    align-items: center;
+    padding: var(--space-xs) var(--space-2xs);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .ingest-row summary::-webkit-details-marker { display: none; }
+
+  .ingest-row summary:hover {
+    background-color: var(--surface-raised);
+  }
+
+  .ingest-row__cell {
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ingest-row__cell--title {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .ingest-row__cell--date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .ingest-row__cell--error {
+    font-size: 0.8rem;
+    color: var(--color-events);
+  }
+
+  .ingest-row__detail {
+    padding: var(--space-sm);
+    background-color: var(--surface-raised);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+
+  .ingest-row__section {
+    margin-block-end: var(--space-sm);
+  }
+
+  .ingest-row__section:last-child {
+    margin-block-end: 0;
+  }
+
+  .ingest-row__section h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-block-end: var(--space-3xs);
+  }
+
+  .ingest-row__section pre {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-break: break-all;
+    background-color: var(--surface-card);
+    padding: var(--space-xs);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    max-block-size: 300px;
+    overflow-y: auto;
+  }
+
+  .ingest-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .ingest-badge--approved { background-color: rgba(42, 157, 143, 0.2); color: var(--color-language); }
+  .ingest-badge--pending_review { background-color: rgba(244, 162, 97, 0.2); color: var(--color-teachings); }
+  .ingest-badge--failed { background-color: rgba(230, 57, 70, 0.2); color: var(--color-events); }
+  .ingest-badge--rejected { background-color: rgba(119, 119, 119, 0.2); color: var(--text-muted); }
+
+  /* ══════════════════════════════════════════════════════════
      Social Feed — Responsive Polish
      ══════════════════════════════════════════════════════════ */
 
@@ -6636,6 +6792,16 @@
 
     .feed-pill {
       flex-shrink: 0;
+    }
+
+    .ingest-row summary {
+      grid-template-columns: 1fr;
+      gap: var(--space-3xs);
+    }
+
+    .ingest-row__cell--error,
+    .ingest-row__cell--date {
+      display: none;
     }
   }
 
