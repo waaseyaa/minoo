@@ -2173,12 +2173,13 @@
 
   /* Location bar */
   .location-bar {
-    background-color: var(--surface-raised);
-    border-block-end: 1px solid var(--border-dark);
+    background-color: transparent;
+    border-block-end: none;
     padding-block: var(--space-3xs);
-    padding-inline: var(--gutter);
+    padding-inline: 0;
     font-size: var(--text-sm);
     color: var(--text-secondary);
+    max-inline-size: 980px;
   }
 
   .location-bar__inner {
@@ -5577,11 +5578,7 @@
   }
 
   .feed-sidebar {
-    position: sticky;
-    top: var(--space-md);
     align-self: start;
-    max-block-size: calc(100vh - var(--space-lg));
-    overflow-y: auto;
   }
 
   @media (max-width: 1024px) {
