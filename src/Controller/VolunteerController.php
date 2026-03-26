@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -32,11 +33,11 @@ final class VolunteerController
 
         $location = $this->resolveLocation($request);
 
-        $html = $this->twig->render('elders/volunteer.html.twig', [
+        $html = $this->twig->render('elders/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
             'values' => [],
             'location' => $location,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -76,10 +77,10 @@ final class VolunteerController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('elders/volunteer.html.twig', [
+            $html = $this->twig->render('elders/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => $errors,
                 'values' => compact('name', 'phone', 'community', 'availability', 'skills', 'notes', 'maxTravelKm'),
-            ]);
+            ]));
 
             return new SsrResponse(content: $html, statusCode: 422);
         }
@@ -127,9 +128,9 @@ final class VolunteerController
             }
         }
 
-        $html = $this->twig->render('elders/volunteer-confirmation.html.twig', [
+        $html = $this->twig->render('elders/volunteer-confirmation.html.twig', LayoutTwigContext::withAccount($account, [
             'entity' => $entity,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

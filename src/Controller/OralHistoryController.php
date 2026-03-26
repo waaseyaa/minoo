@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -36,11 +37,11 @@ final class OralHistoryController
             ->execute();
         $stories = $storyIds !== [] ? array_values($storyStorage->loadMultiple($storyIds)) : [];
 
-        $html = $this->twig->render('oral-histories.html.twig', [
+        $html = $this->twig->render('oral-histories.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/oral-histories',
             'collections' => $collections,
             'stories' => $stories,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -77,12 +78,12 @@ final class OralHistoryController
             }
         }
 
-        $html = $this->twig->render('oral-histories.html.twig', [
+        $html = $this->twig->render('oral-histories.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/oral-histories/collections/' . $slug,
             'collection' => $collection,
             'stories' => $stories,
             'curator' => $curator,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,
@@ -145,14 +146,14 @@ final class OralHistoryController
             }
         }
 
-        $html = $this->twig->render('oral-histories.html.twig', [
+        $html = $this->twig->render('oral-histories.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/oral-histories/' . $slug,
             'story' => $story,
             'contributor' => $contributor,
             'collection' => $collection,
             'prev_story' => $prevStory,
             'next_story' => $nextStory,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

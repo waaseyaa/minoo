@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\Flash;
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -40,11 +41,11 @@ final class VolunteerDashboardController
         $volStorage = $this->entityTypeManager->getStorage('volunteer');
         $volIds = $volStorage->getQuery()->condition('account_id', $account->id())->execute();
         $volunteer = $volIds !== [] ? $volStorage->load(reset($volIds)) : null;
-        $html = $this->twig->render('dashboard/volunteer.html.twig', [
+        $html = $this->twig->render('dashboard/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
             'requests' => $requests,
             'grouped' => $grouped,
             'volunteer' => $volunteer,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -56,11 +57,11 @@ final class VolunteerDashboardController
             return new SsrResponse(content: 'Not found', statusCode: 404);
         }
 
-        $html = $this->twig->render('dashboard/volunteer-edit.html.twig', [
+        $html = $this->twig->render('dashboard/volunteer-edit.html.twig', LayoutTwigContext::withAccount($account, [
             'volunteer' => $volunteer,
             'errors' => [],
             'values' => [],
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -80,7 +81,7 @@ final class VolunteerDashboardController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('dashboard/volunteer-edit.html.twig', [
+            $html = $this->twig->render('dashboard/volunteer-edit.html.twig', LayoutTwigContext::withAccount($account, [
                 'volunteer' => $volunteer,
                 'errors' => $errors,
                 'values' => [
@@ -90,7 +91,7 @@ final class VolunteerDashboardController
                     'skills' => $request->request->all('skills'),
                     'notes' => trim((string) $request->request->get('notes', '')),
                 ],
-            ]);
+            ]));
             return new SsrResponse(content: $html, statusCode: 422);
         }
 

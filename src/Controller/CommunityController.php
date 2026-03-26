@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\NorthCloudCache;
 use Minoo\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -104,12 +105,12 @@ final class CommunityController
             ? ['lat' => $location->latitude, 'lng' => $location->longitude, 'name' => $location->communityName]
             : null;
 
-        $html = $this->twig->render('communities/list.html.twig', [
+        $html = $this->twig->render('communities/list.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/communities',
             'communities_json' => json_encode($communitiesJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
             'location_json' => json_encode($locationJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
             'businesses_json' => json_encode($businessesJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -131,11 +132,11 @@ final class CommunityController
         $community = $ids !== [] ? $storage->load(reset($ids)) : null;
 
         if ($community === null) {
-            $html = $this->twig->render('communities/list.html.twig', [
+            $html = $this->twig->render('communities/list.html.twig', LayoutTwigContext::withAccount($account, [
                 'path' => '/communities',
                 'communities_json' => '[]',
                 'location_json' => 'null',
-            ]);
+            ]));
 
             return new SsrResponse(content: $html, statusCode: 404);
         }
@@ -206,7 +207,7 @@ final class CommunityController
             ->execute();
         $localPeople = $personIds !== [] ? array_values($personStorage->loadMultiple($personIds)) : [];
 
-        $html = $this->twig->render('communities/detail.html.twig', [
+        $html = $this->twig->render('communities/detail.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/communities/' . $slug,
             'community' => $community,
             'nearby' => $nearby,
@@ -218,7 +219,7 @@ final class CommunityController
             'local_teachings' => $localTeachings,
             'local_businesses' => $localBusinesses,
             'local_people' => $localPeople,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }

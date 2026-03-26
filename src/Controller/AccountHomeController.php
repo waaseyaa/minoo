@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\ElderIdentity;
+use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -22,12 +23,11 @@ final class AccountHomeController
 
     public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('account/home.html.twig', [
-            'account' => $account,
+        $html = $this->twig->render('account/home.html.twig', LayoutTwigContext::withAccount($account, [
             'roles' => $account->getRoles(),
             'is_elder' => $account instanceof User && ElderIdentity::isElder($account),
             'path' => '/account',
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }

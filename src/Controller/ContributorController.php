@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -29,10 +30,10 @@ final class ContributorController
             ->execute();
         $contributors = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
-        $html = $this->twig->render('contributors.html.twig', [
+        $html = $this->twig->render('contributors.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/contributors',
             'contributors' => $contributors,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -50,10 +51,10 @@ final class ContributorController
             ->execute();
         $contributor = $ids !== [] ? $storage->load(reset($ids)) : null;
 
-        $html = $this->twig->render('contributors.html.twig', [
+        $html = $this->twig->render('contributors.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/contributors/' . $slug,
             'contributor' => $contributor,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

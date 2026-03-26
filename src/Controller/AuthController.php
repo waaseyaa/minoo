@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\AuthMailer;
+use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\EmailVerificationService;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -28,11 +29,11 @@ final class AuthController
 
     public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('auth/login.html.twig', [
+        $html = $this->twig->render('auth/login.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
             'values' => [],
             'redirect' => (string) $request->query->get('redirect', ''),
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -45,10 +46,10 @@ final class AuthController
         $ip = $request->getClientIp() ?? '0.0.0.0';
 
         if (!$limiter->check($ip, '/login', 5, 300)) {
-            $html = $this->twig->render('auth/login.html.twig', [
+            $html = $this->twig->render('auth/login.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => ['email' => 'Too many attempts. Please try again in 5 minutes.'],
                 'values' => [],
-            ]);
+            ]));
             return new SsrResponse(content: $html, statusCode: 429);
         }
         $limiter->record($ip, '/login');
@@ -65,10 +66,10 @@ final class AuthController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('auth/login.html.twig', [
+            $html = $this->twig->render('auth/login.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => $errors,
                 'values' => compact('email'),
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
@@ -78,10 +79,10 @@ final class AuthController
             ->execute();
 
         if ($ids === []) {
-            $html = $this->twig->render('auth/login.html.twig', [
+            $html = $this->twig->render('auth/login.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => ['email' => 'Invalid email or password.'],
                 'values' => compact('email'),
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
@@ -89,18 +90,18 @@ final class AuthController
         $user = $storage->load(reset($ids));
 
         if ($user === null || !$user->checkPassword($password)) {
-            $html = $this->twig->render('auth/login.html.twig', [
+            $html = $this->twig->render('auth/login.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => ['email' => 'Invalid email or password.'],
                 'values' => compact('email'),
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
         if (!$user->isActive()) {
-            $html = $this->twig->render('auth/login.html.twig', [
+            $html = $this->twig->render('auth/login.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => ['email' => 'This account has been deactivated.'],
                 'values' => compact('email'),
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
@@ -118,10 +119,10 @@ final class AuthController
 
     public function registerForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('auth/register.html.twig', [
+        $html = $this->twig->render('auth/register.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
             'values' => [],
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -147,10 +148,10 @@ final class AuthController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('auth/register.html.twig', [
+            $html = $this->twig->render('auth/register.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => $errors,
                 'values' => compact('name', 'email', 'phone'),
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
@@ -167,12 +168,12 @@ final class AuthController
             if ($existingUser !== null && !$existingUser->isActive()) {
                 $token = $this->emailVerificationService->createToken($existingUser->id());
                 $this->authMailer->sendEmailVerification($existingUser, $token);
-                $html = $this->twig->render('auth/check-email.html.twig', []);
+                $html = $this->twig->render('auth/check-email.html.twig', LayoutTwigContext::withAccount($account, []));
                 return new SsrResponse(content: $html);
             }
 
             // Active account — show generic check-email page to prevent enumeration
-            $html = $this->twig->render('auth/check-email.html.twig', []);
+            $html = $this->twig->render('auth/check-email.html.twig', LayoutTwigContext::withAccount($account, []));
             return new SsrResponse(content: $html);
         }
 
@@ -207,9 +208,9 @@ final class AuthController
 
     public function forgotPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('auth/forgot-password.html.twig', [
+        $html = $this->twig->render('auth/forgot-password.html.twig', LayoutTwigContext::withAccount($account, [
             'values' => [],
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -223,10 +224,10 @@ final class AuthController
 
         if (!$limiter->check($ip, '/forgot-password', 3, 300)) {
             // Return 200 even when rate-limited to prevent enumeration via status codes
-            $html = $this->twig->render('auth/forgot-password.html.twig', [
+            $html = $this->twig->render('auth/forgot-password.html.twig', LayoutTwigContext::withAccount($account, [
                 'submitted' => true,
                 'values' => [],
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
         $limiter->record($ip, '/forgot-password');
@@ -250,10 +251,10 @@ final class AuthController
         }
 
         // Always show the same message (prevents user enumeration)
-        $html = $this->twig->render('auth/forgot-password.html.twig', [
+        $html = $this->twig->render('auth/forgot-password.html.twig', LayoutTwigContext::withAccount($account, [
             'submitted' => true,
             'values' => compact('email'),
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -273,11 +274,11 @@ final class AuthController
             }
         }
 
-        $html = $this->twig->render('auth/reset-password.html.twig', [
+        $html = $this->twig->render('auth/reset-password.html.twig', LayoutTwigContext::withAccount($account, [
             'token' => $token,
             'token_error' => $tokenError,
             'errors' => [],
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -292,11 +293,11 @@ final class AuthController
         $userId = $resetService->validateToken($token);
 
         if ($userId === null) {
-            $html = $this->twig->render('auth/reset-password.html.twig', [
+            $html = $this->twig->render('auth/reset-password.html.twig', LayoutTwigContext::withAccount($account, [
                 'token' => $token,
                 'token_error' => 'This reset link is invalid or has expired.',
                 'errors' => [],
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
@@ -311,11 +312,11 @@ final class AuthController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('auth/reset-password.html.twig', [
+            $html = $this->twig->render('auth/reset-password.html.twig', LayoutTwigContext::withAccount($account, [
                 'token' => $token,
                 'token_error' => null,
                 'errors' => $errors,
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
@@ -324,11 +325,11 @@ final class AuthController
         $user = $storage->load($userId);
 
         if ($user === null) {
-            $html = $this->twig->render('auth/reset-password.html.twig', [
+            $html = $this->twig->render('auth/reset-password.html.twig', LayoutTwigContext::withAccount($account, [
                 'token' => $token,
                 'token_error' => 'User account not found.',
                 'errors' => [],
-            ]);
+            ]));
             return new SsrResponse(content: $html);
         }
 
@@ -346,20 +347,20 @@ final class AuthController
         $token = (string) $request->query->get('token', '');
 
         if ($token === '') {
-            $html = $this->twig->render('auth/verify-email.html.twig', [
+            $html = $this->twig->render('auth/verify-email.html.twig', LayoutTwigContext::withAccount($account, [
                 'verified' => false,
                 'error' => 'This verification link is invalid or has expired.',
-            ]);
+            ]));
             return new SsrResponse(content: $html, statusCode: 400);
         }
 
         $userId = $this->emailVerificationService->validateToken($token);
 
         if ($userId === null) {
-            $html = $this->twig->render('auth/verify-email.html.twig', [
+            $html = $this->twig->render('auth/verify-email.html.twig', LayoutTwigContext::withAccount($account, [
                 'verified' => false,
                 'error' => 'This verification link is invalid or has expired.',
-            ]);
+            ]));
             return new SsrResponse(content: $html, statusCode: 400);
         }
 
@@ -368,10 +369,10 @@ final class AuthController
         $user = $storage->load($userId);
 
         if ($user === null) {
-            $html = $this->twig->render('auth/verify-email.html.twig', [
+            $html = $this->twig->render('auth/verify-email.html.twig', LayoutTwigContext::withAccount($account, [
                 'verified' => false,
                 'error' => 'User account not found.',
-            ]);
+            ]));
             return new SsrResponse(content: $html, statusCode: 404);
         }
 
@@ -385,9 +386,9 @@ final class AuthController
 
         Flash::success('Your email is verified and your account is active. Welcome to Minoo.');
 
-        $html = $this->twig->render('auth/verify-email.html.twig', [
+        $html = $this->twig->render('auth/verify-email.html.twig', LayoutTwigContext::withAccount($account, [
             'verified' => true,
-        ]);
+        ]));
         return new SsrResponse(content: $html);
     }
 

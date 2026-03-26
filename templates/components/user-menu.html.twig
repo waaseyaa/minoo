@@ -2,14 +2,14 @@
 {% if account is defined and account.isAuthenticated() %}
 <div class="user-menu" id="user-menu">
   <button class="user-menu__trigger" aria-expanded="false" aria-controls="user-menu-dropdown">
-    <span class="user-menu__avatar">{{ account_initial }}</span>
+    <span class="user-menu__avatar">{{ account_display_initial(account) }}</span>
   </button>
   <div class="user-menu__dropdown" id="user-menu-dropdown" hidden>
     <div class="user-menu__identity">
-      <span class="user-menu__avatar user-menu__avatar--lg">{{ account_initial }}</span>
+      <span class="user-menu__avatar user-menu__avatar--lg">{{ account_display_initial(account) }}</span>
       <div>
-        <div class="user-menu__name">{{ account_name }}</div>
-        <div class="user-menu__email">{{ account_email }}</div>
+        <div class="user-menu__name">{{ account_display_name(account) }}</div>
+        <div class="user-menu__email">{{ account_display_email(account) }}</div>
       </div>
     </div>
     <div class="user-menu__section">

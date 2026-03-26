@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\CommunityLookup;
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -42,11 +43,11 @@ final class GroupController
 
         $communities = CommunityLookup::build($this->entityTypeManager, $groups);
 
-        $html = $this->twig->render('groups.html.twig', [
+        $html = $this->twig->render('groups.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/groups',
             'groups' => $groups,
             'communities' => $communities,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -105,13 +106,13 @@ final class GroupController
             $relatedTeachings = $teachingIds ? array_values($teachingStorage->loadMultiple($teachingIds)) : [];
         }
 
-        $html = $this->twig->render('groups.html.twig', [
+        $html = $this->twig->render('groups.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/groups/' . $slug,
             'group' => $group,
             'related_people' => $relatedPeople,
             'related_events' => $relatedEvents,
             'related_teachings' => $relatedTeachings,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

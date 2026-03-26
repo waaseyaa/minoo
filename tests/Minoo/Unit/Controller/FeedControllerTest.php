@@ -92,7 +92,7 @@ final class FeedControllerTest extends TestCase
         $this->assertArrayHasKey('suggested_communities', $capturedContext);
         $this->assertArrayHasKey('followed_communities', $capturedContext);
         $this->assertArrayHasKey('user_communities', $capturedContext);
-        $this->assertArrayHasKey('account_initial', $capturedContext);
+        $this->assertArrayHasKey('account', $capturedContext);
 
         // Trending falls back to feed items when no reaction entity type exists
         $this->assertCount(1, $capturedContext['trending']);
@@ -101,10 +101,9 @@ final class FeedControllerTest extends TestCase
         // No location cookie — suggested communities empty
         $this->assertSame([], $capturedContext['suggested_communities']);
 
-        // Anonymous user — followed/user communities empty, initial empty
+        // Anonymous user — followed/user communities empty
         $this->assertSame([], $capturedContext['followed_communities']);
         $this->assertSame([], $capturedContext['user_communities']);
-        $this->assertSame('', $capturedContext['account_initial']);
     }
 
     #[Test]

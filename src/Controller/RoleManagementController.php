@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\ElderIdentity;
+use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -103,12 +104,11 @@ final class RoleManagementController
     {
         $users = $this->loadUserRows($account);
 
-        $html = $this->twig->render('dashboard/coordinator-users.html.twig', [
+        $html = $this->twig->render('dashboard/coordinator-users.html.twig', LayoutTwigContext::withAccount($account, [
             'users' => $users,
-            'account' => $account,
             'can_manage_coordinator' => false,
             'path' => '/dashboard/coordinator/users',
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -117,12 +117,11 @@ final class RoleManagementController
     {
         $users = $this->loadUserRows($account);
 
-        $html = $this->twig->render('admin/users.html.twig', [
+        $html = $this->twig->render('admin/users.html.twig', LayoutTwigContext::withAccount($account, [
             'users' => $users,
-            'account' => $account,
             'can_manage_coordinator' => true,
             'path' => '/admin/users',
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }

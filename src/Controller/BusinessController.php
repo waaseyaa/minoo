@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\CommunityLookup;
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -43,11 +44,11 @@ final class BusinessController
 
         $communities = CommunityLookup::build($this->entityTypeManager, $businesses);
 
-        $html = $this->twig->render('businesses.html.twig', [
+        $html = $this->twig->render('businesses.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/businesses',
             'businesses' => $businesses,
             'communities' => $communities,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -128,7 +129,7 @@ final class BusinessController
             }
         }
 
-        $html = $this->twig->render('businesses.html.twig', [
+        $html = $this->twig->render('businesses.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/businesses/' . $slug,
             'business' => $business,
             'owner' => $owner,
@@ -136,7 +137,7 @@ final class BusinessController
             'community' => $community,
             'image_url' => $imageUrl,
             'image_credit' => $imageCredit,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

@@ -6,6 +6,7 @@ namespace Minoo\Provider;
 
 use Minoo\Service\FlashMessageService;
 use Minoo\Support\Flash;
+use Minoo\Twig\AccountDisplayTwigExtension;
 use Minoo\Twig\DateTwigExtension;
 use Minoo\Twig\FlashTwigExtension;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -29,5 +30,6 @@ final class FlashServiceProvider extends ServiceProvider
         Flash::setService($service);
         $twig->addExtension(new FlashTwigExtension($service));
         $twig->addExtension(new DateTwigExtension());
+        $twig->addExtension(new AccountDisplayTwigExtension());
     }
 }

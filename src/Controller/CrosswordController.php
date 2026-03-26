@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\CrosswordEngine;
+use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\GameStatsCalculator;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -31,9 +32,9 @@ final class CrosswordController
     /** Render the crossword game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('crossword.html.twig', [
+        $html = $this->twig->render('crossword.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/crossword',
-        ]);
+        ]));
         return new SsrResponse(content: $html);
     }
 

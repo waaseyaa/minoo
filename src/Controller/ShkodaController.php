@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\GameStatsCalculator;
+use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\ShkodaEngine;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -37,9 +38,9 @@ final class ShkodaController
     /** Render the game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('shkoda.html.twig', [
+        $html = $this->twig->render('shkoda.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/shkoda',
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }

@@ -6,6 +6,7 @@ namespace Minoo\Controller;
 
 use Minoo\Domain\Geo\Service\VolunteerRanker;
 use Minoo\Support\Flash;
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -70,7 +71,7 @@ final class CoordinatorDashboardController
         $communityNames = $this->buildCommunityNameMap(
             array_merge($allRequests, array_values($volunteers)),
         );
-        $html = $this->twig->render('dashboard/coordinator.html.twig', [
+        $html = $this->twig->render('dashboard/coordinator.html.twig', LayoutTwigContext::withAccount($account, [
             'open_requests' => $open,
             'assigned_requests' => $assigned,
             'pending_confirmation' => $pendingConfirmation,
@@ -81,7 +82,7 @@ final class CoordinatorDashboardController
             'cancelled_requests' => $cancelled,
             'community_names' => $communityNames,
             'pending_application_count' => $pendingApplicationCount,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -97,9 +98,9 @@ final class CoordinatorDashboardController
 
         $applications = $ids !== [] ? $storage->loadMultiple($ids) : [];
 
-        $html = $this->twig->render('dashboard/coordinator-applications.html.twig', [
+        $html = $this->twig->render('dashboard/coordinator-applications.html.twig', LayoutTwigContext::withAccount($account, [
             'applications' => $applications,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }

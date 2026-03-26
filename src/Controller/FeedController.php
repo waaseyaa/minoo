@@ -8,13 +8,12 @@ use Minoo\Feed\FeedAssemblerInterface;
 use Minoo\Feed\FeedContext;
 use Minoo\Feed\FeedResponse;
 use Minoo\Support\GeoDistance;
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
-use Waaseyaa\User\Middleware\CsrfMiddleware;
-use Waaseyaa\User\User;
 
 final class FeedController
 {
@@ -35,23 +34,19 @@ final class FeedController
         $suggestedCommunities = $this->buildSuggestedCommunities($ctx->latitude, $ctx->longitude);
         $followedCommunities = $this->buildFollowedCommunities($account);
         $userCommunities = $this->buildUserCommunities($followedCommunities, $suggestedCommunities);
-        $accountInitial = $this->buildAccountInitial($account);
 
-        $html = $this->twig->render('feed.html.twig', [
+        $html = $this->twig->render('feed.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/',
-            'account' => $account,
             'response' => $response,
             'nextCursor' => $response->nextCursor,
             'activeFilter' => $response->activeFilter,
             'filterParam' => $resolved['filterParam'],
-            'csrf_token' => CsrfMiddleware::token(),
             'trending' => $trending,
             'upcoming_events' => $upcomingEvents,
             'suggested_communities' => $suggestedCommunities,
             'followed_communities' => $followedCommunities,
             'user_communities' => $userCommunities,
-            'account_initial' => $accountInitial,
-        ]);
+        ]));
 
         $headers = ['Content-Type' => 'text/html; charset=UTF-8'];
 
@@ -393,33 +388,6 @@ final class FeedController
         }
 
         return $result;
-    }
-
-    /**
-     * First letter of the authenticated user's display name, uppercased.
-     */
-    private function buildAccountInitial(AccountInterface $account): string
-    {
-        if (!$account->isAuthenticated()) {
-            return '';
-        }
-
-        // User entity has getName(); generic AccountInterface does not.
-        if ($account instanceof User) {
-            $name = $account->getName();
-            if ($name !== '') {
-                return mb_strtoupper(mb_substr($name, 0, 1));
-            }
-        }
-
-        if (method_exists($account, 'label')) {
-            $label = (string) $account->label();
-            if ($label !== '') {
-                return mb_strtoupper(mb_substr($label, 0, 1));
-            }
-        }
-
-        return '?';
     }
 
     /**

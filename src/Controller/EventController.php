@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\CommunityLookup;
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -42,11 +43,11 @@ final class EventController
 
         $communities = CommunityLookup::build($this->entityTypeManager, $events);
 
-        $html = $this->twig->render('events.html.twig', [
+        $html = $this->twig->render('events.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/events',
             'events' => $events,
             'communities' => $communities,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -118,7 +119,7 @@ final class EventController
             }
         }
 
-        $html = $this->twig->render('events.html.twig', [
+        $html = $this->twig->render('events.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/events/' . $slug,
             'event' => $event,
             'related_teachings' => $relatedTeachings,
@@ -126,7 +127,7 @@ final class EventController
             'host_community' => $hostCommunity,
             'image_url' => $imageUrl,
             'image_credit' => $imageCredit,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -29,7 +30,7 @@ final class IngestionDashboardController
         $logs = $this->loadRecentLogs($storage, $statusFilter);
         $statusCounts = $this->buildStatusCounts($storage);
 
-        $html = $this->twig->render('admin/ingestion.html.twig', [
+        $html = $this->twig->render('admin/ingestion.html.twig', LayoutTwigContext::withAccount($account, [
             'logs' => $logs,
             'total_count' => $this->countLogs($storage),
             'status_counts' => $statusCounts,
@@ -37,7 +38,7 @@ final class IngestionDashboardController
             'nc_sync' => $this->loadNcSyncStatus(),
             'status_filter' => $statusFilter,
             'hide_sidebar' => true,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }

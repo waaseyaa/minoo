@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Entity\DictionaryEntry;
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -40,13 +41,13 @@ final class LanguageController
         $entries = $pageIds !== [] ? array_values($storage->loadMultiple($pageIds)) : [];
         $totalPages = (int) ceil($total / self::PAGE_SIZE);
 
-        $html = $this->twig->render('language.html.twig', [
+        $html = $this->twig->render('language.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/language',
             'entries' => $entries,
             'current_page' => $page,
             'total_pages' => $totalPages,
             'total_entries' => $total,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -67,11 +68,11 @@ final class LanguageController
             $entry = null;
         }
 
-        $html = $this->twig->render('language.html.twig', [
+        $html = $this->twig->render('language.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/language/' . $slug,
             'entry' => $entry,
             'inflected_forms' => $entry !== null ? $this->parseInflectedForms((string) $entry->get('inflected_forms')) : [],
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

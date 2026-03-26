@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -68,14 +69,14 @@ final class PeopleController
         $photoUrls = $mediaIds !== [] ? $this->resolvePhotoUrls($mediaIds) : [];
         $location = $this->resolveLocation($request);
 
-        $html = $this->twig->render('people.html.twig', [
+        $html = $this->twig->render('people.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/people',
             'people' => $people,
             'photo_urls' => $photoUrls,
             'all_roles' => array_keys($allRoles),
             'all_offerings' => array_keys($allOfferings),
             'location' => $location,
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
@@ -144,7 +145,7 @@ final class PeopleController
             $relatedEvents = $eventIds !== [] ? $eventStorage->loadMultiple($eventIds) : [];
         }
 
-        $html = $this->twig->render('people.html.twig', [
+        $html = $this->twig->render('people.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/people/' . $slug,
             'person' => $person,
             'photo_url' => $photoUrl,
@@ -153,7 +154,7 @@ final class PeopleController
             'linked_business' => $linkedBusiness,
             'community_entity' => $communityEntity,
             'related_events' => $relatedEvents,
-        ]);
+        ]));
 
         return new SsrResponse(
             content: $html,

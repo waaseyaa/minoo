@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Support\GameStatsCalculator;
+use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\MatcherEngine;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -31,9 +32,9 @@ final class MatcherController
     /** Render the game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
-        $html = $this->twig->render('matcher.html.twig', [
+        $html = $this->twig->render('matcher.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/matcher',
-        ]);
+        ]));
 
         return new SsrResponse(content: $html);
     }
