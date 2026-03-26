@@ -2177,6 +2177,7 @@
     border-block-end: none;
     padding-block: var(--space-3xs);
     padding-inline: 0;
+    margin-block-end: var(--space-xs);
     font-size: var(--text-sm);
     color: var(--text-secondary);
     max-inline-size: 980px;
@@ -6031,8 +6032,7 @@
   }
 
   .feed-card__author + .feed-card__source::before {
-    content: " · ";
-    color: var(--text-muted);
+    content: none;
   }
 
   .feed-card__source {

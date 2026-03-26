@@ -40,7 +40,7 @@
         {% if item.communityName|default('') %}
           <a href="{{ lang_url('/communities/' ~ item.communitySlug|default('')) }}" class="feed-card__source">{{ item.communityName }}</a>
         {% endif %}
-        <span class="feed-card__attribution-action">&middot; {{ item.relativeTime|default('') }}</span>
+        <span class="feed-card__attribution-action">{{ item.relativeTime|default('') }}</span>
       </div>
     </div>
     <p class="feed-card__body">{{ item.meta|default('') }}</p>
