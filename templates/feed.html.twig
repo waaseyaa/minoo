@@ -300,6 +300,14 @@
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const headers = { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
 
+    function requireAuth(res) {
+      if (res.status === 401) {
+        window.location.href = '/login';
+        return true;
+      }
+      return false;
+    }
+
     function showFeedback(btn, message, isError) {
       const label = btn.querySelector('.feed-action__label') || btn;
       const original = label.textContent;
@@ -319,6 +327,7 @@
       try {
         if (isActive && btn.dataset.reactionId) {
           const res = await fetch(`/api/engagement/react/${btn.dataset.reactionId}`, { method: 'DELETE', headers });
+          if (requireAuth(res)) return;
           if (!res.ok) { showFeedback(btn, 'Error', true); return; }
           btn.classList.remove('feed-action--active');
           delete btn.dataset.reactionId;
@@ -328,6 +337,7 @@
             method: 'POST', headers,
             body: JSON.stringify({ target_type: type, target_id: id, reaction_type: reactionType })
           });
+          if (requireAuth(res)) return;
           if (!res.ok) {
             const err = await res.json().catch(() => ({}));
             showFeedback(btn, err.error || 'Error', true);
@@ -502,6 +512,7 @@
           method: 'POST', headers,
           body: JSON.stringify({ target_type: form.dataset.type, target_id: form.dataset.id, body })
         });
+        if (requireAuth(res)) return;
         if (res.ok) {
           const list = form.previousElementSibling;
           list.insertAdjacentHTML('beforeend',
