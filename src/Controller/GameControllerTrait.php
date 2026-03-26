@@ -22,7 +22,7 @@ trait GameControllerTrait
     private function jsonBody(HttpRequest $request): array
     {
         $content = $request->getContent();
-        if ($content === '' || $content === false) {
+        if ($content === '') {
             return [];
         }
         try {

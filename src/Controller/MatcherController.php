@@ -269,6 +269,8 @@ final class MatcherController
         ]);
         $sessionStorage->save($session);
 
+        assert($session instanceof \Minoo\Entity\GameSession);
+
         return $session;
     }
 
