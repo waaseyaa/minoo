@@ -22,7 +22,6 @@ final class FeedAssembler implements FeedAssemblerInterface
         $events = $this->loader->loadUpcomingEvents($ctx->limit * 2);
         $groups = $this->loader->loadGroups($ctx->limit * 2);
         $businesses = $this->loader->loadBusinesses($ctx->limit * 2);
-        $people = $this->loader->loadPublicPeople($ctx->limit * 2);
         $posts = $this->loader->loadPosts($ctx->limit * 2);
         $featuredRaw = $this->loader->loadFeaturedItems();
         $communities = $this->loader->loadAllCommunities();
@@ -70,7 +69,6 @@ final class FeedAssembler implements FeedAssemblerInterface
             ['type' => 'event', 'entities' => $events, 'communityField' => 'community_id'],
             ['type' => 'group', 'entities' => $groups, 'communityField' => 'community_id'],
             ['type' => 'business', 'entities' => $businesses, 'communityField' => 'community_id'],
-            ['type' => 'person', 'entities' => $people, 'communityField' => 'community'],
         ];
 
         foreach ($sources as $sourceIdx => $source) {

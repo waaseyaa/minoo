@@ -6,7 +6,6 @@ namespace Minoo\Tests\Unit\Feed;
 
 use Minoo\Entity\Event;
 use Minoo\Entity\Group;
-use Minoo\Entity\ResourcePerson;
 use Minoo\Feed\EntityLoaderService;
 use Minoo\Feed\FeedAssembler;
 use Minoo\Feed\FeedContext;
@@ -53,12 +52,9 @@ final class FeedAssemblerTest extends TestCase
     {
         $event = new Event(['eid' => 1, 'title' => 'E1', 'slug' => 'e1', 'status' => 1, 'created_at' => time()]);
         $group = new Group(['gid' => 2, 'name' => 'G1', 'slug' => 'g1', 'type' => 'organization', 'status' => 1, 'created_at' => time()]);
-        $person = new ResourcePerson(['rpid' => 3, 'name' => 'P1', 'slug' => 'p1', 'consent_public' => 1, 'status' => 1, 'created_at' => time()]);
-
         $this->loader->method('loadUpcomingEvents')->willReturn([$event]);
         $this->loader->method('loadGroups')->willReturn([$group]);
         $this->loader->method('loadBusinesses')->willReturn([]);
-        $this->loader->method('loadPublicPeople')->willReturn([$person]);
         $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
@@ -72,7 +68,7 @@ final class FeedAssemblerTest extends TestCase
         $this->assertContains('communities', $types);
         $this->assertContains('event', $types);
         $this->assertContains('group', $types);
-        $this->assertContains('person', $types);
+        $this->assertNotContains('person', $types);
     }
 
     #[Test]
@@ -164,12 +160,9 @@ final class FeedAssemblerTest extends TestCase
         $base = 1711000000;
         $event = new Event(['eid' => 1, 'title' => 'E1', 'slug' => 'e1', 'status' => 1, 'created_at' => $base]);
         $group = new Group(['gid' => 2, 'name' => 'G1', 'slug' => 'g1', 'type' => 'organization', 'status' => 1, 'created_at' => $base - 100]);
-        $person = new ResourcePerson(['rpid' => 3, 'name' => 'P1', 'slug' => 'p1', 'consent_public' => 1, 'status' => 1, 'created_at' => $base - 200]);
-
         $this->loader->method('loadUpcomingEvents')->willReturn([$event]);
         $this->loader->method('loadGroups')->willReturn([$group]);
         $this->loader->method('loadBusinesses')->willReturn([]);
-        $this->loader->method('loadPublicPeople')->willReturn([$person]);
         $this->loader->method('loadPosts')->willReturn([]);
         $this->loader->method('loadFeaturedItems')->willReturn([]);
         $this->loader->method('loadAllCommunities')->willReturn([]);
