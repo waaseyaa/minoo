@@ -260,12 +260,11 @@ final class EngagementController
         if ($uploadedFiles !== []) {
             $imagePaths = [];
             foreach ($uploadedFiles as $file) {
-                $detectedMimeType = $file->getMimeType();
                 $fileArray = [
                     'name' => $file->getClientOriginalName(),
                     'tmp_name' => $file->getPathname(),
                     'size' => $file->getSize(),
-                    'type' => is_string($detectedMimeType) ? $detectedMimeType : '',
+                    'type' => $this->detectMimeType($file->getPathname()),
                     'error' => $file->getError(),
                 ];
                 if ($this->uploadService->validateImage($fileArray) === []) {
@@ -325,6 +324,23 @@ final class EngagementController
         }
 
         return array_slice($files, 0, 4);
+    }
+
+    private function detectMimeType(string $path): string
+    {
+        if (!is_file($path)) {
+            return '';
+        }
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo === false) {
+            return '';
+        }
+
+        $mimeType = finfo_file($finfo, $path);
+        finfo_close($finfo);
+
+        return is_string($mimeType) ? $mimeType : '';
     }
 
     public function deletePost(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse

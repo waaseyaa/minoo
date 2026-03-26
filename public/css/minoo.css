@@ -185,6 +185,7 @@
     --width-content: 80rem;
     --width-narrow:  40rem;
     --width-card:    25rem;
+    --width-page:    61.25rem; /* 980px, matches feed layout rhythm */
 
     /* Radii */
     --radius-sm:   0.25rem;
@@ -5053,8 +5054,18 @@
     margin-block-start: var(--space-sm);
   }
 
+  .flow-lg {
+    max-inline-size: var(--width-page);
+    margin-inline: auto;
+  }
+
   .flow-lg > * + * {
     margin-block-start: var(--space-lg);
+  }
+
+  .content-max {
+    max-inline-size: var(--width-page);
+    margin-inline: auto;
   }
 
   .visually-hidden {
@@ -5566,7 +5577,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) 260px;
     gap: var(--space-md);
-    max-inline-size: 980px;
+    max-inline-size: var(--width-page);
     margin-block-start: calc(-1 * var(--space-sm));
   }
 
@@ -5863,6 +5874,14 @@
     font-size: var(--text-sm);
     margin: 0;
     padding-block: var(--space-3xs);
+  }
+
+  .mentor-callout {
+    border-inline-start: 3px solid var(--color-programs);
+    background-color: oklch(from var(--color-programs) l c h / 0.1);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--text-secondary);
   }
 
   /* Post image grid */

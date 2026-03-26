@@ -44,9 +44,26 @@ Framework `RenderController::tryRenderPathTemplate()` maps URL segments to templ
 - `path` (string): Current request path, set by framework
 
 ### Navigation
-6 nav items: Events, Groups, Teachings, Language, Search. Active state via `aria-current="page"` when `path starts with '/events'` etc.
+Primary navigation is sidebar-first in `templates/components/sidebar-nav.html.twig`, rendered from `templates/base.html.twig` as part of `app-layout`. Active state is path-driven (`current_path == '/...'` or `starts with '/...'` checks).
 
-Mobile toggle: vanilla JS toggles `.is-open` on `.site-nav` and `aria-expanded` on `.nav-toggle`.
+Header behavior is minimal: logo, search, and user menu; sidebar toggle is mobile-only and controls `.app-sidebar--open` plus `.app-sidebar__overlay--visible`.
+
+## Homepage-As-Source Layout Policy
+
+`/` is rendered by `FeedController::index()` using `templates/feed.html.twig`, and is the source-of-truth for current SSR composition rhythm.
+
+### Canonical layout surfaces
+- **Shell layout (`base.html.twig`):** `app-layout` with `app-sidebar` and `app-main`
+- **Homepage content (`feed.html.twig`):** `feed-layout` with primary content plus optional right rail
+- **Listing hubs (`events`, `groups`, `teachings`, `people`, etc.):** `flow-lg` + `listing-hero` + `card-grid`
+
+### Column policy
+- Treat **page layout columns** and **card-grid columns** as separate concerns.
+- `feed-layout` can be multi-region (main + right rail) when there is real supporting content.
+- `card-grid` uses shared width tokens; do not add a page-specific third card column unless introducing a shared density variant across multiple surfaces.
+
+### Width policy
+- Shared content rhythm should come from shared tokens/utilities (for example a shared max content width utility), not one-off per-template hard-coded widths.
 
 ## Listing + Detail Pattern
 
