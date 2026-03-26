@@ -9,6 +9,7 @@ use Minoo\Support\UploadService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityInterface;
@@ -277,6 +278,38 @@ final class EngagementControllerTest extends TestCase
         $storage->method('create')->willReturn($entity);
 
         $request = $this->jsonRequest('POST', ['body' => 'Hello community!', 'community_id' => 1]);
+
+        $response = $this->controller->createPost([], [], $account, $request);
+
+        $this->assertSame(201, $response->statusCode);
+        $json = json_decode($response->content, true);
+        $this->assertSame(3, $json['id']);
+    }
+
+    #[Test]
+    public function create_post_accepts_single_multipart_image_field(): void
+    {
+        $account = $this->mockAccount(42);
+        $entity = $this->mockEntity(['body' => 'Hello community!', 'created_at' => 1700000000], 3);
+        $storage = $this->mockStorage('post');
+        $storage->method('create')->willReturn($entity);
+
+        $tmpImage = tempnam(sys_get_temp_dir(), 'img');
+        file_put_contents($tmpImage, 'test-image');
+        $upload = new UploadedFile(
+            path: $tmpImage,
+            originalName: 'photo.jpg',
+            mimeType: 'image/jpeg',
+            error: UPLOAD_ERR_OK,
+            test: true,
+        );
+
+        $request = HttpRequest::create(
+            uri: '/api/engagement/post',
+            method: 'POST',
+            parameters: ['body' => 'Hello community!', 'community_id' => 1],
+            files: ['images' => $upload],
+        );
 
         $response = $this->controller->createPost([], [], $account, $request);
 

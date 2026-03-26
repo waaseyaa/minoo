@@ -6,6 +6,7 @@ namespace Minoo\Controller;
 
 use Minoo\Entity\Reaction;
 use Minoo\Support\UploadService;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
@@ -255,18 +256,15 @@ final class EngagementController
         }
 
         // Handle image uploads
-        $uploadedFiles = $request->files->all('images');
+        $uploadedFiles = $this->extractUploadedImages($request);
         if ($uploadedFiles !== []) {
             $imagePaths = [];
-            foreach (array_slice($uploadedFiles, 0, 4) as $file) {
-                if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
-                    continue;
-                }
+            foreach ($uploadedFiles as $file) {
                 $fileArray = [
                     'name' => $file->getClientOriginalName(),
                     'tmp_name' => $file->getPathname(),
                     'size' => $file->getSize(),
-                    'type' => $file->getMimeType() ?? '',
+                    'type' => $file->getClientMimeType(),
                     'error' => $file->getError(),
                 ];
                 if ($this->uploadService->validateImage($fileArray) === []) {
@@ -284,6 +282,48 @@ final class EngagementController
             'body' => $entity->get('body'),
             'created_at' => $entity->get('created_at'),
         ], 201);
+    }
+
+    /** @return list<UploadedFile> */
+    private function extractUploadedImages(HttpRequest $request): array
+    {
+        $candidates = [];
+        foreach (['images', 'images[]'] as $key) {
+            try {
+                $all = $request->files->all($key);
+                if ($all !== []) {
+                    $candidates[] = $all;
+                }
+            } catch (\Throwable) {
+                // Some payload shapes throw when all() expects array but gets a single file.
+            }
+
+            $single = $request->files->get($key);
+            if ($single !== null) {
+                $candidates[] = $single;
+            }
+        }
+
+        $files = [];
+        $flatten = function (mixed $value) use (&$files, &$flatten): void {
+            if ($value instanceof UploadedFile) {
+                $files[] = $value;
+
+                return;
+            }
+
+            if (is_array($value)) {
+                foreach ($value as $item) {
+                    $flatten($item);
+                }
+            }
+        };
+
+        foreach ($candidates as $candidate) {
+            $flatten($candidate);
+        }
+
+        return array_slice($files, 0, 4);
     }
 
     public function deletePost(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
