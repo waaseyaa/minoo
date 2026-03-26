@@ -139,10 +139,13 @@ final class FeedController
                     $top = array_slice(array_keys($counts), 0, 5);
                     foreach ($top as $compositeKey) {
                         [$type, $id] = explode(':', $compositeKey, 2);
+                        if ($type === 'post' || !$this->entityTypeManager->hasDefinition($type)) {
+                            continue;
+                        }
                         if ($this->entityTypeManager->hasDefinition($type)) {
                             try {
                                 $entity = $this->entityTypeManager->getStorage($type)->load($id);
-                                if ($entity !== null) {
+                                if ($entity !== null && $entity->label() !== '' && $entity->label() !== null) {
                                     $trending[] = [
                                         'type' => $type,
                                         'badge' => ucfirst($type),
@@ -166,13 +169,19 @@ final class FeedController
         }
 
         if ($trending === []) {
-            foreach (array_slice($response->items, 0, 5) as $item) {
+            foreach ($response->items as $item) {
+                if ($item->type === 'post' || $item->title === '') {
+                    continue;
+                }
                 $trending[] = [
                     'type' => $item->type,
                     'badge' => $item->badge,
                     'title' => $item->title,
                     'url' => $item->url,
                 ];
+                if (\count($trending) >= 5) {
+                    break;
+                }
             }
         }
 
