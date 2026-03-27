@@ -4584,6 +4584,26 @@
     margin-block-start: var(--space-md);
   }
 
+  .crossword__themes-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--space-xl) var(--space-md);
+    color: var(--text-muted);
+  }
+
+  .crossword__themes-empty-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-block-end: var(--space-xs);
+  }
+
+  .crossword__themes-empty-body {
+    font-size: var(--text-sm);
+    max-inline-size: 36ch;
+    margin-inline: auto;
+  }
+
   /* Loading state */
   .crossword__loading {
     text-align: center;
