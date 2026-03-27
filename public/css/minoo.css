@@ -5485,7 +5485,7 @@
   .atlas-filters {
     display: flex;
     gap: var(--space-2xs);
-    padding-block: var(--space-xs);
+    padding: var(--space-xs) var(--gutter);
     flex-wrap: wrap;
   }
 
@@ -5528,9 +5528,29 @@
     overflow: hidden;
   }
 
-  /* Full-bleed for map pages */
-  .site-main:has(.community-map) {
+  /* Full-width atlas column: main uses .app-main (not .site-main) */
+  .app-main:has(.community-map) {
     padding-inline: 0;
+  }
+
+  .app-main:has(.community-map) .content-max {
+    max-inline-size: none;
+    margin-inline: 0;
+    inline-size: 100%;
+  }
+
+  .app-main:has(.community-map) .flash-messages {
+    padding-inline: var(--gutter);
+  }
+
+  .app-main:has(.community-map) .location-bar {
+    max-inline-size: none;
+    padding-inline: var(--gutter);
+  }
+
+  .app-main:has(.community-map) .location-bar__inner {
+    max-inline-size: none;
+    margin-inline: 0;
   }
 
   @media (max-width: 768px) {
