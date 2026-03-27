@@ -55,14 +55,14 @@ final class CrosswordControllerTest extends TestCase
     }
 
     #[Test]
-    public function random_returns_404_when_no_puzzles_for_tier(): void
+    public function random_returns_error_when_no_puzzles_for_tier(): void
     {
         $this->puzzleQuery->method('execute')->willReturn([]);
 
         $controller = new CrosswordController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->random([], ['tier' => 'medium'], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(200, $response->statusCode);
         $content = json_decode($response->content, true);
         $this->assertSame('no_puzzles', $content['error']);
         $this->assertSame('medium', $content['tier']);
@@ -76,7 +76,7 @@ final class CrosswordControllerTest extends TestCase
         $controller = new CrosswordController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->random([], ['tier' => 'extreme'], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(200, $response->statusCode);
         $content = json_decode($response->content, true);
         $this->assertSame('easy', $content['tier']);
     }
