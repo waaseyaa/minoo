@@ -991,6 +991,17 @@
   function renderThemes(themes) {
     themesListEl.innerHTML = '';
 
+    if (!themes || themes.length === 0) {
+      themesListEl.innerHTML =
+        '<div class="crossword__themes-empty">' +
+          '<p class="crossword__themes-empty-title">Themed Puzzle Packs Coming Soon</p>' +
+          '<p class="crossword__themes-empty-body">' +
+            'We\u2019re working on themed collections like Animals, Family, and Seasons.' +
+          '</p>' +
+        '</div>';
+      return;
+    }
+
     themes.forEach(function (theme) {
       var card = document.createElement('div');
       card.className = 'crossword__theme-card';
