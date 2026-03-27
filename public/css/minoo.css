@@ -5434,6 +5434,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    max-inline-size: none; /* base .card caps at --width-card; list rows span full column */
+    inline-size: 100%;
     padding: var(--space-xs) var(--space-sm);
     border-radius: 0;
     border-inline-start: 3px solid var(--color-communities);
