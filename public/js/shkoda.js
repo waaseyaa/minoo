@@ -132,6 +132,7 @@
   }
 
   function updateFire(wasWrong) {
+    if (state.gameOver) return;
     var remaining = state.maxWrong - state.wrongGuesses.length;
     if (remaining < 0) remaining = 0;
     fireEl.dataset.fireState = remaining;
@@ -259,8 +260,14 @@
     }
 
     if (allRevealed) {
+      state.gameOver = true;
+      fireEl.dataset.fireState = 'win';
+      spawnSparks();
       completeGame('won');
     } else if (state.wrongGuesses.length >= state.maxWrong) {
+      state.gameOver = true;
+      fireEl.dataset.fireState = '0';
+      spawnSmoke();
       completeGame('lost');
     }
   }
@@ -319,10 +326,11 @@
     showReveal(won, data, stats);
 
     // Trigger animation — override fire state for win/loss
-    if (won) {
+    // (practice mode may have set this already before async complete call)
+    if (won && fireEl.dataset.fireState !== 'win') {
       fireEl.dataset.fireState = 'win';
       spawnSparks();
-    } else {
+    } else if (!won && fireEl.dataset.fireState !== '0') {
       fireEl.dataset.fireState = '0';
       spawnSmoke();
     }
