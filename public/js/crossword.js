@@ -112,6 +112,30 @@
     if (completeEl) completeEl.hidden = !show;
   }
 
+  function showNoPuzzles(tier) {
+    showGame(false);
+    showComplete(true);
+    completeTitleEl.textContent = 'No puzzles available yet';
+    completeTeachingsEl.innerHTML =
+      '<p>No ' + escapeHtml(tier) + ' puzzles have been generated yet. ' +
+      'Try an easy puzzle instead!</p>';
+    completeStatsEl.innerHTML = '';
+    completeActionsEl.innerHTML = '';
+
+    var easyBtn = document.createElement('button');
+    easyBtn.className = 'game-btn game-btn--primary';
+    easyBtn.textContent = 'Play Easy';
+    easyBtn.addEventListener('click', function () {
+      state.tier = 'easy';
+      var tiers = difficultyEl.querySelectorAll('.crossword__tier');
+      tiers.forEach(function (t) {
+        t.classList.toggle('crossword__tier--active', t.dataset.tier === 'easy');
+      });
+      startGame();
+    });
+    completeActionsEl.appendChild(easyBtn);
+  }
+
   // ── Grid building ──
   function buildGrid(size, placements) {
     // Initialize empty grid
@@ -1085,8 +1109,13 @@
     apiGet(endpoint).then(function (data) {
       if (data.error) {
         showLoading(false);
-        loadingEl.hidden = false;
-        loadingEl.querySelector('p').textContent = data.error;
+        if (data.error === 'no_puzzles') {
+          showNoPuzzles(data.tier || state.tier);
+        } else {
+          loadingEl.hidden = false;
+          var errP = loadingEl.querySelector('p');
+          if (errP) errP.textContent = data.error;
+        }
         return;
       }
 

@@ -93,7 +93,7 @@ final class CrosswordController
         }
 
         if ($practiceIds === []) {
-            return $this->json(['error' => 'No puzzles available'], 503);
+            return $this->json(['error' => 'no_puzzles', 'tier' => $tier], 404);
         }
 
         $puzzleId = $practiceIds[array_rand($practiceIds)];
