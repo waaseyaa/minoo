@@ -649,6 +649,7 @@
     padding-block: var(--space-md);
     padding-inline: var(--gutter);
     min-block-size: 60vh;
+    min-inline-size: 0; /* grid: let 1fr column shrink and fill correctly */
   }
 
   /* Large-screen containment — standard breakpoints */
@@ -662,6 +663,12 @@
     .app-layout {
       max-inline-size: 1400px;
       margin-inline: auto;
+    }
+
+    /* Atlas needs the main column to use the full viewport (map + list), not a centered 1400px shell */
+    .app-layout:has(.community-map) {
+      max-inline-size: none;
+      margin-inline: 0;
     }
   }
 
