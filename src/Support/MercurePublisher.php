@@ -8,7 +8,7 @@ final class MercurePublisher
 {
     public function __construct(
         private readonly string $hubUrl,
-        private readonly string $publisherJwt,
+        private readonly string $jwtSecret,
     ) {}
 
     public function publish(string $topic, array $data): bool
@@ -26,7 +26,7 @@ final class MercurePublisher
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $this->buildPostBody($topic, $data),
             CURLOPT_HTTPHEADER => [
-                'Authorization: Bearer ' . $this->publisherJwt,
+                'Authorization: Bearer ' . $this->generateJwt(),
                 'Content-Type: application/x-www-form-urlencoded',
             ],
             CURLOPT_RETURNTRANSFER => true,
@@ -42,7 +42,21 @@ final class MercurePublisher
 
     public function isConfigured(): bool
     {
-        return $this->hubUrl !== '' && $this->publisherJwt !== '';
+        return $this->hubUrl !== '' && $this->jwtSecret !== '';
+    }
+
+    public function generateJwt(): string
+    {
+        $header = self::base64UrlEncode(json_encode(['alg' => 'HS256', 'typ' => 'JWT'], JSON_THROW_ON_ERROR));
+        $payload = self::base64UrlEncode(json_encode(['mercure' => ['publish' => ['*']]], JSON_THROW_ON_ERROR));
+        $signature = self::base64UrlEncode(hash_hmac('sha256', "{$header}.{$payload}", $this->jwtSecret, true));
+
+        return "{$header}.{$payload}.{$signature}";
+    }
+
+    private static function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     public function buildPostBody(string $topic, array $data): string

@@ -70,7 +70,7 @@ final class MessagingServiceProvider extends ServiceProvider
             $config = $this->config('messaging');
             return new MercurePublisher(
                 (string) ($config['mercure_hub_url'] ?? ''),
-                (string) ($config['mercure_publisher_jwt'] ?? ''),
+                (string) ($config['mercure_jwt_secret'] ?? ''),
             );
         });
     }

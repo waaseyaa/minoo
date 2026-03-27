@@ -57,4 +57,21 @@ final class MercurePublisherTest extends TestCase
 
         $this->assertFalse($publisher->publish('/threads/1', ['msg' => 'hello']));
     }
+
+    #[Test]
+    public function generate_jwt_produces_valid_hs256_token(): void
+    {
+        $publisher = new MercurePublisher('http://hub.example.com/.well-known/mercure', 'test-secret');
+
+        $jwt = $publisher->generateJwt();
+        $parts = explode('.', $jwt);
+
+        $this->assertCount(3, $parts);
+
+        $header = json_decode(base64_decode(strtr($parts[0], '-_', '+/')), true);
+        $this->assertSame('HS256', $header['alg']);
+
+        $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+        $this->assertSame(['*'], $payload['mercure']['publish']);
+    }
 }
