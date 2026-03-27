@@ -32,6 +32,15 @@ final class MessageThread extends ContentEntityBase
         if (!array_key_exists('updated_at', $values)) {
             $values['updated_at'] = $values['created_at'];
         }
+        if (!array_key_exists('thread_type', $values)) {
+            $values['thread_type'] = 'direct';
+        }
+        if (!in_array($values['thread_type'], ['direct', 'group'], true)) {
+            throw new \InvalidArgumentException('thread_type must be direct or group');
+        }
+        if (!array_key_exists('last_message_at', $values)) {
+            $values['last_message_at'] = $values['created_at'];
+        }
 
         parent::__construct($values, $this->entityTypeId, $this->entityKeys);
     }
