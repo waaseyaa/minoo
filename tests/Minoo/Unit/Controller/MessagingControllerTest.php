@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
@@ -142,7 +143,7 @@ final class MessagingControllerTest extends TestCase
         $participantStorage->method('getQuery')->willReturn($participantQuery);
 
         // Message belongs to user 2, not user 1.
-        $message = $this->createMock(EntityInterface::class);
+        $message = $this->createMock(ContentEntityBase::class);
         $message->method('id')->willReturn($messageId);
         $message->method('get')->willReturnMap([
             ['sender_id', 2],
@@ -177,7 +178,7 @@ final class MessagingControllerTest extends TestCase
         $participantQuery->method('execute')->willReturn([1]);
         $participantStorage->method('getQuery')->willReturn($participantQuery);
 
-        $message = $this->createMock(EntityInterface::class);
+        $message = $this->createMock(ContentEntityBase::class);
         $message->method('id')->willReturn($messageId);
         $message->method('get')->willReturnMap([
             ['sender_id', 1],
@@ -216,7 +217,7 @@ final class MessagingControllerTest extends TestCase
         $participantQuery->method('execute')->willReturn([1]);
         $participantStorage->method('getQuery')->willReturn($participantQuery);
 
-        $message = $this->createMock(EntityInterface::class);
+        $message = $this->createMock(ContentEntityBase::class);
         $message->method('id')->willReturn($messageId);
         $message->method('get')->willReturnMap([
             ['sender_id', 1],
@@ -257,7 +258,7 @@ final class MessagingControllerTest extends TestCase
         $participantQuery2->method('range')->willReturn($participantQuery2);
         $participantQuery2->method('execute')->willReturn([42]);
 
-        $participant = $this->createMock(EntityInterface::class);
+        $participant = $this->createMock(ContentEntityBase::class);
         $participant->method('set')->willReturn($participant);
 
         $participantStorage = $this->createMock(EntityStorageInterface::class);
@@ -283,7 +284,7 @@ final class MessagingControllerTest extends TestCase
         $account = $this->mockAccount(1);
 
         // participantsForUser returns one participant
-        $participant = $this->createMock(EntityInterface::class);
+        $participant = $this->createMock(ContentEntityBase::class);
         $participant->method('get')->willReturnMap([
             ['thread_id', 10],
             ['last_read_at', 0],
@@ -299,7 +300,7 @@ final class MessagingControllerTest extends TestCase
         $participantStorage->method('loadMultiple')->with([1])->willReturn([1 => $participant]);
 
         // Message storage returns one message from another user
-        $msg = $this->createMock(EntityInterface::class);
+        $msg = $this->createMock(ContentEntityBase::class);
         $msg->method('get')->willReturnMap([
             ['created_at', 100],
             ['sender_id', 2],

@@ -190,7 +190,7 @@ final class MessagingServiceProvider extends ServiceProvider
 
         $router->addRoute(
             'messaging.unread',
-            RouteBuilder::create('/api/messaging/unread')
+            RouteBuilder::create('/api/messaging/unread-count')
                 ->controller('Minoo\\Controller\\MessagingController::unreadCount')
                 ->requireAuthentication()
                 ->methods('GET')
