@@ -95,6 +95,21 @@ jobs:
             --prefer-dist
 
       # -----------------------------------------------------------------------
+      # Admin SPA (generated — not committed; matches npm run build:admin)
+      # -----------------------------------------------------------------------
+
+      - name: Build admin SPA
+        run: |
+          cd waaseyaa/packages/admin
+          npm ci
+          export NUXT_PUBLIC_APP_NAME=Minoo
+          export NUXT_PUBLIC_BASE_URL=
+          npm run generate
+          rm -rf "${GITHUB_WORKSPACE}/minoo/public/admin"
+          mkdir -p "${GITHUB_WORKSPACE}/minoo/public/admin"
+          cp -a .output/public/* "${GITHUB_WORKSPACE}/minoo/public/admin/"
+
+      # -----------------------------------------------------------------------
       # Assemble build artifact
       # -----------------------------------------------------------------------
 
