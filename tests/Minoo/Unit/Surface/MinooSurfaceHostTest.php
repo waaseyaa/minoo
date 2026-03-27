@@ -284,16 +284,30 @@ final class MinooSurfaceHostTest extends TestCase
     #[Test]
     public function list_filters_entities_by_access(): void
     {
-        $allowed = $this->createStub(\Waaseyaa\Entity\EntityInterface::class);
-        $allowed->method('toArray')->willReturn(['id' => '1', 'title' => 'Visible']);
-        $denied = $this->createStub(\Waaseyaa\Entity\EntityInterface::class);
-        $denied->method('toArray')->willReturn(['id' => '2', 'title' => 'Hidden']);
+        $eventType = new EntityType(
+            id: 'event',
+            label: 'Event',
+            class: \stdClass::class,
+            keys: ['id' => 'eid'],
+            group: 'events',
+        );
+
+        $allowed = $this->createMock(\Waaseyaa\Entity\EntityInterface::class);
+        $allowed->method('getEntityTypeId')->willReturn('event');
+        $allowed->method('uuid')->willReturn('');
+        $allowed->method('id')->willReturn(1);
+        $allowed->method('toArray')->willReturn(['eid' => 1, 'title' => 'Visible']);
+
+        $denied = $this->createMock(\Waaseyaa\Entity\EntityInterface::class);
+        $denied->method('getEntityTypeId')->willReturn('event');
+        $denied->method('toArray')->willReturn(['eid' => 2, 'title' => 'Hidden']);
 
         $storage = $this->createMock(EntityStorageInterface::class);
         $storage->method('loadMultiple')->willReturn([$allowed, $denied]);
 
         $etm = $this->createMock(EntityTypeManager::class);
         $etm->method('hasDefinition')->willReturn(true);
+        $etm->method('getDefinition')->willReturn($eventType);
         $etm->method('getStorage')->willReturn($storage);
 
         $accessHandler = $this->createMock(\Waaseyaa\Access\EntityAccessHandler::class);
@@ -301,6 +315,9 @@ final class MinooSurfaceHostTest extends TestCase
             fn($entity) => $entity === $allowed
                 ? \Waaseyaa\Access\AccessResult::allowed('OK')
                 : \Waaseyaa\Access\AccessResult::neutral('Denied'),
+        );
+        $accessHandler->method('filterFields')->willReturnCallback(
+            static fn(\Waaseyaa\Entity\EntityInterface $entity, array $fields): array => $fields,
         );
 
         $host = new MinooSurfaceHost($etm, $accessHandler);
@@ -317,7 +334,12 @@ final class MinooSurfaceHostTest extends TestCase
         $result = $host->list('event');
 
         $this->assertTrue($result->ok);
-        $this->assertCount(1, $result->data);
-        $this->assertSame('Visible', $result->data[0]['title']);
+        $this->assertIsArray($result->data);
+        $this->assertArrayHasKey('entities', $result->data);
+        $this->assertCount(1, $result->data['entities']);
+        $this->assertSame('Visible', $result->data['entities'][0]['attributes']['title'] ?? null);
+        $this->assertSame(1, $result->data['total']);
+        $this->assertSame(0, $result->data['offset']);
+        $this->assertSame(50, $result->data['limit']);
     }
 }

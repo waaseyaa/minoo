@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "scripts": {
+    "build:admin": "bash scripts/build-admin-spa.sh",
     "prepare": "husky",
     "test": "vendor/bin/phpunit",
     "test:unit": "vendor/bin/phpunit --testsuite MinooUnit",

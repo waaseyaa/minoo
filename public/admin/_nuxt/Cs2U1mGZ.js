@@ -1,0 +1,1 @@
+import{v as r}from"./DuLlP09K.js";function u(){const{$admin:t}=r();function i(n,a){return t.catalog.find(e=>e.id===n)?.capabilities[a]??!1}function o(n){return t.catalog.find(a=>a.id===n)}return{bootstrap:t.bootstrap,catalog:t.catalog,tenant:t.tenant,hasCapability:i,getEntity:o}}export{u};

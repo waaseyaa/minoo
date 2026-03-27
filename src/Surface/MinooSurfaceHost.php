@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Minoo\Surface;
 
-use Symfony\Component\HttpFoundation\Request;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\EntityAccessHandler;
 use Waaseyaa\AdminSurface\Catalog\CatalogBuilder;
 use Waaseyaa\AdminSurface\Host\AbstractAdminSurfaceHost;
 use Waaseyaa\AdminSurface\Host\AdminSurfaceResultData;
 use Waaseyaa\AdminSurface\Host\AdminSurfaceSessionData;
+use Waaseyaa\Api\Controller\SchemaController;
+use Waaseyaa\Api\JsonApiController;
+use Waaseyaa\Api\JsonApiError;
+use Waaseyaa\Api\JsonApiResource;
+use Waaseyaa\Api\ResourceSerializer;
+use Waaseyaa\Api\Schema\SchemaPresenter;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
@@ -21,9 +26,10 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly ?EntityAccessHandler $accessHandler = null,
+        private readonly ?SchemaPresenter $schemaPresenter = null,
     ) {}
 
-    public function resolveSession(Request $request): ?AdminSurfaceSessionData
+    public function resolveSession(\Symfony\Component\HttpFoundation\Request $request): ?AdminSurfaceSessionData
     {
         $account = $request->attributes->get('account');
 
@@ -106,11 +112,31 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
             );
         }
 
-        $items = array_values(array_map(fn($e) => $e->toArray(), $entities));
+        $entities = array_values($entities);
+        $total = count($entities);
 
-        return AdminSurfaceResultData::success($items, [
-            'type' => $type,
-            'total' => count($items),
+        $offset = max(0, (int) ($query['page[offset]'] ?? $query['page']['offset'] ?? 0));
+        $limit = (int) ($query['page[limit]'] ?? $query['page']['limit'] ?? 50);
+        if ($limit < 1) {
+            $limit = 50;
+        }
+        $limit = min($limit, 500);
+
+        $serializer = $this->serializer();
+        $pageEntities = array_slice($entities, $offset, $limit);
+
+        $surfaceEntities = [];
+        foreach ($pageEntities as $entity) {
+            $surfaceEntities[] = $this->jsonApiResourceToSurfaceEntity(
+                $serializer->serialize($entity, $this->accessHandler, $this->currentAccount),
+            );
+        }
+
+        return AdminSurfaceResultData::success([
+            'entities' => $surfaceEntities,
+            'total' => $total,
+            'offset' => $offset,
+            'limit' => $limit,
         ]);
     }
 
@@ -133,7 +159,9 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
             }
         }
 
-        return AdminSurfaceResultData::success($entity->toArray());
+        $resource = $this->serializer()->serialize($entity, $this->accessHandler, $this->currentAccount);
+
+        return AdminSurfaceResultData::success($this->jsonApiResourceToSurfaceEntity($resource));
     }
 
     public function action(string $type, string $action, array $payload = []): AdminSurfaceResultData
@@ -145,9 +173,97 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
         $storage = $this->entityTypeManager->getStorage($type);
 
         return match ($action) {
+            'schema' => $this->handleSchema($type),
+            'create' => $this->handleCreate($type, $payload),
+            'update' => $this->handleUpdate($type, $payload),
             'delete' => $this->handleDelete($storage, $type, $payload),
             default => AdminSurfaceResultData::error(400, 'Unknown action', "Action '{$action}' is not supported."),
         };
+    }
+
+    private function handleSchema(string $type): AdminSurfaceResultData
+    {
+        $presenter = $this->schemaPresenter ?? new SchemaPresenter();
+        $controller = new SchemaController(
+            $this->entityTypeManager,
+            $presenter,
+            $this->accessHandler,
+            $this->currentAccount,
+        );
+        $doc = $controller->show($type);
+        if ($doc->errors !== []) {
+            return $this->jsonApiDocumentToSurfaceError($doc);
+        }
+
+        $schema = $doc->meta['schema'] ?? null;
+        if (!is_array($schema)) {
+            return AdminSurfaceResultData::error(500, 'Internal error', 'Schema payload missing.');
+        }
+
+        return AdminSurfaceResultData::success($schema);
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function handleCreate(string $type, array $payload): AdminSurfaceResultData
+    {
+        $api = $this->jsonApi();
+
+        try {
+            $doc = $api->store($type, [
+                'data' => [
+                    'type' => $type,
+                    'attributes' => $payload['attributes'] ?? [],
+                ],
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return AdminSurfaceResultData::error(422, 'Unprocessable', $e->getMessage());
+        }
+
+        if ($doc->errors !== []) {
+            return $this->jsonApiDocumentToSurfaceError($doc);
+        }
+
+        if (!$doc->data instanceof JsonApiResource) {
+            return AdminSurfaceResultData::error(500, 'Internal error', 'Create returned no resource.');
+        }
+
+        return AdminSurfaceResultData::success($this->jsonApiResourceToSurfaceEntity($doc->data));
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function handleUpdate(string $type, array $payload): AdminSurfaceResultData
+    {
+        $id = $payload['id'] ?? null;
+        if ($id === null || $id === '') {
+            return AdminSurfaceResultData::error(400, 'Missing ID', 'Payload must include an id field.');
+        }
+
+        $api = $this->jsonApi();
+
+        try {
+            $doc = $api->update($type, (string) $id, [
+                'data' => [
+                    'type' => $type,
+                    'attributes' => $payload['attributes'] ?? [],
+                ],
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return AdminSurfaceResultData::error(422, 'Unprocessable', $e->getMessage());
+        }
+
+        if ($doc->errors !== []) {
+            return $this->jsonApiDocumentToSurfaceError($doc);
+        }
+
+        if (!$doc->data instanceof JsonApiResource) {
+            return AdminSurfaceResultData::error(500, 'Internal error', 'Update returned no resource.');
+        }
+
+        return AdminSurfaceResultData::success($this->jsonApiResourceToSurfaceEntity($doc->data));
     }
 
     private function handleDelete(
@@ -176,6 +292,49 @@ final class MinooSurfaceHost extends AbstractAdminSurfaceHost
         $storage->delete([$entity]);
 
         return AdminSurfaceResultData::success(['deleted' => true]);
+    }
+
+    private function jsonApi(): JsonApiController
+    {
+        return new JsonApiController(
+            $this->entityTypeManager,
+            $this->serializer(),
+            $this->accessHandler,
+            $this->currentAccount,
+        );
+    }
+
+    private function serializer(): ResourceSerializer
+    {
+        return new ResourceSerializer($this->entityTypeManager);
+    }
+
+    /**
+     * @return array{type: string, id: string, attributes: array<string, mixed>}
+     */
+    private function jsonApiResourceToSurfaceEntity(JsonApiResource $resource): array
+    {
+        return [
+            'type' => $resource->type,
+            'id' => $resource->id,
+            'attributes' => $resource->attributes,
+        ];
+    }
+
+    private function jsonApiDocumentToSurfaceError(\Waaseyaa\Api\JsonApiDocument $doc): AdminSurfaceResultData
+    {
+        $first = $doc->errors[0] ?? null;
+        if (!$first instanceof JsonApiError) {
+            return AdminSurfaceResultData::error($doc->statusCode, 'Error', 'Request failed.');
+        }
+
+        $status = (int) $first->status;
+
+        return AdminSurfaceResultData::error(
+            $status,
+            $first->title,
+            $first->detail !== '' ? $first->detail : null,
+        );
     }
 
     /**
