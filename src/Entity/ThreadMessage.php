@@ -37,6 +37,12 @@ final class ThreadMessage extends ContentEntityBase
         if (!array_key_exists('created_at', $values)) {
             $values['created_at'] = time();
         }
+        if (!array_key_exists('edited_at', $values)) {
+            $values['edited_at'] = null;
+        }
+        if (!array_key_exists('deleted_at', $values)) {
+            $values['deleted_at'] = null;
+        }
 
         parent::__construct($values, $this->entityTypeId, $this->entityKeys);
     }

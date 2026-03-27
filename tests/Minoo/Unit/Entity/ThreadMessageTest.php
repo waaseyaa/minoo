@@ -61,5 +61,27 @@ final class ThreadMessageTest extends TestCase
             'body' => str_repeat('a', 2001),
         ]);
     }
+
+    #[Test]
+    public function it_defaults_edited_at_to_null(): void
+    {
+        $message = new ThreadMessage([
+            'thread_id' => 1,
+            'sender_id' => 1,
+            'body' => 'Hello',
+        ]);
+        $this->assertNull($message->get('edited_at'));
+    }
+
+    #[Test]
+    public function it_defaults_deleted_at_to_null(): void
+    {
+        $message = new ThreadMessage([
+            'thread_id' => 1,
+            'sender_id' => 1,
+            'body' => 'Hello',
+        ]);
+        $this->assertNull($message->get('deleted_at'));
+    }
 }
 

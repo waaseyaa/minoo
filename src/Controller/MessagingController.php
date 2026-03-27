@@ -17,6 +17,141 @@ final class MessagingController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
+    public function editMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $threadId = (int) ($params['id'] ?? 0);
+        $messageId = (int) ($params['message_id'] ?? 0);
+        $userId = (int) $account->id();
+
+        if (!$this->isParticipant($threadId, $userId)) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
+        $storage = $this->messageStorage();
+        $message = $storage->load($messageId);
+        if ($message === null) {
+            return $this->json(['error' => 'Not found'], 404);
+        }
+
+        if ((int) $message->get('sender_id') !== $userId) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
+        if ($message->get('deleted_at') !== null) {
+            return $this->json(['error' => 'Message has been deleted'], 410);
+        }
+
+        $data = $this->jsonBody($request);
+        $body = trim((string) ($data['body'] ?? ''));
+        if ($body === '' || mb_strlen($body) > 2000) {
+            return $this->json(['error' => 'Body must be 1-2000 characters'], 422);
+        }
+
+        $now = time();
+        $message->set('body', $body);
+        $message->set('edited_at', $now);
+        $storage->save($message);
+
+        return $this->json([
+            'id' => (int) $message->id(),
+            'body' => $body,
+            'edited_at' => $now,
+        ]);
+    }
+
+    public function deleteMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $threadId = (int) ($params['id'] ?? 0);
+        $messageId = (int) ($params['message_id'] ?? 0);
+        $userId = (int) $account->id();
+
+        if (!$this->isParticipant($threadId, $userId)) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
+        $storage = $this->messageStorage();
+        $message = $storage->load($messageId);
+        if ($message === null) {
+            return $this->json(['error' => 'Not found'], 404);
+        }
+
+        if ((int) $message->get('sender_id') !== $userId && !$account->hasPermission('administer content')) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
+        $now = time();
+        $message->set('deleted_at', $now);
+        $storage->save($message);
+
+        return $this->json(['deleted' => true]);
+    }
+
+    public function markRead(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $threadId = (int) ($params['id'] ?? 0);
+        $userId = (int) $account->id();
+
+        if (!$this->isParticipant($threadId, $userId)) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
+        $participantStorage = $this->participantStorage();
+        $ids = $participantStorage->getQuery()
+            ->condition('thread_id', $threadId)
+            ->condition('user_id', $userId)
+            ->range(0, 1)
+            ->execute();
+
+        if ($ids === []) {
+            return $this->json(['error' => 'Not found'], 404);
+        }
+
+        $participant = $participantStorage->load((int) reset($ids));
+        if ($participant === null) {
+            return $this->json(['error' => 'Not found'], 404);
+        }
+
+        $now = time();
+        $participant->set('last_read_at', $now);
+        $participantStorage->save($participant);
+
+        return $this->json(['last_read_at' => $now]);
+    }
+
+    public function typing(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $threadId = (int) ($params['id'] ?? 0);
+        $userId = (int) $account->id();
+
+        if (!$this->isParticipant($threadId, $userId)) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+
+        // Typing indicator is a fire-and-forget signal; no persistence needed.
+        return $this->json(['typing' => true]);
+    }
+
+    public function unreadCount(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $userId = (int) $account->id();
+        $participantStorage = $this->participantStorage();
+        $messageStorage = $this->messageStorage();
+
+        $participantRows = $this->participantsForUser($participantStorage, $userId);
+        $totalUnread = 0;
+
+        foreach ($participantRows as $participant) {
+            $totalUnread += $this->countUnreadMessages(
+                $messageStorage,
+                (int) $participant->get('thread_id'),
+                (int) $participant->get('last_read_at'),
+                $userId,
+            );
+        }
+
+        return $this->json(['unread_count' => $totalUnread]);
+    }
+
     public function indexThreads(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         $participantStorage = $this->participantStorage();
@@ -38,22 +173,33 @@ final class MessagingController
             $threads[$threadId] = $thread;
         }
 
-        usort($threads, static fn(EntityInterface $a, EntityInterface $b): int => ((int) $b->get('updated_at')) <=> ((int) $a->get('updated_at')));
+        usort($threads, static fn(EntityInterface $a, EntityInterface $b): int => ((int) $b->get('last_message_at')) <=> ((int) $a->get('last_message_at')));
 
         $limit = max(1, min(100, (int) ($query['limit'] ?? 50)));
         $offset = max(0, (int) ($query['offset'] ?? 0));
         $threads = array_slice(array_values($threads), $offset, $limit);
 
+        $lastReadByThread = [];
+        foreach ($participantRows as $participant) {
+            $lastReadByThread[(int) $participant->get('thread_id')] = (int) $participant->get('last_read_at');
+        }
+
         $payload = [];
         foreach ($threads as $thread) {
             $threadId = (int) $thread->id();
             $latestMessage = $this->latestMessageForThread($messageStorage, $threadId);
+
+            $lastReadAt = $lastReadByThread[$threadId] ?? 0;
+            $unreadCount = $this->countUnreadMessages($messageStorage, $threadId, $lastReadAt, (int) $account->id());
+
             $payload[] = [
                 'id' => $threadId,
                 'title' => (string) $thread->get('title'),
                 'created_by' => (int) $thread->get('created_by'),
                 'updated_at' => (int) $thread->get('updated_at'),
+                'last_message_at' => (int) $thread->get('last_message_at'),
                 'last_message' => $latestMessage,
+                'unread_count' => $unreadCount,
             ];
         }
 
@@ -76,6 +222,7 @@ final class MessagingController
 
         $title = trim((string) ($data['title'] ?? ''));
         $body = trim((string) ($data['body'] ?? ''));
+        $threadType = count($participantIds) > 2 ? 'group' : 'direct';
         $now = time();
 
         $threadStorage = $this->threadStorage();
@@ -88,6 +235,8 @@ final class MessagingController
                 'created_by' => $creatorId,
                 'created_at' => $now,
                 'updated_at' => $now,
+                'thread_type' => $threadType,
+                'last_message_at' => $now,
             ]);
             $threadStorage->save($thread);
 
@@ -170,13 +319,20 @@ final class MessagingController
 
         $messages = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
-        $payload = array_map(static fn(EntityInterface $message): array => [
-            'id' => (int) $message->id(),
-            'thread_id' => (int) $message->get('thread_id'),
-            'sender_id' => (int) $message->get('sender_id'),
-            'body' => (string) $message->get('body'),
-            'created_at' => (int) $message->get('created_at'),
-        ], $messages);
+        $payload = array_map(static function (EntityInterface $message): array {
+            $deletedAt = $message->get('deleted_at');
+            $editedAt = $message->get('edited_at');
+
+            return [
+                'id' => (int) $message->id(),
+                'thread_id' => (int) $message->get('thread_id'),
+                'sender_id' => (int) $message->get('sender_id'),
+                'body' => $deletedAt !== null ? '' : (string) $message->get('body'),
+                'created_at' => (int) $message->get('created_at'),
+                'edited_at' => $editedAt !== null ? (int) $editedAt : null,
+                'deleted_at' => $deletedAt !== null ? (int) $deletedAt : null,
+            ];
+        }, $messages);
 
         return $this->json(['messages' => $payload]);
     }
@@ -215,7 +371,7 @@ final class MessagingController
         $thread = $threadStorage->load($threadId);
         if ($thread !== null) {
             $thread->set('updated_at', $now);
-            // All participants can add messages; thread activity should reflect the latest message.
+            $thread->set('last_message_at', $now);
             $threadStorage->save($thread);
         }
 
@@ -433,6 +589,29 @@ final class MessagingController
             ->execute();
 
         return $ids !== [] ? array_values($participantStorage->loadMultiple($ids)) : [];
+    }
+
+    private function countUnreadMessages(EntityStorageInterface $messageStorage, int $threadId, int $lastReadAt, int $userId): int
+    {
+        $ids = $messageStorage->getQuery()
+            ->condition('thread_id', $threadId)
+            ->sort('created_at', 'DESC')
+            ->range(0, 100)
+            ->execute();
+
+        if ($ids === []) {
+            return 0;
+        }
+
+        $messages = array_values($messageStorage->loadMultiple($ids));
+        $count = 0;
+        foreach ($messages as $msg) {
+            if ((int) $msg->get('created_at') > $lastReadAt && (int) $msg->get('sender_id') !== $userId) {
+                ++$count;
+            }
+        }
+
+        return $count;
     }
 
     /** @return array<string, mixed>|null */

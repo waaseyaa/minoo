@@ -25,8 +25,10 @@ final class MessagingServiceProvider extends ServiceProvider
             fieldDefinitions: [
                 'title' => ['type' => 'string', 'label' => 'Title', 'weight' => 0],
                 'created_by' => ['type' => 'integer', 'label' => 'Created By', 'weight' => 1],
+                'thread_type' => ['type' => 'string', 'label' => 'Thread Type', 'weight' => 2, 'default' => 'direct'],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 10],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 11],
+                'last_message_at' => ['type' => 'timestamp', 'label' => 'Last Message At', 'weight' => 12, 'default' => 0],
             ],
         ));
 
@@ -58,6 +60,8 @@ final class MessagingServiceProvider extends ServiceProvider
                 'body' => ['type' => 'text_long', 'label' => 'Body', 'weight' => 2],
                 'status' => ['type' => 'boolean', 'label' => 'Status', 'weight' => 3, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 10],
+                'edited_at' => ['type' => 'timestamp', 'label' => 'Edited At', 'weight' => 11, 'default' => null],
+                'deleted_at' => ['type' => 'timestamp', 'label' => 'Deleted At', 'weight' => 12, 'default' => null],
             ],
         ));
     }
@@ -137,6 +141,57 @@ final class MessagingServiceProvider extends ServiceProvider
             'messaging.users.search',
             RouteBuilder::create('/api/messaging/users')
                 ->controller('Minoo\\Controller\\MessagingController::searchUsers')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'messaging.messages.edit',
+            RouteBuilder::create('/api/messaging/threads/{id}/messages/{message_id}')
+                ->controller('Minoo\\Controller\\MessagingController::editMessage')
+                ->requireAuthentication()
+                ->methods('PATCH')
+                ->requirement('id', '\\d+')
+                ->requirement('message_id', '\\d+')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'messaging.messages.delete',
+            RouteBuilder::create('/api/messaging/threads/{id}/messages/{message_id}')
+                ->controller('Minoo\\Controller\\MessagingController::deleteMessage')
+                ->requireAuthentication()
+                ->methods('DELETE')
+                ->requirement('id', '\\d+')
+                ->requirement('message_id', '\\d+')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'messaging.threads.read',
+            RouteBuilder::create('/api/messaging/threads/{id}/read')
+                ->controller('Minoo\\Controller\\MessagingController::markRead')
+                ->requireAuthentication()
+                ->methods('POST')
+                ->requirement('id', '\\d+')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'messaging.threads.typing',
+            RouteBuilder::create('/api/messaging/threads/{id}/typing')
+                ->controller('Minoo\\Controller\\MessagingController::typing')
+                ->requireAuthentication()
+                ->methods('POST')
+                ->requirement('id', '\\d+')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'messaging.unread',
+            RouteBuilder::create('/api/messaging/unread')
+                ->controller('Minoo\\Controller\\MessagingController::unreadCount')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
