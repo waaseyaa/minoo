@@ -7,6 +7,7 @@ namespace Minoo\Provider;
 use Minoo\Entity\MessageThread;
 use Minoo\Entity\ThreadMessage;
 use Minoo\Entity\ThreadParticipant;
+use Minoo\Support\MercurePublisher;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -64,6 +65,14 @@ final class MessagingServiceProvider extends ServiceProvider
                 'deleted_at' => ['type' => 'timestamp', 'label' => 'Deleted At', 'weight' => 12, 'default' => null],
             ],
         ));
+
+        $this->singleton(MercurePublisher::class, function (): MercurePublisher {
+            $config = $this->config('messaging');
+            return new MercurePublisher(
+                (string) ($config['mercure_hub_url'] ?? ''),
+                (string) ($config['mercure_publisher_jwt'] ?? ''),
+            );
+        });
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void

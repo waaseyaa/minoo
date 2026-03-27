@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Support\MercurePublisher;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
@@ -15,6 +16,7 @@ final class MessagingController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
+        private readonly ?MercurePublisher $mercurePublisher = null,
     ) {}
 
     public function editMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -52,6 +54,13 @@ final class MessagingController
         $message->set('edited_at', $now);
         $storage->save($message);
 
+        $this->publishMercure("/threads/{$threadId}", [
+            'type' => 'message_edited',
+            'id' => $messageId,
+            'body' => $body,
+            'edited_at' => $now,
+        ]);
+
         return $this->json([
             'id' => (int) $message->id(),
             'body' => $body,
@@ -82,6 +91,11 @@ final class MessagingController
         $now = time();
         $message->set('deleted_at', $now);
         $storage->save($message);
+
+        $this->publishMercure("/threads/{$threadId}", [
+            'type' => 'message_deleted',
+            'id' => $messageId,
+        ]);
 
         return $this->json(['deleted' => true]);
     }
@@ -115,6 +129,12 @@ final class MessagingController
         $participant->set('last_read_at', $now);
         $participantStorage->save($participant);
 
+        $this->publishMercure("/threads/{$threadId}", [
+            'type' => 'read',
+            'user_id' => $userId,
+            'last_read_at' => $now,
+        ]);
+
         return $this->json(['last_read_at' => $now]);
     }
 
@@ -127,7 +147,12 @@ final class MessagingController
             return $this->json(['error' => 'Forbidden'], 403);
         }
 
-        // Typing indicator is a fire-and-forget signal; no persistence needed.
+        $this->publishMercure("/threads/{$threadId}", [
+            'type' => 'typing',
+            'user_id' => $userId,
+            'display_name' => (string) ($account->get('name') ?? ''),
+        ]);
+
         return $this->json(['typing' => true]);
     }
 
@@ -218,6 +243,33 @@ final class MessagingController
 
         if (count($participantIds) < 2) {
             return $this->json(['error' => 'At least 2 participants are required'], 422);
+        }
+
+        $blockStorage = $this->entityTypeManager->getStorage('user_block');
+        foreach ($participantIds as $participantId) {
+            if ($participantId === $creatorId) {
+                continue;
+            }
+
+            $blocked = $blockStorage->getQuery()
+                ->condition('blocker_id', $participantId)
+                ->condition('blocked_id', $creatorId)
+                ->range(0, 1)
+                ->execute();
+
+            if ($blocked !== []) {
+                return $this->json(['error' => 'Cannot message a user who has blocked you'], 403);
+            }
+
+            $blocking = $blockStorage->getQuery()
+                ->condition('blocker_id', $creatorId)
+                ->condition('blocked_id', $participantId)
+                ->range(0, 1)
+                ->execute();
+
+            if ($blocking !== []) {
+                return $this->json(['error' => 'Cannot message a user you have blocked'], 403);
+            }
         }
 
         $title = trim((string) ($data['title'] ?? ''));
@@ -374,6 +426,17 @@ final class MessagingController
             $thread->set('last_message_at', $now);
             $threadStorage->save($thread);
         }
+
+        $this->publishMercure("/threads/{$threadId}", [
+            'type' => 'message',
+            'message' => [
+                'id' => (int) $message->id(),
+                'thread_id' => $threadId,
+                'sender_id' => $userId,
+                'body' => $body,
+                'created_at' => $now,
+            ],
+        ]);
 
         return $this->json([
             'id' => (int) $message->id(),
@@ -653,6 +716,12 @@ final class MessagingController
     private function messageStorage(): EntityStorageInterface
     {
         return $this->entityTypeManager->getStorage('thread_message');
+    }
+
+    /** @param array<string, mixed> $data */
+    private function publishMercure(string $topic, array $data): void
+    {
+        $this->mercurePublisher?->publish($topic, $data);
     }
 
     /** @param array<string, mixed> $data */
