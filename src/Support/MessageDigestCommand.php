@@ -74,6 +74,7 @@ final class MessageDigestCommand
                     ->condition('thread_id', $threadId)
                     ->condition('created_at', $lastReadAt, '>')
                     ->condition('created_at', $debounceThreshold, '<')
+                    ->condition('deleted_at', null)
                     ->sort('created_at', 'DESC')
                     ->range(0, 5)
                     ->execute();
