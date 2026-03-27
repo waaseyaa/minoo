@@ -22,6 +22,7 @@ data/
 scripts/.venv/
 __pycache__/
 *.pyc
+bin/mercure
 
 # Nuxt admin SPA (run: npm run build:admin — production build runs in deploy workflow)
 /public/admin/*
