@@ -13,6 +13,7 @@
       </div>
     </div>
     <div class="user-menu__section">
+      <a href="/messages" class="user-menu__item">Messages</a>
       <a href="/account" class="user-menu__item">{{ trans('usermenu.profile') }}</a>
       {% if 'elder_coordinator' in account.getRoles() %}
         <a href="/dashboard/coordinator" class="user-menu__item">{{ trans('usermenu.dashboard') }}</a>

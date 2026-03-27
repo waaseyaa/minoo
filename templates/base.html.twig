@@ -17,7 +17,7 @@
   {% if csrf_token is defined %}
     <meta name="csrf-token" content="{{ csrf_token }}">
   {% endif %}
-  <link rel="stylesheet" href="/css/minoo.css?v=41">
+  <link rel="stylesheet" href="/css/minoo.css?v=42">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   {% block head %}{% endblock %}
   <script defer src="https://analytics.minoo.live/script.js" data-website-id="b357d196-9464-42e1-a93b-5f85743f20c9"></script>
@@ -43,6 +43,15 @@
           </form>
         </div>
         <div class="site-header__right">
+          {% if account is defined and account.isAuthenticated() %}
+          <div class="messages-popover" id="messages-popover">
+            <button class="messages-popover__trigger" id="messages-popover-trigger" data-user-id="{{ account.id() }}" data-hub-url="/hub" aria-expanded="false" aria-controls="messages-popover-dropdown" aria-label="Messages">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="messages-badge" id="messages-badge" hidden>0</span>
+            </button>
+            <div class="messages-popover__dropdown" id="messages-popover-dropdown" hidden></div>
+          </div>
+          {% endif %}
           {% include "components/user-menu.html.twig" %}
         </div>
       </div>
@@ -364,6 +373,9 @@
     document.querySelectorAll('.related-section').forEach(el => { el.style.opacity = '0'; el.style.transition = 'opacity 0.4s ease'; observer.observe(el); });
   }
   </script>
+  {% if account is defined and account.isAuthenticated() %}
+    <script type="module" src="/js/messaging/popover.js"></script>
+  {% endif %}
   {% block scripts %}{% endblock %}
 </body>
 </html>
