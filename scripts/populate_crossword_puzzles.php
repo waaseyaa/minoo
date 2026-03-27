@@ -165,9 +165,14 @@ if ($result !== null) {
 // --- 2. Practice puzzles ---
 
 echo "\n--- Practice Puzzles ---\n";
-$practiceTiers = ['easy', 'easy', 'medium', 'medium', 'hard'];
+$practiceTiers = [
+    'easy', 'easy', 'easy',
+    'medium', 'medium', 'medium',
+    'hard', 'hard', 'hard',
+];
 
-for ($i = 1; $i <= 5; $i++) {
+$practiceTierCount = count($practiceTiers);
+for ($i = 1; $i <= $practiceTierCount; $i++) {
     $practiceId = sprintf('practice-%03d', $i);
     $tier = $practiceTiers[$i - 1];
 
