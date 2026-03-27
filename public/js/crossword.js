@@ -25,7 +25,7 @@
   var root = document.querySelector('[data-game="crossword"]');
   if (!root) return;
 
-  var tabsEl = root.querySelector('.crossword__tabs');
+  var tabsEl = root.querySelector('.game-header__tabs');
   var difficultyEl = root.querySelector('.crossword__difficulty');
   var themesEl = root.querySelector('.crossword__themes');
   var themesListEl = root.querySelector('.crossword__themes-list');
