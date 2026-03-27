@@ -5249,8 +5249,12 @@
   }
   .card--contact .card--contact__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-sm);
+  }
+  /* Odd count: last field spans both columns (no empty “third” half-row on wide layouts) */
+  .card--contact .card--contact__grid > *:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
   .card--contact .card--contact__label {
     font-size: 0.7rem;
@@ -5646,10 +5650,10 @@
     text-underline-offset: 2px;
   }
 
-  /* Community nearby grid */
+  /* Community nearby grid — auto-fit so 1–2 cards span full width (no empty 3rd track) */
   .community-nearby-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
     gap: var(--space-2xs);
   }
   @media (max-width: 768px) {
@@ -5664,10 +5668,10 @@
     }
   }
 
-  /* Community leader cards */
+  /* Community leader cards — auto-fit so a single leader fills the row */
   .community-leader-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
     gap: var(--space-2xs);
   }
   @media (max-width: 768px) {
