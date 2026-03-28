@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Entity\Reaction;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
@@ -41,9 +40,6 @@ final class EngagementController
         }
 
         $reactionType = trim($data['reaction_type']);
-        if (!in_array($reactionType, Reaction::ALLOWED_REACTION_TYPES, true)) {
-            return $this->json(['error' => 'Invalid reaction_type'], 422);
-        }
 
         $storage = $this->entityTypeManager->getStorage('reaction');
 

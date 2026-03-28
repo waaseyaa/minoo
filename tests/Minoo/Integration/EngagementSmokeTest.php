@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Integration;
 
-use Minoo\Entity\Reaction;
+use Waaseyaa\Engagement\Reaction;
 use Minoo\Feed\EngagementCounter;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;

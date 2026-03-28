@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Access;
 
 use Minoo\Access\MessagingAccessPolicy;
-use Minoo\Entity\ThreadParticipant;
+use Waaseyaa\Messaging\ThreadParticipant;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
