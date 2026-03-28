@@ -53,6 +53,76 @@
     font-size: var(--text-base);
   }
 
+  .messages-search {
+    padding: var(--space-2xs) var(--space-sm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .messages-search__input {
+    width: 100%;
+    background: var(--surface-elevated);
+    border: none;
+    border-radius: 1.25rem;
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-family: inherit;
+
+    &::placeholder { color: var(--text-tertiary); }
+    &:focus { outline: 2px solid var(--color-accent, oklch(0.75 0.15 250)); outline-offset: -2px; }
+  }
+
+  .messages-search-group {
+    padding: var(--space-2xs) var(--space-xs);
+  }
+
+  .messages-search-group__title {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--text-tertiary);
+    padding: var(--space-2xs) var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .messages-search-result {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-xs);
+    width: 100%;
+    padding: var(--space-xs);
+    border: none;
+    border-radius: var(--radius-md, 0.5rem);
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    font-size: var(--text-sm);
+
+    &:hover { background: var(--surface-elevated); }
+
+    & mark {
+      background: oklch(from var(--color-accent, oklch(0.75 0.15 250)) l c h / 0.25);
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+  }
+
+  .messages-search-result__snippet {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .messages-search-result__time {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+
   .messages-thread-list {
     flex: 1;
     overflow-y: auto;

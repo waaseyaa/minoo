@@ -205,5 +205,14 @@ final class MessagingServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        $router->addRoute(
+            'messaging.search',
+            RouteBuilder::create('/api/messaging/search')
+                ->controller('Minoo\\Controller\\MessagingController::searchMessages')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->build(),
+        );
     }
 }

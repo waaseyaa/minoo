@@ -593,6 +593,81 @@ final class MessagingController
         return $this->json(['users' => $matches]);
     }
 
+    public function searchMessages(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $term = trim((string) ($query['q'] ?? ''));
+        if ($term === '' || mb_strlen($term) < 2) {
+            return $this->json(['results' => []]);
+        }
+
+        $userId = (int) $account->id();
+        $participantStorage = $this->participantStorage();
+        $participantRows = $this->participantsForUser($participantStorage, $userId);
+
+        if ($participantRows === []) {
+            return $this->json(['results' => []]);
+        }
+
+        $threadIds = [];
+        foreach ($participantRows as $participant) {
+            $threadIds[] = (int) $participant->get('thread_id');
+        }
+
+        // Search messages across all user's threads using LIKE on body column.
+        $messageStorage = $this->messageStorage();
+        $likeTerm = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $term) . '%';
+        $allMatches = [];
+
+        foreach ($threadIds as $threadId) {
+            $ids = $messageStorage->getQuery()
+                ->condition('thread_id', $threadId)
+                ->condition('body', $likeTerm, 'LIKE')
+                ->sort('created_at', 'DESC')
+                ->range(0, 10)
+                ->execute();
+
+            if ($ids === []) {
+                continue;
+            }
+
+            $messages = array_values($messageStorage->loadMultiple($ids));
+            foreach ($messages as $message) {
+                if ($message->get('deleted_at') !== null) {
+                    continue;
+                }
+                $allMatches[] = [
+                    'thread_id' => $threadId,
+                    'message_id' => (int) $message->id(),
+                    'sender_id' => (int) $message->get('sender_id'),
+                    'body' => (string) $message->get('body'),
+                    'created_at' => (int) $message->get('created_at'),
+                ];
+            }
+        }
+
+        // Sort by recency and limit.
+        usort($allMatches, static fn(array $a, array $b): int => $b['created_at'] <=> $a['created_at']);
+        $allMatches = array_slice($allMatches, 0, 30);
+
+        // Group by thread.
+        $grouped = [];
+        $threadStorage = $this->threadStorage();
+        foreach ($allMatches as $match) {
+            $tid = $match['thread_id'];
+            if (!isset($grouped[$tid])) {
+                $thread = $threadStorage->load($tid);
+                $grouped[$tid] = [
+                    'thread_id' => $tid,
+                    'thread_title' => $thread !== null ? (string) $thread->get('title') : '',
+                    'messages' => [],
+                ];
+            }
+            $grouped[$tid]['messages'][] = $match;
+        }
+
+        return $this->json(['results' => array_values($grouped)]);
+    }
+
     /** @return array<string, mixed> */
     private function jsonBody(HttpRequest $request): array
     {

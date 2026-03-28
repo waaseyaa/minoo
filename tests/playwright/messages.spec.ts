@@ -320,3 +320,61 @@ test.describe('Messaging — reactions', () => {
     await expect(page.locator('.messages-reaction-picker')).toBeVisible();
   });
 });
+
+test.describe('Messaging — search', () => {
+  test('search API returns matching messages scoped to user threads', async ({ page }) => {
+    await login(page, 'test@minoo.test', 'TestPass123!');
+
+    // Create a thread with a known message body.
+    const usersRes = await page.request.get('/api/messaging/users?q=Member');
+    const users = await usersRes.json();
+    const member = (users.users || users).find((u: { name?: string }) => u.name?.includes('Member'));
+    if (!member) { test.skip(true, 'Member user not found'); return; }
+    const threadRes = await page.request.post('/api/messaging/threads', { data: { participant_ids: [member.id] } });
+    const thread = await threadRes.json();
+    const threadId = thread.thread?.id || thread.id;
+    await page.request.post(`/api/messaging/threads/${threadId}/messages`, { data: { body: 'UniqueSearchTerm42 hello' } });
+
+    // Search for the unique term.
+    const searchRes = await page.request.get('/api/messaging/search?q=UniqueSearchTerm42');
+    expect(searchRes.ok()).toBeTruthy();
+    const data = await searchRes.json();
+    expect(data.results.length).toBeGreaterThan(0);
+    expect(data.results[0].messages[0].body).toContain('UniqueSearchTerm42');
+  });
+
+  test('search API rejects short queries', async ({ page }) => {
+    await login(page, 'test@minoo.test', 'TestPass123!');
+    const searchRes = await page.request.get('/api/messaging/search?q=a');
+    expect(searchRes.ok()).toBeTruthy();
+    const data = await searchRes.json();
+    expect(data.results).toEqual([]);
+  });
+
+  test('search input renders in sidebar', async ({ page }) => {
+    await login(page, 'test@minoo.test', 'TestPass123!');
+    await page.goto('/messages');
+    await expect(page.locator('.messages-search__input')).toBeVisible();
+  });
+
+  test('typing in search input shows results', async ({ page }) => {
+    await login(page, 'test@minoo.test', 'TestPass123!');
+
+    // Ensure a message exists with a searchable term.
+    const usersRes = await page.request.get('/api/messaging/users?q=Member');
+    const users = await usersRes.json();
+    const member = (users.users || users).find((u: { name?: string }) => u.name?.includes('Member'));
+    if (!member) { test.skip(true, 'Member user not found'); return; }
+    const threadRes = await page.request.post('/api/messaging/threads', { data: { participant_ids: [member.id] } });
+    const thread = await threadRes.json();
+    const threadId = thread.thread?.id || thread.id;
+    await page.request.post(`/api/messaging/threads/${threadId}/messages`, { data: { body: 'SearchableXYZ999 test' } });
+
+    await page.goto('/messages');
+    await page.fill('.messages-search__input', 'SearchableXYZ999');
+
+    // Wait for debounced search results to appear.
+    await expect(page.locator('.messages-search-group')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('.messages-search-result')).toBeVisible();
+  });
+});

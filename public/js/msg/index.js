@@ -30,7 +30,8 @@ if (app) {
   let currentThreadId = null;
   let mercure = null;
 
-  // Initial load.
+  // Mount search input and load threads.
+  threadList.mountSearch();
   loadThreads();
 
   async function loadThreads() {

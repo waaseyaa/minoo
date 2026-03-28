@@ -1,5 +1,5 @@
 /**
- * Thread list sidebar — renders threads, handles selection, unread state.
+ * Thread list sidebar — renders threads, handles selection, unread state, search.
  */
 import { escapeHtml } from './utils.js';
 
@@ -13,6 +13,8 @@ export class ThreadList {
     this.onSelectThread = onSelectThread;
     this.threads = [];
     this.activeThreadId = null;
+    this.searchTimer = null;
+    this.isSearching = false;
 
     this.containerEl.addEventListener('click', (event) => {
       const button = event.target.closest('[data-thread-id]');
@@ -21,6 +23,73 @@ export class ThreadList {
       this.setActive(threadId);
       this.onSelectThread(threadId);
     });
+  }
+
+  /** Insert search input above the thread list. Call once after mount. */
+  mountSearch() {
+    const wrapper = this.containerEl.parentElement;
+    if (!wrapper || wrapper.querySelector('.messages-search')) return;
+
+    const header = wrapper.querySelector('.messages-sidebar__header');
+    const searchEl = document.createElement('div');
+    searchEl.className = 'messages-search';
+    searchEl.innerHTML = `<input type="search" class="messages-search__input" placeholder="Search messages\u2026" aria-label="Search messages">`;
+    header?.insertAdjacentElement('afterend', searchEl);
+
+    const input = searchEl.querySelector('input');
+    input?.addEventListener('input', () => {
+      clearTimeout(this.searchTimer);
+      const q = input.value.trim();
+      if (q.length < 2) {
+        if (this.isSearching) {
+          this.isSearching = false;
+          this.render(this.threads);
+        }
+        return;
+      }
+      this.searchTimer = setTimeout(() => this.search(q), 300);
+    });
+  }
+
+  async search(term) {
+    this.isSearching = true;
+    try {
+      const response = await fetch(`/api/messaging/search?q=${encodeURIComponent(term)}`);
+      if (!response.ok) return;
+      const data = await response.json();
+      this.renderSearchResults(data.results || [], term);
+    } catch {}
+  }
+
+  renderSearchResults(results, term) {
+    if (results.length === 0) {
+      this.containerEl.innerHTML = '<p class="messages-empty-note">No messages found</p>';
+      return;
+    }
+
+    const html = results.map((group) => {
+      const title = group.thread_title?.trim() || `Thread #${group.thread_id}`;
+      const messagesHtml = group.messages.map((msg) => {
+        const snippet = this.highlightTerm(escapeHtml(msg.body), term);
+        const time = this.formatTime(msg.created_at);
+        return `<button class="messages-search-result" data-thread-id="${group.thread_id}">
+          <span class="messages-search-result__snippet">${snippet}</span>
+          <span class="messages-search-result__time">${escapeHtml(time)}</span>
+        </button>`;
+      }).join('');
+
+      return `<div class="messages-search-group">
+        <div class="messages-search-group__title">${escapeHtml(title)}</div>
+        ${messagesHtml}
+      </div>`;
+    }).join('');
+
+    this.containerEl.innerHTML = html;
+  }
+
+  highlightTerm(text, term) {
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
   }
 
   /** @param {Array} threads */
