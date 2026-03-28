@@ -1,44 +1,57 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Word Match — Minoo{% endblock %}
+{% block title %}{{ trans('games.word_match_title') }} — Minoo{% endblock %}
 
 {% block content %}
-<div class="matcher" data-game="matcher">
+<div class="matcher" data-game="matcher"
+     data-label-ojibwe="{{ trans('games.ojibwe') }}"
+     data-label-english="{{ trans('games.english') }}"
+     data-label-game-loaded="{{ trans('games.game_loaded') }}"
+     data-label-correct="{{ trans('games.correct_match') }}"
+     data-label-incorrect="{{ trans('games.incorrect_match') }}"
+     data-label-complete="{{ trans('games.game_complete') }}"
+     data-label-failed-load="{{ trans('games.failed_load') }}"
+     data-label-error="{{ trans('games.error') }}"
+     data-label-connection-error="{{ trans('games.connection_error') }}"
+     data-label-copied="{{ trans('games.copied') }}"
+     data-label-word-match="{{ trans('games.word_match_title') }}"
+     data-label-practice="{{ trans('games.practice') }}"
+     data-label-accuracy="{{ trans('games.accuracy') }}">
     {# Compact header: breadcrumb + title + tabs on one row #}
     <div class="game-header">
         <div class="game-header__title">
-            <nav class="game-header__breadcrumb" aria-label="Breadcrumb">
-                <a href="/games">Games</a> /
+            <nav class="game-header__breadcrumb" aria-label="{{ trans('games.breadcrumb') }}">
+                <a href="/games">{{ trans('games.title') }}</a> /
             </nav>
-            <h1>Word Match</h1>
+            <h1>{{ trans('games.word_match_title') }}</h1>
         </div>
-        <div class="game-header__tabs" role="tablist" aria-label="Game mode">
-            <button role="tab" class="game-btn game-btn--tab" data-mode="daily" aria-selected="true">Daily</button>
-            <button role="tab" class="game-btn game-btn--tab" data-mode="practice" aria-selected="false">Practice</button>
+        <div class="game-header__tabs" role="tablist" aria-label="{{ trans('games.game_mode') }}">
+            <button role="tab" class="game-btn game-btn--tab" data-mode="daily" aria-selected="true">{{ trans('games.daily') }}</button>
+            <button role="tab" class="game-btn game-btn--tab" data-mode="practice" aria-selected="false">{{ trans('games.practice') }}</button>
         </div>
     </div>
 
     {# Practice controls (hidden in daily mode) #}
     <div class="matcher__controls" data-show-mode="practice" hidden>
-        <div class="matcher__difficulty" role="group" aria-label="Difficulty">
-            <button class="game-btn game-btn--sm" data-difficulty="easy" aria-pressed="true">Easy (4)</button>
-            <button class="game-btn game-btn--sm" data-difficulty="medium" aria-pressed="false">Medium (6)</button>
-            <button class="game-btn game-btn--sm" data-difficulty="hard" aria-pressed="false">Hard (8)</button>
+        <div class="matcher__difficulty" role="group" aria-label="{{ trans('games.difficulty') }}">
+            <button class="game-btn game-btn--sm" data-difficulty="easy" aria-pressed="true">{{ trans('games.easy_4') }}</button>
+            <button class="game-btn game-btn--sm" data-difficulty="medium" aria-pressed="false">{{ trans('games.medium_6') }}</button>
+            <button class="game-btn game-btn--sm" data-difficulty="hard" aria-pressed="false">{{ trans('games.hard_8') }}</button>
         </div>
-        <div class="matcher__direction" role="group" aria-label="Direction">
-            <button class="game-btn game-btn--sm" data-direction="ojibwe_to_english" aria-pressed="true">Ojibwe → English</button>
-            <button class="game-btn game-btn--sm" data-direction="english_to_ojibwe" aria-pressed="false">English → Ojibwe</button>
+        <div class="matcher__direction" role="group" aria-label="{{ trans('games.direction') }}">
+            <button class="game-btn game-btn--sm" data-direction="ojibwe_to_english" aria-pressed="true">{{ trans('games.ojibwe_to_english') }}</button>
+            <button class="game-btn game-btn--sm" data-direction="english_to_ojibwe" aria-pressed="false">{{ trans('games.english_to_ojibwe') }}</button>
         </div>
     </div>
 
     {# Game board #}
-    <div class="matcher__board" aria-label="Matching game board">
+    <div class="matcher__board" aria-label="{{ trans('games.matching_board') }}">
         <div class="matcher__column matcher__column--left" data-side="left">
-            <div class="matcher__column-header" data-col-label="left">Ojibwe</div>
+            <div class="matcher__column-header" data-col-label="left">{{ trans('games.ojibwe') }}</div>
         </div>
         <svg class="matcher__svg" aria-hidden="true"></svg>
         <div class="matcher__column matcher__column--right" data-side="right">
-            <div class="matcher__column-header" data-col-label="right">English</div>
+            <div class="matcher__column-header" data-col-label="right">{{ trans('games.english') }}</div>
         </div>
     </div>
 
@@ -46,39 +59,39 @@
     <div class="matcher__status">
         <div class="game-stat">
             <span class="game-stat__value" data-stat="time">0:00</span>
-            <span class="game-stat__label">Time</span>
+            <span class="game-stat__label">{{ trans('games.time') }}</span>
         </div>
         <div class="game-stat">
             <span class="game-stat__value" data-stat="matched">0</span>
-            <span class="game-stat__label">Matched</span>
+            <span class="game-stat__label">{{ trans('games.matched') }}</span>
         </div>
         <div class="game-stat">
             <span class="game-stat__value" data-stat="wrong">0</span>
-            <span class="game-stat__label">Wrong</span>
+            <span class="game-stat__label">{{ trans('games.wrong') }}</span>
         </div>
     </div>
 
     {# Completion overlay #}
     <div class="matcher__complete" hidden>
         <div class="matcher__complete-card">
-            <h2 class="matcher__complete-title">All matched!</h2>
+            <h2 class="matcher__complete-title">{{ trans('games.all_matched') }}</h2>
             <div class="matcher__complete-stats">
                 <div class="game-stat">
                     <span class="game-stat__value" data-result="time"></span>
-                    <span class="game-stat__label">Time</span>
+                    <span class="game-stat__label">{{ trans('games.time') }}</span>
                 </div>
                 <div class="game-stat">
                     <span class="game-stat__value" data-result="attempts"></span>
-                    <span class="game-stat__label">Attempts</span>
+                    <span class="game-stat__label">{{ trans('games.attempts') }}</span>
                 </div>
                 <div class="game-stat">
                     <span class="game-stat__value" data-result="accuracy"></span>
-                    <span class="game-stat__label">Accuracy</span>
+                    <span class="game-stat__label">{{ trans('games.accuracy') }}</span>
                 </div>
             </div>
             <div class="matcher__complete-actions">
-                <button class="game-btn game-btn--primary" data-action="play-again">Play Again</button>
-                <button class="game-btn" data-action="share">Share</button>
+                <button class="game-btn game-btn--primary" data-action="play-again">{{ trans('games.play_again') }}</button>
+                <button class="game-btn" data-action="share">{{ trans('games.share') }}</button>
             </div>
         </div>
     </div>
@@ -102,6 +115,7 @@
     const completeOverlay = root.querySelector('.matcher__complete');
     const toast = root.querySelector('.game-toast');
     const srAnnounce = root.querySelector('[data-sr-announce]');
+    const labels = root.dataset;
 
     let state = {
         token: null,
@@ -183,7 +197,7 @@
             const res = await fetch(url);
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                showToast(err.error || 'Failed to load game');
+                showToast(err.error || labels.labelFailedLoad);
                 return;
             }
 
@@ -195,9 +209,9 @@
             state.difficulty = data.difficulty;
 
             renderBoard();
-            announce('Game loaded. Match the words.');
+            announce(labels.labelGameLoaded);
         } catch (e) {
-            showToast('Failed to load game');
+            showToast(labels.labelFailedLoad);
         }
     }
 
@@ -215,13 +229,13 @@
 
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                showToast(err.error || 'Error');
+                showToast(err.error || labels.labelError);
                 return null;
             }
 
             return await res.json();
         } catch (e) {
-            showToast('Connection error');
+            showToast(labels.labelConnectionError);
             return null;
         }
     }
@@ -250,11 +264,11 @@
         const leftLabel = root.querySelector('[data-col-label="left"]');
         const rightLabel = root.querySelector('[data-col-label="right"]');
         if (state.direction === 'ojibwe_to_english') {
-            leftLabel.textContent = 'Ojibwe';
-            rightLabel.textContent = 'English';
+            leftLabel.textContent = labels.labelOjibwe;
+            rightLabel.textContent = labels.labelEnglish;
         } else {
-            leftLabel.textContent = 'English';
-            rightLabel.textContent = 'Ojibwe';
+            leftLabel.textContent = labels.labelEnglish;
+            rightLabel.textContent = labels.labelOjibwe;
         }
 
         state.pairs.left.forEach(item => {
@@ -395,7 +409,7 @@
             rightEl.disabled = true;
 
             drawLockedLine(leftEl, rightEl);
-            announce(`Correct! ${state.matchCount} of ${state.totalPairs} matched.`);
+            announce(`${labels.labelCorrect} ${state.matchCount} / ${state.totalPairs}`);
 
             if (state.matchCount === state.totalPairs) {
                 stopTimer();
@@ -406,7 +420,7 @@
             state.wrongCount++;
             leftEl.classList.add('matcher-word--wrong');
             rightEl.classList.add('matcher-word--wrong');
-            announce('Incorrect match. Try again.');
+            announce(labels.labelIncorrect);
 
             setTimeout(() => {
                 leftEl.classList.remove('matcher-word--wrong');
@@ -460,23 +474,23 @@
             root.querySelector('[data-result="accuracy"]').textContent = data.accuracy + '%';
         }
         completeOverlay.hidden = false;
-        announce('All pairs matched! Game complete.');
+        announce(labels.labelComplete);
     }
 
     function shareResult() {
         const time = root.querySelector('[data-result="time"]').textContent;
         const accuracy = root.querySelector('[data-result="accuracy"]').textContent;
         const text = [
-            '\u{1F517} Word Match \u2014 Minoo',
-            `${state.mode === 'daily' ? new Date().toISOString().slice(0, 10) : 'Practice'} \u00B7 ${state.difficulty}`,
-            `${time} \u00B7 ${accuracy} accuracy`,
+            `\u{1F517} ${labels.labelWordMatch} \u2014 Minoo`,
+            `${state.mode === 'daily' ? new Date().toISOString().slice(0, 10) : labels.labelPractice} \u00B7 ${state.difficulty}`,
+            `${time} \u00B7 ${accuracy} ${labels.labelAccuracy}`,
             'minoo.live/games/matcher',
         ].join('\n');
 
         if (navigator.share) {
             navigator.share({ text }).catch(() => {});
         } else if (navigator.clipboard) {
-            navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+            navigator.clipboard.writeText(text).then(() => showToast(labels.labelCopied));
         }
     }
 

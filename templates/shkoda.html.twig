@@ -1,36 +1,36 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Shkoda — Word Game{% endblock %}
+{% block title %}{{ trans('games.shkoda_title') }} — {{ trans('games.word_game_badge') }}{% endblock %}
 
 {% block content %}
 <div class="shkoda" id="shkoda-game" data-api-base="/api/games/shkoda">
     {# Compact header: breadcrumb + title + tabs on one row #}
     <div class="game-header">
         <div class="game-header__title">
-            <nav class="game-header__breadcrumb" aria-label="Breadcrumb">
-                <a href="/games">Games</a> /
+            <nav class="game-header__breadcrumb" aria-label="{{ trans('games.breadcrumb') }}">
+                <a href="/games">{{ trans('games.title') }}</a> /
             </nav>
-            <h1>Shkoda</h1>
+            <h1>{{ trans('games.shkoda_title') }}</h1>
         </div>
         <nav class="game-header__tabs" role="tablist">
-            <button class="shkoda__tab shkoda__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily</button>
-            <button class="shkoda__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
-            <button class="shkoda__tab" role="tab" data-mode="streak" aria-selected="false">Streak</button>
+            <button class="shkoda__tab shkoda__tab--active" role="tab" data-mode="daily" aria-selected="true">{{ trans('games.daily') }}</button>
+            <button class="shkoda__tab" role="tab" data-mode="practice" aria-selected="false">{{ trans('games.practice') }}</button>
+            <button class="shkoda__tab" role="tab" data-mode="streak" aria-selected="false">{{ trans('games.streak') }}</button>
         </nav>
     </div>
 
     {# Direction toggle #}
     <div class="shkoda__direction" id="shkoda-direction">
-        <span class="shkoda__dir-label shkoda__dir-label--active" id="shkoda-dir-from">English</span>
-        <button class="shkoda__dir-swap" id="shkoda-dir-swap" aria-label="Swap direction" type="button">
+        <span class="shkoda__dir-label shkoda__dir-label--active" id="shkoda-dir-from">{{ trans('games.english') }}</span>
+        <button class="shkoda__dir-swap" id="shkoda-dir-swap" aria-label="{{ trans('games.swap_direction') }}" type="button">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
         </button>
-        <span class="shkoda__dir-label" id="shkoda-dir-to">Ojibwe</span>
+        <span class="shkoda__dir-label" id="shkoda-dir-to">{{ trans('games.ojibwe') }}</span>
     </div>
 
     {# Campfire SVG #}
     <div class="shkoda__fire" id="shkoda-fire" data-fire-state="7">
-        <svg viewBox="0 0 120 120" width="120" height="120" aria-label="Campfire" role="img">
+        <svg viewBox="0 0 120 120" width="120" height="120" aria-label="{{ trans('games.campfire') }}" role="img">
             {# Glow #}
             <ellipse class="shkoda__glow" cx="60" cy="100" rx="40" ry="15" />
             {# Flames — 3 layers #}
@@ -45,12 +45,12 @@
             <circle class="shkoda__ember" cx="65" cy="88" r="1.5" />
             <circle class="shkoda__ember" cx="55" cy="85" r="1" />
         </svg>
-        <div class="shkoda__remaining" id="shkoda-remaining">7 guesses remaining</div>
+        <div class="shkoda__remaining" id="shkoda-remaining" data-label-remaining="{{ trans('games.guesses_remaining') }}">{{ trans('games.guesses_remaining_default') }}</div>
     </div>
 
     {# Clue box #}
     <div class="shkoda__clue" id="shkoda-clue">
-        <div class="shkoda__clue-label">Guess the Ojibwe word for:</div>
+        <div class="shkoda__clue-label">{{ trans('games.guess_word_for') }}</div>
         <div class="shkoda__clue-word" id="shkoda-clue-word"></div>
         <div class="shkoda__clue-detail" id="shkoda-clue-detail"></div>
     </div>
@@ -60,7 +60,7 @@
 
     {# Wrong guesses #}
     <div class="shkoda__wrong" id="shkoda-wrong">
-        <span class="shkoda__wrong-label">Wrong guesses:</span>
+        <span class="shkoda__wrong-label">{{ trans('games.wrong_guesses') }}</span>
         <div class="shkoda__wrong-letters" id="shkoda-wrong-letters"></div>
     </div>
 
@@ -77,7 +77,7 @@
     </div>
 
     {# Loading state #}
-    <div class="shkoda__loading" id="shkoda-loading">Loading...</div>
+    <div class="shkoda__loading" id="shkoda-loading">{{ trans('games.loading') }}</div>
 
     {# Screen reader announcements #}
     <div class="visually-hidden" aria-live="polite" id="shkoda-announcer"></div>

@@ -13,8 +13,8 @@
       <div class="messages-layout" id="messages-app" data-user-id="{{ account.id() }}" data-hub-url="/.well-known/mercure">
         <aside class="messages-sidebar">
           <div class="messages-sidebar__header">
-            <h2>Chats</h2>
-            <button class="messages-compose-btn" id="messages-new-thread" aria-label="New message">✎</button>
+            <h2>{{ trans('messages.chats_title') }}</h2>
+            <button class="messages-compose-btn" id="messages-new-thread" aria-label="{{ trans('messages.new_message') }}">✎</button>
           </div>
           <div id="messages-thread-list" class="messages-thread-list"></div>
         </aside>

@@ -3,7 +3,27 @@
 {% block title %}{{ trans('page.title') }} — Minoo{% endblock %}
 
 {% block content %}
-  <div class="feed-layout">
+  <div class="feed-layout"
+       data-label-all-caught-up="{{ trans('feed.all_caught_up') }}"
+       data-label-just-now="{{ trans('feed.just_now') }}"
+       data-label-write-comment="{{ trans('feed.write_comment') }}"
+       data-label-delete-confirm="{{ trans('feed.delete_confirm') }}"
+       data-label-deleting="{{ trans('feed.deleting') }}"
+       data-label-delete="{{ trans('feed.delete') }}"
+       data-label-posting="{{ trans('feed.posting') }}"
+       data-label-post="{{ trans('feed.post') }}"
+       data-label-network-error="{{ trans('feed.network_error') }}"
+       data-label-error-try-again="{{ trans('feed.error_try_again') }}"
+       data-label-could-not-load="{{ trans('feed.could_not_load_comments') }}"
+       data-label-copied="{{ trans('feed.copied') }}"
+       data-label-saving="{{ trans('feed.saving') }}"
+       data-label-save="{{ trans('feed.save') }}"
+       data-label-could-not-load-post="{{ trans('feed.could_not_load_post') }}"
+       data-label-could-not-update="{{ trans('feed.could_not_update_post') }}"
+       data-label-could-not-delete="{{ trans('feed.could_not_delete_post') }}"
+       data-label-you="{{ trans('feed.you') }}"
+       data-label-post-btn="{{ trans('feed.post_comment') }}"
+       data-label-error="{{ trans('feed.error') }}">
     <div class="feed-main">
       {% include "components/feed-create-post.html.twig" %}
 
@@ -40,11 +60,11 @@
   {# === Edit Post Modal === #}
   <dialog class="edit-post-modal" id="edit-post-modal">
     <form class="edit-post-modal__form" id="edit-post-form">
-      <h3 class="edit-post-modal__title">Edit post</h3>
+      <h3 class="edit-post-modal__title">{{ trans('feed.edit_post') }}</h3>
       <textarea class="edit-post-modal__textarea" id="edit-post-body" rows="4" maxlength="5000" required></textarea>
       <div class="edit-post-modal__actions">
-        <button type="button" class="btn btn--ghost" id="edit-post-cancel">Cancel</button>
-        <button type="submit" class="btn btn--primary" id="edit-post-save">Save</button>
+        <button type="button" class="btn btn--ghost" id="edit-post-cancel">{{ trans('feed.cancel') }}</button>
+        <button type="submit" class="btn btn--primary" id="edit-post-save">{{ trans('feed.save') }}</button>
       </div>
       <input type="hidden" id="edit-post-id">
     </form>
@@ -56,6 +76,7 @@
     const feed = document.getElementById('feed');
     const sentinel = document.getElementById('feed-sentinel');
     if (!feed || !sentinel) return;
+    const feedLabels = document.querySelector('.feed-layout').dataset;
 
     let nextCursor = feed.dataset.nextCursor || null;
     let activeFilter = feed.dataset.activeFilter || 'all';
@@ -89,7 +110,7 @@
 
         nextCursor = data.nextCursor;
         if (!nextCursor) {
-          sentinel.innerHTML = '<p class="feed-end">You\'re all caught up</p>';
+          sentinel.innerHTML = '<p class="feed-end">' + feedLabels.labelAllCaughtUp + '</p>';
         }
       } catch (e) {
         if (e.name !== 'AbortError') console.error('Feed load error:', e);
@@ -132,7 +153,7 @@
           nextCursor = data.nextCursor;
           feed.dataset.nextCursor = nextCursor || '';
           if (!nextCursor) {
-            sentinel.innerHTML = '<p class="feed-end">You\'re all caught up</p>';
+            sentinel.innerHTML = '<p class="feed-end">' + feedLabels.labelAllCaughtUp + '</p>';
           }
         })
         .catch(e => { if (e.name !== 'AbortError') console.error(e); });
@@ -168,6 +189,8 @@
 {% block scripts %}
   {# === GraphQL Helper + Post Management === #}
   <script>
+  const feedLbl = document.querySelector('.feed-layout').dataset;
+
   // === GraphQL Helper ===
   async function graphqlRequest(query, variables = {}) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -221,10 +244,10 @@
     const btn = e.target.closest('[data-action="delete-post"]');
     if (!btn) return;
     closeAllMenus();
-    if (!confirm('Delete this post?')) return;
+    if (!confirm(feedLbl.labelDeleteConfirm)) return;
     const id = btn.dataset.id;
     btn.disabled = true;
-    btn.textContent = 'Deleting...';
+    btn.textContent = feedLbl.labelDeleting;
     try {
       await graphqlRequest(
         'mutation DeletePost($id: ID!) { deletePost(id: $id) { deleted } }',
@@ -233,9 +256,9 @@
       const card = btn.closest('.feed-card');
       card.remove();
     } catch (err) {
-      alert('Could not delete post: ' + err.message);
+      alert(feedLbl.labelCouldNotDelete + ': ' + err.message);
       btn.disabled = false;
-      btn.textContent = 'Delete';
+      btn.textContent = feedLbl.labelDelete;
     }
   });
 
@@ -258,7 +281,7 @@
       editBody.value = data.post.body;
       editModal.showModal();
     } catch (err) {
-      alert('Could not load post: ' + err.message);
+      alert(feedLbl.labelCouldNotLoadPost + ': ' + err.message);
     }
   });
 
@@ -271,7 +294,7 @@
     if (!body) return;
     const saveBtn = document.getElementById('edit-post-save');
     saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving...';
+    saveBtn.textContent = feedLbl.labelSaving;
     try {
       const data = await graphqlRequest(
         `mutation UpdatePost($id: ID!, $input: PostUpdateInput!) {
@@ -286,10 +309,10 @@
       }
       editModal.close();
     } catch (err) {
-      alert('Could not update post: ' + err.message);
+      alert(feedLbl.labelCouldNotUpdate + ': ' + err.message);
     } finally {
       saveBtn.disabled = false;
-      saveBtn.textContent = 'Save';
+      saveBtn.textContent = feedLbl.labelSave;
     }
   });
   </script>
@@ -299,6 +322,7 @@
   (function() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
     const headers = { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken };
+    const fl = document.querySelector('.feed-layout').dataset;
 
     function requireAuth(res) {
       if (res.status === 401) {
@@ -347,7 +371,7 @@
           btn.classList.add('is-active');
           btn.dataset.reactionId = data.id;
         }
-      } catch (err) { showFeedback(btn, 'Network error', true); }
+      } catch (err) { showFeedback(btn, fl.labelNetworkError, true); }
     });
 
     // Comment expansion
@@ -363,11 +387,11 @@
           const id = btn.dataset.id;
           try {
             const res = await fetch(`/api/engagement/comments/${type}/${id}`);
-            if (!res.ok) { section.innerHTML = '<p class="feed-comments__error">Could not load comments.</p>'; return; }
+            if (!res.ok) { section.innerHTML = '<p class="feed-comments__error">' + fl.labelCouldNotLoad + '</p>'; return; }
             const data = await res.json();
             section.innerHTML = renderComments(data.comments || [], type, id);
             section.dataset.loaded = '1';
-          } catch (err) { section.innerHTML = '<p class="feed-comments__error">Could not load comments.</p>'; }
+          } catch (err) { section.innerHTML = '<p class="feed-comments__error">' + fl.labelCouldNotLoad + '</p>'; }
         }
       } else {
         section.hidden = true;
@@ -383,7 +407,7 @@
         navigator.share({ url, title: btn.dataset.title });
       } else {
         navigator.clipboard.writeText(url).then(() => {
-          showFeedback(btn, 'Copied!', false);
+          showFeedback(btn, fl.labelCopied, false);
         });
       }
     });
@@ -449,7 +473,7 @@
         const body = textarea.value.trim();
         if (!body) return;
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Posting...';
+        submitBtn.textContent = fl.labelPosting;
         try {
           const fd = new FormData();
           fd.append('body', body);
@@ -467,14 +491,14 @@
             location.reload();
           } else {
             const err = await res.json().catch(() => ({}));
-            submitBtn.textContent = err.error || 'Error — try again';
+            submitBtn.textContent = err.error || fl.labelErrorTryAgain;
             submitBtn.disabled = false;
-            setTimeout(() => { submitBtn.textContent = 'Post'; }, 2000);
+            setTimeout(() => { submitBtn.textContent = fl.labelPost; }, 2000);
           }
         } catch (err) {
-          submitBtn.textContent = 'Network error';
+          submitBtn.textContent = fl.labelNetworkError;
           submitBtn.disabled = false;
-          setTimeout(() => { submitBtn.textContent = 'Post'; }, 2000);
+          setTimeout(() => { submitBtn.textContent = fl.labelPost; }, 2000);
         }
       });
     }
@@ -487,12 +511,12 @@
     function renderComments(comments, type, id) {
       let html = '<div class="feed-comments__list">';
       comments.forEach(c => {
-        html += `<div class="feed-comment"><strong>User</strong> <span class="feed-comment__time">${c.relative_time || ''}</span><p>${escapeHtml(c.body)}</p></div>`;
+        html += `<div class="feed-comment"><strong>${escapeHtml(c.author_name || 'User')}</strong> <span class="feed-comment__time">${c.relative_time || ''}</span><p>${escapeHtml(c.body)}</p></div>`;
       });
       html += '</div>';
       html += `<form class="feed-comments__form" data-type="${type}" data-id="${id}">
-        <input type="text" placeholder="Write a comment..." maxlength="2000" required>
-        <button type="submit">Post</button>
+        <input type="text" placeholder="${fl.labelWriteComment}" maxlength="2000" required>
+        <button type="submit">${fl.labelPostBtn}</button>
       </form>`;
       return html;
     }
@@ -516,18 +540,18 @@
         if (res.ok) {
           const list = form.previousElementSibling;
           list.insertAdjacentHTML('beforeend',
-            `<div class="feed-comment"><strong>You</strong> <span class="feed-comment__time">just now</span><p>${escapeHtml(body)}</p></div>`
+            `<div class="feed-comment"><strong>${fl.labelYou}</strong> <span class="feed-comment__time">${fl.labelJustNow}</span><p>${escapeHtml(body)}</p></div>`
           );
           input.value = '';
         } else {
           const err = await res.json().catch(() => ({}));
           input.value = '';
-          input.placeholder = err.error || 'Error — try again';
-          setTimeout(() => { input.placeholder = 'Write a comment...'; }, 2000);
+          input.placeholder = err.error || fl.labelErrorTryAgain;
+          setTimeout(() => { input.placeholder = fl.labelWriteComment; }, 2000);
         }
       } catch (err) {
-        input.placeholder = 'Network error';
-        setTimeout(() => { input.placeholder = 'Write a comment...'; }, 2000);
+        input.placeholder = fl.labelNetworkError;
+        setTimeout(() => { input.placeholder = fl.labelWriteComment; }, 2000);
       }
       submitBtn.disabled = false;
     });

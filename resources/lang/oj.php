@@ -791,4 +791,118 @@ return [
 
     // Open Graph / SEO
     'og.default_description' => '',
+
+    // Games hub
+    'games.title' => '', // needs translation
+    'games.subtitle' => '', // needs translation
+    'games.available_games' => '', // needs translation
+    'games.word_game_badge' => '', // needs translation
+    'games.shkoda_title' => 'Shkoda', // proper name — no translation needed
+    'games.shkoda_description' => '', // needs translation
+    'games.crossword_title' => '', // needs translation
+    'games.crossword_description' => '', // needs translation
+    'games.word_match_title' => '', // needs translation
+    'games.word_match_description' => '', // needs translation
+    'games.play_now' => '', // needs translation
+    'games.more_coming' => '', // needs translation
+    'games.listening_quiz' => '', // needs translation
+    'games.sentence_builder' => '', // needs translation
+    'games.breadcrumb' => '', // needs translation
+    'games.game_mode' => '', // needs translation
+    'games.daily' => '', // needs translation
+    'games.practice' => '', // needs translation
+    'games.streak' => '', // needs translation
+    'games.themes' => '', // needs translation
+    'games.easy' => '', // needs translation
+    'games.medium' => '', // needs translation
+    'games.hard' => '', // needs translation
+    'games.easy_4' => '', // needs translation
+    'games.medium_6' => '', // needs translation
+    'games.hard_8' => '', // needs translation
+    'games.difficulty' => '', // needs translation
+    'games.direction' => '', // needs translation
+    'games.ojibwe_to_english' => '', // needs translation
+    'games.english_to_ojibwe' => '', // needs translation
+    'games.ojibwe' => 'Anishinaabemowin', // dict: Anishinaabemowin: "Ojibwe language"
+    'games.english' => 'Zhaaganaashiimowin', // dict: zhaaganaashiimowin: "English language"
+    'games.matching_board' => '', // needs translation
+    'games.time' => '', // needs translation
+    'games.matched' => '', // needs translation
+    'games.wrong' => '', // needs translation
+    'games.all_matched' => '', // needs translation
+    'games.attempts' => '', // needs translation
+    'games.accuracy' => '', // needs translation
+    'games.play_again' => '', // needs translation
+    'games.share' => '', // needs translation
+    'games.next_puzzle' => '', // needs translation
+    'games.across' => '', // needs translation
+    'games.down' => '', // needs translation
+    'games.crossword_grid' => '', // needs translation
+    'games.word_bank' => '', // needs translation
+    'games.loading' => '', // needs translation
+    'games.loading_puzzle' => '', // needs translation
+    'games.swap_direction' => '', // needs translation
+    'games.campfire' => 'Shkoda', // dict: shkoda: fire
+    'games.guesses_remaining' => '', // needs translation
+    'games.guesses_remaining_default' => '', // needs translation
+    'games.guess_word_for' => '', // needs translation
+    'games.wrong_guesses' => '', // needs translation
+    'games.game_loaded' => '', // needs translation
+    'games.correct_match' => '', // needs translation
+    'games.incorrect_match' => '', // needs translation
+    'games.game_complete' => '', // needs translation
+    'games.failed_load' => '', // needs translation
+    'games.error' => '', // needs translation
+    'games.connection_error' => '', // needs translation
+    'games.copied' => '', // needs translation
+
+    // Messages — additional
+    'messages.chats_title' => '', // needs translation
+    'messages.new_message' => '', // needs translation
+
+    // Feed — additional
+    'feed.edit_post' => '', // needs translation
+    'feed.cancel' => '', // needs translation
+    'feed.save' => 'Ganawenjigewin', // dict: ganawendan: "take care of, keep"
+    'feed.edit' => '', // needs translation
+    'feed.delete' => '', // needs translation
+    'feed.post_options' => '', // needs translation
+    'feed.source_minoo' => 'Minoo',
+    'feed.all_caught_up' => '', // needs translation
+    'feed.just_now' => '', // needs translation
+    'feed.write_comment' => '', // needs translation
+    'feed.delete_confirm' => '', // needs translation
+    'feed.deleting' => '', // needs translation
+    'feed.posting' => '', // needs translation
+    'feed.network_error' => '', // needs translation
+    'feed.error_try_again' => '', // needs translation
+    'feed.could_not_load_comments' => '', // needs translation
+    'feed.copied' => '', // needs translation
+    'feed.saving' => '', // needs translation
+    'feed.could_not_load_post' => '', // needs translation
+    'feed.could_not_update_post' => '', // needs translation
+    'feed.could_not_delete_post' => '', // needs translation
+    'feed.you' => '', // needs translation
+    'feed.post_comment' => '', // needs translation
+    'feed.error' => '', // needs translation
+
+    // Contributors
+    'contributors.title' => '', // needs translation
+    'contributors.subtitle' => '', // needs translation
+    'contributors.empty_heading' => '', // needs translation
+    'contributors.empty_body' => '', // needs translation
+    'contributors.explore_language' => '', // needs translation
+    'contributors.all_contributors' => '', // needs translation
+    'contributors.not_found' => '', // needs translation
+    'contributors.not_found_message' => '', // needs translation
+    'contributors.browse_all' => '', // needs translation
+
+    // Oral Histories
+    'oral_histories.title' => 'Gdibaajmowinaanin', // dict: dibaajmowin: "story, narrative"; g- (our) + -aanin plural
+    'oral_histories.subtitle' => '', // needs translation
+    'oral_histories.collections' => '', // needs translation
+    'oral_histories.stories' => 'Dibaajimowinan', // dict: dibaajmowin: "a story; a narrative" (plural)
+    'oral_histories.not_found' => '', // needs translation
+    'oral_histories.not_found_message' => '', // needs translation
+    'oral_histories.browse_all' => '', // needs translation
 ];

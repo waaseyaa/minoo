@@ -1,29 +1,29 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Crossword — Minoo Games{% endblock %}
+{% block title %}{{ trans('games.crossword_title') }} — Minoo {{ trans('games.title') }}{% endblock %}
 
 {% block content %}
 <div class="crossword" data-game="crossword">
     {# Compact header: breadcrumb + title + tabs on one row #}
     <div class="game-header">
         <div class="game-header__title">
-            <nav class="game-header__breadcrumb" aria-label="Breadcrumb">
-                <a href="/games">Games</a> /
+            <nav class="game-header__breadcrumb" aria-label="{{ trans('games.breadcrumb') }}">
+                <a href="/games">{{ trans('games.title') }}</a> /
             </nav>
-            <h1>Crossword</h1>
+            <h1>{{ trans('games.crossword_title') }}</h1>
         </div>
         <div class="game-header__tabs" role="tablist">
-            <button class="crossword__tab crossword__tab--active" role="tab" data-mode="daily" aria-selected="true">Daily</button>
-            <button class="crossword__tab" role="tab" data-mode="practice" aria-selected="false">Practice</button>
-            <button class="crossword__tab" role="tab" data-mode="themes" aria-selected="false">Themes</button>
+            <button class="crossword__tab crossword__tab--active" role="tab" data-mode="daily" aria-selected="true">{{ trans('games.daily') }}</button>
+            <button class="crossword__tab" role="tab" data-mode="practice" aria-selected="false">{{ trans('games.practice') }}</button>
+            <button class="crossword__tab" role="tab" data-mode="themes" aria-selected="false">{{ trans('games.themes') }}</button>
         </div>
     </div>
 
     {# Difficulty selector (practice mode) #}
     <div class="crossword__difficulty" hidden>
-        <button class="crossword__tier crossword__tier--active" data-tier="easy">Easy</button>
-        <button class="crossword__tier" data-tier="medium">Medium</button>
-        <button class="crossword__tier" data-tier="hard">Hard</button>
+        <button class="crossword__tier crossword__tier--active" data-tier="easy">{{ trans('games.easy') }}</button>
+        <button class="crossword__tier" data-tier="medium">{{ trans('games.medium') }}</button>
+        <button class="crossword__tier" data-tier="hard">{{ trans('games.hard') }}</button>
     </div>
 
     {# Theme selector (themes mode) #}
@@ -37,24 +37,24 @@
             {# Left: Clues #}
             <div class="crossword__clues">
                 <div class="crossword__clues-across">
-                    <h4 class="crossword__clues-heading">Across</h4>
+                    <h4 class="crossword__clues-heading">{{ trans('games.across') }}</h4>
                     <div class="crossword__clues-list" data-direction="across"></div>
                 </div>
                 <div class="crossword__clues-down">
-                    <h4 class="crossword__clues-heading">Down</h4>
+                    <h4 class="crossword__clues-heading">{{ trans('games.down') }}</h4>
                     <div class="crossword__clues-list" data-direction="down"></div>
                 </div>
             </div>
 
             {# Center: Grid #}
             <div class="crossword__grid-area">
-                <div class="crossword__grid" role="grid" aria-label="Crossword grid"></div>
+                <div class="crossword__grid" role="grid" aria-label="{{ trans('games.crossword_grid') }}"></div>
                 <div class="crossword__active-clue"></div>
             </div>
 
             {# Right: Word bank #}
             <div class="crossword__word-bank">
-                <h4 class="crossword__word-bank-heading">Word Bank</h4>
+                <h4 class="crossword__word-bank-heading">{{ trans('games.word_bank') }}</h4>
                 <div class="crossword__word-bank-list"></div>
                 <div class="crossword__difficulty-badge"></div>
             </div>
@@ -74,14 +74,14 @@
         <div class="crossword__complete-stats"></div>
         <div class="crossword__complete-teachings"></div>
         <div class="crossword__complete-actions">
-            <button class="game-btn game-btn--primary" data-action="next">Next Puzzle</button>
-            <button class="game-btn" data-action="share">Share</button>
+            <button class="game-btn game-btn--primary" data-action="next">{{ trans('games.next_puzzle') }}</button>
+            <button class="game-btn" data-action="share">{{ trans('games.share') }}</button>
         </div>
     </div>
 
     {# Loading #}
     <div class="crossword__loading">
-        <p>Loading puzzle...</p>
+        <p>{{ trans('games.loading_puzzle') }}</p>
     </div>
 
     {# Screen reader announcements #}

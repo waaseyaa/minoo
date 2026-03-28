@@ -1,18 +1,18 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Games — Minoo{% endblock %}
+{% block title %}{{ trans('games.title') }} — Minoo{% endblock %}
 
 {% block content %}
 <div class="games-hub content-max">
     <header class="games-hub__header">
         <div class="games-hub__header-content">
-            <h1 class="games-hub__title">Games</h1>
-            <p class="games-hub__subtitle">Learn Anishinaabemowin through play. Every game draws from our living dictionary.</p>
+            <h1 class="games-hub__title">{{ trans('games.title') }}</h1>
+            <p class="games-hub__subtitle">{{ trans('games.subtitle') }}</p>
         </div>
     </header>
 
     <section class="games-hub__featured">
-        <h2 class="visually-hidden">Available Games</h2>
+        <h2 class="visually-hidden">{{ trans('games.available_games') }}</h2>
         <a href="/games/shkoda" class="game-card game-card--featured">
             <div class="game-card__icon">
                 <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
@@ -25,10 +25,10 @@
                 </svg>
             </div>
             <div class="game-card__content">
-                <span class="game-card__badge">Word Game</span>
-                <h3 class="game-card__title">Shkoda</h3>
-                <p class="game-card__description">Guess Ojibwe words letter by letter while keeping the campfire burning. Daily challenges, practice mode, and streaks.</p>
-                <span class="game-card__cta">Play now</span>
+                <span class="game-card__badge">{{ trans('games.word_game_badge') }}</span>
+                <h3 class="game-card__title">{{ trans('games.shkoda_title') }}</h3>
+                <p class="game-card__description">{{ trans('games.shkoda_description') }}</p>
+                <span class="game-card__cta">{{ trans('games.play_now') }}</span>
             </div>
         </a>
         <a href="/games/crossword" class="game-card game-card--featured">
@@ -49,10 +49,10 @@
                 </svg>
             </div>
             <div class="game-card__content">
-                <span class="game-card__badge">Word Game</span>
-                <h3 class="game-card__title">Crossword</h3>
-                <p class="game-card__description">Fill the grid with Ojibwe words. Clues in English, answers in Anishinaabemowin — a new puzzle each day.</p>
-                <span class="game-card__cta">Play now</span>
+                <span class="game-card__badge">{{ trans('games.word_game_badge') }}</span>
+                <h3 class="game-card__title">{{ trans('games.crossword_title') }}</h3>
+                <p class="game-card__description">{{ trans('games.crossword_description') }}</p>
+                <span class="game-card__cta">{{ trans('games.play_now') }}</span>
             </div>
         </a>
         <a href="/games/matcher" class="game-card game-card--featured">
@@ -70,28 +70,28 @@
                 </svg>
             </div>
             <div class="game-card__content">
-                <span class="game-card__badge">Word Game</span>
-                <h3 class="game-card__title">Word Match</h3>
-                <p class="game-card__description">Draw lines between Ojibwe words and English definitions. Daily challenges and practice mode.</p>
-                <span class="game-card__cta">Play now</span>
+                <span class="game-card__badge">{{ trans('games.word_game_badge') }}</span>
+                <h3 class="game-card__title">{{ trans('games.word_match_title') }}</h3>
+                <p class="game-card__description">{{ trans('games.word_match_description') }}</p>
+                <span class="game-card__cta">{{ trans('games.play_now') }}</span>
             </div>
         </a>
     </section>
 
     <section class="games-hub__coming">
-        <h2 class="games-hub__section-title">More games coming</h2>
+        <h2 class="games-hub__section-title">{{ trans('games.more_coming') }}</h2>
         <div class="games-hub__coming-grid">
             <div class="game-card game-card--placeholder">
                 <div class="game-card__placeholder-icon">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8"/></svg>
                 </div>
-                <span class="game-card__placeholder-label">Listening Quiz</span>
+                <span class="game-card__placeholder-label">{{ trans('games.listening_quiz') }}</span>
             </div>
             <div class="game-card game-card--placeholder">
                 <div class="game-card__placeholder-icon">
                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12h8M12 8v8"/></svg>
                 </div>
-                <span class="game-card__placeholder-label">Sentence Builder</span>
+                <span class="game-card__placeholder-label">{{ trans('games.sentence_builder') }}</span>
             </div>
         </div>
     </section>
