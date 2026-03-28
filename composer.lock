@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b7417666e3484b3104d98d4af1fe717",
+    "content-hash": "68b802c5f35bd6ff9ac9850b80cc198b",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3274,16 +3274,16 @@
         },
         {
             "name": "waaseyaa/engagement",
-            "version": "v0.1.0-alpha.66",
+            "version": "v0.1.0-alpha.67",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/engagement.git",
-                "reference": "e1880eda98df841171f409c40fc2dd9793c124fb"
+                "reference": "257ac277f578e30e0479a104829aff4ee810838d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/engagement/zipball/e1880eda98df841171f409c40fc2dd9793c124fb",
-                "reference": "e1880eda98df841171f409c40fc2dd9793c124fb",
+                "url": "https://api.github.com/repos/waaseyaa/engagement/zipball/257ac277f578e30e0479a104829aff4ee810838d",
+                "reference": "257ac277f578e30e0479a104829aff4ee810838d",
                 "shasum": ""
             },
             "require": {
@@ -3318,9 +3318,9 @@
             "description": "Social engagement entities (reactions, comments, follows) for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/engagement/issues",
-                "source": "https://github.com/waaseyaa/engagement/tree/v0.1.0-alpha.66"
+                "source": "https://github.com/waaseyaa/engagement/tree/v0.1.0-alpha.67"
             },
-            "time": "2026-03-28T13:09:03+00:00"
+            "time": "2026-03-28T13:34:25+00:00"
         },
         {
             "name": "waaseyaa/entity",

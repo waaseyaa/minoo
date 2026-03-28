@@ -206,17 +206,20 @@ final class EngagementSmokeTest extends TestCase
     }
 
     #[Test]
-    public function invalid_reaction_type_is_rejected(): void
+    public function invalid_reaction_type_is_rejected_when_allowed_list_provided(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid reaction_type');
 
-        new Reaction([
-            'reaction_type' => 'invalid_type',
-            'user_id' => 1,
-            'target_type' => 'post',
-            'target_id' => 1,
-        ]);
+        new Reaction(
+            values: [
+                'reaction_type' => 'invalid_type',
+                'user_id' => 1,
+                'target_type' => 'post',
+                'target_id' => 1,
+            ],
+            allowedReactionTypes: ['like', 'interested', 'recommend', 'miigwech', 'connect'],
+        );
     }
 
     #[Test]
