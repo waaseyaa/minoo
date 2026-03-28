@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Provider;
 
-use Minoo\Entity\UserBlock;
+use Waaseyaa\User\UserBlock;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;

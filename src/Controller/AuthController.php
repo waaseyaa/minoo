@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Support\AuthMailer;
+use Waaseyaa\User\AuthMailer;
 use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\EmailVerificationService;
 use Waaseyaa\SSR\Flash\Flash;
@@ -13,7 +13,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Minoo\Middleware\RateLimitMiddleware;
-use Minoo\Support\PasswordResetService;
+use Waaseyaa\User\PasswordResetTokenRepository;
 use Waaseyaa\SSR\SsrResponse;
 use Waaseyaa\User\User;
 
@@ -23,7 +23,7 @@ final class AuthController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly AuthMailer $authMailer,
-        private readonly PasswordResetService $passwordResetService,
+        private readonly PasswordResetTokenRepository $passwordResetTokenRepository,
         private readonly EmailVerificationService $emailVerificationService,
     ) {}
 
@@ -244,7 +244,7 @@ final class AuthController
                 /** @var User|null $user */
                 $user = $storage->load(reset($ids));
                 if ($user !== null) {
-                    $token = $this->passwordResetService->createToken($user->id());
+                    $token = $this->passwordResetTokenRepository->createToken($user->id());
                     $this->authMailer->sendPasswordReset($user, $token);
                 }
             }
@@ -267,7 +267,7 @@ final class AuthController
         if ($token === '') {
             $tokenError = 'No reset token provided.';
         } else {
-            $resetService = $this->passwordResetService;
+            $resetService = $this->passwordResetTokenRepository;
             $userId = $resetService->validateToken($token);
             if ($userId === null) {
                 $tokenError = 'This reset link is invalid or has expired.';
@@ -289,7 +289,7 @@ final class AuthController
         $password = (string) $request->request->get('password', '');
         $passwordConfirm = (string) $request->request->get('password_confirm', '');
 
-        $resetService = $this->passwordResetService;
+        $resetService = $this->passwordResetTokenRepository;
         $userId = $resetService->validateToken($token);
 
         if ($userId === null) {

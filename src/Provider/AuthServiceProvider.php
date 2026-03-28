@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Provider;
 
 use Minoo\Support\EmailVerificationService;
-use Minoo\Support\PasswordResetService;
+use Waaseyaa\User\PasswordResetTokenRepository;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -14,8 +14,8 @@ final class AuthServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->singleton(PasswordResetService::class, function () {
-            return new PasswordResetService($this->createPdo());
+        $this->singleton(PasswordResetTokenRepository::class, function () {
+            return new PasswordResetTokenRepository($this->createPdo());
         });
 
         $this->singleton(EmailVerificationService::class, function () {
