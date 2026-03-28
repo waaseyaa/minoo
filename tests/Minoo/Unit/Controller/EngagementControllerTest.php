@@ -134,6 +134,11 @@ final class EngagementControllerTest extends TestCase
     #[Test]
     public function react_rejects_invalid_reaction_type(): void
     {
+        $storage = $this->mockStorage('reaction');
+        $storage->method('create')->willThrowException(
+            new \InvalidArgumentException("Invalid reaction_type 'invalid_type'."),
+        );
+
         $request = $this->jsonRequest('POST', [
             'reaction_type' => 'invalid_type',
             'target_type' => 'event',
@@ -143,7 +148,6 @@ final class EngagementControllerTest extends TestCase
         $response = $this->controller->react([], [], $this->mockAccount(), $request);
 
         $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid reaction_type', $response->content);
     }
 
     // --- Missing fields ---

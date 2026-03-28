@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Seed;
 
-use Minoo\Entity\Reaction;
 use Minoo\Seed\EngagementSeeder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -63,7 +62,7 @@ final class EngagementSeederTest extends TestCase
             $this->assertArrayHasKey('user_index', $reaction);
             $this->assertArrayHasKey('target_type', $reaction);
             $this->assertArrayHasKey('post_index', $reaction);
-            $this->assertContains($reaction['reaction_type'], Reaction::ALLOWED_REACTION_TYPES);
+            $this->assertContains($reaction['reaction_type'], ['like', 'interested', 'recommend', 'miigwech', 'connect']);
         }
     }
 
@@ -119,7 +118,7 @@ final class EngagementSeederTest extends TestCase
         $reactions = EngagementSeeder::reactions();
         $usedTypes = array_unique(array_column($reactions, 'reaction_type'));
 
-        foreach (Reaction::ALLOWED_REACTION_TYPES as $type) {
+        foreach (['like', 'interested', 'recommend', 'miigwech', 'connect'] as $type) {
             $this->assertContains($type, $usedTypes, "Reaction type '{$type}' is not represented in seed data.");
         }
     }
