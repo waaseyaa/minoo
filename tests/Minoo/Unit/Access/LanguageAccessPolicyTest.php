@@ -23,7 +23,7 @@ final class LanguageAccessPolicyTest extends TestCase
         $this->assertTrue($policy->appliesTo('example_sentence'));
         $this->assertTrue($policy->appliesTo('word_part'));
         $this->assertTrue($policy->appliesTo('dialect_region'));
-        $this->assertFalse($policy->appliesTo('speaker'));
+        $this->assertTrue($policy->appliesTo('speaker'));
         $this->assertFalse($policy->appliesTo('node'));
     }
 
