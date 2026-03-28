@@ -6,6 +6,7 @@ namespace Minoo\Provider;
 
 use Minoo\Entity\DictionaryEntry;
 use Minoo\Entity\ExampleSentence;
+use Minoo\Entity\Speaker;
 use Minoo\Entity\WordPart;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -73,6 +74,25 @@ final class LanguageServiceProvider extends ServiceProvider
                 'type' => ['type' => 'string', 'label' => 'Type', 'description' => 'initial, medial, or final.', 'weight' => 5],
                 'definition' => ['type' => 'string', 'label' => 'Definition', 'weight' => 10],
                 'source_url' => ['type' => 'uri', 'label' => 'Source URL', 'weight' => 15],
+                'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
+                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
+                'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
+            ],
+        ));
+
+        $this->entityType(new EntityType(
+            id: 'speaker',
+            label: 'Speaker',
+            class: Speaker::class,
+            keys: ['id' => 'spid', 'uuid' => 'uuid', 'label' => 'name'],
+            group: 'language',
+            fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
+                'code' => ['type' => 'string', 'label' => 'Code', 'weight' => 1],
+                'bio' => ['type' => 'text', 'label' => 'Biography', 'weight' => 5],
+                'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 6],
+                'consent_public_display' => ['type' => 'boolean', 'label' => 'Public Display Consent', 'description' => 'Whether this speaker may be shown on public pages.', 'weight' => 28, 'default' => 1],
+                'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this speaker data may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
