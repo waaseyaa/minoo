@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Controller/BlockController.php
-
-		-
 			message: '#^Parameter \#1 \$community of method Minoo\\Controller\\CommunityController\:\:findNearbyCommunities\(\) expects Waaseyaa\\Entity\\ContentEntityBase, Waaseyaa\\Entity\\EntityInterface given\.$#'
 			identifier: argument.type
 			count: 1
@@ -49,12 +43,6 @@ parameters:
 			path: src/Controller/CoordinatorDashboardController.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Controller/EngagementController.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -79,12 +67,6 @@ parameters:
 			path: src/Controller/IngestionApiController.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Controller/IngestionApiController.php
-
-		-
 			message: '#^Property Minoo\\Controller\\LocationController\:\:\$twig is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
@@ -105,12 +87,6 @@ parameters:
 		-
 			message: '#^Strict comparison using \!\=\= between lowercase\-string&non\-empty\-string and '''' will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
-			count: 1
-			path: src/Controller/MessagingController.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and false will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
 			count: 1
 			path: src/Controller/MessagingController.php
 
@@ -143,12 +119,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: src/Feed/FeedAssembler.php
-
-		-
-			message: '#^Call to an undefined method Minoo\\Provider\\MessagingServiceProvider\:\:config\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Provider/MessagingServiceProvider.php
 
 		-
 			message: '#^Offset ''auto'' on array\{auto\: string, elder\: string\|null, elder_author\: string\|null\} on left side of \?\? always exists and is not nullable\.$#'
