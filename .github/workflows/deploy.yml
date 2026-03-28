@@ -101,7 +101,7 @@ jobs:
       - name: Build admin SPA
         run: |
           cd waaseyaa/packages/admin
-          npm ci
+          npm install --no-audit --no-fund
           export NUXT_PUBLIC_APP_NAME=Minoo
           export NUXT_PUBLIC_BASE_URL=
           npm run generate
