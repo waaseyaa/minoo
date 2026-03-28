@@ -7,7 +7,7 @@ namespace Minoo\Controller;
 use Minoo\Support\AuthMailer;
 use Minoo\Support\LayoutTwigContext;
 use Minoo\Support\EmailVerificationService;
-use Minoo\Support\Flash;
+use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;

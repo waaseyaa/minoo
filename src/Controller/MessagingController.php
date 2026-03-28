@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Support\MercurePublisher;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Api\JsonResponseTrait;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\Mercure\MercurePublisher;
 use Waaseyaa\SSR\SsrResponse;
 
 final class MessagingController
 {
+    use JsonResponseTrait;
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly ?MercurePublisher $mercurePublisher = null,
@@ -668,21 +670,6 @@ final class MessagingController
         return $this->json(['results' => array_values($grouped)]);
     }
 
-    /** @return array<string, mixed> */
-    private function jsonBody(HttpRequest $request): array
-    {
-        $content = $request->getContent();
-        if ($content === '' || $content === false) {
-            return [];
-        }
-
-        try {
-            return (array) json_decode((string) $content, true, 16, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
-            return [];
-        }
-    }
-
     /** @param array<int, mixed> $raw */
     /** @return list<int> */
     private function normalizeParticipantIds(array $raw): array
@@ -823,13 +810,4 @@ final class MessagingController
         $this->mercurePublisher?->publish($topic, $data);
     }
 
-    /** @param array<string, mixed> $data */
-    private function json(array $data, int $status = 200): SsrResponse
-    {
-        return new SsrResponse(
-            content: json_encode($data, JSON_THROW_ON_ERROR),
-            statusCode: $status,
-            headers: ['Content-Type' => 'application/json'],
-        );
-    }
 }

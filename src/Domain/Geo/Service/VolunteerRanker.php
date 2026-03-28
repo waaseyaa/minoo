@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Domain\Geo\Service;
 
 use Minoo\Domain\Geo\ValueObject\RankedVolunteer;
-use Minoo\Support\GeoDistance;
+use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Ingestion\EntityMapper;
 
-use Minoo\Support\SlugGenerator;
+use Waaseyaa\Foundation\SlugGenerator;
 
 final class NcArticleToTeachingMapper
 {

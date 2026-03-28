@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Feed;
 
-use Minoo\Support\GeoDistance;
+use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\Entity\ContentEntityBase;
 
 final class FeedItemFactory

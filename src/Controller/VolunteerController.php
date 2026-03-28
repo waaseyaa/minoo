@@ -10,7 +10,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
-use Minoo\Support\Flash;
+use Waaseyaa\SSR\Flash\Flash;
 
 final class VolunteerController
 {
