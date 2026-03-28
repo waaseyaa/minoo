@@ -33,6 +33,6 @@
 {% block scripts %}
   {{ parent() }}
   {% if account is defined and account.isAuthenticated() %}
-    <script type="module" src="/js/messaging/index.js?v=2"></script>
+    <script type="module" src="/js/msg/index.js"></script>
   {% endif %}
 {% endblock %}
