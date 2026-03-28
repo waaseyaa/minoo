@@ -7,7 +7,7 @@ namespace Minoo\Controller;
 use Minoo\Feed\FeedAssemblerInterface;
 use Minoo\Feed\FeedContext;
 use Minoo\Feed\FeedResponse;
-use Minoo\Support\GeoDistance;
+use Waaseyaa\Geo\GeoDistance;
 use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;

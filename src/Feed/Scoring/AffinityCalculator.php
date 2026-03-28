@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Feed\Scoring;
 
-use Minoo\Support\GeoDistance;
+use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\Entity\EntityTypeManager;
 
 final class AffinityCalculator

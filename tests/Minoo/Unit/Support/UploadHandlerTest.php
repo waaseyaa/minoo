@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Unit\Support;
 
-use Minoo\Support\UploadService;
+use Waaseyaa\Media\UploadHandler;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UploadService::class)]
-final class UploadServiceTest extends TestCase
+#[CoversClass(UploadHandler::class)]
+final class UploadHandlerTest extends TestCase
 {
-    private UploadService $service;
+    private UploadHandler $service;
 
     protected function setUp(): void
     {
-        $this->service = new UploadService(sys_get_temp_dir() . '/upload_test_' . bin2hex(random_bytes(4)));
+        $this->service = new UploadHandler(sys_get_temp_dir() . '/upload_test_' . bin2hex(random_bytes(4)));
     }
 
     #[Test]
@@ -28,9 +28,9 @@ final class UploadServiceTest extends TestCase
             'type' => 'image/jpeg',
         ];
 
-        $errors = $this->service->validateImage($file);
+        $errors = $this->service->validate($file);
 
-        self::assertContains('Image must be under 5MB.', $errors);
+        self::assertContains('File must be under 5MB.', $errors);
     }
 
     #[Test]
@@ -42,9 +42,9 @@ final class UploadServiceTest extends TestCase
             'type' => 'application/pdf',
         ];
 
-        $errors = $this->service->validateImage($file);
+        $errors = $this->service->validate($file);
 
-        self::assertContains('Only JPEG, PNG, GIF, and WebP images are allowed.', $errors);
+        self::assertContains('File type not allowed.', $errors);
     }
 
     #[Test]
@@ -56,7 +56,7 @@ final class UploadServiceTest extends TestCase
             'type' => 'image/jpeg',
         ];
 
-        $errors = $this->service->validateImage($file);
+        $errors = $this->service->validate($file);
 
         self::assertSame([], $errors);
     }
@@ -81,7 +81,7 @@ final class UploadServiceTest extends TestCase
             'type' => 'image/jpeg',
         ];
 
-        $errors = $this->service->validateImage($file);
+        $errors = $this->service->validate($file);
 
         self::assertContains('Upload failed.', $errors);
         self::assertCount(1, $errors);

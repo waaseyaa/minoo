@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Domain\Geo\Service\VolunteerRanker;
-use Minoo\Support\Flash;
+use Waaseyaa\SSR\Flash\Flash;
 use Minoo\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;

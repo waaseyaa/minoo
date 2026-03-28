@@ -6,7 +6,7 @@ namespace Minoo\Controller;
 
 use Minoo\Support\ElderIdentity;
 use Minoo\Support\LayoutTwigContext;
-use Minoo\Support\Flash;
+use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;

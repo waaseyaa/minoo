@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Entity\Reaction;
-use Minoo\Support\UploadService;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Api\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Media\UploadHandler;
 use Waaseyaa\SSR\SsrResponse;
 
 final class EngagementController
 {
+    use JsonResponseTrait;
+
     /** @var list<string> Entity types that can be reaction/comment/follow targets */
     private const ALLOWED_TARGET_TYPES = [
         'event', 'group', 'teaching', 'community', 'post',
@@ -22,7 +25,7 @@ final class EngagementController
 
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-        private readonly UploadService $uploadService,
+        private readonly UploadHandler $uploadHandler,
     ) {}
 
     public function react(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -267,8 +270,8 @@ final class EngagementController
                     'type' => $this->detectMimeType($file->getPathname()),
                     'error' => $file->getError(),
                 ];
-                if ($this->uploadService->validateImage($fileArray) === []) {
-                    $imagePaths[] = $this->uploadService->moveUpload($fileArray, 'posts/' . $entity->id());
+                if ($this->uploadHandler->validate($fileArray) === []) {
+                    $imagePaths[] = $this->uploadHandler->moveUpload($fileArray, 'posts/' . $entity->id());
                 }
             }
             if ($imagePaths !== []) {
@@ -358,25 +361,9 @@ final class EngagementController
         }
 
         $storage->delete([$entity]);
-        $this->uploadService->deleteDirectory('posts/' . $id);
+        $this->uploadHandler->deleteDirectory('posts/' . $id);
 
         return $this->json(['deleted' => true]);
-    }
-
-    /** @return array<string, mixed> */
-    private function jsonBody(HttpRequest $request): array
-    {
-        $content = $request->getContent();
-
-        if ($content === '' || $content === false) {
-            return [];
-        }
-
-        try {
-            return (array) json_decode((string) $content, true, 16, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
-            return [];
-        }
     }
 
     private function isValidTargetType(string $type): bool
@@ -384,13 +371,4 @@ final class EngagementController
         return in_array($type, self::ALLOWED_TARGET_TYPES, true);
     }
 
-    /** @param array<string, mixed> $data */
-    private function json(array $data, int $status = 200): SsrResponse
-    {
-        return new SsrResponse(
-            content: json_encode($data, JSON_THROW_ON_ERROR),
-            statusCode: $status,
-            headers: ['Content-Type' => 'application/json'],
-        );
-    }
 }

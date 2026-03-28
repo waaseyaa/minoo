@@ -10,11 +10,13 @@ use Minoo\Ingestion\IngestStatus;
 use Minoo\Ingestion\PayloadValidator;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Api\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
 
 final class IngestionApiController
 {
+    use JsonResponseTrait;
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
@@ -154,28 +156,4 @@ final class IngestionApiController
         return is_array($decoded) ? $decoded : null;
     }
 
-    /** @return array<string, mixed> */
-    private function jsonBody(HttpRequest $request): array
-    {
-        $content = $request->getContent();
-        if ($content === '' || $content === false) {
-            return [];
-        }
-
-        try {
-            return (array) json_decode((string) $content, true, 16, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
-            return [];
-        }
-    }
-
-    /** @param array<string, mixed> $data */
-    private function json(array $data, int $status = 200): SsrResponse
-    {
-        return new SsrResponse(
-            content: json_encode($data, JSON_THROW_ON_ERROR),
-            statusCode: $status,
-            headers: ['Content-Type' => 'application/json'],
-        );
-    }
 }

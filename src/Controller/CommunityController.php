@@ -13,7 +13,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\SsrResponse;
-use Minoo\Support\GeoDistance;
+use Waaseyaa\Geo\GeoDistance;
 
 final class CommunityController
 {

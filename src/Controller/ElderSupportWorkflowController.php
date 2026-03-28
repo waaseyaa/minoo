@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Minoo\Support\Flash;
+use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;

@@ -7,7 +7,7 @@ namespace Minoo\Provider;
 use Minoo\Entity\MessageThread;
 use Minoo\Entity\ThreadMessage;
 use Minoo\Entity\ThreadParticipant;
-use Minoo\Support\MercurePublisher;
+use Waaseyaa\Mercure\MercurePublisher;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
