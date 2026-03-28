@@ -25,7 +25,7 @@ final class EngagementController
 
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-        private readonly UploadHandler $uploadService,
+        private readonly UploadHandler $uploadHandler,
     ) {}
 
     public function react(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -270,8 +270,8 @@ final class EngagementController
                     'type' => $this->detectMimeType($file->getPathname()),
                     'error' => $file->getError(),
                 ];
-                if ($this->uploadService->validate($fileArray) === []) {
-                    $imagePaths[] = $this->uploadService->moveUpload($fileArray, 'posts/' . $entity->id());
+                if ($this->uploadHandler->validate($fileArray) === []) {
+                    $imagePaths[] = $this->uploadHandler->moveUpload($fileArray, 'posts/' . $entity->id());
                 }
             }
             if ($imagePaths !== []) {
@@ -361,7 +361,7 @@ final class EngagementController
         }
 
         $storage->delete([$entity]);
-        $this->uploadService->deleteDirectory('posts/' . $id);
+        $this->uploadHandler->deleteDirectory('posts/' . $id);
 
         return $this->json(['deleted' => true]);
     }
