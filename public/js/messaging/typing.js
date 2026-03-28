@@ -34,6 +34,8 @@ export class TypingIndicator {
 
     fetch(`/api/messaging/threads/${this.threadId}/typing`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
     }).catch(() => {});
   }
 

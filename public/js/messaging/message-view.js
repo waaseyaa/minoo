@@ -123,6 +123,8 @@ export class MessageView {
 
     const response = await fetch(`/api/messaging/threads/${this.threadId}/messages/${messageId}`, {
       method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
     });
 
     if (response.ok) {

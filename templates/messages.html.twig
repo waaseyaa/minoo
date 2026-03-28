@@ -10,7 +10,7 @@
         <p>{{ trans('messages.auth_required_body') }}</p>
       </div>
     {% else %}
-      <div class="messages-layout" id="messages-app" data-user-id="{{ account.id() }}" data-hub-url="/hub">
+      <div class="messages-layout" id="messages-app" data-user-id="{{ account.id() }}" data-hub-url="/.well-known/mercure">
         <aside class="messages-sidebar">
           <div class="messages-sidebar__header">
             <h2>Chats</h2>

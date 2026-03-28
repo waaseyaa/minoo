@@ -45,7 +45,7 @@
         <div class="site-header__right">
           {% if account is defined and account.isAuthenticated() %}
           <div class="messages-popover" id="messages-popover">
-            <button class="messages-popover__trigger" id="messages-popover-trigger" data-user-id="{{ account.id() }}" data-hub-url="/hub" aria-expanded="false" aria-controls="messages-popover-dropdown" aria-label="Messages">
+            <button class="messages-popover__trigger" id="messages-popover-trigger" data-user-id="{{ account.id() }}" data-hub-url="/.well-known/mercure" aria-expanded="false" aria-controls="messages-popover-dropdown" aria-label="Messages">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               <span class="messages-badge" id="messages-badge" hidden>0</span>
             </button>

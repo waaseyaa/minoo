@@ -30,7 +30,7 @@ export class MercureConnection {
   connect() {
     this.disconnect();
 
-    const url = new URL(this.hubUrl);
+    const url = new URL(this.hubUrl, window.location.origin);
     for (const topic of this.topics) {
       url.searchParams.append('topic', topic);
     }

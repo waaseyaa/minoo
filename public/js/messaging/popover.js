@@ -54,7 +54,7 @@ if (trigger && badge && dropdown) {
       const response = await fetch('/api/messaging/unread-count');
       if (!response.ok) return;
       const data = await response.json();
-      setBadge(data.count || 0);
+      setBadge(data.unread_count || 0);
     } catch {}
   }
 

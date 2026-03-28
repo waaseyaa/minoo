@@ -67,7 +67,7 @@ if (app) {
       composeBar.focus();
 
       // Mark as read.
-      fetch(`/api/messaging/threads/${threadId}/read`, { method: 'POST' }).catch(() => {});
+      fetch(`/api/messaging/threads/${threadId}/read`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => {});
     } catch {
       threadViewEl.innerHTML = '<p class="messages-empty-note">Failed to load messages</p>';
     }
