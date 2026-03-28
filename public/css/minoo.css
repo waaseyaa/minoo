@@ -226,6 +226,65 @@
     }
   }
 
+  .messages-reactions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    padding: 0.125rem var(--space-sm);
+  }
+
+  .messages-reaction-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 0.125rem var(--space-xs);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    color: var(--text-secondary);
+
+    &:hover { background: var(--surface-hover, var(--surface-elevated)); }
+
+    &.is-active {
+      border-color: var(--color-accent, oklch(0.75 0.15 250));
+      color: var(--color-accent, oklch(0.75 0.15 250));
+      background: oklch(from var(--color-accent, oklch(0.75 0.15 250)) l c h / 0.1);
+    }
+  }
+
+  .messages-react-btn {
+    font-size: var(--text-xs);
+  }
+
+  .messages-reaction-picker {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    display: flex;
+    gap: var(--space-2xs);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 0.5rem);
+    padding: var(--space-2xs) var(--space-xs);
+    box-shadow: 0 2px 8px oklch(0 0 0 / 0.25);
+    z-index: 10;
+
+    & button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      padding: var(--space-2xs);
+      border-radius: var(--radius-sm, 0.25rem);
+
+      &:hover { background: var(--surface-elevated); }
+    }
+  }
+
+  .messages-bubble { position: relative; }
+
   .messages-compose {
     display: flex;
     gap: var(--space-xs);

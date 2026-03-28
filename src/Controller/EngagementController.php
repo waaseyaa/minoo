@@ -17,7 +17,7 @@ final class EngagementController
     /** @var list<string> Entity types that can be reaction/comment/follow targets */
     private const ALLOWED_TARGET_TYPES = [
         'event', 'group', 'teaching', 'community', 'post',
-        'oral_history', 'dictionary_entry', 'cultural_collection',
+        'oral_history', 'dictionary_entry', 'cultural_collection', 'thread_message',
     ];
 
     public function __construct(

@@ -371,18 +371,42 @@ final class MessagingController
 
         $messages = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
-        $payload = array_map(static function (EntityInterface $message): array {
+        // Batch-load reactions for all messages in this page.
+        $reactionsByMessage = [];
+        if ($ids !== []) {
+            $reactionStorage = $this->entityTypeManager->getStorage('reaction');
+            $reactionIds = $reactionStorage->getQuery()
+                ->condition('target_type', 'thread_message')
+                ->execute();
+            if ($reactionIds !== []) {
+                $reactions = $reactionStorage->loadMultiple($reactionIds);
+                foreach ($reactions as $reaction) {
+                    $targetId = (int) $reaction->get('target_id');
+                    if (in_array($targetId, $ids, true)) {
+                        $reactionsByMessage[$targetId][] = [
+                            'id' => (int) $reaction->id(),
+                            'user_id' => (int) $reaction->get('user_id'),
+                            'reaction_type' => (string) $reaction->get('reaction_type'),
+                        ];
+                    }
+                }
+            }
+        }
+
+        $payload = array_map(static function (EntityInterface $message) use ($reactionsByMessage): array {
             $deletedAt = $message->get('deleted_at');
             $editedAt = $message->get('edited_at');
+            $messageId = (int) $message->id();
 
             return [
-                'id' => (int) $message->id(),
+                'id' => $messageId,
                 'thread_id' => (int) $message->get('thread_id'),
                 'sender_id' => (int) $message->get('sender_id'),
                 'body' => $deletedAt !== null ? '' : (string) $message->get('body'),
                 'created_at' => (int) $message->get('created_at'),
                 'edited_at' => $editedAt !== null ? (int) $editedAt : null,
                 'deleted_at' => $deletedAt !== null ? (int) $deletedAt : null,
+                'reactions' => $reactionsByMessage[$messageId] ?? [],
             ];
         }, $messages);
 

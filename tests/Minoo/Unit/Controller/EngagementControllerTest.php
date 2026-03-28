@@ -231,6 +231,25 @@ final class EngagementControllerTest extends TestCase
     }
 
     #[Test]
+    public function react_accepts_thread_message_target_type(): void
+    {
+        $account = $this->mockAccount(42);
+        $entity = $this->mockEntity(['reaction_type' => 'miigwech'], 7);
+        $storage = $this->mockStorage('reaction');
+        $storage->method('create')->willReturn($entity);
+
+        $request = $this->jsonRequest('POST', [
+            'reaction_type' => 'miigwech', 'target_type' => 'thread_message', 'target_id' => 99,
+        ]);
+
+        $response = $this->controller->react([], [], $account, $request);
+
+        $this->assertSame(201, $response->statusCode);
+        $json = json_decode($response->content, true);
+        $this->assertSame(7, $json['id']);
+    }
+
+    #[Test]
     public function comment_creates_comment_and_returns_201(): void
     {
         $account = $this->mockAccount(42);

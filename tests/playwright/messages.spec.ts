@@ -241,3 +241,82 @@ test.describe('Messaging — popover badge', () => {
     await expect(page.locator('.messages-popover__link[href="/messages"]')).toBeVisible();
   });
 });
+
+test.describe('Messaging — reactions', () => {
+  test('can react to a message via API', async ({ page }) => {
+    await login(page, 'test@minoo.test', 'TestPass123!');
+
+    // Ensure a thread with a message exists.
+    const usersRes = await page.request.get('/api/messaging/users?q=Member');
+    const users = await usersRes.json();
+    const member = (users.users || users).find((u: { name?: string }) => u.name?.includes('Member'));
+    if (!member) { test.skip(true, 'Member user not found'); return; }
+    const threadRes = await page.request.post('/api/messaging/threads', { data: { participant_ids: [member.id] } });
+    const thread = await threadRes.json();
+    const threadId = thread.thread?.id || thread.id;
+    const msgRes = await page.request.post(`/api/messaging/threads/${threadId}/messages`, { data: { body: 'React to this' } });
+    const msg = await msgRes.json();
+    const messageId = msg.id;
+
+    // Add a reaction via engagement API.
+    const reactRes = await page.request.post('/api/engagement/react', {
+      data: { target_type: 'thread_message', target_id: messageId, reaction_type: 'miigwech' },
+    });
+    expect(reactRes.ok()).toBeTruthy();
+    const reaction = await reactRes.json();
+    expect(reaction.id).toBeTruthy();
+
+    // Verify reactions appear in messages endpoint.
+    const messagesRes = await page.request.get(`/api/messaging/threads/${threadId}/messages`);
+    const messagesData = await messagesRes.json();
+    const reactedMsg = messagesData.messages.find((m: { id: number }) => m.id === messageId);
+    expect(reactedMsg.reactions.length).toBeGreaterThan(0);
+    expect(reactedMsg.reactions[0].reaction_type).toBe('miigwech');
+
+    // Remove the reaction (cleanup — may fail if session mismatch, not critical).
+    await page.request.delete(`/api/engagement/react/${reaction.id}`);
+  });
+
+  test('react button appears on message bubbles', async ({ page }) => {
+    await login(page, 'test@minoo.test', 'TestPass123!');
+
+    // Ensure a thread with a message exists.
+    const usersRes = await page.request.get('/api/messaging/users?q=Member');
+    const users = await usersRes.json();
+    const member = (users.users || users).find((u: { name?: string }) => u.name?.includes('Member'));
+    if (!member) { test.skip(true, 'Member user not found'); return; }
+    const threadRes = await page.request.post('/api/messaging/threads', { data: { participant_ids: [member.id] } });
+    const thread = await threadRes.json();
+    const threadId = thread.thread?.id || thread.id;
+    await page.request.post(`/api/messaging/threads/${threadId}/messages`, { data: { body: 'Check react button' } });
+
+    await page.goto('/messages');
+    await page.locator(`[data-thread-id="${threadId}"]`).click();
+    await expect(page.locator('.messages-bubble')).toBeVisible({ timeout: 10000 });
+
+    // React button should be present on the bubble.
+    await expect(page.locator('.messages-react-btn').first()).toBeVisible();
+  });
+
+  test('clicking react button opens picker', async ({ page }) => {
+    await login(page, 'test@minoo.test', 'TestPass123!');
+
+    // Ensure a thread with a message exists.
+    const usersRes = await page.request.get('/api/messaging/users?q=Member');
+    const users = await usersRes.json();
+    const member = (users.users || users).find((u: { name?: string }) => u.name?.includes('Member'));
+    if (!member) { test.skip(true, 'Member user not found'); return; }
+    const threadRes = await page.request.post('/api/messaging/threads', { data: { participant_ids: [member.id] } });
+    const thread = await threadRes.json();
+    const threadId = thread.thread?.id || thread.id;
+    await page.request.post(`/api/messaging/threads/${threadId}/messages`, { data: { body: 'Picker test' } });
+
+    await page.goto('/messages');
+    await page.locator(`[data-thread-id="${threadId}"]`).click();
+    await expect(page.locator('.messages-bubble')).toBeVisible({ timeout: 10000 });
+
+    // Click the react button on the first message.
+    await page.locator('.messages-react-btn').first().click();
+    await expect(page.locator('.messages-reaction-picker')).toBeVisible();
+  });
+});
