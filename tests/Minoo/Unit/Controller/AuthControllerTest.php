@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\AuthController;
-use Minoo\Support\AuthMailer;
+use Waaseyaa\User\AuthMailer;
 use Minoo\Support\EmailVerificationService;
-use Minoo\Support\PasswordResetService;
+use Waaseyaa\User\PasswordResetTokenRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -26,7 +26,7 @@ final class AuthControllerTest extends TestCase
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
     private AuthMailer $authMailer;
-    private PasswordResetService $passwordResetService;
+    private PasswordResetTokenRepository $passwordResetService;
     private EmailVerificationService $emailVerificationService;
     private EntityStorageInterface $userStorage;
     private EntityQueryInterface $query;
@@ -63,7 +63,7 @@ final class AuthControllerTest extends TestCase
 
         $pdo = new \PDO('sqlite::memory:');
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->passwordResetService = new PasswordResetService($pdo);
+        $this->passwordResetService = new PasswordResetTokenRepository($pdo);
         $this->emailVerificationService = new EmailVerificationService($pdo);
 
         $this->account = $this->createMock(AccountInterface::class);

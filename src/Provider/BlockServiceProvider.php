@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Provider;
 
-use Minoo\Entity\UserBlock;
-use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -14,18 +12,7 @@ final class BlockServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->entityType(new EntityType(
-            id: 'user_block',
-            label: 'User Block',
-            class: UserBlock::class,
-            keys: ['id' => 'ubid', 'uuid' => 'uuid', 'label' => 'blocker_id'],
-            group: 'messaging',
-            fieldDefinitions: [
-                'blocker_id' => ['type' => 'integer', 'label' => 'Blocker ID', 'weight' => 0],
-                'blocked_id' => ['type' => 'integer', 'label' => 'Blocked ID', 'weight' => 1],
-                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 10],
-            ],
-        ));
+        // user_block entity type is registered by framework UserServiceProvider.
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
