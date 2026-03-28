@@ -14,8 +14,8 @@
   {% if path == '/contributors' %}
     <div class="flow-lg">
       <div class="listing-hero">
-        <h1>Contributors</h1>
-        <p class="listing-hero__subtitle">Meet the Knowledge Keepers, Elders, and language speakers who share their gifts with our community.</p>
+        <h1>{{ trans('contributors.title') }}</h1>
+        <p class="listing-hero__subtitle">{{ trans('contributors.subtitle') }}</p>
       </div>
 
       {% if contributors is defined and contributors|length > 0 %}
@@ -34,10 +34,10 @@
         </div>
       {% else %}
         {% include "components/empty-state.html.twig" with {
-          heading: 'No contributors yet',
-          body: 'Contributors will appear here once they have given consent to be listed publicly.',
+          heading: trans('contributors.empty_heading'),
+          body: trans('contributors.empty_body'),
           action_url: lang_url('/language'),
-          action_label: 'Explore Language'
+          action_label: trans('contributors.explore_language')
         } %}
       {% endif %}
     </div>
@@ -51,7 +51,7 @@
         ]
       } %}
       <div class="detail-hero">
-        <a href="{{ lang_url('/contributors') }}" class="detail-hero__back">All Contributors</a>
+        <a href="{{ lang_url('/contributors') }}" class="detail-hero__back">{{ trans('contributors.all_contributors') }}</a>
         {% if contributor.get('role') is not empty %}
           <span class="detail-hero__badge">{{ contributor.get('role')|capitalize }}</span>
         {% endif %}
@@ -67,9 +67,9 @@
     </div>
   {% else %}
     <div class="flow-lg">
-      <h1>Contributor Not Found</h1>
-      <p>We could not find that contributor.</p>
-      <p><a href="{{ lang_url('/contributors') }}">Browse all contributors</a></p>
+      <h1>{{ trans('contributors.not_found') }}</h1>
+      <p>{{ trans('contributors.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/contributors') }}">{{ trans('contributors.browse_all') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

@@ -20,13 +20,13 @@
     {# ── Listing ── #}
     <div class="flow-lg">
       <div class="listing-hero">
-        <h1>Our Stories</h1>
-        <p class="listing-hero__subtitle">Oral histories, teachings, and living records shared by our community members and Knowledge Keepers.</p>
+        <h1>{{ trans('oral_histories.title') }}</h1>
+        <p class="listing-hero__subtitle">{{ trans('oral_histories.subtitle') }}</p>
       </div>
 
       {% if collections is defined and collections|length > 0 %}
         <section>
-          <h2>Collections</h2>
+          <h2>{{ trans('oral_histories.collections') }}</h2>
           <div class="card-grid">
             {% for c in collections %}
               {% include "components/collection-card.html.twig" with {
@@ -45,7 +45,7 @@
 
       {% if stories is defined and stories|length > 0 %}
         <section>
-          <h2>Stories</h2>
+          <h2>{{ trans('oral_histories.stories') }}</h2>
           <div class="card-grid">
             {% for s in stories %}
               {% include "components/oral-history-card.html.twig" with {
@@ -274,9 +274,9 @@
 
   {% else %}
     <div class="flow-lg">
-      <h1>Not Found</h1>
-      <p>We could not find that story or collection.</p>
-      <p><a href="/oral-histories">Browse all oral histories</a></p>
+      <h1>{{ trans('oral_histories.not_found') }}</h1>
+      <p>{{ trans('oral_histories.not_found_message') }}</p>
+      <p><a href="/oral-histories">{{ trans('oral_histories.browse_all') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

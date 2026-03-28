@@ -24,10 +24,10 @@
   <article class="feed-card feed-card--post" data-id="{{ item.id }}" data-entity-type="post">
     {% if account is defined and account.isAuthenticated() and (account.id() == item.payload.authorId or account.hasPermission('administer content')) %}
       <div class="feed-card__menu">
-        <button class="feed-card__menu-trigger" aria-label="Post options" aria-haspopup="true" aria-expanded="false" data-action="toggle-menu">&middot;&middot;&middot;</button>
+        <button class="feed-card__menu-trigger" aria-label="{{ trans('feed.post_options') }}" aria-haspopup="true" aria-expanded="false" data-action="toggle-menu">&middot;&middot;&middot;</button>
         <div class="feed-card__menu-dropdown" hidden>
-          <button class="feed-card__menu-item" data-action="edit-post" data-id="{{ item.id|split(':')|last }}">Edit</button>
-          <button class="feed-card__menu-item feed-card__menu-item--danger" data-action="delete-post" data-id="{{ item.id|split(':')|last }}">Delete</button>
+          <button class="feed-card__menu-item" data-action="edit-post" data-id="{{ item.id|split(':')|last }}">{{ trans('feed.edit') }}</button>
+          <button class="feed-card__menu-item feed-card__menu-item--danger" data-action="delete-post" data-id="{{ item.id|split(':')|last }}">{{ trans('feed.delete') }}</button>
         </div>
       </div>
     {% endif %}
@@ -62,7 +62,7 @@
           <a href="{{ lang_url('/communities/' ~ item.communitySlug|default('')) }}" class="feed-card__source">{{ item.communityName }}</a>
           <span class="feed-card__attribution-action">{{ trans('feed.posted_' ~ item.type) }} &middot; {{ item.relativeTime|default('') }}</span>
         {% else %}
-          <span class="feed-card__source">Minoo</span>
+          <span class="feed-card__source">{{ trans('feed.source_minoo') }}</span>
           <span class="feed-card__attribution-action">&middot; {{ item.badge|default('') }} &middot; {{ item.relativeTime|default('') }}</span>
         {% endif %}
       </div>
