@@ -5604,6 +5604,35 @@
   }
 }
 
+/* Language switcher */
+@layer components {
+  .language-switcher {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--step--1);
+  }
+
+  .language-switcher__item {
+    padding: var(--space-3xs) var(--space-2xs);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out),
+                background-color var(--duration-fast) var(--ease-out);
+  }
+
+  a.language-switcher__item:hover {
+    color: var(--text-primary);
+    background-color: var(--surface-hover);
+  }
+
+  .language-switcher__item--active {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+}
+
 @layer utilities {
   .flow > * + * {
     margin-block-start: var(--space-sm);
