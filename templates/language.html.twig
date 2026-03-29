@@ -31,7 +31,7 @@
               {% include "components/dictionary-entry-card.html.twig" with {
                 word: result.lemma|default(result.word|default('')),
                 part_of_speech: result.word_class_normalized|default(result.part_of_speech|default('')),
-                definition: result.definitions is defined ? result.definitions|join('; ') : (result.definition|default('')),
+                definition: result.definitions|default(result.definition|default('')),
                 attribution_source: result.attribution_source|default(''),
                 attribution_url: result.attribution_url|default(''),
                 example: '',

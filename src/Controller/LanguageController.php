@@ -94,7 +94,7 @@ final class LanguageController
         if ($q !== '') {
             $response = $this->northCloudClient->searchDictionary($q);
             if ($response !== null) {
-                $searchResults = $response['entries'];
+                $searchResults = array_map($this->normalizeSearchResult(...), $response['entries']);
                 $searchTotal = $response['total'];
             }
         }
@@ -107,6 +107,22 @@ final class LanguageController
         ]));
 
         return new SsrResponse(content: $html);
+    }
+
+    /**
+     * @param array<string, mixed> $entry
+     * @return array<string, mixed>
+     */
+    private function normalizeSearchResult(array $entry): array
+    {
+        $defs = $entry['definitions'] ?? '';
+        if (is_string($defs)) {
+            $decoded = json_decode($defs, true);
+            $entry['definitions'] = is_array($decoded) ? implode('; ', $decoded) : $defs;
+        } elseif (is_array($defs)) {
+            $entry['definitions'] = implode('; ', $defs);
+        }
+        return $entry;
     }
 
     /**
