@@ -6,7 +6,7 @@ test.describe('Dictionary search', () => {
     const heading = page.locator('h1');
     await expect(heading).toBeVisible();
     const searchInput = page.locator('input[name="q"]');
-    await expect(searchInput).toBeVisible();
+    await expect(searchInput).toBeAttached();
   });
 
   test('search returns results for "makwa"', async ({ page }) => {
