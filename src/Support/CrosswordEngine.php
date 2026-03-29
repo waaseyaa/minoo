@@ -274,7 +274,15 @@ final class CrosswordEngine
             return null;
         }
 
-        usort($candidates, fn($a, $b) => $b['intersections'] - $a['intersections']);
+        usort($candidates, function ($a, $b) {
+            $diff = $b['intersections'] - $a['intersections'];
+            if ($diff !== 0) {
+                return $diff;
+            }
+            return $a['row'] !== $b['row']
+                ? $a['row'] - $b['row']
+                : $a['col'] - $b['col'];
+        });
         $best = $candidates[0];
         unset($best['intersections']);
 

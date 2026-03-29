@@ -37,9 +37,7 @@ final class CrosswordEngineTest extends TestCase
         $words = ['shkoda', 'nibi', 'mkwa', 'ziibi', 'giizhig', 'dewe'];
         $result = CrosswordEngine::generateGrid($words, 10, 4);
 
-        if ($result === null) {
-            $this->markTestSkipped('Grid generation did not produce a result for this word set');
-        }
+        $this->assertNotNull($result, 'Deterministic grid generation should always produce a result for this word set');
 
         // Verify no two words place different letters in the same cell
         $cells = [];
@@ -62,12 +60,10 @@ final class CrosswordEngineTest extends TestCase
     #[Test]
     public function placements_stay_within_grid_bounds(): void
     {
-        $words = ['shkoda', 'nibi', 'mkwa', 'ziibi'];
+        $words = ['shkoda', 'nibi', 'mkwa', 'ziibi', 'giizhig'];
         $result = CrosswordEngine::generateGrid($words, 10, 3);
 
-        if ($result === null) {
-            $this->markTestSkipped('Grid generation did not produce a result');
-        }
+        $this->assertNotNull($result, 'Deterministic grid generation should always produce a result');
 
         foreach ($result['placements'] as $p) {
             $len = mb_strlen($p['word']);
@@ -87,9 +83,7 @@ final class CrosswordEngineTest extends TestCase
         $words = ['shkoda', 'nibi', 'mkwa', 'ziibi', 'giizhig'];
         $result = CrosswordEngine::generateGrid($words, 10, 4);
 
-        if ($result === null) {
-            $this->markTestSkipped('Grid generation did not produce a result');
-        }
+        $this->assertNotNull($result, 'Deterministic grid generation should always produce a result');
 
         $this->assertTrue(
             CrosswordEngine::areAllWordsConnected($result['placements']),
