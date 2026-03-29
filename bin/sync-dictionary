@@ -16,16 +16,16 @@ require __DIR__ . '/../vendor/autoload.php';
 use Minoo\Ingestion\EntityMapper\DictionaryEntryMapper;
 use Minoo\Support\NorthCloudClient;
 
-$kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
-
-(new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
+// ConsoleKernel is broken on production (#493) — use HttpKernel via reflection.
+$kernel = new Waaseyaa\Foundation\Kernel\HttpKernel(dirname(__DIR__));
+(new ReflectionMethod(Waaseyaa\Foundation\Kernel\AbstractKernel::class, 'boot'))->invoke($kernel);
 
 $entityTypeManager = $kernel->getEntityTypeManager();
 $configFile = dirname(__DIR__) . '/config/waaseyaa.php';
 $config = file_exists($configFile) ? require $configFile : [];
 
 $dryRun = in_array('--dry-run', $argv, true);
-$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://northcloud.one'), '/');
+$baseUrl = rtrim((string) ($config['northcloud']['base_url'] ?? 'https://api.northcloud.one'), '/');
 $timeout = (int) ($config['northcloud']['timeout'] ?? 5);
 
 if ($dryRun) {
