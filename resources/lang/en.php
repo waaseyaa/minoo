@@ -227,6 +227,12 @@ return [
     'language.prev' => 'Previous',
     'language.next' => 'Next',
     'language.page' => 'Page',
+    'language.search_placeholder' => 'Search Anishinaabemowin words...',
+    'language.search_button' => 'Search',
+    'language.search_results_title' => 'Dictionary Search',
+    'language.search_results_count' => 'results found',
+    'language.search_no_results' => 'No results found for your search. Try a different word or spelling.',
+    'language.search_try_again' => 'Try another search',
 
     // Search
     'search.title' => 'Search',

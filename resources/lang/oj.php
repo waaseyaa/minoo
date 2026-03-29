@@ -240,6 +240,12 @@ return [
     'language.prev' => 'Ishkweyaang', // "Back/Previous"
     'language.next' => 'Niigaan', // "Forward/Next"
     'language.page' => 'Ozhibii\'iganaak', // "Page"
+    'language.search_placeholder' => 'Andone\' ikidowinan...', // "Search words..."
+    'language.search_button' => 'Andone\'', // "Search"
+    'language.search_results_title' => 'Ikidowinan Andone\'igen', // "Word Search"
+    'language.search_results_count' => 'mikanziinaawaa', // "found"
+    'language.search_no_results' => 'Gaawiin gegoo mikanziin. Gagwe-andone\' bakaan ikidowin.', // "Nothing found. Try a different word."
+    'language.search_try_again' => 'Gagwe-andone\' miinawaa', // "Try searching again"
 
     // Search
     'search.title' => 'Andone\'igen', // dict: andone': "search for, seek"

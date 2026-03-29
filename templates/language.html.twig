@@ -1,7 +1,9 @@
 {% extends "base.html.twig" %}
 
 {% block title %}
-  {%- if path == '/language' -%}
+  {%- if path == '/language/search' -%}
+    {{ trans('language.search_results_title') }} — Minoo
+  {%- elseif path == '/language' -%}
     {{ trans('language.title') }} — Minoo
   {%- elseif entry is defined and entry -%}
     {{ entry.get('word') }} — Minoo
@@ -11,10 +13,50 @@
 {% endblock %}
 
 {% block content %}
-  {% if path == '/language' %}
+  {% if path == '/language/search' %}
+    <div class="flow-lg">
+      <h1>{{ trans('language.search_results_title') }}</h1>
+
+      <form action="{{ lang_url('/language/search') }}" method="get" class="search-form">
+        <input type="text" name="q" value="{{ search_query|default('') }}" placeholder="{{ trans('language.search_placeholder') }}" class="search-form__input" aria-label="{{ trans('language.search_placeholder') }}">
+        <button type="submit" class="btn btn--primary">{{ trans('language.search_button') }}</button>
+      </form>
+
+      {% if search_query is defined and search_query != '' %}
+        {% if search_results is defined and search_results|length > 0 %}
+          <p class="listing-hero__count">{{ search_total }} {{ trans('language.search_results_count') }}</p>
+
+          <div class="card-grid">
+            {% for result in search_results %}
+              {% include "components/dictionary-entry-card.html.twig" with {
+                word: result.lemma|default(result.word|default('')),
+                part_of_speech: result.word_class_normalized|default(result.part_of_speech|default('')),
+                definition: result.definitions is defined ? result.definitions|join('; ') : (result.definition|default('')),
+                attribution_source: result.attribution_source|default(''),
+                attribution_url: result.attribution_url|default(''),
+                example: '',
+                tags: [],
+                url: result.slug is defined ? "/language/" ~ result.slug : ''
+              } %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>{{ trans('language.search_no_results') }}</p>
+          <p><a href="{{ lang_url('/language') }}">{{ trans('language.browse_all') }}</a></p>
+        {% endif %}
+      {% endif %}
+
+      <p><a href="{{ lang_url('/language') }}">{{ trans('language.browse_all') }}</a></p>
+    </div>
+  {% elseif path == '/language' %}
     <div class="flow-lg">
       <h1>{{ trans('language.title') }}</h1>
       <p class="listing-hero__subtitle">{{ trans('language.subtitle') }}</p>
+
+      <form action="{{ lang_url('/language/search') }}" method="get" class="search-form">
+        <input type="text" name="q" placeholder="{{ trans('language.search_placeholder') }}" class="search-form__input" aria-label="{{ trans('language.search_placeholder') }}">
+        <button type="submit" class="btn btn--primary">{{ trans('language.search_button') }}</button>
+      </form>
 
       {% if entries is defined and entries|length > 0 %}
         {% if total_entries is defined %}

@@ -6,6 +6,7 @@ namespace Minoo\Controller;
 
 use Minoo\Entity\DictionaryEntry;
 use Minoo\Support\LayoutTwigContext;
+use Minoo\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -19,6 +20,7 @@ final class LanguageController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
+        private readonly NorthCloudClient $northCloudClient,
     ) {}
 
     /** @param array<string, mixed> $params */
@@ -78,6 +80,33 @@ final class LanguageController
             content: $html,
             statusCode: $entry !== null ? 200 : 404,
         );
+    }
+
+    /** @param array<string, mixed> $params */
+    /** @param array<string, mixed> $query */
+    public function search(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    {
+        $q = trim((string) ($query['q'] ?? ''));
+
+        $searchResults = [];
+        $searchTotal = 0;
+
+        if ($q !== '') {
+            $response = $this->northCloudClient->searchDictionary($q);
+            if ($response !== null) {
+                $searchResults = $response['entries'];
+                $searchTotal = $response['total'];
+            }
+        }
+
+        $html = $this->twig->render('language.html.twig', LayoutTwigContext::withAccount($account, [
+            'path' => '/language/search',
+            'search_query' => $q,
+            'search_results' => $searchResults,
+            'search_total' => $searchTotal,
+        ]));
+
+        return new SsrResponse(content: $html);
     }
 
     /**

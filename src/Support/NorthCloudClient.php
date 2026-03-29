@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Support;
 
-final class NorthCloudClient
+class NorthCloudClient
 {
     /** Attribution string matching the NC API X-Attribution header. */
     public const string DICTIONARY_ATTRIBUTION = "Ojibwe People's Dictionary, University of Minnesota";

@@ -8,6 +8,7 @@ use Minoo\Entity\DictionaryEntry;
 use Minoo\Entity\ExampleSentence;
 use Minoo\Entity\Speaker;
 use Minoo\Entity\WordPart;
+use Minoo\Support\NorthCloudClient;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -99,6 +100,12 @@ final class LanguageServiceProvider extends ServiceProvider
             ],
         ));
 
+        $this->singleton(NorthCloudClient::class, function () {
+            $ncConfig = $this->config['northcloud'] ?? [];
+            $baseUrl = rtrim((string) ($ncConfig['base_url'] ?? 'https://api.northcloud.one'), '/');
+            $timeout = (int) ($ncConfig['search']['timeout'] ?? $ncConfig['timeout'] ?? 15);
+            return new NorthCloudClient($baseUrl, $timeout);
+        });
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
@@ -107,6 +114,16 @@ final class LanguageServiceProvider extends ServiceProvider
             'language.list',
             RouteBuilder::create('/language')
                 ->controller('Minoo\\Controller\\LanguageController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'language.search',
+            RouteBuilder::create('/language/search')
+                ->controller('Minoo\\Controller\\LanguageController::search')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
