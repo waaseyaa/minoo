@@ -4,7 +4,7 @@ Indigenous knowledge platform built on Waaseyaa CMS framework.
 
 ## Architecture
 
-Minoo is a **thin application** — custom entity types, access policies, service providers, and seeders live in `src/`. All framework code lives in `waaseyaa/framework` (sibling directory, symlinked via Composer path repositories).
+Minoo is a **thin application** — custom entity types, access policies, service providers, and seeders live in `src/`. All framework code lives in `waaseyaa/framework` (sibling directory). Framework packages are installed from versioned tags via `composer install`.
 
 ```
 minoo/
@@ -197,7 +197,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **`trans()` is a Twig function, not PHP**: Controllers cannot call `trans()`. Use hardcoded English strings for `Flash::success()`/`Flash::error()` — this matches all existing controllers (AuthController, ElderSupportWorkflowController, etc.).
 - **App-specific identity fields belong in Minoo, not framework**: Use `ElderIdentity::isElder($user)` / `ElderIdentity::setElder($user, bool)` from `src/Support/ElderIdentity.php`. Never add Minoo domain concepts to the framework `User` class.
 - **Validate Referer before redirecting**: `$request->headers->get('Referer')` can be an external URL. Use `RoleManagementController::safeReferrer()` pattern — reject anything that doesn't start with `/` or starts with `//`.
-- **Vendor packages are versioned, not symlinked**: `vendor/waaseyaa/*` is installed from version tags (e.g. `^0.1.0-alpha.52`), not path repositories. Framework changes require: tag new release in waaseyaa → `composer update` in Minoo. Editing `vendor/` directly is lost on next update.
+- **Vendor packages are versioned, not symlinked**: `vendor/waaseyaa/*` is installed from version tags (e.g. `^0.1.0-alpha.70`), not path repositories. Framework changes require: tag new release in waaseyaa → `composer update 'waaseyaa/*'` in Minoo. Editing `vendor/` directly is lost on next update. Run `composer install` locally — do NOT use a vendor symlink (breaks after monorepo package extraction).
 - **`ServiceProvider::boot()` takes no parameters**: Cannot inject via `boot()` signature. Use `$this->resolve(EventDispatcherInterface::class)` inside `boot()` body.
 - **Feed scoring config**: All ranking constants (decay half-life, affinity signals, engagement weights, diversity thresholds) are in `config/feed_scoring.php`. Tunable without code changes.
 - **Conditional grid columns**: Use `:has()` when grid layouts have optional children (e.g. `.search-layout:has(.search-filters)`). Without it, empty grid columns waste space.
@@ -206,7 +206,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Migration tables must use `_data` CLOB schema**: Content entities use `{id} INTEGER PRIMARY KEY AUTOINCREMENT, uuid CLOB, bundle CLOB, {label} CLOB, langcode CLOB, _data CLOB`. Config entities use `{id} TEXT PRIMARY KEY, bundle CLOB, langcode CLOB, _data CLOB`. All field values are stored in the `_data` JSON blob — do NOT create individual columns for fields. `SqlEntityStorage` will error with "no column named _data" if the schema is wrong.
 - **Dictionary `definition` field is JSON-wrapped**: Values like `["bear"]` need `json_decode()` before display. Use `cleanDefinition()` pattern in controllers.
 - **New providers must be registered in `composer.json`**: Add to `extra.waaseyaa.providers[]` then run `php bin/waaseyaa optimize:manifest`. Without this, routes and entity types are not discovered.
-- **Vendor symlink goes circular after worktree cleanup**: `git checkout -- vendor` or `composer install` from a worktree can replace the symlink with a self-referencing one (`vendor -> /home/jones/dev/minoo/vendor`). Fix: `rm vendor && ln -s ../waaseyaa/vendor vendor`.
+- **Worktree vendor corruption**: Worktrees don't share the main repo's `vendor/`. After worktree cleanup, run `composer install` in the main repo to restore dependencies.
 - **CSS cache bust is manual**: Bump `?v=N` in `base.html.twig` after CSS changes. Stale CSS on production is the #1 cause of "it looks broken after deploy."
 - **Crossword puzzle tiers**: Only easy-tier puzzles exist in the database. Practice mode for medium/hard returns 500. Generate puzzles via CLI before testing those tiers. See #558, #560.
 - **Crossword themes tab**: No themed puzzle packs exist yet. The tab renders blank with no empty state message. See #559.
