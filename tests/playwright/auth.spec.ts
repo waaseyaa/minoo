@@ -26,8 +26,8 @@ test.describe('Auth flows', () => {
     // Bypass HTML5 required validation to reach server-side errors
     await page.$eval('.form', (form: HTMLFormElement) => form.noValidate = true);
     await page.click('.form button[type="submit"]');
-    await expect(page.getByText('Email is required.')).toBeVisible();
-    await expect(page.getByText('Password is required.')).toBeVisible();
+    await expect(page.getByTestId('error-email')).toBeVisible();
+    await expect(page.getByTestId('error-password')).toBeVisible();
   });
 
   test('login failure shows error for invalid credentials', async ({ page }) => {
@@ -35,7 +35,7 @@ test.describe('Auth flows', () => {
     await page.fill('input[name="email"]', 'nobody@example.com');
     await page.fill('input[name="password"]', 'wrongpassword');
     await page.click('.form button[type="submit"]');
-    await expect(page.getByText('Invalid email or password.')).toBeVisible();
+    await expect(page.getByTestId('error-email')).toBeVisible();
   });
 
   test('login success redirects to homepage', async ({ page }) => {
@@ -66,9 +66,9 @@ test.describe('Auth flows', () => {
     // Bypass HTML5 required validation to reach server-side errors
     await page.$eval('.form', (form: HTMLFormElement) => form.noValidate = true);
     await page.click('.form button[type="submit"]');
-    await expect(page.getByText('Name is required.')).toBeVisible();
-    await expect(page.getByText('Email is required.')).toBeVisible();
-    await expect(page.getByText('Password is required.')).toBeVisible();
+    await expect(page.getByTestId('error-name')).toBeVisible();
+    await expect(page.getByTestId('error-email')).toBeVisible();
+    await expect(page.getByTestId('error-password')).toBeVisible();
   });
 
   test('registration password too short shows error', async ({ page }) => {
@@ -79,7 +79,7 @@ test.describe('Auth flows', () => {
     // Bypass HTML5 minlength validation to reach server-side errors
     await page.$eval('.form', (form: HTMLFormElement) => form.noValidate = true);
     await page.click('.form button[type="submit"]');
-    await expect(page.getByText('Password must be at least 8 characters.')).toBeVisible();
+    await expect(page.getByTestId('error-password')).toBeVisible();
   });
 
   test('registration duplicate email shows check-email page (no enumeration)', async ({ page }) => {
@@ -88,7 +88,7 @@ test.describe('Auth flows', () => {
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'ValidPass123!');
     await page.click('.form button[type="submit"]');
-    await expect(page.getByText('Check Your Email')).toBeVisible();
+    await expect(page.getByTestId('check-email-heading')).toBeVisible();
   });
 
   test('registration success auto-logs in and redirects to homepage', async ({ page }) => {

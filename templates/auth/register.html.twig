@@ -18,7 +18,7 @@
         value="{{ values.name|default('') }}"
         required>
       {% if errors.name is defined %}
-        <p class="form__error" role="alert">{{ errors.name }}</p>
+        <p class="form__error" role="alert" data-testid="error-name">{{ errors.name }}</p>
       {% endif %}
     </div>
 
@@ -30,7 +30,7 @@
         value="{{ values.email|default('') }}"
         required>
       {% if errors.email is defined %}
-        <p class="form__error" role="alert">{{ errors.email }}</p>
+        <p class="form__error" role="alert" data-testid="error-email">{{ errors.email }}</p>
       {% endif %}
     </div>
 
@@ -42,7 +42,7 @@
         minlength="8"
         required>
       {% if errors.password is defined %}
-        <p class="form__error" role="alert">{{ errors.password }}</p>
+        <p class="form__error" role="alert" data-testid="error-password">{{ errors.password }}</p>
       {% endif %}
     </div>
 

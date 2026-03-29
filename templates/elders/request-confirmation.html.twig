@@ -15,7 +15,7 @@
         <span class="card__badge card__badge--elder">{{ trans('request_confirm.badge') }}</span>
         <h1>{{ trans('request_confirm.title') }}</h1>
         <p class="card__meta">{{ trans('request_confirm.reference') }}: {{ entity.uuid() }}</p>
-        <p class="text-secondary">{{ trans('request_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
+        <p class="text-secondary" data-testid="confirmation-message">{{ trans('request_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
         <p class="text-secondary">{{ trans('request_confirm.cancel_note') }}</p>
       </div>
 
@@ -23,12 +23,12 @@
         <dl class="detail__fields">
           <div class="detail__field">
             <dt>{{ trans('request_confirm.type_of_help') }}</dt>
-            <dd>{{ entity.get('type')|capitalize }}</dd>
+            <dd data-testid="confirmation-type">{{ entity.get('type')|capitalize }}</dd>
           </div>
           {% if entity.get('community') %}
             <div class="detail__field">
               <dt>{{ trans('request_confirm.community') }}</dt>
-              <dd>{{ entity.get('community') }}</dd>
+              <dd data-testid="confirmation-community">{{ entity.get('community') }}</dd>
             </div>
           {% endif %}
           {% if entity.get('is_representative') %}
@@ -47,7 +47,7 @@
       </div>
 
       <div class="flow">
-        <h2>{{ trans('request_confirm.what_next') }}</h2>
+        <h2 data-testid="what-next-heading">{{ trans('request_confirm.what_next') }}</h2>
         <ol class="how-it-works__list">
           <li>{{ trans('request_confirm.next_step1') }}</li>
           <li>{{ trans('request_confirm.next_step2') }}</li>

@@ -115,7 +115,7 @@
               {% endfor %}
             </div>
           {% else %}
-            <p>{{ trans('search.no_results', {query: q}) }}</p>
+            <p data-testid="search-no-results">{{ trans('search.no_results', {query: q}) }}</p>
           {% endif %}
 
           {# Pagination #}
@@ -159,7 +159,7 @@
         </div>
       </div>
     {% else %}
-      <p>{{ trans('search.search_intro') }}</p>
+      <p data-testid="search-intro">{{ trans('search.search_intro') }}</p>
     {% endif %}
   </div>
 {% endblock %}

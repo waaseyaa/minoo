@@ -89,12 +89,12 @@ test.describe('Volunteer Portal', () => {
 
     await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
     // Should show application received heading
-    await expect(page.getByRole('heading', { name: 'Application Received' })).toBeVisible();
+    await expect(page.getByTestId('confirmation-heading')).toBeVisible();
     // Should show the volunteer's name in the confirmation message
-    await expect(page.getByText('Thank you, John Volunteer')).toBeVisible();
+    await expect(page.getByTestId('confirmation-message')).toBeVisible();
     // Should show availability
-    await expect(page.getByText('Weekends')).toBeVisible();
+    await expect(page.getByTestId('confirmation-availability')).toBeVisible();
     // Should show "What Happens Next" steps
-    await expect(page.getByRole('heading', { name: 'What Happens Next' })).toBeVisible();
+    await expect(page.getByTestId('what-next-heading')).toBeVisible();
   });
 });

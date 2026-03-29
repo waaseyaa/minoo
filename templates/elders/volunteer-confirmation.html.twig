@@ -13,8 +13,8 @@
     <div class="flow-lg">
       <div>
         <span class="card__badge card__badge--elder">{{ trans('volunteer_confirm.badge') }}</span>
-        <h1>{{ trans('volunteer_confirm.title') }}</h1>
-        <p class="text-secondary">{{ trans('volunteer_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
+        <h1 data-testid="confirmation-heading">{{ trans('volunteer_confirm.title') }}</h1>
+        <p class="text-secondary" data-testid="confirmation-message">{{ trans('volunteer_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
       </div>
 
       <div class="card card--detail">
@@ -22,7 +22,7 @@
           {% if entity.get('availability') %}
             <div class="detail__field">
               <dt>{{ trans('volunteer_confirm.availability') }}</dt>
-              <dd>{{ entity.get('availability') }}</dd>
+              <dd data-testid="confirmation-availability">{{ entity.get('availability') }}</dd>
             </div>
           {% endif %}
           {% if entity.get('skills') is iterable and entity.get('skills')|length > 0 %}
@@ -47,7 +47,7 @@
       </div>
 
       <div class="flow">
-        <h2>{{ trans('volunteer_confirm.what_next') }}</h2>
+        <h2 data-testid="what-next-heading">{{ trans('volunteer_confirm.what_next') }}</h2>
         <ol class="how-it-works__list">
           <li>{{ trans('volunteer_confirm.next_step1') }}</li>
           <li>{{ trans('volunteer_confirm.next_step2') }}</li>

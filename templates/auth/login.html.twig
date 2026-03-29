@@ -21,7 +21,7 @@
         value="{{ values.email|default('') }}"
         required autocomplete="email">
       {% if errors.email is defined %}
-        <p class="form__error" role="alert">{{ errors.email }}</p>
+        <p class="form__error" role="alert" data-testid="error-email">{{ errors.email }}</p>
       {% endif %}
     </div>
 
@@ -32,7 +32,7 @@
         type="password" id="password" name="password"
         required autocomplete="current-password">
       {% if errors.password is defined %}
-        <p class="form__error" role="alert">{{ errors.password }}</p>
+        <p class="form__error" role="alert" data-testid="error-password">{{ errors.password }}</p>
       {% endif %}
     </div>
 

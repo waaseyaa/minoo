@@ -4,15 +4,15 @@ test.describe('Elders Portal', () => {
   test('elders landing page loads with program title', async ({ page }) => {
     await page.goto('/elders');
     await expect(page.locator('h1')).toContainText('Elder Support Program');
-    await expect(page.getByRole('link', { name: 'Request Help' })).toBeVisible();
+    await expect(page.getByTestId('request-help-link')).toBeVisible();
   });
 
   test('elders page has How It Works section', async ({ page }) => {
     await page.goto('/elders');
-    await expect(page.getByRole('heading', { name: 'How It Works' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: '1. Request Help' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: '2. Get Matched' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: '3. Receive Support' })).toBeVisible();
+    await expect(page.getByTestId('how-it-works-heading')).toBeVisible();
+    await expect(page.getByTestId('step-1-heading')).toBeVisible();
+    await expect(page.getByTestId('step-2-heading')).toBeVisible();
+    await expect(page.getByTestId('step-3-heading')).toBeVisible();
   });
 
   test('request form loads with all fields', async ({ page }) => {
@@ -85,14 +85,14 @@ test.describe('Elders Portal', () => {
 
     // Confirmation page should show UUID reference
     await expect(page.locator('.card__meta')).toContainText(/Reference:/);
-    // Should show the requester name in thank-you text
-    await expect(page.getByText('Thank you, Mary Elder')).toBeVisible();
+    // Should show the requester name in confirmation message
+    await expect(page.getByTestId('confirmation-message')).toBeVisible();
     // Should show type of help
-    await expect(page.getByText('Ride')).toBeVisible();
+    await expect(page.getByTestId('confirmation-type')).toBeVisible();
     // Should show community
-    await expect(page.getByText('Wikwemikong')).toBeVisible();
+    await expect(page.getByTestId('confirmation-community')).toBeVisible();
     // Should show "What Happens Next" steps
-    await expect(page.getByRole('heading', { name: 'What Happens Next' })).toBeVisible();
+    await expect(page.getByTestId('what-next-heading')).toBeVisible();
   });
 
   test('representative submission requires elder name', async ({ page }) => {

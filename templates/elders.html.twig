@@ -10,18 +10,18 @@
   </div>
 
   <div class="portal-section flow">
-    <h2>{{ trans('elders.how_heading') }}</h2>
+    <h2 data-testid="how-it-works-heading">{{ trans('elders.how_heading') }}</h2>
     <div class="how-it-works">
       <div class="how-it-works__step flow">
-        <h3>{{ trans('elders.step1_title') }}</h3>
+        <h3 data-testid="step-1-heading">{{ trans('elders.step1_title') }}</h3>
         <p>{{ trans('elders.step1_text') }}</p>
       </div>
       <div class="how-it-works__step flow">
-        <h3>{{ trans('elders.step2_title') }}</h3>
+        <h3 data-testid="step-2-heading">{{ trans('elders.step2_title') }}</h3>
         <p>{{ trans('elders.step2_text') }}</p>
       </div>
       <div class="how-it-works__step flow">
-        <h3>{{ trans('elders.step3_title') }}</h3>
+        <h3 data-testid="step-3-heading">{{ trans('elders.step3_title') }}</h3>
         <p>{{ trans('elders.step3_text') }}</p>
       </div>
     </div>
@@ -37,7 +37,7 @@
         <li>{{ trans('elders.for_elders_step3') }}</li>
         <li>{{ trans('elders.for_elders_step4') }}</li>
       </ol>
-      <a href="{{ lang_url('/elders/request') }}" class="btn btn--primary">{{ trans('elders.request_help_button') }}</a>
+      <a href="{{ lang_url('/elders/request') }}" class="btn btn--primary" data-testid="request-help-link">{{ trans('elders.request_help_button') }}</a>
     </div>
 
     <div class="how-it-works__step">
