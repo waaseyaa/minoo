@@ -255,7 +255,7 @@ final class AgimController
             $teachings[] = $teaching;
         }
 
-        $stats = GameStatsCalculator::build($this->entityTypeManager, $account, 'agim', [], ['completed']);
+        $stats = GameStatsCalculator::build($this->entityTypeManager, $account, 'agim', ['abandoned'], ['completed']);
         $timeSeconds = time() - (int) $session->get('created_at');
 
         return $this->json([
@@ -270,7 +270,7 @@ final class AgimController
     public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
     {
         return $this->json(
-            GameStatsCalculator::build($this->entityTypeManager, $account, 'agim', [], ['completed']),
+            GameStatsCalculator::build($this->entityTypeManager, $account, 'agim', ['abandoned'], ['completed']),
         );
     }
 

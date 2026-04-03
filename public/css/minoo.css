@@ -3806,6 +3806,7 @@
   .shkoda     { --game-accent: var(--shkoda-correct); }
   .crossword  { --game-accent: var(--crossword-correct); }
   .matcher    { --game-accent: var(--matcher-accent); }
+  .agim       { --game-accent: var(--color-language); }
 
   /* Shared stat block (used in reveal/completion screens) */
   .game-stat {
@@ -6175,6 +6176,179 @@
   @media (max-width: 768px) {
     .community-leader-grid {
       grid-template-columns: 1fr;
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     Agim Number Game
+     ══════════════════════════════════════════════ */
+
+  .agim {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .agim__progress {
+    width: 100%;
+  }
+
+  .agim__progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .agim__progress-fill {
+    height: 100%;
+    background: var(--game-accent);
+    border-radius: inherit;
+    transition: width 0.3s ease;
+  }
+
+  .agim__progress-label {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-align: right;
+    margin-block-start: var(--space-3xs);
+  }
+
+  .agim__numeral {
+    font-size: var(--step-4);
+    font-weight: 800;
+    text-align: center;
+    color: var(--text-primary);
+    line-height: 1;
+    min-height: 1.2em;
+  }
+
+  .agim__input-form {
+    display: flex;
+    gap: var(--space-xs);
+    width: 100%;
+  }
+
+  .agim__input {
+    flex: 1;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-raised, oklch(0.18 0.01 260));
+    color: var(--text-primary);
+    font-size: var(--text-base);
+
+    &:focus {
+      outline: none;
+      border-color: var(--game-accent);
+    }
+  }
+
+  .agim__submit {
+    padding: var(--space-xs) var(--space-md);
+    background: var(--game-accent);
+    border: 1px solid var(--game-accent);
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: oklch(from var(--game-accent) calc(l - 0.05) c h);
+    }
+  }
+
+  .agim__feedback {
+    text-align: center;
+    font-size: var(--text-base);
+    font-weight: 600;
+    min-height: 1.5em;
+    padding: var(--space-2xs) 0;
+  }
+
+  .agim__reveal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    text-align: center;
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .agim__reveal-title {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    color: var(--game-accent);
+    margin: 0;
+  }
+
+  .agim__reveal-summary {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .agim__teachings {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+    gap: var(--space-xs);
+    text-align: center;
+  }
+
+  .agim__play-again {
+    padding: var(--space-xs) var(--space-lg);
+    border: 1px solid var(--game-accent);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--game-accent);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background: oklch(from var(--game-accent) l c h / 0.1);
+    }
+  }
+
+  .agim__loading {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    padding: var(--space-lg) 0;
+  }
+
+  .agim__tab {
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+
+    &--active {
+      color: var(--game-accent);
+      border-color: var(--game-accent);
+      background: oklch(from var(--game-accent) l c h / 0.1);
     }
   }
 

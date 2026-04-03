@@ -15,6 +15,7 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Storage\EntityQueryInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(AgimController::class)]
@@ -222,6 +223,32 @@ final class AgimControllerTest extends TestCase
         $this->assertTrue($body['correct']);
         $this->assertSame(0, $body['remaining']);
         $this->assertSame('completed', $setValues['status']);
+    }
+
+    #[Test]
+    public function stats_abandoned_session_breaks_streak(): void
+    {
+        // Newest session is abandoned — must break the current streak
+        $abandoned = $this->makeSession(['status' => 'abandoned', 'created_at' => '200', 'updated_at' => '300']);
+        // Older session is completed — should not count toward current streak once it is broken
+        $completed = $this->makeSession(['status' => 'completed', 'created_at' => '100', 'updated_at' => '180']);
+
+        $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('condition')->willReturnSelf();
+        $query->method('execute')->willReturn([2, 1]);
+
+        $this->sessionStorage->method('getQuery')->willReturn($query);
+        $this->sessionStorage->method('loadMultiple')->willReturn([2 => $abandoned, 1 => $completed]);
+
+        $this->account->method('isAuthenticated')->willReturn(true);
+        $this->account->method('id')->willReturn(42);
+
+        $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
+        $response = $controller->stats([], [], $this->account, $this->request);
+
+        $this->assertSame(200, $response->statusCode);
+        $body = json_decode($response->content, true);
+        $this->assertSame(0, $body['current_streak']);
     }
 
     /** Build a POST request with a JSON body. */

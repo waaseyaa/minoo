@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Agim — Number Game{% endblock %}
+{% block title %}{{ trans('games.agim_title') }} — Minoo{% endblock %}
 
 {% block content %}
 <div class="agim" id="agim-game" data-api-base="/api/games/agim">
@@ -9,7 +9,7 @@
             <nav class="game-header__breadcrumb" aria-label="Breadcrumb">
                 <a href="/games">Games</a> /
             </nav>
-            <h1>Agim</h1>
+            <h1>{{ trans('games.agim_title') }}</h1>
         </div>
         <nav class="game-header__tabs" role="tablist">
             <button class="agim__tab agim__tab--active" role="tab" data-level="1" aria-selected="true">1–5</button>
@@ -29,30 +29,30 @@
     <div class="agim__numeral" id="agim-numeral" aria-live="polite"></div>
 
     <form class="agim__input-form" id="agim-form" autocomplete="off">
-        <label class="visually-hidden" for="agim-answer">Type the Ojibwe word</label>
+        <label class="visually-hidden" for="agim-answer">{{ trans('games.agim_type_word') }}</label>
         <input
             class="agim__input"
             id="agim-answer"
             type="text"
-            placeholder="Type the Ojibwe word…"
+            placeholder="{{ trans('games.agim_type_word_placeholder') }}"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"
             spellcheck="false"
         />
-        <button class="agim__submit" type="submit">Check</button>
+        <button class="agim__submit" type="submit">{{ trans('games.agim_check') }}</button>
     </form>
 
     <div class="agim__feedback" id="agim-feedback" aria-live="polite" hidden></div>
 
     <div class="agim__reveal" id="agim-reveal" hidden>
-        <h2 class="agim__reveal-title">Miigwech!</h2>
+        <h2 class="agim__reveal-title">{{ trans('games.agim_miigwech') }}</h2>
         <p class="agim__reveal-summary" id="agim-reveal-summary"></p>
         <ul class="agim__teachings" id="agim-teachings"></ul>
-        <button class="agim__play-again" id="agim-play-again" type="button">Play again</button>
+        <button class="agim__play-again" id="agim-play-again" type="button">{{ trans('games.play_again') }}</button>
     </div>
 
-    <div class="agim__loading" id="agim-loading">Loading…</div>
+    <div class="agim__loading" id="agim-loading">{{ trans('games.loading') }}</div>
 
     <div class="visually-hidden" aria-live="polite" id="agim-announcer"></div>
 </div>
