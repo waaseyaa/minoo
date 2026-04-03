@@ -100,6 +100,7 @@ final class AgimController
         $storage = $this->entityTypeManager->getStorage('game_session');
         $session = $storage->create([
             'game_type' => 'agim',
+            'mode' => 'practice',
             'difficulty_tier' => $tier,
             'status' => 'in_progress',
             'user_id' => $account->isAuthenticated() ? $account->id() : null,

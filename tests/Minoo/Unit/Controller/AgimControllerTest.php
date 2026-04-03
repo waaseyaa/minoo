@@ -95,6 +95,25 @@ final class AgimControllerTest extends TestCase
     }
 
     #[Test]
+    public function start_sets_practice_mode_on_session(): void
+    {
+        $createdValues = [];
+        $session = $this->makeSession(['uuid' => 'abc-mode']);
+        $this->sessionStorage->method('create')->willReturnCallback(
+            function (array $vals) use ($session, &$createdValues) {
+                $createdValues = $vals;
+                return $session;
+            },
+        );
+        $this->account->method('isAuthenticated')->willReturn(false);
+
+        $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
+        $controller->start([], ['level' => '1'], $this->account, $this->request);
+
+        $this->assertSame('practice', $createdValues['mode'] ?? null);
+    }
+
+    #[Test]
     public function start_level_4_has_19_numerals_and_streak_tier(): void
     {
         $createdValues = [];

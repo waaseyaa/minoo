@@ -191,6 +191,30 @@ final class GameSessionTest extends TestCase
     }
 
     #[Test]
+    public function agim_game_type_is_valid(): void
+    {
+        $session = new GameSession([
+            'game_type' => 'agim',
+            'mode' => 'practice',
+        ]);
+
+        $this->assertSame('agim', $session->get('game_type'));
+        $this->assertSame('practice', $session->get('mode'));
+    }
+
+    #[Test]
+    public function agim_accepts_streak_difficulty_tier(): void
+    {
+        $session = new GameSession([
+            'game_type' => 'agim',
+            'mode' => 'practice',
+            'difficulty_tier' => 'streak',
+        ]);
+
+        $this->assertSame('streak', $session->get('difficulty_tier'));
+    }
+
+    #[Test]
     public function shkoda_still_requires_direction_and_entry(): void
     {
         $this->expectException(\InvalidArgumentException::class);
