@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Waaseyaa\Auth\Config\AuthConfig;
+use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\User\AuthMailer;
 use Minoo\Support\LayoutTwigContext;
-use Minoo\Support\EmailVerificationService;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Minoo\Middleware\RateLimitMiddleware;
-use Waaseyaa\User\PasswordResetTokenRepository;
 use Waaseyaa\SSR\SsrResponse;
 use Waaseyaa\User\User;
 
@@ -23,8 +23,8 @@ final class AuthController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly AuthMailer $authMailer,
-        private readonly PasswordResetTokenRepository $passwordResetTokenRepository,
-        private readonly EmailVerificationService $emailVerificationService,
+        private readonly AuthTokenRepositoryInterface $tokenRepo,
+        private readonly AuthConfig $authConfig,
     ) {}
 
     public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -166,7 +166,7 @@ final class AuthController
 
             // If inactive (unverified), re-send verification email instead of revealing existence
             if ($existingUser !== null && !$existingUser->isActive()) {
-                $token = $this->emailVerificationService->createToken($existingUser->id());
+                $token = $this->tokenRepo->createToken($existingUser->id(), 'email_verification', $this->authConfig->tokenTtl('email_verification'));
                 $this->authMailer->sendEmailVerification($existingUser, $token);
                 $html = $this->twig->render('auth/check-email.html.twig', LayoutTwigContext::withAccount($account, []));
                 return new SsrResponse(content: $html);
@@ -195,7 +195,7 @@ final class AuthController
         $storage->save($user);
 
         // Send welcome email (non-blocking — account is already active)
-        $token = $this->emailVerificationService->createToken($user->id());
+        $token = $this->tokenRepo->createToken($user->id(), 'email_verification', $this->authConfig->tokenTtl('email_verification'));
         $this->authMailer->sendEmailVerification($user, $token);
 
         // Auto-login
@@ -244,7 +244,7 @@ final class AuthController
                 /** @var User|null $user */
                 $user = $storage->load(reset($ids));
                 if ($user !== null) {
-                    $token = $this->passwordResetTokenRepository->createToken($user->id());
+                    $token = $this->tokenRepo->createToken($user->id(), 'password_reset', $this->authConfig->tokenTtl('password_reset'));
                     $this->authMailer->sendPasswordReset($user, $token);
                 }
             }
@@ -267,9 +267,8 @@ final class AuthController
         if ($token === '') {
             $tokenError = 'No reset token provided.';
         } else {
-            $resetService = $this->passwordResetTokenRepository;
-            $userId = $resetService->validateToken($token);
-            if ($userId === null) {
+            $result = $this->tokenRepo->validateToken($token, 'password_reset');
+            if ($result === null) {
                 $tokenError = 'This reset link is invalid or has expired.';
             }
         }
@@ -289,10 +288,9 @@ final class AuthController
         $password = (string) $request->request->get('password', '');
         $passwordConfirm = (string) $request->request->get('password_confirm', '');
 
-        $resetService = $this->passwordResetTokenRepository;
-        $userId = $resetService->validateToken($token);
+        $result = $this->tokenRepo->validateToken($token, 'password_reset');
 
-        if ($userId === null) {
+        if ($result === null) {
             $html = $this->twig->render('auth/reset-password.html.twig', LayoutTwigContext::withAccount($account, [
                 'token' => $token,
                 'token_error' => 'This reset link is invalid or has expired.',
@@ -300,6 +298,8 @@ final class AuthController
             ]));
             return new SsrResponse(content: $html);
         }
+
+        $userId = $result['user_id'];
 
         $errors = [];
         if ($password === '') {
@@ -335,7 +335,7 @@ final class AuthController
 
         $user->setRawPassword($password);
         $storage->save($user);
-        $resetService->consumeToken($token);
+        $this->tokenRepo->consumeToken($result['id']);
 
         Flash::success('Your password has been reset. Please sign in.');
 
@@ -354,9 +354,9 @@ final class AuthController
             return new SsrResponse(content: $html, statusCode: 400);
         }
 
-        $userId = $this->emailVerificationService->validateToken($token);
+        $result = $this->tokenRepo->validateToken($token, 'email_verification');
 
-        if ($userId === null) {
+        if ($result === null) {
             $html = $this->twig->render('auth/verify-email.html.twig', LayoutTwigContext::withAccount($account, [
                 'verified' => false,
                 'error' => 'This verification link is invalid or has expired.',
@@ -364,6 +364,7 @@ final class AuthController
             return new SsrResponse(content: $html, statusCode: 400);
         }
 
+        $userId = $result['user_id'];
         $storage = $this->entityTypeManager->getStorage('user');
         /** @var User|null $user */
         $user = $storage->load($userId);
@@ -378,7 +379,7 @@ final class AuthController
 
         $user->set('status', true);
         $storage->save($user);
-        $this->emailVerificationService->consumeToken($token);
+        $this->tokenRepo->consumeToken($result['id']);
 
         $this->authMailer->sendWelcome($user);
 

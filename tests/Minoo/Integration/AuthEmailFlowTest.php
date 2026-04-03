@@ -4,39 +4,37 @@ declare(strict_types=1);
 
 namespace Minoo\Tests\Integration;
 
-use Minoo\Support\EmailVerificationService;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Auth\Token\AuthTokenRepository;
+use Waaseyaa\Database\DBALDatabase;
 
 #[CoversNothing]
 final class AuthEmailFlowTest extends TestCase
 {
-    private \PDO $pdo;
-    private EmailVerificationService $verifyService;
+    private AuthTokenRepository $tokenRepo;
 
     protected function setUp(): void
     {
-        $this->pdo = new \PDO('sqlite::memory:');
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->verifyService = new EmailVerificationService($this->pdo);
+        $db = DBALDatabase::createSqlite(':memory:');
+        $this->tokenRepo = new AuthTokenRepository($db, 'test-secret');
+        $this->tokenRepo->ensureSchema();
     }
 
     #[Test]
     public function verification_token_lifecycle_activates_user(): void
     {
-        // 1. Create a verification token (simulating registration)
         $userId = 'user-integration-1';
-        $token = $this->verifyService->createToken($userId);
+        $token = $this->tokenRepo->createToken($userId, 'email_verification', 86400);
 
-        // 2. Token should be valid
-        self::assertSame($userId, $this->verifyService->validateToken($token));
+        $result = $this->tokenRepo->validateToken($token, 'email_verification');
+        self::assertNotNull($result);
+        self::assertSame($userId, $result['user_id']);
 
-        // 3. Consume the token (simulating verification click)
-        $this->verifyService->consumeToken($token);
+        $this->tokenRepo->consumeToken($result['id']);
 
-        // 4. Token should no longer be valid
-        self::assertNull($this->verifyService->validateToken($token));
+        self::assertNull($this->tokenRepo->validateToken($token, 'email_verification'));
     }
 
     #[Test]
@@ -44,12 +42,13 @@ final class AuthEmailFlowTest extends TestCase
     {
         $userId = 'user-integration-2';
 
-        $token1 = $this->verifyService->createToken($userId);
-        $token2 = $this->verifyService->createToken($userId);
+        $token1 = $this->tokenRepo->createToken($userId, 'email_verification', 86400);
+        $token2 = $this->tokenRepo->createToken($userId, 'email_verification', 86400);
 
-        // First token should be invalidated
-        self::assertNull($this->verifyService->validateToken($token1));
-        // Second token should be valid
-        self::assertSame($userId, $this->verifyService->validateToken($token2));
+        self::assertNull($this->tokenRepo->validateToken($token1, 'email_verification'));
+
+        $result2 = $this->tokenRepo->validateToken($token2, 'email_verification');
+        self::assertNotNull($result2);
+        self::assertSame($userId, $result2['user_id']);
     }
 }
