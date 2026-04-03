@@ -24,6 +24,23 @@ return [
             getenv('WAASEYAA_DEV_FALLBACK_ACCOUNT') ?: false,
             FILTER_VALIDATE_BOOLEAN,
         ),
+        'registration' => 'open',
+        'require_verified_email' => false,
+        'mail_missing_policy' => null, // auto-resolves: dev_log in dev, fail in production
+        'token_ttls' => [
+            'password_reset' => 3600,       // 1 hour
+            'email_verification' => 86400,  // 24 hours
+        ],
+    ],
+
+    // Session cookie ini (applied in SessionMiddleware before session_start).
+    'session' => [
+        'cookie' => [
+            'httponly' => true,
+            'secure' => 'auto',
+            'samesite' => 'Lax',
+            'use_strict_mode' => true,
+        ],
     ],
 
     // Upload validation (POST /api/media/upload).

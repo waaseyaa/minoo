@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\AuthController;
+use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\User\AuthMailer;
-use Minoo\Support\EmailVerificationService;
-use Waaseyaa\User\PasswordResetTokenRepository;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -26,8 +25,7 @@ final class AuthControllerTest extends TestCase
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
     private AuthMailer $authMailer;
-    private PasswordResetTokenRepository $passwordResetService;
-    private EmailVerificationService $emailVerificationService;
+    private AuthTokenRepositoryInterface $tokenRepo;
     private EntityStorageInterface $userStorage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
@@ -60,11 +58,7 @@ final class AuthControllerTest extends TestCase
         ]));
 
         $this->authMailer = $this->createMock(AuthMailer::class);
-
-        $pdo = new \PDO('sqlite::memory:');
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->passwordResetService = new PasswordResetTokenRepository($pdo);
-        $this->emailVerificationService = new EmailVerificationService($pdo);
+        $this->tokenRepo = $this->createMock(AuthTokenRepositoryInterface::class);
 
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
@@ -82,8 +76,7 @@ final class AuthControllerTest extends TestCase
             $this->entityTypeManager,
             $this->twig,
             $this->authMailer,
-            $this->passwordResetService,
-            $this->emailVerificationService,
+            $this->tokenRepo,
         );
     }
 
@@ -164,6 +157,11 @@ final class AuthControllerTest extends TestCase
         });
         $this->userStorage->method('save')->willReturn(42);
 
+        $this->tokenRepo->expects(self::once())
+            ->method('createToken')
+            ->with(42, 'email_verification', 86400)
+            ->willReturn('fake-verify-token');
+
         $this->authMailer->expects(self::once())
             ->method('sendEmailVerification');
 
@@ -190,6 +188,11 @@ final class AuthControllerTest extends TestCase
 
         $this->query->method('execute')->willReturn([1]);
         $this->userStorage->method('load')->willReturn($user);
+
+        $this->tokenRepo->expects(self::once())
+            ->method('createToken')
+            ->with(1, 'password_reset', 3600)
+            ->willReturn('fake-reset-token');
 
         $this->authMailer->expects(self::once())
             ->method('sendPasswordReset');
@@ -239,10 +242,14 @@ final class AuthControllerTest extends TestCase
             'status' => 0,
         ]);
 
-        // Create a real token in the in-memory DB
-        $token = $this->emailVerificationService->createToken('99');
+        $this->tokenRepo->method('validateToken')
+            ->with('valid-token', 'email_verification')
+            ->willReturn(['id' => 1, 'user_id' => '99', 'meta' => null]);
 
-        $this->query->method('execute')->willReturn([99]);
+        $this->tokenRepo->expects(self::once())
+            ->method('consumeToken')
+            ->with(1);
+
         $this->userStorage->method('load')->with('99')->willReturn($user);
         $this->userStorage->expects(self::once())->method('save');
 
@@ -250,7 +257,7 @@ final class AuthControllerTest extends TestCase
             ->method('sendWelcome')
             ->with($user);
 
-        $this->request = HttpRequest::create('/verify-email?token=' . $token, 'GET', ['token' => $token]);
+        $this->request = HttpRequest::create('/verify-email?token=valid-token', 'GET', ['token' => 'valid-token']);
 
         $response = $this->createController()->verifyEmail([], [], $this->account, $this->request);
 
@@ -271,6 +278,11 @@ final class AuthControllerTest extends TestCase
 
         $this->query->method('execute')->willReturn([50]);
         $this->userStorage->method('load')->with(50)->willReturn($existingUser);
+
+        $this->tokenRepo->expects(self::once())
+            ->method('createToken')
+            ->with(50, 'email_verification', 86400)
+            ->willReturn('fake-verify-token');
 
         $this->authMailer->expects(self::once())
             ->method('sendEmailVerification');

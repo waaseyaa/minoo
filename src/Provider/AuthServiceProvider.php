@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Minoo\Provider;
 
-use Minoo\Support\EmailVerificationService;
-use Waaseyaa\User\PasswordResetTokenRepository;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -14,23 +12,8 @@ final class AuthServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->singleton(PasswordResetTokenRepository::class, function () {
-            return new PasswordResetTokenRepository($this->createPdo());
-        });
-
-        $this->singleton(EmailVerificationService::class, function () {
-            return new EmailVerificationService($this->createPdo());
-        });
-    }
-
-    private function createPdo(): \PDO
-    {
-        $projectRoot = $this->config['app_root'] ?? dirname(__DIR__, 2);
-        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/storage/waaseyaa.sqlite';
-        $pdo = new \PDO('sqlite:' . $dbPath);
-        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        return $pdo;
+        // Token repository and auth config are registered by the framework's
+        // Waaseyaa\Auth\AuthServiceProvider. No custom bindings needed.
     }
 
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
