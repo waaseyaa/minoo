@@ -306,5 +306,62 @@ final class GameServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        // --- Agim routes ---
+
+        $router->addRoute(
+            'games.agim',
+            RouteBuilder::create('/games/agim')
+                ->controller('Minoo\\Controller\\AgimController::page')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.agim.start',
+            RouteBuilder::create('/api/games/agim/start')
+                ->controller('Minoo\\Controller\\AgimController::start')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.agim.prompt',
+            RouteBuilder::create('/api/games/agim/prompt')
+                ->controller('Minoo\\Controller\\AgimController::prompt')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.agim.answer',
+            RouteBuilder::create('/api/games/agim/answer')
+                ->controller('Minoo\\Controller\\AgimController::answer')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.agim.complete',
+            RouteBuilder::create('/api/games/agim/complete')
+                ->controller('Minoo\\Controller\\AgimController::complete')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.agim.stats',
+            RouteBuilder::create('/api/games/agim/stats')
+                ->controller('Minoo\\Controller\\AgimController::stats')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->build(),
+        );
     }
 }
