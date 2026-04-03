@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Tests\Unit\Controller;
 
 use Minoo\Controller\AuthController;
+use Waaseyaa\Auth\Config\AuthConfig;
 use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\User\AuthMailer;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -26,6 +27,7 @@ final class AuthControllerTest extends TestCase
     private Environment $twig;
     private AuthMailer $authMailer;
     private AuthTokenRepositoryInterface $tokenRepo;
+    private AuthConfig $authConfig;
     private EntityStorageInterface $userStorage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
@@ -59,6 +61,13 @@ final class AuthControllerTest extends TestCase
 
         $this->authMailer = $this->createMock(AuthMailer::class);
         $this->tokenRepo = $this->createMock(AuthTokenRepositoryInterface::class);
+        $this->authConfig = AuthConfig::fromArray([
+            'registration' => 'open',
+            'token_ttls' => [
+                'password_reset' => 3600,
+                'email_verification' => 86400,
+            ],
+        ]);
 
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
@@ -77,6 +86,7 @@ final class AuthControllerTest extends TestCase
             $this->twig,
             $this->authMailer,
             $this->tokenRepo,
+            $this->authConfig,
         );
     }
 

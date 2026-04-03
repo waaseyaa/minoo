@@ -13,12 +13,12 @@ Minoo's waaseyaa packages are pinned at alpha.90. The framework is at alpha.103 
 
 1. **Add `waaseyaa/auth` dependency** — provides `AuthTokenRepositoryInterface`, `AuthConfig`, `RateLimiter`
 2. **Migrate token handling** — replace `PasswordResetTokenRepository` (removed) and `EmailVerificationService` (Minoo-owned) with framework's `AuthTokenRepositoryInterface`
-3. **Migrate rate limiting** — replace `RateLimitMiddleware` with framework's `RateLimiter`
+3. **Rate limiting kept as-is** — framework's `RateLimiter` is in-memory only, not suitable for SSR
 4. **Add auth config** — `config/waaseyaa.php` gets `auth` block for registration mode, token TTLs, mail policy
 5. **Update AuthController** — new constructor deps, updated method calls
 6. **Update AuthServiceProvider** — register via framework bindings, remove custom PDO wiring
 7. **Update tests** — mock `AuthTokenRepositoryInterface` instead of concrete classes
-8. **Delete dead code** — `EmailVerificationService`, `RateLimitMiddleware`
+8. **Delete dead code** — `EmailVerificationService` (replaced by framework tokens)
 
 ### What stays
 
@@ -77,15 +77,7 @@ This means `validateToken` result must be kept to get the `id` for consumption.
 
 ### Rate limiting
 
-**Before (hand-rolled):**
-```php
-$limiter = new RateLimitMiddleware($dbPath);
-if (!$limiter->check($ip, '/login', 5, 300)) { ... }
-$limiter->record($ip, '/login');
-```
-
-**After (framework):**
-The framework's `RateLimiter` is injected via DI. Exact API TBD — check implementation.
+**Kept as-is.** Minoo's `RateLimitMiddleware` uses SQLite-backed persistent storage, which survives across PHP-FPM requests. The framework's `RateLimiter` is in-memory only — it resets per process, making it unsuitable for SSR form endpoints. Migration deferred until the framework provides a persistent rate limiter.
 
 ## Config additions
 
@@ -112,7 +104,6 @@ The framework's `RateLimiter` is injected via DI. Exact API TBD — check implem
 | `src/Provider/AuthServiceProvider.php` | Remove PDO wiring, inject framework bindings |
 | `tests/Minoo/Unit/Controller/AuthControllerTest.php` | Mock `AuthTokenRepositoryInterface` |
 | `src/Support/EmailVerificationService.php` | Delete |
-| `src/Middleware/RateLimitMiddleware.php` | Delete (if exists as standalone) |
 
 ## Risk
 

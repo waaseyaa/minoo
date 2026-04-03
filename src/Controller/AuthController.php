@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Waaseyaa\Auth\Config\AuthConfig;
 use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\User\AuthMailer;
 use Minoo\Support\LayoutTwigContext;
@@ -23,6 +24,7 @@ final class AuthController
         private readonly Environment $twig,
         private readonly AuthMailer $authMailer,
         private readonly AuthTokenRepositoryInterface $tokenRepo,
+        private readonly AuthConfig $authConfig,
     ) {}
 
     public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
@@ -164,7 +166,7 @@ final class AuthController
 
             // If inactive (unverified), re-send verification email instead of revealing existence
             if ($existingUser !== null && !$existingUser->isActive()) {
-                $token = $this->tokenRepo->createToken($existingUser->id(), 'email_verification', 86400);
+                $token = $this->tokenRepo->createToken($existingUser->id(), 'email_verification', $this->authConfig->tokenTtl('email_verification'));
                 $this->authMailer->sendEmailVerification($existingUser, $token);
                 $html = $this->twig->render('auth/check-email.html.twig', LayoutTwigContext::withAccount($account, []));
                 return new SsrResponse(content: $html);
@@ -193,7 +195,7 @@ final class AuthController
         $storage->save($user);
 
         // Send welcome email (non-blocking — account is already active)
-        $token = $this->tokenRepo->createToken($user->id(), 'email_verification', 86400);
+        $token = $this->tokenRepo->createToken($user->id(), 'email_verification', $this->authConfig->tokenTtl('email_verification'));
         $this->authMailer->sendEmailVerification($user, $token);
 
         // Auto-login
@@ -242,7 +244,7 @@ final class AuthController
                 /** @var User|null $user */
                 $user = $storage->load(reset($ids));
                 if ($user !== null) {
-                    $token = $this->tokenRepo->createToken($user->id(), 'password_reset', 3600);
+                    $token = $this->tokenRepo->createToken($user->id(), 'password_reset', $this->authConfig->tokenTtl('password_reset'));
                     $this->authMailer->sendPasswordReset($user, $token);
                 }
             }
