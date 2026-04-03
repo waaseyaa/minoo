@@ -55,7 +55,7 @@ minoo/
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*`, `src/Support/GeoDistance.php`, `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
 | `src/Support/NorthCloudClient.php`, `src/Support/NorthCloudCache.php` | — | `docs/specs/geo-domain.md` (NC client section) |
-| `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, MailService, Flash, FixtureResolver, PasswordResetService |
+| `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, MailService, Flash, FixtureResolver, ElderIdentity |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
 | `src/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
@@ -128,7 +128,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
 php -S localhost:8081 -t public               # Dev server (port 8081)
-./vendor/bin/phpunit                          # All tests (746 tests, 2185 assertions)
+./vendor/bin/phpunit                          # All tests (829 tests, 2395 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
