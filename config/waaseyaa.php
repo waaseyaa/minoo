@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 return [
+    // Sovereignty profile for this deployment: 'local', 'self_hosted', or 'northops'.
+    // Override per environment with WAASEYAA_SOVEREIGNTY_PROFILE.
+    'sovereignty_profile' => getenv('WAASEYAA_SOVEREIGNTY_PROFILE') ?: 'northops',
+
     // SQLite database path. WAASEYAA_DB env var takes precedence.
     'database' => getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/storage/waaseyaa.sqlite',
 
