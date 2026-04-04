@@ -2,6 +2,8 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
+Last framework sync: Waaseyaa alpha.104 (community-scoped tenancy #1093–#1094, domain router architecture #571)
+
 ## Architecture
 
 Minoo is a **thin application** — custom entity types, access policies, service providers, and seeders live in `src/`. All framework code lives in `waaseyaa/framework` (sibling directory). Framework packages are installed from versioned tags via `composer install`.
