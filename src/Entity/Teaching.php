@@ -11,6 +11,7 @@ use Waaseyaa\Entity\ContentEntityBase;
 final class Teaching extends ContentEntityBase implements HasCommunityInterface
 {
     use HasCommunityTrait;
+
     protected string $entityTypeId = 'teaching';
 
     protected array $entityKeys = [

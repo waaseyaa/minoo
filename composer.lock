@@ -3386,16 +3386,16 @@
         },
         {
             "name": "waaseyaa/entity",
-            "version": "v0.1.0-alpha.103",
+            "version": "v0.1.0-alpha.104",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/entity.git",
-                "reference": "86e629203e8f533731d197a943674c32270bb080"
+                "reference": "8f2f3f5d5050b1a3c744aa4b5ad144784a99aea2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/entity/zipball/86e629203e8f533731d197a943674c32270bb080",
-                "reference": "86e629203e8f533731d197a943674c32270bb080",
+                "url": "https://api.github.com/repos/waaseyaa/entity/zipball/8f2f3f5d5050b1a3c744aa4b5ad144784a99aea2",
+                "reference": "8f2f3f5d5050b1a3c744aa4b5ad144784a99aea2",
                 "shasum": ""
             },
             "require": {
@@ -3432,22 +3432,22 @@
             "description": "Entity type system — types, interfaces, lifecycle, queries. No storage.",
             "support": {
                 "issues": "https://github.com/waaseyaa/entity/issues",
-                "source": "https://github.com/waaseyaa/entity/tree/v0.1.0-alpha.103"
+                "source": "https://github.com/waaseyaa/entity/tree/v0.1.0-alpha.104"
             },
-            "time": "2026-03-27T14:08:43+00:00"
+            "time": "2026-04-04T17:16:03+00:00"
         },
         {
             "name": "waaseyaa/entity-storage",
-            "version": "v0.1.0-alpha.103",
+            "version": "v0.1.0-alpha.104",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/entity-storage.git",
-                "reference": "44951a36614425ed54f1f757729f4c2ec2cf923d"
+                "reference": "8bee09b09e3711ed807eb75241b26b9b6ce03ed7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/entity-storage/zipball/44951a36614425ed54f1f757729f4c2ec2cf923d",
-                "reference": "44951a36614425ed54f1f757729f4c2ec2cf923d",
+                "url": "https://api.github.com/repos/waaseyaa/entity-storage/zipball/8bee09b09e3711ed807eb75241b26b9b6ce03ed7",
+                "reference": "8bee09b09e3711ed807eb75241b26b9b6ce03ed7",
                 "shasum": ""
             },
             "require": {
@@ -3480,9 +3480,9 @@
             "description": "Pluggable entity persistence. v0.1.0: SQL storage behind clean interfaces.",
             "support": {
                 "issues": "https://github.com/waaseyaa/entity-storage/issues",
-                "source": "https://github.com/waaseyaa/entity-storage/tree/v0.1.0-alpha.103"
+                "source": "https://github.com/waaseyaa/entity-storage/tree/v0.1.0-alpha.104"
             },
-            "time": "2026-03-30T16:26:08+00:00"
+            "time": "2026-04-04T17:16:03+00:00"
         },
         {
             "name": "waaseyaa/field",
@@ -3532,16 +3532,16 @@
         },
         {
             "name": "waaseyaa/foundation",
-            "version": "v0.1.0-alpha.103",
+            "version": "v0.1.0-alpha.104",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/foundation.git",
-                "reference": "7e7a687252ff5de24db16ce9b877f39ad369bfdd"
+                "reference": "f9f6933233b1971193642537a0981d94217d7500"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/foundation/zipball/7e7a687252ff5de24db16ce9b877f39ad369bfdd",
-                "reference": "7e7a687252ff5de24db16ce9b877f39ad369bfdd",
+                "url": "https://api.github.com/repos/waaseyaa/foundation/zipball/f9f6933233b1971193642537a0981d94217d7500",
+                "reference": "f9f6933233b1971193642537a0981d94217d7500",
                 "shasum": ""
             },
             "require": {
@@ -3581,9 +3581,9 @@
             "description": "Core framework primitives: service providers, domain events, results, error handling",
             "support": {
                 "issues": "https://github.com/waaseyaa/foundation/issues",
-                "source": "https://github.com/waaseyaa/foundation/tree/v0.1.0-alpha.103"
+                "source": "https://github.com/waaseyaa/foundation/tree/v0.1.0-alpha.104"
             },
-            "time": "2026-04-02T22:54:02+00:00"
+            "time": "2026-04-04T17:16:03+00:00"
         },
         {
             "name": "waaseyaa/geo",

@@ -11,6 +11,7 @@ use Waaseyaa\Entity\ContentEntityBase;
 final class Event extends ContentEntityBase implements HasCommunityInterface
 {
     use HasCommunityTrait;
+
     protected string $entityTypeId = 'event';
 
     protected array $entityKeys = [
