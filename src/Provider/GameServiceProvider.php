@@ -38,6 +38,7 @@ final class GameServiceProvider extends ServiceProvider
                 'puzzle_id' => ['type' => 'string', 'label' => 'Puzzle ID', 'weight' => 19],
                 'grid_state' => ['type' => 'text_long', 'label' => 'Grid State', 'description' => 'JSON crossword grid fill state.', 'weight' => 20],
                 'hints_used' => ['type' => 'integer', 'label' => 'Hints Used', 'weight' => 21, 'default' => 0],
+                'found_objects' => ['type' => 'text_long', 'label' => 'Found Objects', 'description' => 'JSON array of found object IDs (Journey game).', 'weight' => 22, 'default' => '[]'],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
@@ -359,6 +360,72 @@ final class GameServiceProvider extends ServiceProvider
             'api.games.agim.stats',
             RouteBuilder::create('/api/games/agim/stats')
                 ->controller('Minoo\\Controller\\AgimController::stats')
+                ->requireAuthentication()
+                ->methods('GET')
+                ->build(),
+        );
+
+        // --- Journey routes ---
+
+        $router->addRoute(
+            'games.journey',
+            RouteBuilder::create('/games/journey')
+                ->controller('Minoo\\Controller\\JourneyController::page')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.journey.scenes',
+            RouteBuilder::create('/api/games/journey/scenes')
+                ->controller('Minoo\\Controller\\JourneyController::scenes')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.journey.scene',
+            RouteBuilder::create('/api/games/journey/scene/{slug}')
+                ->controller('Minoo\\Controller\\JourneyController::scene')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.journey.tap',
+            RouteBuilder::create('/api/games/journey/tap')
+                ->controller('Minoo\\Controller\\JourneyController::tap')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.journey.hint',
+            RouteBuilder::create('/api/games/journey/hint')
+                ->controller('Minoo\\Controller\\JourneyController::hint')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.journey.complete',
+            RouteBuilder::create('/api/games/journey/complete')
+                ->controller('Minoo\\Controller\\JourneyController::complete')
+                ->allowAll()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'api.games.journey.stats',
+            RouteBuilder::create('/api/games/journey/stats')
+                ->controller('Minoo\\Controller\\JourneyController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
