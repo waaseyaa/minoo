@@ -16,8 +16,8 @@ final class GameSession extends ContentEntityBase
         'label' => 'mode',
     ];
 
-    public const VALID_GAME_TYPES = ['shkoda', 'crossword', 'matcher', 'agim'];
-    private const VALID_MODES = ['daily', 'practice', 'streak', 'themed'];
+    public const VALID_GAME_TYPES = ['shkoda', 'crossword', 'matcher', 'agim', 'journey'];
+    private const VALID_MODES = ['daily', 'practice', 'streak', 'themed', 'chapter'];
     private const VALID_DIRECTIONS = ['ojibwe_to_english', 'english_to_ojibwe'];
     private const VALID_STATUSES = ['in_progress', 'won', 'lost', 'completed', 'abandoned'];
     private const VALID_TIERS = ['easy', 'medium', 'hard', 'streak'];
@@ -84,6 +84,9 @@ final class GameSession extends ContentEntityBase
         }
         if (!array_key_exists('hints_used', $values)) {
             $values['hints_used'] = 0;
+        }
+        if (!array_key_exists('found_objects', $values)) {
+            $values['found_objects'] = '[]';
         }
         if (!array_key_exists('created_at', $values)) {
             $values['created_at'] = time();

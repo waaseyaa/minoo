@@ -1,0 +1,64 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Minoo's Journey — {{ trans('games.title') }}{% endblock %}
+
+{% block content %}
+<div class="journey" data-game="journey">
+
+    <div class="game-header">
+        <div class="game-header__title">
+            <nav class="game-header__breadcrumb" aria-label="{{ trans('games.breadcrumb') }}">
+                <a href="/games">{{ trans('games.title') }}</a> /
+            </nav>
+            <h1>Minoo's Journey</h1>
+        </div>
+        <button class="journey__lang-toggle" aria-pressed="true">Show English</button>
+    </div>
+
+    {# ── Scene list ─────────────────────────────────────────────────────── #}
+    <div class="journey__scenes">
+        <p class="journey__intro">Find the hidden objects. Earn stars. Restore the homestead.</p>
+        <ul class="journey__scene-list" role="list"></ul>
+    </div>
+
+    {# ── Active scene ───────────────────────────────────────────────────── #}
+    <div class="journey__scene-view" hidden>
+
+        {# Scene image + tap target #}
+        <div class="journey__scene-frame">
+            <img class="journey__scene-img" src="" alt="" draggable="false" />
+            {# Tap layer sits over the image; ripples are injected here #}
+            <div class="journey__tap-layer" role="button" tabindex="0"
+                 aria-label="Scene — tap to find hidden objects"></div>
+        </div>
+
+        {# Controls bar #}
+        <div class="journey__controls">
+            <span class="journey__progress" aria-live="polite">
+                <span class="journey__found-count">0</span> /
+                <span class="journey__total-count">0</span> found
+            </span>
+            <button class="journey__hint-btn" type="button">
+                Hint (<span class="journey__hints-left">3</span>)
+            </button>
+        </div>
+
+        {# Object list #}
+        <ul class="journey__object-list" role="list" aria-label="Objects to find"></ul>
+
+        {# Screen-reader announcer (injected by games-common.js via cssPrefix) #}
+        <div id="journey-announcer" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+    </div>
+
+    {# ── Completion card ─────────────────────────────────────────────────── #}
+    <div class="journey__complete" hidden>
+        <div class="journey__completion-card"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/js/games-common.js"></script>
+    <script src="/js/journey.js"></script>
+{% endblock %}
