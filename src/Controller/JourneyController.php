@@ -13,7 +13,7 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Api\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Http\SsrResponse;
+use Waaseyaa\SSR\SsrResponse;
 
 /**
  * JourneyController — Routes for Minoo's Journey hidden-object game.
