@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Minoo\Entity;
 
+use Waaseyaa\Entity\Community\HasCommunityInterface;
+use Waaseyaa\Entity\Community\HasCommunityTrait;
 use Waaseyaa\Entity\ContentEntityBase;
 
-final class Event extends ContentEntityBase
+final class Event extends ContentEntityBase implements HasCommunityInterface
 {
+    use HasCommunityTrait;
     protected string $entityTypeId = 'event';
 
     protected array $entityKeys = [
