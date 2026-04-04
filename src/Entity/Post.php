@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Minoo\Entity;
 
+use Waaseyaa\Entity\Community\HasCommunityInterface;
+use Waaseyaa\Entity\Community\HasCommunityTrait;
 use Waaseyaa\Entity\ContentEntityBase;
 
-final class Post extends ContentEntityBase
+final class Post extends ContentEntityBase implements HasCommunityInterface
 {
+    use HasCommunityTrait;
+
     protected string $entityTypeId = 'post';
 
     protected array $entityKeys = [
