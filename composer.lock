@@ -2802,7 +2802,7 @@
         },
         {
             "name": "waaseyaa/access",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/access.git",
@@ -2844,13 +2844,13 @@
             "description": "Access control and permission system for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/access/issues",
-                "source": "https://github.com/waaseyaa/access/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/access/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:46:26+00:00"
         },
         {
             "name": "waaseyaa/admin-surface",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/admin-surface.git",
@@ -2897,13 +2897,13 @@
             "description": "Canonical integration boundary for the Waaseyaa Admin SPA",
             "support": {
                 "issues": "https://github.com/waaseyaa/admin-surface/issues",
-                "source": "https://github.com/waaseyaa/admin-surface/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/admin-surface/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-02T15:57:27+00:00"
         },
         {
             "name": "waaseyaa/ai-agent",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/ai-agent.git",
@@ -2942,13 +2942,13 @@
             "description": "AI agent orchestration and tool execution for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/ai-agent/issues",
-                "source": "https://github.com/waaseyaa/ai-agent/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/ai-agent/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-23T06:24:45+00:00"
         },
         {
             "name": "waaseyaa/ai-schema",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/ai-schema.git",
@@ -2986,7 +2986,7 @@
             "description": "AI-friendly schema definitions and entity metadata for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/ai-schema/issues",
-                "source": "https://github.com/waaseyaa/ai-schema/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/ai-schema/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-23T06:34:58+00:00"
         },
@@ -3040,7 +3040,7 @@
         },
         {
             "name": "waaseyaa/api",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/api.git",
@@ -3086,13 +3086,13 @@
             "description": "RESTful JSON:API resource layer for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/api/issues",
-                "source": "https://github.com/waaseyaa/api/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/api/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-05T01:21:35+00:00"
         },
         {
             "name": "waaseyaa/auth",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/auth.git",
@@ -3137,13 +3137,13 @@
             "description": "Headless authentication for Waaseyaa — login, registration, 2FA, password reset",
             "support": {
                 "issues": "https://github.com/waaseyaa/auth/issues",
-                "source": "https://github.com/waaseyaa/auth/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/auth/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:46:26+00:00"
         },
         {
             "name": "waaseyaa/cache",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/cache.git",
@@ -3186,22 +3186,22 @@
             "description": "Cache bins with cache tag invalidation for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/cache/issues",
-                "source": "https://github.com/waaseyaa/cache/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/cache/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-23T00:58:08+00:00"
         },
         {
             "name": "waaseyaa/cli",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/cli.git",
-                "reference": "414a783ba0872ac12a55aab398e06f6030b653c3"
+                "reference": "fb1908ecd545b9e7c52e48b8a5e7e0705644d3e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/cli/zipball/414a783ba0872ac12a55aab398e06f6030b653c3",
-                "reference": "414a783ba0872ac12a55aab398e06f6030b653c3",
+                "url": "https://api.github.com/repos/waaseyaa/cli/zipball/fb1908ecd545b9e7c52e48b8a5e7e0705644d3e7",
+                "reference": "fb1908ecd545b9e7c52e48b8a5e7e0705644d3e7",
                 "shasum": ""
             },
             "require": {
@@ -3216,6 +3216,9 @@
             "require-dev": {
                 "phpunit/phpunit": "^10.5"
             },
+            "bin": [
+                "bin/waaseyaa"
+            ],
             "type": "library",
             "extra": {
                 "waaseyaa": {
@@ -3240,13 +3243,13 @@
             "description": "Command-line interface and console commands for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/cli/issues",
-                "source": "https://github.com/waaseyaa/cli/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/cli/tree/v0.1.0-alpha.107"
             },
-            "time": "2026-04-04T00:46:26+00:00"
+            "time": "2026-04-06T04:22:55+00:00"
         },
         {
             "name": "waaseyaa/config",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/config.git",
@@ -3285,13 +3288,13 @@
             "description": "Configuration management as YAML with package-aware ownership for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/config/issues",
-                "source": "https://github.com/waaseyaa/config/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/config/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-02T16:14:37+00:00"
         },
         {
             "name": "waaseyaa/database-legacy",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/database-legacy.git",
@@ -3329,7 +3332,7 @@
             "description": "Database adapter wrapping Drupal DBAL. Interim until Doctrine migration.",
             "support": {
                 "issues": "https://github.com/waaseyaa/database-legacy/issues",
-                "source": "https://github.com/waaseyaa/database-legacy/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/database-legacy/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-19T22:48:53+00:00"
         },
@@ -3385,7 +3388,7 @@
         },
         {
             "name": "waaseyaa/entity",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/entity.git",
@@ -3431,13 +3434,13 @@
             "description": "Entity type system — types, interfaces, lifecycle, queries. No storage.",
             "support": {
                 "issues": "https://github.com/waaseyaa/entity/issues",
-                "source": "https://github.com/waaseyaa/entity/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/entity/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T17:16:03+00:00"
         },
         {
             "name": "waaseyaa/entity-storage",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/entity-storage.git",
@@ -3479,13 +3482,13 @@
             "description": "Pluggable entity persistence. v0.1.0: SQL storage behind clean interfaces.",
             "support": {
                 "issues": "https://github.com/waaseyaa/entity-storage/issues",
-                "source": "https://github.com/waaseyaa/entity-storage/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/entity-storage/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T17:16:03+00:00"
         },
         {
             "name": "waaseyaa/field",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/field.git",
@@ -3525,22 +3528,22 @@
             "description": "Field type system — pluggable field types, definitions, formatters for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/field/issues",
-                "source": "https://github.com/waaseyaa/field/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/field/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:46:26+00:00"
         },
         {
             "name": "waaseyaa/foundation",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/foundation.git",
-                "reference": "da132219ab5d3d1d9d1f9064b6a014e9c2f1d193"
+                "reference": "bd5a1d66baa726e2aad8755e5052c7a48325deb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/foundation/zipball/da132219ab5d3d1d9d1f9064b6a014e9c2f1d193",
-                "reference": "da132219ab5d3d1d9d1f9064b6a014e9c2f1d193",
+                "url": "https://api.github.com/repos/waaseyaa/foundation/zipball/bd5a1d66baa726e2aad8755e5052c7a48325deb3",
+                "reference": "bd5a1d66baa726e2aad8755e5052c7a48325deb3",
                 "shasum": ""
             },
             "require": {
@@ -3580,9 +3583,9 @@
             "description": "Core framework primitives: service providers, domain events, results, error handling",
             "support": {
                 "issues": "https://github.com/waaseyaa/foundation/issues",
-                "source": "https://github.com/waaseyaa/foundation/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/foundation/tree/v0.1.0-alpha.107"
             },
-            "time": "2026-04-06T03:56:58+00:00"
+            "time": "2026-04-06T04:31:45+00:00"
         },
         {
             "name": "waaseyaa/geo",
@@ -3634,16 +3637,16 @@
         },
         {
             "name": "waaseyaa/graphql",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/graphql.git",
-                "reference": "5515718594e7187da0a6f3f26c5a82f18248a1f8"
+                "reference": "daabc8be5c3a8142262aada7553f2687cdc8a0dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/graphql/zipball/5515718594e7187da0a6f3f26c5a82f18248a1f8",
-                "reference": "5515718594e7187da0a6f3f26c5a82f18248a1f8",
+                "url": "https://api.github.com/repos/waaseyaa/graphql/zipball/daabc8be5c3a8142262aada7553f2687cdc8a0dc",
+                "reference": "daabc8be5c3a8142262aada7553f2687cdc8a0dc",
                 "shasum": ""
             },
             "require": {
@@ -3682,13 +3685,13 @@
             "description": "GraphQL endpoint for Waaseyaa — auto-generated schema from entity types",
             "support": {
                 "issues": "https://github.com/waaseyaa/graphql/issues",
-                "source": "https://github.com/waaseyaa/graphql/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/graphql/tree/v0.1.0-alpha.107"
             },
-            "time": "2026-04-04T00:58:32+00:00"
+            "time": "2026-04-06T11:42:40+00:00"
         },
         {
             "name": "waaseyaa/i18n",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/i18n.git",
@@ -3726,13 +3729,13 @@
             "description": "Internationalization foundation: Language, LanguageManager, LanguageContext, FallbackChain",
             "support": {
                 "issues": "https://github.com/waaseyaa/i18n/issues",
-                "source": "https://github.com/waaseyaa/i18n/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/i18n/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-16T21:50:01+00:00"
         },
         {
             "name": "waaseyaa/mail",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/mail.git",
@@ -3780,13 +3783,13 @@
             "description": "Transport-agnostic mail API for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/mail/issues",
-                "source": "https://github.com/waaseyaa/mail/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/mail/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:46:26+00:00"
         },
         {
             "name": "waaseyaa/mcp",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/mcp.git",
@@ -3837,13 +3840,13 @@
             "description": "Remote MCP server endpoint for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/mcp/issues",
-                "source": "https://github.com/waaseyaa/mcp/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/mcp/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:46:26+00:00"
         },
         {
             "name": "waaseyaa/media",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/media.git",
@@ -3886,13 +3889,13 @@
             "description": "Media entity type and file management for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/media/issues",
-                "source": "https://github.com/waaseyaa/media/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/media/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-30T16:26:08+00:00"
         },
         {
             "name": "waaseyaa/menu",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/menu.git",
@@ -3935,7 +3938,7 @@
             "description": "Menu and navigation link management for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/menu/issues",
-                "source": "https://github.com/waaseyaa/menu/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/menu/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-29T16:26:20+00:00"
         },
@@ -4037,7 +4040,7 @@
         },
         {
             "name": "waaseyaa/node",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/node.git",
@@ -4081,13 +4084,13 @@
             "description": "Content node entity type for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/node/issues",
-                "source": "https://github.com/waaseyaa/node/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/node/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-29T16:26:20+00:00"
         },
         {
             "name": "waaseyaa/path",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/path.git",
@@ -4130,13 +4133,13 @@
             "description": "URL path aliases and routing integration for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/path/issues",
-                "source": "https://github.com/waaseyaa/path/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/path/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-29T16:26:20+00:00"
         },
         {
             "name": "waaseyaa/plugin",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/plugin.git",
@@ -4174,7 +4177,7 @@
             "description": "Attribute-based plugin discovery and management for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/plugin/issues",
-                "source": "https://github.com/waaseyaa/plugin/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/plugin/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:46:26+00:00"
         },
@@ -4231,7 +4234,7 @@
         },
         {
             "name": "waaseyaa/relationship",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/relationship.git",
@@ -4273,13 +4276,13 @@
             "description": "Reusable relationship primitives for Waaseyaa applications",
             "support": {
                 "issues": "https://github.com/waaseyaa/relationship/issues",
-                "source": "https://github.com/waaseyaa/relationship/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/relationship/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-30T16:26:08+00:00"
         },
         {
             "name": "waaseyaa/routing",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/routing.git",
@@ -4320,13 +4323,13 @@
             "description": "HTTP routing and controller resolution for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/routing/issues",
-                "source": "https://github.com/waaseyaa/routing/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/routing/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-23T17:30:12+00:00"
         },
         {
             "name": "waaseyaa/search",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/search.git",
@@ -4373,7 +4376,7 @@
             "description": "Search provider interface and DTOs for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/search/issues",
-                "source": "https://github.com/waaseyaa/search/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/search/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-23T17:41:28+00:00"
         },
@@ -4436,7 +4439,7 @@
         },
         {
             "name": "waaseyaa/state",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/state.git",
@@ -4474,13 +4477,13 @@
             "description": "Key-value state storage for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/state/issues",
-                "source": "https://github.com/waaseyaa/state/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/state/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:46:26+00:00"
         },
         {
             "name": "waaseyaa/taxonomy",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/taxonomy.git",
@@ -4524,13 +4527,13 @@
             "description": "Taxonomy vocabulary and term entity types for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/taxonomy/issues",
-                "source": "https://github.com/waaseyaa/taxonomy/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/taxonomy/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-30T16:26:08+00:00"
         },
         {
             "name": "waaseyaa/typed-data",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/typed-data.git",
@@ -4568,22 +4571,22 @@
             "description": "Type system with PHP-native facade for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/typed-data/issues",
-                "source": "https://github.com/waaseyaa/typed-data/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/typed-data/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-16T21:50:01+00:00"
         },
         {
             "name": "waaseyaa/user",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/user.git",
-                "reference": "e83130b4eb19c2feb3a533132a172d2123ae5a6b"
+                "reference": "5e29177496b36d823382d4167ef714e2d1f43020"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/user/zipball/e83130b4eb19c2feb3a533132a172d2123ae5a6b",
-                "reference": "e83130b4eb19c2feb3a533132a172d2123ae5a6b",
+                "url": "https://api.github.com/repos/waaseyaa/user/zipball/5e29177496b36d823382d4167ef714e2d1f43020",
+                "reference": "5e29177496b36d823382d4167ef714e2d1f43020",
                 "shasum": ""
             },
             "require": {
@@ -4622,13 +4625,13 @@
             "description": "User entity, authentication, and session management for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/user/issues",
-                "source": "https://github.com/waaseyaa/user/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/user/tree/v0.1.0-alpha.107"
             },
-            "time": "2026-04-03T20:07:25+00:00"
+            "time": "2026-04-06T11:42:40+00:00"
         },
         {
             "name": "waaseyaa/validation",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/validation.git",
@@ -4667,13 +4670,13 @@
             "description": "Data validation constraints and validators for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/validation/issues",
-                "source": "https://github.com/waaseyaa/validation/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/validation/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-27T19:12:28+00:00"
         },
         {
             "name": "waaseyaa/workflows",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/workflows.git",
@@ -4718,7 +4721,7 @@
             "description": "Content moderation and editorial workflow states for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/workflows/issues",
-                "source": "https://github.com/waaseyaa/workflows/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/workflows/tree/v0.1.0-alpha.107"
             },
             "time": "2026-03-29T16:26:20+00:00"
         },
@@ -6575,7 +6578,7 @@
         },
         {
             "name": "waaseyaa/testing",
-            "version": "v0.1.0-alpha.106",
+            "version": "v0.1.0-alpha.107",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/testing.git",
@@ -6611,7 +6614,7 @@
             "description": "Testing utilities for Waaseyaa — base test case, entity factories, and helper traits.",
             "support": {
                 "issues": "https://github.com/waaseyaa/testing/issues",
-                "source": "https://github.com/waaseyaa/testing/tree/v0.1.0-alpha.106"
+                "source": "https://github.com/waaseyaa/testing/tree/v0.1.0-alpha.107"
             },
             "time": "2026-04-04T00:58:32+00:00"
         }
