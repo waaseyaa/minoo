@@ -5,6 +5,10 @@
       <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       {{ trans('sidebar.home') }}
     </a>
+    <a href="{{ lang_url('/studio') }}" class="sidebar-nav__item{% if current_path is defined and current_path == '/studio' %} sidebar-nav__item--active{% endif %}">
+      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      Watch Live
+    </a>
     <a href="{{ lang_url('/communities') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/communities' %} sidebar-nav__item--active{% endif %}">
       <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       {{ trans('nav.communities') }}

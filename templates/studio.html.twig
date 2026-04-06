@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %}
+
+{% block title %}The Studio — Watch Minoo being built — Minoo{% endblock %}
+
+{% block meta_description %}Watch Minoo being built, live, from inside Minoo. Russell streams the work from Sagamok Anishnawbek.{% endblock %}
+
+{% block content %}
+  <div class="content-well content-well--full">
+    <div class="content-section flow-lg">
+      <div>
+        <h1>The Studio</h1>
+        <p class="text-secondary">This is Minoo, being built. Right now, by Russell, from Sagamok Anishnawbek. Pull up a chair.</p>
+      </div>
+
+      <div class="live-embed">
+        <div class="live-embed__player">
+          <iframe
+            src="https://player.twitch.tv/?channel=jonesrussell42&parent=minoo.live&parent=localhost"
+            title="Twitch player — jonesrussell42"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+        <div class="live-embed__chat">
+          <iframe
+            src="https://www.twitch.tv/embed/jonesrussell42/chat?parent=minoo.live&parent=localhost&darkpopout"
+            title="Twitch chat — jonesrussell42"
+            loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <section class="flow">
+        <h2>What's happening here</h2>
+        <p>Most build-in-public happens on someone else's platform. Twitter, YouTube, somewhere the audience lives but the work doesn't. This is the opposite: the build is happening inside the thing being built. The platform watches itself being made.</p>
+        <p>If the stream is live above, you're watching me write the code that runs the page you're on right now. If it's offline, the player will tell you so — and you can <a href="https://www.twitch.tv/jonesrussell42" rel="noopener">follow on Twitch</a> to get pinged when it goes live again.</p>
+      </section>
+    </div>
+  </div>
+{% endblock %}

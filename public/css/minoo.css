@@ -8412,3 +8412,46 @@ a.btn--ghost:hover {
   }
 
 }
+
+@layer components {
+  .live-embed {
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: 1fr;
+    container-type: inline-size;
+  }
+  .live-embed__player {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface-elevated);
+  }
+  .live-embed__player iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .live-embed__chat {
+    height: clamp(360px, 50vh, 600px);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface-elevated);
+  }
+  .live-embed__chat iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  @container (min-width: 900px) {
+    .live-embed {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      align-items: stretch;
+    }
+    .live-embed__chat { height: auto; }
+  }
+}
+
