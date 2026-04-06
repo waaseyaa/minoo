@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ edition.get('headline') }}</title>
-    <link rel="stylesheet" href="/css/minoo.css?v={{ asset_version() }}">
+    <link rel="stylesheet" href="/css/minoo.css?v=50">
     <style>
         @page {
             size: Letter;
@@ -62,7 +62,8 @@
     {% for section, items in items_by_section %}
         <section>
             <h2>{{ section|capitalize }}</h2>
-            {% for item in items if item.get('included') %}
+            {% for item in items %}
+                {% if item.get('included') %}
                 <article>
                     {% if item.get('source_type') and source_entities[item.id()] is defined %}
                         {% set src = source_entities[item.id()] %}
@@ -76,6 +77,7 @@
                         <p>{{ item.get('inline_body')|striptags }}</p>
                     {% endif %}
                 </article>
+                {% endif %}
             {% endfor %}
         </section>
     {% endfor %}
