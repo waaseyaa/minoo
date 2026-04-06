@@ -92,7 +92,8 @@
                 "Minoo\\Provider\\FeedServiceProvider",
                 "Minoo\\Provider\\FeedScoringServiceProvider",
                 "Minoo\\Provider\\GameServiceProvider",
-                "Minoo\\Provider\\BlockServiceProvider"
+                "Minoo\\Provider\\BlockServiceProvider",
+                "Minoo\\Provider\\NewsletterServiceProvider"
             ]
         }
     },
