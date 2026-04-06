@@ -6,15 +6,18 @@ namespace Minoo\Provider;
 
 use Minoo\Domain\Newsletter\Service\EditionLifecycle;
 use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
+use Minoo\Domain\Newsletter\Service\NewsletterDispatcher;
 use Minoo\Domain\Newsletter\Service\NewsletterRenderer;
 use Minoo\Domain\Newsletter\Service\RenderTokenStore;
 use Minoo\Domain\Newsletter\ValueObject\SectionQuota;
 use Minoo\Entity\NewsletterEdition;
 use Minoo\Entity\NewsletterItem;
 use Minoo\Entity\NewsletterSubmission;
+use Minoo\Support\NewsletterMailer;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
+use Waaseyaa\Mail\MailDriverInterface;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
 
@@ -117,6 +120,22 @@ final class NewsletterServiceProvider extends ServiceProvider
                 timeoutSeconds: $config['pdf']['timeout_seconds'] ?? 60,
             );
         });
+
+        $this->singleton(NewsletterDispatcher::class, function () {
+            $config = require __DIR__ . '/../../config/newsletter.php';
+            $mailConfig = $this->config['mail'] ?? [];
+            $mailer = new NewsletterMailer(
+                driver: $this->resolve(MailDriverInterface::class),
+                apiKey: (string) ($mailConfig['sendgrid_api_key'] ?? ''),
+                fromAddress: (string) ($mailConfig['from_address'] ?? ''),
+                fromName: (string) ($mailConfig['from_name'] ?? 'Minoo Newsroom'),
+            );
+            return new NewsletterDispatcher(
+                mailService: $mailer,
+                communityConfig: $config['communities'] ?? [],
+                defaultCommunity: $config['default_community'] ?? 'manitoulin-regional',
+            );
+        });
     }
 
     public function routes(WaaseyaaRouter $router, ?EntityTypeManager $entityTypeManager = null): void
@@ -175,6 +194,16 @@ final class NewsletterServiceProvider extends ServiceProvider
             'newsletter.editor.generate',
             RouteBuilder::create('/coordinator/newsletter/{id}/generate')
                 ->controller('Minoo\Controller\NewsletterEditorController::generate')
+                ->requireRole('community_coordinator')
+                ->render()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.editor.send',
+            RouteBuilder::create('/coordinator/newsletter/{id}/send')
+                ->controller('Minoo\Controller\NewsletterEditorController::send')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')

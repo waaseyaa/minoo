@@ -6,6 +6,8 @@ return [
 
     'mode' => 'regional',
 
+    'default_community' => 'manitoulin-regional',
+
     'regional_cover_communities' => ['wiikwemkoong', 'sheguiandah', 'aundeck'],
 
     'sections' => [

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Domain\Newsletter\Exception\DispatchException;
 use Minoo\Domain\Newsletter\Exception\RenderException;
 use Minoo\Domain\Newsletter\Service\EditionLifecycle;
 use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
+use Minoo\Domain\Newsletter\Service\NewsletterDispatcher;
 use Minoo\Domain\Newsletter\Service\NewsletterRenderer;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,6 +27,7 @@ final class NewsletterEditorController
         private readonly EditionLifecycle $lifecycle,
         private readonly NewsletterAssembler $assembler,
         private readonly NewsletterRenderer $renderer,
+        private readonly NewsletterDispatcher $dispatcher,
     ) {
     }
 
@@ -143,6 +146,55 @@ final class NewsletterEditorController
         }
 
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
+    }
+
+    public function send(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $edition = $this->loadEditionOrFail($params['id'] ?? null);
+
+        try {
+            $recipient = $this->dispatcher->dispatch($edition);
+
+            $this->lifecycle->markSent($edition);
+            $this->entityTypeManager->getStorage('newsletter_edition')->save($edition);
+
+            $this->writeIngestLog(
+                title: sprintf('Newsletter edition #%d sent to %s', (int) $edition->id(), $recipient),
+                success: true,
+                message: sprintf('Dispatched PDF to %s', $recipient),
+            );
+
+            Flash::success(sprintf('Newsletter sent to %s.', $recipient));
+        } catch (DispatchException $e) {
+            $this->writeIngestLog(
+                title: sprintf('Newsletter edition #%d dispatch failed', (int) $edition->id()),
+                success: false,
+                message: $e->getMessage(),
+            );
+            Flash::error('Send failed: ' . $e->getMessage());
+        } catch (\DomainException $e) {
+            Flash::error('This edition cannot be sent in its current state. Refresh and try again.');
+        }
+
+        return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
+    }
+
+    private function writeIngestLog(string $title, bool $success, string $message): void
+    {
+        try {
+            $storage = $this->entityTypeManager->getStorage('ingest_log');
+            $log = $storage->create([
+                'title' => $title,
+                'status' => $success ? 'approved' : 'failed',
+                'source' => 'newsletter_dispatch',
+                'error_message' => $success ? '' : $message,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ]);
+            $storage->save($log);
+        } catch (\Throwable) {
+            // Audit logging is best-effort: never let it block the user flow.
+        }
     }
 
     private function loadEditionOrFail(mixed $id): EntityInterface
