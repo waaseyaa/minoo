@@ -12,7 +12,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class AgimController
 {
@@ -76,19 +76,19 @@ final class AgimController
     }
 
     /** Render the Agim game page. */
-    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('agim.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/agim',
         ]));
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /**
      * GET /api/games/agim/start?level={1-4}
      * Creates a new game session for the requested level.
      */
-    public function start(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function start(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $raw = (int) ($query['level'] ?? 1);
         $level = isset(self::TIERS[$raw]) ? $raw : 1;
@@ -120,7 +120,7 @@ final class AgimController
      * GET /api/games/agim/prompt?session_token=X
      * Returns the next numeral to answer.
      */
-    public function prompt(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function prompt(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = $query['session_token'] ?? '';
         if ($token === '') {
@@ -150,7 +150,7 @@ final class AgimController
      * Body: {session_token, numeral, answer}
      * Validates the answer, updates session state.
      */
-    public function answer(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function answer(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -211,7 +211,7 @@ final class AgimController
      * Body: {session_token}
      * Returns teaching data for all numbers in the level.
      */
-    public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -268,7 +268,7 @@ final class AgimController
     }
 
     /** GET /api/games/agim/stats — auth required (enforced at route level). */
-    public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->json(
             GameStatsCalculator::build($this->entityTypeManager, $account, 'agim', ['abandoned'], ['completed']),

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class LanguageController
 {
@@ -25,7 +25,7 @@ final class LanguageController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $page = max(1, (int) ($query['page'] ?? 1));
         $offset = ($page - 1) * self::PAGE_SIZE;
@@ -51,12 +51,12 @@ final class LanguageController
             'total_entries' => $total,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
@@ -76,15 +76,12 @@ final class LanguageController
             'inflected_forms' => $entry !== null ? $this->parseInflectedForms((string) $entry->get('inflected_forms')) : [],
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $entry !== null ? 200 : 404,
-        );
+        return new Response($html, $entry !== null ? 200 : 404);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function search(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function search(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $q = trim((string) ($query['q'] ?? ''));
 
@@ -106,7 +103,7 @@ final class LanguageController
             'search_total' => $searchTotal,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /**

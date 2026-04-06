@@ -103,8 +103,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
-        self::assertSame(302, $response->statusCode);
-        self::assertSame('/elders/request/42', $response->headers['Location']);
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame('/elders/request/42', $response->headers->get('Location'));
     }
 
     #[Test]
@@ -119,8 +119,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
-        self::assertSame(302, $response->statusCode);
-        self::assertSame('/', $response->headers['Location']);
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame('/', $response->headers->get('Location'));
     }
 
     #[Test]
@@ -136,8 +136,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
-        self::assertSame(302, $response->statusCode);
-        self::assertSame('/', $response->headers['Location']);
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame('/', $response->headers->get('Location'));
     }
 
     #[Test]
@@ -153,8 +153,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitLogin([], [], $this->account, $this->request);
 
-        self::assertSame(302, $response->statusCode);
-        self::assertSame('/', $response->headers['Location']);
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame('/', $response->headers->get('Location'));
     }
 
     #[Test]
@@ -185,8 +185,8 @@ final class AuthControllerTest extends TestCase
         $response = $this->createController()->submitRegister([], [], $this->account, $this->request);
 
         // Should auto-login and redirect to home
-        self::assertSame(302, $response->statusCode);
-        self::assertSame('/', $response->headers['Location']);
+        self::assertSame(302, $response->getStatusCode());
+        self::assertSame('/', $response->headers->get('Location'));
         // Session should be set (auto-login)
         self::assertSame(42, $_SESSION['waaseyaa_uid']);
     }
@@ -211,8 +211,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitForgotPassword([], [], $this->account, $this->request);
 
-        self::assertSame(200, $response->statusCode);
-        self::assertStringContainsString('submitted', $response->content);
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('submitted', $response->getContent());
     }
 
     #[Test]
@@ -227,8 +227,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitForgotPassword([], [], $this->account, $this->request);
 
-        self::assertSame(200, $response->statusCode);
-        self::assertStringContainsString('submitted', $response->content);
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('submitted', $response->getContent());
     }
 
     #[Test]
@@ -238,8 +238,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->verifyEmail([], [], $this->account, $this->request);
 
-        self::assertSame(400, $response->statusCode);
-        self::assertStringContainsString('invalid or has expired', $response->content);
+        self::assertSame(400, $response->getStatusCode());
+        self::assertStringContainsString('invalid or has expired', $response->getContent());
     }
 
     #[Test]
@@ -271,8 +271,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->verifyEmail([], [], $this->account, $this->request);
 
-        self::assertSame(200, $response->statusCode);
-        self::assertStringContainsString('verified', $response->content);
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('verified', $response->getContent());
         self::assertSame(99, $_SESSION['waaseyaa_uid']);
     }
 
@@ -305,8 +305,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitRegister([], [], $this->account, $this->request);
 
-        self::assertSame(200, $response->statusCode);
-        self::assertStringContainsString('check-email', $response->content);
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('check-email', $response->getContent());
     }
 
     #[Test]
@@ -333,8 +333,8 @@ final class AuthControllerTest extends TestCase
 
         $response = $this->createController()->submitRegister([], [], $this->account, $this->request);
 
-        self::assertSame(200, $response->statusCode);
-        self::assertStringContainsString('check-email', $response->content);
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('check-email', $response->getContent());
     }
 
     private function createSuccessfulUser(): User

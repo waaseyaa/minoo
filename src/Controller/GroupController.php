@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class GroupController
 {
@@ -21,7 +21,7 @@ final class GroupController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('group');
         $ids = $storage->getQuery()
@@ -49,12 +49,12 @@ final class GroupController
             'communities' => $communities,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('group');
@@ -114,9 +114,6 @@ final class GroupController
             'related_teachings' => $relatedTeachings,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $group !== null ? 200 : 404,
-        );
+        return new Response($html, $group !== null ? 200 : 404);
     }
 }

@@ -71,8 +71,8 @@ final class AgimControllerTest extends TestCase
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->start([], ['level' => '1'], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $body = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $body = json_decode($response->getContent(), true);
         $this->assertSame('abc-123', $body['session_token']);
         $this->assertSame(1, $body['level']);
         $this->assertSame(5, $body['total']);
@@ -89,7 +89,7 @@ final class AgimControllerTest extends TestCase
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->start([], ['level' => '99'], $this->account, $this->request);
 
-        $body = json_decode($response->content, true);
+        $body = json_decode($response->getContent(), true);
         $this->assertSame(1, $body['level']);
         $this->assertSame(5, $body['total']);
     }
@@ -129,7 +129,7 @@ final class AgimControllerTest extends TestCase
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->start([], ['level' => '4'], $this->account, $this->request);
 
-        $body = json_decode($response->content, true);
+        $body = json_decode($response->getContent(), true);
         $this->assertSame(19, $body['total']);
         $this->assertSame(4, $body['level']);
         $this->assertSame('streak', $createdValues['difficulty_tier']);
@@ -146,8 +146,8 @@ final class AgimControllerTest extends TestCase
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->prompt([], ['session_token' => 'tok-1'], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $body = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $body = json_decode($response->getContent(), true);
         $this->assertSame(3, $body['numeral']);
         $this->assertSame(3, $body['remaining']);
     }
@@ -160,7 +160,7 @@ final class AgimControllerTest extends TestCase
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->prompt([], ['session_token' => 'bad-token'], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -175,8 +175,8 @@ final class AgimControllerTest extends TestCase
         $request = $this->jsonPost(['session_token' => 'tok-1', 'numeral' => 1, 'answer' => 'bezhig']);
         $response = $controller->answer([], [], $this->account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $body = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $body = json_decode($response->getContent(), true);
         $this->assertTrue($body['correct']);
         $this->assertSame('bezhig', $body['expected_word']);
         $this->assertSame(2, $body['remaining']);
@@ -194,7 +194,7 @@ final class AgimControllerTest extends TestCase
         $request = $this->jsonPost(['session_token' => 'tok-1', 'numeral' => 1, 'answer' => 'wrong']);
         $response = $controller->answer([], [], $this->account, $request);
 
-        $body = json_decode($response->content, true);
+        $body = json_decode($response->getContent(), true);
         $this->assertFalse($body['correct']);
         $this->assertSame(3, $body['remaining']); // still 3 — numeral re-queued
         $this->assertSame('bezhig', $body['expected_word']);
@@ -212,7 +212,7 @@ final class AgimControllerTest extends TestCase
         $request = $this->jsonPost(['session_token' => 'tok-1', 'numeral' => 2, 'answer' => 'NIIZH']);
         $response = $controller->answer([], [], $this->account, $request);
 
-        $body = json_decode($response->content, true);
+        $body = json_decode($response->getContent(), true);
         $this->assertTrue($body['correct']);
     }
 
@@ -238,7 +238,7 @@ final class AgimControllerTest extends TestCase
         $request = $this->jsonPost(['session_token' => 'tok-1', 'numeral' => 5, 'answer' => 'naanan']);
         $response = $controller->answer([], [], $this->account, $request);
 
-        $body = json_decode($response->content, true);
+        $body = json_decode($response->getContent(), true);
         $this->assertTrue($body['correct']);
         $this->assertSame(0, $body['remaining']);
         $this->assertSame('completed', $setValues['status']);
@@ -265,8 +265,8 @@ final class AgimControllerTest extends TestCase
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->stats([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $body = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $body = json_decode($response->getContent(), true);
         $this->assertSame(0, $body['current_streak']);
     }
 

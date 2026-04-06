@@ -11,7 +11,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\User\User;
 
 final class AccountHomeController
@@ -21,7 +22,7 @@ final class AccountHomeController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('account/home.html.twig', LayoutTwigContext::withAccount($account, [
             'roles' => $account->getRoles(),
@@ -29,16 +30,16 @@ final class AccountHomeController
             'path' => '/account',
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function toggleElder(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function toggleElder(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('user');
         $user = $storage->load($account->id());
 
         if (!$user instanceof User) {
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/account']);
+            return new RedirectResponse('/account');
         }
 
         $isElder = ElderIdentity::isElder($user);
@@ -47,6 +48,6 @@ final class AccountHomeController
 
         Flash::success($isElder ? 'Elder status removed.' : 'You have identified as an Elder. Miigwech.');
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/account']);
+        return new RedirectResponse('/account');
     }
 }

@@ -10,7 +10,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class ElderSupportController
 {
@@ -21,7 +22,7 @@ final class ElderSupportController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function requestForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function requestForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $location = $this->resolveLocation($request);
 
@@ -31,12 +32,12 @@ final class ElderSupportController
             'location' => $location,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function submitRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function submitRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $name = trim((string) $request->request->get('name', ''));
         $phone = trim((string) $request->request->get('phone', ''));
@@ -73,7 +74,7 @@ final class ElderSupportController
                 'values' => compact('name', 'phone', 'community', 'type', 'notes', 'isRepresentative', 'elderName', 'consent'),
             ]));
 
-            return new SsrResponse(content: $html, statusCode: 422);
+            return new Response($html, 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
@@ -94,16 +95,12 @@ final class ElderSupportController
 
         Flash::success('Your request has been submitted. A coordinator will be in touch.');
 
-        return new SsrResponse(
-            content: '',
-            statusCode: 302,
-            headers: ['Location' => '/elders/request/' . $entity->uuid()],
-        );
+        return new RedirectResponse('/elders/request/' . $entity->uuid());
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function requestDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function requestDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $uuid = $params['uuid'] ?? '';
         $entity = null;
@@ -120,10 +117,7 @@ final class ElderSupportController
             'entity' => $entity,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $entity !== null ? 200 : 404,
-        );
+        return new Response($html, $entity !== null ? 200 : 404);
     }
 
     private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext

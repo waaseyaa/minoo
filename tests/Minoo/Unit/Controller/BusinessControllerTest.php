@@ -62,9 +62,9 @@ final class BusinessControllerTest extends TestCase
         $controller = new BusinessController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Nginaajiiw Salon &amp; Spa', $response->content);
-        $this->assertStringContainsString('Cedar &amp; Stone', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Nginaajiiw Salon &amp; Spa', $response->getContent());
+        $this->assertStringContainsString('Cedar &amp; Stone', $response->getContent());
     }
 
     #[Test]
@@ -75,8 +75,8 @@ final class BusinessControllerTest extends TestCase
         $controller = new BusinessController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('/businesses', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('/businesses', $response->getContent());
     }
 
     #[Test]
@@ -92,8 +92,8 @@ final class BusinessControllerTest extends TestCase
         $controller = new BusinessController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'nginaajiiw-salon-spa'], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Nginaajiiw Salon &amp; Spa', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Nginaajiiw Salon &amp; Spa', $response->getContent());
     }
 
     #[Test]
@@ -104,7 +104,7 @@ final class BusinessControllerTest extends TestCase
         $controller = new BusinessController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -120,6 +120,6 @@ final class BusinessControllerTest extends TestCase
         $controller = new BusinessController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'some-group'], [], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 }

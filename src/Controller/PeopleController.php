@@ -10,7 +10,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class PeopleController
 {
@@ -21,7 +21,7 @@ final class PeopleController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('resource_person');
         $queryBuilder = $storage->getQuery()
@@ -78,12 +78,12 @@ final class PeopleController
             'location' => $location,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('resource_person');
@@ -156,10 +156,7 @@ final class PeopleController
             'related_events' => $relatedEvents,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $person !== null ? 200 : 404,
-        );
+        return new Response($html, $person !== null ? 200 : 404);
     }
 
     private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext

@@ -42,7 +42,7 @@ final class ElderSupportControllerTest extends TestCase
         $controller = new ElderSupportController($this->entityTypeManager, $this->twig);
         $response = $controller->requestForm([], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -53,7 +53,7 @@ final class ElderSupportControllerTest extends TestCase
 
         $response = $controller->submitRequest([], [], $this->account, $request);
 
-        $this->assertSame(422, $response->statusCode);
+        $this->assertSame(422, $response->getStatusCode());
     }
 
     #[Test]
@@ -67,8 +67,8 @@ final class ElderSupportControllerTest extends TestCase
 
         $response = $controller->submitRequest([], [], $this->account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('name', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('name', $response->getContent());
     }
 
     #[Test]
@@ -83,8 +83,8 @@ final class ElderSupportControllerTest extends TestCase
 
         $response = $controller->submitRequest([], [], $this->account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('type', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('type', $response->getContent());
     }
 
     #[Test]
@@ -109,7 +109,7 @@ final class ElderSupportControllerTest extends TestCase
         $controller = new ElderSupportController($this->entityTypeManager, $this->twig);
         $response = $controller->requestDetail(['uuid' => $uuid], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -129,7 +129,7 @@ final class ElderSupportControllerTest extends TestCase
         $controller = new ElderSupportController($this->entityTypeManager, $this->twig);
         $response = $controller->requestDetail(['uuid' => 'nonexistent'], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -138,7 +138,7 @@ final class ElderSupportControllerTest extends TestCase
         $controller = new ElderSupportController($this->entityTypeManager, $this->twig);
         $response = $controller->requestDetail([], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -156,8 +156,8 @@ final class ElderSupportControllerTest extends TestCase
 
         $response = $controller->submitRequest([], [], $this->account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('consent', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('consent', $response->getContent());
     }
 
     #[Test]
@@ -175,7 +175,7 @@ final class ElderSupportControllerTest extends TestCase
 
         $response = $controller->submitRequest([], [], $this->account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('elder_name', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('elder_name', $response->getContent());
     }
 }

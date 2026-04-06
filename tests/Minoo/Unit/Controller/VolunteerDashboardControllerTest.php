@@ -79,8 +79,8 @@ final class VolunteerDashboardControllerTest extends TestCase
         $controller = new VolunteerDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->index([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Mary', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Mary', $response->getContent());
     }
 
     #[Test]
@@ -91,7 +91,7 @@ final class VolunteerDashboardControllerTest extends TestCase
         $controller = new VolunteerDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->index([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -127,8 +127,8 @@ final class VolunteerDashboardControllerTest extends TestCase
         $controller = new VolunteerDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->editForm([], [], $account, HttpRequest::create('/'));
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('edit:John', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('edit:John', $response->getContent());
     }
 
     #[Test]
@@ -153,7 +153,7 @@ final class VolunteerDashboardControllerTest extends TestCase
         $controller = new VolunteerDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->editForm([], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -192,7 +192,7 @@ final class VolunteerDashboardControllerTest extends TestCase
         $controller = new VolunteerDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->submitEdit([], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('555-9999', $volunteer->get('phone'));
         $this->assertSame('Evenings', $volunteer->get('availability'));
     }
@@ -226,7 +226,7 @@ final class VolunteerDashboardControllerTest extends TestCase
         $controller = new VolunteerDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->toggleAvailability([], [], $account, HttpRequest::create('/', 'POST'));
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('unavailable', $volunteer->get('status'));
     }
 
@@ -259,7 +259,7 @@ final class VolunteerDashboardControllerTest extends TestCase
         $controller = new VolunteerDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->toggleAvailability([], [], $account, HttpRequest::create('/', 'POST'));
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('active', $volunteer->get('status'));
     }
 }

@@ -13,7 +13,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class FeedController
 {
@@ -23,7 +24,7 @@ final class FeedController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $resolved = self::resolveFilter($query['filter'] ?? 'all');
         $ctx = $this->buildContext($request, $query, $account, $resolved['filter']);
@@ -55,10 +56,10 @@ final class FeedController
             $headers['Set-Cookie'] = "minoo_fv=1; Path=/; Expires={$expires}; SameSite=Lax";
         }
 
-        return new SsrResponse(content: $html, headers: $headers);
+        return new Response($html, 200, $headers);
     }
 
-    public function api(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function api(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $ctx = $this->buildContext($request, $query, $account);
         $response = $this->assembler->assemble($ctx);
@@ -75,14 +76,10 @@ final class FeedController
             'activeFilter' => $response->activeFilter,
         ], JSON_THROW_ON_ERROR);
 
-        return new SsrResponse(
-            content: $json,
-            statusCode: 200,
-            headers: ['Content-Type' => 'application/json'],
-        );
+        return new Response($json, 200, ['Content-Type' => 'application/json']);
     }
 
-    public function explore(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function explore(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $type = $query['type'] ?? 'all';
         $q = trim($query['q'] ?? '');
@@ -100,7 +97,7 @@ final class FeedController
             $target .= '?' . http_build_query(['q' => $q]);
         }
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $target]);
+        return new RedirectResponse($target);
     }
 
     /**

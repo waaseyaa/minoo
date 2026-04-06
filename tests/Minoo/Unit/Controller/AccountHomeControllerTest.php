@@ -48,7 +48,7 @@ final class AccountHomeControllerTest extends TestCase
         $controller = $this->createController($twig);
         $response = $controller->index([], [], $account, new HttpRequest());
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -70,7 +70,7 @@ final class AccountHomeControllerTest extends TestCase
         $controller = $this->createController($twig);
         $response = $controller->index([], [], $account, new HttpRequest());
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -139,8 +139,8 @@ final class AccountHomeControllerTest extends TestCase
         $_SESSION = [];
         $response = $controller->toggleElder([], [], $account, HttpRequest::create('/account/elder-toggle', 'POST'));
 
-        $this->assertSame(302, $response->statusCode);
-        $this->assertSame('/account', $response->headers['Location']);
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertSame('/account', $response->headers->get('Location'));
         $this->assertTrue(ElderIdentity::isElder($user));
     }
 
@@ -163,7 +163,7 @@ final class AccountHomeControllerTest extends TestCase
         $_SESSION = [];
         $response = $controller->toggleElder([], [], $account, HttpRequest::create('/account/elder-toggle', 'POST'));
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertFalse(ElderIdentity::isElder($user));
     }
 }

@@ -63,7 +63,7 @@ final class MessagingControllerTest extends TestCase
 
         $response = $this->controller->createMessage(['id' => '10'], [], $account, $request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     #[Test]
@@ -106,8 +106,8 @@ final class MessagingControllerTest extends TestCase
 
         $response = $this->controller->createMessage(['id' => (string) $threadId], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $this->assertStringContainsString('"id":99', $response->content);
+        $this->assertSame(201, $response->getStatusCode());
+        $this->assertStringContainsString('"id":99', $response->getContent());
     }
 
     #[Test]
@@ -123,8 +123,8 @@ final class MessagingControllerTest extends TestCase
 
         $response = $this->controller->createThread([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('At least 2 participants', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('At least 2 participants', $response->getContent());
     }
 
     #[Test]
@@ -161,7 +161,7 @@ final class MessagingControllerTest extends TestCase
         $request = $this->jsonRequest(['body' => 'Edited']);
         $response = $this->controller->editMessage(['id' => (string) $threadId, 'message_id' => (string) $messageId], [], $account, $request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     #[Test]
@@ -198,9 +198,9 @@ final class MessagingControllerTest extends TestCase
         $request = $this->jsonRequest(['body' => 'Edited body']);
         $response = $this->controller->editMessage(['id' => (string) $threadId, 'message_id' => (string) $messageId], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('"body":"Edited body"', $response->content);
-        $this->assertStringContainsString('"edited_at":', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('"body":"Edited body"', $response->getContent());
+        $this->assertStringContainsString('"edited_at":', $response->getContent());
     }
 
     #[Test]
@@ -236,8 +236,8 @@ final class MessagingControllerTest extends TestCase
         $request = HttpRequest::create('/', 'DELETE');
         $response = $this->controller->deleteMessage(['id' => (string) $threadId, 'message_id' => (string) $messageId], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('"deleted":true', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('"deleted":true', $response->getContent());
     }
 
     #[Test]
@@ -274,8 +274,8 @@ final class MessagingControllerTest extends TestCase
         $request = HttpRequest::create('/', 'POST');
         $response = $this->controller->markRead(['id' => (string) $threadId], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('"last_read_at":', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('"last_read_at":', $response->getContent());
     }
 
     #[Test]
@@ -324,8 +324,8 @@ final class MessagingControllerTest extends TestCase
         $request = HttpRequest::create('/', 'GET');
         $response = $this->controller->unreadCount([], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('"unread_count":1', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('"unread_count":1', $response->getContent());
     }
 }
 

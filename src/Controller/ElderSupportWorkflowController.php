@@ -8,7 +8,8 @@ use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class ElderSupportWorkflowController
 {
@@ -16,10 +17,10 @@ final class ElderSupportWorkflowController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
-    public function assignVolunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function assignVolunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
-            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+            return new Response('Forbidden', 403);
         }
 
         $esrid = (int) ($params['esrid'] ?? 0);
@@ -29,14 +30,14 @@ final class ElderSupportWorkflowController
         $entity = $esrid > 0 ? $storage->load($esrid) : null;
 
         if ($entity === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         $volunteerStorage = $this->entityTypeManager->getStorage('volunteer');
         $volunteer = $volunteerId > 0 ? $volunteerStorage->load($volunteerId) : null;
 
         if ($volunteer === null) {
-            return new SsrResponse(content: 'Volunteer not found', statusCode: 404);
+            return new Response('Volunteer not found', 404);
         }
 
         $entity->set('assigned_volunteer', $volunteerId);
@@ -46,10 +47,10 @@ final class ElderSupportWorkflowController
         $storage->save($entity);
 
         Flash::success('Volunteer assigned successfully.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
+        return new RedirectResponse('/dashboard/coordinator');
     }
 
-    public function startRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function startRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->volunteerTransition(
             $params,
@@ -60,22 +61,22 @@ final class ElderSupportWorkflowController
         );
     }
 
-    public function completeRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function completeRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $esrid = (int) ($params['esrid'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
         $entity = $esrid > 0 ? $storage->load($esrid) : null;
 
         if ($entity === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         if ($entity->get('assigned_volunteer') !== $account->id()) {
-            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+            return new Response('Forbidden', 403);
         }
 
         if ($entity->get('status') !== 'in_progress') {
-            return new SsrResponse(content: 'Invalid status transition', statusCode: 422);
+            return new Response('Invalid status transition', 422);
         }
 
         $notes = trim((string) $request->request->get('completion_notes', ''));
@@ -88,13 +89,13 @@ final class ElderSupportWorkflowController
         $storage->save($entity);
 
         Flash::success('Request marked as complete. The coordinator will follow up.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        return new RedirectResponse('/dashboard/volunteer');
     }
 
-    public function confirmRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function confirmRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
-            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+            return new Response('Forbidden', 403);
         }
 
         $esrid = (int) ($params['esrid'] ?? 0);
@@ -102,11 +103,11 @@ final class ElderSupportWorkflowController
         $entity = $esrid > 0 ? $storage->load($esrid) : null;
 
         if ($entity === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         if ($entity->get('status') !== 'completed') {
-            return new SsrResponse(content: 'Invalid status transition', statusCode: 422);
+            return new Response('Invalid status transition', 422);
         }
 
         $entity->set('status', 'confirmed');
@@ -114,13 +115,13 @@ final class ElderSupportWorkflowController
         $storage->save($entity);
 
         Flash::success('Request marked as confirmed. Thank you for following up.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
+        return new RedirectResponse('/dashboard/coordinator');
     }
 
-    public function cancelRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function cancelRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
-            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+            return new Response('Forbidden', 403);
         }
 
         $esrid = (int) ($params['esrid'] ?? 0);
@@ -128,12 +129,12 @@ final class ElderSupportWorkflowController
         $entity = $esrid > 0 ? $storage->load($esrid) : null;
 
         if ($entity === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         $status = $entity->get('status');
         if (!in_array($status, ['open', 'assigned'], true)) {
-            return new SsrResponse(content: 'Invalid status transition', statusCode: 422);
+            return new Response('Invalid status transition', 422);
         }
 
         $reason = trim((string) $request->request->get('reason', ''));
@@ -144,25 +145,25 @@ final class ElderSupportWorkflowController
         $storage->save($entity);
 
         Flash::success('Request cancelled.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
+        return new RedirectResponse('/dashboard/coordinator');
     }
 
-    public function declineRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function declineRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $esrid = (int) ($params['esrid'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
         $entity = $esrid > 0 ? $storage->load($esrid) : null;
 
         if ($entity === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         if ($entity->get('assigned_volunteer') !== $account->id()) {
-            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+            return new Response('Forbidden', 403);
         }
 
         if ($entity->get('status') !== 'assigned') {
-            return new SsrResponse(content: 'Invalid status transition', statusCode: 422);
+            return new Response('Invalid status transition', 422);
         }
 
         $entity->set('status', 'open');
@@ -172,13 +173,13 @@ final class ElderSupportWorkflowController
         $storage->save($entity);
 
         Flash::success('Request declined. The coordinator has been notified.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        return new RedirectResponse('/dashboard/volunteer');
     }
 
-    public function reassignVolunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function reassignVolunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
-            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+            return new Response('Forbidden', 403);
         }
 
         $esrid = (int) ($params['esrid'] ?? 0);
@@ -188,14 +189,14 @@ final class ElderSupportWorkflowController
         $entity = $esrid > 0 ? $storage->load($esrid) : null;
 
         if ($entity === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         $volunteerStorage = $this->entityTypeManager->getStorage('volunteer');
         $volunteer = $volunteerId > 0 ? $volunteerStorage->load($volunteerId) : null;
 
         if ($volunteer === null) {
-            return new SsrResponse(content: 'Volunteer not found', statusCode: 404);
+            return new Response('Volunteer not found', 404);
         }
 
         $entity->set('assigned_volunteer', $volunteerId);
@@ -205,7 +206,7 @@ final class ElderSupportWorkflowController
         $storage->save($entity);
 
         Flash::success('Request reassigned.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator']);
+        return new RedirectResponse('/dashboard/coordinator');
     }
 
     private function volunteerTransition(
@@ -214,22 +215,22 @@ final class ElderSupportWorkflowController
         string $fromStatus,
         string $toStatus,
         string $message,
-    ): SsrResponse
+    ): Response
     {
         $esrid = (int) ($params['esrid'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
         $entity = $esrid > 0 ? $storage->load($esrid) : null;
 
         if ($entity === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         if ($entity->get('assigned_volunteer') !== $account->id()) {
-            return new SsrResponse(content: 'Forbidden', statusCode: 403);
+            return new Response('Forbidden', 403);
         }
 
         if ($entity->get('status') !== $fromStatus) {
-            return new SsrResponse(content: 'Invalid status transition', statusCode: 422);
+            return new Response('Invalid status transition', 422);
         }
 
         $entity->set('status', $toStatus);
@@ -237,6 +238,6 @@ final class ElderSupportWorkflowController
         $storage->save($entity);
 
         Flash::success($message);
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        return new RedirectResponse('/dashboard/volunteer');
     }
 }

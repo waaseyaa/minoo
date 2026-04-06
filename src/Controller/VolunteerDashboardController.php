@@ -10,7 +10,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class VolunteerDashboardController
 {
@@ -19,7 +20,7 @@ final class VolunteerDashboardController
         private readonly Environment $twig,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
 
@@ -47,14 +48,14 @@ final class VolunteerDashboardController
             'volunteer' => $volunteer,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function editForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function editForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->findVolunteerByAccount($account);
         if ($volunteer === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         $html = $this->twig->render('dashboard/volunteer-edit.html.twig', LayoutTwigContext::withAccount($account, [
@@ -63,14 +64,14 @@ final class VolunteerDashboardController
             'values' => [],
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function submitEdit(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function submitEdit(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->findVolunteerByAccount($account);
         if ($volunteer === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         $phone = trim((string) $request->request->get('phone', ''));
@@ -92,7 +93,7 @@ final class VolunteerDashboardController
                     'notes' => trim((string) $request->request->get('notes', '')),
                 ],
             ]));
-            return new SsrResponse(content: $html, statusCode: 422);
+            return new Response($html, 422);
         }
 
         $volunteer->set('phone', $phone);
@@ -116,14 +117,14 @@ final class VolunteerDashboardController
         $storage->save($volunteer);
 
         Flash::success('Your profile has been updated.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        return new RedirectResponse('/dashboard/volunteer');
     }
 
-    public function toggleAvailability(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function toggleAvailability(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->findVolunteerByAccount($account);
         if ($volunteer === null) {
-            return new SsrResponse(content: 'Not found', statusCode: 404);
+            return new Response('Not found', 404);
         }
 
         $newStatus = $volunteer->get('status') === 'active' ? 'unavailable' : 'active';
@@ -135,7 +136,7 @@ final class VolunteerDashboardController
 
         $message = $newStatus === 'active' ? 'You are now active.' : 'You are now unavailable.';
         Flash::success($message);
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+        return new RedirectResponse('/dashboard/volunteer');
     }
 
     private function findVolunteerByAccount(AccountInterface $account): ?\Waaseyaa\Entity\ContentEntityBase

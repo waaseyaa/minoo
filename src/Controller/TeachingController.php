@@ -11,7 +11,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class TeachingController
 {
@@ -22,7 +22,7 @@ final class TeachingController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('teaching');
         $ids = $storage->getQuery()
@@ -50,12 +50,12 @@ final class TeachingController
             'communities' => $communities,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('teaching');
@@ -123,10 +123,7 @@ final class TeachingController
             'image_credit' => $imageCredit,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $teaching !== null ? 200 : 404,
-        );
+        return new Response($html, $teaching !== null ? 200 : 404);
     }
 
     /**

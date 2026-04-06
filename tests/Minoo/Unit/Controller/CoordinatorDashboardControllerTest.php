@@ -96,11 +96,11 @@ final class CoordinatorDashboardControllerTest extends TestCase
         $controller = new CoordinatorDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->index([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Elder Mary', $response->content);
-        $this->assertStringContainsString('John Helper', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Elder Mary', $response->getContent());
+        $this->assertStringContainsString('John Helper', $response->getContent());
         // pending_application_count should be an integer, not empty
-        $this->assertMatchesRegularExpression('/pending:\d+/', $response->content);
+        $this->assertMatchesRegularExpression('/pending:\d+/', $response->getContent());
     }
 
     #[Test]
@@ -162,18 +162,18 @@ final class CoordinatorDashboardControllerTest extends TestCase
         $controller = new CoordinatorDashboardController($this->entityTypeManager, $this->twig);
         $response = $controller->index([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
         // Same community first (< 1 km), then near volunteer (~68 km)
-        $this->assertStringContainsString('Same Vol:< 1 km;', $response->content);
-        $this->assertStringContainsString('Near Vol:68 km;', $response->content);
+        $this->assertStringContainsString('Same Vol:< 1 km;', $response->getContent());
+        $this->assertStringContainsString('Near Vol:68 km;', $response->getContent());
 
         // Same Vol should appear before Near Vol
-        $samePos = strpos($response->content, 'Same Vol');
-        $nearPos = strpos($response->content, 'Near Vol');
+        $samePos = strpos($response->getContent(), 'Same Vol');
+        $nearPos = strpos($response->getContent(), 'Near Vol');
         $this->assertLessThan($nearPos, $samePos);
 
         // Community names are resolved from IDs
-        $this->assertStringContainsString('[1=Sagamok]', $response->content);
-        $this->assertStringContainsString('[2=Sudbury]', $response->content);
+        $this->assertStringContainsString('[1=Sagamok]', $response->getContent());
+        $this->assertStringContainsString('[2=Sudbury]', $response->getContent());
     }
 }

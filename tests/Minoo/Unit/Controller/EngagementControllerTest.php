@@ -80,8 +80,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->react([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid target_type', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Invalid target_type', $response->getContent());
     }
 
     #[Test]
@@ -95,8 +95,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->comment([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid target_type', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Invalid target_type', $response->getContent());
     }
 
     #[Test]
@@ -109,8 +109,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->follow([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid target_type', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Invalid target_type', $response->getContent());
     }
 
     #[Test]
@@ -125,8 +125,8 @@ final class EngagementControllerTest extends TestCase
             $request,
         );
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Invalid target_type', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Invalid target_type', $response->getContent());
     }
 
     // --- Reaction type validation ---
@@ -147,7 +147,7 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->react([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
+        $this->assertSame(422, $response->getStatusCode());
     }
 
     // --- Missing fields ---
@@ -159,8 +159,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->react([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Missing required fields', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Missing required fields', $response->getContent());
     }
 
     #[Test]
@@ -170,8 +170,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->comment([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Missing required fields', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Missing required fields', $response->getContent());
     }
 
     // --- Body length validation ---
@@ -183,8 +183,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->createPost([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Body must be', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Body must be', $response->getContent());
     }
 
     #[Test]
@@ -194,8 +194,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->createPost([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Body must be', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Body must be', $response->getContent());
     }
 
     #[Test]
@@ -209,8 +209,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->comment([], [], $this->mockAccount(), $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Body must be', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Body must be', $response->getContent());
     }
 
     // --- Happy-path creation tests ---
@@ -229,8 +229,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->react([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame(1, $json['id']);
     }
 
@@ -248,8 +248,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->react([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame(7, $json['id']);
     }
 
@@ -267,8 +267,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->comment([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame(5, $json['id']);
         $this->assertSame('Great event!', $json['body']);
     }
@@ -287,8 +287,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->follow([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame(7, $json['id']);
     }
 
@@ -304,8 +304,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->createPost([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame(3, $json['id']);
     }
 
@@ -336,8 +336,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->createPost([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame(3, $json['id']);
     }
 
@@ -376,8 +376,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->createPost([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame(3, $json['id']);
     }
 
@@ -394,8 +394,8 @@ final class EngagementControllerTest extends TestCase
         $request = HttpRequest::create('/api/engagement/react/1', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '1'], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertTrue($json['deleted']);
     }
 
@@ -410,8 +410,8 @@ final class EngagementControllerTest extends TestCase
         $request = HttpRequest::create('/api/engagement/react/1', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '1'], [], $account, $request);
 
-        $this->assertSame(403, $response->statusCode);
-        $this->assertStringContainsString('Forbidden', $response->content);
+        $this->assertSame(403, $response->getStatusCode());
+        $this->assertStringContainsString('Forbidden', $response->getContent());
     }
 
     #[Test]
@@ -425,8 +425,8 @@ final class EngagementControllerTest extends TestCase
         $request = HttpRequest::create('/api/engagement/react/1', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '1'], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertTrue($json['deleted']);
     }
 
@@ -440,7 +440,7 @@ final class EngagementControllerTest extends TestCase
         $request = HttpRequest::create('/api/engagement/react/999', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '999'], [], $account, $request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -454,7 +454,7 @@ final class EngagementControllerTest extends TestCase
         $request = HttpRequest::create('/api/engagement/comment/1', 'DELETE');
         $response = $this->controller->deleteComment(['id' => '1'], [], $account, $request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     #[Test]
@@ -468,7 +468,7 @@ final class EngagementControllerTest extends TestCase
         $request = HttpRequest::create('/api/engagement/post/1', 'DELETE');
         $response = $this->controller->deletePost(['id' => '1'], [], $account, $request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     // --- Constructor exception safety net (#453) ---
@@ -486,8 +486,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->react([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(422, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame('Invalid entity data', $json['error']);
     }
 
@@ -504,8 +504,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->comment([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(422, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame('Invalid entity data', $json['error']);
     }
 
@@ -522,8 +522,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->follow([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(422, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame('Invalid entity data', $json['error']);
     }
 
@@ -540,8 +540,8 @@ final class EngagementControllerTest extends TestCase
 
         $response = $this->controller->createPost([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(422, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertSame('Invalid entity data', $json['error']);
     }
 }

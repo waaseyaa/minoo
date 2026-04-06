@@ -76,7 +76,7 @@ final class IngestionDashboardControllerTest extends TestCase
             $account = $this->createMock(AccountInterface::class);
             $request = new HttpRequest();
             $response = $controller->index([], [], $account, $request);
-            $this->assertSame(200, $response->statusCode);
+            $this->assertSame(200, $response->getStatusCode());
         } finally {
             if (is_file($statusPath)) {
                 unlink($statusPath);
@@ -142,7 +142,7 @@ final class IngestionDashboardControllerTest extends TestCase
 
         $response = $controller->index([], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -194,7 +194,7 @@ final class IngestionDashboardControllerTest extends TestCase
 
         $response = $controller->index([], ['status' => 'failed'], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -239,7 +239,7 @@ final class IngestionDashboardControllerTest extends TestCase
 
         $response = $controller->index([], ['status' => 'evil_injection'], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     private function queryMockReturning(array $executeResult, bool $count = false, bool $allowCondition = false): EntityQueryInterface

@@ -62,8 +62,8 @@ final class CrosswordControllerTest extends TestCase
         $controller = new CrosswordController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->random([], ['tier' => 'medium'], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $content = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $content = json_decode($response->getContent(), true);
         $this->assertSame('no_puzzles', $content['error']);
         $this->assertSame('medium', $content['tier']);
     }
@@ -76,8 +76,8 @@ final class CrosswordControllerTest extends TestCase
         $controller = new CrosswordController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->random([], ['tier' => 'extreme'], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $content = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $content = json_decode($response->getContent(), true);
         $this->assertSame('easy', $content['tier']);
     }
 }

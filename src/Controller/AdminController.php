@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class AdminController
 {
@@ -15,12 +15,12 @@ final class AdminController
         $this->projectRoot = dirname(__DIR__, 2);
     }
 
-    public function spa(): SsrResponse
+    public function spa(): Response
     {
         $spaIndex = $this->projectRoot . '/public/admin/index.html';
 
         if (file_exists($spaIndex)) {
-            return new SsrResponse(content: file_get_contents($spaIndex), statusCode: 200);
+            return new Response(file_get_contents($spaIndex));
         }
 
         $html = <<<'HTML'
@@ -60,6 +60,6 @@ final class AdminController
         </html>
         HTML;
 
-        return new SsrResponse(content: $html, statusCode: 200);
+        return new Response($html);
     }
 }

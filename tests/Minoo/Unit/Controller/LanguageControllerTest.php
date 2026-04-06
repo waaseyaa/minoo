@@ -66,9 +66,9 @@ final class LanguageControllerTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('makwa', $response->content);
-        $this->assertStringContainsString('miigwech', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('makwa', $response->getContent());
+        $this->assertStringContainsString('miigwech', $response->getContent());
     }
 
     #[Test]
@@ -79,8 +79,8 @@ final class LanguageControllerTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('/language', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('/language', $response->getContent());
     }
 
     #[Test]
@@ -99,8 +99,8 @@ final class LanguageControllerTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('aniin', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('aniin', $response->getContent());
     }
 
     #[Test]
@@ -125,10 +125,10 @@ final class LanguageControllerTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->show(['slug' => 'makwa'], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('makwa', $response->content);
-        $this->assertStringContainsString('plural: makwag', $response->content);
-        $this->assertStringContainsString('diminutive: makoons', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('makwa', $response->getContent());
+        $this->assertStringContainsString('plural: makwag', $response->getContent());
+        $this->assertStringContainsString('diminutive: makoons', $response->getContent());
     }
 
     #[Test]
@@ -139,7 +139,7 @@ final class LanguageControllerTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -161,8 +161,8 @@ final class LanguageControllerTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->show(['slug' => 'makwa'], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('makwag pl; makoons dim', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('makwag pl; makoons dim', $response->getContent());
     }
 
     #[Test]
@@ -175,6 +175,6 @@ final class LanguageControllerTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->show(['slug' => 'secret-word'], [], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 }
