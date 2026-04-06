@@ -1,0 +1,69 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Newsroom — {{ edition.get('headline') }}{% endblock %}
+
+{% block content %}
+<section class="newsroom">
+    <header>
+        <h1>{{ edition.get('headline') }}</h1>
+        <p>
+            Vol. {{ edition.get('volume') }} No. {{ edition.get('issue_number') }} ·
+            {{ edition.get('community_id') ?: 'Regional' }} ·
+            <span class="status status--{{ edition.get('status') }}">{{ edition.get('status') }}</span>
+        </p>
+    </header>
+
+    {% for type, msgs in flashes %}
+        {% for msg in msgs %}
+            <div class="flash flash--{{ type }}">{{ msg }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="newsroom-actions">
+        {% if edition.get('status') == 'draft' %}
+            <form method="post" action="/coordinator/newsletter/{{ edition.id() }}/assemble">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Auto-fill from NorthCloud</button>
+            </form>
+        {% endif %}
+
+        {% if edition.get('status') == 'curating' %}
+            <form method="post" action="/coordinator/newsletter/{{ edition.id() }}/approve">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Approve</button>
+            </form>
+        {% endif %}
+
+        {% if edition.get('status') == 'approved' %}
+            <form method="post" action="/coordinator/newsletter/{{ edition.id() }}/generate">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Generate PDF</button>
+            </form>
+        {% endif %}
+
+        {% if edition.get('status') == 'generated' %}
+            <a href="/newsletter/{{ edition.get('community_id') ?: 'regional' }}/{{ edition.get('volume') }}-{{ edition.get('issue_number') }}.pdf">Download PDF</a>
+            <form method="post" action="/coordinator/newsletter/{{ edition.id() }}/send">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">Send to printer</button>
+            </form>
+        {% endif %}
+    </div>
+
+    {% for section, items in items_by_section %}
+        <section class="newsroom-section">
+            <h2>{{ section|capitalize }}</h2>
+            <ul>
+                {% for item in items %}
+                    <li>
+                        <strong>{{ item.get('editor_blurb') ?: item.get('inline_title') }}</strong>
+                        <small>{{ item.get('source_type') }} #{{ item.get('source_id') }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% else %}
+        <p>No items yet — assemble to populate.</p>
+    {% endfor %}
+</section>
+{% endblock %}
