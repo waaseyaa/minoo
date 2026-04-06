@@ -220,6 +220,8 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **ISC profiles have no email field**: No sub-page contains band office email. Email must come from community website scraping.
 - **Website leadership scraping is unreliable**: NC Go scraper's `ExtractLeaders` has ~80% false positive rate — role context bleeds across entire pages, matching nav links and headings as names. Use ISC Governance sub-page for authoritative leadership data instead. See indigenous-harvesters#2.
 - **SSH to razor-crest rate-limits**: fail2ban blocks rapid SSH connections. Add 10-15s delays between SSH commands. Use SSH tunnels (`-f -N -L`) for sustained API access.
+- **`public/index.php` must always call `$response->send()`**: Never gate the emit on `PHP_SAPI === 'cli-server'`. Symfony `Response::send()` is SAPI-aware and works correctly under fpm-fcgi, cli, and cli-server. Gating it (as was briefly done in 6c4e755) produces a WSOD under Caddy + PHP-FPM: kernel handles the request, returns the Response object, and nothing emits the body — every route returns 200 with zero content-length. Discovered via a production outage during the alpha.75 → alpha.107 jump. The old SsrResponse-era kernel echoed content during `handle()`, which is why the gate ever seemed to work.
+- **Verify production with body size, not HTTP status**: A `curl -I` or `curl -w "%{http_code}"` returning 200 does NOT prove the app is alive. A crashing kernel can still emit headers. Always `curl -sS -o file -w "%{http_code}/%{size_download}"` and spot-check a `<title>` tag after deploys. Zero-byte 200s are the classic "PHP fatal after headers sent" failure mode.
 
 ## GitHub Workflow
 
