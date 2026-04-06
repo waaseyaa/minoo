@@ -11,7 +11,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\User\User;
 
 final class RoleManagementController
@@ -24,7 +25,7 @@ final class RoleManagementController
         private readonly Environment $twig,
     ) {}
 
-    public function changeRole(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function changeRole(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $targetUid = (int) $params['uid'];
         $action = $request->request->get('action', '');
@@ -35,13 +36,13 @@ final class RoleManagementController
             || !in_array($role, self::ALLOWED_ROLES, true)) {
             Flash::error('Invalid request.');
 
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+            return new RedirectResponse($referrer);
         }
 
         if ($targetUid === $account->id()) {
             Flash::error('You cannot modify your own roles.');
 
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+            return new RedirectResponse($referrer);
         }
 
         $actorRoles = $account->getRoles();
@@ -51,13 +52,13 @@ final class RoleManagementController
         if (!$isCoordinator && !$isAdmin) {
             Flash::error('You do not have permission to manage roles.');
 
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/account']);
+            return new RedirectResponse('/account');
         }
 
         if ($role === 'elder_coordinator' && !$isAdmin) {
             Flash::error('Only admins can manage coordinator roles.');
 
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+            return new RedirectResponse($referrer);
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
@@ -66,13 +67,13 @@ final class RoleManagementController
         if (!$user instanceof User) {
             Flash::error('User not found.');
 
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+            return new RedirectResponse($referrer);
         }
 
         if (in_array('admin', $user->getRoles(), true)) {
             Flash::error('Admin accounts cannot be modified.');
 
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+            return new RedirectResponse($referrer);
         }
 
         try {
@@ -90,17 +91,17 @@ final class RoleManagementController
             error_log(sprintf('[RoleManagementController::changeRole] Error: %s', $e->getMessage()));
             Flash::error('Unable to update role. Please try again.');
 
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+            return new RedirectResponse($referrer);
         }
 
         $label = $role === 'elder_coordinator' ? 'Coordinator' : ucfirst($role);
         $verb = $action === 'grant' ? 'granted to' : 'revoked from';
         Flash::success("{$label} role {$verb} " . $user->getName() . '.');
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $referrer]);
+        return new RedirectResponse($referrer);
     }
 
-    public function coordinatorList(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function coordinatorList(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $users = $this->loadUserRows($account);
 
@@ -110,10 +111,10 @@ final class RoleManagementController
             'path' => '/dashboard/coordinator/users',
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function adminList(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function adminList(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $users = $this->loadUserRows($account);
 
@@ -123,7 +124,7 @@ final class RoleManagementController
             'path' => '/admin/users',
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /**

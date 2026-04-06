@@ -57,7 +57,7 @@ final class CoordinatorApplicationsTest extends TestCase
         $request = HttpRequest::create('/dashboard/coordinator/applications');
         $response = $controller->applications([], [], $this->account, $request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -109,7 +109,7 @@ final class CoordinatorApplicationsTest extends TestCase
         $request = HttpRequest::create('/dashboard/coordinator/applications/test-uuid/approve', 'POST');
         $response = $controller->approveApplication(['uuid' => 'test-uuid'], [], $this->account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertContains('volunteer', $user->getRoles());
     }
 
@@ -147,7 +147,7 @@ final class CoordinatorApplicationsTest extends TestCase
         $request = HttpRequest::create('/dashboard/coordinator/applications/test-uuid/deny', 'POST');
         $response = $controller->denyApplication(['uuid' => 'test-uuid'], [], $this->account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -174,7 +174,7 @@ final class CoordinatorApplicationsTest extends TestCase
         $request = HttpRequest::create('/dashboard/coordinator/applications/test-uuid/approve', 'POST');
         $response = $controller->approveApplication(['uuid' => 'test-uuid'], [], $this->account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -209,6 +209,6 @@ final class CoordinatorApplicationsTest extends TestCase
         $request = HttpRequest::create('/dashboard/coordinator/applications/test-uuid/approve', 'POST');
         $response = $controller->approveApplication(['uuid' => 'test-uuid'], [], $this->account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 }

@@ -12,7 +12,8 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class ShkodaController
 {
@@ -30,23 +31,23 @@ final class ShkodaController
     }
 
     /** Redirect legacy /games/ishkode URL to /games/shkoda. */
-    public function redirectLegacy(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function redirectLegacy(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return new SsrResponse(content: '', statusCode: 301, headers: ['Location' => '/games/shkoda']);
+        return new RedirectResponse('/games/shkoda', 301);
     }
 
     /** Render the game page. */
-    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('shkoda.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/shkoda',
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** GET /api/games/shkoda/daily — today's challenge metadata. */
-    public function daily(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function daily(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $today = date('Y-m-d');
         $dayOfWeek = (int) date('w');
@@ -114,7 +115,7 @@ final class ShkodaController
     }
 
     /** GET /api/games/shkoda/word — random word for practice/streak. */
-    public function word(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function word(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $mode = ($query['mode'] ?? 'practice') === 'streak' ? 'streak' : 'practice';
         $tier = $query['tier'] ?? 'easy';
@@ -173,7 +174,7 @@ final class ShkodaController
     }
 
     /** POST /api/games/shkoda/guess — validate a letter (daily mode only). */
-    public function guess(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function guess(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -253,7 +254,7 @@ final class ShkodaController
     }
 
     /** POST /api/games/shkoda/complete — submit completed game, get teaching data + stats. */
-    public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -321,7 +322,7 @@ final class ShkodaController
     }
 
     /** GET /api/games/shkoda/stats — player stats (auth required). */
-    public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'shkoda'));
     }

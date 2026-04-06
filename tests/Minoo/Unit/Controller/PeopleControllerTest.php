@@ -63,9 +63,9 @@ final class PeopleControllerTest extends TestCase
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Mary Trudeau', $response->content);
-        $this->assertStringContainsString('John Beaucage', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Mary Trudeau', $response->getContent());
+        $this->assertStringContainsString('John Beaucage', $response->getContent());
     }
 
     #[Test]
@@ -76,8 +76,8 @@ final class PeopleControllerTest extends TestCase
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('/people', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('/people', $response->getContent());
     }
 
     #[Test]
@@ -93,8 +93,8 @@ final class PeopleControllerTest extends TestCase
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'mary-trudeau'], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Mary Trudeau', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Mary Trudeau', $response->getContent());
     }
 
     #[Test]
@@ -105,6 +105,6 @@ final class PeopleControllerTest extends TestCase
         $controller = new PeopleController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 }

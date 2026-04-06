@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class ContributorController
 {
@@ -20,7 +20,7 @@ final class ContributorController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('contributor');
         $ids = $storage->getQuery()
@@ -35,12 +35,12 @@ final class ContributorController
             'contributors' => $contributors,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('contributor');
@@ -56,9 +56,6 @@ final class ContributorController
             'contributor' => $contributor,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $contributor !== null ? 200 : 404,
-        );
+        return new Response($html, $contributor !== null ? 200 : 404);
     }
 }

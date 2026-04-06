@@ -65,9 +65,9 @@ final class CommunityControllerTest extends TestCase
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
-        $this->assertStringContainsString('Blind River', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->getContent());
+        $this->assertStringContainsString('Blind River', $response->getContent());
     }
 
     #[Test]
@@ -78,8 +78,8 @@ final class CommunityControllerTest extends TestCase
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('[]', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('[]', $response->getContent());
     }
 
     #[Test]
@@ -95,8 +95,8 @@ final class CommunityControllerTest extends TestCase
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->getContent());
     }
 
     #[Test]
@@ -107,7 +107,7 @@ final class CommunityControllerTest extends TestCase
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -131,8 +131,8 @@ final class CommunityControllerTest extends TestCase
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->getContent());
     }
 
     #[Test]
@@ -159,10 +159,10 @@ final class CommunityControllerTest extends TestCase
 
         $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('Sagamok Anishnawbek', $response->content);
-        $this->assertStringNotContainsString('people:', $response->content);
-        $this->assertStringNotContainsString('office:', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('Sagamok Anishnawbek', $response->getContent());
+        $this->assertStringNotContainsString('people:', $response->getContent());
+        $this->assertStringNotContainsString('office:', $response->getContent());
     }
 
     #[Test]

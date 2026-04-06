@@ -12,7 +12,8 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class CoordinatorDashboardController
 {
@@ -21,7 +22,7 @@ final class CoordinatorDashboardController
         private readonly Environment $twig,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $requestStorage = $this->entityTypeManager->getStorage('elder_support_request');
 
@@ -84,11 +85,11 @@ final class CoordinatorDashboardController
             'pending_application_count' => $pendingApplicationCount,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
-    public function applications(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function applications(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('volunteer');
         $ids = $storage->getQuery()
@@ -102,17 +103,17 @@ final class CoordinatorDashboardController
             'applications' => $applications,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
-    public function approveApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function approveApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->loadVolunteerByUuid($params['uuid'] ?? '');
 
         if ($volunteer === null || $volunteer->get('status') !== 'pending') {
             Flash::error('Application not found or already processed.');
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+            return new RedirectResponse('/dashboard/coordinator/applications');
         }
 
         $volunteer->set('status', 'active');
@@ -132,17 +133,17 @@ final class CoordinatorDashboardController
         }
 
         Flash::success('Volunteer application approved.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+        return new RedirectResponse('/dashboard/coordinator/applications');
     }
 
     /** @param array<string, mixed> $params */
-    public function denyApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function denyApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->loadVolunteerByUuid($params['uuid'] ?? '');
 
         if ($volunteer === null || $volunteer->get('status') !== 'pending') {
             Flash::error('Application not found or already processed.');
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+            return new RedirectResponse('/dashboard/coordinator/applications');
         }
 
         $volunteer->set('status', 'denied');
@@ -150,7 +151,7 @@ final class CoordinatorDashboardController
         $this->entityTypeManager->getStorage('volunteer')->save($volunteer);
 
         Flash::info('Volunteer application denied.');
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/coordinator/applications']);
+        return new RedirectResponse('/dashboard/coordinator/applications');
     }
 
     private function loadVolunteerByUuid(string $uuid): ?EntityInterface

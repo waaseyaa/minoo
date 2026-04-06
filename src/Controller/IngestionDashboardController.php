@@ -10,7 +10,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class IngestionDashboardController
 {
@@ -22,7 +22,7 @@ final class IngestionDashboardController
     ) {}
 
     /** @param array<string, string> $params */
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('ingest_log');
 
@@ -40,7 +40,7 @@ final class IngestionDashboardController
             'hide_sidebar' => true,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     private function resolveStatusFilter(array $query): ?string

@@ -25,8 +25,8 @@ final class IngestionApiControllerTest extends TestCase
         $account = $this->createMock(AccountInterface::class);
         $response = $controller->status([], [], $account, new HttpRequest());
 
-        $this->assertSame(200, $response->statusCode);
-        $decoded = json_decode($response->content, true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame(200, $response->getStatusCode());
+        $decoded = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
         $this->assertArrayHasKey('status', $decoded);
     }
 
@@ -40,7 +40,7 @@ final class IngestionApiControllerTest extends TestCase
 
         $response = $controller->ingestEnvelope([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
+        $this->assertSame(422, $response->getStatusCode());
     }
 
     #[Test]
@@ -67,7 +67,7 @@ final class IngestionApiControllerTest extends TestCase
         $controller = new IngestionApiController($etm);
         $response = $controller->approve(['id' => '10'], [], $account, new HttpRequest());
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('approved', $log->get('status'));
         $this->assertSame(99, $log->get('reviewed_by'));
     }

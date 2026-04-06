@@ -11,7 +11,7 @@ use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 use Waaseyaa\Mercure\MercurePublisher;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class MessagingController
 {
@@ -21,7 +21,7 @@ final class MessagingController
         private readonly ?MercurePublisher $mercurePublisher = null,
     ) {}
 
-    public function editMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function editMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         $messageId = (int) ($params['message_id'] ?? 0);
@@ -70,7 +70,7 @@ final class MessagingController
         ]);
     }
 
-    public function deleteMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function deleteMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         $messageId = (int) ($params['message_id'] ?? 0);
@@ -102,7 +102,7 @@ final class MessagingController
         return $this->json(['deleted' => true]);
     }
 
-    public function markRead(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function markRead(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         $userId = (int) $account->id();
@@ -140,7 +140,7 @@ final class MessagingController
         return $this->json(['last_read_at' => $now]);
     }
 
-    public function typing(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function typing(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         $userId = (int) $account->id();
@@ -158,7 +158,7 @@ final class MessagingController
         return $this->json(['typing' => true]);
     }
 
-    public function unreadCount(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function unreadCount(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $userId = (int) $account->id();
         $participantStorage = $this->participantStorage();
@@ -179,7 +179,7 @@ final class MessagingController
         return $this->json(['unread_count' => $totalUnread]);
     }
 
-    public function indexThreads(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function indexThreads(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $participantStorage = $this->participantStorage();
         $threadStorage = $this->threadStorage();
@@ -233,7 +233,7 @@ final class MessagingController
         return $this->json(['threads' => $payload]);
     }
 
-    public function createThread(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function createThread(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $participantIds = $this->normalizeParticipantIds($data['participant_ids'] ?? []);
@@ -322,7 +322,7 @@ final class MessagingController
         return $this->json(['id' => (int) $thread->id()], 201);
     }
 
-    public function showThread(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function showThread(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         if (!$this->isParticipant($threadId, (int) $account->id())) {
@@ -354,7 +354,7 @@ final class MessagingController
         ]);
     }
 
-    public function indexMessages(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function indexMessages(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         if (!$this->isParticipant($threadId, (int) $account->id())) {
@@ -415,7 +415,7 @@ final class MessagingController
         return $this->json(['messages' => $payload]);
     }
 
-    public function createMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function createMessage(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         $userId = (int) $account->id();
@@ -473,7 +473,7 @@ final class MessagingController
         ], 201);
     }
 
-    public function addParticipants(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function addParticipants(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         if (!$this->isThreadOwner($threadId, (int) $account->id(), $account)) {
@@ -522,7 +522,7 @@ final class MessagingController
         return $this->json(['added_participant_ids' => $added], 201);
     }
 
-    public function removeParticipant(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function removeParticipant(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $threadId = (int) ($params['id'] ?? 0);
         $targetUserId = (int) ($params['user_id'] ?? 0);
@@ -557,7 +557,7 @@ final class MessagingController
         return $this->json(['removed' => true]);
     }
 
-    public function searchUsers(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function searchUsers(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $term = mb_strtolower(trim((string) ($query['q'] ?? '')));
         if ($term === '') {
@@ -595,7 +595,7 @@ final class MessagingController
         return $this->json(['users' => $matches]);
     }
 
-    public function searchMessages(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function searchMessages(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $term = trim((string) ($query['q'] ?? ''));
         if ($term === '' || mb_strlen($term) < 2) {

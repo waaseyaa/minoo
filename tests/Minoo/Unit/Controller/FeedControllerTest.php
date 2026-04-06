@@ -48,7 +48,7 @@ final class FeedControllerTest extends TestCase
 
         $response = $controller->index([], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -132,8 +132,8 @@ final class FeedControllerTest extends TestCase
 
         $response = $controller->api([], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $json = json_decode($response->content, true);
+        $this->assertSame(200, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
         $this->assertArrayHasKey('items', $json);
         $this->assertArrayHasKey('nextCursor', $json);
         $this->assertArrayHasKey('activeFilter', $json);
@@ -153,6 +153,6 @@ final class FeedControllerTest extends TestCase
 
         $response = $controller->explore([], ['type' => 'events', 'q' => 'pow wow'], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 }

@@ -9,7 +9,7 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Api\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class BlockController
 {
@@ -18,7 +18,7 @@ final class BlockController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->blockStorage();
         $ids = $storage->getQuery()
@@ -38,7 +38,7 @@ final class BlockController
         return $this->json(['blocks' => $payload]);
     }
 
-    public function store(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function store(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $blockedId = (int) ($data['blocked_id'] ?? 0);
@@ -79,7 +79,7 @@ final class BlockController
         return $this->json(['id' => (int) $block->id()], 201);
     }
 
-    public function delete(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function delete(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $blockedUserId = (int) ($params['user_id'] ?? 0);
         $blockerId = (int) $account->id();

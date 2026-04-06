@@ -11,7 +11,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class EventController
 {
@@ -22,7 +22,7 @@ final class EventController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('event');
         $ids = $storage->getQuery()
@@ -49,12 +49,12 @@ final class EventController
             'communities' => $communities,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('event');
@@ -129,10 +129,7 @@ final class EventController
             'image_credit' => $imageCredit,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $event !== null ? 200 : 404,
-        );
+        return new Response($html, $event !== null ? 200 : 404);
     }
 
     /**

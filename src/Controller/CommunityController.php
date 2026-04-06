@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Geo\GeoDistance;
 
 final class CommunityController
@@ -25,7 +25,7 @@ final class CommunityController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('community');
         $location = $this->resolveLocation($request);
@@ -112,7 +112,7 @@ final class CommunityController
             'businesses_json' => json_encode($businessesJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     private const NEARBY_LIMIT = 6;
@@ -120,7 +120,7 @@ final class CommunityController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('community');
@@ -138,7 +138,7 @@ final class CommunityController
                 'location_json' => 'null',
             ]));
 
-            return new SsrResponse(content: $html, statusCode: 404);
+            return new Response($html, 404);
         }
 
         $nearby = [];
@@ -221,7 +221,7 @@ final class CommunityController
             'local_people' => $localPeople,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /**

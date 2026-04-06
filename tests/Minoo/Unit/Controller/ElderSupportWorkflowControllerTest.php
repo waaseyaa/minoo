@@ -63,7 +63,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->assignVolunteer(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('assigned', $entity->get('status'));
         $this->assertSame(5, $entity->get('assigned_volunteer'));
     }
@@ -80,7 +80,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->startRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('in_progress', $entity->get('status'));
     }
 
@@ -96,7 +96,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->completeRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('completed', $entity->get('status'));
     }
 
@@ -112,7 +112,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->confirmRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('confirmed', $entity->get('status'));
     }
 
@@ -128,7 +128,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->assignVolunteer(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     #[Test]
@@ -142,7 +142,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->startRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     #[Test]
@@ -158,7 +158,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('cancelled', $entity->get('status'));
         $this->assertSame('Elder no longer needs help', $entity->get('cancelled_reason'));
     }
@@ -176,7 +176,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('cancelled', $entity->get('status'));
     }
 
@@ -192,7 +192,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(422, $response->statusCode);
+        $this->assertSame(422, $response->getStatusCode());
     }
 
     #[Test]
@@ -204,7 +204,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->cancelRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     #[Test]
@@ -219,7 +219,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->declineRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('open', $entity->get('status'));
         $this->assertNull($entity->get('assigned_volunteer'));
         $this->assertNull($entity->get('assigned_at'));
@@ -236,7 +236,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->declineRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(403, $response->statusCode);
+        $this->assertSame(403, $response->getStatusCode());
     }
 
     #[Test]
@@ -250,7 +250,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->declineRequest(['esrid' => '1'], [], $account, $this->request);
 
-        $this->assertSame(422, $response->statusCode);
+        $this->assertSame(422, $response->getStatusCode());
     }
 
     #[Test]
@@ -263,7 +263,7 @@ final class ElderSupportWorkflowControllerTest extends TestCase
         $controller = new ElderSupportWorkflowController($this->entityTypeManager);
         $response = $controller->declineRequest(['esrid' => '99'], [], $account, $this->request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     private function createCoordinatorAccount(): AccountInterface

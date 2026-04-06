@@ -69,7 +69,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertContains('volunteer', $targetUser->getRoles());
     }
 
@@ -86,7 +86,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('revoke', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertNotContains('volunteer', $targetUser->getRoles());
     }
 
@@ -103,7 +103,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'elder');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertTrue(ElderIdentity::isElder($targetUser));
     }
 
@@ -120,7 +120,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('revoke', 'elder');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertFalse(ElderIdentity::isElder($targetUser));
     }
 
@@ -134,7 +134,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '5'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -147,7 +147,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'elder_coordinator');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -163,7 +163,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'elder_coordinator');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
         $this->assertContains('elder_coordinator', $targetUser->getRoles());
     }
 
@@ -180,7 +180,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -191,7 +191,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('destroy', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -202,7 +202,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -213,7 +213,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'superuser');
         $response = $this->controller->changeRole(['uid' => '2'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -227,7 +227,7 @@ final class RoleManagementControllerTest extends TestCase
         $request = $this->changeRoleRequest('grant', 'volunteer');
         $response = $this->controller->changeRole(['uid' => '999'], [], $account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -266,7 +266,7 @@ final class RoleManagementControllerTest extends TestCase
 
         $response = $this->controller->coordinatorList([], [], $account, new HttpRequest());
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -295,6 +295,6 @@ final class RoleManagementControllerTest extends TestCase
 
         $response = $this->controller->adminList([], [], $account, new HttpRequest());
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 }

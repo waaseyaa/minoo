@@ -45,9 +45,9 @@ final class LanguageControllerSearchTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->search([], [], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('/language/search', $response->content);
-        $this->assertStringContainsString('|0', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('/language/search', $response->getContent());
+        $this->assertStringContainsString('|0', $response->getContent());
     }
 
     #[Test]
@@ -67,9 +67,9 @@ final class LanguageControllerSearchTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->search([], ['q' => 'makwa'], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('makwa', $response->content);
-        $this->assertStringContainsString('|1', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('makwa', $response->getContent());
+        $this->assertStringContainsString('|1', $response->getContent());
     }
 
     #[Test]
@@ -80,7 +80,7 @@ final class LanguageControllerSearchTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->search([], ['q' => '   '], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -94,7 +94,7 @@ final class LanguageControllerSearchTest extends TestCase
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->search([], ['q' => 'zzz'], $this->account, $this->request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('|0', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('|0', $response->getContent());
     }
 }

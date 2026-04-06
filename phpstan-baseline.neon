@@ -1,6 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Method Minoo\\Controller\\AgimController\:\:getEntityTypeManager\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Controller/AgimController.php
+
+		-
 			message: '#^Parameter \#1 \$community of method Minoo\\Controller\\CommunityController\:\:findNearbyCommunities\(\) expects Waaseyaa\\Entity\\ContentEntityBase, Waaseyaa\\Entity\\EntityInterface given\.$#'
 			identifier: argument.type
 			count: 1
@@ -137,3 +143,9 @@ parameters:
 			identifier: nullCoalesce.variable
 			count: 1
 			path: src/Support/GeocodingService.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<array\{id\: mixed, key\: mixed, label_en\: mixed, label_oj\: mixed\}\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Support/JourneyEngine.php

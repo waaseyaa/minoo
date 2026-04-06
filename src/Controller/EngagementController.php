@@ -10,7 +10,7 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Api\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Media\UploadHandler;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class EngagementController
 {
@@ -27,7 +27,7 @@ final class EngagementController
         private readonly UploadHandler $uploadHandler,
     ) {}
 
-    public function react(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function react(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
 
@@ -58,7 +58,7 @@ final class EngagementController
         return $this->json(['id' => $entity->id(), 'reaction_type' => $entity->get('reaction_type')], 201);
     }
 
-    public function deleteReaction(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function deleteReaction(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('reaction');
@@ -77,7 +77,7 @@ final class EngagementController
         return $this->json(['deleted' => true]);
     }
 
-    public function comment(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function comment(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
 
@@ -115,7 +115,7 @@ final class EngagementController
         ], 201);
     }
 
-    public function deleteComment(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function deleteComment(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('comment');
@@ -134,7 +134,7 @@ final class EngagementController
         return $this->json(['deleted' => true]);
     }
 
-    public function getComments(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function getComments(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $targetType = $params['target_type'] ?? '';
         if (!$this->isValidTargetType($targetType)) {
@@ -166,7 +166,7 @@ final class EngagementController
         return $this->json(['comments' => $items]);
     }
 
-    public function follow(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function follow(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
 
@@ -194,7 +194,7 @@ final class EngagementController
         return $this->json(['id' => $entity->id()], 201);
     }
 
-    public function deleteFollow(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function deleteFollow(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('follow');
@@ -213,7 +213,7 @@ final class EngagementController
         return $this->json(['deleted' => true]);
     }
 
-    public function createPost(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function createPost(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         // Support both JSON and multipart form data
         // Try JSON first (existing API), fall back to form data (multipart with images)
@@ -342,7 +342,7 @@ final class EngagementController
         return is_string($mimeType) ? $mimeType : '';
     }
 
-    public function deletePost(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function deletePost(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('post');

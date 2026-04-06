@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class OralHistoryController
 {
@@ -20,7 +20,7 @@ final class OralHistoryController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $collectionStorage = $this->entityTypeManager->getStorage('oral_history_collection');
         $collectionIds = $collectionStorage->getQuery()
@@ -43,12 +43,12 @@ final class OralHistoryController
             'stories' => $stories,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function collection(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function collection(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $collectionStorage = $this->entityTypeManager->getStorage('oral_history_collection');
@@ -85,15 +85,12 @@ final class OralHistoryController
             'curator' => $curator,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $collection !== null ? 200 : 404,
-        );
+        return new Response($html, $collection !== null ? 200 : 404);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storyStorage = $this->entityTypeManager->getStorage('oral_history');
@@ -155,9 +152,6 @@ final class OralHistoryController
             'next_story' => $nextStory,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $story !== null ? 200 : 404,
-        );
+        return new Response($html, $story !== null ? 200 : 404);
     }
 }

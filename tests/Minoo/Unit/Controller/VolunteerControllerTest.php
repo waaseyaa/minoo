@@ -42,7 +42,7 @@ final class VolunteerControllerTest extends TestCase
         $controller = new VolunteerController($this->entityTypeManager, $this->twig);
         $response = $controller->signupForm([], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -53,7 +53,7 @@ final class VolunteerControllerTest extends TestCase
 
         $response = $controller->submitSignup([], [], $this->account, $request);
 
-        $this->assertSame(422, $response->statusCode);
+        $this->assertSame(422, $response->getStatusCode());
     }
 
     #[Test]
@@ -66,8 +66,8 @@ final class VolunteerControllerTest extends TestCase
 
         $response = $controller->submitSignup([], [], $this->account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('phone', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('phone', $response->getContent());
     }
 
     #[Test]
@@ -98,7 +98,7 @@ final class VolunteerControllerTest extends TestCase
 
         $response = $controller->submitSignup([], [], $this->account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -129,7 +129,7 @@ final class VolunteerControllerTest extends TestCase
 
         $response = $controller->submitSignup([], [], $this->account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -159,7 +159,7 @@ final class VolunteerControllerTest extends TestCase
         $controller = new VolunteerController($this->entityTypeManager, $this->twig);
         $response = $controller->submitSignup([], [], $this->account, $request);
 
-        $this->assertSame(302, $response->statusCode);
+        $this->assertSame(302, $response->getStatusCode());
     }
 
     #[Test]
@@ -184,7 +184,7 @@ final class VolunteerControllerTest extends TestCase
         $controller = new VolunteerController($this->entityTypeManager, $this->twig);
         $response = $controller->signupDetail(['uuid' => $uuid], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(200, $response->statusCode);
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
@@ -204,7 +204,7 @@ final class VolunteerControllerTest extends TestCase
         $controller = new VolunteerController($this->entityTypeManager, $this->twig);
         $response = $controller->signupDetail(['uuid' => 'nonexistent'], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -213,6 +213,6 @@ final class VolunteerControllerTest extends TestCase
         $controller = new VolunteerController($this->entityTypeManager, $this->twig);
         $response = $controller->signupDetail([], [], $this->account, HttpRequest::create('/'));
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 }

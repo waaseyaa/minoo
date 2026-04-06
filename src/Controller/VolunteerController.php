@@ -9,7 +9,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\SSR\Flash\Flash;
 
 final class VolunteerController
@@ -24,11 +25,11 @@ final class VolunteerController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function signupForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function signupForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if ($account->isAuthenticated() && $this->hasExistingVolunteer($account)) {
             Flash::info("You're already registered as a volunteer.");
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+            return new RedirectResponse('/dashboard/volunteer');
         }
 
         $location = $this->resolveLocation($request);
@@ -39,12 +40,12 @@ final class VolunteerController
             'location' => $location,
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function submitSignup(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function submitSignup(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $name = trim((string) $request->request->get('name', ''));
         $phone = trim((string) $request->request->get('phone', ''));
@@ -58,7 +59,7 @@ final class VolunteerController
 
         if ($account->isAuthenticated() && $this->hasExistingVolunteer($account)) {
             Flash::info("You're already registered as a volunteer.");
-            return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/dashboard/volunteer']);
+            return new RedirectResponse('/dashboard/volunteer');
         }
 
         $errors = [];
@@ -82,7 +83,7 @@ final class VolunteerController
                 'values' => compact('name', 'phone', 'community', 'availability', 'skills', 'notes', 'maxTravelKm'),
             ]));
 
-            return new SsrResponse(content: $html, statusCode: 422);
+            return new Response($html, 422);
         }
 
         $storage = $this->entityTypeManager->getStorage('volunteer');
@@ -106,16 +107,12 @@ final class VolunteerController
         $entity = $storage->create($values);
         $storage->save($entity);
 
-        return new SsrResponse(
-            content: '',
-            statusCode: 302,
-            headers: ['Location' => '/elders/volunteer/' . $entity->uuid()],
-        );
+        return new RedirectResponse('/elders/volunteer/' . $entity->uuid());
     }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function signupDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function signupDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $uuid = $params['uuid'] ?? '';
         $entity = null;
@@ -132,10 +129,7 @@ final class VolunteerController
             'entity' => $entity,
         ]));
 
-        return new SsrResponse(
-            content: $html,
-            statusCode: $entity !== null ? 200 : 404,
-        );
+        return new Response($html, $entity !== null ? 200 : 404);
     }
 
     private function hasExistingVolunteer(AccountInterface $account): bool

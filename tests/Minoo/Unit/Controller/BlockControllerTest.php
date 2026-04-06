@@ -72,8 +72,8 @@ final class BlockControllerTest extends TestCase
 
         $response = $this->controller->store([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('Cannot block yourself', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Cannot block yourself', $response->getContent());
     }
 
     #[Test]
@@ -84,8 +84,8 @@ final class BlockControllerTest extends TestCase
 
         $response = $this->controller->store([], [], $account, $request);
 
-        $this->assertSame(422, $response->statusCode);
-        $this->assertStringContainsString('blocked_id is required', $response->content);
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('blocked_id is required', $response->getContent());
     }
 
     #[Test]
@@ -99,8 +99,8 @@ final class BlockControllerTest extends TestCase
 
         $response = $this->controller->store([], [], $account, $request);
 
-        $this->assertSame(409, $response->statusCode);
-        $this->assertStringContainsString('already blocked', $response->content);
+        $this->assertSame(409, $response->getStatusCode());
+        $this->assertStringContainsString('already blocked', $response->getContent());
     }
 
     #[Test]
@@ -119,8 +119,8 @@ final class BlockControllerTest extends TestCase
 
         $response = $this->controller->store([], [], $account, $request);
 
-        $this->assertSame(201, $response->statusCode);
-        $this->assertStringContainsString('"id":10', $response->content);
+        $this->assertSame(201, $response->getStatusCode());
+        $this->assertStringContainsString('"id":10', $response->getContent());
     }
 
     #[Test]
@@ -134,7 +134,7 @@ final class BlockControllerTest extends TestCase
 
         $response = $this->controller->delete(['user_id' => '2'], [], $account, $request);
 
-        $this->assertSame(404, $response->statusCode);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
@@ -152,8 +152,8 @@ final class BlockControllerTest extends TestCase
 
         $response = $this->controller->delete(['user_id' => '2'], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('"removed":true', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('"removed":true', $response->getContent());
     }
 
     #[Test]
@@ -168,7 +168,7 @@ final class BlockControllerTest extends TestCase
 
         $response = $this->controller->index([], [], $account, $request);
 
-        $this->assertSame(200, $response->statusCode);
-        $this->assertStringContainsString('"blocks":', $response->content);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('"blocks":', $response->getContent());
     }
 }

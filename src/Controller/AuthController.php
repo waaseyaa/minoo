@@ -14,7 +14,8 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Minoo\Middleware\RateLimitMiddleware;
-use Waaseyaa\SSR\SsrResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\User\User;
 
 final class AuthController
@@ -27,7 +28,7 @@ final class AuthController
         private readonly AuthConfig $authConfig,
     ) {}
 
-    public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('auth/login.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
@@ -35,10 +36,10 @@ final class AuthController
             'redirect' => (string) $request->query->get('redirect', ''),
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function submitLogin(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function submitLogin(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $limiter = new RateLimitMiddleware(
             getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/storage/waaseyaa.sqlite'
@@ -50,7 +51,7 @@ final class AuthController
                 'errors' => ['email' => 'Too many attempts. Please try again in 5 minutes.'],
                 'values' => [],
             ]));
-            return new SsrResponse(content: $html, statusCode: 429);
+            return new Response($html, 429);
         }
         $limiter->record($ip, '/login');
 
@@ -70,7 +71,7 @@ final class AuthController
                 'errors' => $errors,
                 'values' => compact('email'),
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
@@ -83,7 +84,7 @@ final class AuthController
                 'errors' => ['email' => 'Invalid email or password.'],
                 'values' => compact('email'),
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         /** @var User|null $user */
@@ -94,7 +95,7 @@ final class AuthController
                 'errors' => ['email' => 'Invalid email or password.'],
                 'values' => compact('email'),
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         if (!$user->isActive()) {
@@ -102,7 +103,7 @@ final class AuthController
                 'errors' => ['email' => 'This account has been deactivated.'],
                 'values' => compact('email'),
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         $_SESSION['waaseyaa_uid'] = $user->id();
@@ -114,20 +115,20 @@ final class AuthController
             '/',
         );
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => $redirect]);
+        return new RedirectResponse($redirect);
     }
 
-    public function registerForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function registerForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('auth/register.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
             'values' => [],
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function submitRegister(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function submitRegister(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $name = trim((string) $request->request->get('name', ''));
         $email = trim((string) $request->request->get('email', ''));
@@ -152,7 +153,7 @@ final class AuthController
                 'errors' => $errors,
                 'values' => compact('name', 'email', 'phone'),
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
@@ -169,12 +170,12 @@ final class AuthController
                 $token = $this->tokenRepo->createToken($existingUser->id(), 'email_verification', $this->authConfig->tokenTtl('email_verification'));
                 $this->authMailer->sendEmailVerification($existingUser, $token);
                 $html = $this->twig->render('auth/check-email.html.twig', LayoutTwigContext::withAccount($account, []));
-                return new SsrResponse(content: $html);
+                return new Response($html);
             }
 
             // Active account — show generic check-email page to prevent enumeration
             $html = $this->twig->render('auth/check-email.html.twig', LayoutTwigContext::withAccount($account, []));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         /** @var User $user */
@@ -203,19 +204,19 @@ final class AuthController
 
         Flash::success('Welcome to Minoo, ' . $name . '.');
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/']);
+        return new RedirectResponse('/');
     }
 
-    public function forgotPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function forgotPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('auth/forgot-password.html.twig', LayoutTwigContext::withAccount($account, [
             'values' => [],
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function submitForgotPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function submitForgotPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $limiter = new RateLimitMiddleware(
             getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/storage/waaseyaa.sqlite'
@@ -228,7 +229,7 @@ final class AuthController
                 'submitted' => true,
                 'values' => [],
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
         $limiter->record($ip, '/forgot-password');
 
@@ -256,10 +257,10 @@ final class AuthController
             'values' => compact('email'),
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function resetPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function resetPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = (string) $request->query->get('token', '');
         $tokenError = null;
@@ -279,10 +280,10 @@ final class AuthController
             'errors' => [],
         ]));
 
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function submitResetPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function submitResetPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = (string) $request->request->get('token', '');
         $password = (string) $request->request->get('password', '');
@@ -296,7 +297,7 @@ final class AuthController
                 'token_error' => 'This reset link is invalid or has expired.',
                 'errors' => [],
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         $userId = $result['user_id'];
@@ -317,7 +318,7 @@ final class AuthController
                 'token_error' => null,
                 'errors' => $errors,
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
@@ -330,7 +331,7 @@ final class AuthController
                 'token_error' => 'User account not found.',
                 'errors' => [],
             ]));
-            return new SsrResponse(content: $html);
+            return new Response($html);
         }
 
         $user->setRawPassword($password);
@@ -339,10 +340,10 @@ final class AuthController
 
         Flash::success('Your password has been reset. Please sign in.');
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/login']);
+        return new RedirectResponse('/login');
     }
 
-    public function verifyEmail(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function verifyEmail(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = (string) $request->query->get('token', '');
 
@@ -351,7 +352,7 @@ final class AuthController
                 'verified' => false,
                 'error' => 'This verification link is invalid or has expired.',
             ]));
-            return new SsrResponse(content: $html, statusCode: 400);
+            return new Response($html, 400);
         }
 
         $result = $this->tokenRepo->validateToken($token, 'email_verification');
@@ -361,7 +362,7 @@ final class AuthController
                 'verified' => false,
                 'error' => 'This verification link is invalid or has expired.',
             ]));
-            return new SsrResponse(content: $html, statusCode: 400);
+            return new Response($html, 400);
         }
 
         $userId = $result['user_id'];
@@ -374,7 +375,7 @@ final class AuthController
                 'verified' => false,
                 'error' => 'User account not found.',
             ]));
-            return new SsrResponse(content: $html, statusCode: 404);
+            return new Response($html, 404);
         }
 
         $user->set('status', true);
@@ -390,16 +391,16 @@ final class AuthController
         $html = $this->twig->render('auth/verify-email.html.twig', LayoutTwigContext::withAccount($account, [
             'verified' => true,
         ]));
-        return new SsrResponse(content: $html);
+        return new Response($html);
     }
 
-    public function logout(array $params, array $query, AccountInterface $account, HttpRequest $request): SsrResponse
+    public function logout(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (session_status() === \PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 
-        return new SsrResponse(content: '', statusCode: 302, headers: ['Location' => '/']);
+        return new RedirectResponse('/');
     }
 
     private function safeRedirect(string $target, string $fallback): string
