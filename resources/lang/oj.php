@@ -66,7 +66,8 @@ return [
     'nav.events' => 'Maawanji\'idiwinan', // dict: maawanji'idiwag: "they come together, meet"
     'nav.oral_histories' => 'Gdibaajmowinaanin', // dict: dibaajmowin: "story, narrative"; g- (our) + -aanin plural — "Our Stories"
     'nav.programs' => 'Anokiiwinan', // dict: anokii: "s/he works"; -winan nominal plural
-    'nav.elder_support' => 'Gichi-aya\'aa Wiidookaagewin', // dict: gichi-aya'aa: "an elder" + wiidookaagewin: "help, assistance"
+    'nav.elder_program' => 'Gichi-aya\'aa Wiidookaagewin', // dict: gichi-aya'aa: "an elder" + wiidookaagewin: "help, assistance"
+    'nav.request_help' => '', // TODO: Ojibwe translation needed
     'nav.volunteer' => 'Wiidookaage', // dict: wiidookaage: "s/he helps people"
     'nav.search' => 'Andone\'igen', // dict: andone': "go look for, search for, seek"
     'nav.dashboard' => 'Anokiiwin', // dict: anokiiwin: work, activity
