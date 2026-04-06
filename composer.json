@@ -7,6 +7,7 @@
         "php": ">=8.4",
         "geoip2/geoip2": "^3.0",
         "sendgrid/sendgrid": "^8.1",
+        "symfony/process": "^8.0",
         "waaseyaa/access": "^0.1",
         "waaseyaa/admin-surface": "^0.1",
         "waaseyaa/api": "^0.1",

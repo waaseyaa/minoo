@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Minoo\Controller;
 
+use Minoo\Domain\Newsletter\Exception\RenderException;
 use Minoo\Domain\Newsletter\Service\EditionLifecycle;
 use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
+use Minoo\Domain\Newsletter\Service\NewsletterRenderer;
 use Minoo\Support\Flash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -22,6 +24,7 @@ final class NewsletterEditorController
         private readonly Environment $twig,
         private readonly EditionLifecycle $lifecycle,
         private readonly NewsletterAssembler $assembler,
+        private readonly NewsletterRenderer $renderer,
     ) {
     }
 
@@ -119,6 +122,24 @@ final class NewsletterEditorController
             Flash::success('Edition approved. You can now generate the PDF.');
         } catch (\DomainException $e) {
             Flash::error($e->getMessage());
+        }
+
+        return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
+    }
+
+    public function generate(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $edition = $this->loadEditionOrFail($params['id'] ?? null);
+
+        try {
+            $artifact = $this->renderer->render($edition);
+            $this->lifecycle->markGenerated($edition, $artifact->path, $artifact->sha256);
+            $this->entityTypeManager->getStorage('newsletter_edition')->save($edition);
+            Flash::success(sprintf('PDF generated (%d bytes).', $artifact->bytes));
+        } catch (RenderException $e) {
+            Flash::error('Render failed: ' . $e->getMessage());
+        } catch (\DomainException $e) {
+            Flash::error('This edition cannot be generated in its current state. Refresh and try again.');
         }
 
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());

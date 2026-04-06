@@ -6,6 +6,7 @@ namespace Minoo\Provider;
 
 use Minoo\Domain\Newsletter\Service\EditionLifecycle;
 use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
+use Minoo\Domain\Newsletter\Service\NewsletterRenderer;
 use Minoo\Domain\Newsletter\Service\RenderTokenStore;
 use Minoo\Domain\Newsletter\ValueObject\SectionQuota;
 use Minoo\Entity\NewsletterEdition;
@@ -103,6 +104,19 @@ final class NewsletterServiceProvider extends ServiceProvider
                 ttlSeconds: 60,
             );
         });
+
+        $this->singleton(NewsletterRenderer::class, function () {
+            $config = require __DIR__ . '/../../config/newsletter.php';
+            $rootDir = dirname(__DIR__, 2);
+            return new NewsletterRenderer(
+                tokenStore: $this->resolve(RenderTokenStore::class),
+                storageDir: $rootDir . '/' . $config['storage_dir'],
+                baseUrl: $_ENV['APP_URL'] ?? 'http://localhost:8081',
+                nodeBinary: 'node',
+                scriptPath: $rootDir . '/bin/render-pdf.js',
+                timeoutSeconds: $config['pdf']['timeout_seconds'] ?? 60,
+            );
+        });
     }
 
     public function routes(WaaseyaaRouter $router, ?EntityTypeManager $entityTypeManager = null): void
@@ -151,6 +165,16 @@ final class NewsletterServiceProvider extends ServiceProvider
             'newsletter.editor.approve',
             RouteBuilder::create('/coordinator/newsletter/{id}/approve')
                 ->controller('Minoo\Controller\NewsletterEditorController::approve')
+                ->requireRole('community_coordinator')
+                ->render()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.editor.generate',
+            RouteBuilder::create('/coordinator/newsletter/{id}/generate')
+                ->controller('Minoo\Controller\NewsletterEditorController::generate')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
