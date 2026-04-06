@@ -133,6 +133,25 @@ All of these will be committed and pushed to `main` before the handoff closes, s
 
 ---
 
+## TOP PRIORITY for next session: ship #637 first
+
+**#637 — `/live` page that embeds the Twitch stream so visitors can watch Minoo being built from inside Minoo.** The vision: develop the platform from the inside, the work is the content, the audience and community converge on one URL. This is the bridge between Track A (polish/feature) and Track B (build in public) and it should ship BEFORE the first stream goes live, because the first stream is the moment to demo it.
+
+Components in #637 (file from the issue):
+- New `/live` route + Twig template
+- CSP `frame-src` update for Twitch embed domains
+- Nav link "Watch Live"
+- Optional v1 chat embed alongside the player
+- Page copy framing the meta-loop
+
+Estimated time: 20-30 minutes including the CSP gotcha hunt and nav update. Perfect first-stream demo: shipping the very page the stream is being watched on.
+
+After #637 ships, in priority order:
+1. Homepage `<h1>` fix (CRITICAL bug from the audit, 5-line template change, great second demo)
+2. `/communities` SSR fix (CRITICAL bug from the audit, bigger story, second-stream material)
+3. Batch-file the rest of the audit issues into a "Polish Sprint" milestone
+4. Land #633 + #634 follow-ups from PR #632
+
 ## Resume script (for the next machine)
 
 When you open Claude Code on the new machine:
@@ -141,17 +160,18 @@ When you open Claude Code on the new machine:
 cd ~/dev/minoo
 git pull --ff-only
 cat docs/plans/2026-04-06-polish-acquisition-sprint.md
+gh issue view 637
 cat docs/audits/2026-04-06-functional-audit.md
 ls content/drafts/
 ```
 
 Then say to Claude Code something like:
 
-> "Resume the polish sprint. Read docs/plans/2026-04-06-polish-acquisition-sprint.md. I'm about to start streaming. Start with the audit file and create the Polish Sprint milestone, then batch-file the CRITICAL and POLISH issues from the audit. Keep it visible so I can narrate."
+> "Resume the polish + acquisition sprint. The TOP priority is #637 — ship the /live Twitch embed page so I can demo it on stream. Read the plan file and the issue. My Twitch handle is [TBD]. Start with #637, then move to the audit punch list. Keep it visible so I can narrate while streaming."
 
-Or, if you want to open with content:
+Or if you want to open with content first:
 
-> "Read content/drafts/2026-04-06-three-stacked-bugs-and-alpha-107.md and the substack draft. Tighten them in Russell's voice. Then publish checklist me through posting them."
+> "Read content/drafts/2026-04-06-three-stacked-bugs-and-alpha-107.md and the substack draft. Tighten them in my voice. Then publish-checklist me through posting them."
 
 ---
 
