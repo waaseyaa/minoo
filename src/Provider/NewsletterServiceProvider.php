@@ -160,6 +160,39 @@ final class NewsletterServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        // Submission moderation routes are registered BEFORE the generic
+        // /coordinator/newsletter/{id} route so "/submissions" is not
+        // accidentally captured as an edition id.
+        $router->addRoute(
+            'newsletter.editor.submissions',
+            RouteBuilder::create('/coordinator/newsletter/submissions')
+                ->controller('Minoo\Controller\NewsletterEditorController::submissionsList')
+                ->requireRole('community_coordinator')
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.editor.submission_approve',
+            RouteBuilder::create('/coordinator/newsletter/submissions/{id}/approve')
+                ->controller('Minoo\Controller\NewsletterEditorController::submissionApprove')
+                ->requireRole('community_coordinator')
+                ->render()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.editor.submission_reject',
+            RouteBuilder::create('/coordinator/newsletter/submissions/{id}/reject')
+                ->controller('Minoo\Controller\NewsletterEditorController::submissionReject')
+                ->requireRole('community_coordinator')
+                ->render()
+                ->methods('POST')
+                ->build(),
+        );
+
         $router->addRoute(
             'newsletter.editor.assemble',
             RouteBuilder::create('/coordinator/newsletter/{id}/assemble')
@@ -210,10 +243,73 @@ final class NewsletterServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        // Public newsletter surface. Order matters: more specific routes
+        // (print_preview, /newsletter, /newsletter/submit, .pdf, vol-issue)
+        // are registered BEFORE the catch-all /newsletter/{community}.
         $router->addRoute(
             'newsletter.print_preview',
             RouteBuilder::create('/newsletter/_internal/{id}/print')
                 ->controller('Minoo\Controller\NewsletterController::printPreview')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.public.index',
+            RouteBuilder::create('/newsletter')
+                ->controller('Minoo\Controller\NewsletterController::index')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.public.submit_form',
+            RouteBuilder::create('/newsletter/submit')
+                ->controller('Minoo\Controller\NewsletterController::submitForm')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.public.submit_post',
+            RouteBuilder::create('/newsletter/submit')
+                ->controller('Minoo\Controller\NewsletterController::submitPost')
+                ->allowAll()
+                ->render()
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.public.pdf',
+            RouteBuilder::create('/newsletter/{community}/{volume}-{issue}.pdf')
+                ->controller('Minoo\Controller\NewsletterController::downloadPdf')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.public.edition',
+            RouteBuilder::create('/newsletter/{community}/{volume}-{issue}')
+                ->controller('Minoo\Controller\NewsletterController::showEdition')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.public.community',
+            RouteBuilder::create('/newsletter/{community}')
+                ->controller('Minoo\Controller\NewsletterController::showCommunity')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

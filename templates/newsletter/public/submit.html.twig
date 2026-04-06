@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+{% block title %}Submit a notice{% endblock %}
+{% block content %}
+<section class="newsletter-submit">
+    <h1>Submit a notice</h1>
+    <p>Birthdays, memorials, recipes, language tips — short notices for the next monthly newsletter.</p>
+
+    {% if flashes is defined %}
+        {% for type, msgs in flashes %}
+            {% for msg in msgs %}<div class="flash flash--{{ type }}">{{ msg }}</div>{% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="/newsletter/submit">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <label>Category
+            <select name="category" required>
+                <option value="notice">Notice</option>
+                <option value="birthday">Birthday</option>
+                <option value="memorial">Memorial</option>
+                <option value="recipe">Recipe</option>
+                <option value="language_tip">Language Tip</option>
+                <option value="event">Event</option>
+                <option value="other">Other</option>
+            </select>
+        </label>
+        <label>Title
+            <input type="text" name="title" required maxlength="200">
+        </label>
+        <label>Body (max 500 chars)
+            <textarea name="body" required maxlength="500" rows="6"></textarea>
+        </label>
+        <button type="submit" class="btn">Submit</button>
+    </form>
+</section>
+{% endblock %}

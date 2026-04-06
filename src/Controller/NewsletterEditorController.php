@@ -179,6 +179,93 @@ final class NewsletterEditorController
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
     }
 
+    public function submissionsList(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $coordinatorCommunity = $this->resolveCoordinatorCommunity($request);
+
+        $storage = $this->entityTypeManager->getStorage('newsletter_submission');
+        $pending = array_filter(
+            $storage->loadMultiple(),
+            fn ($s) => (string) $s->get('status') === 'submitted'
+                && (string) $s->get('community_id') === $coordinatorCommunity,
+        );
+
+        return new Response($this->twig->render('newsletter/editor/submissions.html.twig', [
+            'submissions' => $pending,
+            'flashes' => Flash::pull(),
+        ]));
+    }
+
+    public function submissionApprove(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $storage = $this->entityTypeManager->getStorage('newsletter_submission');
+        $sub = $storage->load((int) ($params['id'] ?? 0));
+        if ($sub === null) {
+            return new Response('Not found', 404);
+        }
+        if (! $this->coordinatorOwnsSubmission($sub, $request)) {
+            return new Response('Forbidden', 403);
+        }
+        $sub->set('status', 'approved');
+        $sub->set('approved_by', $account->id());
+        $sub->set('approved_at', date(\DateTimeInterface::ATOM));
+        $storage->save($sub);
+
+        Flash::success('Submission approved.');
+
+        return new RedirectResponse('/coordinator/newsletter/submissions');
+    }
+
+    public function submissionReject(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $storage = $this->entityTypeManager->getStorage('newsletter_submission');
+        $sub = $storage->load((int) ($params['id'] ?? 0));
+        if ($sub === null) {
+            return new Response('Not found', 404);
+        }
+        if (! $this->coordinatorOwnsSubmission($sub, $request)) {
+            return new Response('Forbidden', 403);
+        }
+        $sub->set('status', 'rejected');
+        $sub->set('approved_by', $account->id());
+        $sub->set('approved_at', date(\DateTimeInterface::ATOM));
+        $storage->save($sub);
+
+        Flash::success('Submission rejected.');
+
+        return new RedirectResponse('/coordinator/newsletter/submissions');
+    }
+
+    /**
+     * Resolve the "current coordinator's community" for tenancy scoping.
+     *
+     * Option B (per code review of #648): there is no coordinator→community
+     * mapping helper in the codebase yet, and the v1 config defines a single
+     * community (`manitoulin-regional`). We resolve the coordinator's community
+     * using the same cookie + config fallback that `NewsletterController::submitPost`
+     * uses for submitters, so a coordinator's view of the moderation queue is
+     * scoped to whichever community context they are currently in. The cookie
+     * value is validated against the configured community list — an unknown or
+     * missing cookie falls back to `default_community`. When per-coordinator
+     * community membership lands (multi-community v2), replace this with a
+     * proper account→community helper.
+     */
+    private function resolveCoordinatorCommunity(HttpRequest $request): string
+    {
+        $config = require dirname(__DIR__, 2) . '/config/newsletter.php';
+        $validCommunities = array_keys($config['communities'] ?? []);
+        $cookieCommunity = (string) ($request->cookies->get('community_id') ?? '');
+
+        return in_array($cookieCommunity, $validCommunities, true)
+            ? $cookieCommunity
+            : ($config['default_community'] ?? 'manitoulin-regional');
+    }
+
+    private function coordinatorOwnsSubmission(EntityInterface $sub, HttpRequest $request): bool
+    {
+        return (string) $sub->get('community_id') === $this->resolveCoordinatorCommunity($request);
+    }
+
     private function writeIngestLog(string $title, bool $success, string $message): void
     {
         try {

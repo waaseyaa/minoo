@@ -1,0 +1,40 @@
+{% extends "base.html.twig" %}
+{% block title %}Elder Newsletter{% endblock %}
+{% block content %}
+<section class="newsletter-public">
+    <h1>Elder Newsletter</h1>
+    <p>Past issues of the monthly print newsletter.</p>
+
+    {% if community is defined %}
+        <h2>{{ community }}</h2>
+        <ul>
+            {% for edition in editions %}
+                <li>
+                    <a href="/newsletter/{{ community }}/{{ edition.get('volume') }}-{{ edition.get('issue_number') }}">
+                        Vol. {{ edition.get('volume') }} No. {{ edition.get('issue_number') }} — {{ edition.get('publish_date') }}
+                    </a>
+                </li>
+            {% else %}
+                <li>No issues yet.</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        {% for community, editions in editions_by_community %}
+            <h2><a href="/newsletter/{{ community }}">{{ community }}</a></h2>
+            <ul>
+                {% for edition in editions %}
+                    <li>
+                        <a href="/newsletter/{{ community }}/{{ edition.get('volume') }}-{{ edition.get('issue_number') }}">
+                            Vol. {{ edition.get('volume') }} No. {{ edition.get('issue_number') }} — {{ edition.get('publish_date') }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No issues yet.</p>
+        {% endfor %}
+    {% endif %}
+
+    <p><a href="/newsletter/submit" class="btn">Submit a notice</a></p>
+</section>
+{% endblock %}

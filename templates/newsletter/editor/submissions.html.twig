@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+{% block title %}Submission moderation{% endblock %}
+{% block content %}
+<section class="newsroom-submissions">
+    <h1>Submission moderation</h1>
+    {% for type, msgs in flashes %}
+        {% for msg in msgs %}<div class="flash flash--{{ type }}">{{ msg }}</div>{% endfor %}
+    {% endfor %}
+
+    <table class="table">
+        <thead><tr><th>Category</th><th>Title</th><th>Body</th><th>Submitted</th><th></th></tr></thead>
+        <tbody>
+            {% for sub in submissions %}
+                <tr>
+                    <td>{{ sub.get('category') }}</td>
+                    <td>{{ sub.get('title') }}</td>
+                    <td>{{ sub.get('body')|slice(0, 80) }}…</td>
+                    <td>{{ sub.get('submitted_at') }}</td>
+                    <td>
+                        <form method="post" action="/coordinator/newsletter/submissions/{{ sub.id() }}/approve" style="display:inline">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Approve</button>
+                        </form>
+                        <form method="post" action="/coordinator/newsletter/submissions/{{ sub.id() }}/reject" style="display:inline">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">No pending submissions.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
