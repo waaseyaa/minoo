@@ -8455,3 +8455,23 @@ a.btn--ghost:hover {
   }
 }
 
+/* ===== NEWSLETTER PRINT ===== */
+@media print {
+    .newsletter-print {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+    .newsletter-print article {
+        break-inside: avoid;
+    }
+    .newsletter-print h2 {
+        page-break-after: avoid;
+    }
+    /* Ensure background colors print on supported renderers */
+    .newsletter-print {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
