@@ -10,58 +10,61 @@
 
 {% block content %}
   {% if entity %}
-    <div class="flow-lg">
-      <div>
-        <span class="card__badge card__badge--elder">{{ trans('volunteer_confirm.badge') }}</span>
-        <h1 data-testid="confirmation-heading">{{ trans('volunteer_confirm.title') }}</h1>
-        <p class="text-secondary" data-testid="confirmation-message">{{ trans('volunteer_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
-      </div>
+    <div class="elders-confirmation">
 
-      <div class="card card--detail">
-        <dl class="detail__fields">
-          {% if entity.get('availability') %}
-            <div class="detail__field">
-              <dt>{{ trans('volunteer_confirm.availability') }}</dt>
-              <dd data-testid="confirmation-availability">{{ entity.get('availability') }}</dd>
-            </div>
-          {% endif %}
-          {% if entity.get('skills') is iterable and entity.get('skills')|length > 0 %}
-            <div class="detail__field">
-              <dt>{{ trans('volunteer_confirm.skills') }}</dt>
-              <dd>
-                <div class="card__tags">
-                  {% for skill in entity.get('skills') %}
-                    <span class="card__tag">{{ skill }}</span>
-                  {% endfor %}
-                </div>
-              </dd>
-            </div>
-          {% endif %}
-          {% if entity.get('notes') %}
-            <div class="detail__field">
-              <dt>{{ trans('volunteer_confirm.notes') }}</dt>
-              <dd>{{ entity.get('notes') }}</dd>
-            </div>
-          {% endif %}
-        </dl>
-      </div>
+      <header class="elders-confirmation__hero">
+        <p class="elders-eyebrow">{{ trans('volunteer_confirm.badge') }}</p>
+        <h1 class="elders-confirmation__title" data-testid="confirmation-heading">{{ trans('volunteer_confirm.title') }}</h1>
+        <p class="elders-confirmation__lede text-secondary" data-testid="confirmation-message">{{ trans('volunteer_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
+      </header>
 
-      <div class="flow">
-        <h2 data-testid="what-next-heading">{{ trans('volunteer_confirm.what_next') }}</h2>
-        <ol class="how-it-works__list">
-          <li>{{ trans('volunteer_confirm.next_step1') }}</li>
-          <li>{{ trans('volunteer_confirm.next_step2') }}</li>
-          <li>{{ trans('volunteer_confirm.next_step3') }}</li>
+      <dl class="elders-summary card card--detail">
+        {% if entity.get('availability') %}
+          <div class="elders-summary__row detail__field">
+            <dt class="elders-summary__term">{{ trans('volunteer_confirm.availability') }}</dt>
+            <dd class="elders-summary__value" data-testid="confirmation-availability">{{ entity.get('availability') }}</dd>
+          </div>
+        {% endif %}
+        {% if entity.get('skills') is iterable and entity.get('skills')|length > 0 %}
+          <div class="elders-summary__row detail__field">
+            <dt class="elders-summary__term">{{ trans('volunteer_confirm.skills') }}</dt>
+            <dd class="elders-summary__value">
+              <div class="card__tags">
+                {% for skill in entity.get('skills') %}
+                  <span class="card__tag">{{ skill }}</span>
+                {% endfor %}
+              </div>
+            </dd>
+          </div>
+        {% endif %}
+        {% if entity.get('notes') %}
+          <div class="elders-summary__row detail__field">
+            <dt class="elders-summary__term">{{ trans('volunteer_confirm.notes') }}</dt>
+            <dd class="elders-summary__value">{{ entity.get('notes') }}</dd>
+          </div>
+        {% endif %}
+      </dl>
+
+      <section class="elders-timeline" aria-labelledby="what-next-heading">
+        <h2 class="elders-timeline__heading" id="what-next-heading" data-testid="what-next-heading">{{ trans('volunteer_confirm.what_next') }}</h2>
+        <ol class="elders-timeline__list">
+          <li class="elders-timeline__item"><p>{{ trans('volunteer_confirm.next_step1') }}</p></li>
+          <li class="elders-timeline__item"><p>{{ trans('volunteer_confirm.next_step2') }}</p></li>
+          <li class="elders-timeline__item"><p>{{ trans('volunteer_confirm.next_step3') }}</p></li>
         </ol>
+      </section>
+
+      <div class="elders-actions">
+        <a class="elders-actions__link" href="{{ lang_url('/elders/volunteer') }}">{{ trans('volunteer_confirm.signup_another') }}</a>
+        <a class="elders-actions__link" href="{{ lang_url('/elders') }}">Back to Elder Support</a>
       </div>
 
-      <p><a href="{{ lang_url('/elders/volunteer') }}">{{ trans('volunteer_confirm.signup_another') }}</a></p>
     </div>
   {% else %}
-    <div class="flow-lg">
-      <h1>{{ trans('volunteer_confirm.not_found_title') }}</h1>
-      <p>{{ trans('volunteer_confirm.not_found_text') }}</p>
-      <p><a href="{{ lang_url('/elders/volunteer') }}">{{ trans('volunteer_confirm.signup_link') }}</a></p>
+    <div class="elders-empty">
+      <h1 class="elders-confirmation__title">{{ trans('volunteer_confirm.not_found_title') }}</h1>
+      <p class="text-secondary">{{ trans('volunteer_confirm.not_found_text') }}</p>
+      <p><a class="elders-actions__link" href="{{ lang_url('/elders/volunteer') }}">{{ trans('volunteer_confirm.signup_link') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}

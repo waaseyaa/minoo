@@ -3105,15 +3105,15 @@
     .card-grid > .card:nth-child(n+7) { animation-delay: 300ms; }
   }
 
-  /* ── Content well (light reading surface on detail pages) ── */
+  /* ── Content well (theme-aware reading surface on detail pages) ── */
   .content-well {
-    background-color: var(--surface-light);
+    background-color: var(--surface-card);
     border-start-start-radius: 0.75rem;
     border-start-end-radius: 0.75rem;
     margin-inline: var(--space-sm);
     padding-block: var(--space-lg) var(--space-xl);
     padding-inline: var(--space-lg);
-    color: var(--text-dark);
+    color: var(--text-primary);
   }
 
   .content-well--full {
@@ -3124,31 +3124,81 @@
   .content-well h2,
   .content-well h3 {
     font-family: var(--font-heading);
-    color: var(--text-dark);
+    color: var(--text-primary);
   }
 
   .content-well p {
-    color: var(--text-dark-secondary);
+    color: var(--text-secondary);
     line-height: 1.7;
   }
 
   .content-well a {
-    color: var(--color-events);
+    color: var(--link);
   }
 
   /* Info cards inside content well */
   .content-well .detail__info-card {
-    background-color: var(--surface-light-card);
+    background-color: var(--surface-raised);
     border-radius: var(--radius-md);
     padding: var(--space-sm);
-    border-inline-start: 3px solid var(--card-accent, var(--color-events));
-    box-shadow: 0 1px 3px oklch(0 0 0 / 0.08);
+    border-inline-start: 3px solid var(--card-accent, var(--accent));
+    box-shadow: var(--shadow-sm);
   }
 
   /* Tags inside content well */
   .content-well .tag {
+    background-color: var(--surface-raised);
+    color: var(--text-secondary);
+  }
+
+  /* Light theme: restore the cream editorial reading surface */
+  [data-theme="light"] .content-well {
+    background-color: var(--surface-light);
+    color: var(--text-dark);
+  }
+  [data-theme="light"] .content-well h2,
+  [data-theme="light"] .content-well h3 {
+    color: var(--text-dark);
+  }
+  [data-theme="light"] .content-well p {
+    color: var(--text-dark-secondary);
+  }
+  [data-theme="light"] .content-well a {
+    color: var(--color-events);
+  }
+  [data-theme="light"] .content-well .detail__info-card {
+    background-color: var(--surface-light-card);
+    box-shadow: 0 1px 3px oklch(0 0 0 / 0.08);
+  }
+  [data-theme="light"] .content-well .tag {
     background-color: var(--border-light);
     color: #666;
+  }
+
+  /* System-light fallback when no explicit theme is set */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .content-well {
+      background-color: var(--surface-light);
+      color: var(--text-dark);
+    }
+    :root:not([data-theme="dark"]) .content-well h2,
+    :root:not([data-theme="dark"]) .content-well h3 {
+      color: var(--text-dark);
+    }
+    :root:not([data-theme="dark"]) .content-well p {
+      color: var(--text-dark-secondary);
+    }
+    :root:not([data-theme="dark"]) .content-well a {
+      color: var(--color-events);
+    }
+    :root:not([data-theme="dark"]) .content-well .detail__info-card {
+      background-color: var(--surface-light-card);
+      box-shadow: 0 1px 3px oklch(0 0 0 / 0.08);
+    }
+    :root:not([data-theme="dark"]) .content-well .tag {
+      background-color: var(--border-light);
+      color: #666;
+    }
   }
 
   @media (min-width: 60em) {
@@ -5633,6 +5683,759 @@
     font-weight: 600;
   }
 }
+
+/* ────────────────────────────────────────────────────────
+   Unlayered button-anchor overrides — workaround for #630
+   .btn--* lives in @layer components which (per #630) loses
+   to base's `a { color: var(--link) }` rule. When a button is
+   rendered as an <a> (e.g. .btn.btn--primary on a link) the
+   text becomes red on red. These unlayered rules force the
+   correct foreground until #630 fixes the layer order.
+   ──────────────────────────────────────────────────────── */
+a.btn--primary,
+a.btn--primary:hover,
+a.btn--primary:focus,
+a.btn--accent,
+a.btn--accent:hover,
+a.btn--accent:focus {
+  color: #fff;
+}
+
+a.btn--secondary,
+a.btn--ghost {
+  color: var(--text-secondary);
+}
+
+a.btn--secondary:hover,
+a.btn--ghost:hover {
+  color: var(--text-primary);
+}
+
+/* ────────────────────────────────────────────────────────
+   Elder Support — kitchen-table editorial
+   Scoped to .elders-page, .elders-form-page, .elders-confirmation
+   Uses only existing tokens. Site accent (--accent) is preserved
+   for primary CTAs, focus rings, and links — same as the rest of
+   the site. The safety callout retains its established teal.
+
+   Note: this block is intentionally UNLAYERED. The existing
+   stylesheet opens `@layer components` at line ~9, before the
+   layer order is declared at line ~553, which pins `components`
+   as the first (lowest-priority) layer. As a result, `@layer base`
+   rules like `a { color: var(--link) }` win over component class
+   selectors. Unlayered author rules beat all layered author rules,
+   so the elder block lives outside any layer for predictable CTAs.
+   ──────────────────────────────────────────────────────── */
+.elders-page {
+    max-inline-size: var(--width-page);
+    margin-inline: auto;
+    padding-block: var(--space-lg) var(--space-2xl);
+    padding-inline: var(--gutter);
+    display: grid;
+    gap: var(--space-2xl);
+  }
+
+  .elders-form-page,
+  .elders-confirmation {
+    max-inline-size: 44rem;
+    margin-inline: auto;
+    padding-block: var(--space-lg) var(--space-2xl);
+    padding-inline: var(--gutter);
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  /* ── Hero ───────────────────────────────────────── */
+  .elders-hero {
+    display: grid;
+    gap: var(--space-md);
+    padding-block: var(--space-xl) var(--space-lg);
+    padding-inline: clamp(var(--space-md), 4vw, var(--space-xl));
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .elders-hero::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: var(--space-2xl);
+    block-size: 3px;
+    background-color: var(--accent);
+    border-end-end-radius: var(--radius-sm);
+  }
+
+  .elders-eyebrow {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .elders-hero__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-primary);
+    margin: 0;
+    max-inline-size: 18ch;
+    font-weight: 500;
+  }
+
+  .elders-hero__lede {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    line-height: var(--leading-normal);
+    color: var(--text-secondary);
+    max-inline-size: 56ch;
+    margin: 0;
+  }
+
+  /* ── Three-step sequence ────────────────────────── */
+  .elders-sequence {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .elders-sequence__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .elders-sequence__steps {
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 48rem) {
+    .elders-sequence__steps {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+  }
+
+  .elders-sequence__step {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block-start: var(--space-sm);
+    border-block-start: 1px solid var(--border-subtle);
+  }
+
+  .elders-sequence__numeral {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    color: var(--color-teachings);
+    line-height: 1;
+    font-weight: 400;
+    font-variant-numeric: oldstyle-nums;
+    margin-block-end: var(--space-2xs);
+  }
+
+  .elders-sequence__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .elders-sequence__body {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: var(--leading-normal);
+    margin: 0;
+    max-inline-size: 36ch;
+  }
+
+  /* ── Dual-path cards (request / volunteer) ──────── */
+  .elders-paths {
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 56rem) {
+    .elders-paths {
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--space-lg);
+      align-items: stretch;
+    }
+  }
+
+  .elders-path {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: clamp(var(--space-md), 3vw, var(--space-lg));
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-subtle);
+    background-color: var(--surface-card);
+  }
+
+  .elders-path--primary {
+    background-color: var(--surface-raised);
+    border-color: var(--border-subtle);
+  }
+
+  .elders-path__eyebrow {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .elders-path--primary .elders-path__eyebrow {
+    color: var(--text-muted);
+  }
+
+  .elders-path__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+    line-height: var(--leading-tight);
+  }
+
+  .elders-path__body {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: var(--leading-normal);
+    margin: 0;
+  }
+
+  .elders-path__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2xs);
+    counter-reset: path-step;
+  }
+
+  .elders-path__list li {
+    counter-increment: path-step;
+    padding-inline-start: var(--space-md);
+    position: relative;
+    color: var(--text-secondary);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  .elders-path__list li::before {
+    content: counter(path-step);
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    color: var(--color-teachings);
+    font-weight: 600;
+    font-variant-numeric: oldstyle-nums;
+  }
+
+  .elders-path__cta {
+    margin-block-start: auto;
+    padding-block-start: var(--space-sm);
+  }
+
+  .elders-path__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    padding-block: var(--space-sm);
+    padding-inline: var(--space-lg);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .elders-path__btn--primary {
+    background-color: var(--accent);
+    color: #fff;
+  }
+
+  .elders-path__btn--primary:hover {
+    background-color: oklch(from var(--accent) calc(l - 0.06) c h);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .elders-path__btn--secondary {
+    background-color: transparent;
+    color: var(--text-primary);
+    border-color: var(--border-subtle);
+  }
+
+  .elders-path__btn--secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .elders-path__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  /* ── Quiet notes (safety, prefer-to-call) ───────── */
+  .elders-note {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block: var(--space-md);
+    padding-inline: var(--space-md);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+    background-color: var(--surface);
+    border-inline-start: 3px solid var(--border-subtle);
+  }
+
+  /* The safety callout keeps its established teal accent (existing pattern). */
+  .elders-note.safety-callout {
+    background-color: var(--surface);
+    border-inline-start-color: var(--color-language);
+  }
+
+  .elders-note__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .elders-note__body {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: var(--leading-normal);
+    margin: 0;
+  }
+
+  .elders-note__body a {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  /* ── Form pages: form-card layout ───────────────── */
+  .elders-form-page__header {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .elders-form-page__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    max-inline-size: 22ch;
+  }
+
+  .elders-form-page__lede {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    line-height: var(--leading-normal);
+    color: var(--text-secondary);
+    max-inline-size: 56ch;
+    margin: 0;
+  }
+
+  .elders-form-card {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: clamp(var(--space-md), 4vw, var(--space-xl));
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Scoped form overrides — only inside the elder form card */
+  .elders-form-card .form {
+    max-inline-size: none;
+    gap: var(--space-md);
+  }
+
+  .elders-form-card .form__field {
+    gap: var(--space-2xs);
+  }
+
+  .elders-form-card .form__label {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    flex-wrap: wrap;
+  }
+
+  .elders-form-card .form__label-optional {
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .elders-form-card .form__label [aria-hidden="true"] {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .elders-form-card .form__input,
+  .elders-form-card .form__select,
+  .elders-form-card .form__textarea {
+    padding-block: var(--space-xs);
+    padding-inline: var(--space-sm);
+    font-size: var(--text-base);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background-color: var(--surface);
+    transition: border-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .elders-form-card .form__input:focus,
+  .elders-form-card .form__select:focus,
+  .elders-form-card .form__textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 22%, transparent);
+  }
+
+  .elders-form-card .form__textarea {
+    min-block-size: 7rem;
+    line-height: var(--leading-normal);
+  }
+
+  .elders-form-card .form__fieldset {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+    display: grid;
+    gap: var(--space-xs);
+    background-color: var(--surface);
+  }
+
+  .elders-form-card .form__checkboxes {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  @media (min-width: 32rem) {
+    .elders-form-card .form__checkboxes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .elders-form-card .form__checkbox-label {
+    padding-block: var(--space-2xs);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+  }
+
+  .elders-form-card .form__checkbox-label input[type="checkbox"] {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    accent-color: var(--accent);
+  }
+
+  .elders-form-card .form__error {
+    font-size: var(--text-sm);
+    color: oklch(55% 0.2 25);
+    font-weight: 500;
+  }
+
+  .elders-form-card .form__actions {
+    margin-block-start: var(--space-sm);
+  }
+
+  .elders-form-card .form__actions .btn,
+  .elders-form-card .form__actions button[type="submit"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 100%;
+    padding-block: var(--space-sm);
+    padding-inline: var(--space-lg);
+    background-color: var(--accent);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  @media (min-width: 32rem) {
+    .elders-form-card .form__actions .btn,
+    .elders-form-card .form__actions button[type="submit"] {
+      inline-size: auto;
+      min-inline-size: 14rem;
+    }
+  }
+
+  .elders-form-card .form__actions .btn:hover,
+  .elders-form-card .form__actions button[type="submit"]:hover {
+    background-color: oklch(from var(--accent) calc(l - 0.06) c h);
+  }
+
+  /* Privacy note inside the form card becomes a hairline footer */
+  .elders-form-card .privacy-note {
+    background-color: transparent;
+    border: none;
+    border-block-start: 1px solid var(--border-subtle);
+    border-inline-start: none;
+    padding-block: var(--space-sm) 0;
+    padding-inline: 0;
+    margin-block-start: var(--space-2xs);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: var(--leading-normal);
+    border-radius: 0;
+  }
+
+  .elders-form-card .privacy-note a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .elders-form-page__footer {
+    display: grid;
+    gap: var(--space-2xs);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .elders-form-page__footer a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ── Confirmation pages ─────────────────────────── */
+  .elders-confirmation__hero {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .elders-confirmation__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    max-inline-size: 22ch;
+  }
+
+  .elders-confirmation__lede {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    line-height: var(--leading-normal);
+    color: var(--text-secondary);
+    max-inline-size: 56ch;
+    margin: 0;
+  }
+
+  .elders-confirmation__reference {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    letter-spacing: var(--tracking-wide);
+    margin: 0;
+  }
+
+  .elders-confirmation__cancel {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    line-height: var(--leading-normal);
+    margin: 0;
+    padding-block-start: var(--space-2xs);
+  }
+
+  /* Summary list (definition list) */
+  .elders-summary {
+    display: grid;
+    gap: 0;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-card);
+    overflow: hidden;
+  }
+
+  .elders-summary__row {
+    display: grid;
+    gap: var(--space-3xs);
+    padding-block: var(--space-sm);
+    padding-inline: var(--space-md);
+    border-block-end: 1px solid var(--border-subtle);
+    margin: 0;
+  }
+
+  @media (min-width: 36rem) {
+    .elders-summary__row {
+      grid-template-columns: 11rem 1fr;
+      gap: var(--space-md);
+      align-items: baseline;
+    }
+  }
+
+  .elders-summary__row:last-child {
+    border-block-end: none;
+  }
+
+  .elders-summary__term {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin: 0;
+  }
+
+  .elders-summary__value {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: var(--leading-normal);
+  }
+
+  /* Numbered timeline replacing bullet list for "what happens next" */
+  .elders-timeline {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .elders-timeline__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .elders-timeline__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-md);
+    counter-reset: timeline-step;
+    position: relative;
+  }
+
+  .elders-timeline__list::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 1.1rem;
+    inset-block-end: 1.1rem;
+    inset-inline-start: 1.125rem;
+    inline-size: 1px;
+    background-color: var(--border-subtle);
+  }
+
+  .elders-timeline__item {
+    counter-increment: timeline-step;
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--space-sm);
+    position: relative;
+    align-items: start;
+  }
+
+  .elders-timeline__item::before {
+    content: counter(timeline-step);
+    grid-column: 1;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    border-radius: var(--radius-full);
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    color: var(--color-teachings);
+    font-weight: 600;
+    font-variant-numeric: oldstyle-nums;
+  }
+
+  .elders-timeline__item p {
+    grid-column: 2;
+    margin: 0;
+    padding-block-start: 0.35em;
+    color: var(--text-secondary);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+  }
+
+  .elders-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    justify-content: space-between;
+    padding-block-start: var(--space-md);
+    border-block-start: 1px solid var(--border-subtle);
+  }
+
+  .elders-actions__link {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-size: var(--text-base);
+  }
+
+  .elders-empty {
+    max-inline-size: 36rem;
+    margin-inline: auto;
+    padding-block: var(--space-2xl);
+    padding-inline: var(--gutter);
+    text-align: center;
+    display: grid;
+    gap: var(--space-md);
+  }
 
 @layer utilities {
   .flow > * + * {

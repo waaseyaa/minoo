@@ -3,15 +3,19 @@
 {% block title %}{{ trans('volunteer_signup.title') }} — Minoo{% endblock %}
 
 {% block content %}
-  <div class="flow-lg">
-    <div>
-      <h1>{{ trans('volunteer_signup.title') }}</h1>
-      <p class="text-secondary">{{ trans('volunteer_signup.subtitle') }}</p>
-      <p class="text-secondary">{{ trans('volunteer_signup.intro_text') }}</p>
-    </div>
+<div class="elders-form-page">
 
+  <header class="elders-form-page__header">
+    <p class="elders-eyebrow">Elder Support</p>
+    <h1 class="elders-form-page__title">{{ trans('volunteer_signup.title') }}</h1>
+    <p class="elders-form-page__lede text-secondary">{{ trans('volunteer_signup.subtitle') }}</p>
+    <p class="elders-form-page__lede text-secondary">{{ trans('volunteer_signup.intro_text') }}</p>
+  </header>
+
+  <div class="elders-form-card">
     <form class="form form--centered" method="POST" action="{{ lang_url('/elders/volunteer') }}">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
       <div class="form__field">
         <label class="form__label" for="name">{{ trans('volunteer_signup.your_name') }} <span aria-hidden="true">*</span></label>
         {% if errors.name is defined %}
@@ -35,21 +39,21 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="community">{{ trans('volunteer_signup.community') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
+        <label class="form__label" for="community">{{ trans('volunteer_signup.community') }} <span class="form__label-optional">{{ trans('volunteer_signup.optional') }}</span></label>
         <input class="form__input" type="text" id="community" name="community"
                value="{{ values.community ?? (location is defined and location.hasLocation() ? location.communityName : '') }}"
                autocomplete="address-level2">
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="availability">{{ trans('volunteer_signup.availability') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
+        <label class="form__label" for="availability">{{ trans('volunteer_signup.availability') }} <span class="form__label-optional">{{ trans('volunteer_signup.optional') }}</span></label>
         <input class="form__input" type="text" id="availability" name="availability"
                value="{{ values.availability ?? '' }}"
                placeholder="{{ trans('volunteer_signup.availability_placeholder') }}">
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="max_travel_km">{{ trans('volunteer_signup.max_travel') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
+        <label class="form__label" for="max_travel_km">{{ trans('volunteer_signup.max_travel') }} <span class="form__label-optional">{{ trans('volunteer_signup.optional') }}</span></label>
         <input class="form__input" type="number" id="max_travel_km" name="max_travel_km"
                value="{{ values.maxTravelKm ?? '' }}"
                min="1" max="1000" step="1"
@@ -57,7 +61,7 @@
       </div>
 
       <fieldset class="form__fieldset">
-        <legend class="form__label">{{ trans('volunteer_signup.skills_legend') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></legend>
+        <legend class="form__label">{{ trans('volunteer_signup.skills_legend') }} <span class="form__label-optional">{{ trans('volunteer_signup.optional') }}</span></legend>
         <div class="form__checkboxes">
           {% set selectedSkills = values.skills ?? [] %}
           {% for skill in ['Rides', 'Groceries', 'Chores', 'Visits / Companionship'] %}
@@ -71,20 +75,23 @@
       </fieldset>
 
       <div class="form__field">
-        <label class="form__label" for="notes">{{ trans('volunteer_signup.additional_notes') }} <span class="form__label-optional">({{ trans('volunteer_signup.optional') }})</span></label>
+        <label class="form__label" for="notes">{{ trans('volunteer_signup.additional_notes') }} <span class="form__label-optional">{{ trans('volunteer_signup.optional') }}</span></label>
         <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes ?? '' }}</textarea>
-      </div>
-
-      <div class="privacy-note">
-        <p>{{ trans('volunteer_signup.privacy_note') }}
-        <a href="{{ lang_url('/legal/privacy') }}">{{ trans('volunteer_signup.privacy_link') }}</a>.</p>
       </div>
 
       <div class="form__actions">
         <button type="submit" class="btn btn--primary">{{ trans('volunteer_signup.submit_button') }}</button>
       </div>
-    </form>
 
-    <p class="text-secondary">{{ trans('volunteer_signup.need_help') }} <a href="{{ lang_url('/elders/request') }}">{{ trans('volunteer_signup.request_link') }}</a>.</p>
+      <div class="privacy-note">
+        <p>{{ trans('volunteer_signup.privacy_note') }} <a href="{{ lang_url('/legal/privacy') }}">{{ trans('volunteer_signup.privacy_link') }}</a>.</p>
+      </div>
+    </form>
   </div>
+
+  <footer class="elders-form-page__footer">
+    <p>{{ trans('volunteer_signup.need_help') }} <a href="{{ lang_url('/elders/request') }}">{{ trans('volunteer_signup.request_link') }}</a>.</p>
+  </footer>
+
+</div>
 {% endblock %}

@@ -6,64 +6,80 @@
 {% block og_image %}https://minoo.live/img/og-elder-support.png{% endblock %}
 
 {% block content %}
-<section class="content-section flow-lg">
-  <div class="portal-section">
-    <h1>{{ trans('elders.title') }}</h1>
-    <p class="text-secondary">{{ trans('elders.subtitle') }}</p>
-  </div>
+<div class="elders-page">
 
-  <div class="portal-section flow">
-    <h2 data-testid="how-it-works-heading">{{ trans('elders.how_heading') }}</h2>
-    <div class="how-it-works">
-      <div class="how-it-works__step flow">
-        <h3 data-testid="step-1-heading">{{ trans('elders.step1_title') }}</h3>
-        <p>{{ trans('elders.step1_text') }}</p>
-      </div>
-      <div class="how-it-works__step flow">
-        <h3 data-testid="step-2-heading">{{ trans('elders.step2_title') }}</h3>
-        <p>{{ trans('elders.step2_text') }}</p>
-      </div>
-      <div class="how-it-works__step flow">
-        <h3 data-testid="step-3-heading">{{ trans('elders.step3_title') }}</h3>
-        <p>{{ trans('elders.step3_text') }}</p>
-      </div>
-    </div>
-  </div>
+  <header class="elders-hero">
+    <p class="elders-eyebrow">A community program</p>
+    <h1 class="elders-hero__title">{{ trans('elders.title') }}</h1>
+    <p class="elders-hero__lede text-secondary">{{ trans('elders.subtitle') }}</p>
+  </header>
 
-  <div class="how-it-works">
-    <div class="how-it-works__step">
-      <h2>{{ trans('elders.for_elders_heading') }}</h2>
-      <p>{{ trans('elders.for_elders_text') }}</p>
-      <ol class="how-it-works__list">
+  <section class="elders-sequence" aria-labelledby="how-it-works-heading">
+    <h2 class="elders-sequence__heading" id="how-it-works-heading" data-testid="how-it-works-heading">{{ trans('elders.how_heading') }}</h2>
+    <ol class="elders-sequence__steps">
+      <li class="elders-sequence__step">
+        <span class="elders-sequence__numeral" aria-hidden="true">01</span>
+        <h3 class="elders-sequence__title" data-testid="step-1-heading">{{ trans('elders.step1_title') }}</h3>
+        <p class="elders-sequence__body">{{ trans('elders.step1_text') }}</p>
+      </li>
+      <li class="elders-sequence__step">
+        <span class="elders-sequence__numeral" aria-hidden="true">02</span>
+        <h3 class="elders-sequence__title" data-testid="step-2-heading">{{ trans('elders.step2_title') }}</h3>
+        <p class="elders-sequence__body">{{ trans('elders.step2_text') }}</p>
+      </li>
+      <li class="elders-sequence__step">
+        <span class="elders-sequence__numeral" aria-hidden="true">03</span>
+        <h3 class="elders-sequence__title" data-testid="step-3-heading">{{ trans('elders.step3_title') }}</h3>
+        <p class="elders-sequence__body">{{ trans('elders.step3_text') }}</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="elders-paths" aria-label="Ways to take part">
+    <article class="elders-path elders-path--primary">
+      <p class="elders-path__eyebrow">For Elders &amp; Families</p>
+      <h2 class="elders-path__heading">{{ trans('elders.for_elders_heading') }}</h2>
+      <p class="elders-path__body">{{ trans('elders.for_elders_text') }}</p>
+      <ol class="elders-path__list">
         <li>{{ trans('elders.for_elders_step1') }}</li>
         <li>{{ trans('elders.for_elders_step2') }}</li>
         <li>{{ trans('elders.for_elders_step3') }}</li>
         <li>{{ trans('elders.for_elders_step4') }}</li>
       </ol>
-      <a href="{{ lang_url('/elders/request') }}" class="btn btn--primary" data-testid="request-help-link">{{ trans('elders.request_help_button') }}</a>
-    </div>
+      <div class="elders-path__cta">
+        <a href="{{ lang_url('/elders/request') }}" class="elders-path__btn elders-path__btn--primary" data-testid="request-help-link">
+          {{ trans('elders.request_help_button') }}
+        </a>
+      </div>
+    </article>
 
-    <div class="how-it-works__step">
-      <h2>{{ trans('elders.for_volunteers_heading') }}</h2>
-      <p>{{ trans('elders.for_volunteers_text') }}</p>
-      <ol class="how-it-works__list">
+    <article class="elders-path">
+      <p class="elders-path__eyebrow">For Volunteers</p>
+      <h2 class="elders-path__heading">{{ trans('elders.for_volunteers_heading') }}</h2>
+      <p class="elders-path__body">{{ trans('elders.for_volunteers_text') }}</p>
+      <ol class="elders-path__list">
         <li>{{ trans('elders.for_volunteers_step1') }}</li>
         <li>{{ trans('elders.for_volunteers_step2') }}</li>
         <li>{{ trans('elders.for_volunteers_step3') }}</li>
         <li>{{ trans('elders.for_volunteers_step4') }}</li>
       </ol>
-      <a href="{{ lang_url('/elders/volunteer') }}" class="btn btn--secondary">{{ trans('elders.volunteer_button') }}</a>
-    </div>
-  </div>
+      <div class="elders-path__cta">
+        <a href="{{ lang_url('/elders/volunteer') }}" class="elders-path__btn elders-path__btn--secondary">
+          {{ trans('elders.volunteer_button') }}
+        </a>
+      </div>
+    </article>
+  </section>
 
-  <div class="safety-callout">
-    <h2>{{ trans('elders.safety_heading') }}</h2>
-    <p>{{ trans('elders.safety_text') }} <a href="{{ lang_url('/safety') }}">{{ trans('elders.safety_link') }}</a>.</p>
-  </div>
+  <aside class="elders-note safety-callout" aria-labelledby="elders-safety-heading">
+    <h2 class="elders-note__heading" id="elders-safety-heading">{{ trans('elders.safety_heading') }}</h2>
+    <p class="elders-note__body">{{ trans('elders.safety_text') }} <a href="{{ lang_url('/safety') }}">{{ trans('elders.safety_link') }}</a>.</p>
+  </aside>
 
-  <div class="portal-section">
-    <h2>{{ trans('elders.prefer_call_heading') }}</h2>
-    <p>{{ trans('elders.prefer_call_text') }}</p>
-  </div>
-</section>
+  <aside class="elders-note" aria-labelledby="elders-call-heading">
+    <h2 class="elders-note__heading" id="elders-call-heading">{{ trans('elders.prefer_call_heading') }}</h2>
+    <p class="elders-note__body">{{ trans('elders.prefer_call_text') }}</p>
+  </aside>
+
+</div>
 {% endblock %}

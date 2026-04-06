@@ -3,14 +3,18 @@
 {% block title %}{{ trans('request.title') }} — Minoo{% endblock %}
 
 {% block content %}
-  <div class="flow-lg">
-    <div>
-      <h1>{{ trans('request.title') }}</h1>
-      <p class="text-secondary">{{ trans('request.subtitle') }}</p>
-    </div>
+<div class="elders-form-page">
 
+  <header class="elders-form-page__header">
+    <p class="elders-eyebrow">Elder Support</p>
+    <h1 class="elders-form-page__title">{{ trans('request.title') }}</h1>
+    <p class="elders-form-page__lede text-secondary">{{ trans('request.subtitle') }}</p>
+  </header>
+
+  <div class="elders-form-card">
     <form class="form form--centered" method="POST" action="{{ lang_url('/elders/request') }}">
       <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
       <div class="form__field">
         <label class="form__label" for="name">{{ trans('request.your_name') }} <span aria-hidden="true">*</span></label>
         {% if errors.name is defined %}
@@ -64,7 +68,7 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="community">{{ trans('request.community') }} <span class="form__label-optional">({{ trans('request.optional') }})</span></label>
+        <label class="form__label" for="community">{{ trans('request.community') }} <span class="form__label-optional">{{ trans('request.optional') }}</span></label>
         <input class="form__input" type="text" id="community" name="community"
                value="{{ values.community ?? (location is defined and location.hasLocation() ? location.communityName : '') }}"
                autocomplete="address-level2">
@@ -86,23 +90,26 @@
       </div>
 
       <div class="form__field">
-        <label class="form__label" for="notes">{{ trans('request.additional_notes') }} <span class="form__label-optional">({{ trans('request.optional') }})</span></label>
+        <label class="form__label" for="notes">{{ trans('request.additional_notes') }} <span class="form__label-optional">{{ trans('request.optional') }}</span></label>
         <textarea class="form__textarea" id="notes" name="notes" rows="4">{{ values.notes ?? '' }}</textarea>
-      </div>
-
-      <div class="privacy-note">
-        <p>{{ trans('request.privacy_note') }}
-        <a href="{{ lang_url('/legal/privacy') }}">{{ trans('request.privacy_link') }}</a>.</p>
       </div>
 
       <div class="form__actions">
         <button type="submit" class="btn btn--primary">{{ trans('request.submit_button') }}</button>
       </div>
-    </form>
 
-    <p class="text-secondary">{{ trans('request.can_help') }} <a href="{{ lang_url('/elders/volunteer') }}">{{ trans('request.volunteer_link') }}</a>.</p>
-    <p class="text-secondary">{{ trans('request.safety_matters') }} <a href="{{ lang_url('/safety') }}">{{ trans('request.safety_link') }}</a>.</p>
+      <div class="privacy-note">
+        <p>{{ trans('request.privacy_note') }} <a href="{{ lang_url('/legal/privacy') }}">{{ trans('request.privacy_link') }}</a>.</p>
+      </div>
+    </form>
   </div>
+
+  <footer class="elders-form-page__footer">
+    <p>{{ trans('request.can_help') }} <a href="{{ lang_url('/elders/volunteer') }}">{{ trans('request.volunteer_link') }}</a>.</p>
+    <p>{{ trans('request.safety_matters') }} <a href="{{ lang_url('/safety') }}">{{ trans('request.safety_link') }}</a>.</p>
+  </footer>
+
+</div>
 {% endblock %}
 
 {% block scripts %}

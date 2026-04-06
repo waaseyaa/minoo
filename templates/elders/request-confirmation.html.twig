@@ -10,59 +10,62 @@
 
 {% block content %}
   {% if entity %}
-    <div class="flow-lg">
-      <div>
-        <span class="card__badge card__badge--elder">{{ trans('request_confirm.badge') }}</span>
-        <h1>{{ trans('request_confirm.title') }}</h1>
-        <p class="card__meta">{{ trans('request_confirm.reference') }}: {{ entity.uuid() }}</p>
-        <p class="text-secondary" data-testid="confirmation-message">{{ trans('request_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
-        <p class="text-secondary">{{ trans('request_confirm.cancel_note') }}</p>
-      </div>
+    <div class="elders-confirmation">
 
-      <div class="card card--detail">
-        <dl class="detail__fields">
-          <div class="detail__field">
-            <dt>{{ trans('request_confirm.type_of_help') }}</dt>
-            <dd data-testid="confirmation-type">{{ entity.get('type')|capitalize }}</dd>
+      <header class="elders-confirmation__hero">
+        <p class="elders-eyebrow">{{ trans('request_confirm.badge') }}</p>
+        <h1 class="elders-confirmation__title">{{ trans('request_confirm.title') }}</h1>
+        <p class="elders-confirmation__lede text-secondary" data-testid="confirmation-message">{{ trans('request_confirm.message', {name: entity.get('name'), phone: entity.get('phone')}) }}</p>
+        <p class="elders-confirmation__reference card__meta">{{ trans('request_confirm.reference') }} <span>{{ entity.uuid() }}</span></p>
+        <p class="elders-confirmation__cancel">{{ trans('request_confirm.cancel_note') }}</p>
+      </header>
+
+      <dl class="elders-summary card card--detail">
+        <div class="elders-summary__row detail__field">
+          <dt class="elders-summary__term">{{ trans('request_confirm.type_of_help') }}</dt>
+          <dd class="elders-summary__value" data-testid="confirmation-type">{{ entity.get('type')|capitalize }}</dd>
+        </div>
+        {% if entity.get('community') %}
+          <div class="elders-summary__row detail__field">
+            <dt class="elders-summary__term">{{ trans('request_confirm.community') }}</dt>
+            <dd class="elders-summary__value" data-testid="confirmation-community">{{ entity.get('community') }}</dd>
           </div>
-          {% if entity.get('community') %}
-            <div class="detail__field">
-              <dt>{{ trans('request_confirm.community') }}</dt>
-              <dd data-testid="confirmation-community">{{ entity.get('community') }}</dd>
-            </div>
-          {% endif %}
-          {% if entity.get('is_representative') %}
-            <div class="detail__field">
-              <dt>{{ trans('request_confirm.requested_for') }}</dt>
-              <dd>{{ entity.get('elder_name') }}</dd>
-            </div>
-          {% endif %}
-          {% if entity.get('notes') %}
-            <div class="detail__field">
-              <dt>{{ trans('request_confirm.notes') }}</dt>
-              <dd>{{ entity.get('notes') }}</dd>
-            </div>
-          {% endif %}
-        </dl>
-      </div>
+        {% endif %}
+        {% if entity.get('is_representative') %}
+          <div class="elders-summary__row detail__field">
+            <dt class="elders-summary__term">{{ trans('request_confirm.requested_for') }}</dt>
+            <dd class="elders-summary__value">{{ entity.get('elder_name') }}</dd>
+          </div>
+        {% endif %}
+        {% if entity.get('notes') %}
+          <div class="elders-summary__row detail__field">
+            <dt class="elders-summary__term">{{ trans('request_confirm.notes') }}</dt>
+            <dd class="elders-summary__value">{{ entity.get('notes') }}</dd>
+          </div>
+        {% endif %}
+      </dl>
 
-      <div class="flow">
-        <h2 data-testid="what-next-heading">{{ trans('request_confirm.what_next') }}</h2>
-        <ol class="how-it-works__list">
-          <li>{{ trans('request_confirm.next_step1') }}</li>
-          <li>{{ trans('request_confirm.next_step2') }}</li>
-          <li>{{ trans('request_confirm.next_step3') }}</li>
-          <li>{{ trans('request_confirm.next_step4') }}</li>
+      <section class="elders-timeline" aria-labelledby="what-next-heading">
+        <h2 class="elders-timeline__heading" id="what-next-heading" data-testid="what-next-heading">{{ trans('request_confirm.what_next') }}</h2>
+        <ol class="elders-timeline__list">
+          <li class="elders-timeline__item"><p>{{ trans('request_confirm.next_step1') }}</p></li>
+          <li class="elders-timeline__item"><p>{{ trans('request_confirm.next_step2') }}</p></li>
+          <li class="elders-timeline__item"><p>{{ trans('request_confirm.next_step3') }}</p></li>
+          <li class="elders-timeline__item"><p>{{ trans('request_confirm.next_step4') }}</p></li>
         </ol>
+      </section>
+
+      <div class="elders-actions">
+        <a class="elders-actions__link" href="{{ lang_url('/elders/request') }}">{{ trans('request_confirm.submit_another') }}</a>
+        <a class="elders-actions__link" href="{{ lang_url('/elders') }}">Back to Elder Support</a>
       </div>
 
-      <p><a href="{{ lang_url('/elders/request') }}">{{ trans('request_confirm.submit_another') }}</a></p>
     </div>
   {% else %}
-    <div class="flow-lg">
-      <h1>{{ trans('request_confirm.not_found_title') }}</h1>
-      <p>{{ trans('request_confirm.not_found_text') }}</p>
-      <p><a href="{{ lang_url('/elders/request') }}">{{ trans('request_confirm.submit_new') }}</a></p>
+    <div class="elders-empty">
+      <h1 class="elders-confirmation__title">{{ trans('request_confirm.not_found_title') }}</h1>
+      <p class="text-secondary">{{ trans('request_confirm.not_found_text') }}</p>
+      <p><a class="elders-actions__link" href="{{ lang_url('/elders/request') }}">{{ trans('request_confirm.submit_new') }}</a></p>
     </div>
   {% endif %}
 {% endblock %}
