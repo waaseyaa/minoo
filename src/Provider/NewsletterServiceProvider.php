@@ -6,6 +6,7 @@ namespace Minoo\Provider;
 
 use Minoo\Domain\Newsletter\Service\EditionLifecycle;
 use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
+use Minoo\Domain\Newsletter\Service\RenderTokenStore;
 use Minoo\Domain\Newsletter\ValueObject\SectionQuota;
 use Minoo\Entity\NewsletterEdition;
 use Minoo\Entity\NewsletterItem;
@@ -93,6 +94,15 @@ final class NewsletterServiceProvider extends ServiceProvider
                 quotas: SectionQuota::fromConfig($config['sections']),
             );
         });
+
+        $this->singleton(RenderTokenStore::class, function () {
+            $config = require __DIR__ . '/../../config/newsletter.php';
+            $dir = dirname(__DIR__, 2) . '/' . $config['storage_dir'] . '/render-tokens';
+            return new RenderTokenStore(
+                storageDir: $dir,
+                ttlSeconds: 60,
+            );
+        });
     }
 
     public function routes(WaaseyaaRouter $router, ?EntityTypeManager $entityTypeManager = null): void
@@ -144,6 +154,16 @@ final class NewsletterServiceProvider extends ServiceProvider
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.print_preview',
+            RouteBuilder::create('/newsletter/_internal/{id}/print')
+                ->controller('Minoo\Controller\NewsletterController::printPreview')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
                 ->build(),
         );
     }
