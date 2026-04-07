@@ -7,6 +7,7 @@
         "php": ">=8.4",
         "geoip2/geoip2": "^3.0",
         "sendgrid/sendgrid": "^8.1",
+        "symfony/dotenv": "^7.0",
         "symfony/process": "^8.0",
         "waaseyaa/access": "^0.1",
         "waaseyaa/admin-surface": "^0.1",
@@ -107,6 +108,14 @@
     },
     "scripts": {
         "audit-site": "./bin/waaseyaa-audit-site",
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve & npm --prefix ../waaseyaa/packages/admin run dev && kill $!"
+        ],
+        "dev:wsl": [
+            "Composer\\Config::disableProcessTimeout",
+            "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve & npm --prefix ../waaseyaa/packages/admin run dev -- --host && kill $!"
+        ],
         "post-create-project-cmd": [
             "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync bin/waaseyaa-audit-site"
         ]
