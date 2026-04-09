@@ -6,29 +6,29 @@ namespace Minoo\Provider;
 
 use Minoo\Support\Command\MailTestCommand;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
-use Waaseyaa\Mail\Driver\SendGridDriver;
-use Waaseyaa\Mail\MailDriverInterface;
+use Waaseyaa\Mail\MailerInterface;
 
 final class MailServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        $config = $this->config['mail'] ?? [];
+    public function register(): void {}
 
-        $this->singleton(MailDriverInterface::class, fn () => new SendGridDriver(
-            apiKey: $config['sendgrid_api_key'] ?? '',
-            fromAddress: $config['from_address'] ?? '',
-            fromName: $config['from_name'] ?? '',
-        ));
-    }
-
+    /**
+     * @return list<object>
+     */
     public function commands(
         \Waaseyaa\Entity\EntityTypeManager $entityTypeManager,
         \Waaseyaa\Database\DatabaseInterface $database,
         \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher,
     ): array {
+        $config = $this->config['mail'] ?? [];
+        $configured = trim((string) ($config['sendgrid_api_key'] ?? '')) !== ''
+            && trim((string) ($config['from_address'] ?? '')) !== '';
+
         return [
-            new MailTestCommand($this->resolve(MailDriverInterface::class)),
+            new MailTestCommand(
+                $this->resolve(MailerInterface::class),
+                $configured,
+            ),
         ];
     }
 }

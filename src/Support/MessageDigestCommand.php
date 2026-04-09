@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace Minoo\Support;
 
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Mail\MailDriverInterface;
-use Waaseyaa\Mail\MailMessage;
+use Waaseyaa\Mail\Envelope;
+use Waaseyaa\Mail\MailerInterface;
 
 final class MessageDigestCommand
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-        private readonly MailDriverInterface $mailService,
+        private readonly MailerInterface $mailer,
+        private readonly bool $mailConfigured,
         private readonly array $config,
     ) {}
 
     public function execute(): void
     {
-        if (!$this->mailService->isConfigured()) {
+        if (!$this->mailConfigured) {
             return;
         }
 
@@ -123,11 +124,11 @@ final class MessageDigestCommand
         $body .= "\nOpen Messages: https://minoo.sagamok.ca/messages\n";
         $body .= "\n--\nMinoo - Sagamok Anishnawbek Community Platform\n";
 
-        $this->mailService->send(new MailMessage(
+        $this->mailer->send(new Envelope(
+            to: [$email],
             from: '',
-            to: $email,
             subject: $subject,
-            body: $body,
+            textBody: $body,
         ));
     }
 }
