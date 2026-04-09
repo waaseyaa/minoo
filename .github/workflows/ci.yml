@@ -8,7 +8,8 @@ on:
 
 # Overlay jobs clone waaseyaa/framework to rsync admin-surface/cli into vendor so CI matches
 # monorepo main when split packages lag Packagist. Use `main` (not Minoo branch names): the
-# framework repo does not mirror Minoo feature branch names.
+# framework repo does not mirror Minoo feature branch names. Do not pin PR/topic branches here —
+# they are deleted after merge and will break checkout.
 env:
   WAASEYAA_FRAMEWORK_REF: main
 
