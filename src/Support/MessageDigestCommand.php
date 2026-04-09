@@ -15,6 +15,7 @@ final class MessageDigestCommand
         private readonly MailerInterface $mailer,
         private readonly bool $mailConfigured,
         private readonly array $config,
+        private readonly string $mailFromAddress,
     ) {}
 
     public function execute(): void
@@ -126,7 +127,7 @@ final class MessageDigestCommand
 
         $this->mailer->send(new Envelope(
             to: [$email],
-            from: '',
+            from: $this->mailFromAddress,
             subject: $subject,
             textBody: $body,
         ));

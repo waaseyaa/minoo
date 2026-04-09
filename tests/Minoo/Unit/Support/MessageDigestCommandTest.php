@@ -31,7 +31,7 @@ final class MessageDigestCommandTest extends TestCase
     {
         $this->mailer->expects($this->never())->method('send');
 
-        $command = new MessageDigestCommand($this->etm, $this->mailer, false, []);
+        $command = new MessageDigestCommand($this->etm, $this->mailer, false, [], 'noreply@minoo.test');
         $command->execute();
     }
 
@@ -55,7 +55,7 @@ final class MessageDigestCommandTest extends TestCase
             ['user', $userStorage],
         ]);
 
-        $command = new MessageDigestCommand($this->etm, $this->mailer, true, []);
+        $command = new MessageDigestCommand($this->etm, $this->mailer, true, [], 'noreply@minoo.test');
         $command->execute();
     }
 }

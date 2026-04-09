@@ -28,13 +28,15 @@ final class MailServiceProvider extends ServiceProvider
         \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher,
     ): array {
         $config = $this->config['mail'] ?? [];
+        $fromAddress = trim((string) ($config['from_address'] ?? ''));
         $configured = trim((string) ($config['sendgrid_api_key'] ?? '')) !== ''
-            && trim((string) ($config['from_address'] ?? '')) !== '';
+            && $fromAddress !== '';
 
         return [
             new MailTestCommand(
                 $this->resolve(MailerInterface::class),
                 $configured,
+                $fromAddress,
             ),
         ];
     }

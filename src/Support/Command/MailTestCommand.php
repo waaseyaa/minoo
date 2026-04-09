@@ -18,6 +18,7 @@ final class MailTestCommand extends Command
     public function __construct(
         private readonly MailerInterface $mailer,
         private readonly bool $mailConfigured,
+        private readonly string $mailFromAddress,
     ) {
         parent::__construct();
     }
@@ -39,7 +40,7 @@ final class MailTestCommand extends Command
         try {
             $this->mailer->send(new Envelope(
                 to: [$email],
-                from: '',
+                from: $this->mailFromAddress,
                 subject: '[Minoo] Mail test',
                 textBody: 'This is a test email from Minoo. If you received this, SendGrid is working.',
             ));
