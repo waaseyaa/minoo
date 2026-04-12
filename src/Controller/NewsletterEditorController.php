@@ -10,7 +10,7 @@ use Minoo\Domain\Newsletter\Service\EditionLifecycle;
 use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
 use Minoo\Domain\Newsletter\Service\NewsletterDispatcher;
 use Minoo\Domain\Newsletter\Service\NewsletterRenderer;
-use Minoo\Support\Flash;
+use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +38,6 @@ final class NewsletterEditorController
 
         return new Response($this->twig->render('newsletter/editor/list.html.twig', [
             'editions' => $editions,
-            'flashes' => Flash::pull(),
         ]));
     }
 
@@ -111,7 +110,6 @@ final class NewsletterEditorController
         return new Response($this->twig->render('newsletter/editor/newsroom.html.twig', [
             'edition' => $edition,
             'items_by_section' => $bySection,
-            'flashes' => Flash::pull(),
         ]));
     }
 
@@ -192,7 +190,6 @@ final class NewsletterEditorController
 
         return new Response($this->twig->render('newsletter/editor/submissions.html.twig', [
             'submissions' => $pending,
-            'flashes' => Flash::pull(),
         ]));
     }
 

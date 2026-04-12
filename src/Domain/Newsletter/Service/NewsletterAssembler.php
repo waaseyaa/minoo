@@ -69,7 +69,7 @@ final class NewsletterAssembler
                     section: $quota->name,
                     sourceType: $source,
                     sourceId: (int) $entity->id(),
-                    blurb: (string) ($entity->get('title') ?? $entity->label() ?? ''),
+                    blurb: (string) ($entity->get('title') ?? $entity->label()),
                     score: $this->scoreByRecency($entity),
                 );
             }

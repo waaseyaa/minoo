@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minoo\Controller;
 
 use Minoo\Domain\Newsletter\Service\RenderTokenStore;
-use Minoo\Support\Flash;
+use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -147,9 +147,7 @@ final class NewsletterController
             return new RedirectResponse('/login?redirect=/newsletter/submit');
         }
 
-        return new Response($this->twig->render('newsletter/public/submit.html.twig', [
-            'flashes' => Flash::pull(),
-        ]));
+        return new Response($this->twig->render('newsletter/public/submit.html.twig'));
     }
 
     public function submitPost(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
