@@ -85,6 +85,10 @@ use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
 use Waaseyaa\Search\SearchProviderInterface;
 use Waaseyaa\Search\Twig\SearchTwigExtension;
+use Waaseyaa\Mcp\Auth\BearerTokenAuth;
+use Waaseyaa\Mcp\Auth\McpAuthInterface;
+use Waaseyaa\Mcp\Bridge\ToolExecutorInterface;
+use Waaseyaa\Mcp\Bridge\ToolRegistryInterface;
 use Waaseyaa\SSR\SsrServiceProvider;
 use Waaseyaa\SSR\ThemeServiceProvider;
 
@@ -794,6 +798,27 @@ final class AppServiceProvider extends ServiceProvider
             $baseUrl = rtrim((string) ($ncConfig['base_url'] ?? 'https://api.northcloud.one'), '/');
             $timeout = (int) ($ncConfig['search']['timeout'] ?? $ncConfig['timeout'] ?? 15);
             return new NorthCloudClient($baseUrl, $timeout);
+        });
+
+        // MCP auth: bind BearerTokenAuth with tokens from config.
+        // Tokens map bearer token string → AccountInterface. Empty by default
+        // (all requests return 401); populate via config/waaseyaa.php mcp.tokens.
+        $this->singleton(McpAuthInterface::class, function (): McpAuthInterface {
+            $tokens = (array) ($this->config['mcp']['tokens'] ?? []);
+            return new BearerTokenAuth($tokens);
+        });
+
+        // MCP tool registry and executor: no tools registered by default.
+        // Add tool definitions and execution logic when MCP tools are wired up.
+        $this->singleton(ToolRegistryInterface::class, fn(): ToolRegistryInterface => new class implements ToolRegistryInterface {
+            public function getTools(): array { return []; }
+            public function getTool(string $name): ?\Waaseyaa\AI\Schema\Mcp\McpToolDefinition { return null; }
+        });
+
+        $this->singleton(ToolExecutorInterface::class, fn(): ToolExecutorInterface => new class implements ToolExecutorInterface {
+            public function execute(string $toolName, array $arguments): array {
+                return ['content' => [['type' => 'text', 'text' => "Unknown tool: {$toolName}"]], 'isError' => true];
+            }
         });
 
         // =====================================================================
