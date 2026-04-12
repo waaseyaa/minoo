@@ -41,7 +41,7 @@ $loop = new NcSyncWorkerLoop(
     syncService: $syncService,
     statusPath: $statusPath,
     intervalSeconds: 1800,
-    maxCycles: 48,
+    maxCycles: 0,
 );
 
 // Signal handling
@@ -53,6 +53,6 @@ $shutdown = static function () use ($loop): void {
 pcntl_signal(SIGTERM, $shutdown);
 pcntl_signal(SIGINT, $shutdown);
 
-fprintf(STDOUT, "NC Sync Worker started (interval=30m, max_cycles=48)\n");
+fprintf(STDOUT, "NC Sync Worker started (interval=30m, max_cycles=unlimited)\n");
 $loop->run();
 fprintf(STDOUT, "NC Sync Worker stopped.\n");

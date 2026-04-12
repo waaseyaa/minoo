@@ -13,13 +13,14 @@ final class NcSyncWorkerLoop
         private readonly NcContentSyncService $syncService,
         private readonly string $statusPath,
         private readonly int $intervalSeconds = 1800,
-        private readonly int $maxCycles = 48,
+        /** @param int $maxCycles Max sync iterations; 0 or negative = unlimited */
+        private readonly int $maxCycles = 0,
         private readonly int $limit = 20,
     ) {}
 
     public function run(): void
     {
-        while ($this->running && $this->cycleCount < $this->maxCycles) {
+        while ($this->running && ($this->maxCycles <= 0 || $this->cycleCount < $this->maxCycles)) {
             try {
                 $result = $this->syncService->sync(limit: $this->limit);
             } catch (\Throwable $e) {
@@ -32,7 +33,7 @@ final class NcSyncWorkerLoop
             $this->writeStatus($result);
             $this->log($result);
 
-            if (!$this->running || $this->cycleCount >= $this->maxCycles) {
+            if (!$this->running || ($this->maxCycles > 0 && $this->cycleCount >= $this->maxCycles)) {
                 break;
             }
 
@@ -78,9 +79,10 @@ final class NcSyncWorkerLoop
             fprintf(STDERR, "[%s] Sync FAILED: could not reach NorthCloud\n", $ts);
             return;
         }
-        fprintf(STDOUT, "[%s] Sync: created=%d skipped=%d failed=%d (cycle %d/%d)\n",
+        $cap = $this->maxCycles <= 0 ? '∞' : (string) $this->maxCycles;
+        fprintf(STDOUT, "[%s] Sync: created=%d skipped=%d failed=%d (cycle %d/%s)\n",
             $ts, $result->created, $result->skipped, $result->failed,
-            $this->cycleCount, $this->maxCycles);
+            $this->cycleCount, $cap);
     }
 
     private function sleep(): void

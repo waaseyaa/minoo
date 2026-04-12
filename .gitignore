@@ -30,3 +30,5 @@ bin/mercure
 # Nuxt admin SPA (run: npm run build:admin — production build runs in deploy workflow)
 /public/admin/*
 !/public/admin/.gitkeep
+storage/waaseyaa.sqlite-shm
+storage/waaseyaa.sqlite-wal

@@ -86,7 +86,7 @@ final class NcSyncWorkerLoopTest extends TestCase
             syncService: $syncService,
             statusPath: $statusPath,
             intervalSeconds: 0,
-            maxCycles: 100,
+            maxCycles: 0,
         );
         $loop->run();
 

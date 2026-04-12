@@ -63,6 +63,7 @@
     },
     "extra": {
         "waaseyaa": {
+            "admin_path": "../waaseyaa/packages/admin",
             "providers": [
                 "Minoo\\Provider\\I18nServiceProvider",
                 "Minoo\\Provider\\EventServiceProvider",
@@ -107,11 +108,11 @@
         }
     },
     "scripts": {
-        "audit-site": "./bin/waaseyaa-audit-site",
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve & npm --prefix ../waaseyaa/packages/admin run dev && kill $!"
+            "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve -p ${APP_PORT:-8081} & SERVE_PID=$!; trap 'kill $SERVE_PID 2>/dev/null || true' EXIT INT TERM; NUXT_BACKEND_URL=http://127.0.0.1:${APP_PORT:-8081} bin/waaseyaa admin:dev"
         ],
+        "audit-site": "./bin/waaseyaa-audit-site",
         "dev:wsl": [
             "Composer\\Config::disableProcessTimeout",
             "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve & npm --prefix ../waaseyaa/packages/admin run dev -- --host && kill $!"
