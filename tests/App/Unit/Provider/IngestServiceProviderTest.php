@@ -4,26 +4,33 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Provider;
 
-use App\Provider\IngestServiceProvider;
+use App\Provider\AppServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(IngestServiceProvider::class)]
+#[CoversClass(AppServiceProvider::class)]
 final class IngestServiceProviderTest extends TestCase
 {
     #[Test]
     public function it_registers_ingest_log_entity_type(): void
     {
-        $provider = new IngestServiceProvider();
+        $provider = new AppServiceProvider();
         $provider->register();
 
         $types = $provider->getEntityTypes();
+        $ingestType = null;
 
-        $this->assertCount(1, $types);
-        $this->assertSame('ingest_log', $types[0]->id());
-        $this->assertSame('Ingestion Log', $types[0]->getLabel());
-        $this->assertSame('ingestion', $types[0]->getGroup());
-        $this->assertSame('ilid', $types[0]->getKeys()['id']);
+        foreach ($types as $type) {
+            if ($type->id() === 'ingest_log') {
+                $ingestType = $type;
+                break;
+            }
+        }
+
+        $this->assertNotNull($ingestType, 'ingest_log entity type should be registered');
+        $this->assertSame('Ingestion Log', $ingestType->getLabel());
+        $this->assertSame('ingestion', $ingestType->getGroup());
+        $this->assertSame('ilid', $ingestType->getKeys()['id']);
     }
 }

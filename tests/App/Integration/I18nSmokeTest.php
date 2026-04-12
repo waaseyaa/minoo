@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
-use App\Provider\I18nServiceProvider;
+use App\Provider\AppServiceProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ final class I18nSmokeTest extends TestCase
 {
     private static string $projectRoot;
     private static HttpKernel $kernel;
-    private static I18nServiceProvider $i18nProvider;
+    private static AppServiceProvider $appProvider;
 
     public static function setUpBeforeClass(): void
     {
@@ -36,14 +36,14 @@ final class I18nSmokeTest extends TestCase
         $boot = new \ReflectionMethod(AbstractKernel::class, 'boot');
         $boot->invoke(self::$kernel);
 
-        // Access providers via reflection to find I18nServiceProvider
+        // Access providers via reflection to find AppServiceProvider
         $prop = new \ReflectionProperty(AbstractKernel::class, 'providers');
         /** @var list<ServiceProvider> $providers */
         $providers = $prop->getValue(self::$kernel);
 
         foreach ($providers as $provider) {
-            if ($provider instanceof I18nServiceProvider) {
-                self::$i18nProvider = $provider;
+            if ($provider instanceof AppServiceProvider) {
+                self::$appProvider = $provider;
                 break;
             }
         }
@@ -62,7 +62,7 @@ final class I18nSmokeTest extends TestCase
     #[Test]
     public function language_manager_is_registered(): void
     {
-        $manager = self::$i18nProvider->resolve(LanguageManagerInterface::class);
+        $manager = self::$appProvider->resolve(LanguageManagerInterface::class);
         $this->assertNotNull($manager);
         $this->assertInstanceOf(LanguageManagerInterface::class, $manager);
     }
@@ -70,7 +70,7 @@ final class I18nSmokeTest extends TestCase
     #[Test]
     public function translator_is_registered(): void
     {
-        $translator = self::$i18nProvider->resolve(TranslatorInterface::class);
+        $translator = self::$appProvider->resolve(TranslatorInterface::class);
         $this->assertNotNull($translator);
         $this->assertInstanceOf(TranslatorInterface::class, $translator);
     }
@@ -79,7 +79,7 @@ final class I18nSmokeTest extends TestCase
     public function english_translation_returns_value(): void
     {
         /** @var TranslatorInterface $translator */
-        $translator = self::$i18nProvider->resolve(TranslatorInterface::class);
+        $translator = self::$appProvider->resolve(TranslatorInterface::class);
         $result = $translator->trans('nav.communities', locale: 'en');
         $this->assertSame('Communities', $result);
     }
@@ -88,7 +88,7 @@ final class I18nSmokeTest extends TestCase
     public function ojibwe_translation_falls_back_to_english_when_empty(): void
     {
         /** @var TranslatorInterface $translator */
-        $translator = self::$i18nProvider->resolve(TranslatorInterface::class);
+        $translator = self::$appProvider->resolve(TranslatorInterface::class);
 
         // chat.toggle_label is '' in oj.php — should fall back to English
         $result = $translator->trans('chat.toggle_label', locale: 'oj');
@@ -99,7 +99,7 @@ final class I18nSmokeTest extends TestCase
     public function default_language_is_english(): void
     {
         /** @var LanguageManagerInterface $manager */
-        $manager = self::$i18nProvider->resolve(LanguageManagerInterface::class);
+        $manager = self::$appProvider->resolve(LanguageManagerInterface::class);
         $default = $manager->getDefaultLanguage();
         $this->assertSame('en', $default->id);
     }
@@ -108,7 +108,7 @@ final class I18nSmokeTest extends TestCase
     public function ojibwe_language_is_available(): void
     {
         /** @var LanguageManagerInterface $manager */
-        $manager = self::$i18nProvider->resolve(LanguageManagerInterface::class);
+        $manager = self::$appProvider->resolve(LanguageManagerInterface::class);
         $languages = $manager->getLanguages();
         $this->assertArrayHasKey('oj', $languages);
     }

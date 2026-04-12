@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Provider;
 
-use App\Provider\CulturalCollectionServiceProvider;
-use App\Provider\CulturalGroupServiceProvider;
-use App\Provider\EventServiceProvider;
-use App\Provider\GroupServiceProvider;
-use App\Provider\LanguageServiceProvider;
-use App\Provider\LeaderServiceProvider;
-use App\Provider\PeopleServiceProvider;
-use App\Provider\TeachingServiceProvider;
+use App\Provider\AppServiceProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -26,15 +19,17 @@ final class ConsentFieldsTest extends TestCase
      */
     public static function contentProviderDataProvider(): array
     {
+        $provider = new AppServiceProvider();
+
         return [
-            'teaching' => [new TeachingServiceProvider(), 'teaching'],
-            'event' => [new EventServiceProvider(), 'event'],
-            'group' => [new GroupServiceProvider(), 'group'],
-            'cultural_group' => [new CulturalGroupServiceProvider(), 'cultural_group'],
-            'cultural_collection' => [new CulturalCollectionServiceProvider(), 'cultural_collection'],
-            'resource_person' => [new PeopleServiceProvider(), 'resource_person'],
-            'leader' => [new LeaderServiceProvider(), 'leader'],
-            'dictionary_entry' => [new LanguageServiceProvider(), 'dictionary_entry'],
+            'teaching' => [$provider, 'teaching'],
+            'event' => [$provider, 'event'],
+            'group' => [$provider, 'group'],
+            'cultural_group' => [$provider, 'cultural_group'],
+            'cultural_collection' => [$provider, 'cultural_collection'],
+            'resource_person' => [$provider, 'resource_person'],
+            'leader' => [$provider, 'leader'],
+            'dictionary_entry' => [$provider, 'dictionary_entry'],
         ];
     }
 

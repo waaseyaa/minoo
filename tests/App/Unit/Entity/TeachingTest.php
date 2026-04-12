@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Teaching;
-use App\Provider\TeachingServiceProvider;
+use App\Provider\AppServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -44,7 +44,7 @@ final class TeachingTest extends TestCase
     #[Test]
     public function it_defines_community_id_field(): void
     {
-        $provider = new TeachingServiceProvider();
+        $provider = new AppServiceProvider();
         $provider->register();
 
         $types = $provider->getEntityTypes();

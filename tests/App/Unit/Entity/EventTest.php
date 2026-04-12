@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Event;
-use App\Provider\EventServiceProvider;
+use App\Provider\AppServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -52,7 +52,7 @@ final class EventTest extends TestCase
     #[Test]
     public function it_defines_community_id_field(): void
     {
-        $provider = new EventServiceProvider();
+        $provider = new AppServiceProvider();
         $provider->register();
 
         $types = $provider->getEntityTypes();
