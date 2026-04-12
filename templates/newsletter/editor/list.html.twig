@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Newsletter editor{% endblock %}
+
+{% block content %}
+<section class="newsroom-list">
+    <h1>Newsletter editor</h1>
+
+    {% for type, msgs in flashes %}
+        {% for msg in msgs %}
+            <div class="flash flash--{{ type }}">{{ msg }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <form method="post" action="/coordinator/newsletter/new" class="form-inline">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <label>Community
+            <input type="text" name="community_id" placeholder="manitoulin-regional or leave blank">
+        </label>
+        <label>Publish date
+            <input type="date" name="publish_date" required>
+        </label>
+        <button type="submit">New edition</button>
+    </form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Issue</th>
+                <th>Community</th>
+                <th>Publish date</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for edition in editions %}
+                <tr>
+                    <td>Vol. {{ edition.get('volume') }} No. {{ edition.get('issue_number') }}</td>
+                    <td>{{ edition.get('community_id') ?: 'Regional' }}</td>
+                    <td>{{ edition.get('publish_date') }}</td>
+                    <td><span class="status status--{{ edition.get('status') }}">{{ edition.get('status') }}</span></td>
+                    <td><a href="/coordinator/newsletter/{{ edition.id() }}">Open</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">No editions yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

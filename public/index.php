@@ -6,7 +6,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$kernel = new \Waaseyaa\Foundation\Kernel\HttpKernel(dirname(__DIR__));
+$projectRoot = dirname(__DIR__);
+if (file_exists($projectRoot . '/.env')) {
+    (new \Symfony\Component\Dotenv\Dotenv())->loadEnv($projectRoot . '/.env');
+}
+
+$kernel = new \Waaseyaa\Foundation\Kernel\HttpKernel($projectRoot);
 
 try {
     $response = $kernel->handle();

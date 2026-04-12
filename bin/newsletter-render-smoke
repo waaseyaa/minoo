@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Manual smoke test for the full newsletter render pipeline.
+# NOT run in CI — requires Playwright + Chromium installed and a seeded
+# edition in the database. Used by ops to validate the render pipeline
+# on staging/prod after a deploy.
+#
+# Usage: bin/newsletter-render-smoke [edition_id]
+#        bin/newsletter-render-smoke 7
+
+set -euo pipefail
+
+EDITION_ID="${1:-1}"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT_DIR"
+
+SERVER_LOG="/tmp/newsletter-smoke-server.log"
+OUT="/tmp/newsletter-smoke-${EDITION_ID}.pdf"
+
+# Start dev server in the background.
+echo "Starting dev server on localhost:8081..."
+php -S localhost:8081 -t public > "$SERVER_LOG" 2>&1 &
+SERVER_PID=$!
+trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+
+# Give the server a moment to come up.
+sleep 2
+
+# Issue a render token for the requested edition.
+echo "Issuing render token for edition ${EDITION_ID}..."
+TOKEN=$(php -r "
+require 'vendor/autoload.php';
+\$store = new Minoo\\Domain\\Newsletter\\Service\\RenderTokenStore(
+    'storage/newsletter/render-tokens',
+    60
+);
+echo \$store->issue((int) '${EDITION_ID}');
+")
+
+if [[ -z "${TOKEN:-}" ]]; then
+    echo "FAIL: could not issue render token."
+    exit 1
+fi
+echo "Token: ${TOKEN}"
+
+echo "Rendering PDF to: ${OUT}"
+node bin/render-pdf.js \
+    --url="http://localhost:8081/newsletter/_internal/${EDITION_ID}/print?token=${TOKEN}" \
+    --out="${OUT}"
+
+if [[ ! -s "$OUT" ]]; then
+    echo "FAIL: PDF was not produced or is empty at ${OUT}."
+    echo "--- server log tail ---"
+    tail -n 40 "$SERVER_LOG" || true
+    exit 1
+fi
+
+SIZE=$(stat -c %s "$OUT" 2>/dev/null || stat -f %z "$OUT")
+echo "OK: PDF written (${SIZE} bytes) to ${OUT}"

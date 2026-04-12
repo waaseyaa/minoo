@@ -1,0 +1,17 @@
+{% extends "base.html.twig" %}
+{% block title %}{{ edition.get('headline') }}{% endblock %}
+{% block content %}
+<section class="newsletter-public-edition">
+    <h1>{{ edition.get('headline') }}</h1>
+    <p>
+        Vol. {{ edition.get('volume') }} No. {{ edition.get('issue_number') }} —
+        {{ edition.get('publish_date') }} —
+        {{ edition.get('community_id') ?: 'Regional' }}
+    </p>
+    {% if edition.get('pdf_path') %}
+        <p>
+            <a class="btn" href="/newsletter/{{ edition.get('community_id') ?: 'regional' }}/{{ edition.get('volume') }}-{{ edition.get('issue_number') }}.pdf">Download PDF</a>
+        </p>
+    {% endif %}
+</section>
+{% endblock %}

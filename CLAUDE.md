@@ -2,7 +2,7 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
-Last framework sync: Waaseyaa alpha.104 (community-scoped tenancy #1093–#1094, domain router architecture #571)
+Last framework sync: Waaseyaa alpha.108 (dotenv loading #1132, Nitro SSR proxy #1133)
 
 ## Architecture
 
@@ -129,7 +129,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
-php -S localhost:8081 -t public               # Dev server (port 8081)
+php -S localhost:8080 -t public               # Dev server (port 8080)
 ./vendor/bin/phpunit                          # All tests (829 tests, 2395 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
