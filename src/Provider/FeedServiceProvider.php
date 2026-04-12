@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Feed\EntityLoaderService;
-use Minoo\Feed\FeedAssembler;
-use Minoo\Feed\FeedAssemblerInterface;
-use Minoo\Feed\FeedItemFactory;
-use Minoo\Feed\Scoring\FeedScorer;
+use App\Feed\EntityLoaderService;
+use App\Feed\FeedAssembler;
+use App\Feed\FeedAssemblerInterface;
+use App\Feed\FeedItemFactory;
+use App\Feed\Scoring\FeedScorer;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -37,7 +37,7 @@ final class FeedServiceProvider extends ServiceProvider
         $router->addRoute(
             'feed.index',
             RouteBuilder::create('/')
-                ->controller('Minoo\\Controller\\FeedController::index')
+                ->controller('App\\Controller\\FeedController::index')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -47,7 +47,7 @@ final class FeedServiceProvider extends ServiceProvider
         $router->addRoute(
             'feed.api',
             RouteBuilder::create('/api/feed')
-                ->controller('Minoo\\Controller\\FeedController::api')
+                ->controller('App\\Controller\\FeedController::api')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -56,7 +56,7 @@ final class FeedServiceProvider extends ServiceProvider
         $router->addRoute(
             'explore.redirect',
             RouteBuilder::create('/explore')
-                ->controller('Minoo\\Controller\\FeedController::explore')
+                ->controller('App\\Controller\\FeedController::explore')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -65,7 +65,7 @@ final class FeedServiceProvider extends ServiceProvider
         $router->addRoute(
             'home.alias',
             RouteBuilder::create('/home')
-                ->controller('Minoo\\Controller\\FeedController::index')
+                ->controller('App\\Controller\\FeedController::index')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Minoo\Entity;
+namespace App\Entity;
 
 use Waaseyaa\Entity\ContentEntityBase;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -20,7 +20,7 @@ final class RoleManagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'dashboard.coordinator.users',
             RouteBuilder::create('/dashboard/coordinator/users')
-                ->controller('Minoo\Controller\RoleManagementController::coordinatorList')
+                ->controller('App\Controller\RoleManagementController::coordinatorList')
                 ->requireRole('elder_coordinator')
                 ->render()
                 ->methods('GET')
@@ -30,7 +30,7 @@ final class RoleManagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.users',
             RouteBuilder::create('/admin/users')
-                ->controller('Minoo\Controller\RoleManagementController::adminList')
+                ->controller('App\Controller\RoleManagementController::adminList')
                 ->requireRole('admin')
                 ->render()
                 ->methods('GET')
@@ -40,7 +40,7 @@ final class RoleManagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'api.users.roles',
             RouteBuilder::create('/api/users/{uid}/roles')
-                ->controller('Minoo\Controller\RoleManagementController::changeRole')
+                ->controller('App\Controller\RoleManagementController::changeRole')
                 ->requireRole('elder_coordinator')
                 ->methods('POST')
                 ->build(),

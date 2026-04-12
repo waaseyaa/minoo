@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\Contributor;
+use App\Entity\Contributor;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -49,7 +49,7 @@ final class ContributorServiceProvider extends ServiceProvider
         $router->addRoute(
             'contributors.list',
             RouteBuilder::create('/contributors')
-                ->controller('Minoo\\Controller\\ContributorController::list')
+                ->controller('App\\Controller\\ContributorController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -59,7 +59,7 @@ final class ContributorServiceProvider extends ServiceProvider
         $router->addRoute(
             'contributors.show',
             RouteBuilder::create('/contributors/{slug}')
-                ->controller('Minoo\\Controller\\ContributorController::show')
+                ->controller('App\\Controller\\ContributorController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

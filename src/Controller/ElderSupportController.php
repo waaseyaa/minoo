@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
 use Waaseyaa\SSR\Flash\Flash;
-use Minoo\Support\LayoutTwigContext;
+use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -120,11 +120,11 @@ final class ElderSupportController
         return new Response($html, $entity !== null ? 200 : 404);
     }
 
-    private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext
+    private function resolveLocation(HttpRequest $request): \App\Domain\Geo\ValueObject\LocationContext
     {
-        return (new \Minoo\Service\LocationResolver(
+        return (new \App\Service\LocationResolver(
             $this->entityTypeManager,
-            new \Minoo\Domain\Geo\Service\CommunityFinder(),
+            new \App\Domain\Geo\Service\CommunityFinder(),
         ))->resolveLocation($request);
     }
 }

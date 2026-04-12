@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\Post;
+use App\Entity\Post;
 use Waaseyaa\Media\UploadHandler;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
@@ -74,7 +74,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.react',
             RouteBuilder::create('/api/engagement/react')
-                ->controller('Minoo\\Controller\\EngagementController::react')
+                ->controller('App\\Controller\\EngagementController::react')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->build(),
@@ -83,7 +83,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.deleteReaction',
             RouteBuilder::create('/api/engagement/react/{id}')
-                ->controller('Minoo\\Controller\\EngagementController::deleteReaction')
+                ->controller('App\\Controller\\EngagementController::deleteReaction')
                 ->requireAuthentication()
                 ->methods('DELETE')
                 ->requirement('id', '\\d+')
@@ -93,7 +93,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.comment',
             RouteBuilder::create('/api/engagement/comment')
-                ->controller('Minoo\\Controller\\EngagementController::comment')
+                ->controller('App\\Controller\\EngagementController::comment')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->build(),
@@ -102,7 +102,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.deleteComment',
             RouteBuilder::create('/api/engagement/comment/{id}')
-                ->controller('Minoo\\Controller\\EngagementController::deleteComment')
+                ->controller('App\\Controller\\EngagementController::deleteComment')
                 ->requireAuthentication()
                 ->methods('DELETE')
                 ->requirement('id', '\\d+')
@@ -112,7 +112,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.getComments',
             RouteBuilder::create('/api/engagement/comments/{target_type}/{target_id}')
-                ->controller('Minoo\\Controller\\EngagementController::getComments')
+                ->controller('App\\Controller\\EngagementController::getComments')
                 ->allowAll()
                 ->methods('GET')
                 ->requirement('target_id', '\\d+')
@@ -122,7 +122,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.follow',
             RouteBuilder::create('/api/engagement/follow')
-                ->controller('Minoo\\Controller\\EngagementController::follow')
+                ->controller('App\\Controller\\EngagementController::follow')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->build(),
@@ -131,7 +131,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.deleteFollow',
             RouteBuilder::create('/api/engagement/follow/{id}')
-                ->controller('Minoo\\Controller\\EngagementController::deleteFollow')
+                ->controller('App\\Controller\\EngagementController::deleteFollow')
                 ->requireAuthentication()
                 ->methods('DELETE')
                 ->requirement('id', '\\d+')
@@ -141,7 +141,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.createPost',
             RouteBuilder::create('/api/engagement/post')
-                ->controller('Minoo\\Controller\\EngagementController::createPost')
+                ->controller('App\\Controller\\EngagementController::createPost')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->build(),
@@ -150,7 +150,7 @@ final class EngagementServiceProvider extends ServiceProvider
         $router->addRoute(
             'engagement.deletePost',
             RouteBuilder::create('/api/engagement/post/{id}')
-                ->controller('Minoo\\Controller\\EngagementController::deletePost')
+                ->controller('App\\Controller\\EngagementController::deletePost')
                 ->requireAuthentication()
                 ->methods('DELETE')
                 ->requirement('id', '\\d+')

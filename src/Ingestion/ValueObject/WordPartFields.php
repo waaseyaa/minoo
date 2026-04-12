@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion\ValueObject;
+namespace App\Ingestion\ValueObject;
 
 final readonly class WordPartFields
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Search\NorthCloudSearchProvider;
+use App\Search\NorthCloudSearchProvider;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Search\SearchProviderInterface;
 use Waaseyaa\Search\Twig\SearchTwigExtension;

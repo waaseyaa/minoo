@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Feed\Scoring\AffinityCache;
-use Minoo\Feed\Scoring\AffinityCalculator;
-use Minoo\Feed\Scoring\DecayCalculator;
-use Minoo\Feed\Scoring\DiversityReranker;
-use Minoo\Feed\Scoring\EngagementCalculator;
-use Minoo\Feed\Scoring\FeedScorer;
+use App\Feed\Scoring\AffinityCache;
+use App\Feed\Scoring\AffinityCalculator;
+use App\Feed\Scoring\DecayCalculator;
+use App\Feed\Scoring\DiversityReranker;
+use App\Feed\Scoring\EngagementCalculator;
+use App\Feed\Scoring\FeedScorer;
 use Waaseyaa\Cache\Backend\MemoryBackend;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Event\EntityEvent;

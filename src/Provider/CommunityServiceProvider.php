@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\Community;
+use App\Entity\Community;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -52,7 +52,7 @@ final class CommunityServiceProvider extends ServiceProvider
         $router->addRoute(
             'communities.list',
             RouteBuilder::create('/communities')
-                ->controller('Minoo\\Controller\\CommunityController::list')
+                ->controller('App\\Controller\\CommunityController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -62,7 +62,7 @@ final class CommunityServiceProvider extends ServiceProvider
         $router->addRoute(
             'communities.show',
             RouteBuilder::create('/communities/{slug}')
-                ->controller('Minoo\\Controller\\CommunityController::show')
+                ->controller('App\\Controller\\CommunityController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -73,7 +73,7 @@ final class CommunityServiceProvider extends ServiceProvider
         $router->addRoute(
             'communities.autocomplete',
             RouteBuilder::create('/api/communities/autocomplete')
-                ->controller('Minoo\\Controller\\CommunityController::autocomplete')
+                ->controller('App\\Controller\\CommunityController::autocomplete')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -82,7 +82,7 @@ final class CommunityServiceProvider extends ServiceProvider
         $router->addRoute(
             'location.current',
             RouteBuilder::create('/api/location/current')
-                ->controller('Minoo\\Controller\\LocationController::current')
+                ->controller('App\\Controller\\LocationController::current')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -91,7 +91,7 @@ final class CommunityServiceProvider extends ServiceProvider
         $router->addRoute(
             'location.set',
             RouteBuilder::create('/api/location/set')
-                ->controller('Minoo\\Controller\\LocationController::set')
+                ->controller('App\\Controller\\LocationController::set')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -100,7 +100,7 @@ final class CommunityServiceProvider extends ServiceProvider
         $router->addRoute(
             'location.update',
             RouteBuilder::create('/api/location/update')
-                ->controller('Minoo\\Controller\\LocationController::update')
+                ->controller('App\\Controller\\LocationController::update')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),

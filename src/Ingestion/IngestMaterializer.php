@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion;
+namespace App\Ingestion;
 
-use Minoo\Entity\IngestLog;
-use Minoo\Ingestion\EntityMapper\ExampleSentenceMapper;
-use Minoo\Ingestion\EntityMapper\SpeakerMapper;
-use Minoo\Ingestion\EntityMapper\WordPartMapper;
+use App\Entity\IngestLog;
+use App\Ingestion\EntityMapper\ExampleSentenceMapper;
+use App\Ingestion\EntityMapper\SpeakerMapper;
+use App\Ingestion\EntityMapper\WordPartMapper;
 use Waaseyaa\Entity\EntityTypeManagerInterface;
 
 final class IngestMaterializer

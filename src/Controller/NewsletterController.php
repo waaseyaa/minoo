@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Domain\Newsletter\Service\RenderTokenStore;
+use App\Domain\Newsletter\Service\RenderTokenStore;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;

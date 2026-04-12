@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Support\GameStatsCalculator;
-use Minoo\Support\LayoutTwigContext;
+use App\Support\GameStatsCalculator;
+use App\Support\LayoutTwigContext;
 use Waaseyaa\Entity\ContentEntityBase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;

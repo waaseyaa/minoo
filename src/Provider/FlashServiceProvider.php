@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Twig\AccountDisplayTwigExtension;
-use Minoo\Twig\DateTwigExtension;
+use App\Twig\AccountDisplayTwigExtension;
+use App\Twig\DateTwigExtension;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\SSR\ThemeServiceProvider;
 

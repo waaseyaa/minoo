@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\Teaching;
-use Minoo\Entity\TeachingType;
+use App\Entity\Teaching;
+use App\Entity\TeachingType;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -128,7 +128,7 @@ final class TeachingServiceProvider extends ServiceProvider
         $router->addRoute(
             'teachings.list',
             RouteBuilder::create('/teachings')
-                ->controller('Minoo\\Controller\\TeachingController::list')
+                ->controller('App\\Controller\\TeachingController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -138,7 +138,7 @@ final class TeachingServiceProvider extends ServiceProvider
         $router->addRoute(
             'teachings.show',
             RouteBuilder::create('/teachings/{slug}')
-                ->controller('Minoo\\Controller\\TeachingController::show')
+                ->controller('App\\Controller\\TeachingController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

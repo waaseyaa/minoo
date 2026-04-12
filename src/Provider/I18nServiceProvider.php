@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\I18n\Language;

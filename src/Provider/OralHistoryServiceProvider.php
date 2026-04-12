@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\OralHistory;
-use Minoo\Entity\OralHistoryCollection;
-use Minoo\Entity\OralHistoryType;
+use App\Entity\OralHistory;
+use App\Entity\OralHistoryCollection;
+use App\Entity\OralHistoryType;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -224,7 +224,7 @@ final class OralHistoryServiceProvider extends ServiceProvider
         $router->addRoute(
             'oral_histories.list',
             RouteBuilder::create('/oral-histories')
-                ->controller('Minoo\\Controller\\OralHistoryController::list')
+                ->controller('App\\Controller\\OralHistoryController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -234,7 +234,7 @@ final class OralHistoryServiceProvider extends ServiceProvider
         $router->addRoute(
             'oral_histories.collection',
             RouteBuilder::create('/oral-histories/collections/{slug}')
-                ->controller('Minoo\\Controller\\OralHistoryController::collection')
+                ->controller('App\\Controller\\OralHistoryController::collection')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -245,7 +245,7 @@ final class OralHistoryServiceProvider extends ServiceProvider
         $router->addRoute(
             'oral_histories.show',
             RouteBuilder::create('/oral-histories/{slug}')
-                ->controller('Minoo\\Controller\\OralHistoryController::show')
+                ->controller('App\\Controller\\OralHistoryController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

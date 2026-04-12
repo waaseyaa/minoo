@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\ResourcePerson;
+use App\Entity\ResourcePerson;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -84,7 +84,7 @@ final class PeopleServiceProvider extends ServiceProvider
         $router->addRoute(
             'people.list',
             RouteBuilder::create('/people')
-                ->controller('Minoo\Controller\PeopleController::list')
+                ->controller('App\Controller\PeopleController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -94,7 +94,7 @@ final class PeopleServiceProvider extends ServiceProvider
         $router->addRoute(
             'people.show',
             RouteBuilder::create('/people/{slug}')
-                ->controller('Minoo\Controller\PeopleController::show')
+                ->controller('App\Controller\PeopleController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Service;
+namespace App\Service;
 
-use Minoo\Domain\Geo\Service\CommunityFinder;
-use Minoo\Domain\Geo\Service\LocationService;
-use Minoo\Domain\Geo\ValueObject\LocationContext;
+use App\Domain\Geo\Service\CommunityFinder;
+use App\Domain\Geo\Service\LocationService;
+use App\Domain\Geo\ValueObject\LocationContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;

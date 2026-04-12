@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Minoo\Domain\Newsletter\Service\EditionLifecycle;
+use App\Domain\Newsletter\Service\EditionLifecycle;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
 

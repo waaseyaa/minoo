@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -20,7 +20,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.threads.index',
             RouteBuilder::create('/api/messaging/threads')
-                ->controller('Minoo\\Controller\\MessagingController::indexThreads')
+                ->controller('App\\Controller\\MessagingController::indexThreads')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -29,7 +29,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.threads.store',
             RouteBuilder::create('/api/messaging/threads')
-                ->controller('Minoo\\Controller\\MessagingController::createThread')
+                ->controller('App\\Controller\\MessagingController::createThread')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->build(),
@@ -38,7 +38,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.threads.show',
             RouteBuilder::create('/api/messaging/threads/{id}')
-                ->controller('Minoo\\Controller\\MessagingController::showThread')
+                ->controller('App\\Controller\\MessagingController::showThread')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->requirement('id', '\\d+')
@@ -48,7 +48,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.messages.index',
             RouteBuilder::create('/api/messaging/threads/{id}/messages')
-                ->controller('Minoo\\Controller\\MessagingController::indexMessages')
+                ->controller('App\\Controller\\MessagingController::indexMessages')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->requirement('id', '\\d+')
@@ -58,7 +58,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.messages.store',
             RouteBuilder::create('/api/messaging/threads/{id}/messages')
-                ->controller('Minoo\\Controller\\MessagingController::createMessage')
+                ->controller('App\\Controller\\MessagingController::createMessage')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -68,7 +68,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.participants.store',
             RouteBuilder::create('/api/messaging/threads/{id}/participants')
-                ->controller('Minoo\\Controller\\MessagingController::addParticipants')
+                ->controller('App\\Controller\\MessagingController::addParticipants')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -78,7 +78,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.participants.delete',
             RouteBuilder::create('/api/messaging/threads/{id}/participants/{user_id}')
-                ->controller('Minoo\\Controller\\MessagingController::removeParticipant')
+                ->controller('App\\Controller\\MessagingController::removeParticipant')
                 ->requireAuthentication()
                 ->methods('DELETE')
                 ->requirement('id', '\\d+')
@@ -89,7 +89,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.users.search',
             RouteBuilder::create('/api/messaging/users')
-                ->controller('Minoo\\Controller\\MessagingController::searchUsers')
+                ->controller('App\\Controller\\MessagingController::searchUsers')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -98,7 +98,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.messages.edit',
             RouteBuilder::create('/api/messaging/threads/{id}/messages/{message_id}')
-                ->controller('Minoo\\Controller\\MessagingController::editMessage')
+                ->controller('App\\Controller\\MessagingController::editMessage')
                 ->requireAuthentication()
                 ->methods('PATCH')
                 ->requirement('id', '\\d+')
@@ -109,7 +109,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.messages.delete',
             RouteBuilder::create('/api/messaging/threads/{id}/messages/{message_id}')
-                ->controller('Minoo\\Controller\\MessagingController::deleteMessage')
+                ->controller('App\\Controller\\MessagingController::deleteMessage')
                 ->requireAuthentication()
                 ->methods('DELETE')
                 ->requirement('id', '\\d+')
@@ -120,7 +120,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.threads.read',
             RouteBuilder::create('/api/messaging/threads/{id}/read')
-                ->controller('Minoo\\Controller\\MessagingController::markRead')
+                ->controller('App\\Controller\\MessagingController::markRead')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -130,7 +130,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.threads.typing',
             RouteBuilder::create('/api/messaging/threads/{id}/typing')
-                ->controller('Minoo\\Controller\\MessagingController::typing')
+                ->controller('App\\Controller\\MessagingController::typing')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -140,7 +140,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.unread',
             RouteBuilder::create('/api/messaging/unread-count')
-                ->controller('Minoo\\Controller\\MessagingController::unreadCount')
+                ->controller('App\\Controller\\MessagingController::unreadCount')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -149,7 +149,7 @@ final class MessagingServiceProvider extends ServiceProvider
         $router->addRoute(
             'messaging.search',
             RouteBuilder::create('/api/messaging/search')
-                ->controller('Minoo\\Controller\\MessagingController::searchMessages')
+                ->controller('App\\Controller\\MessagingController::searchMessages')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),

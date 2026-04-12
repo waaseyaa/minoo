@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\DictionaryEntry;
-use Minoo\Entity\ExampleSentence;
-use Minoo\Entity\Speaker;
-use Minoo\Entity\WordPart;
-use Minoo\Support\NorthCloudClient;
+use App\Entity\DictionaryEntry;
+use App\Entity\ExampleSentence;
+use App\Entity\Speaker;
+use App\Entity\WordPart;
+use App\Support\NorthCloudClient;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -113,7 +113,7 @@ final class LanguageServiceProvider extends ServiceProvider
         $router->addRoute(
             'language.list',
             RouteBuilder::create('/language')
-                ->controller('Minoo\\Controller\\LanguageController::list')
+                ->controller('App\\Controller\\LanguageController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -123,7 +123,7 @@ final class LanguageServiceProvider extends ServiceProvider
         $router->addRoute(
             'language.search',
             RouteBuilder::create('/language/search')
-                ->controller('Minoo\\Controller\\LanguageController::search')
+                ->controller('App\\Controller\\LanguageController::search')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -133,7 +133,7 @@ final class LanguageServiceProvider extends ServiceProvider
         $router->addRoute(
             'language.show',
             RouteBuilder::create('/language/{slug}')
-                ->controller('Minoo\\Controller\\LanguageController::show')
+                ->controller('App\\Controller\\LanguageController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

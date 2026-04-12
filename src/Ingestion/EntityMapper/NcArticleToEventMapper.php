@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion\EntityMapper;
+namespace App\Ingestion\EntityMapper;
 
 use Waaseyaa\Foundation\SlugGenerator;
 

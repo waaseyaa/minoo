@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-namespace Minoo\Provider;
-use Minoo\Entity\FeaturedItem;
+namespace App\Provider;
+use App\Entity\FeaturedItem;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 

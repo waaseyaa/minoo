@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Minoo\Seed\EngagementSeeder;
+use App\Seed\EngagementSeeder;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
 

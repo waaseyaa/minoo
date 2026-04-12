@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -21,7 +21,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.login_form',
             RouteBuilder::create('/login')
-                ->controller('Minoo\Controller\AuthController::loginForm')
+                ->controller('App\Controller\AuthController::loginForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -31,7 +31,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.login_submit',
             RouteBuilder::create('/login')
-                ->controller('Minoo\Controller\AuthController::submitLogin')
+                ->controller('App\Controller\AuthController::submitLogin')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -41,7 +41,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.register_form',
             RouteBuilder::create('/register')
-                ->controller('Minoo\Controller\AuthController::registerForm')
+                ->controller('App\Controller\AuthController::registerForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -51,7 +51,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.register_submit',
             RouteBuilder::create('/register')
-                ->controller('Minoo\Controller\AuthController::submitRegister')
+                ->controller('App\Controller\AuthController::submitRegister')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -61,7 +61,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.logout',
             RouteBuilder::create('/logout')
-                ->controller('Minoo\Controller\AuthController::logout')
+                ->controller('App\Controller\AuthController::logout')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -70,7 +70,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.forgot_password_form',
             RouteBuilder::create('/forgot-password')
-                ->controller('Minoo\Controller\AuthController::forgotPasswordForm')
+                ->controller('App\Controller\AuthController::forgotPasswordForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -80,7 +80,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.forgot_password_submit',
             RouteBuilder::create('/forgot-password')
-                ->controller('Minoo\Controller\AuthController::submitForgotPassword')
+                ->controller('App\Controller\AuthController::submitForgotPassword')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -90,7 +90,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.reset_password_form',
             RouteBuilder::create('/reset-password')
-                ->controller('Minoo\Controller\AuthController::resetPasswordForm')
+                ->controller('App\Controller\AuthController::resetPasswordForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -100,7 +100,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.reset_password_submit',
             RouteBuilder::create('/reset-password')
-                ->controller('Minoo\Controller\AuthController::submitResetPassword')
+                ->controller('App\Controller\AuthController::submitResetPassword')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -110,7 +110,7 @@ final class AuthServiceProvider extends ServiceProvider
         $router->addRoute(
             'auth.verify_email',
             RouteBuilder::create('/verify-email')
-                ->controller('Minoo\Controller\AuthController::verifyEmail')
+                ->controller('App\Controller\AuthController::verifyEmail')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

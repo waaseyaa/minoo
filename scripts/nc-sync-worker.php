@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Minoo\Ingestion\NcContentSyncService;
-use Minoo\Ingestion\NcSyncWorkerLoop;
-use Minoo\Support\NorthCloudClient;
+use App\Ingestion\NcContentSyncService;
+use App\Ingestion\NcSyncWorkerLoop;
+use App\Support\NorthCloudClient;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Search;
+namespace App\Search;
 
 final class CommunityAutocompleteClient
 {

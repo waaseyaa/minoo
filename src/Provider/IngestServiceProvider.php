@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\IngestLog;
-use Minoo\Ingestion\NcContentSyncService;
-use Minoo\Support\Command\NcSyncCommand;
-use Minoo\Support\NorthCloudClient;
+use App\Entity\IngestLog;
+use App\Ingestion\NcContentSyncService;
+use App\Support\Command\NcSyncCommand;
+use App\Support\NorthCloudClient;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;

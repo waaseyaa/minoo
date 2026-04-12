@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Domain\Newsletter\Service\EditionLifecycle;
-use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
-use Minoo\Domain\Newsletter\Service\NewsletterDispatcher;
-use Minoo\Domain\Newsletter\Service\NewsletterRenderer;
-use Minoo\Domain\Newsletter\Service\RenderTokenStore;
-use Minoo\Domain\Newsletter\ValueObject\SectionQuota;
-use Minoo\Entity\NewsletterEdition;
-use Minoo\Entity\NewsletterItem;
-use Minoo\Entity\NewsletterSubmission;
-use Minoo\Support\NewsletterMailer;
+use App\Domain\Newsletter\Service\EditionLifecycle;
+use App\Domain\Newsletter\Service\NewsletterAssembler;
+use App\Domain\Newsletter\Service\NewsletterDispatcher;
+use App\Domain\Newsletter\Service\NewsletterRenderer;
+use App\Domain\Newsletter\Service\RenderTokenStore;
+use App\Domain\Newsletter\ValueObject\SectionQuota;
+use App\Entity\NewsletterEdition;
+use App\Entity\NewsletterItem;
+use App\Entity\NewsletterSubmission;
+use App\Support\NewsletterMailer;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -143,7 +143,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.list',
             RouteBuilder::create('/coordinator/newsletter')
-                ->controller('Minoo\Controller\NewsletterEditorController::list')
+                ->controller('App\Controller\NewsletterEditorController::list')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('GET')
@@ -153,7 +153,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.new',
             RouteBuilder::create('/coordinator/newsletter/new')
-                ->controller('Minoo\Controller\NewsletterEditorController::create')
+                ->controller('App\Controller\NewsletterEditorController::create')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -166,7 +166,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.submissions',
             RouteBuilder::create('/coordinator/newsletter/submissions')
-                ->controller('Minoo\Controller\NewsletterEditorController::submissionsList')
+                ->controller('App\Controller\NewsletterEditorController::submissionsList')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('GET')
@@ -176,7 +176,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.submission_approve',
             RouteBuilder::create('/coordinator/newsletter/submissions/{id}/approve')
-                ->controller('Minoo\Controller\NewsletterEditorController::submissionApprove')
+                ->controller('App\Controller\NewsletterEditorController::submissionApprove')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -186,7 +186,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.submission_reject',
             RouteBuilder::create('/coordinator/newsletter/submissions/{id}/reject')
-                ->controller('Minoo\Controller\NewsletterEditorController::submissionReject')
+                ->controller('App\Controller\NewsletterEditorController::submissionReject')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -196,7 +196,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.assemble',
             RouteBuilder::create('/coordinator/newsletter/{id}/assemble')
-                ->controller('Minoo\Controller\NewsletterEditorController::assemble')
+                ->controller('App\Controller\NewsletterEditorController::assemble')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -206,7 +206,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.show',
             RouteBuilder::create('/coordinator/newsletter/{id}')
-                ->controller('Minoo\Controller\NewsletterEditorController::show')
+                ->controller('App\Controller\NewsletterEditorController::show')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('GET')
@@ -216,7 +216,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.approve',
             RouteBuilder::create('/coordinator/newsletter/{id}/approve')
-                ->controller('Minoo\Controller\NewsletterEditorController::approve')
+                ->controller('App\Controller\NewsletterEditorController::approve')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -226,7 +226,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.generate',
             RouteBuilder::create('/coordinator/newsletter/{id}/generate')
-                ->controller('Minoo\Controller\NewsletterEditorController::generate')
+                ->controller('App\Controller\NewsletterEditorController::generate')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -236,7 +236,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.editor.send',
             RouteBuilder::create('/coordinator/newsletter/{id}/send')
-                ->controller('Minoo\Controller\NewsletterEditorController::send')
+                ->controller('App\Controller\NewsletterEditorController::send')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -249,7 +249,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.print_preview',
             RouteBuilder::create('/newsletter/_internal/{id}/print')
-                ->controller('Minoo\Controller\NewsletterController::printPreview')
+                ->controller('App\Controller\NewsletterController::printPreview')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -259,7 +259,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.public.index',
             RouteBuilder::create('/newsletter')
-                ->controller('Minoo\Controller\NewsletterController::index')
+                ->controller('App\Controller\NewsletterController::index')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -269,7 +269,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.public.submit_form',
             RouteBuilder::create('/newsletter/submit')
-                ->controller('Minoo\Controller\NewsletterController::submitForm')
+                ->controller('App\Controller\NewsletterController::submitForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -279,7 +279,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.public.submit_post',
             RouteBuilder::create('/newsletter/submit')
-                ->controller('Minoo\Controller\NewsletterController::submitPost')
+                ->controller('App\Controller\NewsletterController::submitPost')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -289,7 +289,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.public.pdf',
             RouteBuilder::create('/newsletter/{community}/{volume}-{issue}.pdf')
-                ->controller('Minoo\Controller\NewsletterController::downloadPdf')
+                ->controller('App\Controller\NewsletterController::downloadPdf')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -299,7 +299,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.public.edition',
             RouteBuilder::create('/newsletter/{community}/{volume}-{issue}')
-                ->controller('Minoo\Controller\NewsletterController::showEdition')
+                ->controller('App\Controller\NewsletterController::showEdition')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -309,7 +309,7 @@ final class NewsletterServiceProvider extends ServiceProvider
         $router->addRoute(
             'newsletter.public.community',
             RouteBuilder::create('/newsletter/{community}')
-                ->controller('Minoo\Controller\NewsletterController::showCommunity')
+                ->controller('App\Controller\NewsletterController::showCommunity')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

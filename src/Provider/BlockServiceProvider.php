@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -18,19 +18,19 @@ final class BlockServiceProvider extends ServiceProvider
     public function routes(WaaseyaaRouter $router, ?\Waaseyaa\Entity\EntityTypeManager $entityTypeManager = null): void
     {
         $router->addRoute('blocks.index', RouteBuilder::create('/api/blocks')
-            ->controller('Minoo\\Controller\\BlockController::index')
+            ->controller('App\\Controller\\BlockController::index')
             ->requireAuthentication()
             ->methods('GET')
             ->build());
 
         $router->addRoute('blocks.store', RouteBuilder::create('/api/blocks')
-            ->controller('Minoo\\Controller\\BlockController::store')
+            ->controller('App\\Controller\\BlockController::store')
             ->requireAuthentication()
             ->methods('POST')
             ->build());
 
         $router->addRoute('blocks.delete', RouteBuilder::create('/api/blocks/{user_id}')
-            ->controller('Minoo\\Controller\\BlockController::delete')
+            ->controller('App\\Controller\\BlockController::delete')
             ->requireAuthentication()
             ->methods('DELETE')
             ->requirement('user_id', '\\d+')

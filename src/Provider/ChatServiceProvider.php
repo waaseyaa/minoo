@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -32,7 +32,7 @@ final class ChatServiceProvider extends ServiceProvider
         $router->addRoute(
             'chat.send',
             RouteBuilder::create('/api/chat')
-                ->controller('Minoo\Controller\ChatController::send')
+                ->controller('App\Controller\ChatController::send')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),

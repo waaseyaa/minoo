@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -20,7 +20,7 @@ final class AccountServiceProvider extends ServiceProvider
         $router->addRoute(
             'account.home',
             RouteBuilder::create('/account')
-                ->controller('Minoo\Controller\AccountHomeController::index')
+                ->controller('App\Controller\AccountHomeController::index')
                 ->requireAuthentication()
                 ->render()
                 ->methods('GET')
@@ -30,7 +30,7 @@ final class AccountServiceProvider extends ServiceProvider
         $router->addRoute(
             'account.elder_toggle',
             RouteBuilder::create('/account/elder-toggle')
-                ->controller('Minoo\Controller\AccountHomeController::toggleElder')
+                ->controller('App\Controller\AccountHomeController::toggleElder')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->build(),

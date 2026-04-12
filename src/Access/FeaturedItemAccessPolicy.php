@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Minoo\Access;
+namespace App\Access;
 use Waaseyaa\Access\AccessPolicyInterface;
 use Waaseyaa\Access\AccessResult;
 use Waaseyaa\Access\AccountInterface;

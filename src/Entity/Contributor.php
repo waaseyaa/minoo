@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Entity;
+namespace App\Entity;
 
 use Waaseyaa\Entity\Community\HasCommunityInterface;
 use Waaseyaa\Entity\Community\HasCommunityTrait;

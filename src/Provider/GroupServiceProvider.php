@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\Group;
-use Minoo\Entity\GroupType;
+use App\Entity\Group;
+use App\Entity\GroupType;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -179,7 +179,7 @@ final class GroupServiceProvider extends ServiceProvider
         $router->addRoute(
             'groups.list',
             RouteBuilder::create('/groups')
-                ->controller('Minoo\\Controller\\GroupController::list')
+                ->controller('App\\Controller\\GroupController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -189,7 +189,7 @@ final class GroupServiceProvider extends ServiceProvider
         $router->addRoute(
             'groups.show',
             RouteBuilder::create('/groups/{slug}')
-                ->controller('Minoo\\Controller\\GroupController::show')
+                ->controller('App\\Controller\\GroupController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -200,7 +200,7 @@ final class GroupServiceProvider extends ServiceProvider
         $router->addRoute(
             'businesses.list',
             RouteBuilder::create('/businesses')
-                ->controller('Minoo\\Controller\\BusinessController::list')
+                ->controller('App\\Controller\\BusinessController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -210,7 +210,7 @@ final class GroupServiceProvider extends ServiceProvider
         $router->addRoute(
             'businesses.show',
             RouteBuilder::create('/businesses/{slug}')
-                ->controller('Minoo\\Controller\\BusinessController::show')
+                ->controller('App\\Controller\\BusinessController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

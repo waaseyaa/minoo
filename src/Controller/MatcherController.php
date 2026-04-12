@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Support\GameStatsCalculator;
-use Minoo\Support\LayoutTwigContext;
-use Minoo\Support\MatcherEngine;
+use App\Support\GameStatsCalculator;
+use App\Support\LayoutTwigContext;
+use App\Support\MatcherEngine;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -256,7 +256,7 @@ final class MatcherController
         string $difficulty,
         ?string $dailyDate,
         array $pairs,
-    ): \Minoo\Entity\GameSession {
+    ): \App\Entity\GameSession {
         $sessionStorage = $this->entityTypeManager->getStorage('game_session');
         $session = $sessionStorage->create([
             'game_type' => 'matcher',
@@ -270,7 +270,7 @@ final class MatcherController
         ]);
         $sessionStorage->save($session);
 
-        assert($session instanceof \Minoo\Entity\GameSession);
+        assert($session instanceof \App\Entity\GameSession);
 
         return $session;
     }

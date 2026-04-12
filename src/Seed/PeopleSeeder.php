@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Seed;
+namespace App\Seed;
 
 final class PeopleSeeder
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Service;
+namespace App\Domain\Newsletter\Service;
 
 use Closure;
-use Minoo\Domain\Newsletter\Exception\RenderException;
-use Minoo\Domain\Newsletter\ValueObject\PdfArtifact;
+use App\Domain\Newsletter\Exception\RenderException;
+use App\Domain\Newsletter\ValueObject\PdfArtifact;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 use Waaseyaa\Entity\EntityInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;

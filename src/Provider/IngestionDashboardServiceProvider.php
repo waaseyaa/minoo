@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -21,7 +21,7 @@ final class IngestionDashboardServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.ingestion',
             RouteBuilder::create('/admin/ingestion')
-                ->controller('Minoo\Controller\IngestionDashboardController::index')
+                ->controller('App\Controller\IngestionDashboardController::index')
                 ->requirePermission('administer content')
                 ->render()
                 ->methods('GET')
@@ -31,7 +31,7 @@ final class IngestionDashboardServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.ingestion.status',
             RouteBuilder::create('/api/admin/nc-sync-status')
-                ->controller('Minoo\Controller\IngestionApiController::status')
+                ->controller('App\Controller\IngestionApiController::status')
                 ->requirePermission('administer content')
                 ->methods('GET')
                 ->build(),
@@ -40,7 +40,7 @@ final class IngestionDashboardServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.ingestion.envelope',
             RouteBuilder::create('/api/ingestion/envelope')
-                ->controller('Minoo\Controller\IngestionApiController::ingestEnvelope')
+                ->controller('App\Controller\IngestionApiController::ingestEnvelope')
                 ->requirePermission('administer content')
                 ->methods('POST')
                 ->build(),
@@ -49,7 +49,7 @@ final class IngestionDashboardServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.ingestion.approve',
             RouteBuilder::create('/api/admin/ingestion/{id}/approve')
-                ->controller('Minoo\Controller\IngestionApiController::approve')
+                ->controller('App\Controller\IngestionApiController::approve')
                 ->requirePermission('administer content')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -59,7 +59,7 @@ final class IngestionDashboardServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.ingestion.reject',
             RouteBuilder::create('/api/admin/ingestion/{id}/reject')
-                ->controller('Minoo\Controller\IngestionApiController::reject')
+                ->controller('App\Controller\IngestionApiController::reject')
                 ->requirePermission('administer content')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -69,7 +69,7 @@ final class IngestionDashboardServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.ingestion.materialize',
             RouteBuilder::create('/api/admin/ingestion/{id}/materialize')
-                ->controller('Minoo\Controller\IngestionApiController::materialize')
+                ->controller('App\Controller\IngestionApiController::materialize')
                 ->requirePermission('administer content')
                 ->methods('POST')
                 ->requirement('id', '\\d+')

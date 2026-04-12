@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
 use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
 use Waaseyaa\AdminSurface\Host\GenericAdminSurfaceHost;
@@ -35,7 +35,7 @@ final class AdminServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.spa',
             RouteBuilder::create('/admin')
-                ->controller('Minoo\\Controller\\AdminController::spa')
+                ->controller('App\\Controller\\AdminController::spa')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -44,7 +44,7 @@ final class AdminServiceProvider extends ServiceProvider
         $router->addRoute(
             'admin.spa.catchall',
             RouteBuilder::create('/admin/{path}')
-                ->controller('Minoo\\Controller\\AdminController::spa')
+                ->controller('App\\Controller\\AdminController::spa')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->requirement('path', '.+')

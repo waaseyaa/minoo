@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Exception;
+namespace App\Domain\Newsletter\Exception;
 
-use Minoo\Domain\Newsletter\ValueObject\EditionStatus;
+use App\Domain\Newsletter\ValueObject\EditionStatus;
 
 final class InvalidStateTransition extends \DomainException
 {

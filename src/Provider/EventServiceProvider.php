@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Entity\Event;
-use Minoo\Entity\EventType;
+use App\Entity\Event;
+use App\Entity\EventType;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\RouteBuilder;
@@ -144,7 +144,7 @@ final class EventServiceProvider extends ServiceProvider
         $router->addRoute(
             'events.list',
             RouteBuilder::create('/events')
-                ->controller('Minoo\\Controller\\EventController::list')
+                ->controller('App\\Controller\\EventController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -154,7 +154,7 @@ final class EventServiceProvider extends ServiceProvider
         $router->addRoute(
             'events.show',
             RouteBuilder::create('/events/{slug}')
-                ->controller('Minoo\\Controller\\EventController::show')
+                ->controller('App\\Controller\\EventController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

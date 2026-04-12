@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Provider;
+namespace App\Provider;
 
-use Minoo\Support\Command\MailTestCommand;
-use Minoo\Support\Command\MessagingDigestCommand;
-use Minoo\Support\MessageDigestCommand;
+use App\Support\Command\MailTestCommand;
+use App\Support\Command\MessagingDigestCommand;
+use App\Support\MessageDigestCommand;
 use Symfony\Component\Console\Command\Command;
 use Waaseyaa\Foundation\Kernel\ConsoleKernel;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;

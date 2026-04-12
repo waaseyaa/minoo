@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Feed;
+namespace App\Feed;
 
 final class FeedCursor
 {

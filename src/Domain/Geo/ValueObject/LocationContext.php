@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Domain\Geo\ValueObject;
+namespace App\Domain\Geo\ValueObject;
 
 final readonly class LocationContext
 {
