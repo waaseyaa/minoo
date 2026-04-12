@@ -20,9 +20,12 @@ final class Post extends ContentEntityBase implements HasCommunityInterface
         'label' => 'body',
     ];
 
-    /** @param array<string, mixed> $values */
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+        array $fieldDefinitions = [],
+    ) {
         foreach (['user_id', 'body', 'community_id'] as $field) {
             if (!isset($values[$field])) {
                 throw new \InvalidArgumentException("Missing required field: {$field}");
@@ -42,6 +45,11 @@ final class Post extends ContentEntityBase implements HasCommunityInterface
             $values['updated_at'] = time();
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+            $fieldDefinitions,
+        );
     }
 }

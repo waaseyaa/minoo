@@ -16,9 +16,12 @@ final class OralHistoryCollection extends ContentEntityBase
         'label' => 'title',
     ];
 
-    /** @param array<string, mixed> $values */
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+        array $fieldDefinitions = [],
+    ) {
         if (!array_key_exists('status', $values)) {
             $values['status'] = 1;
         }
@@ -32,6 +35,11 @@ final class OralHistoryCollection extends ContentEntityBase
             $values['updated_at'] = 0;
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+            $fieldDefinitions,
+        );
     }
 }

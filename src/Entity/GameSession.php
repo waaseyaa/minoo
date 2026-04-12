@@ -22,9 +22,12 @@ final class GameSession extends ContentEntityBase
     private const VALID_STATUSES = ['in_progress', 'won', 'lost', 'completed', 'abandoned'];
     private const VALID_TIERS = ['easy', 'medium', 'hard', 'streak'];
 
-    /** @param array<string, mixed> $values */
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+        array $fieldDefinitions = [],
+    ) {
         if (!array_key_exists('game_type', $values)) {
             $values['game_type'] = 'shkoda';
         }
@@ -95,6 +98,11 @@ final class GameSession extends ContentEntityBase
             $values['updated_at'] = time();
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+            $fieldDefinitions,
+        );
     }
 }

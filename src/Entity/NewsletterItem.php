@@ -14,4 +14,18 @@ final class NewsletterItem extends ContentEntityBase
         'uuid' => 'uuid',
         'label' => 'editor_blurb',
     ];
+
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+        array $fieldDefinitions = [],
+    ) {
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+            $fieldDefinitions,
+        );
+    }
 }
