@@ -118,7 +118,8 @@
             "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve & npm --prefix ../waaseyaa/packages/admin run dev -- --host && kill $!"
         ],
         "post-create-project-cmd": [
-            "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync bin/waaseyaa-audit-site"
+            "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync bin/waaseyaa-audit-site",
+            "php bin/post-create-setup.php"
         ]
     },
     "minimum-stability": "dev",
