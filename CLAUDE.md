@@ -57,7 +57,7 @@ minoo/
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*`, `src/Support/GeoDistance.php`, `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
 | `src/Support/NorthCloudClient.php`, `src/Support/NorthCloudCache.php` | — | `docs/specs/geo-domain.md` (NC client section) |
-| `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, MailService, Flash, FixtureResolver, ElderIdentity |
+| `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, Flash, FixtureResolver, ElderIdentity; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
 | `src/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
@@ -183,7 +183,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Reaction field rename**: `emoji` was renamed to `reaction_type` with migration `20260322_120000`. Allowed values: `like`, `interested`, `recommend`, `miigwech`, `connect`. All API endpoints, JS, and tests use `reaction_type`.
 - **Game sessions must set `game_type`**: Both `ShkodaController` and `CrosswordController` must include `'game_type' => 'shkoda'`/`'crossword'` when creating game sessions. `GameStatsCalculator::build()` filters by `game_type` — missing it causes stats to silently return zero for authenticated users.
 - **Game controllers must inject `GateInterface`**: All game API endpoints that mutate session state (`check`, `complete`, `hint`, `abandon`, `guess`) must call `$this->gate->denies('update', $session, $account)` for session ownership validation.
-- **AuthMailer requires `isConfigured()` guard**: All `AuthMailer` methods check `MailService::isConfigured()` before sending. Without a valid `SENDGRID_API_KEY`, SendGrid returns HTTP 401 and throws — crashing registration and password reset flows. CI and local dev typically have no API key.
+- **AuthMailer requires `isConfigured()` guard**: Framework `AuthMailer` skips sends when `authEmailConfigured` is false (no SendGrid key + from address). Without valid credentials, forcing a send would hit SendGrid 401 and throw — crashing registration and password reset flows. CI and local dev typically have no API key.
 - **PHPStan baseline drift**: After adding new files that call `EntityInterface::get()`, regenerate the baseline with `./vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon`. The baseline won't auto-update when new files are added.
 - **Controller DI**: `SsrPageHandler::resolveControllerInstance()` auto-injects constructor params. It checks a hardcoded `$serviceMap` (EntityTypeManager, Twig, HttpRequest, AccountInterface), then falls back to `serviceResolver` for any type registered as a singleton in a service provider. Register new services in providers and they'll be injected automatically.
 - **Production deploy path**: `/home/deployer/minoo/current` (symlink to `releases/N`). DB at `storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.

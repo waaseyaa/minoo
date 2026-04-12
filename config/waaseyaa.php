@@ -116,6 +116,9 @@ return [
         'base_url' => getenv('MINOO_BASE_URL') ?: 'https://minoo.live',
     ],
 
+    // Messaging (digests, Mercure, etc.) — see config/messaging.php.
+    'messaging' => require __DIR__ . '/messaging.php',
+
     // AI embedding pipeline configuration.
     'ai' => [
         // 'ollama' or 'openai'. Empty disables embedding generation.
