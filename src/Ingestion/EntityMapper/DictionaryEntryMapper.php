@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion\EntityMapper;
+namespace App\Ingestion\EntityMapper;
 
 use Waaseyaa\Foundation\SlugGenerator;
-use Minoo\Ingestion\ValueObject\DictionaryEntryFields;
+use App\Ingestion\ValueObject\DictionaryEntryFields;
 
 final class DictionaryEntryMapper
 {

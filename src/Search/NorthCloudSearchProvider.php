@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Search;
+namespace App\Search;
 
 use Waaseyaa\Search\FacetBucket;
 use Waaseyaa\Search\SearchFacet;

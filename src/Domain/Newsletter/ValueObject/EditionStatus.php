@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\ValueObject;
+namespace App\Domain\Newsletter\ValueObject;
 
 enum EditionStatus: string
 {

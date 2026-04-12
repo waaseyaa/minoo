@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Entity;
+namespace App\Entity;
 
 use Waaseyaa\Entity\Community\HasCommunityInterface;
 use Waaseyaa\Entity\Community\HasCommunityTrait;
@@ -20,9 +20,12 @@ final class Leader extends ContentEntityBase implements HasCommunityInterface
         'label' => 'name',
     ];
 
-    /** @param array<string, mixed> $values */
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+        array $fieldDefinitions = [],
+    ) {
         if (!array_key_exists('status', $values)) {
             $values['status'] = 1;
         }
@@ -33,6 +36,11 @@ final class Leader extends ContentEntityBase implements HasCommunityInterface
             $values['updated_at'] = 0;
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+            $fieldDefinitions,
+        );
     }
 }

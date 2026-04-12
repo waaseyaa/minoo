@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Support\Command;
+namespace App\Support\Command;
 
-use Minoo\Ingestion\NcContentSyncService;
+use App\Ingestion\NcContentSyncService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -57,7 +57,7 @@ final class NcSyncCommand extends Command
         return $result->failed > 0 ? self::FAILURE : self::SUCCESS;
     }
 
-    private function writeStatusFile(\Minoo\Ingestion\NcSyncResult $result): void
+    private function writeStatusFile(\App\Ingestion\NcSyncResult $result): void
     {
         $statusPath = dirname(__DIR__, 3) . '/storage/nc-sync-status.json';
 

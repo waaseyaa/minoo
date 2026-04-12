@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Service;
+namespace App\Domain\Newsletter\Service;
 
-use Minoo\Domain\Newsletter\Exception\DispatchException;
+use App\Domain\Newsletter\Exception\DispatchException;
 use Waaseyaa\Entity\EntityInterface;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Entity;
+namespace App\Entity;
 
 use Waaseyaa\Entity\ContentEntityBase;
 
@@ -16,9 +16,12 @@ final class ElderSupportRequest extends ContentEntityBase
         'label' => 'name',
     ];
 
-    /** @param array<string, mixed> $values */
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+        array $fieldDefinitions = [],
+    ) {
         if (!array_key_exists('status', $values)) {
             $values['status'] = 'open';
         }
@@ -35,6 +38,11 @@ final class ElderSupportRequest extends ContentEntityBase
             $values['assigned_at'] = null;
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+            $fieldDefinitions,
+        );
     }
 }

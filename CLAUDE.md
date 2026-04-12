@@ -2,7 +2,7 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
-Last framework sync: Waaseyaa alpha.108 (dotenv loading #1132, Nitro SSR proxy #1133)
+Last framework sync: Waaseyaa alpha.133 (entity arity #1222, skeleton conventions)
 
 ## Architecture
 
@@ -16,11 +16,11 @@ minoo/
 │   ├── Domain/        # Bounded contexts (Geo/)
 │   ├── Entity/        # 17 custom entity classes
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
-│   ├── Provider/      # 13 service providers
+│   ├── Provider/      # AppServiceProvider (single consolidated provider)
 │   ├── Search/        # Search providers, autocomplete
 │   ├── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
 │   └── Support/       # Cross-cutting utilities (GeoDistance, SlugGenerator, CrosswordEngine)
-├── tests/Minoo/
+├── tests/App/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
 ├── templates/
@@ -50,10 +50,10 @@ minoo/
 | `src/Entity/*`, `src/Provider/*` | `minoo:entities` | `docs/specs/entity-model.md` |
 | `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
-| `tests/Minoo/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
+| `tests/App/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
 | `src/Ingestion/*` | `minoo:ingestion` | `docs/specs/ingestion-pipeline.md` |
-| `src/Search/*`, `src/Provider/SearchServiceProvider.php` | `minoo:search` | `docs/specs/search.md` |
-| `src/Controller/*`, route definitions in `src/Provider/` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
+| `src/Search/*` | `minoo:search` | `docs/specs/search.md` |
+| `src/Controller/*`, routes in `src/Provider/AppServiceProvider.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*`, `src/Support/GeoDistance.php`, `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
 | `src/Support/NorthCloudClient.php`, `src/Support/NorthCloudCache.php` | — | `docs/specs/geo-domain.md` (NC client section) |
@@ -76,15 +76,17 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 
 ## Entity Domains (6 domains, 15 types)
 
-| Domain | Entities | Provider | Policy |
-|--------|----------|----------|--------|
-| Events | `event`, `event_type` | `EventServiceProvider` | `EventAccessPolicy` |
-| Groups | `group`, `group_type`, `cultural_group` | `GroupServiceProvider`, `CulturalGroupServiceProvider` | `GroupAccessPolicy`, `CulturalGroupAccessPolicy` |
-| Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingServiceProvider`, `CulturalCollectionServiceProvider` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
-| Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker`, `dialect_region` | `LanguageServiceProvider`, `DialectRegionServiceProvider` | `LanguageAccessPolicy` |
-| Games | `game_session`, `crossword_puzzle` | `GameServiceProvider` | — |
-| Ingestion | `ingest_log` | `IngestServiceProvider` | `IngestAccessPolicy` |
-| Editorial | `featured_item` | `FeaturedItemServiceProvider` | `FeaturedItemAccessPolicy` |
+| Domain | Entities | Policy |
+|--------|----------|--------|
+| Events | `event`, `event_type` | `EventAccessPolicy` |
+| Groups | `group`, `group_type`, `cultural_group` | `GroupAccessPolicy`, `CulturalGroupAccessPolicy` |
+| Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
+| Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker`, `dialect_region` | `LanguageAccessPolicy` |
+| Games | `game_session`, `crossword_puzzle` | — |
+| Ingestion | `ingest_log` | `IngestAccessPolicy` |
+| Editorial | `featured_item` | `FeaturedItemAccessPolicy` |
+
+All entity types are registered in `App\Provider\AppServiceProvider`.
 
 **Note:** `post` has its own `PostAccessPolicy` (public-read, auth-create, author+coordinator delete), separate from `EngagementAccessPolicy` which covers `reaction`, `comment`, `follow`.
 
@@ -109,15 +111,15 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 ## Operation Checklists
 
 **Adding a Minoo entity type:**
-1. Create entity class in `src/Entity/` extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`
-2. Register `EntityType` in existing or new service provider's `register()` method
+1. Create entity class in `src/Entity/` extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`, accept optional constructor params for arity
+2. Register `EntityType` in `AppServiceProvider::register()` method
 3. Create or update `AccessPolicy` in `src/Access/` with `#[PolicyAttribute]`
-4. Write unit test in `tests/Minoo/Unit/Entity/`
-5. Run `./vendor/bin/phpunit` — delete `storage/framework/packages.php` if new provider isn't discovered
+4. Write unit test in `tests/App/Unit/Entity/`
+5. Run `./vendor/bin/phpunit` — delete `storage/framework/packages.php` if entity type isn't discovered
 
 **Adding seed data:**
 1. Add static method to `TaxonomySeeder` (vocabularies) or `ConfigSeeder` (type configs)
-2. Write unit test in `tests/Minoo/Unit/Seed/`
+2. Write unit test in `tests/App/Unit/Seed/`
 3. Return structured arrays — not persisted entities
 
 **Adding a featured item:**
@@ -129,8 +131,8 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
-php -S localhost:8080 -t public               # Dev server (port 8080)
-./vendor/bin/phpunit                          # All tests (829 tests, 2395 assertions)
+php -S localhost:8080 -t public public/index.php  # Dev server (router script required — public/admin/ dir exists)
+./vendor/bin/phpunit                          # All tests (914 tests, 2568 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
@@ -154,7 +156,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 ## Code Style
 
 - PHP 8.4+, `declare(strict_types=1)` in every file
-- Namespace: `Minoo\` for app code, `Minoo\Tests\` for tests
+- Namespace: `App\` for app code, `App\Tests\` for tests
 - PHPUnit 10.5 attributes: `#[Test]`, `#[CoversClass(...)]`, `#[CoversNothing]` for integration
 - `final class` by default
 - See `../waaseyaa/CLAUDE.md` for full framework conventions
@@ -165,7 +167,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **`HttpKernel` has no `resolve()` method**: Use `$kernel->getEntityTypeManager()` for ETM access in scripts. The `resolve()` method is on `ServiceProvider`, not the kernel.
 - **DI resolves `EntityTypeManager` (concrete), not the interface**: Providers must use `$this->resolve(EntityTypeManager::class)`, not `EntityTypeManagerInterface::class`. The kernel registers the concrete class only.
 - **Parallel worktree agents diverge on APIs**: When spawning leaf + integration worktree agents, the integration agent writes its own class versions with potentially different signatures. Always reconcile the integration PR after leaf PRs merge.
-- **`dirname(__DIR__, 3)`** from `tests/Minoo/Integration/` to reach project root (3 levels up, not 2)
+- **`dirname(__DIR__, 3)`** from `tests/App/Integration/` to reach project root (3 levels up, not 2)
 - **Stale manifest cache**: `storage/framework/packages.php` can prevent new providers/policies from being discovered — delete it when adding new providers
 - **`PackageManifestCompiler`** reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
 - **`LanguageAccessPolicy`** covers all 4 language types via array attribute: `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`
@@ -207,7 +209,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **"Did you mean" suggestion slot**: Template and CSS exist in `search.html.twig` but `SearchResult` has no `suggestion` field yet. See #519 for backend wiring.
 - **Migration tables must use `_data` CLOB schema**: Content entities use `{id} INTEGER PRIMARY KEY AUTOINCREMENT, uuid CLOB, bundle CLOB, {label} CLOB, langcode CLOB, _data CLOB`. Config entities use `{id} TEXT PRIMARY KEY, bundle CLOB, langcode CLOB, _data CLOB`. All field values are stored in the `_data` JSON blob — do NOT create individual columns for fields. `SqlEntityStorage` will error with "no column named _data" if the schema is wrong.
 - **Dictionary `definition` field is JSON-wrapped**: Values like `["bear"]` need `json_decode()` before display. Use `cleanDefinition()` pattern in controllers.
-- **New providers must be registered in `composer.json`**: Add to `extra.waaseyaa.providers[]` then run `php bin/waaseyaa optimize:manifest`. Without this, routes and entity types are not discovered.
+- **Single AppServiceProvider**: All entity types, routes, and services are registered in `App\Provider\AppServiceProvider`. Add new entity types and routes there — no need to create separate providers.
 - **Worktree vendor corruption**: Worktrees don't share the main repo's `vendor/`. After worktree cleanup, run `composer install` in the main repo to restore dependencies.
 - **CSS cache bust is manual**: Bump `?v=N` in `base.html.twig` after CSS changes. Stale CSS on production is the #1 cause of "it looks broken after deploy."
 - **Crossword puzzle tiers**: Only easy-tier puzzles exist in the database. Practice mode for medium/hard returns 500. Generate puzzles via CLI before testing those tiers. See #558, #560.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Entity;
+namespace App\Entity;
 
 use Waaseyaa\Entity\ConfigEntityBase;
 
@@ -16,8 +16,11 @@ final class DailyChallenge extends ConfigEntityBase
     private const VALID_TIERS = ['easy', 'medium', 'hard'];
 
     /** @param array<string, mixed> $values */
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+    ) {
         foreach (['date', 'dictionary_entry_id'] as $field) {
             if (!isset($values[$field])) {
                 throw new \InvalidArgumentException("Missing required field: {$field}");
@@ -38,6 +41,10 @@ final class DailyChallenge extends ConfigEntityBase
             throw new \InvalidArgumentException("Invalid difficulty_tier: {$values['difficulty_tier']}");
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+        );
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion;
+namespace App\Ingestion;
 
 final class NcSyncResult
 {

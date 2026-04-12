@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Entity\GameSession;
+use App\Entity\GameSession;
 use Waaseyaa\Api\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 

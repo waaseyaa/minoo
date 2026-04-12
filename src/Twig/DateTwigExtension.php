@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Twig;
+namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;

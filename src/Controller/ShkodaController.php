@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Support\GameStatsCalculator;
-use Minoo\Support\LayoutTwigContext;
-use Minoo\Support\ShkodaEngine;
+use App\Support\GameStatsCalculator;
+use App\Support\LayoutTwigContext;
+use App\Support\ShkodaEngine;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -62,7 +62,7 @@ final class ShkodaController
             $tier = (string) $challenge->get('difficulty_tier');
         } else {
             // Fallback: deterministic random selection seeded by date
-            $tier = \Minoo\Support\GameDifficulty::dailyTier($dayOfWeek);
+            $tier = \App\Support\GameDifficulty::dailyTier($dayOfWeek);
             $direction = $dayOfWeek % 2 === 0 ? 'english_to_ojibwe' : 'ojibwe_to_english';
             $entryId = $this->selectRandomWord($tier, $today);
             if ($entryId === null) {

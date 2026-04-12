@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Support\ElderIdentity;
-use Minoo\Support\LayoutTwigContext;
+use App\Support\ElderIdentity;
+use App\Support\LayoutTwigContext;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;

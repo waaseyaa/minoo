@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion\EntityMapper;
+namespace App\Ingestion\EntityMapper;
 
 use Waaseyaa\Foundation\SlugGenerator;
-use Minoo\Ingestion\ValueObject\WordPartFields;
+use App\Ingestion\ValueObject\WordPartFields;
 
 final class WordPartMapper
 {

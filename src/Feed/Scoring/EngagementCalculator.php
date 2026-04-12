@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Feed\Scoring;
+namespace App\Feed\Scoring;
 
 use Waaseyaa\Entity\EntityTypeManager;
 

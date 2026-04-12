@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Entity;
+namespace App\Entity;
 
 use Waaseyaa\Entity\ConfigEntityBase;
 
@@ -12,8 +12,11 @@ final class DialectRegion extends ConfigEntityBase
 
     protected array $entityKeys = ['id' => 'code', 'label' => 'name'];
 
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+    ) {
         if (!array_key_exists('display_name', $values)) {
             $values['display_name'] = '';
         }
@@ -30,6 +33,10 @@ final class DialectRegion extends ConfigEntityBase
             $values['boundary_geojson'] = null;
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+        );
     }
 }

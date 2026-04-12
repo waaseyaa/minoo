@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Assembler;
+namespace App\Domain\Newsletter\Assembler;
 
 final readonly class ItemCandidate
 {

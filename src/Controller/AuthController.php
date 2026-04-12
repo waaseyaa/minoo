@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
 use Waaseyaa\Auth\Config\AuthConfig;
 use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\User\AuthMailer;
-use Minoo\Support\LayoutTwigContext;
+use App\Support\LayoutTwigContext;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Minoo\Middleware\RateLimitMiddleware;
+use App\Middleware\RateLimitMiddleware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\User\User;

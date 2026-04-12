@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Chat\AnthropicChatProvider;
-use Minoo\Chat\ChatRateLimiter;
+use App\Chat\AnthropicChatProvider;
+use App\Chat\ChatRateLimiter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;

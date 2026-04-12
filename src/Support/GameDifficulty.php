@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Support;
+namespace App\Support;
 
 /**
  * Shared difficulty tier logic for all games.

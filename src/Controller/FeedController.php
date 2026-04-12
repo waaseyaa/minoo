@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Feed\FeedAssemblerInterface;
-use Minoo\Feed\FeedContext;
-use Minoo\Feed\FeedResponse;
+use App\Feed\FeedAssemblerInterface;
+use App\Feed\FeedContext;
+use App\Feed\FeedResponse;
 use Waaseyaa\Geo\GeoDistance;
-use Minoo\Support\LayoutTwigContext;
+use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Entity;
+namespace App\Entity;
 
 use Waaseyaa\Entity\Community\HasCommunityInterface;
 use Waaseyaa\Entity\Community\HasCommunityTrait;
@@ -21,9 +21,12 @@ final class Group extends ContentEntityBase implements HasCommunityInterface
         'bundle' => 'type',
     ];
 
-    /** @param array<string, mixed> $values */
-    public function __construct(array $values = [])
-    {
+    public function __construct(
+        array $values = [],
+        string $entityTypeId = '',
+        array $entityKeys = [],
+        array $fieldDefinitions = [],
+    ) {
         if (!array_key_exists('status', $values)) {
             $values['status'] = 1;
         }
@@ -37,6 +40,11 @@ final class Group extends ContentEntityBase implements HasCommunityInterface
             $values['copyright_status'] = 'unknown';
         }
 
-        parent::__construct($values, $this->entityTypeId, $this->entityKeys);
+        parent::__construct(
+            $values,
+            $entityTypeId ?: $this->entityTypeId,
+            $entityKeys ?: $this->entityKeys,
+            $fieldDefinitions,
+        );
     }
 }

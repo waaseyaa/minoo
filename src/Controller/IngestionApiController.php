@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Ingestion\IngestImporter;
-use Minoo\Ingestion\IngestMaterializer;
-use Minoo\Ingestion\IngestStatus;
-use Minoo\Ingestion\PayloadValidator;
+use App\Ingestion\IngestImporter;
+use App\Ingestion\IngestMaterializer;
+use App\Ingestion\IngestStatus;
+use App\Ingestion\PayloadValidator;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Api\JsonResponseTrait;

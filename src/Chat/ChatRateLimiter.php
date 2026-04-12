@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Chat;
+namespace App\Chat;
 
 final class ChatRateLimiter
 {

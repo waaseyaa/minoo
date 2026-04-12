@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Feed;
+namespace App\Feed;
 
-use Minoo\Feed\Scoring\FeedScorer;
+use App\Feed\Scoring\FeedScorer;
 use Waaseyaa\Geo\GeoDistance;
 
 final class FeedAssembler implements FeedAssemblerInterface

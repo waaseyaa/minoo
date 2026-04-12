@@ -6,10 +6,10 @@
          cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="MinooUnit">
-            <directory>tests/Minoo/Unit</directory>
+            <directory>tests/App/Unit</directory>
         </testsuite>
         <testsuite name="MinooIntegration">
-            <directory>tests/Minoo/Integration</directory>
+            <directory>tests/App/Integration</directory>
         </testsuite>
     </testsuites>
     <source>

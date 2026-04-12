@@ -20,9 +20,9 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use Minoo\Domain\Newsletter\Service\EditionLifecycle;
-use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
-use Minoo\Domain\Newsletter\ValueObject\SectionQuota;
+use App\Domain\Newsletter\Service\EditionLifecycle;
+use App\Domain\Newsletter\Service\NewsletterAssembler;
+use App\Domain\Newsletter\ValueObject\SectionQuota;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
 

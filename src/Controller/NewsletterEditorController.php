@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Domain\Newsletter\Exception\DispatchException;
-use Minoo\Domain\Newsletter\Exception\RenderException;
-use Minoo\Domain\Newsletter\Service\EditionLifecycle;
-use Minoo\Domain\Newsletter\Service\NewsletterAssembler;
-use Minoo\Domain\Newsletter\Service\NewsletterDispatcher;
-use Minoo\Domain\Newsletter\Service\NewsletterRenderer;
+use App\Domain\Newsletter\Exception\DispatchException;
+use App\Domain\Newsletter\Exception\RenderException;
+use App\Domain\Newsletter\Service\EditionLifecycle;
+use App\Domain\Newsletter\Service\NewsletterAssembler;
+use App\Domain\Newsletter\Service\NewsletterDispatcher;
+use App\Domain\Newsletter\Service\NewsletterRenderer;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;

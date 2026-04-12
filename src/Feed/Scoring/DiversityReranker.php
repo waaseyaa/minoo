@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Feed\Scoring;
+namespace App\Feed\Scoring;
 
-use Minoo\Feed\FeedItem;
+use App\Feed\FeedItem;
 
 final class DiversityReranker
 {

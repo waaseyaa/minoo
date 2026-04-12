@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Domain\Geo\Service\LocationService;
+use App\Domain\Geo\Service\LocationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;

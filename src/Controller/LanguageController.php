@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Entity\DictionaryEntry;
-use Minoo\Support\LayoutTwigContext;
-use Minoo\Support\NorthCloudClient;
+use App\Entity\DictionaryEntry;
+use App\Support\LayoutTwigContext;
+use App\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Domain\Geo\Service\VolunteerRanker;
+use App\Domain\Geo\Service\VolunteerRanker;
 use Waaseyaa\SSR\Flash\Flash;
-use Minoo\Support\LayoutTwigContext;
+use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -173,7 +173,7 @@ final class CoordinatorDashboardController
     /**
      * @param \Waaseyaa\Entity\ContentEntityBase[] $openRequests
      * @param \Waaseyaa\Entity\ContentEntityBase[] $volunteers
-     * @return array<int|string, \Minoo\Domain\Geo\ValueObject\RankedVolunteer[]>
+     * @return array<int|string, \App\Domain\Geo\ValueObject\RankedVolunteer[]>
      */
     private function buildRankedMap(
         VolunteerRanker $ranker,

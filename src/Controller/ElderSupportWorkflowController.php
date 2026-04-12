@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;

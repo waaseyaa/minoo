@@ -81,7 +81,7 @@ if ($existingIds !== []) {
     $person = $personStorage->load(reset($existingIds));
     echo "Found existing person: {$person->get('name')} (rpid: {$person->id()})\n";
 } else {
-    $person = new \Minoo\Entity\ResourcePerson([
+    $person = new \App\Entity\ResourcePerson([
         'name' => 'Larissa Toulouse',
         'slug' => 'larissa-toulouse',
     ]);

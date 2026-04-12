@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Exception;
+namespace App\Domain\Newsletter\Exception;
 
 final class RenderException extends \RuntimeException
 {

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Service;
+namespace App\Domain\Newsletter\Service;
 
-use Minoo\Domain\Newsletter\Assembler\ItemCandidate;
-use Minoo\Domain\Newsletter\ValueObject\EditionStatus;
-use Minoo\Domain\Newsletter\ValueObject\SectionQuota;
+use App\Domain\Newsletter\Assembler\ItemCandidate;
+use App\Domain\Newsletter\ValueObject\EditionStatus;
+use App\Domain\Newsletter\ValueObject\SectionQuota;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 

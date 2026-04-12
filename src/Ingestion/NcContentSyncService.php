@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion;
+namespace App\Ingestion;
 
-use Minoo\Ingestion\EntityMapper\NcArticleToEventMapper;
-use Minoo\Ingestion\EntityMapper\NcArticleToTeachingMapper;
-use Minoo\Support\NorthCloudClient;
+use App\Ingestion\EntityMapper\NcArticleToEventMapper;
+use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
+use App\Support\NorthCloudClient;
 use Waaseyaa\Entity\EntityTypeManager;
 
 class NcContentSyncService

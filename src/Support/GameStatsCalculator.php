@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Support;
+namespace App\Support;
 
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;

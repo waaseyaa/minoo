@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Support\CrosswordEngine;
-use Minoo\Support\LayoutTwigContext;
-use Minoo\Support\GameStatsCalculator;
+use App\Support\CrosswordEngine;
+use App\Support\LayoutTwigContext;
+use App\Support\GameStatsCalculator;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -578,7 +578,7 @@ final class CrosswordController
     private function generateFallbackDaily(string $puzzleId, string $today): ?object
     {
         $dayOfWeek = (int) date('w', strtotime($today));
-        $tier = \Minoo\Support\GameDifficulty::dailyTier($dayOfWeek);
+        $tier = \App\Support\GameDifficulty::dailyTier($dayOfWeek);
 
         // Load dictionary words with definitions
         $dictStorage = $this->entityTypeManager->getStorage('dictionary_entry');

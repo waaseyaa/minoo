@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Service;
+namespace App\Domain\Newsletter\Service;
 
-use Minoo\Domain\Newsletter\Exception\InvalidStateTransition;
-use Minoo\Domain\Newsletter\ValueObject\EditionStatus;
+use App\Domain\Newsletter\Exception\InvalidStateTransition;
+use App\Domain\Newsletter\ValueObject\EditionStatus;
 use Waaseyaa\Entity\EntityInterface;
 
 final class EditionLifecycle

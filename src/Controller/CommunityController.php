@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Controller;
+namespace App\Controller;
 
-use Minoo\Support\LayoutTwigContext;
-use Minoo\Support\NorthCloudCache;
-use Minoo\Support\NorthCloudClient;
+use App\Support\LayoutTwigContext;
+use App\Support\NorthCloudCache;
+use App\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -47,9 +47,9 @@ final class CommunityController
 
         // Sort by proximity when location is known, delegating to LocationResolver
         if ($location->hasLocation()) {
-            $resolver = new \Minoo\Service\LocationResolver(
+            $resolver = new \App\Service\LocationResolver(
                 $this->entityTypeManager,
-                new \Minoo\Domain\Geo\Service\CommunityFinder(),
+                new \App\Domain\Geo\Service\CommunityFinder(),
             );
             $communities = array_map(
                 static fn (array $r) => $r['community'],
@@ -243,7 +243,7 @@ final class CommunityController
             ->execute();
         $all = $allIds !== [] ? $storage->loadMultiple($allIds) : [];
 
-        $finder = new \Minoo\Domain\Geo\Service\CommunityFinder();
+        $finder = new \App\Domain\Geo\Service\CommunityFinder();
         $results = $finder->findNearby((float) $lat, (float) $lon, array_values($all), self::NEARBY_LIMIT + 1);
 
         // Filter out the current community and cap at distance limit.
@@ -323,11 +323,11 @@ final class CommunityController
         );
     }
 
-    private function resolveLocation(HttpRequest $request): \Minoo\Domain\Geo\ValueObject\LocationContext
+    private function resolveLocation(HttpRequest $request): \App\Domain\Geo\ValueObject\LocationContext
     {
-        return (new \Minoo\Service\LocationResolver(
+        return (new \App\Service\LocationResolver(
             $this->entityTypeManager,
-            new \Minoo\Domain\Geo\Service\CommunityFinder(),
+            new \App\Domain\Geo\Service\CommunityFinder(),
         ))->resolveLocation($request);
     }
 }

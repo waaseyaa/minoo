@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Twig;
+namespace App\Twig;
 
-use Minoo\Support\AccountDisplay;
+use App\Support\AccountDisplay;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Waaseyaa\Access\AccountInterface;

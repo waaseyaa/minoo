@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Ingestion\EntityMapper;
+namespace App\Ingestion\EntityMapper;
 
-use Minoo\Ingestion\ValueObject\LeaderFields;
+use App\Ingestion\ValueObject\LeaderFields;
 
 final class LeaderMapper
 {

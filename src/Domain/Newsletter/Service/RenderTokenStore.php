@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Minoo\Domain\Newsletter\Service;
+namespace App\Domain\Newsletter\Service;
 
 final class RenderTokenStore
 {

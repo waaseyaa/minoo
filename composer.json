@@ -53,55 +53,25 @@
     },
     "autoload": {
         "psr-4": {
-            "Minoo\\": "src/"
+            "App\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Minoo\\Tests\\": "tests/Minoo/"
+            "App\\Tests\\": "tests/App/"
         }
     },
     "extra": {
         "waaseyaa": {
             "admin_path": "../waaseyaa/packages/admin",
             "providers": [
-                "Minoo\\Provider\\I18nServiceProvider",
-                "Minoo\\Provider\\EventServiceProvider",
-                "Minoo\\Provider\\GroupServiceProvider",
-                "Minoo\\Provider\\CulturalGroupServiceProvider",
-                "Minoo\\Provider\\TeachingServiceProvider",
-                "Minoo\\Provider\\CulturalCollectionServiceProvider",
-                "Minoo\\Provider\\LanguageServiceProvider",
-                "Minoo\\Provider\\IngestServiceProvider",
-                "Minoo\\Provider\\SearchServiceProvider",
-                "Minoo\\Provider\\PeopleServiceProvider",
-                "Minoo\\Provider\\ElderSupportServiceProvider",
-                "Minoo\\Provider\\CommunityServiceProvider",
-                "Minoo\\Provider\\AuthServiceProvider",
-                "Minoo\\Provider\\DashboardServiceProvider",
-                "Minoo\\Provider\\IngestionDashboardServiceProvider",
-                "Minoo\\Provider\\MailServiceProvider",
-                "Minoo\\Provider\\AccountServiceProvider",
-                "Minoo\\Provider\\FlashServiceProvider",
-                "Minoo\\Provider\\ChatServiceProvider",
-                "Minoo\\Provider\\FeaturedItemServiceProvider",
-                "Minoo\\Provider\\RoleManagementServiceProvider",
-                "Minoo\\Provider\\AdminServiceProvider",
-                "Minoo\\Provider\\DialectRegionServiceProvider",
-                "Minoo\\Provider\\OralHistoryServiceProvider",
-                "Minoo\\Provider\\ContributorServiceProvider",
-                "Minoo\\Provider\\EngagementServiceProvider",
-                "Minoo\\Provider\\MessagingServiceProvider",
-                "Minoo\\Provider\\FeedServiceProvider",
-                "Minoo\\Provider\\FeedScoringServiceProvider",
-                "Minoo\\Provider\\GameServiceProvider",
-                "Minoo\\Provider\\BlockServiceProvider",
-                "Minoo\\Provider\\NewsletterServiceProvider"
+                "App\\Provider\\AppServiceProvider"
             ]
         }
     },
     "config": {
         "optimize-autoloader": true,
+        "process-timeout": 0,
         "sort-packages": true,
         "allow-plugins": {
             "phpstan/extension-installer": true
