@@ -116,19 +116,19 @@ test.describe('Auth flows', () => {
     await page.waitForURL('/');
   });
 
-  // ── Auth redirects (skipped in dev — fallback account) ────────────
+  // ── Auth redirects ────────────────────────────────────────────────
 
-  test.skip('coordinator dashboard redirects unauthenticated users to /login', async ({ page }) => {
+  test('coordinator dashboard redirects unauthenticated users to /login', async ({ page }) => {
     await page.goto('/dashboard/coordinator');
     await expect(page).toHaveURL(/\/login/);
   });
 
-  test.skip('volunteer dashboard redirects unauthenticated users to /login', async ({ page }) => {
+  test('volunteer dashboard redirects unauthenticated users to /login', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
     await expect(page).toHaveURL(/\/login/);
   });
 
-  test.skip('redirect preserves intended destination in query param', async ({ page }) => {
+  test('redirect preserves intended destination in query param', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
     await expect(page).toHaveURL(/\/login\?redirect=/);
   });
@@ -155,20 +155,20 @@ test.describe('Auth flows', () => {
     await expect(page.locator('a[href="/register"]')).toBeVisible();
   });
 
-  // ── 403 error page tests (skipped in dev — fallback account) ──────
+  // ── 403 error page tests ──────────────────────────────────────────
 
-  test.skip('visiting protected route unauthenticated shows friendly 403', async ({ page }) => {
+  test('visiting protected route unauthenticated shows friendly 403', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
     await expect(page.locator('h1')).toContainText('Forbidden');
     await expect(page.locator('a[href*="/login?redirect="]')).toBeVisible();
   });
 
-  test.skip('403 page includes login link with redirect', async ({ page }) => {
+  test('403 page includes login link with redirect', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
     await expect(page.locator('a[href*="/login?redirect=%2Fdashboard%2Fvolunteer"]')).toBeVisible();
   });
 
-  test.skip('403 page includes link to homepage', async ({ page }) => {
+  test('403 page includes link to homepage', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
     await expect(page.locator('a[href="/"]')).toBeVisible();
   });

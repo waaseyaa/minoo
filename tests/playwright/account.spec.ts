@@ -44,8 +44,7 @@ test.describe('Account Home — volunteer user', () => {
 });
 
 test.describe('Account Home — unauthenticated', () => {
-  // Skipped in dev — fallback account bypasses auth redirect
-  test.skip('unauthenticated /account access redirects to /login', async ({ page }) => {
+  test('unauthenticated /account access redirects to /login', async ({ page }) => {
     await page.goto('/account');
     await expect(page).toHaveURL(/\/login/);
   });

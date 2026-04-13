@@ -17,5 +17,10 @@ export default defineConfig({
     port: 8081,
     reuseExistingServer: true,
     timeout: 10000,
+    env: {
+      ...process.env,
+      APP_ENV: 'testing',
+      WAASEYAA_DEV_FALLBACK_ACCOUNT: 'false',
+    },
   },
 });
