@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
+use App\Domain\Newsletter\Exception\InvalidStateTransition;
 use App\Domain\Newsletter\Service\EditionLifecycle;
 use App\Domain\Newsletter\Service\NewsletterAssembler;
+use App\Domain\Newsletter\ValueObject\EditionStatus;
 use App\Domain\Newsletter\ValueObject\SectionQuota;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
@@ -273,5 +275,109 @@ final class NewsletterEndToEndTest extends TestCase
         $editionStorage->save($edition);
         $this->assertSame('sent', $edition->get('status'));
         $this->assertNotEmpty((string) $edition->get('sent_at'));
+    }
+
+    #[Test]
+    public function lifecycle_metadata_persists_across_reload(): void
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $storage = $etm->getStorage('newsletter_edition');
+        $lifecycle = new EditionLifecycle();
+
+        $edition = $storage->create([
+            'community_id' => 'wiikwemkoong',
+            'volume' => 1,
+            'issue_number' => 50,
+            'publish_date' => '2026-06-01',
+            'status' => 'draft',
+            'headline' => 'Persistence test',
+        ]);
+        $storage->save($edition);
+
+        // Walk the full chain, saving at each step
+        $lifecycle->transition($edition, EditionStatus::Curating);
+        $storage->save($edition);
+
+        $lifecycle->approve($edition, approverId: 7);
+        $storage->save($edition);
+
+        $lifecycle->markGenerated($edition, '/storage/newsletter/persist-test.pdf', 'sha256abc');
+        $storage->save($edition);
+
+        $lifecycle->markSent($edition);
+        $storage->save($edition);
+
+        // Reload from DB and verify all metadata survived
+        $reloaded = $storage->load($edition->id());
+        $this->assertSame('sent', $reloaded->get('status'));
+        $this->assertSame(7, (int) $reloaded->get('approved_by'));
+        $this->assertNotEmpty((string) $reloaded->get('approved_at'));
+        $this->assertSame('/storage/newsletter/persist-test.pdf', (string) $reloaded->get('pdf_path'));
+        $this->assertSame('sha256abc', (string) $reloaded->get('pdf_hash'));
+        $this->assertNotEmpty((string) $reloaded->get('sent_at'));
+    }
+
+    #[Test]
+    public function illegal_skip_does_not_corrupt_persisted_state(): void
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $storage = $etm->getStorage('newsletter_edition');
+        $lifecycle = new EditionLifecycle();
+
+        $edition = $storage->create([
+            'community_id' => 'wiikwemkoong',
+            'volume' => 1,
+            'issue_number' => 51,
+            'publish_date' => '2026-06-01',
+            'status' => 'draft',
+            'headline' => 'Skip guard test',
+        ]);
+        $storage->save($edition);
+
+        try {
+            $lifecycle->transition($edition, EditionStatus::Sent);
+            $this->fail('Expected InvalidStateTransition');
+        } catch (InvalidStateTransition) {
+            // expected
+        }
+
+        // Save after failed transition — status must remain draft
+        $storage->save($edition);
+        $reloaded = $storage->load($edition->id());
+        $this->assertSame('draft', $reloaded->get('status'));
+    }
+
+    #[Test]
+    public function idempotent_approve_preserves_metadata_after_persist(): void
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $storage = $etm->getStorage('newsletter_edition');
+        $lifecycle = new EditionLifecycle();
+
+        $edition = $storage->create([
+            'community_id' => 'wiikwemkoong',
+            'volume' => 1,
+            'issue_number' => 52,
+            'publish_date' => '2026-06-01',
+            'status' => 'draft',
+            'headline' => 'Idempotent approve test',
+        ]);
+        $storage->save($edition);
+
+        $lifecycle->transition($edition, EditionStatus::Curating);
+        $lifecycle->approve($edition, approverId: 3);
+        $storage->save($edition);
+
+        $originalApprovedAt = $edition->get('approved_at');
+
+        // Reload and approve again — should be idempotent
+        $reloaded = $storage->load($edition->id());
+        $lifecycle->approve($reloaded, approverId: 99);
+        $storage->save($reloaded);
+
+        $finalReload = $storage->load($edition->id());
+        $this->assertSame('approved', $finalReload->get('status'));
+        $this->assertSame(3, (int) $finalReload->get('approved_by'));
+        $this->assertSame((string) $originalApprovedAt, (string) $finalReload->get('approved_at'));
     }
 }
