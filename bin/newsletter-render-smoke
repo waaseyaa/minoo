@@ -29,7 +29,7 @@ sleep 2
 echo "Issuing render token for edition ${EDITION_ID}..."
 TOKEN=$(php -r "
 require 'vendor/autoload.php';
-\$store = new Minoo\\Domain\\Newsletter\\Service\\RenderTokenStore(
+\$store = new App\\Domain\\Newsletter\\Service\\RenderTokenStore(
     'storage/newsletter/render-tokens',
     60
 );
