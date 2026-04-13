@@ -15,6 +15,8 @@ final class NewsletterAdminApiController
 {
     use JsonResponseTrait;
 
+    public const array SEARCHABLE_TYPES = ['post', 'event', 'teaching', 'dictionary_entry'];
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
@@ -249,6 +251,41 @@ final class NewsletterAdminApiController
             'editor_blurb' => $item->get('editor_blurb'),
             'included' => $item->get('included'),
         ]);
+    }
+
+    public function entitySearch(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $q = trim($query['q'] ?? '');
+        if ($q === '') {
+            return $this->json(['results' => []]);
+        }
+
+        $typesParam = trim($query['types'] ?? '');
+        if ($typesParam !== '') {
+            $requestedTypes = array_map('trim', explode(',', $typesParam));
+            $types = array_values(array_intersect($requestedTypes, self::SEARCHABLE_TYPES));
+        } else {
+            $types = self::SEARCHABLE_TYPES;
+        }
+
+        $results = [];
+        foreach ($types as $type) {
+            $storage = $this->entityTypeManager->getStorage($type);
+            $entities = $storage->getQuery()
+                ->condition('label', "%{$q}%", 'LIKE')
+                ->range(0, 10)
+                ->execute();
+
+            foreach ($entities as $entity) {
+                $results[] = [
+                    'entity_type' => $type,
+                    'entity_id' => $entity->id(),
+                    'label' => $entity->label(),
+                ];
+            }
+        }
+
+        return $this->json(['results' => $results]);
     }
 
     /** @return array<string, mixed> */

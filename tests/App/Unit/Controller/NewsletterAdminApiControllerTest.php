@@ -26,6 +26,9 @@ final class NewsletterAdminApiControllerTest extends TestCase
     private AccountInterface $account;
     private NewsletterAdminApiController $controller;
 
+    /** @var array<string, EntityStorageInterface> */
+    private array $entityStorages = [];
+
     protected function setUp(): void
     {
         $this->etm = $this->createMock(EntityTypeManager::class);
@@ -33,10 +36,17 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $this->editionStorage = $this->createMock(EntityStorageInterface::class);
         $this->itemStorage = $this->createMock(EntityStorageInterface::class);
 
-        $this->etm->method('getStorage')->willReturnMap([
-            ['newsletter_edition', $this->editionStorage],
-            ['newsletter_item', $this->itemStorage],
-        ]);
+        $this->entityStorages = [
+            'newsletter_edition' => $this->editionStorage,
+            'newsletter_item' => $this->itemStorage,
+        ];
+
+        $this->etm->method('getStorage')->willReturnCallback(function (string $type): EntityStorageInterface {
+            if (!isset($this->entityStorages[$type])) {
+                $this->entityStorages[$type] = $this->createMock(EntityStorageInterface::class);
+            }
+            return $this->entityStorages[$type];
+        });
 
         $this->account = $this->createMock(AccountInterface::class);
         $this->account->method('id')->willReturn(42);
@@ -521,5 +531,137 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
         $this->assertSame(10, $data['id']);
         $this->assertSame(5, $data['position']);
+    }
+
+    // --- entitySearch ---
+
+    #[Test]
+    public function entity_search_returns_empty_results_when_q_is_empty(): void
+    {
+        $response = $this->controller->entitySearch([], [], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame([], $data['results']);
+    }
+
+    #[Test]
+    public function entity_search_returns_empty_results_when_q_is_whitespace(): void
+    {
+        $response = $this->controller->entitySearch([], ['q' => '   '], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame([], $data['results']);
+    }
+
+    #[Test]
+    public function entity_search_queries_all_searchable_types_by_default(): void
+    {
+        // Set up mock entities for two types, empty for others
+        $eventEntity = $this->createMock(ContentEntityBase::class);
+        $eventEntity->method('id')->willReturn(10);
+        $eventEntity->method('label')->willReturn('Spring Gathering');
+
+        $teachingEntity = $this->createMock(ContentEntityBase::class);
+        $teachingEntity->method('id')->willReturn(20);
+        $teachingEntity->method('label')->willReturn('Spring Teachings');
+
+        foreach (NewsletterAdminApiController::SEARCHABLE_TYPES as $type) {
+            $storage = $this->entityStorages[$type] ?? $this->createMock(EntityStorageInterface::class);
+            $this->entityStorages[$type] = $storage;
+
+            $query = $this->createMock(EntityQueryInterface::class);
+            $query->method('condition')->willReturnSelf();
+            $query->method('range')->willReturnSelf();
+
+            $entities = match ($type) {
+                'event' => [$eventEntity],
+                'teaching' => [$teachingEntity],
+                default => [],
+            };
+            $query->method('execute')->willReturn($entities);
+            $storage->method('getQuery')->willReturn($query);
+        }
+
+        $response = $this->controller->entitySearch([], ['q' => 'Spring'], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertCount(2, $data['results']);
+
+        $this->assertSame('event', $data['results'][0]['entity_type']);
+        $this->assertSame(10, $data['results'][0]['entity_id']);
+        $this->assertSame('Spring Gathering', $data['results'][0]['label']);
+
+        $this->assertSame('teaching', $data['results'][1]['entity_type']);
+        $this->assertSame(20, $data['results'][1]['entity_id']);
+        $this->assertSame('Spring Teachings', $data['results'][1]['label']);
+    }
+
+    #[Test]
+    public function entity_search_filters_to_requested_types(): void
+    {
+        $eventEntity = $this->createMock(ContentEntityBase::class);
+        $eventEntity->method('id')->willReturn(10);
+        $eventEntity->method('label')->willReturn('Pow Wow');
+
+        $eventStorage = $this->createMock(EntityStorageInterface::class);
+        $this->entityStorages['event'] = $eventStorage;
+
+        $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('condition')->willReturnSelf();
+        $query->method('range')->willReturnSelf();
+        $query->method('execute')->willReturn([$eventEntity]);
+        $eventStorage->method('getQuery')->willReturn($query);
+
+        $response = $this->controller->entitySearch([], ['q' => 'Pow', 'types' => 'event'], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertCount(1, $data['results']);
+        $this->assertSame('event', $data['results'][0]['entity_type']);
+    }
+
+    #[Test]
+    public function entity_search_ignores_disallowed_types(): void
+    {
+        // Request a type not in SEARCHABLE_TYPES — should be ignored
+        foreach (NewsletterAdminApiController::SEARCHABLE_TYPES as $type) {
+            $storage = $this->entityStorages[$type] ?? $this->createMock(EntityStorageInterface::class);
+            $this->entityStorages[$type] = $storage;
+        }
+
+        $response = $this->controller->entitySearch([], ['q' => 'test', 'types' => 'user,admin'], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame([], $data['results']);
+    }
+
+    #[Test]
+    public function entity_search_intersects_requested_types_with_allowed(): void
+    {
+        $teachingEntity = $this->createMock(ContentEntityBase::class);
+        $teachingEntity->method('id')->willReturn(30);
+        $teachingEntity->method('label')->willReturn('Cedar Teaching');
+
+        $teachingStorage = $this->createMock(EntityStorageInterface::class);
+        $this->entityStorages['teaching'] = $teachingStorage;
+
+        $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('condition')->willReturnSelf();
+        $query->method('range')->willReturnSelf();
+        $query->method('execute')->willReturn([$teachingEntity]);
+        $teachingStorage->method('getQuery')->willReturn($query);
+
+        // Request teaching (allowed) + user (disallowed) — only teaching should be queried
+        $response = $this->controller->entitySearch([], ['q' => 'Cedar', 'types' => 'teaching,user'], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertCount(1, $data['results']);
+        $this->assertSame('teaching', $data['results'][0]['entity_type']);
+        $this->assertSame(30, $data['results'][0]['entity_id']);
     }
 }
