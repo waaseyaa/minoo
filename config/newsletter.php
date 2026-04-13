@@ -23,13 +23,14 @@ return [
     // with inline_title + inline_body (no source_type/source_id).
     // Order here = print order within the edition.
     'inline_sections' => [
-        'cover'          => ['label' => 'Cover'],
-        'editors_note'   => ['label' => "Editor's Note"],
-        'jokes'          => ['label' => 'Jokes & Humour'],
-        'puzzles'        => ['label' => 'Puzzles'],
-        'horoscope'      => ['label' => 'Anishinaabe Horoscope'],
-        'elder_spotlight' => ['label' => 'Elder Spotlight'],
-        'back_page'      => ['label' => 'Back Page'],
+        'cover'           => ['label' => 'Cover'],
+        'editors_note'    => ['label' => "Editor's Note"],
+        'language_corner' => ['label' => 'Anishinaabemowin Corner'],
+        'jokes'           => ['label' => 'Jokes & Humour'],
+        'puzzles'         => ['label' => 'Puzzles'],
+        'horoscope'       => ['label' => 'Anishinaabe Horoscope'],
+        'elder_spotlight'  => ['label' => 'Elder Spotlight'],
+        'back_page'       => ['label' => 'Back Page'],
     ],
 
     'communities' => [

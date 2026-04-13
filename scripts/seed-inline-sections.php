@@ -76,6 +76,10 @@ $placeholders = [
         'title' => "Editor's Note",
         'body' => "[Welcome message and brief preview of what's inside. 150--200 words. To be written by editor.]",
     ],
+    'language_corner' => [
+        'title' => 'Anishinaabemowin Corner',
+        'body' => '[Vocabulary, phrases, and cultural context for this issue. Pronunciation guidance where possible. Connect to the season or a theme from this issue. Awaiting collaborator input from Barbara Nolan. To be hand-authored per issue.]',
+    ],
     'jokes' => [
         'title' => 'Jokes & Humour',
         'body' => '[2--3 short, clean jokes appropriate for Elders. Community-oriented humour. To be written by editor.]',

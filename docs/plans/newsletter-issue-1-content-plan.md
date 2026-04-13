@@ -13,16 +13,17 @@ Issue #692. This document is the source of truth for section order, quotas, page
 | 3 | Community News | `news` | entity-driven | 3 | `post` |
 | 4 | Events | `events` | entity-driven | 5 | `event` |
 | 5 | Teachings | `teachings` | entity-driven | 2 | `teaching` |
-| 6 | Language Corner | `language` | entity-driven | 1 | `dictionary_entry` |
-| 7 | Community Voices | `community` | entity-driven | 4 | `newsletter_submission` |
-| 8 | Jokes & Humour | `jokes` | inline | n/a | Hand-authored jokes appropriate for Elders |
-| 9 | Puzzles | `puzzles` | inline | n/a | Hand-authored word search, crossword, or trivia |
-| 10 | Anishinaabe Horoscope | `horoscope` | inline | n/a | Hand-authored seasonal horoscope by clan |
-| 11 | Elder Spotlight | `elder_spotlight` | inline | n/a | Hand-authored Elder profile or interview |
-| 12 | Back Page | `back_page` | inline | n/a | Contact info, next issue date, miigwech |
+| 6 | Language (entity) | `language` | entity-driven | 1 | `dictionary_entry` |
+| 7 | Anishinaabemowin Corner | `language_corner` | inline | n/a | Hand-authored vocabulary, phrases, cultural context (Barbara Nolan collaboration) |
+| 8 | Community Voices | `community` | entity-driven | 4 | `newsletter_submission` |
+| 9 | Jokes & Humour | `jokes` | inline | n/a | Hand-authored jokes appropriate for Elders |
+| 10 | Puzzles | `puzzles` | inline | n/a | Hand-authored word search, crossword, or trivia |
+| 11 | Anishinaabe Horoscope | `horoscope` | inline | n/a | Hand-authored seasonal horoscope by clan |
+| 12 | Elder Spotlight | `elder_spotlight` | inline | n/a | Hand-authored Elder profile or interview |
+| 13 | Back Page | `back_page` | inline | n/a | Contact info, next issue date, miigwech |
 
 **Entity-driven total:** 15 items (3 + 5 + 2 + 1 + 4)
-**Inline sections:** 7 (cover, editor's note, jokes, puzzles, horoscope, elder spotlight, back page)
+**Inline sections:** 8 (cover, editor's note, language corner, jokes, puzzles, horoscope, elder spotlight, back page)
 
 ---
 
@@ -35,7 +36,8 @@ Issue #692. This document is the source of truth for section order, quotas, page
 | 3--4 | Community News (3 posts) | ~half page each, title + blurb + source date |
 | 5--6 | Events (5 events) | Compact cards: name, date, location, one-line description |
 | 7 | Teachings (2 teachings) | Title, source/Knowledge Keeper attribution, 2--3 sentence summary |
-| 8 | Language Corner (1 entry) | Featured word with pronunciation, definition, example sentence, mini word list sidebar |
+| 8 (top) | Language (1 entry) | Featured word with pronunciation, definition, example sentence |
+| 8 (bottom) | Anishinaabemowin Corner | Inline vocabulary, phrases, cultural context — half page |
 | 9--10 | Community Voices (4 submissions) | Letters, announcements, notices from community members |
 | 11 (top) | Jokes & Humour | 2--3 short jokes, half page |
 | 11 (bottom) | Puzzles | Word search or crossword, half page |
@@ -89,6 +91,20 @@ Issue #692. This document is the source of truth for section order, quotas, page
 - **Source:** `dictionary_entry` entity type
 - **Per-item layout:** Anishinaabemowin word, pronunciation guide, English definition, example sentence
 - **Inline supplement:** Editor may add a sidebar of 3--5 additional words (hand-authored, not assembled)
+
+### Anishinaabemowin Corner (inline)
+
+- Distinct from the entity-driven `language` section (which pulls a `dictionary_entry`)
+- Hand-authored vocabulary, phrases, and cultural context for each issue
+- Intended for collaboration with **Barbara Nolan** — content awaits her input
+- **Editorial constraints:**
+  - Use Anishinaabemowin terms with English context, never as decoration
+  - Include pronunciation guidance where possible
+  - Connect vocabulary to the season or a theme from this issue
+  - Respect dialect variation — note which dialect when relevant
+  - Keep accessible: a reader with no prior Anishinaabemowin should learn something
+- Not assembled from entities; hand-authored per issue via inline seeding script
+- Visually distinct in print template (bordered box or shaded background)
 
 ### Community Voices (entity-driven)
 
@@ -174,6 +190,6 @@ Each entity-driven section opens with a one-sentence intro written by the editor
 ## Assembler Constraints
 
 - The `NewsletterAssembler` processes entity-driven sections in config order (the `sections` key in `config/newsletter.php`)
-- Inline sections (cover, editor's note, jokes, puzzles, horoscope, elder spotlight, back page) are defined in `config/newsletter.php` under `inline_sections` but are **not** processed by the assembler; they are seeded via `scripts/seed-inline-sections.php`
+- Inline sections (cover, editor's note, language corner, jokes, puzzles, horoscope, elder spotlight, back page) are defined in `config/newsletter.php` under `inline_sections` but are **not** processed by the assembler; they are seeded via `scripts/seed-inline-sections.php`
 - Config `sections` key must list entity-driven sections in print order: `news`, `events`, `teachings`, `language`, `community`
 - Quotas in config must match this plan: news=3, events=5, teachings=2, language=1, community=4
