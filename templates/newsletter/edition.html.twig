@@ -206,6 +206,51 @@
             body { background: #fff; }
             a { color: #000; text-decoration: none; }
         }
+
+        {% if review_mode|default(false) %}
+        /* --- Review draft watermark --- */
+        body::before {
+            content: "REVIEW DRAFT — NOT FOR PRINT";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-35deg);
+            font-size: 48pt;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.06);
+            white-space: nowrap;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        /* --- Collaborator annotation box --- */
+        .collaborator-note {
+            border: 2px dashed #000;
+            padding: 0.2in;
+            margin-top: 0.2in;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .collaborator-note h4 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-bottom: 0.08in;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.05in;
+        }
+        .collaborator-note p {
+            font-size: 11pt;
+            line-height: 1.4;
+            margin-bottom: 0.06in;
+        }
+        .collaborator-note ul {
+            font-size: 11pt;
+            line-height: 1.4;
+            margin-left: 0.25in;
+            margin-bottom: 0.06in;
+        }
+        {% endif %}
     </style>
 </head>
 <body>
@@ -403,6 +448,27 @@
                 </div>
                 {% endif %}
             {% endfor %}
+        {% endif %}
+
+        {% if review_mode|default(false) %}
+        <div class="collaborator-note">
+            <h4>Note for Language Collaborators</h4>
+            <p>This section is reserved for Anishinaabemowin language content.
+               We are looking for contributions that help readers connect with the language
+               in an accessible, everyday way.</p>
+            <p><strong>What we are looking for:</strong></p>
+            <ul>
+                <li>Vocabulary (5-10 words with pronunciation and definitions)</li>
+                <li>Common phrases or greetings for the season</li>
+                <li>Cultural context for how words are used in ceremony or daily life</li>
+            </ul>
+            <p><strong>Space available:</strong> Approximately 200-300 words
+               (half a printed page in the newsletter layout above).</p>
+            <p><strong>To submit:</strong> Email your content to the Minoo editorial team,
+               or share via a document link. We will format it to match the newsletter style.</p>
+            <p><strong>Timeline:</strong> Content received before the print deadline will be
+               included in this issue. Otherwise, it will appear in the next issue.</p>
+        </div>
         {% endif %}
     </div>
 </div>

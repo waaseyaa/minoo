@@ -63,10 +63,13 @@ final class NewsletterController
             }
         }
 
+        $reviewMode = $request->query->get('mode') === 'review';
+
         return new Response($this->twig->render('newsletter/edition.html.twig', [
             'edition' => $edition,
             'items_by_section' => $bySection,
             'source_entities' => $sourceEntities,
+            'review_mode' => $reviewMode,
         ]));
     }
 
