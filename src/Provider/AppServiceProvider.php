@@ -62,6 +62,7 @@ use App\Support\NorthCloudClient;
 use App\Twig\AccountDisplayTwigExtension;
 use App\Twig\DateTwigExtension;
 use Symfony\Component\Console\Command\Command;
+use Waaseyaa\Analytics\UmamiClient;
 use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
 use Waaseyaa\AdminSurface\Host\GenericAdminSurfaceHost;
 use Waaseyaa\Api\Schema\SchemaPresenter;
@@ -917,6 +918,13 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $this->singleton(SearchProviderInterface::class, fn(): SearchProviderInterface => $this->searchProvider);
+
+        $analyticsConfig = $this->config['analytics'] ?? [];
+        $this->singleton(UmamiClient::class, fn(): UmamiClient => new UmamiClient(
+            trackerUrl: (string) ($analyticsConfig['tracker_url'] ?? ''),
+            siteId: (string) ($analyticsConfig['site_id'] ?? ''),
+            appUrl: (string) ($this->config['app']['url'] ?? 'https://minoo.live'),
+        ));
 
         // =====================================================================
         // --- People ---
@@ -3365,6 +3373,17 @@ final class AppServiceProvider extends ServiceProvider
         if ($twigForChat !== null) {
             $chatConfig = $this->loadChatConfig();
             $twigForChat->addGlobal('chat_enabled', $chatConfig['enabled'] ?? false);
+        }
+
+        // =====================================================================
+        // --- Analytics: umami_tracker_url / umami_site_id globals ---
+        // =====================================================================
+
+        $twigForAnalytics = ThemeServiceProvider::getTwigEnvironment();
+        if ($twigForAnalytics !== null) {
+            $analyticsConfig = $this->config['analytics'] ?? [];
+            $twigForAnalytics->addGlobal('umami_tracker_url', (string) ($analyticsConfig['tracker_url'] ?? ''));
+            $twigForAnalytics->addGlobal('umami_site_id', (string) ($analyticsConfig['site_id'] ?? ''));
         }
 
         // =====================================================================
