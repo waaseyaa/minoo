@@ -13,6 +13,7 @@
         "waaseyaa/admin-surface": "^0.1",
         "waaseyaa/api": "^0.1",
         "waaseyaa/auth": "^0.1",
+        "waaseyaa/bimaaji": "^0.1",
         "waaseyaa/cache": "^0.1",
         "waaseyaa/cli": "^0.1",
         "waaseyaa/config": "^0.1",
@@ -65,7 +66,8 @@
         "waaseyaa": {
             "admin_path": "../waaseyaa/packages/admin",
             "providers": [
-                "App\\Provider\\AppServiceProvider"
+                "App\\Provider\\AppServiceProvider",
+                "App\\Provider\\BimaajiBridgeProvider"
             ]
         }
     },
