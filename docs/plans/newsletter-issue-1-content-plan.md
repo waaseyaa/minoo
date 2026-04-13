@@ -15,11 +15,14 @@ Issue #692. This document is the source of truth for section order, quotas, page
 | 5 | Teachings | `teachings` | entity-driven | 2 | `teaching` |
 | 6 | Language Corner | `language` | entity-driven | 1 | `dictionary_entry` |
 | 7 | Community Voices | `community` | entity-driven | 4 | `newsletter_submission` |
-| 8 | Elder Spotlight | `elder_spotlight` | inline | n/a | Hand-authored Elder profile or interview |
-| 9 | Back Page | `back_page` | inline | n/a | Contact info, next issue date, miigwech |
+| 8 | Jokes & Humour | `jokes` | inline | n/a | Hand-authored jokes appropriate for Elders |
+| 9 | Puzzles | `puzzles` | inline | n/a | Hand-authored word search, crossword, or trivia |
+| 10 | Anishinaabe Horoscope | `horoscope` | inline | n/a | Hand-authored seasonal horoscope by clan |
+| 11 | Elder Spotlight | `elder_spotlight` | inline | n/a | Hand-authored Elder profile or interview |
+| 12 | Back Page | `back_page` | inline | n/a | Contact info, next issue date, miigwech |
 
 **Entity-driven total:** 15 items (3 + 5 + 2 + 1 + 4)
-**Inline sections:** 4 (cover, editor's note, elder spotlight, back page)
+**Inline sections:** 7 (cover, editor's note, jokes, puzzles, horoscope, elder spotlight, back page)
 
 ---
 
@@ -34,8 +37,11 @@ Issue #692. This document is the source of truth for section order, quotas, page
 | 7 | Teachings (2 teachings) | Title, source/Knowledge Keeper attribution, 2--3 sentence summary |
 | 8 | Language Corner (1 entry) | Featured word with pronunciation, definition, example sentence, mini word list sidebar |
 | 9--10 | Community Voices (4 submissions) | Letters, announcements, notices from community members |
-| 11 | Elder Spotlight | Photo placeholder, name, community, narrative profile (~300 words) |
-| 12 | Back Page | Community contacts, "Next issue: [month]", miigwech closing |
+| 11 (top) | Jokes & Humour | 2--3 short jokes, half page |
+| 11 (bottom) | Puzzles | Word search or crossword, half page |
+| 12 (top half) | Anishinaabe Horoscope | Seasonal horoscope by clan animal, half page |
+| 12 (middle) | Elder Spotlight | Brief Elder profile (~150 words), quarter page |
+| 12 (bottom) | Back Page | Community contacts, "Next issue: [month]", miigwech closing |
 | **12** | **Total** | |
 
 ---
@@ -91,10 +97,31 @@ Issue #692. This document is the source of truth for section order, quotas, page
 - **Per-item layout:** Title, author/community attribution, submission text (may be trimmed for space)
 - **Constraint:** Only `status = approved` submissions (assembler already filters this)
 
+### Jokes & Humour (inline)
+
+- 2--3 short, clean jokes appropriate for Elders
+- Warm, community-oriented humour — nothing mean-spirited
+- May include Anishinaabe wordplay or bilingual puns when natural
+- Not assembled from entities; hand-authored per issue
+
+### Puzzles (inline)
+
+- One puzzle per issue: word search, crossword, or trivia quiz
+- Theme should connect to the season or a teaching from this issue
+- Include answer key (small print, inverted at bottom of section)
+- Not assembled from entities; hand-authored per issue
+
+### Anishinaabe Horoscope (inline)
+
+- Seasonal horoscope organized by clan animal (Bear, Loon, Crane, etc.)
+- Light, positive, grounded in seasonal rhythms — not astrology
+- 1--2 sentences per clan, plus a seasonal message for all
+- Not assembled from entities; hand-authored per issue
+
 ### Elder Spotlight (inline)
 
 - Hand-authored Elder profile or interview
-- ~300 words with photo placeholder
+- ~150 words (reduced from 300 to share page 12 with horoscope + back page)
 - Not assembled from entities; written by editor for each issue
 - Should name the Elder, their community, and what they want readers to know
 
@@ -147,6 +174,6 @@ Each entity-driven section opens with a one-sentence intro written by the editor
 ## Assembler Constraints
 
 - The `NewsletterAssembler` processes entity-driven sections in config order (the `sections` key in `config/newsletter.php`)
-- Inline sections (cover, editor's note, elder spotlight, back page) are **not** in config and are **not** processed by the assembler; they exist only in the print template
+- Inline sections (cover, editor's note, jokes, puzzles, horoscope, elder spotlight, back page) are defined in `config/newsletter.php` under `inline_sections` but are **not** processed by the assembler; they are seeded via `scripts/seed-inline-sections.php`
 - Config `sections` key must list entity-driven sections in print order: `news`, `events`, `teachings`, `language`, `community`
 - Quotas in config must match this plan: news=3, events=5, teachings=2, language=1, community=4
