@@ -1,0 +1,99 @@
+{% extends "base.html.twig" %}
+
+{% set hide_sidebar = true %}
+
+{% block title %}Minoo — Indigenous Knowledge &amp; Community{% endblock %}
+
+{% block og_description %}Discover Teachings, Events, and community stories shared by Knowledge Keepers and community members across Turtle Island.{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+
+    {# === Welcome Hero === #}
+    <section class="home-hero">
+      <h1 class="home-hero__title">Welcome to Minoo</h1>
+      <p class="home-hero__subtitle">A place where Indigenous Knowledge, culture, and community come together. Explore Teachings from Knowledge Keepers, find Events near you, and connect with communities across Turtle Island.</p>
+      <div class="home-hero__actions">
+        <a href="/teachings" class="btn btn--primary">Explore Teachings</a>
+        <a href="/events" class="btn btn--outline">Upcoming Events</a>
+      </div>
+    </section>
+
+    {# === Featured Items === #}
+    {% if featured is defined and featured|length > 0 %}
+      <section class="home-section">
+        <h2 class="home-section__heading">Featured</h2>
+        <div class="card-grid">
+          {% for item in featured %}
+            <a href="{{ item.url }}" class="card">
+              <span class="card__badge">{{ item.entity_type|capitalize }}</span>
+              <h3 class="card__title">{{ item.headline }}</h3>
+              {% if item.subheadline is defined and item.subheadline %}
+                <p class="card__meta">{{ item.subheadline }}</p>
+              {% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# === Upcoming Events === #}
+    {% if events is defined and events|length > 0 %}
+      <section class="home-section">
+        <div class="home-section__header">
+          <h2 class="home-section__heading">Upcoming Events</h2>
+          <a href="/events" class="home-section__link">View all →</a>
+        </div>
+        <div class="card-grid">
+          {% for e in events %}
+            {% include "components/event-card.html.twig" with {
+              title: e.get('title'),
+              type: e.get('type')|default('')|capitalize,
+              date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
+              location: e.get('location')|default(''),
+              description: e.get('description')|default(''),
+              url: "/events/" ~ e.get('slug')
+            } only %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# === Recent Teachings === #}
+    {% if teachings is defined and teachings|length > 0 %}
+      <section class="home-section">
+        <div class="home-section__header">
+          <h2 class="home-section__heading">Recent Teachings</h2>
+          <a href="/teachings" class="home-section__link">View all →</a>
+        </div>
+        <div class="card-grid">
+          {% for t in teachings %}
+            {% include "components/teaching-card.html.twig" with {
+              title: t.get('title'),
+              type: t.get('type')|default('')|capitalize,
+              description: t.get('description')|default(''),
+              url: "/teachings/" ~ t.get('slug')
+            } only %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# === Community Highlights === #}
+    <section class="home-section">
+      <div class="home-section__header">
+        <h2 class="home-section__heading">Our Communities</h2>
+        <a href="/communities" class="home-section__link">View all →</a>
+      </div>
+      <p class="home-section__intro">Minoo connects Indigenous communities across Turtle Island. Find your community, share knowledge, and stay connected.</p>
+    </section>
+
+    {# === Call to Action === #}
+    <section class="home-cta">
+      <h2 class="home-cta__heading">Join the Conversation</h2>
+      <p class="home-cta__body">Create an account to share your stories, follow communities, and stay up to date with Events and Teachings that matter to you.</p>
+      <a href="/register" class="btn btn--primary">Get Started</a>
+    </section>
+
+  </div>
+{% endblock %}
