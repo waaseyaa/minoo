@@ -46,6 +46,151 @@ final class NewsletterEndToEndTest extends TestCase
         }
     }
 
+    private function createEdition(string $community, int $issue = 1): \Waaseyaa\Entity\EntityInterface
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $storage = $etm->getStorage('newsletter_edition');
+        $edition = $storage->create([
+            'community_id' => $community,
+            'volume' => 1,
+            'issue_number' => $issue,
+            'publish_date' => '2026-05-01',
+            'status' => 'draft',
+            'headline' => "Test Issue {$issue}",
+        ]);
+        $storage->save($edition);
+        return $edition;
+    }
+
+    private function createSubmission(string $community, string $title, string $status = 'submitted'): \Waaseyaa\Entity\EntityInterface
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $storage = $etm->getStorage('newsletter_submission');
+        $sub = $storage->create([
+            'community_id' => $community,
+            'submitted_by' => 1,
+            'submitted_at' => '2026-04-01T00:00:00+00:00',
+            'category' => 'announcement',
+            'title' => $title,
+            'body' => "Body of: {$title}",
+            'status' => $status,
+        ]);
+        $storage->save($sub);
+        return $sub;
+    }
+
+    private function assembleWithCommunityQuota(\Waaseyaa\Entity\EntityInterface $edition, int $quota = 8): void
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $lifecycle = new EditionLifecycle();
+        $quotas = SectionQuota::fromConfig([
+            'community' => ['quota' => $quota, 'sources' => ['newsletter_submission']],
+        ]);
+        $assembler = new NewsletterAssembler(
+            entityTypeManager: $etm,
+            lifecycle: $lifecycle,
+            quotas: $quotas,
+        );
+        $assembler->assemble($edition);
+        $etm->getStorage('newsletter_edition')->save($edition);
+    }
+
+    private function itemsForEdition(\Waaseyaa\Entity\EntityInterface $edition): array
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $itemStorage = $etm->getStorage('newsletter_item');
+        return array_values(array_filter(
+            $itemStorage->loadMultiple(),
+            static fn($i) => (string) $i->get('edition_id') === (string) $edition->id(),
+        ));
+    }
+
+    #[Test]
+    public function assembler_includes_only_approved_submissions(): void
+    {
+        $this->createSubmission('wiikwemkoong', 'Approved one', 'approved');
+        $this->createSubmission('wiikwemkoong', 'Still pending', 'submitted');
+        $this->createSubmission('wiikwemkoong', 'Was rejected', 'rejected');
+
+        $edition = $this->createEdition('wiikwemkoong', issue: 10);
+        $this->assembleWithCommunityQuota($edition);
+
+        $items = $this->itemsForEdition($edition);
+        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+
+        $this->assertContains('Approved one', $blurbs, 'Approved submission should be included');
+        $this->assertNotContains('Still pending', $blurbs, 'Pending submission must be excluded');
+        $this->assertNotContains('Was rejected', $blurbs, 'Rejected submission must be excluded');
+    }
+
+    #[Test]
+    public function assembler_excludes_submissions_from_other_communities(): void
+    {
+        $this->createSubmission('sheguiandah', 'From Sheguiandah', 'approved');
+
+        $edition = $this->createEdition('wiikwemkoong', issue: 11);
+        $this->assembleWithCommunityQuota($edition);
+
+        $items = $this->itemsForEdition($edition);
+        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+
+        $this->assertNotContains('From Sheguiandah', $blurbs, 'Submission from different community must be excluded');
+    }
+
+    #[Test]
+    public function assembler_is_idempotent_on_rerun(): void
+    {
+        $this->createSubmission('wiikwemkoong', 'Idempotent test', 'approved');
+
+        $edition = $this->createEdition('wiikwemkoong', issue: 12);
+        $this->assembleWithCommunityQuota($edition);
+
+        $firstRunItems = $this->itemsForEdition($edition);
+        $firstCount = count($firstRunItems);
+        $this->assertGreaterThan(0, $firstCount);
+
+        // Reset to draft for re-assembly
+        $lifecycle = new EditionLifecycle();
+        $lifecycle->transition($edition, \App\Domain\Newsletter\ValueObject\EditionStatus::Draft);
+        self::$kernel->getEntityTypeManager()->getStorage('newsletter_edition')->save($edition);
+
+        $this->assembleWithCommunityQuota($edition);
+
+        $secondRunItems = $this->itemsForEdition($edition);
+        $this->assertCount($firstCount, $secondRunItems, 'Re-assembly should produce same item count');
+    }
+
+    #[Test]
+    public function submission_approval_makes_it_available_to_assembler(): void
+    {
+        // Create a pending submission
+        $sub = $this->createSubmission('wiikwemkoong', 'Pending then approved', 'submitted');
+
+        $edition = $this->createEdition('wiikwemkoong', issue: 13);
+        $this->assembleWithCommunityQuota($edition);
+
+        $items = $this->itemsForEdition($edition);
+        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+        $this->assertNotContains('Pending then approved', $blurbs, 'Pending should not appear');
+
+        // Approve the submission
+        $sub->set('status', 'approved');
+        $sub->set('approved_by', 5);
+        $sub->set('approved_at', date(\DateTimeInterface::ATOM));
+        self::$kernel->getEntityTypeManager()->getStorage('newsletter_submission')->save($sub);
+
+        // Reset edition and re-assemble
+        $lifecycle = new EditionLifecycle();
+        $lifecycle->transition($edition, \App\Domain\Newsletter\ValueObject\EditionStatus::Draft);
+        self::$kernel->getEntityTypeManager()->getStorage('newsletter_edition')->save($edition);
+
+        $this->assembleWithCommunityQuota($edition);
+
+        $items = $this->itemsForEdition($edition);
+        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+        $this->assertContains('Pending then approved', $blurbs, 'After approval, submission should appear');
+    }
+
     #[Test]
     public function full_lifecycle_draft_to_sent(): void
     {

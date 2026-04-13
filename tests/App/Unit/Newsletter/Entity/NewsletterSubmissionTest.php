@@ -33,4 +33,49 @@ final class NewsletterSubmissionTest extends TestCase
         $this->assertSame('submitted', $sub->get('status'));
         $this->assertSame('Edna turns 80', $sub->label());
     }
+
+    #[Test]
+    public function approval_sets_status_and_metadata(): void
+    {
+        $sub = new NewsletterSubmission([
+            'nsuid' => 2,
+            'community_id' => 'wiikwemkoong',
+            'submitted_by' => 18,
+            'submitted_at' => '2026-04-02T13:22:00+00:00',
+            'title' => 'Community potluck',
+            'body' => 'Bring a dish to share.',
+            'status' => 'submitted',
+        ]);
+
+        $this->assertSame('submitted', $sub->get('status'));
+
+        $sub->set('status', 'approved');
+        $sub->set('approved_by', 5);
+        $sub->set('approved_at', '2026-04-03T10:00:00+00:00');
+
+        $this->assertSame('approved', $sub->get('status'));
+        $this->assertSame(5, $sub->get('approved_by'));
+        $this->assertSame('2026-04-03T10:00:00+00:00', $sub->get('approved_at'));
+    }
+
+    #[Test]
+    public function rejection_sets_status_and_metadata(): void
+    {
+        $sub = new NewsletterSubmission([
+            'nsuid' => 3,
+            'community_id' => 'wiikwemkoong',
+            'submitted_by' => 18,
+            'submitted_at' => '2026-04-02T13:22:00+00:00',
+            'title' => 'Off-topic submission',
+            'body' => 'Not relevant to community.',
+            'status' => 'submitted',
+        ]);
+
+        $sub->set('status', 'rejected');
+        $sub->set('approved_by', 5);
+        $sub->set('approved_at', '2026-04-03T10:00:00+00:00');
+
+        $this->assertSame('rejected', $sub->get('status'));
+        $this->assertSame(5, $sub->get('approved_by'));
+    }
 }
