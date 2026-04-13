@@ -19,8 +19,8 @@
 
         body {
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 12pt;
-            line-height: 1.5;
+            font-size: 11.5pt;
+            line-height: 1.4;
             color: #1a1a1a;
             background: #fff;
             max-width: 8.5in;
@@ -90,31 +90,31 @@
 
         /* ---------- Section headers ---------- */
         h2 {
-            font-size: 16pt;
+            font-size: 15pt;
             text-transform: uppercase;
             letter-spacing: 1pt;
             border-bottom: 2px solid #1a1a1a;
-            padding-bottom: 0.06in;
-            margin-bottom: 0.25in;
-            margin-top: 0.1in;
+            padding-bottom: 0.05in;
+            margin-bottom: 0.12in;
+            margin-top: 0.05in;
         }
         h3 {
-            font-size: 13pt;
-            margin-top: 0.15in;
-            margin-bottom: 0.05in;
+            font-size: 12pt;
+            margin-top: 0.08in;
+            margin-bottom: 0.03in;
         }
         p {
-            margin-bottom: 0.08in;
+            margin-bottom: 0.05in;
         }
 
         /* ---------- Section intro ---------- */
         .section-intro {
             font-style: italic;
             color: #444;
-            font-size: 12pt;
-            margin-bottom: 0.2in;
+            font-size: 11pt;
+            margin-bottom: 0.1in;
             border-left: 3px solid #999;
-            padding-left: 0.15in;
+            padding-left: 0.12in;
         }
 
         /* ---------- Article blocks ---------- */
@@ -125,6 +125,7 @@
         /* ---------- Prose indent ---------- */
         .prose p {
             text-indent: 0.2in;
+            margin-bottom: 0.04in;
         }
         .prose p:first-of-type {
             text-indent: 0;
@@ -149,37 +150,50 @@
 
         /* ---------- Horoscope items ---------- */
         .horoscope-item {
-            margin-bottom: 0.1in;
+            margin-bottom: 0.08in;
             break-inside: avoid;
         }
         .horoscope-item h3 {
-            font-size: 11pt;
+            font-size: 10.5pt;
             margin-top: 0;
             margin-bottom: 0.02in;
         }
         .horoscope-item p {
-            font-size: 11pt;
-            line-height: 1.4;
+            font-size: 10pt;
+            line-height: 1.35;
             text-indent: 0;
+            margin-bottom: 0.03in;
         }
 
         /* ---------- Puzzle grid ---------- */
         .word-search-grid {
-            font-family: "Courier New", monospace;
-            font-size: 14pt;
-            line-height: 1.8;
-            letter-spacing: 0.15in;
+            font-family: "Courier New", "Courier", monospace;
+            border-collapse: collapse;
+            margin: 0.15in auto;
+            border: 2px solid #1a1a1a;
+        }
+        .word-search-grid td {
+            width: 0.34in;
+            height: 0.34in;
             text-align: center;
-            margin: 0.2in 0;
+            vertical-align: middle;
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #888;
+            padding: 0;
         }
         .word-list {
             column-count: 3;
             column-gap: 0.3in;
-            font-size: 12pt;
-            margin-top: 0.15in;
+            font-size: 11pt;
+            margin: 0.12in 0.2in 0;
+            padding: 0;
+            list-style: none;
         }
-        .word-list span {
-            display: block;
+        .word-list li {
+            break-inside: avoid;
+            margin-bottom: 0.03in;
         }
 
         /* ---------- Quote block ---------- */
@@ -221,46 +235,62 @@
         }
         .events-grid article {
             break-inside: avoid;
-            margin-bottom: 0.15in;
+            margin-bottom: 0.1in;
         }
         .events-grid h3 {
-            font-size: 12pt;
+            font-size: 11pt;
             margin-top: 0;
+            margin-bottom: 0.03in;
         }
         .events-grid p {
-            font-size: 11pt;
+            font-size: 10pt;
+            line-height: 1.3;
+            margin-bottom: 0.03in;
+        }
+        .events-grid .event-detail {
+            margin-bottom: 0.02in;
         }
 
         /* ---------- Mini calendar ---------- */
         .mini-cal {
             float: right;
-            margin: 0 0 0.2in 0.25in;
+            margin: 0 0 0.15in 0.25in;
             border: 2px solid #1a1a1a;
             border-collapse: collapse;
             font-size: 10pt;
-            line-height: 1.3;
+            line-height: 1.2;
         }
         .mini-cal caption {
             font-weight: bold;
             font-size: 11pt;
-            padding: 0.06in 0;
+            padding: 0.05in 0;
             border-bottom: 2px solid #1a1a1a;
+            letter-spacing: 0.5pt;
+            text-transform: uppercase;
         }
         .mini-cal th {
-            font-size: 9pt;
-            font-weight: normal;
-            color: #666;
-            padding: 0.04in 0.08in;
+            font-size: 8.5pt;
+            font-weight: bold;
+            color: #444;
+            padding: 0.04in 0.07in;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5pt;
+            background: #f0f0f0;
+            border-bottom: 1px solid #888;
         }
         .mini-cal td {
             text-align: center;
-            padding: 0.04in 0.08in;
-            font-size: 10pt;
+            padding: 0.03in 0.06in;
+            font-size: 9.5pt;
+            border: 1px solid #ccc;
+            min-width: 0.28in;
+            height: 0.28in;
         }
         .mini-cal td.has-event {
             font-weight: bold;
-            background: #e8e8e8;
+            background: #d6d6d6;
+            border-color: #1a1a1a;
         }
 
         /* ---------- Drop cap ---------- */
@@ -291,31 +321,39 @@
         .featured-word {
             border: 2px solid #1a1a1a;
             text-align: center;
-            padding: 0.35in 0.4in;
-            margin-bottom: 0.25in;
+            padding: 0.2in 0.3in;
+            margin-bottom: 0.15in;
         }
         .featured-word .word {
-            font-size: 28pt;
+            font-size: 24pt;
             font-weight: bold;
-            margin-bottom: 0.08in;
+            margin-bottom: 0.04in;
             text-indent: 0;
         }
         .featured-word .pronunciation {
-            font-size: 15pt;
+            font-size: 13pt;
             font-style: italic;
             color: #555;
-            margin-bottom: 0.15in;
+            margin-bottom: 0.08in;
             text-indent: 0;
         }
         .featured-word .meaning {
-            font-size: 16pt;
+            font-size: 14pt;
             text-indent: 0;
         }
         .featured-word .example {
-            font-size: 13pt;
+            font-size: 12pt;
             color: #444;
-            margin-top: 0.12in;
+            margin-top: 0.06in;
             text-indent: 0;
+        }
+        .featured-word-svg {
+            margin-bottom: 0.08in;
+        }
+        .featured-word-svg svg {
+            display: block;
+            margin: 0 auto;
+            max-height: 0.6in;
         }
 
         /* ---------- Vocabulary list ---------- */
@@ -331,33 +369,34 @@
         /* ---------- Visual vocab grid ---------- */
         .vocab-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.2in;
-            margin-top: 0.2in;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.12in;
+            margin-top: 0.1in;
         }
         .vocab-card {
             border: 1.5px solid #1a1a1a;
-            padding: 0.12in 0.15in;
+            padding: 0.08in 0.1in;
             text-align: center;
             break-inside: avoid;
         }
         .vocab-card svg {
             display: block;
-            margin: 0 auto 0.06in;
+            margin: 0 auto 0.04in;
+            max-height: 0.45in;
         }
         .vocab-card .vocab-word {
-            font-size: 14pt;
+            font-size: 12pt;
             font-weight: bold;
             margin-bottom: 0.02in;
         }
         .vocab-card .vocab-pron {
-            font-size: 9pt;
+            font-size: 8.5pt;
             font-style: italic;
             color: #666;
-            margin-bottom: 0.04in;
+            margin-bottom: 0.02in;
         }
         .vocab-card .vocab-meaning {
-            font-size: 11pt;
+            font-size: 10pt;
         }
 
         /* ---------- Joke styling ---------- */
@@ -387,7 +426,7 @@
             margin-bottom: 0.25in;
         }
         .photo-wrap img {
-            width: 3.5in;
+            width: 2.8in;
             border: 3px solid #1a1a1a;
         }
         .photo-caption {
@@ -429,9 +468,23 @@
             margin-bottom: 0.15in;
         }
         .partners-logos {
-            display: inline-flex;
-            align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
             gap: 0.6in;
+            flex-wrap: wrap;
+        }
+        .partner-logo {
+            text-align: center;
+        }
+        .partner-logo svg {
+            display: block;
+            margin: 0 auto 0.05in;
+            max-height: 0.6in;
+        }
+        .partner-name {
+            font-size: 10pt;
+            color: #333;
         }
 
         /* ---------- Colophon ---------- */
@@ -547,7 +600,12 @@
     {% if items_by_section['editors_note'] is defined %}
         {% for item in items_by_section['editors_note'] %}
             {% if item.get('included') %}
-                <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% set k = item.get('kind') %}
+                {% if k == 'drop_cap' %}
+                    <div class="prose drop-cap">{{ item.get('inline_body')|raw }}</div>
+                {% else %}
+                    <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
             {% endif %}
         {% endfor %}
     {% endif %}
@@ -593,10 +651,40 @@
     <h2>Events Calendar</h2>
     <div class="section-intro">Upcoming events across the North Shore.</div>
 
+    {# Render calendar item(s) first, outside the events-grid so it floats right #}
+    {% if items_by_section['events'] is defined %}
+        {% for item in items_by_section['events'] %}
+            {% if item.get('included') and item.get('kind') == 'calendar' %}
+                {% set cal = item.get('structured') %}
+                {% if cal %}
+                <table class="mini-cal">
+                    <caption>{{ cal.month }}</caption>
+                    <tr>
+                        {% for wd in cal.weekdays %}<th>{{ wd }}</th>{% endfor %}
+                    </tr>
+                    {% for week in cal.weeks %}
+                    <tr>
+                        {% for cell in week %}
+                            {% if cell is null %}
+                                <td></td>
+                            {% elseif cell.event %}
+                                <td class="has-event">{{ cell.day }}</td>
+                            {% else %}
+                                <td>{{ cell.day }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
     <div class="events-grid">
     {% if items_by_section['events'] is defined %}
         {% for item in items_by_section['events'] %}
-            {% if item.get('included') %}
+            {% if item.get('included') and item.get('kind') != 'calendar' %}
             <article>
                 {% if item.get('source_type') and source_entities[item.id()] is defined %}
                     {% set src = source_entities[item.id()] %}
@@ -670,9 +758,11 @@
     {% if items_by_section['language'] is defined %}
         {% for item in items_by_section['language'] %}
             {% if item.get('included') %}
+                {% set fwStruct = item.get('structured') %}
                 {% if item.get('source_type') and source_entities[item.id()] is defined %}
                     {% set src = source_entities[item.id()] %}
                     <div class="featured-word">
+                        {% if fwStruct and fwStruct.svg %}<div class="featured-word-svg">{{ fwStruct.svg|raw }}</div>{% endif %}
                         <p class="word">{{ src.label() ?: src.get('word') }}</p>
                         {% if src.get('pronunciation') %}
                             <p class="pronunciation">{{ src.get('pronunciation') }}</p>
@@ -684,6 +774,7 @@
                     </div>
                 {% else %}
                     <div class="featured-word">
+                        {% if fwStruct and fwStruct.svg %}<div class="featured-word-svg">{{ fwStruct.svg|raw }}</div>{% endif %}
                         <p class="word">{{ item.get('inline_title') }}</p>
                         <div>{{ item.get('inline_body')|raw }}</div>
                     </div>
@@ -692,7 +783,7 @@
         {% endfor %}
     {% endif %}
 
-    {# Anishinaabemowin Corner inline content (vocab, phrases, etc.) #}
+    {# Anishinaabemowin Corner inline content (vocab grid, phrases, etc.) #}
     {% if items_by_section['language_corner'] is defined %}
         {% for item in items_by_section['language_corner'] %}
             {% if item.get('included') %}
@@ -700,7 +791,25 @@
                 {% if item.get('inline_title') %}
                     <h3>{{ item.get('inline_title') }}</h3>
                 {% endif %}
-                <div>{{ item.get('inline_body')|raw }}</div>
+                {% if item.get('inline_body') %}
+                    <div>{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
+                {% if item.get('kind') == 'vocab_grid' %}
+                    {% set vg = item.get('structured') %}
+                    {% if vg and vg.cards %}
+                    <div class="vocab-grid">
+                        {% for c in vg.cards %}
+                        <div class="vocab-card">
+                            {% if c.svg %}{{ c.svg|raw }}{% endif %}
+                            <div class="vocab-word">{{ c.word }}</div>
+                            {% if c.pronunciation %}<div class="vocab-pron">{{ c.pronunciation }}</div>{% endif %}
+                            <div class="vocab-meaning">{{ c.meaning }}</div>
+                            {% if c.example %}<div class="vocab-example">{{ c.example }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endif %}
             </article>
             {% endif %}
         {% endfor %}
@@ -802,7 +911,24 @@
                 {% if item.get('inline_title') %}
                     <h3>{{ item.get('inline_title') }}</h3>
                 {% endif %}
-                <div>{{ item.get('inline_body')|raw }}</div>
+                {% if item.get('inline_body') %}
+                    <div>{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
+                {% if item.get('kind') == 'word_search' %}
+                    {% set ws = item.get('structured') %}
+                    {% if ws and ws.grid %}
+                    <table class="word-search-grid">
+                        {% for row in ws.grid %}
+                        <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+                        {% endfor %}
+                    </table>
+                    {% if ws.words %}
+                    <ul class="word-list">
+                        {% for w in ws.words %}<li>{{ w }}</li>{% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endif %}
+                {% endif %}
             </article>
             {% if not loop.last %}<hr>{% endif %}
             {% endif %}
@@ -845,7 +971,15 @@
     {% if items_by_section['elder_spotlight'] is defined %}
         {% for item in items_by_section['elder_spotlight'] %}
             {% if item.get('included') %}
-            <article class="prose">
+            {% if item.get('kind') == 'spotlight' and item.get('media_url') %}
+                <div class="photo-wrap">
+                    <img src="{{ item.get('media_url') }}" alt="{{ item.get('media_alt') }}">
+                    {% if item.get('media_caption') %}
+                        <p class="photo-caption">{{ item.get('media_caption') }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <article class="prose{% if item.get('kind') == 'spotlight' or item.get('kind') == 'drop_cap' %} drop-cap{% endif %}">
                 {% if item.get('inline_title') %}
                     <h3>{{ item.get('inline_title') }}</h3>
                 {% endif %}
@@ -866,7 +1000,30 @@
     {% if items_by_section['back_page'] is defined %}
         {% for item in items_by_section['back_page'] %}
             {% if item.get('included') %}
-                <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% set k = item.get('kind') %}
+                {% if k == 'back_page_box' %}
+                    <div class="back-page-box">
+                        {% if item.get('inline_title') %}<h3>{{ item.get('inline_title') }}</h3>{% endif %}
+                        {{ item.get('inline_body')|raw }}
+                    </div>
+                {% elseif k == 'partners' %}
+                    {% set ps = item.get('structured') %}
+                    <div class="partners">
+                        <div class="partners-label">Partners</div>
+                        <div class="partners-logos">
+                        {% for p in (ps.partners ?? []) %}
+                            <div class="partner-logo">
+                                {% if p.svg %}{{ p.svg|raw }}{% endif %}
+                                <div class="partner-name">{% if p.url %}<a href="{{ p.url }}">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                {% elseif k == 'colophon' %}
+                    <div class="colophon">{{ item.get('inline_body')|raw }}</div>
+                {% else %}
+                    <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
             {% endif %}
         {% endfor %}
     {% else %}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 35" width="50" height="35" role="img" aria-label="Crow">
+                <path d="M10,25 Q15,10 25,12 Q30,8 35,12 L38,10 L36,14 Q42,16 40,22 L42,28 Q35,26 30,28 Q20,30 10,25Z" fill="#1a1a1a"/>
+                <circle cx="32" cy="14" r="1.5" fill="#fff"/>
+                <line x1="38" y1="14" x2="44" y2="12" stroke="#1a1a1a" stroke-width="1.5"/>
+            </svg>

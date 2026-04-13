@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 30" width="55" height="30" role="img" aria-label="Sucker fish">
+                <path d="M5,15 Q15,5 30,8 Q42,5 50,15 Q42,25 30,22 Q15,25 5,15Z" fill="none" stroke="#1a1a1a" stroke-width="1.8"/>
+                <circle cx="40" cy="13" r="2" fill="#1a1a1a"/>
+                <path d="M3,8 L10,15 L3,22" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+                <line x1="22" y1="10" x2="22" y2="20" stroke="#1a1a1a" stroke-width="1" opacity="0.5"/>
+            </svg>

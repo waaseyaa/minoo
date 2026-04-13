@@ -9,6 +9,7 @@ storage/geoip/
 .phpunit.cache/
 storage/phpstan/
 storage/newsletter/
+storage/tmp/
 /phpstan/
 /waaseyaa-sync-*/
 .playwright-mcp/

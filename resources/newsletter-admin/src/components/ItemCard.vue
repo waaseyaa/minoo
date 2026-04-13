@@ -2,7 +2,7 @@
   <div class="item-card">
     <span class="position">#{{ item.position }}</span>
     <span class="source-badge" :class="'source--' + item.source_type">{{ item.source_type }}</span>
-    <span class="title">{{ item.title || item.blurb || '(untitled)' }}</span>
+    <span class="title">{{ item.inline_title || item.editor_blurb || '(untitled)' }}</span>
     <span class="actions">
       <button :disabled="isFirst" title="Move up" @click="$emit('move-up')">&#9650;</button>
       <button :disabled="isLast" title="Move down" @click="$emit('move-down')">&#9660;</button>
