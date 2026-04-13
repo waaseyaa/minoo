@@ -26,6 +26,10 @@ final class FeedController
 
     public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
+        if (!$account->isAuthenticated()) {
+            return new RedirectResponse('/', 302);
+        }
+
         $resolved = self::resolveFilter($query['filter'] ?? 'all');
         $ctx = $this->buildContext($request, $query, $account, $resolved['filter']);
         $response = $this->assembler->assemble($ctx);

@@ -44,11 +44,32 @@ final class FeedControllerTest extends TestCase
 
         $controller = new FeedController($assembler, $twig, $etm);
         $account = $this->createMock(AccountInterface::class);
-        $request = HttpRequest::create('/');
+        $account->method('isAuthenticated')->willReturn(true);
+        $request = HttpRequest::create('/feed');
 
         $response = $controller->index([], [], $account, $request);
 
         $this->assertSame(200, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function index_redirects_anonymous_to_homepage(): void
+    {
+        $twig = $this->createMock(Environment::class);
+        $assembler = $this->createMock(FeedAssemblerInterface::class);
+        $etm = $this->createEntityTypeManager();
+
+        $twig->expects($this->never())->method('render');
+
+        $controller = new FeedController($assembler, $twig, $etm);
+        $account = $this->createMock(AccountInterface::class);
+        $account->method('isAuthenticated')->willReturn(false);
+        $request = HttpRequest::create('/feed');
+
+        $response = $controller->index([], [], $account, $request);
+
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertSame('/', $response->headers->get('Location'));
     }
 
     #[Test]
@@ -80,8 +101,8 @@ final class FeedControllerTest extends TestCase
 
         $controller = new FeedController($assembler, $twig, $etm);
         $account = $this->createMock(AccountInterface::class);
-        $account->method('isAuthenticated')->willReturn(false);
-        $request = HttpRequest::create('/');
+        $account->method('isAuthenticated')->willReturn(true);
+        $request = HttpRequest::create('/feed');
 
         $controller->index([], [], $account, $request);
 
@@ -100,10 +121,6 @@ final class FeedControllerTest extends TestCase
 
         // No location cookie — suggested communities empty
         $this->assertSame([], $capturedContext['suggested_communities']);
-
-        // Anonymous user — followed/user communities empty
-        $this->assertSame([], $capturedContext['followed_communities']);
-        $this->assertSame([], $capturedContext['user_communities']);
     }
 
     #[Test]
