@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Homepage', () => {
-  test('shows feed layout with sidebar', async ({ page }) => {
+test.describe('Homepage (anonymous)', () => {
+  test('shows homepage hero for anonymous visitors', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.feed-layout')).toBeVisible();
-    await expect(page.locator('.app-sidebar')).toBeVisible();
-    await expect(page.locator('.feed-container')).toBeVisible();
+    await expect(page.locator('.home-hero')).toBeVisible();
+    await expect(page.locator('.home-hero__title')).toContainText('Welcome to Minoo');
   });
 
   test('has skip link', async ({ page }) => {
@@ -14,29 +13,16 @@ test.describe('Homepage', () => {
     await expect(skipLink).toHaveAttribute('href', '#main-content');
   });
 
-  test('has feed filter chips', async ({ page }) => {
+  test('homepage has call-to-action section', async ({ page }) => {
     await page.goto('/');
-    const chips = page.locator('.feed-chips .feed-chip');
-    await expect(chips.first()).toBeVisible();
-    await expect(page.locator('.feed-chip[data-filter="all"]')).toBeVisible();
-    await expect(page.locator('.feed-chip[data-filter="event"]')).toBeVisible();
-    await expect(page.locator('.feed-chip[data-filter="business"]')).toBeVisible();
-    await expect(page.locator('.feed-chip[data-filter="person"]')).toBeVisible();
+    await expect(page.locator('.home-cta')).toBeVisible();
+    await expect(page.locator('.home-cta__heading')).toContainText('Join the Conversation');
   });
 
-  test('feed filter switching works', async ({ page }) => {
+  test('homepage has navigation links to key sections', async ({ page }) => {
     await page.goto('/');
-    const allChip = page.locator('.feed-chip[data-filter="all"]');
-    await expect(allChip).toBeVisible();
-    await allChip.click();
-    await expect(page.locator('.feed-container')).toBeVisible();
-  });
-
-  test('sidebar has Programs section with elder and volunteer links', async ({ page }) => {
-    await page.goto('/');
-    const sidebar = page.locator('.sidebar-nav');
-    await expect(sidebar.locator('a[href="/elders/request"]')).toBeVisible();
-    await expect(sidebar.locator('a[href="/elders/volunteer"]')).toBeVisible();
+    await expect(page.locator('.home-hero__actions a[href="/teachings"]')).toBeVisible();
+    await expect(page.locator('.home-hero__actions a[href="/events"]')).toBeVisible();
   });
 
   test('sidebar shows primary navigation items', async ({ page }) => {
@@ -48,19 +34,45 @@ test.describe('Homepage', () => {
     await expect(sidebar.locator('a[href="/events"]')).toBeVisible();
   });
 
-  test('feed shows content cards', async ({ page }) => {
+  test('sidebar does not show Feed link for anonymous users', async ({ page }) => {
     await page.goto('/');
-    const cards = page.locator('.feed-container article');
-    await expect(cards.first()).toBeVisible();
+    const sidebar = page.locator('.sidebar-nav');
+    await expect(sidebar.locator('a[href="/feed"]')).not.toBeVisible();
   });
 
   test('explore redirect routes to section pages', async ({ page }) => {
     const response = await page.goto('/explore?type=events');
     expect(response?.url()).toContain('/events');
   });
+});
 
-  test('left sidebar has navigation shortcuts', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('.sidebar-nav')).toBeVisible();
+test.describe('Feed page (/feed)', () => {
+  test('feed page loads with feed layout', async ({ page }) => {
+    await page.goto('/feed');
+    await expect(page.locator('.feed-layout')).toBeVisible();
+    await expect(page.locator('.feed-container')).toBeVisible();
+  });
+
+  test('feed page has filter chips', async ({ page }) => {
+    await page.goto('/feed');
+    const chips = page.locator('.feed-chips .feed-chip');
+    await expect(chips.first()).toBeVisible();
+    await expect(page.locator('.feed-chip[data-filter="all"]')).toBeVisible();
+    await expect(page.locator('.feed-chip[data-filter="event"]')).toBeVisible();
+  });
+
+  test('feed filter switching works', async ({ page }) => {
+    await page.goto('/feed');
+    const allChip = page.locator('.feed-chip[data-filter="all"]');
+    await expect(allChip).toBeVisible();
+    await allChip.click();
+    await expect(page.locator('.feed-container')).toBeVisible();
+  });
+
+  test('sidebar has Programs section with elder and volunteer links', async ({ page }) => {
+    await page.goto('/feed');
+    const sidebar = page.locator('.sidebar-nav');
+    await expect(sidebar.locator('a[href="/elders/request"]')).toBeVisible();
+    await expect(sidebar.locator('a[href="/elders/volunteer"]')).toBeVisible();
   });
 });
