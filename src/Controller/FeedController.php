@@ -37,7 +37,7 @@ final class FeedController
         $userCommunities = $this->buildUserCommunities($followedCommunities, $suggestedCommunities);
 
         $html = $this->twig->render('feed.html.twig', LayoutTwigContext::withAccount($account, [
-            'path' => '/',
+            'path' => '/feed',
             'response' => $response,
             'nextCursor' => $response->nextCursor,
             'activeFilter' => $response->activeFilter,
