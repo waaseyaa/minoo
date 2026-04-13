@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+// When used as a PHP built-in server router script, return false for existing
+// static files so PHP serves them directly (CSS, JS, fonts, images, etc.).
+// This is a no-op under FPM/Caddy in production.
+if (PHP_SAPI === 'cli-server') {
+    $file = __DIR__ . parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if (is_file($file)) {
+        return false;
+    }
+}
+
 use Symfony\Component\HttpFoundation\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
