@@ -47,9 +47,8 @@ function parseArgs(argv) {
         const page = browser.contexts()[0].pages()[0];
         await page.pdf({
             path: args.out,
-            format: 'Letter',
+            preferCSSPageSize: true,
             printBackground: true,
-            margin: { top: '0.5in', right: '0.5in', bottom: '0.5in', left: '0.5in' },
         });
     } catch (e) {
         console.error(`PDF write error: ${e.message}`);
