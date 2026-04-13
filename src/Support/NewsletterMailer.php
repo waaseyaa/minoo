@@ -23,7 +23,7 @@ use Waaseyaa\Mail\MailDriverInterface;
 final class NewsletterMailer
 {
     public function __construct(
-        private readonly MailDriverInterface $driver,
+        private readonly ?MailDriverInterface $driver,
         private readonly string $apiKey,
         private readonly string $fromAddress,
         private readonly string $fromName = 'Minoo Newsroom',
@@ -32,7 +32,7 @@ final class NewsletterMailer
 
     public function isConfigured(): bool
     {
-        return $this->driver->isConfigured() && $this->apiKey !== '' && $this->fromAddress !== '';
+        return $this->driver !== null && $this->driver->isConfigured() && $this->apiKey !== '' && $this->fromAddress !== '';
     }
 
     public function sendWithAttachment(string $to, string $subject, string $body, string $path): bool

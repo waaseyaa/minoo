@@ -62,6 +62,7 @@ use App\Support\NorthCloudClient;
 use App\Twig\AccountDisplayTwigExtension;
 use App\Twig\DateTwigExtension;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
 use Waaseyaa\AdminSurface\Host\GenericAdminSurfaceHost;
 use Waaseyaa\Api\Schema\SchemaPresenter;
@@ -1710,8 +1711,15 @@ final class AppServiceProvider extends ServiceProvider
         $this->singleton(NewsletterDispatcher::class, function () {
             $config = require __DIR__ . '/../../config/newsletter.php';
             $mailConfig = $this->config['mail'] ?? [];
+
+            try {
+                $driver = $this->resolve(MailDriverInterface::class);
+            } catch (\Throwable) {
+                $driver = null;
+            }
+
             $mailer = new NewsletterMailer(
-                driver: $this->resolve(MailDriverInterface::class),
+                driver: $driver,
                 apiKey: (string) ($mailConfig['sendgrid_api_key'] ?? ''),
                 fromAddress: (string) ($mailConfig['from_address'] ?? ''),
                 fromName: (string) ($mailConfig['from_name'] ?? 'Minoo Newsroom'),
@@ -2388,6 +2396,130 @@ final class AppServiceProvider extends ServiceProvider
         // --- Admin ---
         // =====================================================================
 
+        // Newsletter Admin API — registered BEFORE AdminSurface catch-all
+
+        $router->addRoute(
+            'newsletter.admin.list',
+            RouteBuilder::create('/admin/api/newsletter')
+                ->controller('App\\Controller\\NewsletterAdminApiController::listEditions')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.create',
+            RouteBuilder::create('/admin/api/newsletter')
+                ->controller('App\\Controller\\NewsletterAdminApiController::createEdition')
+                ->requireRole('administrator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.entity_search',
+            RouteBuilder::create('/admin/api/newsletter/entity-search')
+                ->controller('App\\Controller\\NewsletterAdminApiController::entitySearch')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.get',
+            RouteBuilder::create('/admin/api/newsletter/{id}')
+                ->controller('App\\Controller\\NewsletterAdminApiController::getEdition')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.add_item',
+            RouteBuilder::create('/admin/api/newsletter/{id}/items')
+                ->controller('App\\Controller\\NewsletterAdminApiController::addItem')
+                ->requireRole('administrator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.remove_item',
+            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}')
+                ->controller('App\\Controller\\NewsletterAdminApiController::removeItem')
+                ->requireRole('administrator')
+                ->methods('DELETE')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.reorder_item',
+            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}/reorder')
+                ->controller('App\\Controller\\NewsletterAdminApiController::reorderItem')
+                ->requireRole('administrator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.preview_token',
+            RouteBuilder::create('/admin/api/newsletter/{id}/preview-token')
+                ->controller('App\\Controller\\NewsletterAdminApiController::previewToken')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.generate',
+            RouteBuilder::create('/admin/api/newsletter/{id}/generate')
+                ->controller('App\\Controller\\NewsletterAdminApiController::generate')
+                ->requireRole('administrator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.download',
+            RouteBuilder::create('/admin/api/newsletter/{id}/download')
+                ->controller('App\\Controller\\NewsletterAdminApiController::download')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.send',
+            RouteBuilder::create('/admin/api/newsletter/{id}/send')
+                ->controller('App\\Controller\\NewsletterAdminApiController::send')
+                ->requireRole('administrator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        // Newsletter Builder SPA — before AdminSurface catch-all
+
+        $router->addRoute(
+            'newsletter.admin.spa',
+            RouteBuilder::create('/admin/newsletter')
+                ->controller('App\\Controller\\NewsletterAdminApiController::spaFallback')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin.spa.catchall',
+            RouteBuilder::create('/admin/newsletter/{path}')
+                ->controller('App\\Controller\\NewsletterAdminApiController::spaFallback')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->requirement('path', '.*')
+                ->build(),
+        );
+
+        // AdminSurface generic CRUD (static call — _surface API routes only)
+
         if ($entityTypeManager !== null) {
             $host = new GenericAdminSurfaceHost(
                 entityTypeManager: $entityTypeManager,
@@ -2400,24 +2532,40 @@ final class AppServiceProvider extends ServiceProvider
             AdminSurfaceServiceProvider::registerRoutes($router, $host);
         }
 
-        $router->addRoute(
-            'admin.spa',
-            RouteBuilder::create('/admin')
-                ->controller('App\\Controller\\AdminController::spa')
-                ->requireAuthentication()
-                ->methods('GET')
-                ->build(),
-        );
+        // Re-add admin_spa catch-all AFTER newsletter routes so specific
+        // /admin/api/newsletter/* and /admin/newsletter/* routes match first.
+        // The framework's AdminSurfaceServiceProvider registers admin_spa in its
+        // own routes() which runs before AppServiceProvider. Re-adding with the
+        // same name moves it to the end of Symfony's RouteCollection.
+        $projectRoot = dirname(__DIR__, 2);
+        $vendorDistDir = dirname(__DIR__, 2) . '/vendor/waaseyaa/admin-surface/dist';
+        $vendorDistContent = is_file($vendorDistDir . '/index.html')
+            ? file_get_contents($vendorDistDir . '/index.html')
+            : null;
 
-        $router->addRoute(
-            'admin.spa.catchall',
-            RouteBuilder::create('/admin/{path}')
-                ->controller('App\\Controller\\AdminController::spa')
-                ->requireAuthentication()
-                ->methods('GET')
-                ->requirement('path', '.+')
-                ->build(),
-        );
+        $router->addRoute('admin_spa', RouteBuilder::create('/admin/{path}')
+            ->methods('GET')
+            ->allowAll()
+            ->controller(static function (mixed $request = null, string $path = '') use ($projectRoot, $vendorDistDir, $vendorDistContent): Response {
+                if ($path !== '' && !str_contains($path, '..')) {
+                    $publicAsset = $projectRoot . '/public/admin/' . $path;
+                    if (is_file($publicAsset)) {
+                        return AdminSurfaceServiceProvider::serveStaticFile($publicAsset);
+                    }
+                    $vendorAsset = $vendorDistDir . '/' . $path;
+                    if (is_file($vendorAsset)) {
+                        return AdminSurfaceServiceProvider::serveStaticFile($vendorAsset);
+                    }
+                }
+                $html = AdminSurfaceServiceProvider::resolveAdminIndex($projectRoot, $vendorDistContent);
+                if ($html !== null) {
+                    return new Response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8']);
+                }
+                return new Response('Admin interface not available.', 404);
+            })
+            ->requirement('path', '(?!_surface(/|$)).*')
+            ->default('path', '')
+            ->build());
 
         // =====================================================================
         // --- Oral History ---
@@ -3243,135 +3391,6 @@ final class AppServiceProvider extends ServiceProvider
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
-                ->build(),
-        );
-
-        // =====================================================================
-        // --- Newsletter Admin API ---
-        // =====================================================================
-
-        // List and create editions
-        $router->addRoute(
-            'newsletter.admin_api.list',
-            RouteBuilder::create('/admin/api/newsletter')
-                ->controller('App\Controller\NewsletterAdminApiController::listEditions')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin_api.create',
-            RouteBuilder::create('/admin/api/newsletter')
-                ->controller('App\Controller\NewsletterAdminApiController::createEdition')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        // Entity search MUST come before {id} routes to avoid "entity-search"
-        // being captured as an edition ID.
-        $router->addRoute(
-            'newsletter.admin_api.entity_search',
-            RouteBuilder::create('/admin/api/newsletter/entity-search')
-                ->controller('App\Controller\NewsletterAdminApiController::entitySearch')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        // Single edition
-        $router->addRoute(
-            'newsletter.admin_api.get',
-            RouteBuilder::create('/admin/api/newsletter/{id}')
-                ->controller('App\Controller\NewsletterAdminApiController::getEdition')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        // Item management
-        $router->addRoute(
-            'newsletter.admin_api.add_item',
-            RouteBuilder::create('/admin/api/newsletter/{id}/items')
-                ->controller('App\Controller\NewsletterAdminApiController::addItem')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin_api.remove_item',
-            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}')
-                ->controller('App\Controller\NewsletterAdminApiController::removeItem')
-                ->requireRole('administrator')
-                ->methods('DELETE')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin_api.reorder_item',
-            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}/reorder')
-                ->controller('App\Controller\NewsletterAdminApiController::reorderItem')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        // Preview, generate, download, send
-        $router->addRoute(
-            'newsletter.admin_api.preview_token',
-            RouteBuilder::create('/admin/api/newsletter/{id}/preview-token')
-                ->controller('App\Controller\NewsletterAdminApiController::previewToken')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin_api.generate',
-            RouteBuilder::create('/admin/api/newsletter/{id}/generate')
-                ->controller('App\Controller\NewsletterAdminApiController::generate')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin_api.download',
-            RouteBuilder::create('/admin/api/newsletter/{id}/download')
-                ->controller('App\Controller\NewsletterAdminApiController::download')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin_api.send',
-            RouteBuilder::create('/admin/api/newsletter/{id}/send')
-                ->controller('App\Controller\NewsletterAdminApiController::send')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        // Newsletter Admin SPA fallback
-        $router->addRoute(
-            'newsletter.admin_spa',
-            RouteBuilder::create('/admin/newsletter')
-                ->controller('App\Controller\NewsletterAdminApiController::spaFallback')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin_spa_fallback',
-            RouteBuilder::create('/admin/newsletter/{path}')
-                ->controller('App\Controller\NewsletterAdminApiController::spaFallback')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->requirement('path', '.*')
                 ->build(),
         );
 
