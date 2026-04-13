@@ -3246,6 +3246,115 @@ final class AppServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        // =====================================================================
+        // --- Newsletter Admin API ---
+        // =====================================================================
+
+        // List and create editions
+        $router->addRoute(
+            'newsletter.admin_api.list',
+            RouteBuilder::create('/admin/api/newsletter')
+                ->controller('App\Controller\NewsletterAdminApiController::listEditions')
+                ->requireRole('community_coordinator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin_api.create',
+            RouteBuilder::create('/admin/api/newsletter')
+                ->controller('App\Controller\NewsletterAdminApiController::createEdition')
+                ->requireRole('community_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        // Entity search MUST come before {id} routes to avoid "entity-search"
+        // being captured as an edition ID.
+        $router->addRoute(
+            'newsletter.admin_api.entity_search',
+            RouteBuilder::create('/admin/api/newsletter/entity-search')
+                ->controller('App\Controller\NewsletterAdminApiController::entitySearch')
+                ->requireRole('community_coordinator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        // Single edition
+        $router->addRoute(
+            'newsletter.admin_api.get',
+            RouteBuilder::create('/admin/api/newsletter/{id}')
+                ->controller('App\Controller\NewsletterAdminApiController::getEdition')
+                ->requireRole('community_coordinator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        // Item management
+        $router->addRoute(
+            'newsletter.admin_api.add_item',
+            RouteBuilder::create('/admin/api/newsletter/{id}/items')
+                ->controller('App\Controller\NewsletterAdminApiController::addItem')
+                ->requireRole('community_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin_api.remove_item',
+            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}')
+                ->controller('App\Controller\NewsletterAdminApiController::removeItem')
+                ->requireRole('community_coordinator')
+                ->methods('DELETE')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin_api.reorder_item',
+            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}/reorder')
+                ->controller('App\Controller\NewsletterAdminApiController::reorderItem')
+                ->requireRole('community_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        // Preview, generate, download, send
+        $router->addRoute(
+            'newsletter.admin_api.preview_token',
+            RouteBuilder::create('/admin/api/newsletter/{id}/preview-token')
+                ->controller('App\Controller\NewsletterAdminApiController::previewToken')
+                ->requireRole('community_coordinator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin_api.generate',
+            RouteBuilder::create('/admin/api/newsletter/{id}/generate')
+                ->controller('App\Controller\NewsletterAdminApiController::generate')
+                ->requireRole('community_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin_api.download',
+            RouteBuilder::create('/admin/api/newsletter/{id}/download')
+                ->controller('App\Controller\NewsletterAdminApiController::download')
+                ->requireRole('community_coordinator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin_api.send',
+            RouteBuilder::create('/admin/api/newsletter/{id}/send')
+                ->controller('App\Controller\NewsletterAdminApiController::send')
+                ->requireRole('community_coordinator')
+                ->methods('POST')
+                ->build(),
+        );
+
         // Public newsletter surface. Order matters: more specific routes
         // (print_preview, /newsletter, /newsletter/submit, .pdf, vol-issue)
         // are registered BEFORE the catch-all /newsletter/{community}.
