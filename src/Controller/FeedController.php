@@ -317,7 +317,7 @@ final class FeedController
         try {
             $followStorage = $this->entityTypeManager->getStorage('follow');
             $ids = $followStorage->getQuery()
-                ->condition('user_id', $account->id())
+                ->condition('user_id', (int) $account->id())
                 ->condition('target_type', 'community')
                 ->execute();
 

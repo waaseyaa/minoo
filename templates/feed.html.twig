@@ -40,7 +40,7 @@
       {# === Feed Container === #}
       <div class="feed-container" id="feed" data-next-cursor="{{ nextCursor }}" data-active-filter="{{ activeFilter }}">
         {% for item in response.items %}
-          {% include "components/feed-card.html.twig" with { item: item } only %}
+          {% include "components/feed-card.html.twig" with { item: item, account: account } only %}
         {% endfor %}
       </div>
 
@@ -249,10 +249,14 @@
     btn.disabled = true;
     btn.textContent = feedLbl.labelDeleting;
     try {
-      await graphqlRequest(
-        'mutation DeletePost($id: ID!) { deletePost(id: $id) { deleted } }',
-        { id }
-      );
+      const res = await fetch('/api/engagement/post/' + id, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? res.statusText);
+      }
       const card = btn.closest('.feed-card');
       card.remove();
     } catch (err) {
