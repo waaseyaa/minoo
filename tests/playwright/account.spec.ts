@@ -8,12 +8,12 @@ test.beforeAll(() => {
 test.describe('Account Home — member user', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('member login redirects to homepage then account page works', async ({ page }) => {
+  test('member login redirects to feed then account page works', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'member@minoo.test');
     await page.fill('input[name="password"]', 'MemberPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/');
+    await page.waitForURL('/feed');
 
     // Navigate to account page
     await page.goto('/account');
@@ -30,12 +30,12 @@ test.describe('Account Home — member user', () => {
 });
 
 test.describe('Account Home — volunteer user', () => {
-  test('volunteer login redirects to homepage', async ({ page }) => {
+  test('volunteer login redirects to feed', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/');
+    await page.waitForURL('/feed');
 
     // Navigate to account page and verify volunteer links appear
     await page.goto('/account');

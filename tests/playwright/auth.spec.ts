@@ -38,12 +38,12 @@ test.describe('Auth flows', () => {
     await expect(page.getByTestId('error-email')).toBeVisible();
   });
 
-  test('login success redirects to homepage', async ({ page }) => {
+  test('login success redirects to feed', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/');
+    await page.waitForURL('/feed');
   });
 
   // ── Registration ───────────────────────────────────────────────────
@@ -91,13 +91,13 @@ test.describe('Auth flows', () => {
     await expect(page.getByTestId('check-email-heading')).toBeVisible();
   });
 
-  test('registration success auto-logs in and redirects to homepage', async ({ page }) => {
+  test('registration success auto-logs in and redirects to feed', async ({ page }) => {
     await page.goto('/register');
     await page.fill('input[name="name"]', 'New Test User');
     await page.fill('input[name="email"]', `newuser-${Date.now()}@minoo.test`);
     await page.fill('input[name="password"]', 'NewUserPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/');
+    await page.waitForURL('/feed');
     await expect(page.locator('.flash-message--success')).toContainText('Welcome to Minoo');
   });
 
@@ -109,9 +109,9 @@ test.describe('Auth flows', () => {
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/');
+    await page.waitForURL('/feed');
 
-    // Then log out
+    // Then log out — lands on homepage (anonymous)
     await page.goto('/logout');
     await page.waitForURL('/');
   });
