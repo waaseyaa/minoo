@@ -249,8 +249,9 @@ final class NewsletterAdminApiControllerTest extends TestCase
 
         $query = $this->createMock(EntityQueryInterface::class);
         $query->method('condition')->willReturnSelf();
-        $query->method('execute')->willReturn([$item1, $item2]);
+        $query->method('execute')->willReturn([10, 11]);
         $this->itemStorage->method('getQuery')->willReturn($query);
+        $this->itemStorage->method('loadMultiple')->with([10, 11])->willReturn([$item1, $item2]);
 
         $response = $this->controller->getEdition(['id' => '1'], [], $this->account, new HttpRequest());
 
@@ -333,8 +334,9 @@ final class NewsletterAdminApiControllerTest extends TestCase
 
         $query = $this->createMock(EntityQueryInterface::class);
         $query->method('condition')->willReturnSelf();
-        $query->method('execute')->willReturn([$itemA, $itemB]);
+        $query->method('execute')->willReturn([20, 21]);
         $this->itemStorage->method('getQuery')->willReturn($query);
+        $this->itemStorage->method('loadMultiple')->with([20, 21])->willReturn([$itemA, $itemB]);
 
         $response = $this->controller->getEdition(['id' => '1'], [], $this->account, new HttpRequest());
         $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
@@ -597,13 +599,21 @@ final class NewsletterAdminApiControllerTest extends TestCase
             $query->method('condition')->willReturnSelf();
             $query->method('range')->willReturnSelf();
 
+            $ids = match ($type) {
+                'event' => [10],
+                'teaching' => [20],
+                default => [],
+            };
             $entities = match ($type) {
                 'event' => [$eventEntity],
                 'teaching' => [$teachingEntity],
                 default => [],
             };
-            $query->method('execute')->willReturn($entities);
+            $query->method('execute')->willReturn($ids);
             $storage->method('getQuery')->willReturn($query);
+            if ($ids !== []) {
+                $storage->method('loadMultiple')->with($ids)->willReturn($entities);
+            }
         }
 
         $response = $this->controller->entitySearch([], ['q' => 'Spring'], $this->account, new HttpRequest());
@@ -634,8 +644,9 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $query = $this->createMock(EntityQueryInterface::class);
         $query->method('condition')->willReturnSelf();
         $query->method('range')->willReturnSelf();
-        $query->method('execute')->willReturn([$eventEntity]);
+        $query->method('execute')->willReturn([10]);
         $eventStorage->method('getQuery')->willReturn($query);
+        $eventStorage->method('loadMultiple')->with([10])->willReturn([$eventEntity]);
 
         $response = $this->controller->entitySearch([], ['q' => 'Pow', 'types' => 'event'], $this->account, new HttpRequest());
 
@@ -674,8 +685,9 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $query = $this->createMock(EntityQueryInterface::class);
         $query->method('condition')->willReturnSelf();
         $query->method('range')->willReturnSelf();
-        $query->method('execute')->willReturn([$teachingEntity]);
+        $query->method('execute')->willReturn([30]);
         $teachingStorage->method('getQuery')->willReturn($query);
+        $teachingStorage->method('loadMultiple')->with([30])->willReturn([$teachingEntity]);
 
         // Request teaching (allowed) + user (disallowed) — only teaching should be queried
         $response = $this->controller->entitySearch([], ['q' => 'Cedar', 'types' => 'teaching,user'], $this->account, new HttpRequest());

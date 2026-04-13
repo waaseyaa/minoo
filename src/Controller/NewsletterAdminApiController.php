@@ -118,7 +118,8 @@ final class NewsletterAdminApiController
         // Load items for this edition
         $itemStorage = $this->entityTypeManager->getStorage('newsletter_item');
         $itemQuery = $itemStorage->getQuery();
-        $items = $itemQuery->condition('edition_id', $id)->execute();
+        $itemIds = $itemQuery->condition('edition_id', $id)->execute();
+        $items = $itemIds !== [] ? $itemStorage->loadMultiple($itemIds) : [];
 
         // Group items by section, init all sections as empty
         $itemsBySection = [];
@@ -281,11 +282,12 @@ final class NewsletterAdminApiController
         $results = [];
         foreach ($types as $type) {
             $storage = $this->entityTypeManager->getStorage($type);
-            $entities = $storage->getQuery()
+            $ids = $storage->getQuery()
                 ->condition('label', "%{$q}%", 'LIKE')
                 ->range(0, 10)
                 ->execute();
 
+            $entities = $ids !== [] ? $storage->loadMultiple($ids) : [];
             foreach ($entities as $entity) {
                 $results[] = [
                     'entity_type' => $type,
