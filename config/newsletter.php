@@ -11,11 +11,11 @@ return [
     'regional_cover_communities' => ['wiikwemkoong', 'sheguiandah', 'aundeck'],
 
     'sections' => [
-        'news'      => ['quota' => 4, 'sources' => ['post']],
-        'events'    => ['quota' => 6, 'sources' => ['event']],
+        'news'      => ['quota' => 3, 'sources' => ['post']],
+        'events'    => ['quota' => 5, 'sources' => ['event']],
         'teachings' => ['quota' => 2, 'sources' => ['teaching']],
         'language'  => ['quota' => 1, 'sources' => ['dictionary_entry']],
-        'community' => ['quota' => 8, 'sources' => ['newsletter_submission']],
+        'community' => ['quota' => 4, 'sources' => ['newsletter_submission']],
     ],
 
     'communities' => [
