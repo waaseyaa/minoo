@@ -2745,6 +2745,16 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
+            'feed.page',
+            RouteBuilder::create('/feed')
+                ->controller('App\\Controller\\FeedController::index')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
             'home.alias',
             RouteBuilder::create('/home')
                 ->controller('App\\Controller\\FeedController::index')
