@@ -40,17 +40,21 @@ Three entity types already exist with migrations:
 
 ### Backend API
 
-**Generic CRUD (via admin-surface):** Edition and item list/create/read/update/delete operations use the framework's admin-surface entity CRUD. No custom endpoints needed for basic operations.
-
-**Custom endpoints (new):**
+**Unified admin API controller** (`NewsletterAdminApiController`) — a single controller handling all newsletter builder operations via JSON. Simpler than mixing admin-surface generic CRUD with custom endpoints.
 
 | Method | Path | Purpose |
 |--------|------|---------|
+| GET | `/admin/api/newsletter` | List all editions |
+| POST | `/admin/api/newsletter` | Create a new edition |
+| GET | `/admin/api/newsletter/entity-search?q={query}&types={types}` | Type-ahead search across entity types for the entity picker |
+| GET | `/admin/api/newsletter/{id}` | Get edition with items grouped by section |
+| POST | `/admin/api/newsletter/{id}/items` | Add an item to a section |
+| DELETE | `/admin/api/newsletter/{id}/items/{itemId}` | Remove an item |
+| POST | `/admin/api/newsletter/{id}/items/{itemId}/reorder` | Update item position |
 | GET | `/admin/api/newsletter/{id}/preview-token` | Generate a one-time render token, return the print preview URL |
 | POST | `/admin/api/newsletter/{id}/generate` | Trigger Playwright PDF render, return PDF metadata |
 | GET | `/admin/api/newsletter/{id}/download` | Serve the generated PDF file |
 | POST | `/admin/api/newsletter/{id}/send` | Email PDF to configured printer address |
-| GET | `/admin/api/newsletter/entity-search?q={query}&types={types}` | Type-ahead search across entity types for the entity picker |
 
 ### Admin SPA Pages
 
