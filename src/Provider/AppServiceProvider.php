@@ -2713,12 +2713,36 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         // =====================================================================
+        // --- Homepage ---
+        // =====================================================================
+
+        $router->addRoute(
+            'home.index',
+            RouteBuilder::create('/')
+                ->controller('App\\Controller\\HomeController::index')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'home.alias',
+            RouteBuilder::create('/home')
+                ->controller('App\\Controller\\HomeController::index')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        // =====================================================================
         // --- Feed ---
         // =====================================================================
 
         $router->addRoute(
-            'feed.index',
-            RouteBuilder::create('/')
+            'feed.page',
+            RouteBuilder::create('/feed')
                 ->controller('App\\Controller\\FeedController::index')
                 ->allowAll()
                 ->render()
@@ -2740,26 +2764,6 @@ final class AppServiceProvider extends ServiceProvider
             RouteBuilder::create('/explore')
                 ->controller('App\\Controller\\FeedController::explore')
                 ->allowAll()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'feed.page',
-            RouteBuilder::create('/feed')
-                ->controller('App\\Controller\\FeedController::index')
-                ->allowAll()
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'home.alias',
-            RouteBuilder::create('/home')
-                ->controller('App\\Controller\\FeedController::index')
-                ->allowAll()
-                ->render()
                 ->methods('GET')
                 ->build(),
         );
