@@ -311,4 +311,215 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $this->assertSame(21, $data['items_by_section']['news'][0]['id']);
         $this->assertSame(20, $data['items_by_section']['news'][1]['id']);
     }
+
+    // --- addItem ---
+
+    #[Test]
+    public function add_item_returns_404_when_edition_not_found(): void
+    {
+        $this->editionStorage->method('load')->with(999)->willReturn(null);
+
+        $request = new HttpRequest(
+            content: json_encode(['section' => 'news']),
+            server: ['CONTENT_TYPE' => 'application/json'],
+        );
+
+        $response = $this->controller->addItem(['id' => '999'], [], $this->account, $request);
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function add_item_returns_422_when_section_missing(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(1);
+        $this->editionStorage->method('load')->with(1)->willReturn($edition);
+
+        $request = new HttpRequest(
+            content: json_encode([]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+        );
+
+        $response = $this->controller->addItem(['id' => '1'], [], $this->account, $request);
+
+        $this->assertSame(422, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function add_item_creates_item_with_auto_position(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(1);
+        $this->editionStorage->method('load')->with(1)->willReturn($edition);
+
+        // Count query returns 2 existing items in this section
+        $countQuery = $this->createMock(EntityQueryInterface::class);
+        $countQuery->method('condition')->willReturnSelf();
+        $countQuery->method('count')->willReturnSelf();
+        $countQuery->method('execute')->willReturn([2]);
+        $this->itemStorage->method('getQuery')->willReturn($countQuery);
+
+        $createdItem = $this->createMock(ContentEntityBase::class);
+        $createdItem->method('id')->willReturn(50);
+        $createdItem->method('get')->willReturnCallback(fn (string $field) => match ($field) {
+            'edition_id' => 1,
+            'section' => 'news',
+            'position' => 3,
+            'source_type' => 'inline',
+            'source_id' => 0,
+            'inline_title' => 'My Title',
+            'inline_body' => 'My Body',
+            'editor_blurb' => 'A blurb',
+            'included' => 1,
+            default => null,
+        });
+
+        $this->itemStorage->method('create')->willReturn($createdItem);
+        $this->itemStorage->expects($this->once())->method('save')->with($createdItem);
+
+        $request = new HttpRequest(
+            content: json_encode([
+                'section' => 'news',
+                'inline_title' => 'My Title',
+                'inline_body' => 'My Body',
+                'editor_blurb' => 'A blurb',
+            ]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+        );
+
+        $response = $this->controller->addItem(['id' => '1'], [], $this->account, $request);
+
+        $this->assertSame(201, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame(50, $data['id']);
+        $this->assertSame('news', $data['section']);
+        $this->assertSame(3, $data['position']);
+        $this->assertSame('My Title', $data['inline_title']);
+        $this->assertSame(1, $data['included']);
+    }
+
+    // --- removeItem ---
+
+    #[Test]
+    public function remove_item_returns_404_when_item_not_found(): void
+    {
+        $this->itemStorage->method('load')->with(999)->willReturn(null);
+
+        $response = $this->controller->removeItem(['id' => '1', 'itemId' => '999'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function remove_item_returns_404_when_item_belongs_to_different_edition(): void
+    {
+        $item = $this->createMock(ContentEntityBase::class);
+        $item->method('id')->willReturn(10);
+        $item->method('get')->willReturnCallback(fn (string $field) => match ($field) {
+            'edition_id' => 99,
+            default => null,
+        });
+        $this->itemStorage->method('load')->with(10)->willReturn($item);
+
+        $response = $this->controller->removeItem(['id' => '1', 'itemId' => '10'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function remove_item_deletes_and_returns_200(): void
+    {
+        $item = $this->createMock(ContentEntityBase::class);
+        $item->method('id')->willReturn(10);
+        $item->method('get')->willReturnCallback(fn (string $field) => match ($field) {
+            'edition_id' => 1,
+            default => null,
+        });
+        $this->itemStorage->method('load')->with(10)->willReturn($item);
+        $this->itemStorage->expects($this->once())->method('delete')->with([$item]);
+
+        $response = $this->controller->removeItem(['id' => '1', 'itemId' => '10'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertTrue($data['deleted']);
+    }
+
+    // --- reorderItem ---
+
+    #[Test]
+    public function reorder_item_returns_404_when_item_not_found(): void
+    {
+        $this->itemStorage->method('load')->with(999)->willReturn(null);
+
+        $request = new HttpRequest(
+            content: json_encode(['position' => 2]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+        );
+
+        $response = $this->controller->reorderItem(['id' => '1', 'itemId' => '999'], [], $this->account, $request);
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function reorder_item_returns_404_when_item_belongs_to_different_edition(): void
+    {
+        $item = $this->createMock(ContentEntityBase::class);
+        $item->method('id')->willReturn(10);
+        $item->method('get')->willReturnCallback(fn (string $field) => match ($field) {
+            'edition_id' => 99,
+            default => null,
+        });
+        $this->itemStorage->method('load')->with(10)->willReturn($item);
+
+        $request = new HttpRequest(
+            content: json_encode(['position' => 2]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+        );
+
+        $response = $this->controller->reorderItem(['id' => '1', 'itemId' => '10'], [], $this->account, $request);
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function reorder_item_updates_position_and_returns_200(): void
+    {
+        $item = $this->createMock(ContentEntityBase::class);
+        $item->method('id')->willReturn(10);
+
+        $getValues = [
+            'edition_id' => 1,
+            'section' => 'news',
+            'position' => 5,
+            'source_type' => 'inline',
+            'source_id' => 0,
+            'inline_title' => 'Title',
+            'inline_body' => 'Body',
+            'editor_blurb' => 'Blurb',
+            'included' => 1,
+        ];
+
+        $item->method('get')->willReturnCallback(function (string $field) use (&$getValues) {
+            return $getValues[$field] ?? null;
+        });
+
+        $item->expects($this->once())->method('set')->with('position', 5)->willReturnSelf();
+        $this->itemStorage->method('load')->with(10)->willReturn($item);
+        $this->itemStorage->expects($this->once())->method('save')->with($item);
+
+        $request = new HttpRequest(
+            content: json_encode(['position' => 5]),
+            server: ['CONTENT_TYPE' => 'application/json'],
+        );
+
+        $response = $this->controller->reorderItem(['id' => '1', 'itemId' => '10'], [], $this->account, $request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame(10, $data['id']);
+        $this->assertSame(5, $data['position']);
+    }
 }

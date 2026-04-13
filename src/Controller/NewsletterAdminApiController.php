@@ -155,6 +155,102 @@ final class NewsletterAdminApiController
         ]);
     }
 
+    public function addItem(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $id = (int) ($params['id'] ?? 0);
+        $storage = $this->entityTypeManager->getStorage('newsletter_edition');
+        $edition = $storage->load($id);
+        if ($edition === null) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        $body = $this->jsonBody($request);
+        if (!isset($body['section']) || $body['section'] === '') {
+            return $this->json(['error' => 'Missing required field: section'], 422);
+        }
+
+        // Auto-assign position as next in section
+        $itemStorage = $this->entityTypeManager->getStorage('newsletter_item');
+        $countResult = $itemStorage->getQuery()
+            ->condition('edition_id', $id)
+            ->condition('section', $body['section'])
+            ->count()
+            ->execute();
+        $position = $countResult[0] + 1;
+
+        $item = $itemStorage->create([
+            'edition_id' => $id,
+            'section' => $body['section'],
+            'position' => $position,
+            'source_type' => $body['source_type'] ?? 'inline',
+            'source_id' => $body['source_id'] ?? 0,
+            'inline_title' => $body['inline_title'] ?? '',
+            'inline_body' => $body['inline_body'] ?? '',
+            'editor_blurb' => $body['editor_blurb'] ?? '',
+            'included' => 1,
+        ]);
+        $itemStorage->save($item);
+
+        return $this->json([
+            'id' => $item->id(),
+            'edition_id' => $item->get('edition_id'),
+            'section' => $item->get('section'),
+            'position' => $item->get('position'),
+            'source_type' => $item->get('source_type'),
+            'source_id' => $item->get('source_id'),
+            'inline_title' => $item->get('inline_title'),
+            'inline_body' => $item->get('inline_body'),
+            'editor_blurb' => $item->get('editor_blurb'),
+            'included' => $item->get('included'),
+        ], 201);
+    }
+
+    public function removeItem(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $editionId = (int) ($params['id'] ?? 0);
+        $itemId = (int) ($params['itemId'] ?? 0);
+
+        $itemStorage = $this->entityTypeManager->getStorage('newsletter_item');
+        $item = $itemStorage->load($itemId);
+        if ($item === null || (int) $item->get('edition_id') !== $editionId) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        $itemStorage->delete([$item]);
+
+        return $this->json(['deleted' => true]);
+    }
+
+    public function reorderItem(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $editionId = (int) ($params['id'] ?? 0);
+        $itemId = (int) ($params['itemId'] ?? 0);
+
+        $itemStorage = $this->entityTypeManager->getStorage('newsletter_item');
+        $item = $itemStorage->load($itemId);
+        if ($item === null || (int) $item->get('edition_id') !== $editionId) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        $body = $this->jsonBody($request);
+        $newPosition = (int) ($body['position'] ?? 0);
+        $item->set('position', $newPosition);
+        $itemStorage->save($item);
+
+        return $this->json([
+            'id' => $item->id(),
+            'edition_id' => $item->get('edition_id'),
+            'section' => $item->get('section'),
+            'position' => $item->get('position'),
+            'source_type' => $item->get('source_type'),
+            'source_id' => $item->get('source_id'),
+            'inline_title' => $item->get('inline_title'),
+            'inline_body' => $item->get('inline_body'),
+            'editor_blurb' => $item->get('editor_blurb'),
+            'included' => $item->get('included'),
+        ]);
+    }
+
     /** @return array<string, mixed> */
     private function loadNewsletterConfig(): array
     {
