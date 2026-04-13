@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "424b819d6b0b14980fb1f1b408d12e0f",
+    "content-hash": "114caa4221d0943e9f81784bbca2d5d3",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3539,6 +3539,45 @@
                 "source": "https://github.com/waaseyaa/ai-vector/tree/v0.1.0-alpha.133"
             },
             "time": "2026-04-09T22:54:24+00:00"
+        },
+        {
+            "name": "waaseyaa/analytics",
+            "version": "v0.1.0-alpha.137",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waaseyaa/analytics.git",
+                "reference": "117b41f88d52e490906fbf24b05b3691a68c53a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waaseyaa/analytics/zipball/117b41f88d52e490906fbf24b05b3691a68c53a9",
+                "reference": "117b41f88d52e490906fbf24b05b3691a68c53a9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\Analytics\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Shared Umami analytics integration for Waaseyaa apps — backend sender, JS helpers, and Twig partial.",
+            "support": {
+                "issues": "https://github.com/waaseyaa/analytics/issues",
+                "source": "https://github.com/waaseyaa/analytics/tree/v0.1.0-alpha.137"
+            },
+            "time": "2026-04-13T03:48:09+00:00"
         },
         {
             "name": "waaseyaa/api",
