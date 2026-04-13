@@ -51,5 +51,7 @@ return [
         'timeout_seconds' => 60,
     ],
 
+    'printer_email' => $_ENV['NEWSLETTER_PRINTER_EMAIL'] ?? 'sales@ojgraphix.com',
+
     'storage_dir' => 'storage/newsletter',
 ];

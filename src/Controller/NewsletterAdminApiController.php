@@ -405,6 +405,21 @@ final class NewsletterAdminApiController
         }
     }
 
+    public function spaFallback(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $indexPath = dirname(__DIR__, 2) . '/public/admin/newsletter/index.html';
+
+        if (!file_exists($indexPath)) {
+            return new Response('Newsletter admin not built. Run: cd resources/newsletter-admin && npm run build', 404);
+        }
+
+        return new Response(
+            file_get_contents($indexPath),
+            200,
+            ['Content-Type' => 'text/html'],
+        );
+    }
+
     /** @return array<string, mixed> */
     private function loadNewsletterConfig(): array
     {

@@ -3355,6 +3355,26 @@ final class AppServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        // Newsletter Admin SPA fallback
+        $router->addRoute(
+            'newsletter.admin_spa',
+            RouteBuilder::create('/admin/newsletter')
+                ->controller('App\Controller\NewsletterAdminApiController::spaFallback')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'newsletter.admin_spa_fallback',
+            RouteBuilder::create('/admin/newsletter/{path}')
+                ->controller('App\Controller\NewsletterAdminApiController::spaFallback')
+                ->requireRole('administrator')
+                ->methods('GET')
+                ->requirement('path', '.*')
+                ->build(),
+        );
+
         // Public newsletter surface. Order matters: more specific routes
         // (print_preview, /newsletter, /newsletter/submit, .pdf, vol-issue)
         // are registered BEFORE the catch-all /newsletter/{community}.
