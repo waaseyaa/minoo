@@ -3,75 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ edition.get('headline') }}</title>
-    <link rel="stylesheet" href="/css/minoo.css?v=50">
     <style>
         @page {
             size: Letter;
             margin: 0.5in;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 12pt;
-            line-height: 1.5;
+            font-size: 14pt;
+            line-height: 1.6;
             color: #000;
             background: #fff;
         }
-        .newsletter-print {
-            column-count: 2;
-            column-gap: 0.4in;
-            column-rule: 1px solid #ccc;
+
+        /* --- Page break utilities --- */
+        .page-break { page-break-before: always; }
+        .keep-together { break-inside: avoid; page-break-inside: avoid; }
+        .no-break-after { page-break-after: avoid; }
+
+        /* --- Cover page (page 1) --- */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 9in;
+            text-align: center;
         }
-        .newsletter-print h1 {
-            column-span: all;
-            font-size: 28pt;
-            margin: 0 0 0.2in 0;
-            border-bottom: 3px solid #000;
+        .cover-wordmark {
+            font-size: 42pt;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.15in;
         }
-        .newsletter-print h2 {
-            font-size: 16pt;
-            margin: 0.3in 0 0.1in;
-            border-bottom: 1px solid #000;
+        .cover-subtitle {
+            font-size: 18pt;
+            font-style: italic;
+            margin-bottom: 0.4in;
+        }
+        .cover-rule {
+            width: 3in;
+            border: none;
+            border-top: 3px solid #000;
+            margin: 0.3in auto;
+        }
+        .cover-edition {
+            font-size: 14pt;
+            margin-bottom: 0.15in;
+        }
+        .cover-communities {
+            font-size: 12pt;
+            margin-top: 0.3in;
+            font-style: italic;
+        }
+
+        /* --- Section headers --- */
+        .section-header {
+            border-top: 2px solid #000;
+            padding-top: 0.1in;
+            margin-top: 0.3in;
+            margin-bottom: 0.15in;
             page-break-after: avoid;
         }
-        .newsletter-print h3 {
-            font-size: 13pt;
-            margin: 0.15in 0 0.05in;
+        .section-header h2 {
+            font-size: 20pt;
+            margin: 0;
         }
-        .newsletter-print article {
+        .section-intro {
+            font-style: italic;
+            font-size: 12pt;
+            margin-bottom: 0.2in;
+            color: #333;
+        }
+
+        /* --- Two-column body --- */
+        .two-col {
+            column-count: 2;
+            column-gap: 0.35in;
+            column-rule: 1px solid #ccc;
+        }
+        .full-width {
+            column-span: all;
+        }
+
+        /* --- Article items --- */
+        article {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 0.25in;
+        }
+        article h3 {
+            font-size: 15pt;
+            margin-bottom: 0.05in;
+        }
+        article .attribution {
+            font-size: 11pt;
+            font-style: italic;
+            margin-bottom: 0.05in;
+        }
+        article p {
+            margin-bottom: 0.1in;
+        }
+
+        /* --- Editor's Note (page 2) --- */
+        .editors-note {
+            max-width: 5.5in;
+            margin: 0 auto;
+        }
+        .editors-note h2 {
+            font-size: 22pt;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 0.1in;
+            margin-bottom: 0.25in;
+        }
+
+        /* --- Event compact card --- */
+        .event-card {
             break-inside: avoid;
             margin-bottom: 0.2in;
+            padding-bottom: 0.1in;
+            border-bottom: 1px dotted #999;
         }
-        .newsletter-print .masthead {
-            column-span: all;
-            text-align: center;
-            font-size: 10pt;
+        .event-card:last-child { border-bottom: none; }
+        .event-card h3 { font-size: 14pt; margin-bottom: 0.02in; }
+        .event-card .event-meta {
+            font-size: 11pt;
+            font-style: italic;
+        }
+        .event-card p { font-size: 13pt; }
+
+        /* --- Language feature box --- */
+        .language-feature {
+            border: 2px solid #000;
+            padding: 0.2in;
             margin-bottom: 0.2in;
+            break-inside: avoid;
+        }
+        .language-feature .word {
+            font-size: 22pt;
+            font-weight: bold;
+            margin-bottom: 0.05in;
+        }
+        .language-feature .pronunciation {
+            font-size: 13pt;
+            font-style: italic;
+            margin-bottom: 0.1in;
+        }
+        .language-feature .definition {
+            font-size: 14pt;
+        }
+
+        /* --- Inline section box (language corner, puzzles) --- */
+        .inline-box {
+            border: 1.5px solid #000;
+            padding: 0.2in;
+            margin-bottom: 0.2in;
+            break-inside: avoid;
+        }
+        .inline-box h3 {
+            font-size: 16pt;
+            margin-bottom: 0.1in;
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.05in;
+        }
+
+        /* --- Shared page sections (no forced break between them) --- */
+        .shared-page-section {
+            margin-bottom: 0.2in;
+        }
+        .shared-page-section .section-header {
+            margin-top: 0.15in;
+        }
+
+        /* --- Back page --- */
+        .back-page {
+            text-align: center;
+            padding-top: 0.5in;
+        }
+        .back-page h2 {
+            font-size: 18pt;
+            margin-bottom: 0.2in;
+        }
+        .back-page .closing {
+            font-size: 16pt;
+            font-style: italic;
+            margin-top: 0.3in;
+        }
+        .back-page .contact-info {
+            font-size: 12pt;
+            margin-bottom: 0.1in;
+        }
+        .back-page .next-issue {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-top: 0.2in;
+        }
+
+        /* --- Print-only resets --- */
+        @media print {
+            body { background: #fff; }
+            a { color: #000; text-decoration: none; }
         }
     </style>
 </head>
 <body>
-<div class="newsletter-print">
-    <header class="masthead">
-        <strong>Vol. {{ edition.get('volume') }} No. {{ edition.get('issue_number') }}</strong>
-        — {{ edition.get('publish_date') }}
-        — {{ edition.get('community_id') ?: 'Regional' }}
-    </header>
 
-    <h1>{{ edition.get('headline') }}</h1>
+{# ============================================================
+   PAGE 1 — Cover
+   ============================================================ #}
+<div class="cover">
+    <div class="cover-wordmark">Minoo</div>
+    <div class="cover-subtitle">Elder Newsletter</div>
+    <hr class="cover-rule">
+    <div class="cover-edition">
+        Vol. {{ edition.get('volume') }} &middot; Issue {{ edition.get('issue_number') }}
+        &middot; {{ edition.get('publish_date') }}
+    </div>
+    {% if items_by_section['cover'] is defined %}
+        {% for item in items_by_section['cover'] %}
+            {% if item.get('included') %}
+                <div>{{ item.get('inline_body')|striptags }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <div class="cover-communities">
+        Serving Wiikwemkoong, Sheguiandah &amp; Aundeck Omni Kaning
+    </div>
+</div>
 
-    {% for section, items in items_by_section %}
-        <section>
-            <h2>{{ section|capitalize }}</h2>
-            {% for item in items %}
+{# ============================================================
+   PAGE 2 — Editor's Note
+   ============================================================ #}
+<div class="page-break editors-note">
+    <h2>Editor's Note</h2>
+    {% if items_by_section['editors_note'] is defined %}
+        {% for item in items_by_section['editors_note'] %}
+            {% if item.get('included') %}
+                <div>{{ item.get('inline_body')|striptags|nl2br }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+{# ============================================================
+   PAGES 3-4 — Community News (3 posts)
+   ============================================================ #}
+<div class="page-break">
+    <div class="section-header full-width no-break-after">
+        <h2>Community News</h2>
+    </div>
+    <p class="section-intro">Here's what's been happening across our communities.</p>
+    <div class="two-col">
+        {% if items_by_section['news'] is defined %}
+            {% for item in items_by_section['news'] %}
                 {% if item.get('included') %}
                 <article>
                     {% if item.get('source_type') and source_entities[item.id()] is defined %}
                         {% set src = source_entities[item.id()] %}
                         <h3>{{ src.label() ?: src.get('title') }}</h3>
                         {% if item.get('editor_blurb') %}
-                            <p><em>{{ item.get('editor_blurb') }}</em></p>
+                            <p>{{ item.get('editor_blurb') }}</p>
+                        {% else %}
+                            <p>{{ src.get('body')|default(src.get('description'))|striptags|slice(0, 400) }}</p>
                         {% endif %}
-                        <p>{{ src.get('description')|default(src.get('body'))|striptags|slice(0, 280) }}…</p>
                     {% else %}
                         <h3>{{ item.get('inline_title') }}</h3>
                         <p>{{ item.get('inline_body')|striptags }}</p>
@@ -79,8 +275,282 @@
                 </article>
                 {% endif %}
             {% endfor %}
-        </section>
-    {% endfor %}
+        {% endif %}
+    </div>
 </div>
+
+{# ============================================================
+   PAGES 5-6 — Events (5 events)
+   ============================================================ #}
+<div class="page-break">
+    <div class="section-header full-width no-break-after">
+        <h2>Events</h2>
+    </div>
+    <p class="section-intro">Gatherings, ceremonies, and community events coming up.</p>
+    <div class="two-col">
+        {% if items_by_section['events'] is defined %}
+            {% for item in items_by_section['events'] %}
+                {% if item.get('included') %}
+                <div class="event-card">
+                    {% if item.get('source_type') and source_entities[item.id()] is defined %}
+                        {% set src = source_entities[item.id()] %}
+                        <h3>{{ src.label() ?: src.get('title') }}</h3>
+                        <div class="event-meta">
+                            {% if src.get('event_date') %}{{ src.get('event_date') }}{% endif %}
+                            {% if src.get('location') %} &middot; {{ src.get('location') }}{% endif %}
+                        </div>
+                        {% if item.get('editor_blurb') %}
+                            <p>{{ item.get('editor_blurb') }}</p>
+                        {% elseif src.get('description') %}
+                            <p>{{ src.get('description')|striptags|slice(0, 200) }}</p>
+                        {% endif %}
+                    {% else %}
+                        <h3>{{ item.get('inline_title') }}</h3>
+                        <p>{{ item.get('inline_body')|striptags }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{# ============================================================
+   PAGE 7 — Teachings (2 teachings)
+   ============================================================ #}
+<div class="page-break">
+    <div class="section-header no-break-after">
+        <h2>Teachings</h2>
+    </div>
+    <p class="section-intro">Living knowledge from our Knowledge Keepers.</p>
+    {% if items_by_section['teachings'] is defined %}
+        {% for item in items_by_section['teachings'] %}
+            {% if item.get('included') %}
+            <article>
+                {% if item.get('source_type') and source_entities[item.id()] is defined %}
+                    {% set src = source_entities[item.id()] %}
+                    <h3>{{ src.label() ?: src.get('title') }}</h3>
+                    {% if src.get('source') or src.get('knowledge_keeper') %}
+                        <div class="attribution">
+                            {{ src.get('knowledge_keeper') ?: src.get('source') }}
+                        </div>
+                    {% endif %}
+                    {% if item.get('editor_blurb') %}
+                        <p>{{ item.get('editor_blurb') }}</p>
+                    {% else %}
+                        <p>{{ src.get('body')|default(src.get('description'))|striptags|slice(0, 500) }}</p>
+                    {% endif %}
+                {% else %}
+                    <h3>{{ item.get('inline_title') }}</h3>
+                    <p>{{ item.get('inline_body')|striptags }}</p>
+                {% endif %}
+            </article>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+{# ============================================================
+   PAGE 8 (top) — Language: Featured Word (1 dictionary entry)
+   PAGE 8 (bottom) — Anishinaabemowin Corner (inline)
+   ============================================================ #}
+<div class="page-break">
+    <div class="shared-page-section">
+        <div class="section-header no-break-after">
+            <h2>Language</h2>
+        </div>
+        <p class="section-intro">A word to carry with you this month.</p>
+        {% if items_by_section['language'] is defined %}
+            {% for item in items_by_section['language'] %}
+                {% if item.get('included') %}
+                    {% if item.get('source_type') and source_entities[item.id()] is defined %}
+                        {% set src = source_entities[item.id()] %}
+                        <div class="language-feature">
+                            <div class="word">{{ src.label() ?: src.get('word') }}</div>
+                            {% if src.get('pronunciation') %}
+                                <div class="pronunciation">{{ src.get('pronunciation') }}</div>
+                            {% endif %}
+                            <div class="definition">
+                                {{ src.get('definition') }}
+                            </div>
+                            {% if src.get('example_sentence') %}
+                                <p><em>{{ src.get('example_sentence') }}</em></p>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="language-feature">
+                            <div class="word">{{ item.get('inline_title') }}</div>
+                            <div class="definition">{{ item.get('inline_body')|striptags }}</div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="shared-page-section">
+        <div class="section-header no-break-after">
+            <h2>Anishinaabemowin Corner</h2>
+        </div>
+        {% if items_by_section['language_corner'] is defined %}
+            {% for item in items_by_section['language_corner'] %}
+                {% if item.get('included') %}
+                <div class="inline-box">
+                    {% if item.get('inline_title') %}
+                        <h3>{{ item.get('inline_title') }}</h3>
+                    {% endif %}
+                    <div>{{ item.get('inline_body')|striptags|nl2br }}</div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{# ============================================================
+   PAGES 9-10 — Community Voices (4 submissions)
+   ============================================================ #}
+<div class="page-break">
+    <div class="section-header full-width no-break-after">
+        <h2>Community Voices</h2>
+    </div>
+    <p class="section-intro">In your own words.</p>
+    <div class="two-col">
+        {% if items_by_section['community'] is defined %}
+            {% for item in items_by_section['community'] %}
+                {% if item.get('included') %}
+                <article>
+                    {% if item.get('source_type') and source_entities[item.id()] is defined %}
+                        {% set src = source_entities[item.id()] %}
+                        <h3>{{ src.label() ?: src.get('title') }}</h3>
+                        {% if src.get('author_name') or src.get('community') %}
+                            <div class="attribution">
+                                {{ src.get('author_name') }}
+                                {% if src.get('community') %}, {{ src.get('community') }}{% endif %}
+                            </div>
+                        {% endif %}
+                        {% if item.get('editor_blurb') %}
+                            <p>{{ item.get('editor_blurb') }}</p>
+                        {% else %}
+                            <p>{{ src.get('body')|default(src.get('submission_text'))|striptags|slice(0, 600) }}</p>
+                        {% endif %}
+                    {% else %}
+                        <h3>{{ item.get('inline_title') }}</h3>
+                        <p>{{ item.get('inline_body')|striptags }}</p>
+                    {% endif %}
+                </article>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{# ============================================================
+   PAGE 11 (top) — Jokes & Humour (inline)
+   PAGE 11 (bottom) — Puzzles (inline)
+   ============================================================ #}
+<div class="page-break">
+    <div class="shared-page-section">
+        <div class="section-header no-break-after">
+            <h2>Jokes &amp; Humour</h2>
+        </div>
+        {% if items_by_section['jokes'] is defined %}
+            {% for item in items_by_section['jokes'] %}
+                {% if item.get('included') %}
+                <article>
+                    {% if item.get('inline_title') %}
+                        <h3>{{ item.get('inline_title') }}</h3>
+                    {% endif %}
+                    <p>{{ item.get('inline_body')|striptags|nl2br }}</p>
+                </article>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="shared-page-section">
+        <div class="section-header no-break-after">
+            <h2>Puzzles</h2>
+        </div>
+        {% if items_by_section['puzzles'] is defined %}
+            {% for item in items_by_section['puzzles'] %}
+                {% if item.get('included') %}
+                <div class="inline-box">
+                    {% if item.get('inline_title') %}
+                        <h3>{{ item.get('inline_title') }}</h3>
+                    {% endif %}
+                    <div>{{ item.get('inline_body')|striptags|nl2br }}</div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{# ============================================================
+   PAGE 12 (top) — Anishinaabe Horoscope (inline)
+   PAGE 12 (middle) — Elder Spotlight (inline)
+   PAGE 12 (bottom) — Back Page (inline)
+   ============================================================ #}
+<div class="page-break">
+    <div class="shared-page-section">
+        <div class="section-header no-break-after">
+            <h2>Anishinaabe Horoscope</h2>
+        </div>
+        {% if items_by_section['horoscope'] is defined %}
+            {% for item in items_by_section['horoscope'] %}
+                {% if item.get('included') %}
+                <article>
+                    {% if item.get('inline_title') %}
+                        <h3>{{ item.get('inline_title') }}</h3>
+                    {% endif %}
+                    <p>{{ item.get('inline_body')|striptags|nl2br }}</p>
+                </article>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="shared-page-section">
+        <div class="section-header no-break-after">
+            <h2>Elder Spotlight</h2>
+        </div>
+        {% if items_by_section['elder_spotlight'] is defined %}
+            {% for item in items_by_section['elder_spotlight'] %}
+                {% if item.get('included') %}
+                <article>
+                    {% if item.get('inline_title') %}
+                        <h3>{{ item.get('inline_title') }}</h3>
+                    {% endif %}
+                    <p>{{ item.get('inline_body')|striptags|nl2br }}</p>
+                </article>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="back-page">
+        <hr class="cover-rule">
+        <h2>About Minoo</h2>
+        {% if items_by_section['back_page'] is defined %}
+            {% for item in items_by_section['back_page'] %}
+                {% if item.get('included') %}
+                    <div class="contact-info">{{ item.get('inline_body')|striptags|nl2br }}</div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p class="contact-info">
+                Minoo connects Elders in our communities with news, events,
+                teachings, and each other. This newsletter is printed and
+                delivered so that no one is left out.
+            </p>
+        {% endif %}
+        <div class="next-issue">
+            Next issue coming soon. Miigwech for reading!
+        </div>
+        <div class="closing">Miigwech</div>
+    </div>
+</div>
+
 </body>
 </html>
