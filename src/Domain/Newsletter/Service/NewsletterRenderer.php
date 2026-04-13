@@ -11,7 +11,7 @@ use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 use Waaseyaa\Entity\EntityInterface;
 
-final class NewsletterRenderer
+class NewsletterRenderer
 {
     /**
      * @param Closure(list<string>): Process|null $processFactory

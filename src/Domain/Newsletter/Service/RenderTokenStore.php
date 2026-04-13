@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Newsletter\Service;
 
-final class RenderTokenStore
+class RenderTokenStore
 {
     public function __construct(
         private readonly string $storageDir,

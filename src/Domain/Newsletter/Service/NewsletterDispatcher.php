@@ -16,7 +16,7 @@ use Waaseyaa\Entity\EntityInterface;
  * sent_at, save) are the controller's responsibility so that error paths can
  * keep the edition in `generated` for retry.
  */
-final class NewsletterDispatcher
+class NewsletterDispatcher
 {
     /**
      * @param object $mailService Any object exposing isConfigured(): bool and

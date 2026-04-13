@@ -7,7 +7,7 @@ use App\Domain\Newsletter\Exception\InvalidStateTransition;
 use App\Domain\Newsletter\ValueObject\EditionStatus;
 use Waaseyaa\Entity\EntityInterface;
 
-final class EditionLifecycle
+class EditionLifecycle
 {
     /**
      * Returns the set of statuses an edition in the given source state may

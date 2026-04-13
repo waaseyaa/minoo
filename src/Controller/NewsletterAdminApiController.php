@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Domain\Newsletter\Exception\DispatchException;
+use App\Domain\Newsletter\Exception\RenderException;
+use App\Domain\Newsletter\Service\EditionLifecycle;
+use App\Domain\Newsletter\Service\NewsletterDispatcher;
+use App\Domain\Newsletter\Service\NewsletterRenderer;
+use App\Domain\Newsletter\Service\RenderTokenStore;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -20,6 +26,10 @@ final class NewsletterAdminApiController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
+        private readonly EditionLifecycle $lifecycle,
+        private readonly NewsletterRenderer $renderer,
+        private readonly NewsletterDispatcher $dispatcher,
+        private readonly RenderTokenStore $tokenStore,
     ) {}
 
     public function listEditions(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
@@ -286,6 +296,113 @@ final class NewsletterAdminApiController
         }
 
         return $this->json(['results' => $results]);
+    }
+
+    public function previewToken(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $id = (int) ($params['id'] ?? 0);
+        if ($id <= 0) {
+            return $this->json(['error' => 'Invalid id.'], 422);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('newsletter_edition');
+        $edition = $storage->load($id);
+        if ($edition === null) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        $token = $this->tokenStore->issue($id);
+
+        return $this->json([
+            'preview_url' => sprintf('/newsletter/_internal/%d/print?token=%s', $id, $token),
+        ]);
+    }
+
+    public function generate(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $id = (int) ($params['id'] ?? 0);
+        if ($id <= 0) {
+            return $this->json(['error' => 'Invalid id.'], 422);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('newsletter_edition');
+        $edition = $storage->load($id);
+        if ($edition === null) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        try {
+            $artifact = $this->renderer->render($edition);
+            $this->lifecycle->markGenerated($edition, $artifact->path, $artifact->sha256);
+            $storage->save($edition);
+
+            return $this->json([
+                'path' => $artifact->path,
+                'sha256' => $artifact->sha256,
+                'bytes' => $artifact->bytes,
+            ]);
+        } catch (RenderException $e) {
+            return $this->json(['error' => 'Render failed: ' . $e->getMessage()], 500);
+        } catch (\DomainException $e) {
+            return $this->json(['error' => $e->getMessage()], 409);
+        }
+    }
+
+    public function download(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $id = (int) ($params['id'] ?? 0);
+        if ($id <= 0) {
+            return $this->json(['error' => 'Invalid id.'], 422);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('newsletter_edition');
+        $edition = $storage->load($id);
+        if ($edition === null) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        $pdfPath = (string) ($edition->get('pdf_path') ?? '');
+        if ($pdfPath === '' || !is_file($pdfPath)) {
+            return $this->json(['error' => 'PDF not yet generated.'], 404);
+        }
+
+        $content = file_get_contents($pdfPath);
+        $filename = basename($pdfPath);
+
+        return new Response($content, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            'Content-Length' => (string) strlen($content),
+        ]);
+    }
+
+    public function send(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $id = (int) ($params['id'] ?? 0);
+        if ($id <= 0) {
+            return $this->json(['error' => 'Invalid id.'], 422);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('newsletter_edition');
+        $edition = $storage->load($id);
+        if ($edition === null) {
+            return $this->json(['error' => 'Not found.'], 404);
+        }
+
+        try {
+            $recipient = $this->dispatcher->dispatch($edition);
+            $this->lifecycle->markSent($edition);
+            $storage->save($edition);
+
+            return $this->json([
+                'sent' => true,
+                'recipient' => $recipient,
+            ]);
+        } catch (DispatchException $e) {
+            return $this->json(['error' => 'Send failed: ' . $e->getMessage()], 500);
+        } catch (\DomainException $e) {
+            return $this->json(['error' => $e->getMessage()], 409);
+        }
     }
 
     /** @return array<string, mixed> */

@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller;
 
 use App\Controller\NewsletterAdminApiController;
+use App\Domain\Newsletter\Exception\DispatchException;
+use App\Domain\Newsletter\Exception\RenderException;
+use App\Domain\Newsletter\Service\EditionLifecycle;
+use App\Domain\Newsletter\Service\NewsletterDispatcher;
+use App\Domain\Newsletter\Service\NewsletterRenderer;
+use App\Domain\Newsletter\Service\RenderTokenStore;
+use App\Domain\Newsletter\ValueObject\PdfArtifact;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +28,10 @@ final class NewsletterAdminApiControllerTest extends TestCase
 {
     private EntityTypeManager $etm;
     private Environment $twig;
+    private EditionLifecycle $lifecycle;
+    private NewsletterRenderer $renderer;
+    private NewsletterDispatcher $dispatcher;
+    private RenderTokenStore $tokenStore;
     private EntityStorageInterface $editionStorage;
     private EntityStorageInterface $itemStorage;
     private AccountInterface $account;
@@ -33,6 +44,10 @@ final class NewsletterAdminApiControllerTest extends TestCase
     {
         $this->etm = $this->createMock(EntityTypeManager::class);
         $this->twig = $this->createMock(Environment::class);
+        $this->lifecycle = $this->createMock(EditionLifecycle::class);
+        $this->renderer = $this->createMock(NewsletterRenderer::class);
+        $this->dispatcher = $this->createMock(NewsletterDispatcher::class);
+        $this->tokenStore = $this->createMock(RenderTokenStore::class);
         $this->editionStorage = $this->createMock(EntityStorageInterface::class);
         $this->itemStorage = $this->createMock(EntityStorageInterface::class);
 
@@ -51,7 +66,14 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $this->account = $this->createMock(AccountInterface::class);
         $this->account->method('id')->willReturn(42);
 
-        $this->controller = new NewsletterAdminApiController($this->etm, $this->twig);
+        $this->controller = new NewsletterAdminApiController(
+            $this->etm,
+            $this->twig,
+            $this->lifecycle,
+            $this->renderer,
+            $this->dispatcher,
+            $this->tokenStore,
+        );
     }
 
     // --- listEditions ---
@@ -663,5 +685,265 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $this->assertCount(1, $data['results']);
         $this->assertSame('teaching', $data['results'][0]['entity_type']);
         $this->assertSame(30, $data['results'][0]['entity_id']);
+    }
+
+    // --- previewToken ---
+
+    #[Test]
+    public function preview_token_returns_404_when_edition_not_found(): void
+    {
+        $this->editionStorage->method('load')->with(999)->willReturn(null);
+
+        $response = $this->controller->previewToken(['id' => '999'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function preview_token_returns_url_with_token(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(7);
+        $this->editionStorage->method('load')->with(7)->willReturn($edition);
+
+        $this->tokenStore->expects($this->once())
+            ->method('issue')
+            ->with(7)
+            ->willReturn('abc123def456');
+
+        $response = $this->controller->previewToken(['id' => '7'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame('/newsletter/_internal/7/print?token=abc123def456', $data['preview_url']);
+    }
+
+    // --- generate ---
+
+    #[Test]
+    public function generate_returns_404_when_edition_not_found(): void
+    {
+        $this->editionStorage->method('load')->with(999)->willReturn(null);
+
+        $response = $this->controller->generate(['id' => '999'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function generate_renders_and_returns_artifact_data(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $edition->method('set')->willReturnSelf();
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $artifact = new PdfArtifact(
+            path: '/storage/newsletters/regional/1-3.pdf',
+            bytes: 84200,
+            sha256: 'abcdef1234567890',
+        );
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with($edition)
+            ->willReturn($artifact);
+
+        $this->lifecycle->expects($this->once())
+            ->method('markGenerated')
+            ->with($edition, '/storage/newsletters/regional/1-3.pdf', 'abcdef1234567890');
+
+        $this->editionStorage->expects($this->once())->method('save')->with($edition);
+
+        $response = $this->controller->generate(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame('/storage/newsletters/regional/1-3.pdf', $data['path']);
+        $this->assertSame('abcdef1234567890', $data['sha256']);
+        $this->assertSame(84200, $data['bytes']);
+    }
+
+    #[Test]
+    public function generate_returns_500_on_render_exception(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $this->renderer->method('render')->willThrowException(
+            RenderException::timeout(30),
+        );
+
+        $response = $this->controller->generate(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(500, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertStringContainsString('Render failed', $data['error']);
+    }
+
+    #[Test]
+    public function generate_returns_409_on_domain_exception(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $this->renderer->method('render')->willThrowException(
+            new \DomainException('Cannot generate from draft state'),
+        );
+
+        $response = $this->controller->generate(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(409, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame('Cannot generate from draft state', $data['error']);
+    }
+
+    // --- download ---
+
+    #[Test]
+    public function download_returns_404_when_edition_not_found(): void
+    {
+        $this->editionStorage->method('load')->with(999)->willReturn(null);
+
+        $response = $this->controller->download(['id' => '999'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function download_returns_404_when_pdf_path_not_set(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $edition->method('get')->willReturnCallback(fn (string $field) => match ($field) {
+            'pdf_path' => null,
+            default => null,
+        });
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $response = $this->controller->download(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame('PDF not yet generated.', $data['error']);
+    }
+
+    #[Test]
+    public function download_returns_404_when_pdf_file_missing(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $edition->method('get')->willReturnCallback(fn (string $field) => match ($field) {
+            'pdf_path' => '/nonexistent/path/to/newsletter.pdf',
+            default => null,
+        });
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $response = $this->controller->download(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function download_returns_pdf_content_with_correct_headers(): void
+    {
+        $tmpFile = tempnam(sys_get_temp_dir(), 'newsletter_test_');
+        file_put_contents($tmpFile, '%PDF-1.4 fake content');
+
+        try {
+            $edition = $this->createMock(ContentEntityBase::class);
+            $edition->method('id')->willReturn(3);
+            $edition->method('get')->willReturnCallback(fn (string $field) => match ($field) {
+                'pdf_path' => $tmpFile,
+                default => null,
+            });
+            $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+            $response = $this->controller->download(['id' => '3'], [], $this->account, new HttpRequest());
+
+            $this->assertSame(200, $response->getStatusCode());
+            $this->assertSame('application/pdf', $response->headers->get('Content-Type'));
+            $this->assertStringContainsString('attachment', $response->headers->get('Content-Disposition'));
+            $this->assertSame('%PDF-1.4 fake content', $response->getContent());
+        } finally {
+            @unlink($tmpFile);
+        }
+    }
+
+    // --- send ---
+
+    #[Test]
+    public function send_returns_404_when_edition_not_found(): void
+    {
+        $this->editionStorage->method('load')->with(999)->willReturn(null);
+
+        $response = $this->controller->send(['id' => '999'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function send_dispatches_and_returns_recipient(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $edition->method('set')->willReturnSelf();
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with($edition)
+            ->willReturn('sales@ojgraphix.com');
+
+        $this->lifecycle->expects($this->once())
+            ->method('markSent')
+            ->with($edition);
+
+        $this->editionStorage->expects($this->once())->method('save')->with($edition);
+
+        $response = $this->controller->send(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertTrue($data['sent']);
+        $this->assertSame('sales@ojgraphix.com', $data['recipient']);
+    }
+
+    #[Test]
+    public function send_returns_500_on_dispatch_exception(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $this->dispatcher->method('dispatch')->willThrowException(
+            DispatchException::notConfigured(),
+        );
+
+        $response = $this->controller->send(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(500, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertStringContainsString('Send failed', $data['error']);
+    }
+
+    #[Test]
+    public function send_returns_409_on_domain_exception(): void
+    {
+        $edition = $this->createMock(ContentEntityBase::class);
+        $edition->method('id')->willReturn(3);
+        $this->editionStorage->method('load')->with(3)->willReturn($edition);
+
+        $this->dispatcher->method('dispatch')->willThrowException(
+            new \DomainException('Edition must be in generated state to send'),
+        );
+
+        $response = $this->controller->send(['id' => '3'], [], $this->account, new HttpRequest());
+
+        $this->assertSame(409, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true, 16, JSON_THROW_ON_ERROR);
+        $this->assertSame('Edition must be in generated state to send', $data['error']);
     }
 }
