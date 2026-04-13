@@ -12,7 +12,7 @@ Minoo is a **thin application** — custom entity types, access policies, servic
 minoo/
 ├── src/
 │   ├── Access/        # 10 access policy classes
-│   ├── Controller/    # 11 HTTP controllers (incl. CrosswordController)
+│   ├── Controller/    # 35 HTTP controllers (incl. HomeController, FeedController)
 │   ├── Domain/        # Bounded contexts (Geo/)
 │   ├── Entity/        # 17 custom entity classes
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
@@ -25,6 +25,8 @@ minoo/
 │   └── Integration/   # Full kernel boot smoke test
 ├── templates/
 │   ├── base.html.twig           # Page shell (header, nav, footer)
+│   ├── home.html.twig           # Public homepage for anonymous visitors (extends base)
+│   ├── feed.html.twig           # Authenticated feed (extends base)
 │   ├── page.html.twig           # Default page (extends base)
 │   ├── 404.html.twig            # Not found page (extends base)
 │   ├── events.html.twig         # Events listing + detail (extends base)
@@ -95,7 +97,8 @@ All entity types are registered in `App\Provider\AppServiceProvider`.
 - **CSS:** Single vanilla file `public/css/minoo.css` — no build step, no preprocessor
 - **CSS architecture:** `@layer reset, tokens, base, layout, components, utilities` — oklch colors, fluid `clamp()` type/spacing, native nesting, container queries, logical properties
 - **Templates:** Twig 3 with inheritance — `base.html.twig` defines shell, pages extend it
-- **Path routing:** Framework `RenderController::tryRenderPathTemplate()` maps `/language` → `language.html.twig` (framework#189). Paths without a matching template or path alias get 404.
+- **Homepage/Feed split:** `/` serves `HomeController::index` — anonymous users see `home.html.twig` (public homepage), authenticated users get 302 to `/feed`. `/feed` serves `FeedController::index` (authenticated only, anonymous redirects to `/`). `/home` is an alias for `/`.
+- **Path routing:** Framework `RenderController::tryRenderPathTemplate()` maps `/language` → `language.html.twig` (framework#189). Paths without a matching template or path alias get 404. Note: `feed.html.twig` and `home.html.twig` have explicit controller routes that take priority over path-based rendering.
 - **Design doc:** `docs/plans/2026-03-06-visual-identity-layout-design.md` — color palette, type scale, spacing scale, component patterns
 
 **Adding a public page:**
