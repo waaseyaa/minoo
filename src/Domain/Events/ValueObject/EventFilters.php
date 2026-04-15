@@ -100,4 +100,60 @@ final class EventFilters
             page:        1,
         );
     }
+
+    /**
+     * Build a query string for the current filter state.
+     *
+     * @param array<string, string|int|bool|null> $overrides Additional or overriding params.
+     *                                                       Use null to strip a key.
+     */
+    public function toQueryString(array $overrides = []): string
+    {
+        $params = [];
+
+        if ($this->q !== null) {
+            $params['q'] = $this->q;
+        }
+        if ($this->when !== 'all') {
+            $params['when'] = $this->when;
+        }
+        foreach ($this->types as $t) {
+            $params['type'][] = $t;
+        }
+        if ($this->communityId !== null) {
+            $params['community_id'] = $this->communityId;
+        }
+        if ($this->near) {
+            $params['near'] = '1';
+        }
+        if ($this->view !== 'feed') {
+            $params['view'] = $this->view;
+        }
+        if ($this->month !== null) {
+            $params['month'] = $this->month;
+        }
+        if ($this->date !== null) {
+            $params['date'] = $this->date;
+        }
+        if ($this->sort !== 'soonest') {
+            $params['sort'] = $this->sort;
+        }
+        if ($this->page > 1) {
+            $params['page'] = $this->page;
+        }
+
+        foreach ($overrides as $key => $value) {
+            if ($value === null || $value === '' || $value === false) {
+                unset($params[$key]);
+            } else {
+                $params[$key] = $value;
+            }
+        }
+
+        if ($params === []) {
+            return '';
+        }
+
+        return '?' . http_build_query($params);
+    }
 }

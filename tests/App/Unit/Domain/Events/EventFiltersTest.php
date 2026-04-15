@@ -93,4 +93,43 @@ final class EventFiltersTest extends TestCase
         $this->assertSame([], $w->types);
         $this->assertSame('month', $w->when);
     }
+
+    #[Test]
+    public function to_query_string_empty_on_defaults(): void
+    {
+        $f = EventFilters::fromRequest(Request::create('/events'));
+        $this->assertSame('', $f->toQueryString());
+    }
+
+    #[Test]
+    public function to_query_string_emits_active_filters(): void
+    {
+        $r = Request::create('/events', 'GET', [
+            'type' => ['powwow', 'ceremony'],
+            'when' => 'week',
+            'q' => 'sunrise',
+            'view' => 'list',
+            'sort' => 'latest',
+        ]);
+        $f = EventFilters::fromRequest($r);
+        $qs = $f->toQueryString();
+        $this->assertStringStartsWith('?', $qs);
+        parse_str(ltrim($qs, '?'), $parsed);
+        $this->assertSame('sunrise', $parsed['q']);
+        $this->assertSame('week', $parsed['when']);
+        $this->assertSame(['powwow', 'ceremony'], $parsed['type']);
+        $this->assertSame('list', $parsed['view']);
+        $this->assertSame('latest', $parsed['sort']);
+    }
+
+    #[Test]
+    public function to_query_string_round_trips_through_without(): void
+    {
+        $r = Request::create('/events', 'GET', ['type' => ['powwow', 'ceremony'], 'when' => 'month']);
+        $f = EventFilters::fromRequest($r);
+        $qs = $f->without('type', 'powwow')->toQueryString();
+        parse_str(ltrim($qs, '?'), $parsed);
+        $this->assertSame(['ceremony'], $parsed['type']);
+        $this->assertSame('month', $parsed['when']);
+    }
 }

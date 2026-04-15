@@ -21,6 +21,10 @@
         <p class="listing-hero__subtitle">{{ trans('events.subtitle') }}</p>
       </div>
 
+      {% if filters is defined %}
+        {% include "components/event-filters.html.twig" with { filters: filters, feed: feed|default(null), location: location|default(null) } %}
+      {% endif %}
+
       {% if filters is defined and filters.view == 'calendar' %}
         <p>{{ trans('events.calendar_coming_soon') }}</p>
       {% elseif (feed is defined and feed.flatList|length > 0) or (filters is defined and filters.view == 'list') %}
