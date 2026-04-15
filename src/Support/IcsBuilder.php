@@ -139,9 +139,10 @@ final class IcsBuilder
             $line  = substr($line, $cut);
             $first = false;
         }
-        // Remainder.
+        // Remainder. Loop ran at least once (only reached when line > 75 octets),
+        // so $first is always false here — always emit as a continuation.
         if ($line !== '') {
-            $out .= $first ? $line : (self::CRLF . ' ' . $line);
+            $out .= self::CRLF . ' ' . $line;
         }
         return $out;
     }
