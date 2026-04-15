@@ -158,6 +158,7 @@ return [
     'events.not_found_message' => 'We couldn\'t find this event. It may have been removed or the link may be outdated.',
     'events.browse_all' => 'Browse all events',
     'events.related_teachings' => 'Related Teachings',
+    'events.similar_upcoming' => 'Similar upcoming events',
     'events.people_connected' => 'People Connected to This Event',
     'events.host_community' => 'Host Community',
     'events.status_happening' => 'Happening Now',

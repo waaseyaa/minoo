@@ -139,6 +139,26 @@
           </a>
         </section>
       {% endif %}
+
+      {% if similar_upcoming is defined and similar_upcoming|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('events.similar_upcoming') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for e in similar_upcoming %}
+              {% include "components/event-card.html.twig" with {
+                title: e.get('title'),
+                type: e.get('type')|default('')|capitalize,
+                date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
+                starts_at_iso: e.get('starts_at') ? e.get('starts_at')|date('c') : '',
+                starts_at_raw: e.get('starts_at'),
+                location: e.get('location')|default(''),
+                excerpt: '',
+                url: "/events/" ~ e.get('slug')
+              } %}
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
     </div>
   {% else %}
     <div class="flow-lg">

@@ -166,12 +166,15 @@ final class EventController
             }
         }
 
+        $similarUpcoming = $this->findSimilarUpcoming($event);
+
         $html = $this->twig->render('events.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/events/' . $slug,
             'event' => $event,
             'related_teachings' => $relatedTeachings,
             'connected_people' => $connectedPeople,
             'host_community' => $hostCommunity,
+            'similar_upcoming' => $similarUpcoming,
             'image_url' => $imageUrl,
             'image_credit' => $imageCredit,
         ]));
@@ -209,6 +212,57 @@ final class EventController
             'Content-Type' => 'text/calendar; charset=utf-8',
             'Content-Disposition' => 'attachment; filename="' . $slug . '.ics"',
         ]);
+    }
+
+    /**
+     * @return list<ContentEntityBase>
+     */
+    private function findSimilarUpcoming(?ContentEntityBase $event): array
+    {
+        if ($event === null) {
+            return [];
+        }
+
+        $type = $event->get('type');
+        if ($type === null || $type === '') {
+            return [];
+        }
+
+        $now    = (new \DateTimeImmutable('now'))->format('Y-m-d\TH:i:s');
+        $horizon = (new \DateTimeImmutable('+60 days'))->format('Y-m-d\TH:i:s');
+
+        $storage = $this->entityTypeManager->getStorage('event');
+        $ids = $storage->getQuery()
+            ->condition('type', $type)
+            ->condition('status', 1)
+            ->condition('starts_at', $now, '>')
+            ->condition('starts_at', $horizon, '<=')
+            ->sort('starts_at', 'ASC')
+            ->range(0, 4)
+            ->execute();
+
+        if (!$ids) {
+            return [];
+        }
+
+        $currentId = (int) $event->id();
+        $loaded = $storage->loadMultiple($ids);
+
+        $out = [];
+        foreach ($loaded as $candidate) {
+            if (!$candidate instanceof ContentEntityBase) {
+                continue;
+            }
+            if ((int) $candidate->id() === $currentId) {
+                continue;
+            }
+            $out[] = $candidate;
+            if (count($out) >= 3) {
+                break;
+            }
+        }
+
+        return $out;
     }
 
     /**
