@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Support\CommunityLookup;
+use App\Domain\Events\Service\EventFeedBuilder;
+use App\Domain\Events\ValueObject\EventFeedResult;
+use App\Domain\Events\ValueObject\EventFilters;
+use App\Domain\Geo\Service\CommunityFinder;
+use App\Domain\Geo\ValueObject\LocationContext;
+use App\Service\LocationResolver;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,38 +24,78 @@ final class EventController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
+        private readonly EventFeedBuilder $eventFeedBuilder,
     ) {}
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
     public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()
-            ->condition('status', 1)
-            ->sort('starts_at', 'DESC')
-            ->execute();
-        $events = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+        $filters  = EventFilters::fromRequest($request);
+        $location = $this->resolveLocation($request);
+        $result   = $this->eventFeedBuilder->build($filters, $location);
 
-        $events = array_filter($events, function ($entity) {
-            $mediaId = $entity->get('media_id');
-            if ($mediaId === null || $mediaId === '') {
-                return true;
-            }
-            $status = $entity->get('copyright_status');
-            return in_array($status, ['community_owned', 'cc_by_nc_sa'], true);
-        });
-        $events = array_values($events);
-
-        $communities = CommunityLookup::build($this->entityTypeManager, $events);
+        // Compatibility shim for the existing template: expose a flat
+        // `events` array + `communities` map until Task 9 rebuilds the
+        // template around the sectioned `feed` result.
+        $events      = $this->flattenFeedForTemplate($result);
+        $communities = $result->communities;
 
         $html = $this->twig->render('events.html.twig', LayoutTwigContext::withAccount($account, [
-            'path' => '/events',
-            'events' => $events,
+            'path'        => $request->getPathInfo(),
+            'events'      => $events,
             'communities' => $communities,
+            'filters'     => $filters,
+            'feed'        => $result,
         ]));
 
         return new Response($html);
+    }
+
+    /**
+     * @return list<ContentEntityBase>
+     */
+    private function flattenFeedForTemplate(EventFeedResult $result): array
+    {
+        if ($result->flatList !== []) {
+            return $result->flatList;
+        }
+
+        $seen = [];
+        $out  = [];
+        foreach (
+            [
+                $result->featured,
+                $result->happeningNow,
+                $result->thisWeek,
+                $result->comingUp,
+                $result->onTheHorizon,
+            ] as $section
+        ) {
+            foreach ($section as $entity) {
+                $id = (int) $entity->id();
+                if (isset($seen[$id])) {
+                    continue;
+                }
+                $seen[$id] = true;
+                $out[] = $entity;
+            }
+        }
+
+        return $out;
+    }
+
+    private function resolveLocation(HttpRequest $request): ?LocationContext
+    {
+        try {
+            $resolver = new LocationResolver(
+                $this->entityTypeManager,
+                new CommunityFinder(),
+            );
+            return $resolver->resolveLocation($request);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /** @param array<string, mixed> $params */

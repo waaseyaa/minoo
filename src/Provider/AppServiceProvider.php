@@ -123,6 +123,19 @@ final class AppServiceProvider extends ServiceProvider
         // --- Events ---
         // =====================================================================
 
+        $this->singleton(
+            \App\Domain\Events\Service\EventFeedRanker::class,
+            fn(): \App\Domain\Events\Service\EventFeedRanker => new \App\Domain\Events\Service\EventFeedRanker(),
+        );
+
+        $this->singleton(
+            \App\Domain\Events\Service\EventFeedBuilder::class,
+            fn(): \App\Domain\Events\Service\EventFeedBuilder => new \App\Domain\Events\Service\EventFeedBuilder(
+                $this->resolve(EntityTypeManager::class),
+                $this->resolve(\App\Domain\Events\Service\EventFeedRanker::class),
+            ),
+        );
+
         $this->entityType(new EntityType(
             id: 'event',
             label: 'Event',
