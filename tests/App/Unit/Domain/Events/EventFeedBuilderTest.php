@@ -250,6 +250,45 @@ final class EventFeedBuilderTest extends TestCase
         $this->assertSame([1000, 1001], $ids);
     }
 
+    #[Test]
+    public function calendar_view_builds_calendar_month_and_leaves_sections_empty(): void
+    {
+        $now = strtotime('2026-04-14 12:00:00 UTC');
+        $events = [
+            $this->event(2000, starts: strtotime('2026-04-10 09:00:00 UTC'), ends: strtotime('2026-04-10 17:00:00 UTC')),
+            $this->event(2001, starts: strtotime('2026-04-20 09:00:00 UTC'), ends: strtotime('2026-04-20 17:00:00 UTC')),
+        ];
+        $builder = $this->buildWith($events, $now);
+        $request = Request::create('/events?view=calendar&month=2026-04');
+        $result = $builder->build(EventFilters::fromRequest($request), null);
+
+        $this->assertNotNull($result->calendarMonth);
+        $this->assertSame(2026, $result->calendarMonth->year);
+        $this->assertSame(4, $result->calendarMonth->month);
+        $this->assertSame([], $result->happeningNow);
+        $this->assertSame([], $result->thisWeek);
+        $this->assertSame([], $result->comingUp);
+        $this->assertSame([], $result->onTheHorizon);
+        $this->assertSame([], $result->flatList);
+
+        // Find days with events.
+        $placed = [];
+        foreach ($result->calendarMonth->weeks as $week) {
+            foreach ($week as $day) {
+                if ($day->events !== []) {
+                    $placed[$day->date->format('Y-m-d')] = array_map(
+                        fn ($e) => $e->id(),
+                        $day->events,
+                    );
+                }
+            }
+        }
+        $this->assertArrayHasKey('2026-04-10', $placed);
+        $this->assertSame([2000], $placed['2026-04-10']);
+        $this->assertArrayHasKey('2026-04-20', $placed);
+        $this->assertSame([2001], $placed['2026-04-20']);
+    }
+
     private function eventWithText(int $id, int $starts, string $title, string $description, string $location): ContentEntityBase
     {
         $mock = $this->createMock(ContentEntityBase::class);

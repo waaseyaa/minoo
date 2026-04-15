@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\Events\Service;
 
+use App\Domain\Events\ValueObject\CalendarMonth;
 use App\Domain\Events\ValueObject\EventFeedResult;
 use App\Domain\Events\ValueObject\EventFilters;
 use App\Domain\Events\ValueObject\Pagination;
 use App\Domain\Geo\ValueObject\LocationContext;
 use Closure;
+use DateTimeImmutable;
+use DateTimeZone;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
 
@@ -40,6 +43,10 @@ final class EventFeedBuilder
     public function build(EventFilters $filters, ?LocationContext $location): EventFeedResult
     {
         $now = ($this->clock)();
+
+        if ($filters->view === 'calendar') {
+            return $this->buildCalendar($filters, $now);
+        }
 
         if ($filters->isActive() || $filters->view === 'list') {
             return $this->buildFiltered($filters, $location, $now);
@@ -169,6 +176,59 @@ final class EventFeedBuilder
             activeFilters:    $filters,
             availableFilters: ['types' => [], 'communities' => []],
             pagination:       new Pagination($filters->page, $perPage, $total),
+        );
+    }
+
+    private function buildCalendar(EventFilters $filters, int $now): EventFeedResult
+    {
+        $utc = new DateTimeZone('UTC');
+
+        // Determine target month (YYYY-MM); default to current month in UTC.
+        if ($filters->month !== null && preg_match('/^(\d{4})-(\d{2})$/', $filters->month, $m)) {
+            $year  = (int) $m[1];
+            $month = (int) $m[2];
+            if ($month < 1 || $month > 12) {
+                $nowDt = (new DateTimeImmutable('@' . $now))->setTimezone($utc);
+                $year  = (int) $nowDt->format('Y');
+                $month = (int) $nowDt->format('n');
+            }
+        } else {
+            $nowDt = (new DateTimeImmutable('@' . $now))->setTimezone($utc);
+            $year  = (int) $nowDt->format('Y');
+            $month = (int) $nowDt->format('n');
+        }
+
+        $todayDt = (new DateTimeImmutable('@' . $now))->setTimezone($utc);
+
+        // First build an empty month to compute the grid window.
+        $empty = CalendarMonth::fromEvents($year, $month, [], $todayDt);
+        $gridStart = (int) $empty->gridStart()->format('U');
+        $gridEnd   = (int) $empty->gridEnd()->format('U') + 86400;
+
+        // Load events whose [starts_at, ends_at] overlaps [gridStart, gridEnd).
+        $storage = $this->entityTypeManager->getStorage('event');
+        $ids = $storage->getQuery()
+            ->condition('status', 1)
+            ->condition('starts_at', $gridEnd, '<')
+            ->condition('ends_at', $gridStart, '>=')
+            ->execute();
+        $events = $ids === [] ? [] : array_values($storage->loadMultiple($ids));
+
+        $calendar = CalendarMonth::fromEvents($year, $month, $events, $todayDt);
+
+        return new EventFeedResult(
+            featured:         [],
+            happeningNow:     [],
+            thisWeek:         [],
+            comingUp:         [],
+            onTheHorizon:     [],
+            flatList:         [],
+            calendarMonth:    $calendar,
+            communities:      [],
+            totalUpcoming:    count($events),
+            activeFilters:    $filters,
+            availableFilters: ['types' => [], 'communities' => []],
+            pagination:       null,
         );
     }
 
