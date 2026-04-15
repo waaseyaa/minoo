@@ -1,7 +1,8 @@
 {#
   Event list view grouped by month.
   Expects:
-    - events: iterable of event entities
+    - events: iterable of event entities (used only for emptiness check & fallback grouping)
+    - groups: pre-computed list of {key, label, events} (from EventFeedResult::monthGroups()); null → build inline fallback
     - pagination: Pagination VO or null
     - filters: EventFilters VO
     - communities: map of community_id => {name, slug, ...}
@@ -14,31 +15,36 @@
     {% endif %}
   </div>
 {% else %}
-  {# Group events by YYYY-MM key while preserving input order #}
-  {% set groups = [] %}
-  {% set seenKeys = [] %}
-  {% for e in events %}
-    {% set startsAt = e.get('starts_at') %}
-    {% set key = startsAt ? startsAt|date('Y-m') : 'undated' %}
-    {% set label = startsAt ? startsAt|date('F Y') : trans('events.section_on_horizon') %}
-    {% if key not in seenKeys %}
-      {% set seenKeys = seenKeys|merge([key]) %}
-      {% set groups = groups|merge([{ key: key, label: label, events: [e] }]) %}
-    {% else %}
-      {% set newGroups = [] %}
-      {% for g in groups %}
-        {% if g.key == key %}
-          {% set newGroups = newGroups|merge([{ key: g.key, label: g.label, events: g.events|merge([e]) }]) %}
-        {% else %}
-          {% set newGroups = newGroups|merge([g]) %}
-        {% endif %}
-      {% endfor %}
-      {% set groups = newGroups %}
-    {% endif %}
-  {% endfor %}
+  {# Prefer pre-computed $groups from EventFeedResult::monthGroups() — avoids an
+     O(n²) |merge rebuild in Twig. Fall back to an inline build only when a
+     caller passes a raw $events array without a feed result. #}
+  {% set renderGroups = groups|default(null) %}
+  {% if renderGroups is null %}
+    {% set renderGroups = [] %}
+    {% set seenKeys = [] %}
+    {% for e in events %}
+      {% set startsAt = e.get('starts_at') %}
+      {% set key = startsAt ? startsAt|date('Y-m') : 'undated' %}
+      {% set label = startsAt ? startsAt|date('F Y') : trans('events.section_on_horizon') %}
+      {% if key not in seenKeys %}
+        {% set seenKeys = seenKeys|merge([key]) %}
+        {% set renderGroups = renderGroups|merge([{ key: key, label: label, events: [e] }]) %}
+      {% else %}
+        {% set newGroups = [] %}
+        {% for g in renderGroups %}
+          {% if g.key == key %}
+            {% set newGroups = newGroups|merge([{ key: g.key, label: g.label, events: g.events|merge([e]) }]) %}
+          {% else %}
+            {% set newGroups = newGroups|merge([g]) %}
+          {% endif %}
+        {% endfor %}
+        {% set renderGroups = newGroups %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 
   <div class="event-list">
-    {% for group in groups %}
+    {% for group in renderGroups %}
       <section class="event-list__month">
         <h2 class="event-list__month-heading">{{ group.label }}</h2>
         <ul class="event-list__items">

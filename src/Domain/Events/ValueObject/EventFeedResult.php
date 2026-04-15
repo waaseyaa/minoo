@@ -42,4 +42,35 @@ final class EventFeedResult
             || $this->comingUp !== []
             || $this->onTheHorizon !== [];
     }
+
+    /**
+     * Group `flatList` by YYYY-MM for the list view. Preserves input order.
+     * Computed in PHP so templates don't perform O(n²) `|merge` rebuilds.
+     *
+     * @return list<array{key: string, label: string, events: list<ContentEntityBase>}>
+     */
+    public function monthGroups(): array
+    {
+        $groups = [];
+        $index  = []; // key => position in $groups
+        foreach ($this->flatList as $event) {
+            $startsAt = $event->get('starts_at');
+            if (is_int($startsAt) && $startsAt > 0) {
+                $key   = date('Y-m', $startsAt);
+                $label = date('F Y', $startsAt);
+            } elseif (is_string($startsAt) && $startsAt !== '' && ($ts = strtotime($startsAt)) !== false) {
+                $key   = date('Y-m', $ts);
+                $label = date('F Y', $ts);
+            } else {
+                $key   = 'undated';
+                $label = 'Undated';
+            }
+            if (!isset($index[$key])) {
+                $index[$key]  = count($groups);
+                $groups[]     = ['key' => $key, 'label' => $label, 'events' => []];
+            }
+            $groups[$index[$key]]['events'][] = $event;
+        }
+        return $groups;
+    }
 }
