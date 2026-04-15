@@ -138,4 +138,51 @@ final class IcsBuilderTest extends TestCase
             $this->assertLessThanOrEqual(75, strlen($line), 'Line too long: ' . $line);
         }
     }
+
+    #[Test]
+    public function folds_multibyte_utf8_without_splitting_characters(): void
+    {
+        // Ojibwe syllabics: each character is 3 bytes in UTF-8.
+        // Repeat until comfortably past 75 octets.
+        $syllabics   = str_repeat('ᐊᓂᐦᔑᓇᐯ ᐅᑕᐦᐊᔅᑲᐣ ', 10);
+        $event       = $this->makeEvent([
+            'uuid'      => 'abc',
+            'title'     => $syllabics,
+            'slug'      => 't',
+            'starts_at' => '2026-04-15 13:00:00',
+        ]);
+
+        $ics = IcsBuilder::buildForEvent($event, 'h');
+
+        foreach (explode("\r\n", $ics) as $line) {
+            // No folded segment may exceed 75 octets.
+            $this->assertLessThanOrEqual(75, strlen($line), 'Line too long: ' . bin2hex($line));
+            // Every folded segment must remain valid UTF-8 — if foldLine
+            // split mid-character, this assertion fails.
+            $this->assertTrue(
+                mb_check_encoding($line, 'UTF-8'),
+                'Invalid UTF-8 in folded line: ' . bin2hex($line),
+            );
+        }
+
+        // All continuation lines start with a single space per RFC 5545.
+        $lines = explode("\r\n", rtrim($ics, "\r\n"));
+        $summaryIndex = null;
+        foreach ($lines as $i => $line) {
+            if (str_starts_with($line, 'SUMMARY:')) {
+                $summaryIndex = $i;
+                break;
+            }
+        }
+        $this->assertNotNull($summaryIndex, 'SUMMARY line not found');
+        // Walk forward as long as following lines are continuations.
+        for ($i = $summaryIndex + 1; $i < count($lines); $i++) {
+            $line = $lines[$i];
+            // Stop when we reach the next property (no leading space).
+            if ($line === '' || $line[0] !== ' ') {
+                break;
+            }
+            $this->assertSame(' ', $line[0], 'Continuation must start with single space');
+        }
+    }
 }

@@ -102,6 +102,13 @@ final class IcsBuilder
 
     /**
      * Fold lines longer than 75 octets with CRLF + single space.
+     *
+     * RFC 5545 §3.1 folds on 75-OCTET boundaries. Naively slicing at byte 75
+     * can split a multibyte UTF-8 sequence mid-character, corrupting content
+     * (e.g. Ojibwe syllabics like ᐃ/ᒥ). This implementation walks back from
+     * the cut position until it lands on a UTF-8 start byte — either ASCII
+     * (0xxxxxxx) or a leading byte (11xxxxxx) — never a continuation
+     * (10xxxxxx).
      */
     private static function foldLine(string $line): string
     {
@@ -109,15 +116,32 @@ final class IcsBuilder
             return $line;
         }
 
-        $out       = '';
-        $remaining = $line;
-        // First chunk: up to 75 octets.
-        $out      .= substr($remaining, 0, 75);
-        $remaining = substr($remaining, 75);
-        // Subsequent chunks: CRLF + space + up to 74 octets.
-        while ($remaining !== '') {
-            $out      .= self::CRLF . ' ' . substr($remaining, 0, 74);
-            $remaining = substr($remaining, 74);
+        $out = '';
+        // First chunk: up to 75 octets, continuation chunks: up to 74 octets
+        // (one octet is consumed by the leading space on continuation lines).
+        $first = true;
+        while (strlen($line) > ($first ? 75 : 74)) {
+            $limit = $first ? 75 : 74;
+            $cut   = $limit;
+            // Walk back while the byte AT $cut is a UTF-8 continuation byte.
+            // Continuation bytes match 0b10xxxxxx (i.e. (byte & 0xC0) === 0x80).
+            // We never want to cut such that the next chunk starts with one.
+            while ($cut > 0 && (ord($line[$cut]) & 0xC0) === 0x80) {
+                $cut--;
+            }
+            // Defensive: if we somehow walked back to 0, fall through with
+            // a plain byte cut to guarantee forward progress.
+            if ($cut === 0) {
+                $cut = $limit;
+            }
+            $chunk = substr($line, 0, $cut);
+            $out  .= $first ? $chunk : (self::CRLF . ' ' . $chunk);
+            $line  = substr($line, $cut);
+            $first = false;
+        }
+        // Remainder.
+        if ($line !== '') {
+            $out .= $first ? $line : (self::CRLF . ' ' . $line);
         }
         return $out;
     }
