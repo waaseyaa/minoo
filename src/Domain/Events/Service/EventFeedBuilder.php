@@ -41,11 +41,18 @@ final class EventFeedBuilder
         ));
         usort($thisWeek, fn ($a, $b) => (int) $a->get('starts_at') <=> (int) $b->get('starts_at'));
 
+        $comingUpCandidates = array_values(array_filter(
+            $all,
+            fn (ContentEntityBase $e) => $this->isInComingUpWindow($e, $now)
+        ));
+        usort($comingUpCandidates, fn ($a, $b) => (int) $a->get('starts_at') <=> (int) $b->get('starts_at'));
+        $comingUp = $this->applyDiversity($comingUpCandidates, 12);
+
         return new EventFeedResult(
             featured:         [],
             happeningNow:     $happeningNow,
             thisWeek:         $thisWeek,
-            comingUp:         [],
+            comingUp:         $comingUp,
             onTheHorizon:     [],
             flatList:         [],
             calendarMonth:    null,
@@ -83,5 +90,92 @@ final class EventFeedBuilder
     {
         $s = (int) $e->get('starts_at');
         return $s > $now && $s <= $now + 7 * 86400;
+    }
+
+    private function isInComingUpWindow(ContentEntityBase $e, int $now): bool
+    {
+        $s = (int) $e->get('starts_at');
+        return $s > $now + 7 * 86400 && $s <= $now + 30 * 86400;
+    }
+
+    /**
+     * Greedy diversity selection over chronologically-sorted candidates.
+     *
+     * Rules:
+     *   - No more than 3 events of the same `type` in a row.
+     *   - No more than 2 events from the same `community_id` in the top 6.
+     *   - Cap at $limit events.
+     *
+     * Walks candidates in order; at each position, picks the first candidate that
+     * doesn't violate the constraints. If none satisfies, relaxes (takes the next
+     * remaining candidate) so we still fill the slot deterministically.
+     *
+     * @param list<ContentEntityBase> $candidates
+     * @return list<ContentEntityBase>
+     */
+    private function applyDiversity(array $candidates, int $limit): array
+    {
+        $selected = [];
+        $remaining = $candidates;
+
+        while ($remaining !== [] && count($selected) < $limit) {
+            $pickedIndex = null;
+            foreach ($remaining as $idx => $candidate) {
+                if (!$this->violatesDiversity($candidate, $selected)) {
+                    $pickedIndex = $idx;
+                    break;
+                }
+            }
+            // Relaxation: if no candidate passes, take the first remaining one.
+            if ($pickedIndex === null) {
+                $pickedIndex = array_key_first($remaining);
+            }
+            $selected[] = $remaining[$pickedIndex];
+            unset($remaining[$pickedIndex]);
+            $remaining = array_values($remaining);
+        }
+
+        return $selected;
+    }
+
+    /**
+     * @param list<ContentEntityBase> $selected
+     */
+    private function violatesDiversity(ContentEntityBase $candidate, array $selected): bool
+    {
+        // Rule 1: no more than 3 of the same type in a row.
+        $type = (string) $candidate->get('type');
+        $tail = array_slice($selected, -3);
+        if (count($tail) === 3) {
+            $sameType = true;
+            foreach ($tail as $e) {
+                if ((string) $e->get('type') !== $type) {
+                    $sameType = false;
+                    break;
+                }
+            }
+            if ($sameType) {
+                return true;
+            }
+        }
+
+        // Rule 2: no more than 2 from the same community in the top 6.
+        if (count($selected) < 6) {
+            $communityId = (string) $candidate->get('community_id');
+            if ($communityId !== '') {
+                $top6 = array_slice($selected, 0, 6);
+                $sameCommunity = 0;
+                foreach ($top6 as $e) {
+                    if ((string) $e->get('community_id') === $communityId) {
+                        $sameCommunity++;
+                    }
+                }
+                if ($sameCommunity >= 2) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
