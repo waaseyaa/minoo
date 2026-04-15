@@ -11,11 +11,15 @@
         title: e.get('title'),
         type: e.get('type')|default('')|capitalize,
         date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
+        starts_at_iso: e.get('starts_at') ? e.get('starts_at')|date('c') : '',
+        starts_at_raw: e.get('starts_at')|default(null),
         location: e.get('location')|default(''),
         excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
         url: "/events/" ~ e.get('slug'),
         community_name: comm.name|default(''),
-        community_slug: comm.slug|default('')
+        community_slug: comm.slug|default(''),
+        photo_url: e.get('photo_url')|default(''),
+        happening_now: variant is defined and variant == 'now'
       } %}
     {% endfor %}
   </div>

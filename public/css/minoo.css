@@ -619,6 +619,12 @@
 
     /* ── Domain accent colors ── */
     --color-events: #e63946;
+
+    /* ── Event type accent colors (per-type left border) ── */
+    --event-ceremony: oklch(65% 0.15 30);
+    --event-gathering: oklch(70% 0.14 160);
+    --event-powwow: oklch(70% 0.18 340);
+    --event-tournament: oklch(68% 0.14 240);
     --color-teachings: #f4a261;
     --color-language: #2a9d8f;
     --color-communities: #6a9caf;
@@ -1523,6 +1529,43 @@
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     color: var(--text-secondary);
+  }
+
+  /* Event card enhancements (Task 12 / #717) */
+  .card--event[data-event-type="ceremony"]   { border-inline-start: 3px solid var(--event-ceremony); }
+  .card--event[data-event-type="gathering"]  { border-inline-start: 3px solid var(--event-gathering); }
+  .card--event[data-event-type="powwow"]     { border-inline-start: 3px solid var(--event-powwow); }
+  .card--event[data-event-type="tournament"] { border-inline-start: 3px solid var(--event-tournament); }
+
+  .card--happening-now {
+    background: color-mix(in oklch, var(--surface) 92%, var(--accent));
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--accent) 40%, transparent);
+  }
+
+  .card__relative-date {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    margin-block-start: calc(var(--space-2xs) * -1);
+  }
+
+  .card__distance {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+  }
+
+  .card__thumbnail {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    margin-block-end: var(--space-xs);
+  }
+
+  .card__thumbnail img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   /* Person photo */
