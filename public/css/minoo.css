@@ -3273,6 +3273,30 @@
     }
   }
 
+  .event-feed__section {
+    margin-block-end: var(--space-xl);
+  }
+
+  .event-feed__section-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-block-end: var(--space-md);
+  }
+
+  .event-feed__section-header h2 {
+    margin: 0;
+  }
+
+  .event-feed__section-count {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .event-feed__section--now .card {
+    /* accent reserved for Task 12 */
+  }
+
   .detail-hero {
     padding-block: var(--space-m);
 

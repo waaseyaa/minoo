@@ -162,6 +162,12 @@ return [
     'events.status_happening' => 'Happening Now',
     'events.status_upcoming' => 'Upcoming',
     'events.status_past' => 'Past Event',
+    'events.section_featured' => 'Featured',
+    'events.section_happening_now' => 'Happening now',
+    'events.section_this_week' => 'This week',
+    'events.section_coming_up' => 'Coming up',
+    'events.section_on_horizon' => 'On the horizon',
+    'events.calendar_coming_soon' => 'Calendar view coming soon.',
 
     // Groups
     'groups.title' => 'Groups',

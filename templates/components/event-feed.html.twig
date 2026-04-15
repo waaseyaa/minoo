@@ -1,0 +1,26 @@
+{# Expects: feed (EventFeedResult), communities (map) #}
+{% if feed.featured|length > 0 %}
+  {% include "components/event-feed-section.html.twig" with { title: trans('events.section_featured'), events: feed.featured, communities: communities, variant: 'featured' } %}
+{% endif %}
+{% if feed.happeningNow|length > 0 %}
+  {% include "components/event-feed-section.html.twig" with { title: trans('events.section_happening_now'), events: feed.happeningNow, communities: communities, variant: 'now' } %}
+{% endif %}
+{% if feed.thisWeek|length > 0 %}
+  {% include "components/event-feed-section.html.twig" with { title: trans('events.section_this_week'), events: feed.thisWeek, communities: communities } %}
+{% endif %}
+{% if feed.comingUp|length > 0 %}
+  {% include "components/event-feed-section.html.twig" with { title: trans('events.section_coming_up'), events: feed.comingUp, communities: communities } %}
+{% endif %}
+{% if feed.onTheHorizon|length > 0 %}
+  {% set featuredIds = [] %}
+  {% for f in feed.featured %}{% set featuredIds = featuredIds|merge([f.id()]) %}{% endfor %}
+  {% set horizon = [] %}
+  {% for e in feed.onTheHorizon %}{% if e.id() not in featuredIds %}{% set horizon = horizon|merge([e]) %}{% endif %}{% endfor %}
+  {% if horizon|length > 0 %}
+    {% include "components/event-feed-section.html.twig" with { title: trans('events.section_on_horizon'), events: horizon, communities: communities } %}
+  {% endif %}
+{% endif %}
+
+{% if not feed.hasAnySectionContent() %}
+  {% include "components/empty-state.html.twig" with { heading: trans('events.empty_heading'), body: trans('events.empty_body') } %}
+{% endif %}
