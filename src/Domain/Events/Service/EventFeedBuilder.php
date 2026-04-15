@@ -6,6 +6,7 @@ namespace App\Domain\Events\Service;
 
 use App\Domain\Events\ValueObject\EventFeedResult;
 use App\Domain\Events\ValueObject\EventFilters;
+use App\Domain\Events\ValueObject\Pagination;
 use App\Domain\Geo\ValueObject\LocationContext;
 use Closure;
 use Waaseyaa\Entity\ContentEntityBase;
@@ -39,6 +40,11 @@ final class EventFeedBuilder
     public function build(EventFilters $filters, ?LocationContext $location): EventFeedResult
     {
         $now = ($this->clock)();
+
+        if ($filters->isActive() || $filters->view === 'list') {
+            return $this->buildFiltered($filters, $location, $now);
+        }
+
         $all = $this->loadUpcomingAndActive($now);
 
         $happeningNow = array_values(array_filter(
@@ -96,6 +102,135 @@ final class EventFeedBuilder
             availableFilters: ['types' => [], 'communities' => []],
             pagination:       null,
         );
+    }
+
+    private function buildFiltered(EventFilters $filters, ?LocationContext $location, int $now): EventFeedResult
+    {
+        $perPage = 30;
+        $isPast = $filters->when === 'past';
+        $candidates = $this->loadForFilter($now, $isPast);
+
+        // Filter by type
+        if ($filters->types !== []) {
+            $candidates = array_values(array_filter(
+                $candidates,
+                fn (ContentEntityBase $e) => in_array((string) $e->get('type'), $filters->types, true),
+            ));
+        }
+
+        // Filter by community
+        if ($filters->communityId !== null) {
+            $candidates = array_values(array_filter(
+                $candidates,
+                fn (ContentEntityBase $e) => (string) $e->get('community_id') === $filters->communityId,
+            ));
+        }
+
+        // Filter by when-window
+        $candidates = $this->applyWhenFilter($candidates, $filters, $now);
+
+        // Text search (naive LIKE across title/description/location)
+        if ($filters->q !== null) {
+            $needle = $filters->q;
+            $candidates = array_values(array_filter($candidates, function (ContentEntityBase $e) use ($needle): bool {
+                foreach (['title', 'description', 'location'] as $field) {
+                    $value = $e->get($field);
+                    if (is_string($value) && $value !== '' && stripos($value, $needle) !== false) {
+                        return true;
+                    }
+                }
+                return false;
+            }));
+        }
+
+        // Sort
+        $descending = $isPast || $filters->sort === 'latest';
+        usort(
+            $candidates,
+            fn (ContentEntityBase $a, ContentEntityBase $b): int => $descending
+                ? (int) $b->get('starts_at') <=> (int) $a->get('starts_at')
+                : (int) $a->get('starts_at') <=> (int) $b->get('starts_at'),
+        );
+
+        $total = count($candidates);
+        $offset = ($filters->page - 1) * $perPage;
+        $flatList = array_values(array_slice($candidates, $offset, $perPage));
+
+        return new EventFeedResult(
+            featured:         [],
+            happeningNow:     [],
+            thisWeek:         [],
+            comingUp:         [],
+            onTheHorizon:     [],
+            flatList:         $flatList,
+            calendarMonth:    null,
+            communities:      [],
+            totalUpcoming:    $total,
+            activeFilters:    $filters,
+            availableFilters: ['types' => [], 'communities' => []],
+            pagination:       new Pagination($filters->page, $perPage, $total),
+        );
+    }
+
+    /**
+     * @param  list<ContentEntityBase> $events
+     * @return list<ContentEntityBase>
+     */
+    private function applyWhenFilter(array $events, EventFilters $filters, int $now): array
+    {
+        switch ($filters->when) {
+            case 'week':
+                return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
+                    $s = (int) $e->get('starts_at');
+                    return $s > $now && $s <= $now + 7 * 86400;
+                }));
+            case 'month':
+                return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
+                    $s = (int) $e->get('starts_at');
+                    return $s > $now && $s <= $now + 30 * 86400;
+                }));
+            case '3mo':
+                return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
+                    $s = (int) $e->get('starts_at');
+                    return $s > $now && $s <= $now + 90 * 86400;
+                }));
+            case 'past':
+                return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
+                    return (int) $e->get('ends_at') < $now;
+                }));
+            case 'day':
+                if ($filters->date === null) {
+                    return $events;
+                }
+                $dayStart = strtotime($filters->date . ' 00:00:00 UTC');
+                if ($dayStart === false) {
+                    return $events;
+                }
+                $dayEnd = $dayStart + 86400;
+                return array_values(array_filter($events, function (ContentEntityBase $e) use ($dayStart, $dayEnd): bool {
+                    $s = (int) $e->get('starts_at');
+                    return $s >= $dayStart && $s < $dayEnd;
+                }));
+            default:
+                return $events;
+        }
+    }
+
+    /** @return list<ContentEntityBase> */
+    private function loadForFilter(int $now, bool $includePast): array
+    {
+        $storage = $this->entityTypeManager->getStorage('event');
+        $query = $storage->getQuery()->condition('status', 1);
+        if ($includePast) {
+            $query->condition('ends_at', $now, '<');
+        } else {
+            $query->condition('ends_at', $now, '>=');
+        }
+        $ids = $query->execute();
+        if ($ids === []) {
+            return [];
+        }
+        return array_values($storage->loadMultiple($ids));
     }
 
     /** @return list<ContentEntityBase> */

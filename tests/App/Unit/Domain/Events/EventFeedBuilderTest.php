@@ -146,6 +146,128 @@ final class EventFeedBuilderTest extends TestCase
         $this->assertSame(509, $result->onTheHorizon[0]->id(), 'featured event should lead');
     }
 
+    #[Test]
+    public function filter_short_circuit_returns_flat_list_and_empty_sections(): void
+    {
+        $now = strtotime('2026-04-14 12:00:00');
+        $events = [
+            $this->event(600, type: 'ceremony',  starts: $now + 2 * 86400),
+            $this->event(601, type: 'powwow',    starts: $now + 3 * 86400),
+            $this->event(602, type: 'ceremony',  starts: $now + 4 * 86400),
+            $this->event(603, type: 'gathering', starts: $now + 5 * 86400),
+        ];
+        $builder = $this->buildWith($events, $now);
+        $request = Request::create('/events?type[]=ceremony');
+        $result = $builder->build(EventFilters::fromRequest($request), null);
+
+        $ids = array_map(fn ($e) => $e->id(), $result->flatList);
+        $this->assertSame([600, 602], $ids);
+        $this->assertSame([], $result->happeningNow);
+        $this->assertSame([], $result->thisWeek);
+        $this->assertSame([], $result->comingUp);
+        $this->assertSame([], $result->onTheHorizon);
+        $this->assertNotNull($result->pagination);
+        $this->assertSame(2, $result->pagination->total);
+    }
+
+    #[Test]
+    public function past_filter_sorts_desc_and_excludes_future(): void
+    {
+        $now = strtotime('2026-04-14 12:00:00');
+        $events = [
+            $this->event(700, starts: $now - 10 * 86400, ends: $now - 10 * 86400 + 3600),
+            $this->event(701, starts: $now - 2 * 86400,  ends: $now - 2 * 86400 + 3600),
+            $this->event(702, starts: $now - 5 * 86400,  ends: $now - 5 * 86400 + 3600),
+            $this->event(703, starts: $now + 86400,      ends: $now + 86400 + 3600),
+        ];
+        $builder = $this->buildWith($events, $now);
+        $request = Request::create('/events?when=past');
+        $result = $builder->build(EventFilters::fromRequest($request), null);
+
+        $ids = array_map(fn ($e) => $e->id(), $result->flatList);
+        $this->assertSame([701, 702, 700], $ids);
+        foreach ($result->flatList as $e) {
+            $this->assertLessThan($now, (int) $e->get('ends_at'));
+        }
+    }
+
+    #[Test]
+    public function view_list_without_filters_returns_paginated_flat_list(): void
+    {
+        $now = strtotime('2026-04-14 12:00:00');
+        $events = [
+            $this->event(800, starts: $now + 2 * 86400),
+            $this->event(801, starts: $now + 5 * 86400),
+            $this->event(802, starts: $now + 10 * 86400),
+        ];
+        $builder = $this->buildWith($events, $now);
+        $request = Request::create('/events?view=list');
+        $result = $builder->build(EventFilters::fromRequest($request), null);
+
+        $this->assertCount(3, $result->flatList);
+        $this->assertNotNull($result->pagination);
+        $this->assertSame(1, $result->pagination->page);
+        $this->assertSame(30, $result->pagination->perPage);
+        $this->assertSame(3, $result->pagination->total);
+        $this->assertSame([], $result->happeningNow);
+        $this->assertSame([], $result->thisWeek);
+    }
+
+    #[Test]
+    public function text_search_matches_title_or_description_or_location(): void
+    {
+        $now = strtotime('2026-04-14 12:00:00');
+        $events = [
+            $this->eventWithText(900, starts: $now + 2 * 86400, title: 'Spring Powwow', description: '', location: ''),
+            $this->eventWithText(901, starts: $now + 3 * 86400, title: 'Moose Lake', description: 'Community spring ceremony', location: ''),
+            $this->eventWithText(902, starts: $now + 4 * 86400, title: 'Winter Gathering', description: '', location: 'Spring River Hall'),
+            $this->eventWithText(903, starts: $now + 5 * 86400, title: 'Summer Feast', description: 'no match', location: 'Sudbury'),
+        ];
+        $builder = $this->buildWith($events, $now);
+        $request = Request::create('/events?q=spring');
+        $result = $builder->build(EventFilters::fromRequest($request), null);
+
+        $ids = array_map(fn ($e) => $e->id(), $result->flatList);
+        sort($ids);
+        $this->assertSame([900, 901, 902], $ids);
+    }
+
+    #[Test]
+    public function when_week_constrains_to_next_7_days(): void
+    {
+        $now = strtotime('2026-04-14 12:00:00');
+        $events = [
+            $this->event(1000, starts: $now + 86400),            // +1d
+            $this->event(1001, starts: $now + 6 * 86400),        // +6d
+            $this->event(1002, starts: $now + 8 * 86400),        // +8d (out)
+            $this->event(1003, starts: $now + 20 * 86400),       // +20d (out)
+        ];
+        $builder = $this->buildWith($events, $now);
+        $request = Request::create('/events?when=week');
+        $result = $builder->build(EventFilters::fromRequest($request), null);
+
+        $ids = array_map(fn ($e) => $e->id(), $result->flatList);
+        $this->assertSame([1000, 1001], $ids);
+    }
+
+    private function eventWithText(int $id, int $starts, string $title, string $description, string $location): ContentEntityBase
+    {
+        $mock = $this->createMock(ContentEntityBase::class);
+        $mock->method('id')->willReturn($id);
+        $mock->method('get')->willReturnMap([
+            ['type', 'gathering'],
+            ['community_id', null],
+            ['starts_at', $starts],
+            ['ends_at', $starts + 3600],
+            ['status', 1],
+            ['slug', 'e-' . $id],
+            ['title', $title],
+            ['description', $description],
+            ['location', $location],
+        ]);
+        return $mock;
+    }
+
     /**
      * @param list<ContentEntityBase> $events
      * @param list<int>               $featuredEventIds
