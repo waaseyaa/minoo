@@ -1,0 +1,48 @@
+{#
+  Pagination nav.
+  Expects:
+    - pagination: App\Domain\Events\ValueObject\Pagination
+    - filters: App\Domain\Events\ValueObject\EventFilters
+    - base_path: string (default '/events')
+#}
+{% set basePath = base_path|default('/events') %}
+{% set totalPages = pagination.totalPages() %}
+{% if totalPages > 1 %}
+  <nav class="pagination" aria-label="Pagination">
+    {% if pagination.hasPrev() %}
+      <a class="pagination__link pagination__link--prev"
+         href="{{ basePath }}{{ filters.toQueryString({'page': pagination.page - 1}) }}"
+         rel="prev">{{ trans('events.pagination_prev') }}</a>
+    {% endif %}
+
+    {% set windowStart = max(1, pagination.page - 2) %}
+    {% set windowEnd = min(totalPages, pagination.page + 2) %}
+    {% if windowStart > 1 %}
+      <a class="pagination__link" href="{{ basePath }}{{ filters.toQueryString({'page': 1}) }}">1</a>
+      {% if windowStart > 2 %}<span class="pagination__ellipsis" aria-hidden="true">…</span>{% endif %}
+    {% endif %}
+
+    {% for p in windowStart..windowEnd %}
+      {% if p == pagination.page %}
+        <span class="pagination__link pagination__link--current" aria-current="page">{{ p }}</span>
+      {% else %}
+        <a class="pagination__link" href="{{ basePath }}{{ filters.toQueryString({'page': p}) }}">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if windowEnd < totalPages %}
+      {% if windowEnd < totalPages - 1 %}<span class="pagination__ellipsis" aria-hidden="true">…</span>{% endif %}
+      <a class="pagination__link" href="{{ basePath }}{{ filters.toQueryString({'page': totalPages}) }}">{{ totalPages }}</a>
+    {% endif %}
+
+    {% if pagination.hasNext() %}
+      <a class="pagination__link pagination__link--next"
+         href="{{ basePath }}{{ filters.toQueryString({'page': pagination.page + 1}) }}"
+         rel="next">{{ trans('events.pagination_next') }}</a>
+    {% endif %}
+
+    <span class="pagination__status visually-hidden">
+      {{ trans('events.pagination_page_of')|replace({':current': pagination.page, ':total': totalPages}) }}
+    </span>
+  </nav>
+{% endif %}

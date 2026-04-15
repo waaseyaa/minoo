@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60" role="img" aria-label="Spring scene">
+            <!-- Branch -->
+            <path d="M20,45 Q60,40 100,35 Q140,30 180,28" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+            <!-- Buds -->
+            <ellipse cx="55" cy="38" rx="4" ry="7" fill="#1a1a1a" transform="rotate(-15,55,38)"/>
+            <ellipse cx="90" cy="33" rx="4" ry="7" fill="#1a1a1a" transform="rotate(-10,90,33)"/>
+            <ellipse cx="130" cy="30" rx="3" ry="6" fill="#1a1a1a" transform="rotate(-5,130,30)"/>
+            <!-- Small leaf unfurling -->
+            <path d="M155,27 Q160,18 165,27" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+            <!-- Bird silhouette -->
+            <path d="M38,15 Q45,8 52,15" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+            <path d="M52,15 Q59,8 66,15" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+        </svg>

@@ -1,0 +1,50 @@
+<div class="event-calendar-wrap">
+  <nav class="event-calendar__nav" aria-label="{{ calendarMonth.label() }}">
+    <a class="btn btn--ghost" href="{{ lang_url('/events') ~ filters.toQueryString({'view': 'calendar', 'month': calendarMonth.prevMonth, 'page': null}) }}" rel="prev">
+      &larr; {{ trans('events.calendar_prev_month') }}
+    </a>
+    <h2 class="event-calendar__label">{{ calendarMonth.label() }}</h2>
+    <a class="btn btn--ghost" href="{{ lang_url('/events') ~ filters.toQueryString({'view': 'calendar', 'month': calendarMonth.nextMonth, 'page': null}) }}" rel="next">
+      {{ trans('events.calendar_next_month') }} &rarr;
+    </a>
+  </nav>
+
+  <table role="grid" class="event-calendar" aria-label="{{ calendarMonth.label() }}">
+    <thead>
+      <tr>
+        <th scope="col">{{ trans('events.weekday_sun') }}</th>
+        <th scope="col">{{ trans('events.weekday_mon') }}</th>
+        <th scope="col">{{ trans('events.weekday_tue') }}</th>
+        <th scope="col">{{ trans('events.weekday_wed') }}</th>
+        <th scope="col">{{ trans('events.weekday_thu') }}</th>
+        <th scope="col">{{ trans('events.weekday_fri') }}</th>
+        <th scope="col">{{ trans('events.weekday_sat') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in calendarMonth.weeks %}
+        <tr>
+          {% for day in week %}
+            <td class="event-calendar__day{% if day.inMonth %} event-calendar__day--in-month{% endif %}{% if day.isToday %} event-calendar__day--today{% endif %}">
+              <div class="event-calendar__date">
+                <span class="event-calendar__num">{{ day.date.format('j') }}</span>
+                {% if day.isToday %}<span class="visually-hidden">{{ trans('events.calendar_today') }}</span>{% endif %}
+              </div>
+              {% set shown = day.events|slice(0, 3) %}
+              {% for e in shown %}
+                <a class="event-calendar__event" data-event-type="{{ e.get('type')|default('') }}" href="/events/{{ e.get('slug') }}">
+                  {{ e.get('title') }}
+                </a>
+              {% endfor %}
+              {% if day.events|length > 3 %}
+                <span class="event-calendar__more">
+                  {{ trans('events.calendar_more_events')|replace({':count': (day.events|length - 3)}) }}
+                </span>
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -21,22 +21,25 @@
         <p class="listing-hero__subtitle">{{ trans('events.subtitle') }}</p>
       </div>
 
-      {% if events is defined and events|length > 0 %}
-        <div class="card-grid">
-          {% for e in events %}
-            {% set comm = communities[e.get('community_id')]|default({}) %}
-            {% include "components/event-card.html.twig" with {
-              title: e.get('title'),
-              type: e.get('type')|default('')|capitalize,
-              date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
-              location: e.get('location')|default(''),
-              excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
-              url: "/events/" ~ e.get('slug'),
-              community_name: comm.name|default(''),
-              community_slug: comm.slug|default('')
-            } %}
-          {% endfor %}
-        </div>
+      {% if filters is defined %}
+        {% include "components/event-filters.html.twig" with { filters: filters, feed: feed|default(null), location: location|default(null) } %}
+      {% endif %}
+
+      {% if filters is defined and filters.view == 'calendar' and feed is defined and feed.calendarMonth %}
+        {% include "components/event-calendar.html.twig" with {
+          calendarMonth: feed.calendarMonth,
+          filters: filters
+        } %}
+      {% elseif (filters is defined and filters.view == 'list') or (feed is defined and feed.flatList|length > 0) %}
+        {% include "components/event-list.html.twig" with {
+          events: (feed is defined and feed.flatList is defined) ? feed.flatList : (events|default([])),
+          groups: (feed is defined and feed.flatList is defined) ? feed.monthGroups() : null,
+          pagination: (feed is defined and feed.pagination is defined) ? feed.pagination : null,
+          filters: filters,
+          communities: communities
+        } %}
+      {% elseif feed is defined %}
+        {% include "components/event-feed.html.twig" with { feed: feed, communities: communities } %}
       {% else %}
         {% include "components/empty-state.html.twig" with {
           heading: trans('events.empty_heading'),
@@ -62,6 +65,9 @@
       } %}
       <div class="detail-hero">
         <a href="{{ lang_url('/events') }}" class="detail-hero__back">{{ trans('events.detail_back') }}</a>
+        {% if event.get('slug') %}
+          <a href="/events/{{ event.get('slug') }}.ics" class="btn btn--secondary detail-hero__ics" download>{{ trans('events.add_to_calendar') }}</a>
+        {% endif %}
         {% if event.get('type') is not empty %}
           <span class="detail-hero__badge">{{ event.get('type')|capitalize }}</span>
         {% endif %}
@@ -132,6 +138,26 @@
           <a href="/communities/{{ host_community.get('slug') }}" class="community-link">
             {{ host_community.get('name') }}
           </a>
+        </section>
+      {% endif %}
+
+      {% if similar_upcoming is defined and similar_upcoming|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('events.similar_upcoming') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for e in similar_upcoming %}
+              {% include "components/event-card.html.twig" with {
+                title: e.get('title'),
+                type: e.get('type')|default('')|capitalize,
+                date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
+                starts_at_iso: e.get('starts_at') ? e.get('starts_at')|date('c') : '',
+                starts_at_raw: e.get('starts_at'),
+                location: e.get('location')|default(''),
+                excerpt: '',
+                url: "/events/" ~ e.get('slug')
+              } %}
+            {% endfor %}
+          </div>
         </section>
       {% endif %}
     </div>

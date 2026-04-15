@@ -1,7 +1,22 @@
-<article class="card card--event">
+<article class="card card--event{% if happening_now|default(false) %} card--happening-now{% endif %}" data-event-type="{{ type|default('')|lower }}">
+  {% if photo_url is defined and photo_url %}
+    <div class="card__thumbnail">
+      <img src="{{ photo_url }}" alt="" loading="lazy">
+    </div>
+  {% endif %}
   <span class="card__badge card__badge--event">{{ type }}</span>
   <h3 class="card__title"><a href="{{ url }}">{{ title }}</a></h3>
-  <p class="card__date">{{ date }}</p>
+  {% if starts_at_iso is defined and starts_at_iso %}
+    <p class="card__date"><time datetime="{{ starts_at_iso }}">{{ date }}</time></p>
+    {% if starts_at_raw is defined and starts_at_raw %}
+      <p class="card__relative-date">{{ starts_at_raw|relative_date }}</p>
+    {% endif %}
+  {% elseif date is defined and date %}
+    <p class="card__date">{{ date }}</p>
+  {% endif %}
+  {% if distance_km is defined and distance_km %}
+    <p class="card__distance">{{ distance_km|round }} km away</p>
+  {% endif %}
   {% if location is defined and location %}
     <p class="card__meta">{{ location }}</p>
   {% endif %}

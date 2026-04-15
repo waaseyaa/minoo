@@ -1,0 +1,152 @@
+{# Filter bar for /events listing. GET form, no JS required. #}
+{% set whenOptions = [
+  { value: 'all',   label: trans('events.filter_when_all') },
+  { value: 'week',  label: trans('events.filter_when_week') },
+  { value: 'month', label: trans('events.filter_when_month') },
+  { value: '3mo',   label: trans('events.filter_when_3mo') },
+  { value: 'past',  label: trans('events.filter_when_past') }
+] %}
+{% set typeOptions = ['ceremony', 'gathering', 'powwow', 'tournament'] %}
+{% set communities = feed is defined and feed.availableFilters.communities is defined ? feed.availableFilters.communities : [] %}
+
+<form class="event-filters" method="get" action="{{ lang_url('/events') }}" role="search" aria-label="{{ trans('events.title') }}">
+  {# Default view for non-toggle submits; view-toggle buttons below append their own name=view which browsers prefer from the button activated. #}
+  <input type="hidden" name="view" value="{{ filters.view }}" />
+  <div class="event-filters__row">
+    <div class="event-filters__group event-filters__group--search">
+      <label class="sr-only" for="event-filter-q">{{ trans('events.filter_search_placeholder') }}</label>
+      <input
+        type="search"
+        id="event-filter-q"
+        name="q"
+        value="{{ filters.q|default('') }}"
+        placeholder="{{ trans('events.filter_search_placeholder') }}"
+        class="event-filters__input"
+      />
+    </div>
+
+    <div class="event-filters__group event-filters__group--view" role="group" aria-label="{{ trans('events.filter_apply') }}">
+      {% for v in ['feed', 'list', 'calendar'] %}
+        <button
+          type="submit"
+          name="view"
+          value="{{ v }}"
+          class="event-filters__view-toggle"
+          aria-pressed="{{ filters.view == v ? 'true' : 'false' }}"
+        >{{ trans('events.view_' ~ v) }}</button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <fieldset class="event-filters__group event-filters__group--when">
+    <legend class="event-filters__legend">{{ trans('events.filter_when_all') }}</legend>
+    <div class="event-filters__chips">
+      {% for opt in whenOptions %}
+        <label class="event-filters__chip-label">
+          <input
+            type="radio"
+            name="when"
+            value="{{ opt.value }}"
+            {{ filters.when == opt.value ? 'checked' : '' }}
+          />
+          <span>{{ opt.label }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <fieldset class="event-filters__group event-filters__group--types">
+    <legend class="event-filters__legend">{{ trans('events.filter_types_heading') }}</legend>
+    <div class="event-filters__chips">
+      {% for t in typeOptions %}
+        <label class="event-filters__chip-label">
+          <input
+            type="checkbox"
+            name="type[]"
+            value="{{ t }}"
+            {{ t in filters.types ? 'checked' : '' }}
+          />
+          <span>{{ trans('events.filter_type_' ~ t) }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  {% if communities|length > 0 %}
+    <div class="event-filters__group">
+      <label class="event-filters__legend" for="event-filter-community">{{ trans('events.filter_community') }}</label>
+      <select id="event-filter-community" name="community_id" class="event-filters__select">
+        <option value="">—</option>
+        {% for c in communities %}
+          <option value="{{ c.id }}" {{ filters.communityId == c.id ? 'selected' : '' }}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+
+  {% if location is defined and location %}
+    <div class="event-filters__group event-filters__group--near">
+      <label class="event-filters__chip-label">
+        <input type="checkbox" name="near" value="1" {{ filters.near ? 'checked' : '' }} />
+        <span>{{ trans('events.filter_near_me') }}</span>
+      </label>
+    </div>
+  {% endif %}
+
+  <div class="event-filters__group event-filters__group--sort">
+    <label class="event-filters__legend" for="event-filter-sort">{{ trans('events.filter_sort_label') }}</label>
+    <select id="event-filter-sort" name="sort" class="event-filters__select">
+      <option value="soonest" {{ filters.sort == 'soonest' ? 'selected' : '' }}>{{ trans('events.filter_sort_soonest') }}</option>
+      <option value="latest"  {{ filters.sort == 'latest'  ? 'selected' : '' }}>{{ trans('events.filter_sort_latest') }}</option>
+    </select>
+  </div>
+
+  <div class="event-filters__actions">
+    <button type="submit" class="btn btn--primary">{{ trans('events.filter_apply') }}</button>
+    {% if filters.isActive() %}
+      <a href="{{ lang_url('/events') }}{{ filters.view != 'feed' ? '?view=' ~ filters.view : '' }}" class="btn btn--ghost">{{ trans('events.filter_clear') }}</a>
+    {% endif %}
+  </div>
+
+</form>
+
+{% if filters.isActive() %}
+  <ul class="event-filters__active" aria-label="Active filters">
+    {% if filters.q %}
+      <li class="event-filters__chip">
+        <span>{{ filters.q }}</span>
+        <a href="{{ lang_url('/events') }}{{ filters.without('q').toQueryString() }}" class="event-filters__chip-remove" aria-label="{{ trans('events.chip_remove') }}">×</a>
+      </li>
+    {% endif %}
+    {% if filters.when != 'all' %}
+      <li class="event-filters__chip">
+        <span>{{ trans('events.filter_when_' ~ filters.when) }}</span>
+        <a href="{{ lang_url('/events') }}{{ filters.without('when').toQueryString() }}" class="event-filters__chip-remove" aria-label="{{ trans('events.chip_remove') }}">×</a>
+      </li>
+    {% endif %}
+    {% for t in filters.types %}
+      <li class="event-filters__chip">
+        <span>{{ trans('events.filter_type_' ~ t) }}</span>
+        <a href="{{ lang_url('/events') }}{{ filters.without('type', t).toQueryString() }}" class="event-filters__chip-remove" aria-label="{{ trans('events.chip_remove') }}">×</a>
+      </li>
+    {% endfor %}
+    {% if filters.communityId %}
+      <li class="event-filters__chip">
+        <span>{{ trans('events.filter_community') }}</span>
+        <a href="{{ lang_url('/events') }}{{ filters.without('community_id').toQueryString() }}" class="event-filters__chip-remove" aria-label="{{ trans('events.chip_remove') }}">×</a>
+      </li>
+    {% endif %}
+    {% if filters.near %}
+      <li class="event-filters__chip">
+        <span>{{ trans('events.filter_near_me') }}</span>
+        <a href="{{ lang_url('/events') }}{{ filters.without('near').toQueryString() }}" class="event-filters__chip-remove" aria-label="{{ trans('events.chip_remove') }}">×</a>
+      </li>
+    {% endif %}
+    {% if filters.date %}
+      <li class="event-filters__chip">
+        <span>{{ filters.date }}</span>
+        <a href="{{ lang_url('/events') }}{{ filters.without('date').toQueryString() }}" class="event-filters__chip-remove" aria-label="{{ trans('events.chip_remove') }}">×</a>
+      </li>
+    {% endif %}
+  </ul>
+{% endif %}

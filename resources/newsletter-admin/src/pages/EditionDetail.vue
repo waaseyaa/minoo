@@ -129,6 +129,7 @@ const sectionLabels = {
 const sectionOrder = Object.keys(sectionLabels)
 
 const edition = ref(null)
+const itemsBySectionData = ref({})
 const loading = ref(true)
 const error = ref('')
 const generating = ref(false)
@@ -160,6 +161,7 @@ async function loadEdition() {
   try {
     const data = await getEdition(props.id)
     edition.value = data.edition ?? data
+    itemsBySectionData.value = data.items_by_section ?? {}
   } catch (e) {
     error.value = e.message
   } finally {
@@ -168,10 +170,8 @@ async function loadEdition() {
 }
 
 function itemsBySection(section) {
-  if (!edition.value?.items) return []
-  return edition.value.items
-    .filter(i => i.section === section)
-    .sort((a, b) => a.position - b.position)
+  const list = itemsBySectionData.value?.[section] ?? []
+  return [...list].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
 }
 
 function openAddModal(section) {
@@ -254,8 +254,7 @@ async function onReorder(itemId, newPosition) {
 async function refreshPreview() {
   try {
     const data = await getPreviewToken(props.id)
-    const token = data.token ?? data
-    previewUrl.value = `/newsletter/_internal/preview/${props.id}?token=${token}`
+    previewUrl.value = data.preview_url
   } catch (e) {
     error.value = e.message
   }

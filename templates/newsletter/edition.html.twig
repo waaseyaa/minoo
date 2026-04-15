@@ -19,8 +19,8 @@
 
         body {
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 12pt;
-            line-height: 1.5;
+            font-size: 14pt;
+            line-height: 1.6;
             color: #1a1a1a;
             background: #fff;
             max-width: 8.5in;
@@ -44,82 +44,176 @@
             text-align: center;
         }
         .cover .newsletter-title {
-            font-size: 32pt;
+            font-size: 40pt;
             font-weight: bold;
-            letter-spacing: 1pt;
-            margin-top: 1.2in;
-            padding-bottom: 0.15in;
+            letter-spacing: 1.5pt;
+            margin-top: 0.45in;
+            padding-bottom: 0.1in;
             border-bottom: 4px solid #1a1a1a;
         }
         .cover .subtitle {
-            font-size: 13pt;
+            font-size: 15pt;
             font-style: italic;
             color: #555;
             margin-top: 0.1in;
         }
         .cover .masthead-info {
-            font-size: 11pt;
+            font-size: 11.5pt;
             color: #444;
-            margin-top: 0.6in;
+            margin-top: 0.2in;
         }
         .cover .issue-info {
-            font-size: 16pt;
+            font-size: 18pt;
             font-weight: bold;
-            margin-top: 0.4in;
+            margin-top: 0.14in;
         }
         .cover .welcome-box {
-            margin-top: 0.8in;
-            padding: 0.3in;
+            margin-top: 0.3in;
+            padding: 0.2in 0.25in;
             border: 2px solid #1a1a1a;
             text-align: left;
             font-size: 13pt;
             line-height: 1.5;
         }
+        .cover .welcome-box p { margin: 0; }
         .cover .toc {
-            margin-top: 0.6in;
+            margin-top: 0.3in;
             text-align: left;
-            font-size: 12pt;
-            line-height: 2;
-            padding-left: 0.5in;
+            padding: 0 0.4in;
         }
-        .cover .toc span.toc-page {
-            float: right;
-            padding-right: 0.5in;
-            color: #666;
+        .cover .toc-title {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1pt;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 0.05in;
+            margin-bottom: 0.1in;
+        }
+        .cover .toc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13pt;
+            line-height: 1.3;
+        }
+        .cover .toc-table tr {
+            border-bottom: 1px dotted #bbb;
+        }
+        .cover .toc-table tr:last-child {
+            border-bottom: none;
+        }
+        .cover .toc-label {
+            padding: 0.06in 0.1in 0.06in 0;
+            white-space: nowrap;
+        }
+        .cover .toc-dots {
+            width: 100%;
+        }
+        .cover .toc-page {
+            text-align: right;
+            font-weight: bold;
+            padding: 0.06in 0;
+            color: #333;
+            white-space: nowrap;
         }
 
         /* ---------- Section headers ---------- */
         h2 {
-            font-size: 16pt;
+            font-size: 18pt;
             text-transform: uppercase;
             letter-spacing: 1pt;
             border-bottom: 2px solid #1a1a1a;
-            padding-bottom: 0.06in;
-            margin-bottom: 0.25in;
-            margin-top: 0.1in;
+            padding-bottom: 0.04in; /* was 0.06in */
+            margin-bottom: 0.14in; /* was 0.25in */
+            margin-top: 0.05in; /* was 0.1in */
         }
         h3 {
-            font-size: 13pt;
-            margin-top: 0.15in;
-            margin-bottom: 0.05in;
+            font-size: 15pt;
+            margin-top: 0.14in; /* was 0.25in */
+            margin-bottom: 0.05in; /* was 0.08in */
         }
         p {
-            margin-bottom: 0.08in;
+            margin-bottom: 0.08in; /* was 0.15in */
         }
 
         /* ---------- Section intro ---------- */
-        .section-intro {
+        .source-line {
+            text-indent: 0;
+            font-size: 9.5pt;
+            line-height: 1.25;
+            color: #666;
+            margin-top: 0.04in;
+            margin-bottom: 0.06in;
+        }
+        .news-lead {
+            margin-bottom: 0.18in;
+        }
+        .news-lead h3 {
+            font-size: 18pt;
+            line-height: 1.2;
+            margin-top: 0.04in;
+            margin-bottom: 0.08in;
+        }
+        .news-lead .drop-cap {
+            font-size: 14pt;
+        }
+        .kicker {
+            font-size: 9pt;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #555;
+            border-bottom: 1px solid #bbb;
+            padding-bottom: 0.03in;
+            margin-bottom: 0.06in;
+        }
+        hr.lead-rule {
+            border: 0;
+            border-top: 1px solid #999;
+            margin: 0.1in 0 0.15in;
+        }
+        .date-line {
+            text-indent: 0;
+            font-size: 9.5pt;
+            line-height: 1.25;
+            color: #666;
             font-style: italic;
-            color: #444;
-            font-size: 12pt;
-            margin-bottom: 0.2in;
+            margin-top: 0;
+            margin-bottom: 0.06in;
+        }
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 0.2in;
+            margin-bottom: 0.14in;
+            border-bottom: 1px solid #999;
+            padding-bottom: 0.06in;
+        }
+        .section-header h2 {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .section-header .section-intro {
+            border-left: none;
+            padding-left: 0;
+            margin-bottom: 0;
+            font-size: 11pt;
+            flex: 1;
+        }
+        .section-intro {
+            color: #333;
+            font-size: 13pt;
+            line-height: 1.5;
+            margin-bottom: 0.14in;
             border-left: 3px solid #999;
             padding-left: 0.15in;
         }
 
         /* ---------- Article blocks ---------- */
         article {
-            margin-bottom: 0.15in;
+            margin-bottom: 0.16in; /* was 0.3in */
         }
 
         /* ---------- Prose indent ---------- */
@@ -133,8 +227,8 @@
         /* ---------- Boxed sections ---------- */
         .boxed {
             border: 2px solid #1a1a1a;
-            padding: 0.2in;
-            margin-bottom: 0.25in;
+            padding: 0.15in; /* was 0.2in */
+            margin-bottom: 0.14in; /* was 0.25in */
         }
         .boxed h3 {
             margin-top: 0;
@@ -149,44 +243,81 @@
 
         /* ---------- Horoscope items ---------- */
         .horoscope-item {
-            margin-bottom: 0.1in;
+            margin-bottom: 0.14in;
             break-inside: avoid;
         }
         .horoscope-item h3 {
-            font-size: 11pt;
+            font-size: 12pt;
             margin-top: 0;
-            margin-bottom: 0.02in;
+            margin-bottom: 0.05in;
+            padding-bottom: 0.03in;
+            border-bottom: 1px solid #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 0.5pt;
         }
         .horoscope-item p {
             font-size: 11pt;
-            line-height: 1.4;
             text-indent: 0;
+            line-height: 1.45;
         }
+
+        /* ---------- Puzzle tail (two-col under word search) ---------- */
+        .puzzle-tail {
+            column-count: 2;
+            column-gap: 0.35in;
+            column-rule: 1px solid #ccc;
+            margin-top: 0.18in;
+        }
+        .puzzle-card {
+            break-inside: avoid;
+            margin-bottom: 0.14in;
+        }
+        .puzzle-card h3 {
+            font-size: 12pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5pt;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 0.03in;
+            margin: 0 0 0.05in;
+        }
+        .puzzle-card p { text-indent: 0; font-size: 11pt; }
 
         /* ---------- Puzzle grid ---------- */
         .word-search-grid {
-            font-family: "Courier New", monospace;
-            font-size: 14pt;
-            line-height: 1.8;
-            letter-spacing: 0.15in;
+            font-family: "Courier New", "Courier", monospace;
+            border-collapse: collapse;
+            margin: 0.1in auto; /* was 0.15in */
+            border: 2px solid #1a1a1a;
+        }
+        .word-search-grid td {
+            width: 0.34in;
+            height: 0.34in;
             text-align: center;
-            margin: 0.2in 0;
+            vertical-align: middle;
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #888;
+            padding: 0;
         }
         .word-list {
             column-count: 3;
             column-gap: 0.3in;
             font-size: 12pt;
-            margin-top: 0.15in;
+            margin: 0.1in 0.2in 0; /* was 0.15in top */
+            padding: 0;
+            list-style: none;
         }
-        .word-list span {
-            display: block;
+        .word-list li {
+            break-inside: avoid;
+            margin-bottom: 0.03in;
         }
 
         /* ---------- Quote block ---------- */
         blockquote {
             border-left: 4px solid #1a1a1a;
             padding-left: 0.2in;
-            margin: 0.2in 0;
+            margin: 0.12in 0; /* was 0.2in */
             font-style: italic;
             font-size: 15pt;
             line-height: 1.5;
@@ -213,54 +344,86 @@
             margin-bottom: 0.06in;
         }
 
-        /* ---------- Events two-column ---------- */
+        /* ---------- Events list (single column; wraps floated calendar) ---------- */
         .events-grid {
-            column-count: 2;
-            column-gap: 0.3in;
-            column-rule: 1px solid #ccc;
+            /* Text flows in one column around the floated mini-calendar */
         }
         .events-grid article {
             break-inside: avoid;
-            margin-bottom: 0.15in;
+            margin-bottom: 0.08in;
+            padding-bottom: 0.05in;
+            border-bottom: 1px dotted #bbb;
+        }
+        .events-grid article:last-child {
+            border-bottom: none;
         }
         .events-grid h3 {
-            font-size: 12pt;
+            font-size: 14pt;
+            line-height: 1.25;
             margin-top: 0;
+            margin-bottom: 0.06in;
         }
         .events-grid p {
-            font-size: 11pt;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin-bottom: 0.04in;
+        }
+        .events-grid .event-detail {
+            font-size: 12pt;
+            line-height: 1.35;
+            margin-bottom: 0.03in;
+        }
+        .events-grid .event-detail strong {
+            display: inline-block;
+            min-width: 0.55in;
+        }
+        /* Clear the calendar float so the dotted rule sits below it cleanly */
+        .events-grid::after {
+            content: "";
+            display: block;
+            clear: both;
         }
 
-        /* ---------- Mini calendar ---------- */
+        /* ---------- Mini calendar (elder-readable sizing) ---------- */
         .mini-cal {
             float: right;
-            margin: 0 0 0.2in 0.25in;
+            margin: 0 0 0.15in 0.22in;
             border: 2px solid #1a1a1a;
             border-collapse: collapse;
-            font-size: 10pt;
-            line-height: 1.3;
+            font-size: 12pt;
+            line-height: 1.35;
         }
         .mini-cal caption {
             font-weight: bold;
-            font-size: 11pt;
-            padding: 0.06in 0;
+            font-size: 13pt;
+            padding: 0.07in 0;
             border-bottom: 2px solid #1a1a1a;
+            letter-spacing: 0.5pt;
+            text-transform: uppercase;
         }
         .mini-cal th {
-            font-size: 9pt;
-            font-weight: normal;
-            color: #666;
-            padding: 0.04in 0.08in;
+            font-size: 10pt;
+            font-weight: bold;
+            color: #333;
+            padding: 0.05in 0.09in;
             text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5pt;
+            background: #f0f0f0;
+            border-bottom: 1px solid #888;
         }
         .mini-cal td {
             text-align: center;
-            padding: 0.04in 0.08in;
-            font-size: 10pt;
+            padding: 0.06in 0.09in;
+            font-size: 12pt;
+            border: 1px solid #ccc;
+            min-width: 0.32in;
+            height: 0.32in;
         }
         .mini-cal td.has-event {
             font-weight: bold;
             background: #e8e8e8;
+            border-color: #1a1a1a;
         }
 
         /* ---------- Drop cap ---------- */
@@ -275,7 +438,7 @@
 
         /* ---------- Signature block ---------- */
         .signature {
-            margin-top: 0.4in;
+            margin-top: 0.22in; /* was 0.4in */
             font-style: italic;
             text-indent: 0;
         }
@@ -283,7 +446,7 @@
         /* ---------- Attribution ---------- */
         .attribution {
             text-indent: 0;
-            margin-top: 0.15in;
+            margin-top: 0.08in; /* was 0.15in */
             font-style: italic;
         }
 
@@ -291,20 +454,20 @@
         .featured-word {
             border: 2px solid #1a1a1a;
             text-align: center;
-            padding: 0.35in 0.4in;
-            margin-bottom: 0.25in;
+            padding: 0.22in 0.3in; /* was 0.35in 0.4in */
+            margin-bottom: 0.15in; /* was 0.25in */
         }
         .featured-word .word {
             font-size: 28pt;
             font-weight: bold;
-            margin-bottom: 0.08in;
+            margin-bottom: 0.05in; /* was 0.08in */
             text-indent: 0;
         }
         .featured-word .pronunciation {
             font-size: 15pt;
             font-style: italic;
             color: #555;
-            margin-bottom: 0.15in;
+            margin-bottom: 0.08in; /* was 0.15in */
             text-indent: 0;
         }
         .featured-word .meaning {
@@ -314,17 +477,83 @@
         .featured-word .example {
             font-size: 13pt;
             color: #444;
-            margin-top: 0.12in;
+            margin-top: 0.07in; /* was 0.12in */
             text-indent: 0;
+        }
+        .featured-word-svg {
+            margin-bottom: 0.07in; /* was 0.12in */
+        }
+        .featured-word-svg svg {
+            display: block;
+            margin: 0 auto;
+            max-height: 0.6in;
+        }
+
+        /* ---------- Teachings ---------- */
+        .teaching-banner {
+            margin: 0.05in 0 0.1in;
+            text-align: center;
+        }
+        .teaching-banner svg {
+            display: block;
+            margin: 0 auto;
+            max-height: 0.7in;
+            width: auto;
+        }
+        .teaching-block {
+            margin-bottom: 0.12in;
+            padding-bottom: 0.08in;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .teaching-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .teaching-heading {
+            display: flex;
+            align-items: center;
+            gap: 0.15in;
+            margin: 0 0 0.08in;
+        }
+        .teaching-icon {
+            flex: 0 0 0.7in;
+        }
+        .teaching-icon svg {
+            display: block;
+            width: 0.7in;
+            height: 0.7in;
+        }
+        .teaching-heading h3 {
+            margin: 0;
+            flex: 1;
+        }
+        .teaching-block .teaching-body {
+            text-indent: 0;
+        }
+        .teaching-block .teaching-body p {
+            text-indent: 0.2in;
+            margin: 0 0 0.06in;
+        }
+        .teaching-block .teaching-body p:first-child {
+            text-indent: 0;
+        }
+        .teaching-block.has-drop-cap .teaching-body p:first-child::first-letter {
+            float: left;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 36pt;
+            line-height: 0.85;
+            padding: 0.04in 0.06in 0 0;
+            font-weight: bold;
         }
 
         /* ---------- Vocabulary list ---------- */
         .vocab-list {
             text-indent: 0;
-            margin-top: 0.15in;
+            margin-top: 0.08in; /* was 0.15in */
         }
         .vocab-item {
-            margin-bottom: 0.12in;
+            margin-bottom: 0.07in; /* was 0.12in */
             text-indent: 0;
         }
 
@@ -332,18 +561,19 @@
         .vocab-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.2in;
-            margin-top: 0.2in;
+            gap: 0.12in; /* was 0.2in */
+            margin-top: 0.12in; /* was 0.2in */
         }
         .vocab-card {
             border: 1.5px solid #1a1a1a;
-            padding: 0.12in 0.15in;
+            padding: 0.09in 0.12in; /* was 0.12in 0.15in */
             text-align: center;
             break-inside: avoid;
         }
         .vocab-card svg {
             display: block;
             margin: 0 auto 0.06in;
+            max-height: 0.45in;
         }
         .vocab-card .vocab-word {
             font-size: 14pt;
@@ -361,9 +591,16 @@
         }
 
         /* ---------- Joke styling ---------- */
+        .jokes-grid {
+            column-count: 2;
+            column-gap: 0.35in;
+            column-rule: 1px solid #ccc;
+            margin-top: 0.08in;
+        }
         .joke {
-            margin-bottom: 0.25in;
-            padding-bottom: 0.15in;
+            break-inside: avoid;
+            margin-bottom: 0.14in;
+            padding-bottom: 0.08in;
             border-bottom: 1px dotted #ccc;
         }
         .joke:last-child {
@@ -371,6 +608,16 @@
         }
         .joke p {
             text-indent: 0;
+            margin-bottom: 0.05in;
+        }
+        .joke h3 {
+            font-size: 11pt;
+            text-transform: uppercase;
+            letter-spacing: 1pt;
+            color: #444;
+            margin: 0 0 0.05in;
+            border-bottom: 1px solid #bbb;
+            padding-bottom: 0.02in;
         }
 
         /* ---------- Puzzle styling ---------- */
@@ -384,7 +631,7 @@
         /* ---------- Photo caption ---------- */
         .photo-wrap {
             text-align: center;
-            margin-bottom: 0.25in;
+            margin-bottom: 0.14in;
         }
         .photo-wrap img {
             width: 3.5in;
@@ -397,28 +644,66 @@
             margin-top: 0.05in;
             text-indent: 0;
         }
+        /* Floated spotlight photo — wraps prose */
+        .photo-wrap.float-left {
+            float: left;
+            width: 2.6in;
+            margin: 0.04in 0.22in 0.08in 0;
+        }
+        .photo-wrap.float-left img {
+            width: 2.6in;
+        }
+
+        /* ---------- Pull quote ---------- */
+        .pull-quote {
+            float: right;
+            width: 2.2in;
+            margin: 0.1in 0 0.15in 0.25in;
+            padding: 0.12in 0 0.1in;
+            border-top: 2px solid #1a1a1a;
+            border-bottom: 2px solid #1a1a1a;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 15pt;
+            font-style: italic;
+            line-height: 1.3;
+            text-indent: 0;
+            color: #1a1a1a;
+        }
+        .pull-quote::before { content: "\201C"; }
+        .pull-quote::after  { content: "\201D"; }
+
+        /* Spotlight CTA line at foot of elder feature */
+        .spotlight-cta {
+            text-indent: 0;
+            font-style: italic;
+            color: #444;
+            border-top: 1px solid #999;
+            padding-top: 0.1in;
+            margin-top: 0.2in;
+            font-size: 11pt;
+        }
 
         /* ---------- Back page ---------- */
         .back-page-box {
             border: 2px solid #1a1a1a;
-            padding: 0.25in;
-            margin-top: 0.3in;
+            padding: 0.18in; /* was 0.25in */
+            margin-top: 0.18in; /* was 0.3in */
         }
         .back-page-box h3 {
             text-align: center;
             margin-top: 0;
-            margin-bottom: 0.15in;
+            margin-bottom: 0.08in; /* was 0.15in */
         }
         .contact-line {
             font-size: 12pt;
-            margin-bottom: 0.1in;
+            margin-bottom: 0.05in; /* was 0.1in */
             text-indent: 0;
         }
 
         /* ---------- Partners block ---------- */
         .partners {
             text-align: center;
-            margin-top: 0.25in;
+            margin-top: 0.14in; /* was 0.25in */
         }
         .partners-label {
             font-size: 9pt;
@@ -426,18 +711,32 @@
             text-indent: 0;
             letter-spacing: 1pt;
             text-transform: uppercase;
-            margin-bottom: 0.15in;
+            margin-bottom: 0.08in; /* was 0.15in */
         }
         .partners-logos {
-            display: inline-flex;
-            align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
             gap: 0.6in;
+            flex-wrap: wrap;
+        }
+        .partner-logo {
+            text-align: center;
+        }
+        .partner-logo svg {
+            display: block;
+            margin: 0 auto 0.05in;
+            max-height: 0.6in;
+        }
+        .partner-name {
+            font-size: 10pt;
+            color: #333;
         }
 
         /* ---------- Colophon ---------- */
         .colophon {
             text-align: center;
-            margin-top: 0.15in;
+            margin-top: 0.08in; /* was 0.15in */
         }
         .colophon p {
             font-size: 11pt;
@@ -446,7 +745,7 @@
         }
         .closing {
             text-align: center;
-            margin-top: 0.3in;
+            margin-top: 0.15in; /* was 0.3in */
             font-size: 11pt;
             color: #888;
         }
@@ -455,11 +754,97 @@
         hr {
             border: none;
             border-top: 1px solid #ccc;
-            margin: 0.25in 0;
+            margin: 0.14in 0; /* was 0.25in */
         }
 
         /* ---------- Keep together ---------- */
         .keep-together { break-inside: avoid; page-break-inside: avoid; }
+
+        /* ---------- Reader Mail ---------- */
+        .reader-mail p {
+            text-indent: 0;
+            margin-bottom: 0.1in;
+        }
+        .reader-mail p strong:first-child {
+            display: inline-block;
+            min-width: 0.1in;
+        }
+        .next-issue-close {
+            text-align: center;
+            border-top: 1px solid #999;
+            padding-top: 0.14in;
+            margin-top: 0.22in;
+            font-size: 12pt;
+            color: #444;
+        }
+
+        /* ---------- Memoir block (Community Voices remembrance pieces) ---------- */
+        .memoir {
+            border-left: 4px solid #1a1a1a;
+            padding: 0.05in 0 0.05in 0.25in;
+            margin-top: 0.18in;
+        }
+        .memoir h3 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-style: italic;
+            font-weight: normal;
+            font-size: 17pt;
+            margin: 0 0 0.08in;
+        }
+        .memoir p { text-indent: 0; }
+        .memoir p + p { text-indent: 0.2in; }
+
+        /* ---------- Our Territory (page 8) ---------- */
+        .territory-epigraph {
+            font-family: Georgia, "Times New Roman", serif;
+            font-style: italic;
+            font-size: 14pt;
+            line-height: 1.45;
+            text-align: center;
+            margin: 0.15in 0.4in 0.22in;
+            color: #1a1a1a;
+        }
+        .territory-intro {
+            font-size: 12pt;
+            line-height: 1.55;
+            margin: 0 0 0.2in;
+        }
+        .territory-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0.2in;
+            column-count: 2;
+            column-gap: 0.35in;
+            column-rule: 0.5pt solid #bbb;
+        }
+        .territory-list li {
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0 0 0.11in;
+            padding: 0;
+            break-inside: avoid;
+        }
+        .territory-list .t-name {
+            font-weight: bold;
+        }
+        .territory-list .t-meaning {
+            font-style: italic;
+        }
+        .territory-list .t-note {
+            display: block;
+            font-size: 10.5pt;
+            color: #555;
+            margin-left: 0.05in;
+        }
+        .territory-closing {
+            font-family: Georgia, "Times New Roman", serif;
+            font-style: italic;
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: center;
+            margin: 0.18in 0.3in 0;
+            color: #1a1a1a;
+        }
 
         /* ---------- Print resets ---------- */
         @media print {
@@ -532,7 +917,25 @@
     {% if items_by_section['cover'] is defined %}
         {% for item in items_by_section['cover'] %}
             {% if item.get('included') %}
-                <div class="welcome-box">{{ item.get('inline_body')|raw }}</div>
+                {% if item.get('kind') == 'toc' %}
+                    {% set toc = item.get('structured') %}
+                    {% if toc and toc.entries %}
+                        <div class="toc">
+                            <div class="toc-title">{{ item.get('inline_title') ?: 'Inside This Issue' }}</div>
+                            <table class="toc-table">
+                                {% for entry in toc.entries %}
+                                <tr>
+                                    <td class="toc-label">{{ entry.label }}</td>
+                                    <td class="toc-dots"></td>
+                                    <td class="toc-page">{{ entry.page }}</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="welcome-box">{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
             {% endif %}
         {% endfor %}
     {% endif %}
@@ -547,7 +950,12 @@
     {% if items_by_section['editors_note'] is defined %}
         {% for item in items_by_section['editors_note'] %}
             {% if item.get('included') %}
-                <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% set k = item.get('kind') %}
+                {% if k == 'drop_cap' %}
+                    <div class="prose drop-cap">{{ item.get('inline_body')|raw }}</div>
+                {% else %}
+                    <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
             {% endif %}
         {% endfor %}
     {% endif %}
@@ -561,7 +969,36 @@
     <div class="section-intro">What is happening around the community this month.</div>
 
     {% if items_by_section['news'] is defined %}
+        {# Lead story — full-width above the two-column grid #}
         {% for item in items_by_section['news'] %}
+            {% if item.get('kind') == 'news_lead' and item.get('included') %}
+            <article class="news-lead">
+                {% if item.get('kicker') %}
+                    <div class="kicker">{{ item.get('kicker') }}</div>
+                {% endif %}
+                <h3>{{ item.get('inline_title') }}</h3>
+                {% if item.get('date_line') %}
+                    <p class="date-line">{{ item.get('date_line') }}</p>
+                {% endif %}
+                <div class="drop-cap">{{ item.get('inline_body')|raw }}</div>
+            </article>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+</div>
+
+{# ============================================================
+   PAGE 3b — News Briefs (secondary stories)
+   ============================================================ #}
+<div class="page">
+    <h2>News Briefs</h2>
+    <div class="section-intro">More from around our communities.</div>
+
+    {% if items_by_section['news'] is defined %}
+        <div class="two-col">
+        {% for item in items_by_section['news'] %}
+            {% if item.get('kind') != 'news_lead' %}
             {% if item.get('included') %}
             <article class="prose">
                 {% if item.get('source_type') and source_entities[item.id()] is defined %}
@@ -577,11 +1014,16 @@
                     {% endif %}
                 {% else %}
                     <h3>{{ item.get('inline_title') }}</h3>
+                    {% if item.get('date_line') %}
+                        <p class="date-line">{{ item.get('date_line') }}</p>
+                    {% endif %}
                     <div>{{ item.get('inline_body')|raw }}</div>
                 {% endif %}
             </article>
             {% endif %}
+            {% endif %}
         {% endfor %}
+    </div>
     {% endif %}
 
 </div>
@@ -591,12 +1033,42 @@
    ============================================================ #}
 <div class="page">
     <h2>Events Calendar</h2>
-    <div class="section-intro">Upcoming events across the North Shore.</div>
+    <div class="section-intro">May brings the first spring markets, the opening of fishing season, and a full slate of adult ed evenings. Here is what is happening across the North Shore.</div>
+
+    {# Render calendar item(s) first, outside the events-grid so it floats right #}
+    {% if items_by_section['events'] is defined %}
+        {% for item in items_by_section['events'] %}
+            {% if item.get('included') and item.get('kind') == 'calendar' %}
+                {% set cal = item.get('structured') %}
+                {% if cal %}
+                <table class="mini-cal">
+                    <caption>{{ cal.month }}</caption>
+                    <tr>
+                        {% for wd in cal.weekdays %}<th>{{ wd }}</th>{% endfor %}
+                    </tr>
+                    {% for week in cal.weeks %}
+                    <tr>
+                        {% for cell in week %}
+                            {% if cell is null %}
+                                <td></td>
+                            {% elseif cell.event %}
+                                <td class="has-event">{{ cell.day }}</td>
+                            {% else %}
+                                <td>{{ cell.day }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
     <div class="events-grid">
     {% if items_by_section['events'] is defined %}
         {% for item in items_by_section['events'] %}
-            {% if item.get('included') %}
+            {% if item.get('included') and item.get('kind') != 'calendar' %}
             <article>
                 {% if item.get('source_type') and source_entities[item.id()] is defined %}
                     {% set src = source_entities[item.id()] %}
@@ -631,28 +1103,51 @@
     <h2>Teachings</h2>
     <div class="section-intro">Seasonal knowledge passed down through generations.</div>
 
+    {# Page-top banner from first teaching_block with banner_svg #}
     {% if items_by_section['teachings'] is defined %}
         {% for item in items_by_section['teachings'] %}
-            {% if item.get('included') %}
-            <article class="prose">
-                {% if item.get('source_type') and source_entities[item.id()] is defined %}
-                    {% set src = source_entities[item.id()] %}
-                    <h3>{{ src.label() ?: src.get('title') }}</h3>
-                    {% if src.get('source') or src.get('knowledge_keeper') %}
-                        <div class="attribution">
-                            {{ src.get('knowledge_keeper') ?: src.get('source') }}
-                        </div>
-                    {% endif %}
-                    {% if item.get('editor_blurb') %}
-                        <p>{{ item.get('editor_blurb') }}</p>
-                    {% else %}
-                        <p>{{ src.get('body')|default(src.get('description'))|striptags|slice(0, 500) }}</p>
-                    {% endif %}
-                {% else %}
-                    <h3>{{ item.get('inline_title') }}</h3>
-                    <div>{{ item.get('inline_body')|raw }}</div>
+            {% if item.get('included') and item.get('kind') == 'teaching_block' %}
+                {% set tbStruct = item.get('structured') %}
+                {% if tbStruct and tbStruct.banner_svg %}
+                    <div class="teaching-banner">{{ tbStruct.banner_svg|raw }}</div>
                 {% endif %}
-            </article>
+            {% endif %}
+        {% endfor %}
+
+        {% for item in items_by_section['teachings'] %}
+            {% if item.get('included') %}
+                {% if item.get('kind') == 'teaching_block' %}
+                    {% set tbStruct = item.get('structured') %}
+                    <article class="teaching-block{% if tbStruct and tbStruct.drop_cap %} has-drop-cap{% endif %}">
+                        <div class="teaching-heading">
+                            {% if tbStruct and tbStruct.icon_svg %}
+                                <div class="teaching-icon">{{ tbStruct.icon_svg|raw }}</div>
+                            {% endif %}
+                            <h3>{{ item.get('inline_title') }}</h3>
+                        </div>
+                        <div class="teaching-body">{{ item.get('inline_body')|raw }}</div>
+                    </article>
+                {% else %}
+                    <article class="prose">
+                        {% if item.get('source_type') and source_entities[item.id()] is defined %}
+                            {% set src = source_entities[item.id()] %}
+                            <h3>{{ src.label() ?: src.get('title') }}</h3>
+                            {% if src.get('source') or src.get('knowledge_keeper') %}
+                                <div class="attribution">
+                                    {{ src.get('knowledge_keeper') ?: src.get('source') }}
+                                </div>
+                            {% endif %}
+                            {% if item.get('editor_blurb') %}
+                                <p>{{ item.get('editor_blurb') }}</p>
+                            {% else %}
+                                <p>{{ src.get('body')|default(src.get('description'))|striptags|slice(0, 500) }}</p>
+                            {% endif %}
+                        {% else %}
+                            <h3>{{ item.get('inline_title') }}</h3>
+                            <div>{{ item.get('inline_body')|raw }}</div>
+                        {% endif %}
+                    </article>
+                {% endif %}
             {% endif %}
         {% endfor %}
     {% endif %}
@@ -670,9 +1165,11 @@
     {% if items_by_section['language'] is defined %}
         {% for item in items_by_section['language'] %}
             {% if item.get('included') %}
+                {% set fwStruct = item.get('structured') %}
                 {% if item.get('source_type') and source_entities[item.id()] is defined %}
                     {% set src = source_entities[item.id()] %}
                     <div class="featured-word">
+                        {% if fwStruct and fwStruct.svg %}<div class="featured-word-svg">{{ fwStruct.svg|raw }}</div>{% endif %}
                         <p class="word">{{ src.label() ?: src.get('word') }}</p>
                         {% if src.get('pronunciation') %}
                             <p class="pronunciation">{{ src.get('pronunciation') }}</p>
@@ -684,6 +1181,7 @@
                     </div>
                 {% else %}
                     <div class="featured-word">
+                        {% if fwStruct and fwStruct.svg %}<div class="featured-word-svg">{{ fwStruct.svg|raw }}</div>{% endif %}
                         <p class="word">{{ item.get('inline_title') }}</p>
                         <div>{{ item.get('inline_body')|raw }}</div>
                     </div>
@@ -692,7 +1190,7 @@
         {% endfor %}
     {% endif %}
 
-    {# Anishinaabemowin Corner inline content (vocab, phrases, etc.) #}
+    {# Anishinaabemowin Corner inline content (vocab grid, phrases, etc.) #}
     {% if items_by_section['language_corner'] is defined %}
         {% for item in items_by_section['language_corner'] %}
             {% if item.get('included') %}
@@ -700,7 +1198,25 @@
                 {% if item.get('inline_title') %}
                     <h3>{{ item.get('inline_title') }}</h3>
                 {% endif %}
-                <div>{{ item.get('inline_body')|raw }}</div>
+                {% if item.get('inline_body') %}
+                    <div>{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
+                {% if item.get('kind') == 'vocab_grid' %}
+                    {% set vg = item.get('structured') %}
+                    {% if vg and vg.cards %}
+                    <div class="vocab-grid">
+                        {% for c in vg.cards %}
+                        <div class="vocab-card">
+                            {% if c.svg %}{{ c.svg|raw }}{% endif %}
+                            <div class="vocab-word">{{ c.word }}</div>
+                            {% if c.pronunciation %}<div class="vocab-pron">{{ c.pronunciation }}</div>{% endif %}
+                            <div class="vocab-meaning">{{ c.meaning }}</div>
+                            {% if c.example %}<div class="vocab-example">{{ c.example }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endif %}
             </article>
             {% endif %}
         {% endfor %}
@@ -730,36 +1246,36 @@
 </div>
 
 {# ============================================================
-   PAGE 7 — Community Voices
+   PAGE 7 — Our Territory (Robinson Huron Treaty First Nations)
    ============================================================ #}
 <div class="page">
-    <h2>Community Voices</h2>
-    <div class="section-intro">Stories and memories from our communities.</div>
+    <h2>Our Territory</h2>
+    <div class="section-intro">The twenty-one First Nations of the Robinson Huron Treaty, 1850.</div>
 
-    {% if items_by_section['community'] is defined %}
-        {% for item in items_by_section['community'] %}
+    {% if items_by_section['territory'] is defined %}
+        {% for item in items_by_section['territory'] %}
             {% if item.get('included') %}
-            <article class="prose">
-                {% if item.get('source_type') and source_entities[item.id()] is defined %}
-                    {% set src = source_entities[item.id()] %}
-                    <h3>{{ src.label() ?: src.get('title') }}</h3>
-                    {% if src.get('author_name') or src.get('community') %}
-                        <div class="attribution">
-                            {{ src.get('author_name') }}
-                            {% if src.get('community') %}, {{ src.get('community') }}{% endif %}
-                        </div>
-                    {% endif %}
-                    {% if item.get('editor_blurb') %}
-                        <p>{{ item.get('editor_blurb') }}</p>
-                    {% else %}
-                        <p>{{ src.get('body')|default(src.get('submission_text'))|striptags|slice(0, 600) }}</p>
-                    {% endif %}
-                {% else %}
-                    <h3>{{ item.get('inline_title') }}</h3>
-                    <div>{{ item.get('inline_body')|raw }}</div>
-                {% endif %}
-            </article>
-            {% if not loop.last %}<hr>{% endif %}
+            {% set data = item.get('structured') %}
+            {% if data.epigraph is defined %}
+                <p class="territory-epigraph">&ldquo;{{ data.epigraph }}&rdquo;</p>
+            {% endif %}
+            {% if data.intro is defined %}
+                <p class="territory-intro">{{ data.intro }}</p>
+            {% endif %}
+            {% if data.nations is defined %}
+                <ul class="territory-list">
+                    {% for n in data.nations %}
+                        <li>
+                            <span class="t-name">{{ n.name }}</span>
+                            {% if n.meaning %}<span class="t-meaning">&mdash; {{ n.meaning }}</span>{% endif %}
+                            {% if n.note %}<span class="t-note">({{ n.note }})</span>{% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if data.closing is defined %}
+                <p class="territory-closing">{{ data.closing }}</p>
+            {% endif %}
             {% endif %}
         {% endfor %}
     {% endif %}
@@ -774,16 +1290,13 @@
     <div class="section-intro">A little laughter is good medicine.</div>
 
     {% if items_by_section['jokes'] is defined %}
+        <div class="jokes-grid">
         {% for item in items_by_section['jokes'] %}
             {% if item.get('included') %}
-            <div class="joke">
-                {% if item.get('inline_title') %}
-                    <h3>{{ item.get('inline_title') }}</h3>
-                {% endif %}
-                <div>{{ item.get('inline_body')|raw }}</div>
-            </div>
+                {{ item.get('inline_body')|raw }}
             {% endif %}
         {% endfor %}
+        </div>
     {% endif %}
 
 </div>
@@ -796,17 +1309,40 @@
     <div class="section-intro">Something to work on with your morning tea.</div>
 
     {% if items_by_section['puzzles'] is defined %}
+        {# Word search renders full-width first #}
         {% for item in items_by_section['puzzles'] %}
-            {% if item.get('included') %}
-            <article>
-                {% if item.get('inline_title') %}
-                    <h3>{{ item.get('inline_title') }}</h3>
+            {% if item.get('included') and item.get('kind') == 'word_search' %}
+            <article class="puzzle-main">
+                {% if item.get('inline_title') %}<h3>{{ item.get('inline_title') }}</h3>{% endif %}
+                {% if item.get('inline_body') %}<div>{{ item.get('inline_body')|raw }}</div>{% endif %}
+                {% set ws = item.get('structured') %}
+                {% if ws and ws.grid %}
+                <table class="word-search-grid">
+                    {% for row in ws.grid %}
+                    <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+                    {% endfor %}
+                </table>
+                {% if ws.words %}
+                <ul class="word-list">
+                    {% for w in ws.words %}<li>{{ w }}</li>{% endfor %}
+                </ul>
                 {% endif %}
-                <div>{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
             </article>
-            {% if not loop.last %}<hr>{% endif %}
             {% endif %}
         {% endfor %}
+
+        {# Remaining puzzle items (riddle, scramble, etc.) flow in two columns #}
+        <div class="puzzle-tail">
+            {% for item in items_by_section['puzzles'] %}
+                {% if item.get('included') and item.get('kind') != 'word_search' %}
+                <article class="puzzle-card">
+                    {% if item.get('inline_title') %}<h3>{{ item.get('inline_title') }}</h3>{% endif %}
+                    {% if item.get('inline_body') %}<div>{{ item.get('inline_body')|raw }}</div>{% endif %}
+                </article>
+                {% endif %}
+            {% endfor %}
+        </div>
     {% endif %}
 
 </div>
@@ -845,7 +1381,15 @@
     {% if items_by_section['elder_spotlight'] is defined %}
         {% for item in items_by_section['elder_spotlight'] %}
             {% if item.get('included') %}
-            <article class="prose">
+            {% if item.get('kind') == 'spotlight' and item.get('media_url') %}
+                <div class="photo-wrap float-left">
+                    <img src="{{ item.get('media_url') }}" alt="{{ item.get('media_alt') }}">
+                    {% if item.get('media_caption') %}
+                        <p class="photo-caption">{{ item.get('media_caption') }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <article class="prose{% if item.get('kind') == 'spotlight' or item.get('kind') == 'drop_cap' %} drop-cap{% endif %}">
                 {% if item.get('inline_title') %}
                     <h3>{{ item.get('inline_title') }}</h3>
                 {% endif %}
@@ -858,15 +1402,57 @@
 </div>
 
 {# ============================================================
-   PAGE 12 — About & Contact (Back Page)
+   PAGE 15 — Reader Mail & Next Issue
+   ============================================================ #}
+<div class="page">
+    <h2>Reader Mail &amp; Next Issue</h2>
+    <div class="section-intro">What we are hoping you send us for Issue 2.</div>
+
+    {% if items_by_section['reader_mail'] is defined %}
+        {% for item in items_by_section['reader_mail'] %}
+            {% if item.get('included') %}
+            <article class="prose reader-mail">
+                <div>{{ item.get('inline_body')|raw }}</div>
+            </article>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
+{# ============================================================
+   PAGE 16 — About & Contact (Back Page)
    ============================================================ #}
 <div class="page">
     <h2>About This Newsletter</h2>
+    <div class="section-intro">How this paper is made, and who makes it possible.</div>
 
     {% if items_by_section['back_page'] is defined %}
         {% for item in items_by_section['back_page'] %}
             {% if item.get('included') %}
-                <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% set k = item.get('kind') %}
+                {% if k == 'back_page_box' %}
+                    <div class="back-page-box">
+                        {% if item.get('inline_title') %}<h3>{{ item.get('inline_title') }}</h3>{% endif %}
+                        {{ item.get('inline_body')|raw }}
+                    </div>
+                {% elseif k == 'partners' %}
+                    {% set ps = item.get('structured') %}
+                    <div class="partners">
+                        <div class="partners-label">Partners</div>
+                        <div class="partners-logos">
+                        {% for p in (ps.partners ?? []) %}
+                            <div class="partner-logo">
+                                {% if p.svg %}{{ p.svg|raw }}{% endif %}
+                                <div class="partner-name">{% if p.url %}<a href="{{ p.url }}">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}</div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                {% elseif k == 'colophon' %}
+                    <div class="colophon">{{ item.get('inline_body')|raw }}</div>
+                {% else %}
+                    <div class="prose">{{ item.get('inline_body')|raw }}</div>
+                {% endif %}
             {% endif %}
         {% endfor %}
     {% else %}

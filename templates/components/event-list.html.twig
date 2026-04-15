@@ -1,0 +1,77 @@
+{#
+  Event list view grouped by month.
+  Expects:
+    - events: iterable of event entities (used only for emptiness check & fallback grouping)
+    - groups: pre-computed list of {key, label, events} (from EventFeedResult::monthGroups()); null → build inline fallback
+    - pagination: Pagination VO or null
+    - filters: EventFilters VO
+    - communities: map of community_id => {name, slug, ...}
+#}
+{% if events|length == 0 %}
+  <div class="event-list__empty">
+    <p>{{ trans('events.list_no_results') }}</p>
+    {% if filters.isActive() %}
+      <a class="btn btn--link" href="/events">{{ trans('events.list_clear_filters') }}</a>
+    {% endif %}
+  </div>
+{% else %}
+  {# Prefer pre-computed $groups from EventFeedResult::monthGroups() — avoids an
+     O(n²) |merge rebuild in Twig. Fall back to an inline build only when a
+     caller passes a raw $events array without a feed result. #}
+  {% set renderGroups = groups|default(null) %}
+  {% if renderGroups is null %}
+    {% set renderGroups = [] %}
+    {% set seenKeys = [] %}
+    {% for e in events %}
+      {% set startsAt = e.get('starts_at') %}
+      {% set key = startsAt ? startsAt|date('Y-m') : 'undated' %}
+      {% set label = startsAt ? startsAt|date('F Y') : trans('events.section_on_horizon') %}
+      {% if key not in seenKeys %}
+        {% set seenKeys = seenKeys|merge([key]) %}
+        {% set renderGroups = renderGroups|merge([{ key: key, label: label, events: [e] }]) %}
+      {% else %}
+        {% set newGroups = [] %}
+        {% for g in renderGroups %}
+          {% if g.key == key %}
+            {% set newGroups = newGroups|merge([{ key: g.key, label: g.label, events: g.events|merge([e]) }]) %}
+          {% else %}
+            {% set newGroups = newGroups|merge([g]) %}
+          {% endif %}
+        {% endfor %}
+        {% set renderGroups = newGroups %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <div class="event-list">
+    {% for group in renderGroups %}
+      <section class="event-list__month">
+        <h2 class="event-list__month-heading">{{ group.label }}</h2>
+        <ul class="event-list__items">
+          {% for e in group.events %}
+            {% set comm = communities[e.get('community_id')]|default({}) %}
+            <li class="event-list__item">
+              {% include "components/event-card.html.twig" with {
+                title: e.get('title'),
+                type: e.get('type')|default('')|capitalize,
+                date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
+                starts_at_iso: e.get('starts_at') ? e.get('starts_at')|date('c') : '',
+                starts_at_raw: e.get('starts_at')|default(null),
+                location: e.get('location')|default(''),
+                excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
+                url: "/events/" ~ e.get('slug'),
+                community_name: comm.name|default(''),
+                community_slug: comm.slug|default(''),
+                photo_url: e.get('photo_url')|default('')
+              } %}
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endfor %}
+  </div>
+
+  {% if pagination is defined and pagination %}
+    {% include "components/pagination.html.twig" with { pagination: pagination, filters: filters, base_path: '/events' } only %}
+  {% endif %}
+{% endif %}
