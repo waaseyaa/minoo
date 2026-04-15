@@ -9,9 +9,17 @@
 {% set typeOptions = ['ceremony', 'gathering', 'powwow', 'tournament'] %}
 {% set communities = feed is defined and feed.availableFilters.communities is defined ? feed.availableFilters.communities : [] %}
 
-<form class="event-filters" method="get" action="{{ lang_url('/events') }}" role="search" aria-label="{{ trans('events.title') }}">
+<form
+  class="event-filters"
+  method="get"
+  action="{{ lang_url('/events') }}"
+  role="search"
+  aria-label="{{ trans('events.title') }}"
+  data-live-submit
+>
   {# Default view for non-toggle submits; view-toggle buttons below append their own name=view which browsers prefer from the button activated. #}
   <input type="hidden" name="view" value="{{ filters.view }}" />
+
   <div class="event-filters__row">
     <div class="event-filters__group event-filters__group--search">
       <label class="sr-only" for="event-filter-q">{{ trans('events.filter_search_placeholder') }}</label>
@@ -39,7 +47,7 @@
   </div>
 
   <fieldset class="event-filters__group event-filters__group--when">
-    <legend class="event-filters__legend">{{ trans('events.filter_when_all') }}</legend>
+    <legend class="sr-only">{{ trans('events.filter_when_all') }}</legend>
     <div class="event-filters__chips">
       {% for opt in whenOptions %}
         <label class="event-filters__chip-label">
@@ -55,60 +63,63 @@
     </div>
   </fieldset>
 
-  <fieldset class="event-filters__group event-filters__group--types">
-    <legend class="event-filters__legend">{{ trans('events.filter_types_heading') }}</legend>
-    <div class="event-filters__chips">
-      {% for t in typeOptions %}
-        <label class="event-filters__chip-label">
-          <input
-            type="checkbox"
-            name="type[]"
-            value="{{ t }}"
-            {{ t in filters.types ? 'checked' : '' }}
-          />
-          <span>{{ trans('events.filter_type_' ~ t) }}</span>
-        </label>
-      {% endfor %}
-    </div>
-  </fieldset>
-
-  {% if communities|length > 0 %}
-    <div class="event-filters__group">
-      <label class="event-filters__legend" for="event-filter-community">{{ trans('events.filter_community') }}</label>
-      <select id="event-filter-community" name="community_id" class="event-filters__select">
-        <option value="">—</option>
-        {% for c in communities %}
-          <option value="{{ c.id }}" {{ filters.communityId == c.id ? 'selected' : '' }}>{{ c.name }}</option>
+  <div class="event-filters__row">
+    <fieldset class="event-filters__group event-filters__group--types">
+      <legend class="sr-only">{{ trans('events.filter_types_heading') }}</legend>
+      <div class="event-filters__chips">
+        {% for t in typeOptions %}
+          <label class="event-filters__chip-label">
+            <input
+              type="checkbox"
+              name="type[]"
+              value="{{ t }}"
+              {{ t in filters.types ? 'checked' : '' }}
+            />
+            <span>{{ trans('events.filter_type_' ~ t) }}</span>
+          </label>
         {% endfor %}
+      </div>
+    </fieldset>
+
+    {% if location is defined and location %}
+      <div class="event-filters__group event-filters__group--near">
+        <label class="event-filters__chip-label">
+          <input type="checkbox" name="near" value="1" {{ filters.near ? 'checked' : '' }} />
+          <span>{{ trans('events.filter_near_me') }}</span>
+        </label>
+      </div>
+    {% endif %}
+
+    {% if communities|length > 0 %}
+      <div class="event-filters__group">
+        <label class="sr-only" for="event-filter-community">{{ trans('events.filter_community') }}</label>
+        <select id="event-filter-community" name="community_id" class="event-filters__select">
+          <option value="">{{ trans('events.filter_community') }}</option>
+          {% for c in communities %}
+            <option value="{{ c.id }}" {{ filters.communityId == c.id ? 'selected' : '' }}>{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endif %}
+
+    <div class="event-filters__group event-filters__group--sort">
+      <label class="sr-only" for="event-filter-sort">{{ trans('events.filter_sort_label') }}</label>
+      <select id="event-filter-sort" name="sort" class="event-filters__select">
+        <option value="soonest" {{ filters.sort == 'soonest' ? 'selected' : '' }}>{{ trans('events.filter_sort_soonest') }}</option>
+        <option value="latest"  {{ filters.sort == 'latest'  ? 'selected' : '' }}>{{ trans('events.filter_sort_latest') }}</option>
       </select>
     </div>
-  {% endif %}
 
-  {% if location is defined and location %}
-    <div class="event-filters__group event-filters__group--near">
-      <label class="event-filters__chip-label">
-        <input type="checkbox" name="near" value="1" {{ filters.near ? 'checked' : '' }} />
-        <span>{{ trans('events.filter_near_me') }}</span>
-      </label>
+    <div class="event-filters__actions">
+      <button type="submit" class="btn btn--primary">{{ trans('events.filter_apply') }}</button>
+      {% if filters.isActive() %}
+        <a href="{{ lang_url('/events') }}{{ filters.view != 'feed' ? '?view=' ~ filters.view : '' }}" class="btn btn--ghost">{{ trans('events.filter_clear') }}</a>
+      {% endif %}
     </div>
-  {% endif %}
-
-  <div class="event-filters__group event-filters__group--sort">
-    <label class="event-filters__legend" for="event-filter-sort">{{ trans('events.filter_sort_label') }}</label>
-    <select id="event-filter-sort" name="sort" class="event-filters__select">
-      <option value="soonest" {{ filters.sort == 'soonest' ? 'selected' : '' }}>{{ trans('events.filter_sort_soonest') }}</option>
-      <option value="latest"  {{ filters.sort == 'latest'  ? 'selected' : '' }}>{{ trans('events.filter_sort_latest') }}</option>
-    </select>
   </div>
-
-  <div class="event-filters__actions">
-    <button type="submit" class="btn btn--primary">{{ trans('events.filter_apply') }}</button>
-    {% if filters.isActive() %}
-      <a href="{{ lang_url('/events') }}{{ filters.view != 'feed' ? '?view=' ~ filters.view : '' }}" class="btn btn--ghost">{{ trans('events.filter_clear') }}</a>
-    {% endif %}
-  </div>
-
 </form>
+
+<script type="module" src="/js/events-filters.js?v=1"></script>
 
 {% if filters.isActive() %}
   <ul class="event-filters__active" aria-label="Active filters">
