@@ -64,6 +64,9 @@
       } %}
       <div class="detail-hero">
         <a href="{{ lang_url('/events') }}" class="detail-hero__back">{{ trans('events.detail_back') }}</a>
+        {% if event.get('slug') %}
+          <a href="/events/{{ event.get('slug') }}.ics" class="btn btn--secondary detail-hero__ics" download>{{ trans('events.add_to_calendar') }}</a>
+        {% endif %}
         {% if event.get('type') is not empty %}
           <span class="detail-hero__badge">{{ event.get('type')|capitalize }}</span>
         {% endif %}

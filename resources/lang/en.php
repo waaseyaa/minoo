@@ -148,6 +148,7 @@ return [
 
     // Events
     'events.title' => 'Events',
+    'events.add_to_calendar' => 'Add to calendar',
     'events.subtitle' => 'Powwows, ceremonies, and community gatherings happening across the region.',
     'events.empty_heading' => 'No events scheduled yet',
     'events.empty_body' => 'Powwows, gatherings, ceremonies, and community events will appear here as they\'re added. In the meantime, explore what\'s happening in your community.',

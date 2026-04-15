@@ -1762,6 +1762,16 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
+            'events.ics',
+            RouteBuilder::create('/events/{slug}.ics')
+                ->controller('App\\Controller\\EventController::ics')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
+        $router->addRoute(
             'events.show',
             RouteBuilder::create('/events/{slug}')
                 ->controller('App\\Controller\\EventController::show')

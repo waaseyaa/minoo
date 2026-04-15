@@ -10,6 +10,7 @@ use App\Domain\Events\ValueObject\EventFilters;
 use App\Domain\Geo\Service\CommunityFinder;
 use App\Domain\Geo\ValueObject\LocationContext;
 use App\Service\LocationResolver;
+use App\Support\IcsBuilder;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -176,6 +177,38 @@ final class EventController
         ]));
 
         return new Response($html, $event !== null ? 200 : 404);
+    }
+
+    /** @param array<string, mixed> $params */
+    /** @param array<string, mixed> $query */
+    public function ics(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $slug = (string) ($params['slug'] ?? '');
+        if ($slug === '') {
+            return new Response('', 404);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('event');
+        $ids = $storage->getQuery()
+            ->condition('slug', $slug)
+            ->condition('status', 1)
+            ->accessCheck(false)
+            ->execute();
+        if (empty($ids)) {
+            return new Response('', 404);
+        }
+
+        $event = $storage->load(reset($ids));
+        if (!$event instanceof ContentEntityBase) {
+            return new Response('', 404);
+        }
+
+        $ics = IcsBuilder::buildForEvent($event, $request->getHost());
+
+        return new Response($ics, 200, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $slug . '.ics"',
+        ]);
     }
 
     /**
