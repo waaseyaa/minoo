@@ -101,22 +101,10 @@ jobs:
             --prefer-dist
 
       # -----------------------------------------------------------------------
-      # Admin SPA (generated — not committed; matches npm run build:admin)
-      # -----------------------------------------------------------------------
-
-      - name: Build admin SPA
-        run: |
-          cd waaseyaa/packages/admin
-          npm install --no-audit --no-fund
-          export NUXT_PUBLIC_APP_NAME=Minoo
-          export NUXT_PUBLIC_BASE_URL=
-          npm run generate
-          rm -rf "${GITHUB_WORKSPACE}/minoo/public/admin"
-          mkdir -p "${GITHUB_WORKSPACE}/minoo/public/admin"
-          cp -a .output/public/* "${GITHUB_WORKSPACE}/minoo/public/admin/"
-
-      # -----------------------------------------------------------------------
       # Assemble build artifact
+      # (Admin SPA build removed — waaseyaa/packages/admin was extracted from
+      # the monorepo. The newsletter admin Vue SPA is pre-built and tracked
+      # in public/admin/newsletter. TODO(#726): wire admin-surface if needed.)
       # -----------------------------------------------------------------------
 
       - name: Assemble build artifact
