@@ -54,23 +54,25 @@ final class EventFeedBuilder
 
         $all = $this->loadUpcomingAndActive($now);
 
+        $byStart = fn ($a, $b) => ($this->toTimestamp($a->get('starts_at')) ?? 0) <=> ($this->toTimestamp($b->get('starts_at')) ?? 0);
+
         $happeningNow = array_values(array_filter(
             $all,
             fn (ContentEntityBase $e) => $this->isHappeningNow($e, $now)
         ));
-        usort($happeningNow, fn ($a, $b) => (int) $a->get('starts_at') <=> (int) $b->get('starts_at'));
+        usort($happeningNow, $byStart);
 
         $thisWeek = array_values(array_filter(
             $all,
             fn (ContentEntityBase $e) => $this->isThisWeek($e, $now)
         ));
-        usort($thisWeek, fn ($a, $b) => (int) $a->get('starts_at') <=> (int) $b->get('starts_at'));
+        usort($thisWeek, $byStart);
 
         $comingUpCandidates = array_values(array_filter(
             $all,
             fn (ContentEntityBase $e) => $this->isInComingUpWindow($e, $now)
         ));
-        usort($comingUpCandidates, fn ($a, $b) => (int) $a->get('starts_at') <=> (int) $b->get('starts_at'));
+        usort($comingUpCandidates, $byStart);
         $comingUp = $this->applyDiversity($comingUpCandidates, 12);
 
         $featuredIds = $this->featuredOverride ?? $this->loadFeaturedEventIds($now);
@@ -86,7 +88,7 @@ final class EventFeedBuilder
             if ($sa !== $sb) {
                 return $sb <=> $sa;
             }
-            return (int) $a->get('starts_at') <=> (int) $b->get('starts_at');
+            return ($this->toTimestamp($a->get('starts_at')) ?? 0) <=> ($this->toTimestamp($b->get('starts_at')) ?? 0);
         });
         // Featured events render in their own section on top of the feed.
         // Exclude them from the horizon strip so the same card isn't shown
@@ -164,9 +166,11 @@ final class EventFeedBuilder
         $descending = $isPast || $filters->sort === 'latest';
         usort(
             $candidates,
-            fn (ContentEntityBase $a, ContentEntityBase $b): int => $descending
-                ? (int) $b->get('starts_at') <=> (int) $a->get('starts_at')
-                : (int) $a->get('starts_at') <=> (int) $b->get('starts_at'),
+            function (ContentEntityBase $a, ContentEntityBase $b) use ($descending): int {
+                $ta = $this->toTimestamp($a->get('starts_at')) ?? 0;
+                $tb = $this->toTimestamp($b->get('starts_at')) ?? 0;
+                return $descending ? $tb <=> $ta : $ta <=> $tb;
+            },
         );
 
         $total = count($candidates);
@@ -220,13 +224,15 @@ final class EventFeedBuilder
         $gridEnd   = (int) $empty->gridEnd()->modify('+1 day')->format('U');
 
         // Load events whose [starts_at, ends_at] overlaps [gridStart, gridEnd).
+        // starts_at/ends_at are ISO strings; filter in PHP since SQL compares as strings.
         $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()
-            ->condition('status', 1)
-            ->condition('starts_at', $gridEnd, '<')
-            ->condition('ends_at', $gridStart, '>=')
-            ->execute();
-        $events = $ids === [] ? [] : array_values($storage->loadMultiple($ids));
+        $ids = $storage->getQuery()->condition('status', 1)->execute();
+        $loaded = $ids === [] ? [] : array_values($storage->loadMultiple($ids));
+        $events = array_values(array_filter($loaded, function (ContentEntityBase $e) use ($gridStart, $gridEnd): bool {
+            $s = $this->toTimestamp($e->get('starts_at'));
+            $f = $this->toTimestamp($e->get('ends_at')) ?? $s;
+            return $s !== null && $f !== null && $s < $gridEnd && $f >= $gridStart;
+        }));
 
         $calendar = CalendarMonth::fromEvents($year, $month, $events, $todayDt, $tz);
 
@@ -255,22 +261,23 @@ final class EventFeedBuilder
         switch ($filters->when) {
             case 'week':
                 return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
-                    $s = (int) $e->get('starts_at');
-                    return $s > $now && $s <= $now + 7 * 86400;
+                    $s = $this->toTimestamp($e->get('starts_at'));
+                    return $s !== null && $s > $now && $s <= $now + 7 * 86400;
                 }));
             case 'month':
                 return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
-                    $s = (int) $e->get('starts_at');
-                    return $s > $now && $s <= $now + 30 * 86400;
+                    $s = $this->toTimestamp($e->get('starts_at'));
+                    return $s !== null && $s > $now && $s <= $now + 30 * 86400;
                 }));
             case '3mo':
                 return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
-                    $s = (int) $e->get('starts_at');
-                    return $s > $now && $s <= $now + 90 * 86400;
+                    $s = $this->toTimestamp($e->get('starts_at'));
+                    return $s !== null && $s > $now && $s <= $now + 90 * 86400;
                 }));
             case 'past':
                 return array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
-                    return (int) $e->get('ends_at') < $now;
+                    $f = $this->toTimestamp($e->get('ends_at')) ?? $this->toTimestamp($e->get('starts_at'));
+                    return $f !== null && $f < $now;
                 }));
             case 'day':
                 if ($filters->date === null) {
@@ -282,8 +289,8 @@ final class EventFeedBuilder
                 }
                 $dayEnd = $dayStart + 86400;
                 return array_values(array_filter($events, function (ContentEntityBase $e) use ($dayStart, $dayEnd): bool {
-                    $s = (int) $e->get('starts_at');
-                    return $s >= $dayStart && $s < $dayEnd;
+                    $s = $this->toTimestamp($e->get('starts_at'));
+                    return $s !== null && $s >= $dayStart && $s < $dayEnd;
                 }));
             default:
                 return $events;
@@ -294,57 +301,79 @@ final class EventFeedBuilder
     private function loadForFilter(int $now, bool $includePast): array
     {
         $storage = $this->entityTypeManager->getStorage('event');
-        $query = $storage->getQuery()->condition('status', 1);
-        if ($includePast) {
-            $query->condition('ends_at', $now, '<');
-        } else {
-            $query->condition('ends_at', $now, '>=');
-        }
-        $ids = $query->execute();
+        $ids = $storage->getQuery()->condition('status', 1)->execute();
         if ($ids === []) {
             return [];
         }
-        return array_values($storage->loadMultiple($ids));
+        $events = array_values($storage->loadMultiple($ids));
+        return array_values(array_filter($events, function (ContentEntityBase $e) use ($now, $includePast): bool {
+            $endsAt = $this->toTimestamp($e->get('ends_at')) ?? $this->toTimestamp($e->get('starts_at'));
+            if ($endsAt === null) {
+                return false;
+            }
+            return $includePast ? $endsAt < $now : $endsAt >= $now;
+        }));
     }
 
     /** @return list<ContentEntityBase> */
     private function loadUpcomingAndActive(int $now): array
     {
         $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()
-            ->condition('status', 1)
-            ->condition('ends_at', $now, '>=')
-            ->sort('starts_at', 'ASC')
-            ->execute();
+        $ids = $storage->getQuery()->condition('status', 1)->execute();
         if ($ids === []) {
             return [];
         }
-        return array_values($storage->loadMultiple($ids));
+        $events = array_values($storage->loadMultiple($ids));
+        $events = array_values(array_filter($events, function (ContentEntityBase $e) use ($now): bool {
+            $endsAt = $this->toTimestamp($e->get('ends_at')) ?? $this->toTimestamp($e->get('starts_at'));
+            return $endsAt !== null && $endsAt >= $now;
+        }));
+        usort($events, fn ($a, $b) => ($this->toTimestamp($a->get('starts_at')) ?? 0) <=> ($this->toTimestamp($b->get('starts_at')) ?? 0));
+        return $events;
     }
 
     private function isHappeningNow(ContentEntityBase $e, int $now): bool
     {
-        $s = (int) $e->get('starts_at');
-        $f = (int) $e->get('ends_at');
+        $s = $this->toTimestamp($e->get('starts_at'));
+        $f = $this->toTimestamp($e->get('ends_at')) ?? $s;
+        if ($s === null || $f === null) {
+            return false;
+        }
         return $s <= $now && $now <= $f;
     }
 
     private function isThisWeek(ContentEntityBase $e, int $now): bool
     {
-        $s = (int) $e->get('starts_at');
-        return $s > $now && $s <= $now + 7 * 86400;
+        $s = $this->toTimestamp($e->get('starts_at'));
+        return $s !== null && $s > $now && $s <= $now + 7 * 86400;
     }
 
     private function isInComingUpWindow(ContentEntityBase $e, int $now): bool
     {
-        $s = (int) $e->get('starts_at');
-        return $s > $now + 7 * 86400 && $s <= $now + 30 * 86400;
+        $s = $this->toTimestamp($e->get('starts_at'));
+        return $s !== null && $s > $now + 7 * 86400 && $s <= $now + 30 * 86400;
     }
 
     private function isOnHorizon(ContentEntityBase $e, int $now): bool
     {
-        $s = (int) $e->get('starts_at');
-        return $s > $now + 30 * 86400 && $s <= $now + 730 * 86400;
+        $s = $this->toTimestamp($e->get('starts_at'));
+        return $s !== null && $s > $now + 30 * 86400 && $s <= $now + 730 * 86400;
+    }
+
+    /**
+     * starts_at/ends_at are stored as ISO 8601 strings (e.g. "2026-06-21T10:00:00Z");
+     * (int) cast truncates to the year. Parse to unix timestamp for comparisons.
+     */
+    private function toTimestamp(mixed $value): ?int
+    {
+        if (is_int($value)) {
+            return $value;
+        }
+        if (is_string($value) && $value !== '') {
+            $ts = strtotime($value);
+            return $ts === false ? null : $ts;
+        }
+        return null;
     }
 
     /** @return list<int> */

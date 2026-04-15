@@ -749,6 +749,8 @@
 
     /* Extended radii */
     --radius-xl: 1.5rem;
+
+    color-scheme: dark;
   }
 
   [data-theme="light"] {
@@ -8735,7 +8737,8 @@ a.btn--ghost:hover {
         padding: 0.5rem 0.75rem;
         border: 1px solid var(--border, oklch(85% 0.01 90));
         border-radius: var(--radius-sm, 0.375rem);
-        background: var(--surface, white);
+        background: var(--surface-card, var(--surface, white));
+        color: var(--text-primary, inherit);
         font: inherit;
         min-inline-size: 0;
     }
