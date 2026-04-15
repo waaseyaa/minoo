@@ -190,6 +190,11 @@ return [
     'events.view_calendar' => 'Calendar',
     'events.filter_clear' => 'Clear filters',
     'events.chip_remove' => 'Remove',
+    'events.pagination_prev' => 'Previous',
+    'events.pagination_next' => 'Next',
+    'events.pagination_page_of' => 'Page :current of :total',
+    'events.list_no_results' => 'No events match these filters.',
+    'events.list_clear_filters' => 'Clear filters',
 
     // Groups
     'groups.title' => 'Groups',

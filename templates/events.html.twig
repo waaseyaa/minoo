@@ -27,36 +27,13 @@
 
       {% if filters is defined and filters.view == 'calendar' %}
         <p>{{ trans('events.calendar_coming_soon') }}</p>
-      {% elseif (feed is defined and feed.flatList|length > 0) or (filters is defined and filters.view == 'list') %}
-        {# Task 13 will replace this with a proper list view component #}
-        {% set listEvents = (feed is defined and feed.flatList|length > 0) ? feed.flatList : (events|default([])) %}
-        {% if listEvents|length > 0 %}
-          <div class="card-grid">
-            {% for e in listEvents %}
-              {% set comm = communities[e.get('community_id')]|default({}) %}
-              {% include "components/event-card.html.twig" with {
-                title: e.get('title'),
-                type: e.get('type')|default('')|capitalize,
-                date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
-                starts_at_iso: e.get('starts_at') ? e.get('starts_at')|date('c') : '',
-                starts_at_raw: e.get('starts_at')|default(null),
-                location: e.get('location')|default(''),
-                excerpt: e.get('description')|default('')|split("\n\n")|first|length > 120 ? e.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : e.get('description')|default('')|split("\n\n")|first,
-                url: "/events/" ~ e.get('slug'),
-                community_name: comm.name|default(''),
-                community_slug: comm.slug|default(''),
-                photo_url: e.get('photo_url')|default('')
-              } %}
-            {% endfor %}
-          </div>
-        {% else %}
-          {% include "components/empty-state.html.twig" with {
-            heading: trans('events.empty_heading'),
-            body: trans('events.empty_body'),
-            action_url: lang_url('/communities'),
-            action_label: trans('events.explore_button')
-          } %}
-        {% endif %}
+      {% elseif (filters is defined and filters.view == 'list') or (feed is defined and feed.flatList|length > 0) %}
+        {% include "components/event-list.html.twig" with {
+          events: (feed is defined and feed.flatList is defined) ? feed.flatList : (events|default([])),
+          pagination: (feed is defined and feed.pagination is defined) ? feed.pagination : null,
+          filters: filters,
+          communities: communities
+        } %}
       {% elseif feed is defined %}
         {% include "components/event-feed.html.twig" with { feed: feed, communities: communities } %}
       {% else %}
