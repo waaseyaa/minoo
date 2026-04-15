@@ -131,19 +131,25 @@ final class EventFeedBuilderTest extends TestCase
     }
 
     #[Test]
-    public function on_the_horizon_caps_at_6_and_ranks_featured_first(): void
+    public function on_the_horizon_caps_at_6_and_excludes_featured(): void
     {
         $now = strtotime('2026-04-14 12:00:00');
         $events = [];
         for ($i = 0; $i < 10; $i++) {
             $events[] = $this->event($i + 500, type: 'gathering', starts: $now + (60 + $i) * 86400);
         }
-        // Mark id 509 as featured (latest start but highest score).
+        // Mark id 509 as featured — it renders in the featured strip at the
+        // top of the feed and must NOT duplicate into the horizon section.
         $builder = $this->buildWithFeatured($events, $now, featuredEventIds: [509]);
         $result = $builder->build(EventFilters::fromRequest(Request::create('/events')), null);
 
         $this->assertCount(6, $result->onTheHorizon);
-        $this->assertSame(509, $result->onTheHorizon[0]->id(), 'featured event should lead');
+        $horizonIds = array_map(fn ($e) => $e->id(), $result->onTheHorizon);
+        $this->assertNotContains(509, $horizonIds, 'featured event must not appear in horizon');
+
+        // The featured event should still appear in the featured section.
+        $featuredIds = array_map(fn ($e) => $e->id(), $result->featured);
+        $this->assertContains(509, $featuredIds);
     }
 
     #[Test]

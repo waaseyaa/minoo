@@ -88,6 +88,16 @@ final class EventFeedBuilder
             }
             return (int) $a->get('starts_at') <=> (int) $b->get('starts_at');
         });
+        // Featured events render in their own section on top of the feed.
+        // Exclude them from the horizon strip so the same card isn't shown
+        // twice on the page (previously deduped in Twig via |merge loops).
+        if ($featuredIds !== []) {
+            $featuredLookup = array_flip($featuredIds);
+            $horizonWindow = array_values(array_filter(
+                $horizonWindow,
+                static fn (ContentEntityBase $e): bool => !isset($featuredLookup[(int) $e->id()]),
+            ));
+        }
         $onTheHorizon = array_slice($horizonWindow, 0, 6);
 
         $featured = array_values(array_filter(
