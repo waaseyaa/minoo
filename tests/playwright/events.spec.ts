@@ -18,12 +18,12 @@ test.describe('Events refactor', () => {
     const hasChip = await thisWeekChip.count();
     test.skip(hasChip === 0, 'This week chip not available');
     await thisWeekChip.click();
-    await expect(page).toHaveURL(/when=this[-_]?week/i);
-    const dismiss = page.locator('.active-filter a, .events-filter__active a, [data-filter-dismiss]').first();
+    await expect(page).toHaveURL(/when=week/i);
+    const dismiss = page.locator('.event-filters__chip-remove, .active-filter a, [data-filter-dismiss]').first();
     const hasDismiss = await dismiss.count();
     test.skip(hasDismiss === 0, 'Active filter dismiss link not rendered');
     await dismiss.click();
-    await expect(page).not.toHaveURL(/when=this[-_]?week/i);
+    await expect(page).not.toHaveURL(/when=week/i);
   });
 
   test('view toggle persists in URL — list and calendar', async ({ page }) => {
