@@ -23,26 +23,36 @@ final class CalendarMonth
 
     /**
      * @param list<ContentEntityBase> $events
+     *
+     * $tz controls the local-time frame used to compute day boundaries and
+     * place events into grid cells. Minoo's primary audience is Canadian
+     * Indigenous communities, so we default to America/Toronto; callers may
+     * override once a per-user TZ preference exists. Event timestamps are
+     * stored as epoch seconds (UTC-absolute) and compared against day
+     * windows expressed in the target TZ — otherwise a 23:30 local event
+     * can cross the UTC midnight boundary and land on the wrong day.
      */
     public static function fromEvents(
         int $year,
         int $month,
         array $events,
         ?DateTimeImmutable $today = null,
+        ?DateTimeZone $tz = null,
     ): self {
-        $utc = new DateTimeZone('UTC');
+        $tz ??= new DateTimeZone('America/Toronto');
+
         $firstOfMonth = new DateTimeImmutable(
             sprintf('%04d-%02d-01 00:00:00', $year, $month),
-            $utc,
+            $tz,
         );
 
-        // Roll back to the Sunday on or before the 1st.
+        // Roll back to the Sunday on or before the 1st (in local TZ).
         // PHP: sun=0 mon=1 ... sat=6
         $dowOfFirst = (int) $firstOfMonth->format('w');
         $gridStart = $firstOfMonth->modify('-' . $dowOfFirst . ' days');
 
         $todayStr = $today !== null
-            ? $today->setTimezone($utc)->format('Y-m-d')
+            ? $today->setTimezone($tz)->format('Y-m-d')
             : null;
 
         $weeks = [];
@@ -50,8 +60,10 @@ final class CalendarMonth
         for ($w = 0; $w < 6; $w++) {
             $week = [];
             for ($d = 0; $d < 7; $d++) {
+                // Compute day boundaries in local TZ so that a 23:30 America/
+                // Toronto event doesn't spill into the next UTC day.
                 $dayStart = (int) $cursor->format('U');
-                $dayEnd   = $dayStart + 86400;
+                $dayEnd   = (int) $cursor->modify('+1 day')->format('U');
 
                 $dayEvents = [];
                 foreach ($events as $event) {

@@ -110,7 +110,8 @@ final class CalendarMonthTest extends TestCase
     #[Test]
     public function today_flag_is_set_when_today_is_in_grid(): void
     {
-        $today = new DateTimeImmutable('2026-04-15', new DateTimeZone('UTC'));
+        // Noon UTC on Apr 15 is 08:00 America/Toronto — same local day.
+        $today = new DateTimeImmutable('2026-04-15 12:00:00', new DateTimeZone('UTC'));
         $cal = CalendarMonth::fromEvents(2026, 4, [], $today);
 
         $todayDays = [];
@@ -143,6 +144,36 @@ final class CalendarMonthTest extends TestCase
     {
         $cal = CalendarMonth::fromEvents(2026, 4, []);
         $this->assertSame('April 2026', $cal->label());
+    }
+
+    #[Test]
+    public function evening_event_in_local_tz_lands_on_correct_day(): void
+    {
+        // April 15 2026 23:30 America/Toronto is April 16 03:30 UTC.
+        // With TZ-naive (UTC) day windows, this event was placed on April 16.
+        // With TZ-aware windows defaulting to America/Toronto, it must land
+        // on April 15.
+        $tz    = new DateTimeZone('America/Toronto');
+        $start = (new DateTimeImmutable('2026-04-15 23:30:00', $tz))->getTimestamp();
+        $end   = $start + 1500; // 25 minutes; stays inside the same local day
+        $event = $this->eventMock(77, $start, $end);
+
+        $cal = CalendarMonth::fromEvents(2026, 4, [$event]);
+
+        $matched = [];
+        foreach ($cal->weeks as $week) {
+            foreach ($week as $day) {
+                foreach ($day->events as $e) {
+                    if ($e->id() === 77) {
+                        $matched[] = $day->date->format('Y-m-d');
+                    }
+                }
+            }
+        }
+        sort($matched);
+        // 00:30–01:30 Apr 16 in UTC, but Apr 15 22:30–23:30 local — spans
+        // only Apr 15 in Toronto.
+        $this->assertSame(['2026-04-15'], $matched);
     }
 
     private function eventMock(int $id, int $startsAt, int $endsAt): ContentEntityBase

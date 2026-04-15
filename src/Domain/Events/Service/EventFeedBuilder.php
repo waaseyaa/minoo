@@ -181,29 +181,33 @@ final class EventFeedBuilder
 
     private function buildCalendar(EventFilters $filters, int $now): EventFeedResult
     {
-        $utc = new DateTimeZone('UTC');
+        // Render month boundaries in the audience's local TZ; a 23:30
+        // America/Toronto event must land in its local day, not tomorrow's
+        // UTC cell. CalendarMonth defaults to the same TZ.
+        $tz = new DateTimeZone('America/Toronto');
 
-        // Determine target month (YYYY-MM); default to current month in UTC.
+        // Determine target month (YYYY-MM); default to current local month.
         if ($filters->month !== null && preg_match('/^(\d{4})-(\d{2})$/', $filters->month, $m)) {
             $year  = (int) $m[1];
             $month = (int) $m[2];
             if ($month < 1 || $month > 12) {
-                $nowDt = (new DateTimeImmutable('@' . $now))->setTimezone($utc);
+                $nowDt = (new DateTimeImmutable('@' . $now))->setTimezone($tz);
                 $year  = (int) $nowDt->format('Y');
                 $month = (int) $nowDt->format('n');
             }
         } else {
-            $nowDt = (new DateTimeImmutable('@' . $now))->setTimezone($utc);
+            $nowDt = (new DateTimeImmutable('@' . $now))->setTimezone($tz);
             $year  = (int) $nowDt->format('Y');
             $month = (int) $nowDt->format('n');
         }
 
-        $todayDt = (new DateTimeImmutable('@' . $now))->setTimezone($utc);
+        $todayDt = (new DateTimeImmutable('@' . $now))->setTimezone($tz);
 
-        // First build an empty month to compute the grid window.
-        $empty = CalendarMonth::fromEvents($year, $month, [], $todayDt);
+        // First build an empty month to compute the grid window in local TZ.
+        $empty = CalendarMonth::fromEvents($year, $month, [], $todayDt, $tz);
         $gridStart = (int) $empty->gridStart()->format('U');
-        $gridEnd   = (int) $empty->gridEnd()->format('U') + 86400;
+        // Grid ends at the start of the day AFTER the last grid cell (local TZ).
+        $gridEnd   = (int) $empty->gridEnd()->modify('+1 day')->format('U');
 
         // Load events whose [starts_at, ends_at] overlaps [gridStart, gridEnd).
         $storage = $this->entityTypeManager->getStorage('event');
@@ -214,7 +218,7 @@ final class EventFeedBuilder
             ->execute();
         $events = $ids === [] ? [] : array_values($storage->loadMultiple($ids));
 
-        $calendar = CalendarMonth::fromEvents($year, $month, $events, $todayDt);
+        $calendar = CalendarMonth::fromEvents($year, $month, $events, $todayDt, $tz);
 
         return new EventFeedResult(
             featured:         [],
