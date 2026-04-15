@@ -130,6 +130,33 @@ final class EventFeedBuilderTest extends TestCase
         }
     }
 
+    #[Test]
+    public function on_the_horizon_caps_at_6_and_ranks_featured_first(): void
+    {
+        $now = strtotime('2026-04-14 12:00:00');
+        $events = [];
+        for ($i = 0; $i < 10; $i++) {
+            $events[] = $this->event($i + 500, type: 'gathering', starts: $now + (60 + $i) * 86400);
+        }
+        // Mark id 509 as featured (latest start but highest score).
+        $builder = $this->buildWithFeatured($events, $now, featuredEventIds: [509]);
+        $result = $builder->build(EventFilters::fromRequest(Request::create('/events')), null);
+
+        $this->assertCount(6, $result->onTheHorizon);
+        $this->assertSame(509, $result->onTheHorizon[0]->id(), 'featured event should lead');
+    }
+
+    /**
+     * @param list<ContentEntityBase> $events
+     * @param list<int>               $featuredEventIds
+     */
+    private function buildWithFeatured(array $events, int $now, array $featuredEventIds): EventFeedBuilder
+    {
+        $builder = $this->buildWith($events, $now);
+        $builder->setFeaturedEventIdsForTesting($featuredEventIds);
+        return $builder;
+    }
+
     /** @param list<ContentEntityBase> $events */
     private function buildWith(array $events, int $now): EventFeedBuilder
     {
@@ -157,10 +184,19 @@ final class EventFeedBuilderTest extends TestCase
         $storage = $this->createMock(EntityStorageInterface::class);
         $storage->method('getQuery')->willReturn($queryStub);
         $storage->method('loadMultiple')->willReturnCallback(
-            fn (array $ids = []) => array_combine(
-                $ids,
-                array_values($this->eventsById($events, $ids))
-            )
+            function (array $ids = []) use ($events) {
+                $byId = [];
+                foreach ($events as $e) {
+                    $byId[$e->id()] = $e;
+                }
+                $out = [];
+                foreach ($ids as $id) {
+                    if (isset($byId[$id])) {
+                        $out[$id] = $byId[$id];
+                    }
+                }
+                return $out;
+            }
         );
 
         $etm = $this->createMock(EntityTypeManager::class);
