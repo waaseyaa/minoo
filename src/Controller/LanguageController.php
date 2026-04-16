@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Entity\DictionaryEntry;
 use App\Support\LayoutTwigContext;
-use App\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
@@ -20,7 +20,7 @@ final class LanguageController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
-        private readonly NorthCloudClient $northCloudClient,
+        private readonly NorthCloudCommunityDictionaryClientInterface $northCloudClient,
     ) {}
 
     /** @param array<string, mixed> $params */

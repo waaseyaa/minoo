@@ -58,7 +58,7 @@ minoo/
 | `src/Controller/*`, routes in `src/Provider/AppServiceProvider.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*`, `src/Support/GeoDistance.php`, `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
-| `src/Support/NorthCloudClient.php`, `src/Support/NorthCloudCache.php` | — | `docs/specs/geo-domain.md` (NC client section) |
+| `src/Contract/NorthCloudCommunityDictionaryClientInterface.php`, `src/Support/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
 | `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, Flash, FixtureResolver, ElderIdentity; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
@@ -198,7 +198,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Playwright tests coupled to i18n strings**: Playwright assertions like `getByRole('heading', { name: '...' })` break when translation strings change. Update `tests/playwright/*.spec.ts` whenever `resources/lang/en.php` heading/title strings change.
 - **`SqlEntityStorage::delete()` takes an array**: `$storage->delete([$entity])` not `$storage->delete($entity)`. Single entity causes TypeError.
 - **`count()->execute()` returns `[N]`**: A single-element array with the count as value. Use `$result[0]` not `count($result)` to get the actual count.
-- **NorthCloudClient timeout**: Default 5s is too tight for full-text search (ES queries take 5+ seconds). Use `search.timeout` config (15s) when constructing client for search operations.
+-- **NorthCloud client timeout**: Use `search.timeout` / `northcloud.timeout` config (15s for search, 5s for community data) when constructing `Waaseyaa\NorthCloud\Client\NorthCloudClient` for search + community operations.
 - **NC Search API param**: Uses `size` for pagination, not `page_size` (that's the communities endpoint only).
 - **ConsoleKernel broken on production** (#493): Missing `SqliteEmbeddingStorage` class crashes all CLI commands. Workaround: boot `HttpKernel` via reflection in one-liner scripts (same pattern as `scripts/populate_featured.php`).
 - **`trans()` is a Twig function, not PHP**: Controllers cannot call `trans()`. Use hardcoded English strings for `Flash::success()`/`Flash::error()` — this matches all existing controllers (AuthController, ElderSupportWorkflowController, etc.).
@@ -219,7 +219,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Crossword themes tab**: No themed puzzle packs exist yet. The tab renders blank with no empty state message. See #559.
 - **CSS/template gotchas**: Moved to `minoo:frontend-ssr` skill (Common Mistakes section)
 - **Entity creation gotchas**: Moved to `minoo:entities` skill (Common Mistakes section)
-- **`NORTHCLOUD_BASE_URL` on production**: Must be `http://localhost:8050` (source-manager), NOT `https://northcloud.one` (that's Minoo itself). The `NorthCloudClient` uses this for people/band-office lookups on community detail pages.
+-- **`NORTHCLOUD_BASE_URL` on production**: Must be `http://localhost:8050` (source-manager), NOT `https://northcloud.one` (that's Minoo itself). The `Waaseyaa\NorthCloud\Client\NorthCloudClient` (via the adapter) uses this for people/band-office lookups on community detail pages.
 - **`api.northcloud.one` is the public read-only proxy**: Caddy reverse proxy to source-manager port 8050. GET-only, explicit path allowlist. Deployed via `northcloud-ansible` role `north-cloud`.
 - **ISC sub-pages have direct URLs**: `FNGovernance.aspx?BAND_NUMBER={band}&lang=eng` (chief/council + election dates), `FNReserves.aspx?BAND_NUMBER={band}&lang=eng` (reserve names + hectares), `FNRegPopulation.aspx?BAND_NUMBER={band}&lang=eng` (registered population breakdown). No ASP.NET postback needed.
 - **ISC profiles have no email field**: No sub-page contains band office email. Email must come from community website scraping.
@@ -255,7 +255,7 @@ All work in this repo follows a GitHub-first workflow. See `docs/specs/workflow.
   - `docs/specs/ingestion-pipeline.md` — NorthCloud ingest, mappers, materialization
   - `docs/specs/search.md` — search provider, config, template
   - `docs/specs/frontend-ssr.md` — templates, CSS design system, components
-  - `docs/specs/geo-domain.md` — Geo bounded context, LocationService, NorthCloudClient, volunteer ranking
+  - `docs/specs/geo-domain.md` — Geo bounded context, LocationService, NorthCloudCommunityDictionaryClientInterface seam, volunteer ranking
 - **Framework specs:** Use `waaseyaa_*` MCP tools for framework-level context
 
 ## Architectural Boundaries
@@ -270,7 +270,7 @@ Minoo is the **application layer**. It owns entity types, map-driven UX, dialect
 **Import rules:**
 - Minoo imports from Waaseyaa (framework) — never the reverse
 - Minoo consumes the shared taxonomy contract (`jonesrussell/indigenous-taxonomy`) for category/region/dialect constants
-- Minoo may call North Cloud APIs (via NorthCloudClient) but must not import NC Go packages
+- Minoo may call North Cloud APIs (via the app-facing NC client interface + adapter on top of `waaseyaa/northcloud`) but must not import NC Go packages
 - North Cloud must not contain Minoo-specific entity types or templates
 
 **Shared contracts:**

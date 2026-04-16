@@ -8,6 +8,7 @@ use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\NorthCloud\Sync\NcHitToEntityMapperInterface;
 
 #[CoversClass(NcArticleToTeachingMapper::class)]
 final class NcArticleToTeachingMapperTest extends TestCase
@@ -45,6 +46,28 @@ final class NcArticleToTeachingMapperTest extends TestCase
     }
 
     #[Test]
+    public function it_implements_the_northcloud_mapper_contract(): void
+    {
+        $this->assertInstanceOf(NcHitToEntityMapperInterface::class, $this->mapper);
+        $this->assertSame('teaching', $this->mapper->entityType());
+        $this->assertSame('source_url', $this->mapper->dedupField());
+    }
+
+    #[Test]
+    public function it_supports_non_event_hits(): void
+    {
+        $this->assertTrue($this->mapper->supports([
+            'content_type' => 'article',
+            'topics' => ['indigenous', 'language'],
+        ]));
+
+        $this->assertFalse($this->mapper->supports([
+            'content_type' => 'event',
+            'topics' => ['indigenous', 'event'],
+        ]));
+    }
+
+    #[Test]
     public function it_generates_slug_from_title(): void
     {
         $hit = ['title' => 'Seven Grandfather Teachings & More!', 'url' => 'https://example.com/seven'];
@@ -55,15 +78,12 @@ final class NcArticleToTeachingMapperTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_missing_fields_gracefully(): void
+    public function it_requires_a_source_url(): void
     {
-        $fields = $this->mapper->map([]);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('missing url');
 
-        $this->assertSame('', $fields['title']);
-        $this->assertSame('', $fields['slug']);
-        $this->assertSame('', $fields['content']);
-        $this->assertSame('', $fields['source_url']);
-        $this->assertSame(1, $fields['status']);
+        $this->mapper->map([]);
     }
 
     #[Test]
@@ -84,7 +104,11 @@ final class NcArticleToTeachingMapperTest extends TestCase
     public function it_uses_current_time_for_invalid_date(): void
     {
         $before = time();
-        $fields = $this->mapper->map(['title' => 'Test', 'published_date' => 'not-a-date']);
+        $fields = $this->mapper->map([
+            'title' => 'Test',
+            'url' => 'https://example.com/test',
+            'published_date' => 'not-a-date',
+        ]);
         $after = time();
 
         $this->assertGreaterThanOrEqual($before, $fields['created_at']);

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Controller;
 
+use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Controller\LanguageController;
-use App\Support\NorthCloudClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +20,7 @@ final class LanguageControllerSearchTest extends TestCase
 {
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
-    private NorthCloudClient $northCloudClient;
+    private NorthCloudCommunityDictionaryClientInterface $northCloudClient;
     private AccountInterface $account;
     private HttpRequest $request;
 
@@ -32,7 +32,7 @@ final class LanguageControllerSearchTest extends TestCase
             'language.html.twig' => '{{ path }}|{{ search_query|default("") }}|{{ search_total|default(0) }}{% for r in search_results|default([]) %}|{{ r.lemma|default(r.word|default("")) }}{% endfor %}',
         ]));
 
-        $this->northCloudClient = $this->createMock(NorthCloudClient::class);
+        $this->northCloudClient = $this->createMock(NorthCloudCommunityDictionaryClientInterface::class);
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/language/search');
     }
@@ -61,7 +61,7 @@ final class LanguageControllerSearchTest extends TestCase
                     ['lemma' => 'makwa', 'word_class_normalized' => 'na', 'definitions' => ['bear'], 'slug' => 'makwa'],
                 ],
                 'total' => 1,
-                'attribution' => NorthCloudClient::DICTIONARY_ATTRIBUTION,
+                'attribution' => 'Ojibwe People\'s Dictionary, University of Minnesota',
             ]);
 
         $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);

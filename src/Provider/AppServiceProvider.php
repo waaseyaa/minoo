@@ -51,14 +51,14 @@ use App\Feed\Scoring\DecayCalculator;
 use App\Feed\Scoring\DiversityReranker;
 use App\Feed\Scoring\EngagementCalculator;
 use App\Feed\Scoring\FeedScorer;
-use App\Ingestion\NcContentSyncService;
-use App\Search\NorthCloudSearchProvider;
+use App\Ingestion\EntityMapper\NcArticleToEventMapper;
+use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
 use App\Support\Command\MailTestCommand;
 use App\Support\Command\MessagingDigestCommand;
-use App\Support\Command\NcSyncCommand;
 use App\Support\MessageDigestCommand;
 use App\Support\NewsletterMailer;
-use App\Support\NorthCloudClient;
+use App\Contract\NorthCloudCommunityDictionaryClientInterface;
+use App\Support\NorthCloudCommunityDictionaryClient;
 use App\Twig\AccountDisplayTwigExtension;
 use App\Twig\DateTwigExtension;
 use Symfony\Component\Console\Command\Command;
@@ -81,6 +81,11 @@ use Waaseyaa\I18n\Twig\TranslationTwigExtension;
 use Waaseyaa\Mail\MailDriverInterface;
 use Waaseyaa\Mail\MailerInterface;
 use Waaseyaa\Media\UploadHandler;
+use Waaseyaa\NorthCloud\Client\NorthCloudClient as PackageNorthCloudClient;
+use Waaseyaa\NorthCloud\Command\NcSyncCommand;
+use Waaseyaa\NorthCloud\Search\NorthCloudSearchProvider;
+use Waaseyaa\NorthCloud\Sync\MapperRegistry;
+use Waaseyaa\NorthCloud\Sync\NcSyncService;
 use Waaseyaa\Routing\Language\UrlPrefixNegotiator;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -807,11 +812,43 @@ final class AppServiceProvider extends ServiceProvider
             ],
         ));
 
-        $this->singleton(NorthCloudClient::class, function () {
+        $this->singleton(MapperRegistry::class, function (): MapperRegistry {
+            $registry = new MapperRegistry();
+            $registry->register(new NcArticleToTeachingMapper());
+            $registry->register(new NcArticleToEventMapper());
+
+            return $registry;
+        });
+
+        $this->singleton(PackageNorthCloudClient::class, function (): PackageNorthCloudClient {
             $ncConfig = $this->config['northcloud'] ?? [];
             $baseUrl = rtrim((string) ($ncConfig['base_url'] ?? 'https://api.northcloud.one'), '/');
-            $timeout = (int) ($ncConfig['search']['timeout'] ?? $ncConfig['timeout'] ?? 15);
-            return new NorthCloudClient($baseUrl, $timeout);
+            $timeout = (int) ($ncConfig['timeout'] ?? 5);
+            $apiToken = (string) ($ncConfig['api_token'] ?? '');
+
+            return new PackageNorthCloudClient(
+                baseUrl: $baseUrl,
+                timeout: $timeout,
+                apiToken: $apiToken,
+                allowInsecure: $this->shouldAllowInsecureNorthCloudUrl($baseUrl),
+            );
+        });
+
+        $this->singleton(
+            NorthCloudCommunityDictionaryClientInterface::class,
+            function (): NorthCloudCommunityDictionaryClientInterface {
+                return new NorthCloudCommunityDictionaryClient(
+                    client: $this->resolve(PackageNorthCloudClient::class),
+                );
+            },
+        );
+
+        $this->singleton(NcSyncService::class, function (): NcSyncService {
+            return new NcSyncService(
+                $this->resolve(PackageNorthCloudClient::class),
+                $this->resolve(EntityTypeManager::class),
+                $this->resolve(MapperRegistry::class),
+            );
         });
 
         // MCP auth: bind BearerTokenAuth with tokens from config.
@@ -925,8 +962,11 @@ final class AppServiceProvider extends ServiceProvider
         $searchConfig = $this->config['search'] ?? [];
 
         $this->searchProvider = new NorthCloudSearchProvider(
-            baseUrl: (string) ($searchConfig['base_url'] ?? 'https://northcloud.one'),
-            timeout: (int) ($searchConfig['timeout'] ?? 5),
+            client: new PackageNorthCloudClient(
+                baseUrl: (string) ($searchConfig['base_url'] ?? 'https://northcloud.one'),
+                timeout: (int) ($searchConfig['timeout'] ?? 5),
+                allowInsecure: $this->shouldAllowInsecureNorthCloudUrl((string) ($searchConfig['base_url'] ?? 'https://northcloud.one')),
+            ),
             cacheTtl: (int) ($searchConfig['cache_ttl'] ?? 60),
         );
 
@@ -3577,13 +3617,6 @@ final class AppServiceProvider extends ServiceProvider
         \Waaseyaa\Database\DatabaseInterface $database,
         \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher,
     ): array {
-        // --- Ingestion: NcSyncCommand ---
-        $ncConfig = $this->config['northcloud'] ?? [];
-        $baseUrl = $ncConfig['base_url'] ?? '';
-        $searchTimeout = (int) ($this->config['search']['timeout'] ?? 15);
-        $client = new NorthCloudClient(baseUrl: $baseUrl, timeout: $searchTimeout);
-        $syncService = new NcContentSyncService($client, $entityTypeManager);
-
         // --- Mail: MailTestCommand + MessagingDigestCommand ---
         $mailConfig = $this->config['mail'] ?? [];
         $fromAddress = trim((string) ($mailConfig['from_address'] ?? ''));
@@ -3604,7 +3637,10 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         return [
-            new NcSyncCommand($syncService),
+            new NcSyncCommand(
+                $this->resolve(NcSyncService::class),
+                dirname(__DIR__, 2) . '/storage/nc-sync-status.json',
+            ),
             new MailTestCommand(
                 $this->resolve(MailerInterface::class),
                 $configured,
@@ -3624,5 +3660,16 @@ final class AppServiceProvider extends ServiceProvider
         }
 
         return require $path;
+    }
+
+    private function shouldAllowInsecureNorthCloudUrl(string $baseUrl): bool
+    {
+        if (!str_starts_with($baseUrl, 'http://')) {
+            return false;
+        }
+
+        $host = strtolower((string) parse_url($baseUrl, PHP_URL_HOST));
+
+        return in_array($host, ['localhost', '127.0.0.1', '::1'], true);
     }
 }

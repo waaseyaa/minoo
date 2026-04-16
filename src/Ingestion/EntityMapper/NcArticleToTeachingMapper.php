@@ -5,9 +5,25 @@ declare(strict_types=1);
 namespace App\Ingestion\EntityMapper;
 
 use Waaseyaa\Foundation\SlugGenerator;
+use Waaseyaa\NorthCloud\Sync\NcHitToEntityMapperInterface;
 
-final class NcArticleToTeachingMapper
+final class NcArticleToTeachingMapper implements NcHitToEntityMapperInterface
 {
+    public function entityType(): string
+    {
+        return 'teaching';
+    }
+
+    public function supports(array $hit): bool
+    {
+        $topics = $hit['topics'] ?? [];
+        if (is_array($topics) && in_array('event', $topics, true)) {
+            return false;
+        }
+
+        return (string) ($hit['content_type'] ?? '') !== 'event';
+    }
+
     /**
      * Map a NorthCloud search hit to teaching entity fields.
      *
@@ -19,6 +35,10 @@ final class NcArticleToTeachingMapper
         $title = (string) ($hit['title'] ?? '');
         $content = (string) ($hit['snippet'] ?? $hit['body'] ?? '');
         $sourceUrl = (string) ($hit['url'] ?? '');
+
+        if ($sourceUrl === '') {
+            throw new \RuntimeException('NorthCloud teaching hit is missing url');
+        }
 
         return [
             'title' => $title,
@@ -33,6 +53,11 @@ final class NcArticleToTeachingMapper
             'created_at' => $this->parseTimestamp($hit['published_date'] ?? null),
             'updated_at' => time(),
         ];
+    }
+
+    public function dedupField(): string
+    {
+        return 'source_url';
     }
 
     private function parseTimestamp(mixed $date): int

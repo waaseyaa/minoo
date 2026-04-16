@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Minoo\Ingestion\EntityMapper\DictionaryEntryMapper;
-use Minoo\Support\NorthCloudClient;
+use App\Ingestion\EntityMapper\DictionaryEntryMapper;
+use Waaseyaa\NorthCloud\Client\NorthCloudClient;
 
 // ConsoleKernel is broken on production (#493) — use HttpKernel via reflection.
 $kernel = new Waaseyaa\Foundation\Kernel\HttpKernel(dirname(__DIR__));
@@ -32,7 +32,13 @@ if ($dryRun) {
     fprintf(STDOUT, "DRY RUN — no changes will be written.\n\n");
 }
 
-$client = new NorthCloudClient($baseUrl, $timeout);
+$client = new NorthCloudClient(
+    baseUrl: $baseUrl,
+    timeout: $timeout,
+    allowInsecure: str_starts_with($baseUrl, 'http://localhost')
+        || str_starts_with($baseUrl, 'http://127.0.0.1')
+        || str_starts_with($baseUrl, 'http://[::1]'),
+);
 $mapper = new DictionaryEntryMapper();
 $storage = $entityTypeManager->getStorage('dictionary_entry');
 

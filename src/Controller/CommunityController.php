@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Support\LayoutTwigContext;
-use App\Support\NorthCloudCache;
-use App\Support\NorthCloudClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -20,7 +19,7 @@ final class CommunityController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
-        private readonly ?NorthCloudClient $northCloudClient = null,
+        private readonly ?NorthCloudCommunityDictionaryClientInterface $northCloudClient = null,
     ) {}
 
     /** @param array<string, mixed> $params */
@@ -150,11 +149,10 @@ final class CommunityController
             $nearby = $this->findNearbyCommunities($community, $storage);
 
             $ncId = $community->get('nc_id');
-            if ($ncId !== null && $ncId !== '') {
+            if ($ncId !== null && $ncId !== '' && $this->northCloudClient !== null) {
                 try {
-                    $ncClient = $this->resolveNorthCloudClient();
-                    $people = $ncClient->getPeople((string) $ncId);
-                    $bandOffice = $ncClient->getBandOffice((string) $ncId);
+                    $people = $this->northCloudClient->getPeople((string) $ncId);
+                    $bandOffice = $this->northCloudClient->getBandOffice((string) $ncId);
                 } catch (\Throwable) {
                     // NorthCloud unavailable — page renders without contact data
                 }
@@ -296,31 +294,6 @@ final class CommunityController
         }
 
         return new JsonResponse($results);
-    }
-
-    private function resolveNorthCloudClient(): NorthCloudClient
-    {
-        if ($this->northCloudClient !== null) {
-            return $this->northCloudClient;
-        }
-
-        $configPath = dirname(__DIR__, 2) . '/config/waaseyaa.php';
-        $config = file_exists($configPath) ? (require $configPath)['northcloud'] ?? [] : [];
-
-        $projectRoot = dirname(__DIR__, 2);
-        $dbPath = getenv('WAASEYAA_DB') ?: $projectRoot . '/storage/waaseyaa.sqlite';
-        $cache = null;
-        if (file_exists($dbPath)) {
-            $pdo = new \PDO('sqlite:' . $dbPath);
-            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $cache = new NorthCloudCache($pdo, (int) ($config['cache_ttl'] ?? 3600));
-        }
-
-        return new NorthCloudClient(
-            baseUrl: (string) ($config['base_url'] ?? 'https://northcloud.one'),
-            timeout: (int) ($config['timeout'] ?? 5),
-            cache: $cache,
-        );
     }
 
     private function resolveLocation(HttpRequest $request): \App\Domain\Geo\ValueObject\LocationContext

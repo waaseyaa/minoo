@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Minoo\Support\NorthCloudClient;
+use Waaseyaa\NorthCloud\Client\NorthCloudClient;
 
 $configFile = dirname(__DIR__) . '/config/waaseyaa.php';
 $config = file_exists($configFile) ? require $configFile : [];
@@ -34,6 +34,9 @@ $client = new NorthCloudClient(
     baseUrl: $baseUrl,
     timeout: $timeout,
     apiToken: $apiToken,
+    allowInsecure: str_starts_with($baseUrl, 'http://localhost')
+        || str_starts_with($baseUrl, 'http://127.0.0.1')
+        || str_starts_with($baseUrl, 'http://[::1]'),
 );
 
 fprintf(STDOUT, "Linking community sources (%s)...\n", $dryRun ? 'DRY RUN' : 'APPLY');

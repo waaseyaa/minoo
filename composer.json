@@ -3,6 +3,15 @@
     "description": "Indigenous knowledge platform powered by NorthCloud ingestion",
     "type": "project",
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../waaseyaa/packages/northcloud",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
         "php": ">=8.4",
         "geoip2/geoip2": "^3.0",
@@ -13,7 +22,7 @@
         "waaseyaa/admin-surface": "^0.1",
         "waaseyaa/api": "^0.1",
         "waaseyaa/auth": "^0.1",
-        "waaseyaa/bimaaji": "^0.1",
+        "waaseyaa/bimaaji": "^0.1.0@alpha",
         "waaseyaa/cache": "^0.1",
         "waaseyaa/cli": "^0.1",
         "waaseyaa/config": "^0.1",
@@ -33,6 +42,7 @@
         "waaseyaa/mercure": "^0.1",
         "waaseyaa/messaging": "^0.1",
         "waaseyaa/node": "^0.1",
+        "waaseyaa/northcloud": "@dev",
         "waaseyaa/path": "^0.1",
         "waaseyaa/plugin": "^0.1",
         "waaseyaa/queue": "^0.1",
