@@ -198,7 +198,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Playwright tests coupled to i18n strings**: Playwright assertions like `getByRole('heading', { name: '...' })` break when translation strings change. Update `tests/playwright/*.spec.ts` whenever `resources/lang/en.php` heading/title strings change.
 - **`SqlEntityStorage::delete()` takes an array**: `$storage->delete([$entity])` not `$storage->delete($entity)`. Single entity causes TypeError.
 - **`count()->execute()` returns `[N]`**: A single-element array with the count as value. Use `$result[0]` not `count($result)` to get the actual count.
--- **NorthCloud client timeout**: Use `search.timeout` / `northcloud.timeout` config (15s for search, 5s for community data) when constructing `Waaseyaa\NorthCloud\Client\NorthCloudClient` for search + community operations.
+- **NorthCloud client timeout**: Use `search.timeout` / `northcloud.timeout` config (15s for search, 5s for community data) when constructing `Waaseyaa\NorthCloud\Client\NorthCloudClient` for search + community operations.
 - **NC Search API param**: Uses `size` for pagination, not `page_size` (that's the communities endpoint only).
 - **ConsoleKernel broken on production** (#493): Missing `SqliteEmbeddingStorage` class crashes all CLI commands. Workaround: boot `HttpKernel` via reflection in one-liner scripts (same pattern as `scripts/populate_featured.php`).
 - **`trans()` is a Twig function, not PHP**: Controllers cannot call `trans()`. Use hardcoded English strings for `Flash::success()`/`Flash::error()` — this matches all existing controllers (AuthController, ElderSupportWorkflowController, etc.).

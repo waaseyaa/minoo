@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ea8103186d62b2711afe44cb5dd4bb2",
+    "content-hash": "26b517daa1a887ac91e173c0bab258a9",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4750,11 +4750,17 @@
         },
         {
             "name": "waaseyaa/northcloud",
-            "version": "dev-main",
+            "version": "v0.1.0-alpha.143",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waaseyaa/northcloud.git",
+                "reference": "3fa6df45ed8433e9fe54a4cf1275eb46b0628ed7"
+            },
             "dist": {
-                "type": "path",
-                "url": "../waaseyaa/packages/northcloud",
-                "reference": "60cf6279f80d044048f0ff4416423d605942b4c1"
+                "type": "zip",
+                "url": "https://api.github.com/repos/waaseyaa/northcloud/zipball/3fa6df45ed8433e9fe54a4cf1275eb46b0628ed7",
+                "reference": "3fa6df45ed8433e9fe54a4cf1275eb46b0628ed7",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.4",
@@ -4785,19 +4791,16 @@
                     "Waaseyaa\\NorthCloud\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Waaseyaa\\NorthCloud\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "North Cloud client, content sync, and search provider for Waaseyaa applications",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/waaseyaa/northcloud/issues",
+                "source": "https://github.com/waaseyaa/northcloud/tree/v0.1.0-alpha.143"
+            },
+            "time": "2026-04-16T18:40:34+00:00"
         },
         {
             "name": "waaseyaa/path",
@@ -7281,8 +7284,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "waaseyaa/bimaaji": 15,
-        "waaseyaa/northcloud": 20
+        "waaseyaa/bimaaji": 15
     },
     "prefer-stable": true,
     "prefer-lowest": false,
