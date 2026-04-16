@@ -8,6 +8,7 @@ use App\Ingestion\EntityMapper\NcArticleToEventMapper;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\NorthCloud\Sync\NcHitToEntityMapperInterface;
 
 #[CoversClass(NcArticleToEventMapper::class)]
 final class NcArticleToEventMapperTest extends TestCase
@@ -41,14 +42,12 @@ final class NcArticleToEventMapperTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_missing_fields_gracefully(): void
+    public function it_requires_a_source_url(): void
     {
-        $fields = $this->mapper->map([]);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('missing url');
 
-        $this->assertSame('', $fields['title']);
-        $this->assertSame('', $fields['description']);
-        $this->assertSame('', $fields['source_url']);
-        $this->assertSame('gathering', $fields['type']);
+        $this->mapper->map([]);
     }
 
     #[Test]
@@ -56,6 +55,7 @@ final class NcArticleToEventMapperTest extends TestCase
     {
         $hit = [
             'title' => 'Test Event',
+            'url' => 'https://example.com/test-event',
             'published_date' => '2026-06-21T09:00:00Z',
         ];
 
@@ -63,5 +63,32 @@ final class NcArticleToEventMapperTest extends TestCase
 
         $expected = strtotime('2026-06-21T09:00:00Z');
         $this->assertSame($expected, $fields['created_at']);
+    }
+
+    #[Test]
+    public function it_implements_the_northcloud_mapper_contract(): void
+    {
+        $this->assertInstanceOf(NcHitToEntityMapperInterface::class, $this->mapper);
+        $this->assertSame('event', $this->mapper->entityType());
+        $this->assertSame('source_url', $this->mapper->dedupField());
+    }
+
+    #[Test]
+    public function it_only_supports_event_hits(): void
+    {
+        $this->assertTrue($this->mapper->supports([
+            'content_type' => 'article',
+            'topics' => ['indigenous', 'event'],
+        ]));
+
+        $this->assertTrue($this->mapper->supports([
+            'content_type' => 'event',
+            'topics' => ['indigenous'],
+        ]));
+
+        $this->assertFalse($this->mapper->supports([
+            'content_type' => 'article',
+            'topics' => ['indigenous', 'language'],
+        ]));
     }
 }

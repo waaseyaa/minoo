@@ -175,6 +175,17 @@ return [
     'events.status_happening' => "Noongom izhiwebad", // "Happening now" — noongom: "now" + izhiwebad: "it is happening"
     'events.status_upcoming' => "Bi-dagoshinomagad", // "Coming/Upcoming" — bi-: "coming" + dagoshinomagad: "it arrives"
     'events.status_past' => "Gaa-ishkwaa-ayaamagak", // "Past/Finished" — gaa-: past tense + ishkwaa: "finished" + ayaamagad: "it exists"
+    'events.meta_date' => '',
+    'events.meta_when' => '',
+    'events.meta_location' => 'Endaad', // dict: endaad: "where located/home"
+    'events.meta_type' => '',
+    'events.meta_host' => '',
+    'events.no_description' => '',
+    'events.source_title' => '',
+    'events.view_source' => '',
+    'events.source_name' => '',
+    'events.source_verified' => '',
+    'events.source_card_label' => '',
 
     // Groups (businesses)
     'groups.title' => 'Anokiiwinan', // dict: anokiiwin: "work, activity, business" (plural)

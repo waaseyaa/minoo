@@ -63,19 +63,28 @@
         alt: event.get('title'),
         credit: image_credit|default('')
       } %}
+      {% set now = "now"|date("U") %}
+      {% set start = event.get('starts_at') ? event.get('starts_at')|date("U") : null %}
+      {% set end_date = event.get('ends_at') ? event.get('ends_at')|date("U") : null %}
+      {% set source_url = event.get('source_url')|default('') %}
+      {% set source_label = event.get('source')|default('') %}
+      {% set verified_at = event.get('verified_at')|default(null) %}
       <div class="detail-hero">
-        <a href="{{ lang_url('/events') }}" class="detail-hero__back">{{ trans('events.detail_back') }}</a>
-        {% if event.get('slug') %}
-          <a href="/events/{{ event.get('slug') }}.ics" class="btn btn--secondary detail-hero__ics" download>{{ trans('events.add_to_calendar') }}</a>
-        {% endif %}
+        <div class="detail-hero__top">
+          <a href="{{ lang_url('/events') }}" class="detail-hero__back">{{ trans('events.detail_back') }}</a>
+          <div class="detail-hero__actions">
+            {% if event.get('slug') %}
+              <a href="/events/{{ event.get('slug') }}.ics" class="btn btn--secondary detail-hero__ics" download>{{ trans('events.add_to_calendar') }}</a>
+            {% endif %}
+            {% if source_url %}
+              <a href="{{ source_url }}" target="_blank" rel="noopener noreferrer" class="btn btn--ghost detail-hero__source">{{ trans('events.view_source') }}</a>
+            {% endif %}
+          </div>
+        </div>
         {% if event.get('type') is not empty %}
           <span class="detail-hero__badge">{{ event.get('type')|capitalize }}</span>
         {% endif %}
         <h1 class="detail-hero__title">{{ event.get('title') }}</h1>
-
-        {% set now = "now"|date("U") %}
-        {% set start = event.get('starts_at') ? event.get('starts_at')|date("U") : null %}
-        {% set end_date = event.get('ends_at') ? event.get('ends_at')|date("U") : null %}
 
         {% if start and end_date and now >= start and now <= end_date %}
           <span class="event-status event-status--active">{{ trans('events.status_happening') }}</span>
@@ -85,20 +94,70 @@
           <span class="event-status event-status--past">{{ trans('events.status_past') }}</span>
         {% endif %}
 
-        <div class="detail__meta">
+        <dl class="detail__meta-grid">
           {% if event.get('starts_at') %}
-            <span class="card__date">{{ event.get('starts_at')|date('F j, Y') }}{% if event.get('ends_at') %} – {{ event.get('ends_at')|date('F j, Y') }}{% endif %}</span>
+            <div class="detail__meta-item">
+              <dt>{{ trans('events.meta_date') }}</dt>
+              <dd>{{ event.get('starts_at')|date('F j, Y') }}{% if event.get('ends_at') %} – {{ event.get('ends_at')|date('F j, Y') }}{% endif %}</dd>
+            </div>
+          {% endif %}
+          {% if event.get('starts_at') %}
+            <div class="detail__meta-item">
+              <dt>{{ trans('events.meta_when') }}</dt>
+              <dd>{{ event.get('starts_at')|relative_date }}</dd>
+            </div>
           {% endif %}
           {% if event.get('location') %}
-            <span>{{ event.get('location') }}</span>
+            <div class="detail__meta-item">
+              <dt>{{ trans('events.meta_location') }}</dt>
+              <dd>{{ event.get('location') }}</dd>
+            </div>
           {% endif %}
-        </div>
+          {% if event.get('type') %}
+            <div class="detail__meta-item">
+              <dt>{{ trans('events.meta_type') }}</dt>
+              <dd>{{ event.get('type')|capitalize }}</dd>
+            </div>
+          {% endif %}
+          {% if host_community is defined and host_community %}
+            <div class="detail__meta-item">
+              <dt>{{ trans('events.meta_host') }}</dt>
+              <dd><a href="/communities/{{ host_community.get('slug') }}">{{ host_community.get('name') }}</a></dd>
+            </div>
+          {% endif %}
+        </dl>
+
+        {% if source_url or source_label or verified_at %}
+          <div class="detail__source">
+            <p class="detail__source-title">{{ trans('events.source_title') }}</p>
+            {% if source_url %}
+              <a href="{{ source_url }}" target="_blank" rel="noopener noreferrer" class="detail__source-link">{{ trans('events.view_source') }}</a>
+            {% endif %}
+            {% if source_label or verified_at %}
+              <p class="detail__source-meta">
+                {% if source_label %}
+                  <span>{{ trans('events.source_name') }}: {{ source_label }}</span>
+                {% endif %}
+                {% if verified_at %}
+                  <span>{{ trans('events.source_verified') }}: {{ verified_at|date('F j, Y') }}</span>
+                {% endif %}
+              </p>
+            {% endif %}
+          </div>
+        {% endif %}
       </div>
       <div class="content-well">
         <div class="detail__body flow">
-          {% for paragraph in event.get('description')|default('')|split("\n\n") %}
-            <p>{{ paragraph }}</p>
-          {% endfor %}
+          {% set description = event.get('description')|default('') %}
+          {% if description|trim %}
+            {% for paragraph in description|split("\n\n") %}
+              {% if paragraph|trim %}
+                <p>{{ paragraph }}</p>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <p>{{ trans('events.no_description') }}</p>
+          {% endif %}
         </div>
       </div>{# .content-well #}
 
@@ -154,7 +213,10 @@
                 starts_at_raw: e.get('starts_at'),
                 location: e.get('location')|default(''),
                 excerpt: '',
-                url: "/events/" ~ e.get('slug')
+                url: "/events/" ~ e.get('slug'),
+                source_url: e.get('source_url')|default(''),
+                source_name: e.get('source')|default(''),
+                source_link_label: trans('events.source_card_label')
               } %}
             {% endfor %}
           </div>

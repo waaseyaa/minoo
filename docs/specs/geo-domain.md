@@ -11,8 +11,8 @@
 | `src/Domain/Geo/Service/VolunteerRanker.php` | Ranks Elder Support volunteers by proximity in 3 tiers |
 | `src/Support/GeoDistance.php` | Haversine distance calculation (static utility) |
 | `src/Support/CommunityLookup.php` | Builds community ID → name/slug lookup maps |
-| `src/Support/NorthCloudClient.php` | HTTP client for North Cloud APIs (dictionary, people, band office) |
-| `src/Support/NorthCloudCache.php` | SQLite-backed response cache for NC API calls (default 1h TTL) |
+| `src/Contract/NorthCloudCommunityDictionaryClientInterface.php` | App-facing seam for North Cloud community + dictionary operations |
+| `src/Support/NorthCloudCommunityDictionaryClient.php` | Adapter that wraps `waaseyaa/northcloud` client behind the app-facing interface |
 
 ## Interface Signatures
 
@@ -96,37 +96,22 @@ final class VolunteerRanker
 }
 ```
 
-### NorthCloudClient (Support)
+### NorthCloudCommunityDictionaryClientInterface + adapter (Support)
 
 ```php
-final class NorthCloudClient
+interface NorthCloudCommunityDictionaryClientInterface
 {
-    public function __construct(
-        string $baseUrl,
-        string $apiToken = '',
-        ?NorthCloudCache $cache = null,
-        ?\Closure $httpClient = null,
-        int $timeout = 10,
-    );
+    /** @return array{entries: list<array<string, mixed>>, total: int, attribution: string}|null */
+    public function getDictionaryEntries(int $page = 1, int $limit = 50): ?array;
 
-    public function searchDictionary(string $query, int $limit = 25, int $offset = 0): ?array;
-    public function getPeople(string $ncId): ?array;       // Community leadership
-    public function getBandOffice(string $ncId): ?array;   // Band office contact info
-    public function linkSources(bool $dryRun = true): ?array;
-    public function createLeadershipScrapeJob(string $ncId): ?array;
-}
-```
+    /** @return array{entries: list<array<string, mixed>>, total: int, attribution: string}|null */
+    public function searchDictionary(string $query): ?array;
 
-### NorthCloudCache (Support)
+    /** @return list<array{id: string, name: string, role: string, role_title?: string, email?: string, phone?: string, verified: bool}>|null */
+    public function getPeople(string $ncId): ?array;
 
-```php
-final class NorthCloudCache
-{
-    public function __construct(\PDO $pdo, int $ttl = 3600);
-
-    public function get(string $key): ?string;    // Null if expired or missing
-    public function set(string $key, string $value): void;
-    public function clear(): void;                // Clears nc_api_cache table
+    /** @return array{address_line1?: string, address_line2?: string, city?: string, province?: string, postal_code?: string, phone?: string, fax?: string, email?: string, toll_free?: string, office_hours?: string, verified: bool}|null */
+    public function getBandOffice(string $ncId): ?array;
 }
 ```
 
@@ -160,11 +145,10 @@ ElderSupportController receives request entity
 
 ```
 Controller/Service needs NC data
-  → NorthCloudClient::getPeople($ncId) (or searchDictionary, getBandOffice)
-    → NorthCloudCache::get(cacheKey) → if hit, return cached
-    → doAuthenticatedRequest(url, apiToken)
-    → on success: cache response, return parsed JSON
-    → on failure: return null (caller handles gracefully)
+  → NorthCloudCommunityDictionaryClientInterface::getPeople($ncId) (or searchDictionary, getBandOffice)
+    → Implementation delegates to `Waaseyaa\NorthCloud\Client\NorthCloudClient`
+    → Package client handles caching and HTTP details
+    → On failure, adapter returns null (caller handles gracefully)
 ```
 
 ## Configuration
@@ -183,5 +167,4 @@ Controller/Service needs NC data
 - **No communities loaded**: If `loadAllCommunities()` returns empty, `findNearest()` returns null and location falls back to `none()`
 - **NULL community status**: Most imported communities have `status=NULL` (not `1`). The homepage `buildNearbyMixed()` requires `status=1`, so nearby results are often empty — `buildRecentMixed()` provides the fallback
 - **Volunteer without community**: If a volunteer entity has no `community_id`, `resolveCoords()` returns null and the volunteer sorts to the end (name-only tier)
-- **NC API timeout**: `NorthCloudClient` uses a configurable timeout (default 10s). On timeout, returns null — callers must handle gracefully
-- **NC cache table creation**: `NorthCloudCache::ensureTable()` auto-creates `nc_api_cache` on first use — no migration needed
+- **NC API timeout**: `Waaseyaa\NorthCloud\Client\NorthCloudClient` uses a configurable timeout (from config). On timeout, adapter returns null — callers must handle gracefully

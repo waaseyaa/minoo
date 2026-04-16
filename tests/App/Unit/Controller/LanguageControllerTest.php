@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Controller;
 
+use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Controller\LanguageController;
 use App\Entity\DictionaryEntry;
-use App\Support\NorthCloudClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +23,7 @@ final class LanguageControllerTest extends TestCase
 {
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
-    private NorthCloudClient $northCloudClient;
+    private NorthCloudCommunityDictionaryClientInterface $northCloudClient;
     private EntityStorageInterface $storage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
@@ -47,7 +47,7 @@ final class LanguageControllerTest extends TestCase
             'language.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
         ]));
 
-        $this->northCloudClient = $this->createMock(NorthCloudClient::class);
+        $this->northCloudClient = $this->createMock(NorthCloudCommunityDictionaryClientInterface::class);
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
     }

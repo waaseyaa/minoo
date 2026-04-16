@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
-use App\Ingestion\NcContentSyncService;
-use App\Support\NorthCloudClient;
+use App\Ingestion\EntityMapper\NcArticleToEventMapper;
+use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
+use Waaseyaa\NorthCloud\Client\NorthCloudClient;
+use Waaseyaa\NorthCloud\Sync\MapperRegistry;
+use Waaseyaa\NorthCloud\Sync\NcSyncService;
 
 #[CoversNothing]
 final class NcContentSyncTest extends TestCase
@@ -48,12 +51,16 @@ final class NcContentSyncTest extends TestCase
         }
     }
 
-    private function createSyncService(string $responseJson): NcContentSyncService
+    private function createSyncService(string $responseJson): NcSyncService
     {
         $httpClient = static fn(string $url): string => $responseJson;
         $client = new NorthCloudClient(baseUrl: 'https://test.northcloud.one', httpClient: $httpClient);
 
-        return new NcContentSyncService($client, self::$etm);
+        $registry = new MapperRegistry();
+        $registry->register(new NcArticleToTeachingMapper());
+        $registry->register(new NcArticleToEventMapper());
+
+        return new NcSyncService($client, self::$etm, $registry);
     }
 
     private function ncSearchResponse(array $hits): string
@@ -193,7 +200,10 @@ final class NcContentSyncTest extends TestCase
         // Return false to simulate a failed HTTP request (null response from client)
         $httpClient = static fn(string $url): bool => false;
         $client = new NorthCloudClient(baseUrl: 'https://unreachable.example.com', httpClient: $httpClient);
-        $service = new NcContentSyncService($client, self::$etm);
+        $registry = new MapperRegistry();
+        $registry->register(new NcArticleToTeachingMapper());
+        $registry->register(new NcArticleToEventMapper());
+        $service = new NcSyncService($client, self::$etm, $registry);
 
         $result = $service->sync(limit: 10);
 

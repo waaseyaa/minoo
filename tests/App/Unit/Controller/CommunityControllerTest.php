@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Controller;
 
+use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Controller\CommunityController;
 use App\Entity\Community;
-use App\Support\NorthCloudClient;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +23,7 @@ final class CommunityControllerTest extends TestCase
 {
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
+    private NorthCloudCommunityDictionaryClientInterface $northCloudClient;
     private EntityStorageInterface $storage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
@@ -49,6 +50,7 @@ final class CommunityControllerTest extends TestCase
 
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
+        $this->northCloudClient = $this->createMock(NorthCloudCommunityDictionaryClientInterface::class);
     }
 
     #[Test]
@@ -128,7 +130,22 @@ final class CommunityControllerTest extends TestCase
             'communities/detail.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
         ]));
 
-        $controller = new CommunityController($this->entityTypeManager, $this->twig);
+        $this->northCloudClient
+            ->method('getPeople')
+            ->with('nc-uuid-123')
+            ->willReturn([
+                ['id' => 'p1', 'name' => 'Chief Example', 'role' => 'chief', 'verified' => false],
+            ]);
+
+        $this->northCloudClient
+            ->method('getBandOffice')
+            ->with('nc-uuid-123')
+            ->willReturn([
+                'phone' => '705-555-0002',
+                'verified' => false,
+            ]);
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->northCloudClient);
         $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -149,13 +166,11 @@ final class CommunityControllerTest extends TestCase
         $this->query->method('execute')->willReturn([1]);
         $this->storage->method('load')->with(1)->willReturn($sagamok);
 
-        $failingClient = new NorthCloudClient(
-            baseUrl: 'https://invalid.test',
-            timeout: 1,
-            httpClient: static function () { throw new \RuntimeException('NorthCloud unavailable'); },
-        );
+        $this->northCloudClient
+            ->method('getPeople')
+            ->willThrowException(new \RuntimeException('NorthCloud unavailable'));
 
-        $controller = new CommunityController($this->entityTypeManager, $this->twig, $failingClient);
+        $controller = new CommunityController($this->entityTypeManager, $this->twig, $this->northCloudClient);
 
         $response = $controller->show(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
 

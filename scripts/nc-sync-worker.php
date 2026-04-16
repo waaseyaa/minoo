@@ -11,11 +11,14 @@ declare(strict_types=1);
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use App\Ingestion\NcContentSyncService;
-use App\Ingestion\NcSyncWorkerLoop;
-use App\Support\NorthCloudClient;
+use App\Ingestion\EntityMapper\NcArticleToEventMapper;
+use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
+use Waaseyaa\NorthCloud\Client\NorthCloudClient;
+use Waaseyaa\NorthCloud\Sync\MapperRegistry;
+use Waaseyaa\NorthCloud\Sync\NcSyncService;
+use Waaseyaa\NorthCloud\Sync\NcSyncWorker;
 
 // Boot kernel
 $kernel = new HttpKernel(dirname(__DIR__));
@@ -31,13 +34,24 @@ if ($baseUrl === '') {
 }
 
 // Build services
-$searchTimeout = (int) ($config['search']['timeout'] ?? 15);
-$client = new NorthCloudClient(baseUrl: $baseUrl, timeout: $searchTimeout);
-$syncService = new NcContentSyncService($client, $kernel->getEntityTypeManager());
+$timeout = (int) ($config['search']['timeout'] ?? 15);
+$registry = new MapperRegistry();
+$registry->register(new NcArticleToTeachingMapper());
+$registry->register(new NcArticleToEventMapper());
+
+$client = new NorthCloudClient(
+    baseUrl: $baseUrl,
+    timeout: $timeout,
+    apiToken: (string) ($config['northcloud']['api_token'] ?? ''),
+    allowInsecure: str_starts_with($baseUrl, 'http://localhost')
+        || str_starts_with($baseUrl, 'http://127.0.0.1')
+        || str_starts_with($baseUrl, 'http://[::1]'),
+);
+$syncService = new NcSyncService($client, $kernel->getEntityTypeManager(), $registry);
 
 $statusPath = dirname(__DIR__) . '/storage/nc-sync-status.json';
 
-$loop = new NcSyncWorkerLoop(
+$loop = new NcSyncWorker(
     syncService: $syncService,
     statusPath: $statusPath,
     intervalSeconds: 1800,
