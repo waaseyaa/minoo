@@ -26,4 +26,14 @@
   {% if excerpt is defined and excerpt %}
     <p class="card__body">{{ excerpt }}</p>
   {% endif %}
+  {% if source_url is defined and source_url %}
+    <p class="card__source">
+      <a href="{{ source_url }}" target="_blank" rel="noopener noreferrer">
+        {{ source_link_label|default('Source') }}
+      </a>
+      {% if source_name is defined and source_name %}
+        <span class="card__source-name"> · {{ source_name }}</span>
+      {% endif %}
+    </p>
+  {% endif %}
 </article>

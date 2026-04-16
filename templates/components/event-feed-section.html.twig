@@ -19,7 +19,10 @@
         community_name: comm.name|default(''),
         community_slug: comm.slug|default(''),
         photo_url: e.get('photo_url')|default(''),
-        happening_now: variant is defined and variant == 'now'
+        happening_now: variant is defined and variant == 'now',
+        source_url: e.get('source_url')|default(''),
+        source_name: e.get('source')|default(''),
+        source_link_label: trans('events.source_card_label')
       } %}
     {% endfor %}
   </div>

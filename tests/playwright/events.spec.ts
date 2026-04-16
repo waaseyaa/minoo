@@ -52,6 +52,33 @@ test.describe('Events refactor', () => {
     await expect(heading).not.toHaveText(beforeText ?? '');
   });
 
+  test('source links render on cards and detail when source exists', async ({ page }) => {
+    await page.goto('/events?view=list');
+    const sourcedCard = page.locator('article.card--event:has(.card__source a)').first();
+    const hasSourcedCard = await sourcedCard.count();
+    test.skip(hasSourcedCard === 0, 'No sourced events in current fixture set');
+
+    const cardSourceLink = sourcedCard.locator('.card__source a').first();
+    await expect(cardSourceLink).toBeVisible();
+    const cardSourceHref = await cardSourceLink.getAttribute('href');
+    expect(cardSourceHref).toBeTruthy();
+    expect(cardSourceHref).toMatch(/^https?:\/\//i);
+    await expect(cardSourceLink).toHaveAttribute('target', '_blank');
+    await expect(cardSourceLink).toHaveAttribute('rel', /noopener/);
+
+    const detailHref = await sourcedCard.locator('.card__title a[href^="/events/"]').first().getAttribute('href');
+    test.skip(!detailHref, 'Sourced event card missing detail link');
+    await page.goto(detailHref!);
+
+    const detailSourceLink = page.getByRole('link', { name: /View original source/i }).first();
+    await expect(detailSourceLink).toBeVisible();
+    const detailSourceHref = await detailSourceLink.getAttribute('href');
+    expect(detailSourceHref).toBeTruthy();
+    expect(detailSourceHref).toMatch(/^https?:\/\//i);
+    await expect(detailSourceLink).toHaveAttribute('target', '_blank');
+    await expect(detailSourceLink).toHaveAttribute('rel', /noopener/);
+  });
+
   test('ICS download returns text/calendar', async ({ page }) => {
     await page.goto('/events');
     const firstCard = page.locator('a[href^="/events/"]').first();
