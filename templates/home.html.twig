@@ -5,26 +5,28 @@
 {% block og_description %}Discover Teachings, Events, and community stories shared by Knowledge Keepers and community members across Turtle Island.{% endblock %}
 
 {% block content %}
-  <div class="flow-lg">
 
     {# === Welcome Hero === #}
-    <section class="home-hero">
-      <h1 class="home-hero__title">Welcome to Minoo</h1>
-      <p class="home-hero__subtitle">A place where Indigenous Knowledge, culture, and community come together. Explore Teachings from Knowledge Keepers, find Events near you, and connect with communities across Turtle Island.</p>
-      <div class="home-hero__actions">
-        <a href="/teachings" class="btn btn--primary">Explore Teachings</a>
-        <a href="/events" class="btn btn--outline">Upcoming Events</a>
+    <section class="hero">
+      <p class="hero__eyebrow">Aanii &middot; Welcome</p>
+      <h1>A place where Indigenous Knowledge, culture, and <em>community</em> come together.</h1>
+      <p>Explore Teachings from Knowledge Keepers, find Events near you, and connect with communities across Turtle Island.</p>
+      <div class="hero__ctas">
+        <a href="{{ lang_url('/events') }}" class="btn btn--primary btn--lg">Find Events near you</a>
+        <a href="{{ lang_url('/teachings') }}" class="btn btn--secondary btn--lg">Explore Teachings</a>
       </div>
     </section>
 
     {# === Featured Items === #}
     {% if featured is defined and featured|length > 0 %}
-      <section class="home-section">
-        <h2 class="home-section__heading">Featured</h2>
-        <div class="card-grid">
+      <section class="sec">
+        <div class="sec__head">
+          <h2>Featured</h2>
+        </div>
+        <div class="ds-grid">
           {% for item in featured %}
-            <a href="{{ item.url }}" class="card">
-              <span class="card__badge">{{ item.entity_type|capitalize }}</span>
+            <a href="{{ item.url }}" class="card card--{{ item.entity_type }}">
+              <span class="card__eyebrow">{{ item.entity_type|capitalize }}</span>
               <h3 class="card__title">{{ item.headline }}</h3>
               {% if item.subheadline is defined and item.subheadline %}
                 <p class="card__meta">{{ item.subheadline }}</p>
@@ -37,13 +39,13 @@
 
     {# === Upcoming Events === #}
     {% if events is defined and events|length > 0 %}
-      <section class="home-section">
-        <div class="home-section__header">
-          <h2 class="home-section__heading">Upcoming Events</h2>
-          <a href="/events" class="home-section__link">View all →</a>
+      <section class="sec">
+        <div class="sec__head">
+          <h2>Upcoming Events</h2>
+          <a href="{{ lang_url('/events') }}">View all &rarr;</a>
         </div>
-        <div class="card-grid">
-          {% for e in events %}
+        <div class="ds-grid">
+          {% for e in events|slice(0, 4) %}
             {% include "components/event-card.html.twig" with {
               title: e.get('title'),
               type: e.get('type')|default('')|capitalize,
@@ -59,13 +61,13 @@
 
     {# === Recent Teachings === #}
     {% if teachings is defined and teachings|length > 0 %}
-      <section class="home-section">
-        <div class="home-section__header">
-          <h2 class="home-section__heading">Recent Teachings</h2>
-          <a href="/teachings" class="home-section__link">View all →</a>
+      <section class="sec">
+        <div class="sec__head">
+          <h2>Recent Teachings</h2>
+          <a href="{{ lang_url('/teachings') }}">View all &rarr;</a>
         </div>
-        <div class="card-grid">
-          {% for t in teachings %}
+        <div class="ds-grid">
+          {% for t in teachings|slice(0, 4) %}
             {% include "components/teaching-card.html.twig" with {
               title: t.get('title'),
               type: t.get('type')|default('')|capitalize,
@@ -78,20 +80,21 @@
     {% endif %}
 
     {# === Community Highlights === #}
-    <section class="home-section">
-      <div class="home-section__header">
-        <h2 class="home-section__heading">Our Communities</h2>
-        <a href="/communities" class="home-section__link">View all →</a>
+    <section class="sec">
+      <div class="sec__head">
+        <h2>Our Communities</h2>
+        <a href="{{ lang_url('/communities') }}">View all &rarr;</a>
       </div>
-      <p class="home-section__intro">Minoo connects Indigenous communities across Turtle Island. Find your community, share knowledge, and stay connected.</p>
+      <p style="color: var(--text-secondary); max-width: 60ch;">Minoo connects Indigenous communities across Turtle Island. Find your community, share knowledge, and stay connected.</p>
     </section>
 
     {# === Call to Action === #}
-    <section class="home-cta">
-      <h2 class="home-cta__heading">Join the Conversation</h2>
-      <p class="home-cta__body">Create an account to share your stories, follow communities, and stay up to date with Events and Teachings that matter to you.</p>
-      <a href="/register" class="btn btn--primary">Get Started</a>
-    </section>
+    {% if account is not defined or not account.isAuthenticated() %}
+      <section class="sec" style="text-align: center; padding: var(--space-xl) 0;">
+        <h2>Join the Conversation</h2>
+        <p style="color: var(--text-secondary); max-width: 50ch; margin: var(--space-sm) auto var(--space-md);">Create an account to share your stories, follow communities, and stay up to date with Events and Teachings that matter to you.</p>
+        <a href="{{ lang_url('/auth/register') }}" class="btn btn--primary btn--lg">Create an Account</a>
+      </section>
+    {% endif %}
 
-  </div>
 {% endblock %}
