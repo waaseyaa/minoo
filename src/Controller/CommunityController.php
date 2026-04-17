@@ -104,7 +104,7 @@ final class CommunityController
             ? ['lat' => $location->latitude, 'lng' => $location->longitude, 'name' => $location->communityName]
             : null;
 
-        $html = $this->twig->render('communities/list.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/communities/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/communities',
             'communities_json' => json_encode($communitiesJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
             'location_json' => json_encode($locationJson, JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
@@ -131,7 +131,7 @@ final class CommunityController
         $community = $ids !== [] ? $storage->load(reset($ids)) : null;
 
         if ($community === null) {
-            $html = $this->twig->render('communities/list.html.twig', LayoutTwigContext::withAccount($account, [
+            $html = $this->twig->render('pages/communities/index.html.twig', LayoutTwigContext::withAccount($account, [
                 'path' => '/communities',
                 'communities_json' => '[]',
                 'location_json' => 'null',
@@ -205,7 +205,7 @@ final class CommunityController
             ->execute();
         $localPeople = $personIds !== [] ? array_values($personStorage->loadMultiple($personIds)) : [];
 
-        $html = $this->twig->render('communities/detail.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/communities/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/communities/' . $slug,
             'community' => $community,
             'nearby' => $nearby,
