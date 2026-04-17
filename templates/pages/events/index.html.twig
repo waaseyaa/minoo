@@ -1,0 +1,46 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('events.title') }} — Minoo{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <section class="hero" style="padding-bottom: var(--space-sm);">
+      <p class="hero__eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        {{ trans('events.near_location')|default('Events across Turtle Island') }}
+      </p>
+      <h1>{{ trans('events.title') }}</h1>
+      <p>{{ trans('events.subtitle')|default('Gatherings, ceremonies, and community events across Turtle Island.') }}</p>
+    </section>
+
+    {% if filters is defined %}
+      {% include "components/domain/events/filters.html.twig" with { filters: filters, feed: feed|default(null), location: location|default(null) } %}
+    {% endif %}
+
+    {% if filters is defined and filters.view == 'calendar' and feed is defined and feed.calendarMonth %}
+      {% include "components/domain/events/calendar.html.twig" with {
+        calendarMonth: feed.calendarMonth,
+        filters: filters
+      } %}
+    {% elseif (filters is defined and filters.view == 'list') or (feed is defined and feed.flatList|length > 0) %}
+      {% include "components/domain/events/list.html.twig" with {
+        events: (feed is defined and feed.flatList is defined) ? feed.flatList : (events|default([])),
+        groups: (feed is defined and feed.flatList is defined) ? feed.monthGroups() : null,
+        pagination: (feed is defined and feed.pagination is defined) ? feed.pagination : null,
+        filters: filters,
+        communities: communities
+      } %}
+    {% elseif feed is defined %}
+      {% include "components/domain/events/feed.html.twig" with { feed: feed, communities: communities } %}
+    {% else %}
+      {% include "components/shared/feedback/empty-state.html.twig" with {
+        heading: trans('events.empty_heading'),
+        body: trans('events.empty_body'),
+        action_url: lang_url('/communities'),
+        action_label: trans('events.explore_button')
+      } %}
+    {% endif %}
+  </div>
+{% endblock %}

@@ -70,7 +70,7 @@ final class FeedController
 
         $items = array_map(function ($item) {
             $data = $item->toArray();
-            $data['html'] = $this->twig->render('components/feed-card.html.twig', ['item' => $item]);
+            $data['html'] = $this->twig->render('components/domain/feed/card.html.twig', ['item' => $item]);
             return $data;
         }, $response->items);
 

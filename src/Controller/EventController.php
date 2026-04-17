@@ -42,7 +42,7 @@ final class EventController
         $events      = $this->flattenFeedForTemplate($result);
         $communities = $result->communities;
 
-        $html = $this->twig->render('events.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/events/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path'        => $request->getPathInfo(),
             'events'      => $events,
             'communities' => $communities,
@@ -168,7 +168,7 @@ final class EventController
 
         $similarUpcoming = $this->findSimilarUpcoming($event);
 
-        $html = $this->twig->render('events.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/events/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/events/' . $slug,
             'event' => $event,
             'related_teachings' => $relatedTeachings,
