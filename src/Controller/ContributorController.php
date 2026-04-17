@@ -30,7 +30,7 @@ final class ContributorController
             ->execute();
         $contributors = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
-        $html = $this->twig->render('contributors.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/contributors/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/contributors',
             'contributors' => $contributors,
         ]));
@@ -51,7 +51,7 @@ final class ContributorController
             ->execute();
         $contributor = $ids !== [] ? $storage->load(reset($ids)) : null;
 
-        $html = $this->twig->render('contributors.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/contributors/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/contributors/' . $slug,
             'contributor' => $contributor,
         ]));

@@ -1,0 +1,35 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Contributors — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <div class="listing-hero">
+      <h1>{{ trans('contributors.title') }}</h1>
+      <p class="listing-hero__subtitle">{{ trans('contributors.subtitle') }}</p>
+    </div>
+
+    {% if contributors is defined and contributors|length > 0 %}
+      <div class="card-grid">
+        {% for c in contributors %}
+          <a href="/contributors/{{ c.get('slug') }}" class="card">
+            <h3 class="card__title">{{ c.get('name') }}</h3>
+            {% if c.get('role') is not empty %}
+              <span class="card__badge">{{ c.get('role')|capitalize }}</span>
+            {% endif %}
+            {% if c.get('bio') is not empty %}
+              <p class="card__excerpt">{{ c.get('bio')|striptags|slice(0, 120) }}{% if c.get('bio')|length > 120 %}&hellip;{% endif %}</p>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      {% include "components/shared/feedback/empty-state.html.twig" with {
+        heading: trans('contributors.empty_heading'),
+        body: trans('contributors.empty_body'),
+        action_url: lang_url('/language'),
+        action_label: trans('contributors.explore_language')
+      } %}
+    {% endif %}
+  </div>
+{% endblock %}
