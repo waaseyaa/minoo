@@ -30,7 +30,7 @@ final class IngestionDashboardController
         $logs = $this->loadRecentLogs($storage, $statusFilter);
         $statusCounts = $this->buildStatusCounts($storage);
 
-        $html = $this->twig->render('admin/ingestion.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/admin/ingestion.html.twig', LayoutTwigContext::withAccount($account, [
             'logs' => $logs,
             'total_count' => $this->countLogs($storage),
             'status_counts' => $statusCounts,
