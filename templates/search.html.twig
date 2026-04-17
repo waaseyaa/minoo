@@ -102,7 +102,7 @@
           {% if results.hits %}
             <div class="card-grid">
               {% for hit in results.hits %}
-                {% include "components/search-result-card.html.twig" with {
+                {% include "components/domain/search/result-card.html.twig" with {
                   title: hit.title,
                   url: hit.url,
                   source_name: hit.sourceName,
