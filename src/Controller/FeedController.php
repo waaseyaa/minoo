@@ -40,7 +40,7 @@ final class FeedController
         $followedCommunities = $this->buildFollowedCommunities($account);
         $userCommunities = $this->buildUserCommunities($followedCommunities, $suggestedCommunities);
 
-        $html = $this->twig->render('feed.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/feed/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/feed',
             'response' => $response,
             'nextCursor' => $response->nextCursor,
