@@ -8816,6 +8816,162 @@ a.btn--ghost:hover {
   .ingest-badge--rejected { background-color: rgba(119, 119, 119, 0.2); color: var(--text-muted); }
 
   /* ══════════════════════════════════════════════════════════
+     Design System: Hero Refinements
+     ══════════════════════════════════════════════════════════ */
+  .hero__eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin: 0 0 var(--space-sm);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--color-teachings);
+    font-weight: 500;
+  }
+
+  .hero__ctas {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Design System: Section (.sec)
+     ══════════════════════════════════════════════════════════ */
+  .sec {
+    margin-top: var(--space-xl);
+  }
+
+  .sec__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-2xs);
+  }
+
+  .sec__head h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+    letter-spacing: -0.01em;
+  }
+
+  .sec__head a {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    font-family: var(--font-body);
+  }
+
+  .sec__head a:hover {
+    color: var(--accent);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Design System: Grid
+     ══════════════════════════════════════════════════════════ */
+  .ds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-md);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Design System: Badge
+     ══════════════════════════════════════════════════════════ */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--badge-bg, rgba(230, 57, 70, 0.15));
+    color: var(--badge-fg, var(--color-events));
+  }
+
+  .badge--events      { --badge-bg: rgba(230, 57, 70, 0.15);  --badge-fg: #e63946; }
+  .badge--teachings   { --badge-bg: rgba(244, 162, 97, 0.15); --badge-fg: #f4a261; }
+  .badge--language    { --badge-bg: rgba(42, 157, 143, 0.15); --badge-fg: #2a9d8f; }
+  .badge--communities { --badge-bg: rgba(106, 156, 175, 0.15); --badge-fg: #6a9caf; }
+  .badge--people      { --badge-bg: rgba(131, 56, 236, 0.15); --badge-fg: #8338ec; }
+  .badge--programs    { --badge-bg: rgba(199, 125, 255, 0.15); --badge-fg: #c77dff; }
+
+  /* ══════════════════════════════════════════════════════════
+     Design System: Filters / Chips
+     ══════════════════════════════════════════════════════════ */
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-md);
+  }
+
+  .chip {
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  .chip:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+  .chip--active {
+    background: var(--color-events);
+    border-color: var(--color-events);
+    color: #fff;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     Design System: Card Refinements
+     ══════════════════════════════════════════════════════════ */
+  .card__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--card-accent, var(--color-events));
+  }
+
+  .card--media {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .card--media .card__thumb {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: var(--surface-raised);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+
+  .card--media .card__content {
+    padding: var(--space-sm);
+  }
+
+  /* ══════════════════════════════════════════════════════════
      Social Feed — Responsive Polish
      ══════════════════════════════════════════════════════════ */
 
