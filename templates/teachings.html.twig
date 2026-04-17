@@ -26,7 +26,7 @@
         <div class="ds-grid">
           {% for t in teachings %}
             {% set comm = communities[t.get('community_id')]|default({}) %}
-            {% include "components/teaching-card.html.twig" with {
+            {% include "components/domain/teachings/card.html.twig" with {
               title: t.get('title'),
               type: t.get('type')|default('')|capitalize,
               author: '',
