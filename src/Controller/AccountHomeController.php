@@ -24,7 +24,7 @@ final class AccountHomeController
 
     public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $html = $this->twig->render('account/home.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/account/index.html.twig', LayoutTwigContext::withAccount($account, [
             'roles' => $account->getRoles(),
             'is_elder' => $account instanceof User && ElderIdentity::isElder($account),
             'path' => '/account',
