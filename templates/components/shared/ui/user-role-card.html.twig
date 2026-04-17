@@ -1,3 +1,5 @@
+{# Required: user (with name, email, roles)
+   Optional: actions #}
 <div class="card card--dashboard">
   <h3 class="card__title">{{ user.name }}</h3>
   {% if user.email %}<p class="card__meta">{{ user.email }}</p>{% endif %}

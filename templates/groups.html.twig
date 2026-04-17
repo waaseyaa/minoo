@@ -37,7 +37,7 @@
           {% endfor %}
         </div>
       {% else %}
-        {% include "components/empty-state.html.twig" with {
+        {% include "components/shared/feedback/empty-state.html.twig" with {
           heading: trans('groups.empty_heading'),
           body: trans('groups.empty_body'),
           action_url: lang_url('/communities'),
@@ -47,7 +47,7 @@
     </div>
   {% elseif group is defined and group %}
     <div class="flow-lg detail">
-      {% include "components/breadcrumb.html.twig" with {
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
         breadcrumbs: [
           {label: trans('breadcrumb.home'), url: '/'},
           {label: trans('groups.title'), url: lang_url('/groups')},

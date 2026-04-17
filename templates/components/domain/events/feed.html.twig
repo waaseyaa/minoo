@@ -19,5 +19,5 @@
 {% endif %}
 
 {% if not feed.hasAnySectionContent() %}
-  {% include "components/empty-state.html.twig" with { heading: trans('events.empty_heading'), body: trans('events.empty_body') } %}
+  {% include "components/shared/feedback/empty-state.html.twig" with { heading: trans('events.empty_heading'), body: trans('events.empty_body') } %}
 {% endif %}

@@ -1,3 +1,5 @@
+{# Required: —
+   Optional: account #}
 {# User menu dropdown - avatar with dropdown for authenticated, login button for guests #}
 {% if account is defined and account.isAuthenticated() %}
 <div class="user-menu" id="user-menu">

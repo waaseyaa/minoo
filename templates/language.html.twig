@@ -90,7 +90,7 @@
           </nav>
         {% endif %}
       {% else %}
-        {% include "components/empty-state.html.twig" with {
+        {% include "components/shared/feedback/empty-state.html.twig" with {
           heading: trans('language.empty_heading'),
           body: trans('language.empty_body'),
           action_url: lang_url('/teachings'),

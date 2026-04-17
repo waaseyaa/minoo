@@ -63,7 +63,7 @@
           </div>
         </section>
       {% else %}
-        {% include "components/empty-state.html.twig" with {
+        {% include "components/shared/feedback/empty-state.html.twig" with {
           heading: 'Stories are being gathered',
           body: 'Our community members and Knowledge Keepers are sharing their stories. Check back soon.',
           action_url: '/teachings',
@@ -75,7 +75,7 @@
   {% elseif collection is defined and collection %}
     {# ── Collection detail ── #}
     <div class="flow-lg detail">
-      {% include "components/breadcrumb.html.twig" with {
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
         breadcrumbs: [
           {label: 'Home', url: '/'},
           {label: 'Oral Histories', url: '/oral-histories'},
@@ -154,7 +154,7 @@
   {% elseif story is defined and story and story.get('is_living_record') %}
     {# ── Living record detail ── #}
     <div class="flow-lg detail">
-      {% include "components/breadcrumb.html.twig" with {
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
         breadcrumbs: [
           {label: 'Home', url: '/'},
           {label: 'Oral Histories', url: '/oral-histories'},
@@ -193,7 +193,7 @@
   {% elseif story is defined and story %}
     {# ── Story detail ── #}
     <div class="flow-lg detail">
-      {% include "components/breadcrumb.html.twig" with {
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
         breadcrumbs: [
           {label: 'Home', url: '/'},
           {label: 'Oral Histories', url: '/oral-histories'},

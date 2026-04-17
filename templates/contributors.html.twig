@@ -33,7 +33,7 @@
           {% endfor %}
         </div>
       {% else %}
-        {% include "components/empty-state.html.twig" with {
+        {% include "components/shared/feedback/empty-state.html.twig" with {
           heading: trans('contributors.empty_heading'),
           body: trans('contributors.empty_body'),
           action_url: lang_url('/language'),
@@ -43,7 +43,7 @@
     </div>
   {% elseif contributor is defined and contributor %}
     <div class="flow-lg detail">
-      {% include "components/breadcrumb.html.twig" with {
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
         breadcrumbs: [
           {label: 'Home', url: '/'},
           {label: 'Contributors', url: lang_url('/contributors')},

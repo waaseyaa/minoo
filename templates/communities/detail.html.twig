@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'layouts/base.html.twig' %}
 
 {% block title %}{{ community.get('name') }} — Minoo{% endblock %}
 
@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-  {% include "components/breadcrumb.html.twig" with {
+  {% include "components/shared/layout/breadcrumb.html.twig" with {
     breadcrumbs: [
       {label: trans('breadcrumb.home'), url: '/'},
       {label: trans('communities.all_communities'), url: lang_url('/communities')},

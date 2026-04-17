@@ -14,7 +14,7 @@
   {% endif %}
 
   {% for user in users %}
-    {% include "components/user-role-card.html.twig" with { user: user, can_manage_coordinator: can_manage_coordinator } %}
+    {% include "components/shared/ui/user-role-card.html.twig" with { user: user, can_manage_coordinator: can_manage_coordinator } %}
   {% endfor %}
 </section>
 {% endblock %}

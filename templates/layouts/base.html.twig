@@ -38,8 +38,8 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input placeholder="Search Teachings, Events, communities…" name="q">
         </div>
-        {% include "components/language-switcher.html.twig" %}
-        {% include "components/theme-toggle.html.twig" %}
+        {% include "components/shared/ui/language-switcher.html.twig" %}
+        {% include "components/shared/ui/theme-toggle.html.twig" %}
         {% if account is defined and account.isAuthenticated() %}
           <div class="hdr__avatar" title="{{ account.get('display_name')|default('A') }}">{{ account.get('display_name')|default('A')|first|upper }}</div>
         {% else %}
@@ -52,13 +52,13 @@
     <div class="app__body{% if hide_sidebar is defined and hide_sidebar %} app__body--no-sidebar{% endif %}">
       {% if hide_sidebar is not defined or not hide_sidebar %}
         <aside class="sbx" id="app-sidebar">
-          {% include "components/sidebar-nav.html.twig" %}
+          {% include "components/shared/layout/sidebar-nav.html.twig" %}
         </aside>
         <div class="app-sidebar__overlay" id="sidebar-overlay"></div>
       {% endif %}
       <main class="app__main" id="main-content">
-        {% include "components/location-bar.html.twig" %}
-        {% include "components/flash-messages.html.twig" %}
+        {% include "components/shared/layout/location-bar.html.twig" %}
+        {% include "components/shared/feedback/flash-messages.html.twig" %}
         {% block content %}{% endblock %}
       </main>
     </div>
@@ -256,7 +256,7 @@
     }
   })();
   </script>
-  {% include "components/chat.html.twig" %}
+  {% include "components/shared/ui/chat.html.twig" %}
   <script>
   (function() {
     const widget = document.getElementById('chat-widget');

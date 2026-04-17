@@ -78,7 +78,7 @@
         </div>
         <p class="people-filters__empty" id="filters-empty" hidden>{{ trans('people.filters_empty') }}</p>
       {% else %}
-        {% include "components/empty-state.html.twig" with {
+        {% include "components/shared/feedback/empty-state.html.twig" with {
           heading: trans('people.empty_heading'),
           body: trans('people.empty_body'),
           action_url: lang_url('/elders/volunteer'),
@@ -88,14 +88,14 @@
     </div>
   {% elseif person is defined and person %}
     <div class="flow-lg detail">
-      {% include "components/breadcrumb.html.twig" with {
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
         breadcrumbs: [
           {label: trans('breadcrumb.home'), url: '/'},
           {label: trans('people.title'), url: lang_url('/people')},
           {label: person.get('name')}
         ]
       } %}
-      {% include "components/hero-image.html.twig" with {
+      {% include "components/shared/layout/hero-image.html.twig" with {
         image_url: image_url|default(''),
         alt: person.get('name'),
         credit: image_credit|default('')

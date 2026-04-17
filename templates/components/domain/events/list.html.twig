@@ -77,6 +77,6 @@
   </div>
 
   {% if pagination is defined and pagination %}
-    {% include "components/pagination.html.twig" with { pagination: pagination, filters: filters, base_path: '/events' } only %}
+    {% include "components/shared/ui/pagination.html.twig" with { pagination: pagination, filters: filters, base_path: '/events' } only %}
   {% endif %}
 {% endif %}
