@@ -105,7 +105,7 @@ final class RoleManagementController
     {
         $users = $this->loadUserRows($account);
 
-        $html = $this->twig->render('dashboard/coordinator-users.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/dashboard/coordinator-users.html.twig', LayoutTwigContext::withAccount($account, [
             'users' => $users,
             'can_manage_coordinator' => false,
             'path' => '/dashboard/coordinator/users',

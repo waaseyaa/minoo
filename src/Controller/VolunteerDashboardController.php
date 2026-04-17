@@ -42,7 +42,7 @@ final class VolunteerDashboardController
         $volStorage = $this->entityTypeManager->getStorage('volunteer');
         $volIds = $volStorage->getQuery()->condition('account_id', $account->id())->execute();
         $volunteer = $volIds !== [] ? $volStorage->load(reset($volIds)) : null;
-        $html = $this->twig->render('dashboard/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/dashboard/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
             'requests' => $requests,
             'grouped' => $grouped,
             'volunteer' => $volunteer,
@@ -58,7 +58,7 @@ final class VolunteerDashboardController
             return new Response('Not found', 404);
         }
 
-        $html = $this->twig->render('dashboard/volunteer-edit.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/dashboard/volunteer-edit.html.twig', LayoutTwigContext::withAccount($account, [
             'volunteer' => $volunteer,
             'errors' => [],
             'values' => [],
@@ -82,7 +82,7 @@ final class VolunteerDashboardController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('dashboard/volunteer-edit.html.twig', LayoutTwigContext::withAccount($account, [
+            $html = $this->twig->render('pages/dashboard/volunteer-edit.html.twig', LayoutTwigContext::withAccount($account, [
                 'volunteer' => $volunteer,
                 'errors' => $errors,
                 'values' => [

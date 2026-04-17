@@ -72,7 +72,7 @@ final class CoordinatorDashboardController
         $communityNames = $this->buildCommunityNameMap(
             array_merge($allRequests, array_values($volunteers)),
         );
-        $html = $this->twig->render('dashboard/coordinator.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/dashboard/coordinator.html.twig', LayoutTwigContext::withAccount($account, [
             'open_requests' => $open,
             'assigned_requests' => $assigned,
             'pending_confirmation' => $pendingConfirmation,
@@ -99,7 +99,7 @@ final class CoordinatorDashboardController
 
         $applications = $ids !== [] ? $storage->loadMultiple($ids) : [];
 
-        $html = $this->twig->render('dashboard/coordinator-applications.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/dashboard/coordinator-applications.html.twig', LayoutTwigContext::withAccount($account, [
             'applications' => $applications,
         ]));
 
