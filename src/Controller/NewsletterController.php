@@ -65,7 +65,7 @@ final class NewsletterController
 
         $reviewMode = $request->query->get('mode') === 'review';
 
-        return new Response($this->twig->render('newsletter/edition.html.twig', [
+        return new Response($this->twig->render('pages/newsletter/edition.html.twig', [
             'edition' => $edition,
             'items_by_section' => $bySection,
             'source_entities' => $sourceEntities,
@@ -86,7 +86,7 @@ final class NewsletterController
             $byCommunity[(string) ($e->get('community_id') ?: 'regional')][] = $e;
         }
 
-        return new Response($this->twig->render('newsletter/public/list.html.twig', [
+        return new Response($this->twig->render('pages/newsletter/public/list.html.twig', [
             'editions_by_community' => $byCommunity,
         ]));
     }
@@ -104,7 +104,7 @@ final class NewsletterController
 
         usort($editions, fn ($a, $b) => (int) $b->get('issue_number') <=> (int) $a->get('issue_number'));
 
-        return new Response($this->twig->render('newsletter/public/list.html.twig', [
+        return new Response($this->twig->render('pages/newsletter/public/list.html.twig', [
             'community' => $community,
             'editions' => $editions,
         ]));
@@ -117,7 +117,7 @@ final class NewsletterController
             return new Response('Not found', 404);
         }
 
-        return new Response($this->twig->render('newsletter/public/edition.html.twig', [
+        return new Response($this->twig->render('pages/newsletter/public/edition.html.twig', [
             'edition' => $edition,
         ]));
     }
@@ -150,7 +150,7 @@ final class NewsletterController
             return new RedirectResponse('/login?redirect=/newsletter/submit');
         }
 
-        return new Response($this->twig->render('newsletter/public/submit.html.twig'));
+        return new Response($this->twig->render('pages/newsletter/public/submit.html.twig'));
     }
 
     public function submitPost(array $params, array $query, AccountInterface $account, HttpRequest $request): Response

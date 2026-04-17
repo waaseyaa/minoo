@@ -36,7 +36,7 @@ final class NewsletterEditorController
         $storage = $this->entityTypeManager->getStorage('newsletter_edition');
         $editions = $storage->loadMultiple();
 
-        return new Response($this->twig->render('newsletter/editor/list.html.twig', [
+        return new Response($this->twig->render('pages/newsletter/editor/list.html.twig', [
             'editions' => $editions,
         ]));
     }
@@ -107,7 +107,7 @@ final class NewsletterEditorController
             $bySection[(string) $item->get('section')][] = $item;
         }
 
-        return new Response($this->twig->render('newsletter/editor/newsroom.html.twig', [
+        return new Response($this->twig->render('pages/newsletter/editor/newsroom.html.twig', [
             'edition' => $edition,
             'items_by_section' => $bySection,
         ]));
@@ -188,7 +188,7 @@ final class NewsletterEditorController
                 && (string) $s->get('community_id') === $coordinatorCommunity,
         );
 
-        return new Response($this->twig->render('newsletter/editor/submissions.html.twig', [
+        return new Response($this->twig->render('pages/newsletter/editor/submissions.html.twig', [
             'submissions' => $pending,
         ]));
     }
