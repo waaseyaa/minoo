@@ -27,13 +27,13 @@ final class StaticPageController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function about(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('about.html.twig', '/about', $account);
+        return $this->render('pages/static/about.html.twig', '/about', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function dataSovereignty(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('data-sovereignty.html.twig', '/data-sovereignty', $account);
+        return $this->render('pages/static/data-sovereignty.html.twig', '/data-sovereignty', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
@@ -51,19 +51,19 @@ final class StaticPageController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function getInvolved(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('get-involved.html.twig', '/get-involved', $account);
+        return $this->render('pages/static/get-involved.html.twig', '/get-involved', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function howItWorks(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('how-it-works.html.twig', '/how-it-works', $account);
+        return $this->render('pages/static/how-it-works.html.twig', '/how-it-works', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function journey(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('journey.html.twig', '/journey', $account);
+        return $this->render('pages/static/journey.html.twig', '/journey', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
@@ -75,19 +75,19 @@ final class StaticPageController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function matcher(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('matcher.html.twig', '/matcher', $account);
+        return $this->render('pages/static/matcher.html.twig', '/matcher', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function messages(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('messages.html.twig', '/messages', $account);
+        return $this->render('pages/static/messages.html.twig', '/messages', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function safety(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('safety.html.twig', '/safety', $account);
+        return $this->render('pages/static/safety.html.twig', '/safety', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
@@ -99,13 +99,13 @@ final class StaticPageController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function studio(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('studio.html.twig', '/studio', $account);
+        return $this->render('pages/static/studio.html.twig', '/studio', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function volunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('volunteer.html.twig', '/volunteer', $account);
+        return $this->render('pages/static/volunteer.html.twig', '/volunteer', $account);
     }
 
     private function render(string $template, string $path, AccountInterface $account): Response
