@@ -69,7 +69,7 @@ final class StaticPageController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function legal(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('legal.html.twig', $request->getPathInfo(), $account);
+        return $this->render('pages/legal/index.html.twig', $request->getPathInfo(), $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
