@@ -1,3 +1,5 @@
+{# Required: name, role
+   Optional: photo_url, business_name, bio, offerings, community_name, community_slug, url #}
 <article class="card card--person" data-role="{{ role }}" data-offerings="{{ offerings is defined and offerings ? offerings|join(',') : '' }}" data-search="{{ ([name, business_name ?? '', bio ?? ''])|join(' ')|lower }}">
   <div class="card__header-row">
     <div class="person-photo person-photo--card">

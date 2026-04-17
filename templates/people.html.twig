@@ -63,7 +63,7 @@
 
         <div class="card-grid" id="people-grid">
           {% for p in people %}
-            {% include "components/resource-person-card.html.twig" with {
+            {% include "components/domain/people/card.html.twig" with {
               name: p.get('name'),
               role: p.get('roles') is iterable ? p.get('roles')|first : '',
               community: p.get('community'),
