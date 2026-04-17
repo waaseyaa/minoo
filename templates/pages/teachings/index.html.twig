@@ -1,0 +1,40 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('teachings.title') }} — Minoo{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+    <div class="flow-lg">
+      <section class="hero">
+        <p class="hero__eyebrow">{{ trans('teachings.eyebrow')|default('Oral teachings from Knowledge Keepers') }}</p>
+        <h1>{{ trans('teachings.title') }}</h1>
+        <p>{{ trans('teachings.subtitle') }}</p>
+      </section>
+
+      {% if teachings is defined and teachings|length > 0 %}
+        <div class="ds-grid">
+          {% for t in teachings %}
+            {% set comm = communities[t.get('community_id')]|default({}) %}
+            {% include "components/domain/teachings/card.html.twig" with {
+              title: t.get('title'),
+              type: t.get('type')|default('')|capitalize,
+              author: '',
+              excerpt: t.get('content')|default('')|split("\n\n")|first|length > 120 ? t.get('content')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : t.get('content')|default('')|split("\n\n")|first,
+              tags: [],
+              url: "/teachings/" ~ t.get('slug'),
+              community_name: comm.name|default(''),
+              community_slug: comm.slug|default('')
+            } %}
+          {% endfor %}
+        </div>
+      {% else %}
+        {% include "components/shared/feedback/empty-state.html.twig" with {
+          heading: trans('teachings.empty_heading'),
+          body: trans('teachings.empty_body'),
+          action_url: lang_url('/language'),
+          action_label: trans('teachings.explore_language')
+        } %}
+      {% endif %}
+    </div>
+{% endblock %}

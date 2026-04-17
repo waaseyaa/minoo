@@ -44,7 +44,7 @@ final class TeachingController
 
         $communities = CommunityLookup::build($this->entityTypeManager, $teachings);
 
-        $html = $this->twig->render('teachings.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/teachings/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/teachings',
             'teachings' => $teachings,
             'communities' => $communities,
@@ -114,7 +114,7 @@ final class TeachingController
             }
         }
 
-        $html = $this->twig->render('teachings.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/teachings/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/teachings/' . $slug,
             'teaching' => $teaching,
             'related_events' => $relatedEvents,
