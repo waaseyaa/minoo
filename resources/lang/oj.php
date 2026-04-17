@@ -161,6 +161,7 @@ return [
 
     // Events
     'events.title' => 'Maawanji\'idiwinan', // dict: maawanji'idiwag: "they come together, meet"
+    'events.near_location' => 'Maawanji\'idiwinan Misi-minis-akiing', // "Events across Turtle Island"
     'events.subtitle' => "Niimi'idiwinan, anami'ewinan, miinawaa oodena-maawanji'idiwinan", // "Powwows, ceremonies, and community gatherings"
     'events.empty_heading' => "Maawanji'idiwinan gaawiin mikanziinaawaa", // "No events found"
     'events.empty_body' => "Maawanji'idiwinan bi-dagoshinomagadoon waabang.", // "Events are coming soon."
@@ -225,6 +226,7 @@ return [
 
     // Teachings
     'teachings.title' => 'Gikinoo\'amaadiwinan', // dict: gikinoo'amaadiwin: "teaching, education"
+    'teachings.eyebrow' => 'Gikinoo\'amaadiwinan gichi-ayaa\'aag ininiwan', // "Teachings from Elders"
     'teachings.subtitle' => "Dibaajimowinan, gikendaasowinan, miinawaa gikinoo'amaadiwinan", // "Stories, knowledge, and teachings"
     'teachings.empty_heading' => "Gikinoo'amaadiwinan gaawiin mikanziinaawaa", // "No teachings found"
     'teachings.empty_body' => "Gikinoo'amaadiwinan bi-dagoshinomagadoon waabang.", // "Teachings are coming soon."
@@ -269,6 +271,7 @@ return [
     'search.scope' => 'Kakina oodenawinan miinawaa anokiiwinan.', // "Across all communities and organizations"
     'search.results_summary' => '{count} ezhichigewinan ({time}s)',
     'search.no_results' => 'Ezhichigewinan gaa-izhi-waabandamaan "{query}".',
+    'search.did_you_mean' => 'Gidinendam ina', // "Did you mean"
     'search.pagination_prev' => '←',
     'search.pagination_next' => '→',
     'search.search_intro' => "Biindigen andone'iganing ji-mikamowad dibaajimowinan, gikinoo'amaadiwinan, maawanji'idiwinan, miinawaa oodena-mazina'iganan.", // "Use search to find stories, teachings, events, and community resources."

@@ -43,7 +43,7 @@
         {% if account is defined and account.isAuthenticated() %}
           <div class="hdr__avatar" title="{{ account.get('display_name')|default('A') }}">{{ account.get('display_name')|default('A')|first|upper }}</div>
         {% else %}
-          <a href="{{ lang_url('/auth/login') }}" class="btn btn--ghost">Sign in</a>
+          <a href="{{ lang_url('/login') }}" class="btn btn--ghost">Sign in</a>
         {% endif %}
       </div>
       <div class="ribbon" aria-hidden="true"></div>
@@ -95,23 +95,7 @@
       this.classList.remove('app-sidebar__overlay--visible');
       document.getElementById('sidebar-toggle')?.setAttribute('aria-expanded', 'false');
     });
-    // User menu dropdown
-    (function() {
-      const trigger = document.querySelector('.user-menu__trigger');
-      if (!trigger) return;
-      const dropdown = document.getElementById('user-menu-dropdown');
-      trigger.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const isOpen = !dropdown.hidden;
-        dropdown.hidden = isOpen;
-        this.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-      });
-      document.addEventListener('click', function() {
-        dropdown.hidden = true;
-        trigger.setAttribute('aria-expanded', 'false');
-      });
-    })();
-    // Theme toggle (header user menu + standalone)
+    // Theme toggle
     (function() {
       function currentTheme() {
         return document.documentElement.getAttribute('data-theme') ||
@@ -120,21 +104,11 @@
       function applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('minoo-theme', theme);
-        var label = document.getElementById('user-menu-theme-value');
-        if (label) label.textContent = theme === 'dark' ? 'Dark' : 'Light';
       }
-      // User menu theme button
-      document.getElementById('user-menu-theme-toggle')?.addEventListener('click', function() {
-        applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
-      });
-      // Standalone toggle (fallback)
       var btn = document.querySelector('.theme-toggle');
       if (btn) btn.addEventListener('click', function() {
         applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
       });
-      // Set initial label
-      var label = document.getElementById('user-menu-theme-value');
-      if (label) label.textContent = currentTheme() === 'dark' ? 'Dark' : 'Light';
     })();
   </script>
   <script>

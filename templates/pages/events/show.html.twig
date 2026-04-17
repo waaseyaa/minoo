@@ -33,7 +33,7 @@
       {% set source_label = event.get('source')|default('') %}
       {% set verified_at = event.get('verified_at')|default(null) %}
 
-      <a href="{{ lang_url('/events') }}" class="btn btn--ghost" style="margin-bottom: var(--space-sm); padding: 4px 0;">&larr; {{ trans('events.back')|default('Back to Events') }}</a>
+      <a href="{{ lang_url('/events') }}" class="btn btn--ghost" style="margin-bottom: var(--space-sm); padding: 4px 0;">&larr; {{ trans('events.detail_back') }}</a>
 
       {% if event.get('type') is not empty %}
         <span class="badge badge--events">{{ event.get('type')|capitalize }}</span>

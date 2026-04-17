@@ -32,7 +32,7 @@ final class MatcherController
     /** Render the game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $html = $this->twig->render('matcher.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/static/matcher.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/matcher',
         ]));
 

@@ -148,6 +148,7 @@ return [
 
     // Events
     'events.title' => 'Events',
+    'events.near_location' => 'Events across Turtle Island',
     'events.add_to_calendar' => 'Add to calendar',
     'events.subtitle' => 'Powwows, ceremonies, and community gatherings happening across the region.',
     'events.empty_heading' => 'No events scheduled yet',
@@ -258,6 +259,7 @@ return [
 
     // Teachings
     'teachings.title' => 'Teachings',
+    'teachings.eyebrow' => 'Oral teachings from Knowledge Keepers',
     'teachings.subtitle' => 'Living knowledge passed down through generations, for right now.',
     'teachings.empty_heading' => 'No Teachings shared yet',
     'teachings.empty_body' => 'Living knowledge — culture, history, and language — will be shared here by Knowledge Keepers and community members. This space is growing.',
@@ -302,6 +304,7 @@ return [
     'search.scope' => 'Showing Indigenous content only',
     'search.results_summary' => '{count} results ({time}s)',
     'search.no_results' => 'No results found for "{query}".',
+    'search.did_you_mean' => 'Did you mean',
     'search.pagination_prev' => 'Previous',
     'search.pagination_next' => 'Next',
     'search.search_intro' => 'Enter a search term to discover articles, teachings, events, and community resources from across Indigenous organizations and communities.',

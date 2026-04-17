@@ -47,7 +47,7 @@ class JourneyController
     /** GET /games/journey */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $html = $this->twig->render('journey.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/static/journey.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/journey',
         ]));
         return new Response($html);

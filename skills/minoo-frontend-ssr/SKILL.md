@@ -7,101 +7,136 @@ description: Use when working on Minoo templates, CSS design system, or SSR rend
 
 ## Scope
 
-Files: `templates/`, `public/css/minoo.css`, SSR rendering in `src/Controller/`
+Files: `templates/`, `public/css/*.css`, SSR rendering in `src/Controller/`
 Tests: Playwright E2E in `e2e/`
 
-> **Note — restructure in progress.** A `layouts/ + pages/<domain>/ + components/{shared,domain}/` reorganization is planned per the 2026-04-17 validation report. Phases 0 + 1 are complete (Tier-2 semantic tokens + collapsed `@layer components` + explicit routes for previously path-resolved static pages). Template and component directories have **not yet moved** — continue following the current conventions documented below.
+## Directory Layout
 
-## Template Architecture
+```
+templates/
+├── layouts/base.html.twig              # Page shell (only layout; extended by all pages)
+├── pages/<domain>/<view>.html.twig     # Route-level templates
+│   └── static/                         # Static content pages (about, how-it-works, etc.)
+├── components/
+│   ├── shared/{layout,ui,data,feedback}/   # Cross-domain partials
+│   └── domain/<name>/                      # Domain-scoped partials
+├── email/                              # Mail bodies rendered by framework AuthMailer
+├── 403.html.twig                       # Framework hardcodes path — do not move
+└── 404.html.twig                       # Framework hardcodes path — do not move
+```
 
-All templates extend `base.html.twig` which defines the page shell (`.site` > `.site-header` + `.site-main` + `.site-footer`). It exposes nine blocks:
-`title`, `meta_description`, `og_title`, `og_description`, `og_image`, `og_type`, `head`, `content`, `scripts`.
+**Framework constraint:** `vendor/waaseyaa/ssr/src/RenderController.php` hardcodes `403.html.twig` and `404.html.twig` at the templates root. Do not relocate.
+
+## Routing
+
+**No path-based template auto-resolution.** Controllers call `$this->twig->render('pages/<domain>/<view>.html.twig', ...)` explicitly. Each route in `App\Provider\AppServiceProvider` maps to a controller method that chooses its template path.
+
+Static pages with no domain logic are served through `StaticPageController`, which renders templates from `pages/static/` or the appropriate `pages/<domain>/` folder.
+
+## Template Inheritance
+
+All page templates extend `layouts/base.html.twig` and override blocks:
 
 ```twig
-{% extends "base.html.twig" %}
+{% extends "layouts/base.html.twig" %}
 {% block title %}Page Title{% endblock %}
 {% block content %}
   {# Page content here #}
 {% endblock %}
 ```
 
-**Path-based routing:** Framework `RenderController::tryRenderPathTemplate()` maps `/path` to `path.html.twig`. Multi-segment paths (e.g. `/events/slug`) fall back to first segment (`events.html.twig`) with full `path` variable available.
+Available blocks: `title`, `meta_description`, `og_title`, `og_description`, `og_image`, `og_type`, `head`, `content`, `scripts`.
 
-**Listing+detail in one template:** Use conditionals inside `{% block content %}`:
+## Component Conventions
+
+Components live under `templates/components/`:
+
+- `shared/layout/` — sidebar-nav, location-bar, breadcrumb, hero-image
+- `shared/ui/` — chat, language-switcher, pagination, theme-toggle, user-role-card
+- `shared/data/` — search-result-card, empty-state, protocol-notice
+- `shared/feedback/` — flash-messages
+- `domain/<name>/` — cards, filters, and domain-scoped partials (events/, teachings/, groups/, people/, businesses/, communities/, feed/, language/, oral-histories/)
+
+Include components with explicit `with` and `only`:
+
 ```twig
-{% block content %}
-  {% set slug = path|split('/')|last %}
-  {% if slug != 'events' %}
-    {# Detail view #}
-  {% else %}
-    {# List view #}
-  {% endif %}
-{% endblock %}
+{% include "components/domain/events/card.html.twig" with {
+  title: event.get('title'),
+  type: event.get('type'),
+  date: event.get('starts_at'),
+  url: "/events/" ~ event.get('slug'),
+} only %}
 ```
 
-## Template Map
+## CSS Architecture
 
-| Template | Purpose | Key variables |
-|----------|---------|---------------|
-| `base.html.twig` | Shell: header, nav, footer, location bar | `path`, `account` |
-| `page.html.twig` | Home page | `events`, `communities`, `location` |
-| `events.html.twig` | Events list + detail | `events`, `path` |
-| `groups.html.twig` | Groups list + detail | `groups`, `path` |
-| `teachings.html.twig` | Teachings list + detail | `teachings`, `path` |
-| `communities.html.twig` | Communities list + detail | `communities`, `path`, `location` |
-| `people.html.twig` | Resource people list + detail | `people`, `path` |
-| `language.html.twig` | Dictionary demo | `entries`, `path` |
-| `search.html.twig` | Search results | `results`, `query` |
-| `elders.html.twig` | Elder support landing | — |
-| `elders/request.html.twig` | Support request form | `errors`, `values` |
-| `elders/volunteer.html.twig` | Volunteer signup form | `errors`, `values` |
-| `volunteer.html.twig` | Volunteer info page | — |
-| `legal.html.twig` | Legal/privacy page | — |
-| `auth/login.html.twig` | Login form | `errors`, `values` |
-| `auth/register.html.twig` | Register form | `errors`, `values` |
-| `dashboard/volunteer.html.twig` | Volunteer dashboard | `requests`, `volunteer` |
-| `dashboard/coordinator.html.twig` | Coordinator dashboard | `requests`, `volunteers` |
-| `404.html.twig` | Not found | `path` |
-| `components/*.html.twig` | Reusable card partials | varies per card |
+`public/css/minoo.css` is a **manifest** — no rules, only the layer declaration and `@import` statements.
 
-## CSS Design System
+```
+public/css/
+├── minoo.css          # Manifest: @layer order + @imports
+├── reset.css          # @layer reset
+├── tokens.css         # @layer tokens
+├── base.css           # @layer base
+├── layout.css         # @layer layout
+├── components.css     # @layer components
+├── utilities.css      # @layer utilities
+└── orphans.css        # Un-layered rules (font-face, legacy rules, @media print)
+```
 
-Single file `public/css/minoo.css` (~9500 lines) — no build step, no preprocessor.
+**Manifest content:**
+```css
+@layer reset, tokens, base, layout, components, utilities;
 
-**Layer order:** `@layer reset, tokens, base, layout, components, utilities;` — **must be the first non-`@font-face` statement in the file** to pin cascade priority before any `@layer` block opens. All component rules live in a **single** `@layer components { ... }` block (collapsed in Phase 0).
+@import "reset.css";
+@import "tokens.css";
+@import "base.css";
+@import "layout.css";
+@import "components.css";
+@import "utilities.css";
+@import "orphans.css";
+```
 
-**Color palette (OKLCH):**
-- Earth tones: `--color-earth-{50,100,200,700,900}` — primary neutrals
-- Forest: `--color-forest-{100,500,700}` — nature green
-- Water: `--color-water-{100,600}` — blue accent
-- Sun: `--color-sun-500` — warm accent
-- Berry: `--color-berry-600` — error/danger
+**orphans.css:** Rules that existed outside any `@layer` block in the pre-split history — `@font-face` declarations, a few legacy unlayered rule sets, and `@media print` blocks. Imported **after** the layered files so they retain highest cascade priority (same behavior as before the split). Do not move rules in or out without understanding the cascade implications.
 
-**Semantic tokens (Tier 2, existing):** `--text-primary`, `--text-secondary`, `--surface`, `--surface-raised`, `--border`, `--accent`, `--link`, `--error`, `--warning`, `--info`, `--success`
-**Semantic tokens (Tier 2, shadcn-style — added Phase 0):** `--background`, `--foreground`, `--surface-default`, `--surface-sunken`, `--surface-overlay`, `--text-inverse`, `--border-default`, `--border-strong`, `--accent-default`, `--accent-hover`, `--accent-foreground`, `--muted`, `--muted-default`, `--muted-foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--destructive`, `--destructive-foreground`, `--input`, `--ring`
-**Domain tokens:** `--domain-events`, `--domain-groups`, `--domain-teachings`, `--domain-language`, `--domain-people`, `--domain-elders`, `--domain-businesses`, `--domain-communities`, `--domain-newsletter`, `--domain-feed`, `--domain-search`
+### Layer Contents
 
-**Type scale (fluid clamp):** `--text-sm` through `--text-3xl`
-**Space scale (fluid clamp):** `--space-3xs` through `--space-2xl`, `--gutter: var(--space-sm)`
-**Width tokens:** `--width-prose: 65ch`, `--width-content: 80rem`, `--width-narrow: 40rem`, `--width-card: 25rem`
+| Layer | Purpose |
+|-------|---------|
+| `reset` | Box-sizing, margin reset, media elements, font inheritance |
+| `tokens` | Design tokens: colors, typography, spacing, widths, radii, shadows |
+| `base` | Body, headings, links, code, lists — use tokens only |
+| `layout` | Page shell: header, sidebar, grid surfaces, app shell |
+| `components` | Cards, detail views, filters, pagination, domain UI blocks |
+| `utilities` | `.flow`, `.flow-lg`, `.sr-only`, single-purpose helpers |
+
+### Design Tokens
+
+OKLCH earth / forest / water / sun / berry palette with shadcn-style Tier-2 semantic aliases (`--background`, `--foreground`, `--muted`, `--card`, `--popover`, `--destructive`, `--ring`, `--input`). Typography uses fluid `clamp()` scales; spacing uses a 1.5-ratio fluid scale; widths: `--width-prose: 65ch`, `--width-content: 80rem`, `--width-narrow: 40rem`, `--width-card: 25rem`.
+
+### CSS Conventions
+
+- Logical properties only (`margin-block`, `padding-inline`) — no `left`/`right`
+- `gap` for sibling spacing
+- Native CSS nesting
+- Container queries on components; media queries reserved for page shell
+- No `!important`
+
+### Cache Busting
+
+`layouts/base.html.twig` references the manifest with a version query: `<link rel="stylesheet" href="/css/minoo.css?v=N">`. Bump `N` after any CSS change.
 
 ## Component Patterns
 
-**Cards:** `.card` with `container-type: inline-size` for container queries.
-- Variants: `.card--event`, `.card--group`, `.card--community`, `.card--teaching`, `.card--language`, `.card--person`, `.card--elder`, `.card--detail`, `.card--dashboard`
-- Parts: `.card__badge`, `.card__title`, `.card__meta`, `.card__body`, `.card__tags`
-- Grid: `.card-grid` with staggered entry animations
+**Cards:** `.card` with `container-type: inline-size`. Variants: `.card--event`, `.card--group`, `.card--community`, `.card--teaching`, `.card--language`, `.card--person`, `.card--elder`, `.card--detail`, `.card--dashboard`. Parts: `.card__badge`, `.card__title`, `.card__meta`, `.card__body`, `.card__tags`. Grid: `.card-grid`.
 
-**Forms:** `.form` > `.form__field` > `.form__label` + `.form__input`
-- Error state: `.form__input--error` + `.form__error[role="alert"]`
-- Buttons: `.form__submit--primary`, `--secondary`, `--danger`, `--sm`
-- Fieldsets: `.form__fieldset`, `.form__checkboxes`, `.form__checkbox-label`
+**Forms:** `.form` > `.form__field` > `.form__label` + `.form__input`. Error state: `.form__input--error` + `.form__error[role="alert"]`. Buttons: `.form__submit--primary`, `--secondary`, `--danger`, `--sm`.
 
-**Buttons:** `.btn` with `--primary`, `--secondary`, `--accent`, `--ghost`, `--lg`
+**Buttons:** `.btn` with `--primary`, `--secondary`, `--accent`, `--ghost`, `--lg`.
 
-**Layout:** `.flow` / `.flow-lg` for vertical rhythm (`> * + *` margin pattern), `.prose` for readable text, `.content-section` for page sections
+**Layout:** `.flow` / `.flow-lg` for vertical rhythm, `.prose` for readable text, `.content-section` for page sections.
 
-**Detail pages:** `.detail` > `.detail__back`, `.detail__header`, `.detail__meta`, `.detail__body`
+**Detail pages:** `.detail` > `.detail__back`, `.detail__header`, `.detail__meta`, `.detail__body`.
 
 ## Common Twig Patterns
 
@@ -111,23 +146,6 @@ Entity field access via `.get()`:
 {% if item.get('status') == 1 %}Published{% endif %}
 ```
 
-Component includes:
-```twig
-{% for event in events %}
-  {% include "components/event-card.html.twig" with {
-    title: event.get('title'),
-    type: event.get('type'),
-    slug: event.get('slug'),
-  } %}
-{% endfor %}
-```
-
-Type label maps with fallback:
-```twig
-{% set type_labels = {powwow: 'Powwow', gathering: 'Gathering'} %}
-{{ type_labels[value]|default(value|replace({'_': ' '})|capitalize) }}
-```
-
 Active nav via `aria-current`:
 ```twig
 <a href="/events"{% if path starts with '/events' %} aria-current="page"{% endif %}>
@@ -135,18 +153,18 @@ Active nav via `aria-current`:
 
 ## Common Mistakes
 
-- **Multiple blocks with same name**: Use conditionals inside the block, not multiple blocks in conditionals
-- **`{% set %}` outside block**: Variables set outside `{% block %}` are not available inside it
-- **Dot notation on entities**: Use `entity.get('field')`, not `entity.field`
-- **CSS `left`/`right`**: Always use logical properties (`margin-inline-start`, `padding-block-end`)
-- **CSS `margin` for spacing**: Use `gap` in flex/grid contexts; `.flow` pattern for vertical stacks
-- **Media queries on components**: Use container queries (`@container`) on components; media queries only for page shell
-- **Missing `path` variable**: Every SSR controller must pass `path` to the template context
-- **`@layer` brace mismatch (#273)**: A premature `}` can close `@layer components` early, leaving subsequent styles unlayered (which outranks all layers in the cascade). Always verify brace balance when editing `minoo.css`
-- **Path-based template routing**: `tryRenderPathTemplate()` matches single segments exactly and falls back to the first segment for multi-segment paths (e.g. `/events/slug` renders `events.html.twig` with `path` set to `/events/slug`). Requires framework#189
-- **Listing+detail pattern**: Use path conditionals _inside_ `{% block content %}` — `{% set %}` must be inside the block, and only one `{% block %}` per name (use conditionals inside the block, not multiple blocks in conditionals)
+- **Moving 403/404 out of templates root** — framework hardcodes these paths; moves break error handling
+- **Dot notation on entities** — use `entity.get('field')`, not `entity.field`
+- **CSS `left`/`right`** — always use logical properties (`margin-inline-start`, `padding-block-end`)
+- **`margin` for spacing** — use `gap` in flex/grid; `.flow` pattern for vertical stacks
+- **Media queries on components** — use container queries (`@container`); media queries only for page shell
+- **Missing `path` variable** — every SSR controller must pass `path` in `LayoutTwigContext::withAccount(...)`
+- **Editing `minoo.css` directly** — it's a manifest; add rules to the matching layer file (`components.css`, `layout.css`, etc.)
+- **Moving rules into/out of `orphans.css`** — unlayered rules outrank all `@layer` rules; understand the cascade impact before touching
+- **Forgetting the `?v=N` bump** — stale CSS after deploy is the #1 "it looks broken" cause
+- **Duplicate route names in `AppServiceProvider`** — later registration silently wins. Games use `games.<name>` for `/games/<name>` and `games.<name>.short` for `/<name>`
 
 ## Related Specs
 
-- `docs/specs/frontend-ssr.md` — full CSS token values, template conventions, component catalog
-- Framework: `waaseyaa_get_spec api-layer` — SsrResponse, RenderController
+- `docs/specs/frontend-ssr.md` — authoritative directory layout, inheritance, CSS architecture, smoke test routes
+- Framework: `waaseyaa_get_spec api-layer` — Response types, RenderController

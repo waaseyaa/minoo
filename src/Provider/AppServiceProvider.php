@@ -3544,14 +3544,14 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'games.agim',
+            'games.agim.short',
             RouteBuilder::create('/agim')
                 ->controller('App\Controller\AgimController::page')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
-            'games.crossword',
+            'games.crossword.short',
             RouteBuilder::create('/crossword')
                 ->controller('App\Controller\CrosswordController::page')
                 ->allowAll()->render()->methods('GET')->build(),
@@ -3642,7 +3642,7 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'games.shkoda',
+            'games.shkoda.short',
             RouteBuilder::create('/shkoda')
                 ->controller('App\Controller\ShkodaController::page')
                 ->allowAll()->render()->methods('GET')->build(),
