@@ -16,10 +16,14 @@
 {% block content %}
   {% if path == '/events' %}
     <div class="flow-lg">
-      <div class="listing-hero">
+      <section class="hero" style="padding-bottom: var(--space-sm);">
+        <p class="hero__eyebrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ trans('events.near_location')|default('Events across Turtle Island') }}
+        </p>
         <h1>{{ trans('events.title') }}</h1>
-        <p class="listing-hero__subtitle">{{ trans('events.subtitle') }}</p>
-      </div>
+        <p>{{ trans('events.subtitle')|default('Gatherings, ceremonies, and community events across Turtle Island.') }}</p>
+      </section>
 
       {% if filters is defined %}
         {% include "components/event-filters.html.twig" with { filters: filters, feed: feed|default(null), location: location|default(null) } %}
@@ -69,84 +73,47 @@
       {% set source_url = event.get('source_url')|default('') %}
       {% set source_label = event.get('source')|default('') %}
       {% set verified_at = event.get('verified_at')|default(null) %}
-      <div class="detail-hero">
-        <div class="detail-hero__top">
-          <a href="{{ lang_url('/events') }}" class="detail-hero__back">{{ trans('events.detail_back') }}</a>
-          <div class="detail-hero__actions">
-            {% if event.get('slug') %}
-              <a href="/events/{{ event.get('slug') }}.ics" class="btn btn--secondary detail-hero__ics" download>{{ trans('events.add_to_calendar') }}</a>
-            {% endif %}
-            {% if source_url %}
-              <a href="{{ source_url }}" target="_blank" rel="noopener noreferrer" class="btn btn--ghost detail-hero__source">{{ trans('events.view_source') }}</a>
-            {% endif %}
-          </div>
-        </div>
-        {% if event.get('type') is not empty %}
-          <span class="detail-hero__badge">{{ event.get('type')|capitalize }}</span>
+
+      <a href="{{ lang_url('/events') }}" class="btn btn--ghost" style="margin-bottom: var(--space-sm); padding: 4px 0;">&larr; {{ trans('events.back')|default('Back to Events') }}</a>
+
+      {% if event.get('type') is not empty %}
+        <span class="badge badge--events">{{ event.get('type')|capitalize }}</span>
+      {% endif %}
+      <h1>{{ event.get('title') }}</h1>
+
+      {% if start and end_date and now >= start and now <= end_date %}
+        <span class="event-status event-status--active">{{ trans('events.status_happening') }}</span>
+      {% elseif start and now < start %}
+        <span class="event-status event-status--upcoming">{{ trans('events.status_upcoming') }}</span>
+      {% elseif end_date and now > end_date %}
+        <span class="event-status event-status--past">{{ trans('events.status_past') }}</span>
+      {% endif %}
+
+      <div class="detail__meta">
+        {% if event.get('starts_at') %}
+          <span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            {{ event.get('starts_at')|date('F j, Y') }}{% if event.get('ends_at') %} &ndash; {{ event.get('ends_at')|date('F j, Y') }}{% endif %}
+          </span>
         {% endif %}
-        <h1 class="detail-hero__title">{{ event.get('title') }}</h1>
-
-        {% if start and end_date and now >= start and now <= end_date %}
-          <span class="event-status event-status--active">{{ trans('events.status_happening') }}</span>
-        {% elseif start and now < start %}
-          <span class="event-status event-status--upcoming">{{ trans('events.status_upcoming') }}</span>
-        {% elseif end_date and now > end_date %}
-          <span class="event-status event-status--past">{{ trans('events.status_past') }}</span>
+        {% if event.get('starts_at') %}
+          <span>{{ event.get('starts_at')|relative_date }}</span>
         {% endif %}
-
-        <dl class="detail__meta-grid">
-          {% if event.get('starts_at') %}
-            <div class="detail__meta-item">
-              <dt>{{ trans('events.meta_date') }}</dt>
-              <dd>{{ event.get('starts_at')|date('F j, Y') }}{% if event.get('ends_at') %} – {{ event.get('ends_at')|date('F j, Y') }}{% endif %}</dd>
-            </div>
-          {% endif %}
-          {% if event.get('starts_at') %}
-            <div class="detail__meta-item">
-              <dt>{{ trans('events.meta_when') }}</dt>
-              <dd>{{ event.get('starts_at')|relative_date }}</dd>
-            </div>
-          {% endif %}
-          {% if event.get('location') %}
-            <div class="detail__meta-item">
-              <dt>{{ trans('events.meta_location') }}</dt>
-              <dd>{{ event.get('location') }}</dd>
-            </div>
-          {% endif %}
-          {% if event.get('type') %}
-            <div class="detail__meta-item">
-              <dt>{{ trans('events.meta_type') }}</dt>
-              <dd>{{ event.get('type')|capitalize }}</dd>
-            </div>
-          {% endif %}
-          {% if host_community is defined and host_community %}
-            <div class="detail__meta-item">
-              <dt>{{ trans('events.meta_host') }}</dt>
-              <dd><a href="/communities/{{ host_community.get('slug') }}">{{ host_community.get('name') }}</a></dd>
-            </div>
-          {% endif %}
-        </dl>
-
-        {% if source_url or source_label or verified_at %}
-          <div class="detail__source">
-            <p class="detail__source-title">{{ trans('events.source_title') }}</p>
-            {% if source_url %}
-              <a href="{{ source_url }}" target="_blank" rel="noopener noreferrer" class="detail__source-link">{{ trans('events.view_source') }}</a>
-            {% endif %}
-            {% if source_label or verified_at %}
-              <p class="detail__source-meta">
-                {% if source_label %}
-                  <span>{{ trans('events.source_name') }}: {{ source_label }}</span>
-                {% endif %}
-                {% if verified_at %}
-                  <span>{{ trans('events.source_verified') }}: {{ verified_at|date('F j, Y') }}</span>
-                {% endif %}
-              </p>
-            {% endif %}
-          </div>
+        {% if event.get('location') %}
+          <span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ event.get('location') }}
+          </span>
+        {% endif %}
+        {% if event.get('type') %}
+          <span>{{ event.get('type')|capitalize }}</span>
+        {% endif %}
+        {% if host_community is defined and host_community %}
+          <span><a href="/communities/{{ host_community.get('slug') }}">{{ host_community.get('name') }}</a></span>
         {% endif %}
       </div>
-      <div class="content-well">
+
+      <div class="detail__layout">
         <div class="detail__body flow">
           {% set description = event.get('description')|default('') %}
           {% if description|trim %}
@@ -158,8 +125,45 @@
           {% else %}
             <p>{{ trans('events.no_description') }}</p>
           {% endif %}
+
+          {% if source_url or source_label or verified_at %}
+            <div class="detail__source">
+              <p class="detail__source-title">{{ trans('events.source_title') }}</p>
+              {% if source_url %}
+                <a href="{{ source_url }}" target="_blank" rel="noopener noreferrer" class="detail__source-link">{{ trans('events.view_source') }}</a>
+              {% endif %}
+              {% if source_label or verified_at %}
+                <p class="detail__source-meta">
+                  {% if source_label %}
+                    <span>{{ trans('events.source_name') }}: {{ source_label }}</span>
+                  {% endif %}
+                  {% if verified_at %}
+                    <span>{{ trans('events.source_verified') }}: {{ verified_at|date('F j, Y') }}</span>
+                  {% endif %}
+                </p>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          {% if event.get('slug') %}
+            <a href="/events/{{ event.get('slug') }}.ics" class="btn btn--secondary" download>{{ trans('events.add_to_calendar') }}</a>
+          {% endif %}
+          {% if source_url %}
+            <a href="{{ source_url }}" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">{{ trans('events.view_source') }}</a>
+          {% endif %}
         </div>
-      </div>{# .content-well #}
+
+        <aside class="detail__aside">
+          {% if host_community is defined and host_community %}
+            <div class="aside-card">
+              <h3 class="aside-card__title">{{ trans('events.host_community') }}</h3>
+              <a href="/communities/{{ host_community.get('slug') }}" class="community-link">
+                {{ host_community.get('name') }}
+              </a>
+            </div>
+          {% endif %}
+        </aside>
+      </div>
 
       {% if related_teachings is defined and related_teachings|length > 0 %}
         <section class="related-section">
@@ -188,15 +192,6 @@
               </a>
             {% endfor %}
           </div>
-        </section>
-      {% endif %}
-
-      {% if host_community is defined and host_community %}
-        <section class="related-section">
-          <h2>{{ trans('events.host_community') }}</h2>
-          <a href="/communities/{{ host_community.get('slug') }}" class="community-link">
-            {{ host_community.get('name') }}
-          </a>
         </section>
       {% endif %}
 
