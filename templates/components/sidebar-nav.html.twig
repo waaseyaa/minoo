@@ -1,79 +1,79 @@
 {# Sidebar navigation - Navigate, Programs, and Your Communities groups #}
-<nav class="sidebar-nav" aria-label="{{ trans('sidebar.navigate') }}">
-  <div class="sidebar-nav__group">
-    <a href="{{ lang_url('/') }}" class="sidebar-nav__item{% if current_path is defined and current_path == '/' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      {{ trans('sidebar.home') }}
+<nav aria-label="{{ trans('sidebar.navigate') }}">
+  <div class="sbx__group">
+    <a href="{{ lang_url('/') }}" class="sbx__item{% if current_path is defined and current_path == '/' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>{{ trans('sidebar.home') }}</span>
     </a>
     {% if account is defined and account.isAuthenticated() %}
-    <a href="{{ lang_url('/feed') }}" class="sidebar-nav__item{% if current_path is defined and current_path == '/feed' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 019 9"/><path d="M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg>
-      Feed
+    <a href="{{ lang_url('/feed') }}" class="sbx__item{% if current_path is defined and current_path == '/feed' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11a9 9 0 019 9"/><path d="M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg>
+      <span>Feed</span>
     </a>
     {% endif %}
-    <a href="{{ lang_url('/studio') }}" class="sidebar-nav__item{% if current_path is defined and current_path == '/studio' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-      Watch Live
+    <a href="{{ lang_url('/studio') }}" class="sbx__item{% if current_path is defined and current_path == '/studio' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      <span>Watch Live</span>
     </a>
-    <a href="{{ lang_url('/communities') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/communities' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      {{ trans('nav.communities') }}
+    <a href="{{ lang_url('/communities') }}" class="sbx__item{% if current_path is defined and current_path starts with '/communities' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>{{ trans('nav.communities') }}</span>
     </a>
-    <a href="{{ lang_url('/events') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/events' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="2"/></svg>
-      {{ trans('nav.events') }}
+    <a href="{{ lang_url('/events') }}" class="sbx__item{% if current_path is defined and current_path starts with '/events' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="2"/></svg>
+      <span>{{ trans('nav.events') }}</span>
     </a>
-    <a href="{{ lang_url('/teachings') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/teachings' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="13" y2="11"/></svg>
-      {{ trans('nav.teachings') }}
+    <a href="{{ lang_url('/teachings') }}" class="sbx__item{% if current_path is defined and current_path starts with '/teachings' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="13" y2="11"/></svg>
+      <span>{{ trans('nav.teachings') }}</span>
     </a>
-    <a href="{{ lang_url('/people') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/people' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-      {{ trans('nav.people') }}
+    <a href="{{ lang_url('/people') }}" class="sbx__item{% if current_path is defined and current_path starts with '/people' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <span>{{ trans('nav.people') }}</span>
     </a>
-    <a href="{{ lang_url('/businesses') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/businesses' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 8v12a2 2 0 002 2h14a2 2 0 002-2V8l-3-6z"/><line x1="3" y1="8" x2="21" y2="8"/><path d="M16 12a4 4 0 01-8 0"/></svg>
-      {{ trans('nav.businesses') }}
+    <a href="{{ lang_url('/businesses') }}" class="sbx__item{% if current_path is defined and current_path starts with '/businesses' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 8v12a2 2 0 002 2h14a2 2 0 002-2V8l-3-6z"/><line x1="3" y1="8" x2="21" y2="8"/><path d="M16 12a4 4 0 01-8 0"/></svg>
+      <span>{{ trans('nav.businesses') }}</span>
     </a>
-    <a href="{{ lang_url('/oral-histories') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/oral-histories' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      {{ trans('nav.oral_histories') }}
+    <a href="{{ lang_url('/oral-histories') }}" class="sbx__item{% if current_path is defined and current_path starts with '/oral-histories' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      <span>{{ trans('nav.oral_histories') }}</span>
     </a>
-    <a href="{{ lang_url('/games') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/games' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-      Games
+    <a href="{{ lang_url('/games') }}" class="sbx__item{% if current_path is defined and current_path starts with '/games' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      <span>Games</span>
     </a>
     {% if account is defined and account.isAuthenticated() %}
-    <a href="{{ lang_url('/messages') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/messages' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      {{ trans('nav.messages') }}
+    <a href="{{ lang_url('/messages') }}" class="sbx__item{% if current_path is defined and current_path starts with '/messages' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span>{{ trans('nav.messages') }}</span>
     </a>
     {% endif %}
   </div>
 
-  <div class="sidebar-nav__group">
-    <h4 class="sidebar-nav__heading">{{ trans('sidebar.programs') }}</h4>
-    <a href="{{ lang_url('/elders') }}" class="sidebar-nav__item{% if current_path is defined and current_path == '/elders' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-      {{ trans('nav.elder_program') }}
+  <div class="sbx__group">
+    <div class="sbx__label">{{ trans('sidebar.programs') }}</div>
+    <a href="{{ lang_url('/elders') }}" class="sbx__item{% if current_path is defined and current_path == '/elders' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <span>{{ trans('nav.elder_program') }}</span>
     </a>
-    <a href="{{ lang_url('/elders/request') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/elders/request' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
-      {{ trans('nav.request_help') }}
+    <a href="{{ lang_url('/elders/request') }}" class="sbx__item{% if current_path is defined and current_path starts with '/elders/request' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+      <span>{{ trans('nav.request_help') }}</span>
     </a>
-    <a href="{{ lang_url('/elders/volunteer') }}" class="sidebar-nav__item{% if current_path is defined and current_path starts with '/elders/volunteer' %} sidebar-nav__item--active{% endif %}">
-      <svg class="sidebar-nav__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-      {{ trans('nav.volunteer') }}
+    <a href="{{ lang_url('/elders/volunteer') }}" class="sbx__item{% if current_path is defined and current_path starts with '/elders/volunteer' %} sbx__item--active{% endif %}">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      <span>{{ trans('nav.volunteer') }}</span>
     </a>
   </div>
 
   {% if account is defined and account.isAuthenticated() and followed_communities is defined and followed_communities|length > 0 %}
-  <div class="sidebar-nav__group">
-    <h4 class="sidebar-nav__heading">{{ trans('sidebar.your_communities') }}</h4>
+  <div class="sbx__group">
+    <div class="sbx__label">{{ trans('sidebar.your_communities') }}</div>
     {% for community in followed_communities %}
-      <a href="{{ lang_url('/communities/' ~ community.slug) }}" class="sidebar-nav__item">
-        <span class="sidebar-nav__community-avatar">{{ community.name|first|upper }}</span>
-        {{ community.name }}
+      <a href="{{ lang_url('/communities/' ~ community.slug) }}" class="sbx__item">
+        <span class="sbx__community-avatar">{{ community.name|first|upper }}</span>
+        <span>{{ community.name }}</span>
       </a>
     {% endfor %}
   </div>
