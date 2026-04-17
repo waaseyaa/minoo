@@ -28,7 +28,7 @@
 
           <div class="card-grid">
             {% for result in search_results %}
-              {% include "components/dictionary-entry-card.html.twig" with {
+              {% include "components/domain/language/entry-card.html.twig" with {
                 word: result.lemma|default(result.word|default('')),
                 part_of_speech: result.word_class_normalized|default(result.part_of_speech|default('')),
                 definition: result.definitions|default(result.definition|default('')),
@@ -65,7 +65,7 @@
 
         <div class="card-grid">
           {% for e in entries %}
-            {% include "components/dictionary-entry-card.html.twig" with {
+            {% include "components/domain/language/entry-card.html.twig" with {
               word: e.get('word'),
               part_of_speech: e.get('part_of_speech')|default(''),
               definition: e.get('definition')|default(''),
