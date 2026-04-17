@@ -1,0 +1,59 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('language.title') }} — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <h1>{{ trans('language.title') }}</h1>
+    <p class="listing-hero__subtitle">{{ trans('language.subtitle') }}</p>
+
+    <form action="{{ lang_url('/language/search') }}" method="get" class="search-form">
+      <input type="text" name="q" placeholder="{{ trans('language.search_placeholder') }}" class="search-form__input" aria-label="{{ trans('language.search_placeholder') }}">
+      <button type="submit" class="btn btn--primary">{{ trans('language.search_button') }}</button>
+    </form>
+
+    {% if entries is defined and entries|length > 0 %}
+      {% if total_entries is defined %}
+        <p class="listing-hero__count">{{ total_entries }} {{ trans('language.entries_label') }}</p>
+      {% endif %}
+
+      <div class="card-grid">
+        {% for e in entries %}
+          {% include "components/domain/language/entry-card.html.twig" with {
+            word: e.get('word'),
+            part_of_speech: e.get('part_of_speech')|default(''),
+            definition: e.get('definition')|default(''),
+            attribution_source: e.get('attribution_source')|default(''),
+            attribution_url: e.get('attribution_url')|default(''),
+            example: '',
+            tags: [],
+            url: "/language/" ~ e.get('slug')
+          } %}
+        {% endfor %}
+      </div>
+
+      {% if total_pages is defined and total_pages > 1 %}
+        <nav class="pagination" aria-label="Dictionary pages">
+          {% if current_page > 1 %}
+            <a href="{{ lang_url('/language') }}?page={{ current_page - 1 }}" class="pagination__link">← {{ trans('language.prev') }}</a>
+          {% endif %}
+          <span class="pagination__info">{{ trans('language.page') }} {{ current_page }} / {{ total_pages }}</span>
+          {% if current_page < total_pages %}
+            <a href="{{ lang_url('/language') }}?page={{ current_page + 1 }}" class="pagination__link">{{ trans('language.next') }} →</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    {% else %}
+      {% include "components/shared/feedback/empty-state.html.twig" with {
+        heading: trans('language.empty_heading'),
+        body: trans('language.empty_body'),
+        action_url: lang_url('/teachings'),
+        action_label: trans('language.explore_teachings')
+      } %}
+    {% endif %}
+
+    <footer class="attribution">
+      <p>{{ trans('language.copyright') }}</p>
+    </footer>
+  </div>
+{% endblock %}

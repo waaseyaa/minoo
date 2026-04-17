@@ -43,7 +43,7 @@ final class LanguageController
         $entries = $pageIds !== [] ? array_values($storage->loadMultiple($pageIds)) : [];
         $totalPages = (int) ceil($total / self::PAGE_SIZE);
 
-        $html = $this->twig->render('language.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/language/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/language',
             'entries' => $entries,
             'current_page' => $page,
@@ -70,7 +70,7 @@ final class LanguageController
             $entry = null;
         }
 
-        $html = $this->twig->render('language.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/language/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/language/' . $slug,
             'entry' => $entry,
             'inflected_forms' => $entry !== null ? $this->parseInflectedForms((string) $entry->get('inflected_forms')) : [],
@@ -96,7 +96,7 @@ final class LanguageController
             }
         }
 
-        $html = $this->twig->render('language.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/language/search.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/language/search',
             'search_query' => $q,
             'search_results' => $searchResults,

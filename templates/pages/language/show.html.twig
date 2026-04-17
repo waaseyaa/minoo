@@ -1,0 +1,48 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}
+  {%- if entry is defined and entry -%}
+    {{ entry.get('word') }} — Minoo
+  {%- else -%}
+    {{ trans('language.not_found') }} — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% if entry is defined and entry %}
+    <div class="flow-lg detail">
+      <a href="{{ lang_url('/language') }}" class="detail__back">{{ trans('language.detail_back') }}</a>
+      <div class="detail__header">
+        <span class="card__badge card__badge--language">{{ entry.get('part_of_speech')|default('') }}</span>
+        <h1>{{ entry.get('word') }}</h1>
+      </div>
+      <div class="content-well">
+        <div class="detail__body flow">
+          <p>{{ entry.get('definition')|default('') }}</p>
+          {% if inflected_forms is defined and inflected_forms %}
+            <p>{{ inflected_forms|join(' · ') }}</p>
+          {% endif %}
+        </div>
+
+        <footer class="attribution">
+          {% if entry.get('attribution_source') %}
+            <p>
+              {% if entry.get('attribution_url') %}
+                <a href="{{ entry.get('attribution_url') }}" rel="external noopener">{{ entry.get('attribution_source') }}</a>
+              {% else %}
+                {{ entry.get('attribution_source') }}
+              {% endif %}
+            </p>
+          {% endif %}
+          <p>{{ trans('language.copyright') }}</p>
+        </footer>
+      </div>{# .content-well #}
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>{{ trans('language.not_found') }}</h1>
+      <p>{{ trans('language.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/language') }}">{{ trans('language.browse_all') }}</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

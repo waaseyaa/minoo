@@ -1,0 +1,40 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('language.search_results_title') }} — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <h1>{{ trans('language.search_results_title') }}</h1>
+
+    <form action="{{ lang_url('/language/search') }}" method="get" class="search-form">
+      <input type="text" name="q" value="{{ search_query|default('') }}" placeholder="{{ trans('language.search_placeholder') }}" class="search-form__input" aria-label="{{ trans('language.search_placeholder') }}">
+      <button type="submit" class="btn btn--primary">{{ trans('language.search_button') }}</button>
+    </form>
+
+    {% if search_query is defined and search_query != '' %}
+      {% if search_results is defined and search_results|length > 0 %}
+        <p class="listing-hero__count">{{ search_total }} {{ trans('language.search_results_count') }}</p>
+
+        <div class="card-grid">
+          {% for result in search_results %}
+            {% include "components/domain/language/entry-card.html.twig" with {
+              word: result.lemma|default(result.word|default('')),
+              part_of_speech: result.word_class_normalized|default(result.part_of_speech|default('')),
+              definition: result.definitions|default(result.definition|default('')),
+              attribution_source: result.attribution_source|default(''),
+              attribution_url: result.attribution_url|default(''),
+              example: '',
+              tags: [],
+              url: result.slug is defined ? "/language/" ~ result.slug : ''
+            } %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>{{ trans('language.search_no_results') }}</p>
+        <p><a href="{{ lang_url('/language') }}">{{ trans('language.browse_all') }}</a></p>
+      {% endif %}
+    {% endif %}
+
+    <p><a href="{{ lang_url('/language') }}">{{ trans('language.browse_all') }}</a></p>
+  </div>
+{% endblock %}
