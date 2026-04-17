@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify your email for Minoo</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f5f5f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+{% extends "layouts/email.html.twig" %}
+{% block title %}Verify your email for Minoo{% endblock %}
+{% block body %}
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f0; padding: 32px 16px;">
     <tr>
       <td align="center">
@@ -52,5 +47,4 @@
       </td>
     </tr>
   </table>
-</body>
-</html>
+{% endblock %}

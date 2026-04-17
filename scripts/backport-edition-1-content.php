@@ -184,13 +184,17 @@ $addItem('editors_note', [
     'kind' => 'drop_cap',
     'title' => "Keeper's Note",
     'body' => <<<'HTML'
-<p>Aanii! My name is Russell Jones. I am a software developer from Sagamok Anishnawbek and I build technology for Indigenous communities. For a long time I have been trying to figure out how to put those skills to work closer to home. This is one answer.</p>
+<p>Aanii! My name is Russell Jones. I am a software developer from Sagamok Anishnawbek and I build technology for Indigenous communities. For a long time I've wanted to put those skills to work closer to home. This is one answer.</p>
 
-<p>I built this newsletter with Minoo Live, a community platform I created for Anishinaabe communities. Minoo Live is not owned by a corporation in California or Toronto. It was built here, by one of us, and it stays here. The data belongs to the communities it serves. Nobody else.</p>
+<p>I built this newsletter with Minoo Live, a community platform I created for Anishinaabe communities. Minoo Live is not owned by a corporation in California or Toronto. It was built here, by one of us, and it stays here. The data belongs to the communities it serves.</p>
 
-<p>Think about what happens when we rely on platforms we do not control. In 2023, Meta blocked news from Facebook and Instagram across Canada. That same summer, wildfires tore through the north and forced remote Indigenous communities to evacuate — and the emergency updates, evacuation notices, and shelter information that our people share through Facebook groups were blocked along with everything else. Your photos, your event pages, your community group, all of it sits on a server in California where someone else decides the rules. They can change those rules any time they want. They already did.</p>
+<p>Think about what happens when we rely on platforms we do not control. In 2023, Meta blocked news from Facebook and Instagram across Canada.</p>
 
-<p>Our people should control our own technology the same way we control our own land, our own water, and our own stories. Minoo Live keeps community data in community hands, and what appears online also arrives in your hands in print.</p>
+<p>That same summer, wildfires tore through the north and forced remote Indigenous communities to evacuate. Emergency updates, evacuation notices, and shelter information that our people share through Facebook groups were blocked along with everything else.</p>
+
+<p>Your photos, your event pages, your community group. All of it sits on a server in California where someone else decides the rules. They can change those rules any time they want. They already do.</p>
+
+<p>Our people should control our own technology the same way we control our own land, our own water, and our own stories. Minoo Live keeps community data in community hands. What appears online arrives in your hands in print.</p>
 
 <p>This first issue is a beginning. It will grow with your ideas and your words. If you have a teaching to pass along or a joke that makes you laugh every time, send it our way. Contact information is on the back page.</p>
 
@@ -345,8 +349,8 @@ $addItem('teachings', [
         'icon_svg' => $loadSvg('medicine'),
     ],
     'body' => <<<'HTML'
-<p>As the snow recedes, the first medicines begin to appear. Wiigwaas (birch bark) can be carefully harvested in spring for teas and remedies. The young shoots of nettles, the early greens. These are gifts from the land that our grandparents relied on.</p>
-<p><em>Know a spring medicine teaching? Share it with us — this section grows with your voices.</em></p>
+<p>As the snow recedes, the first medicines appear. Wiigwaas (birch bark) can be harvested for teas and remedies. Nettle shoots and early greens are gifts our grandparents relied on.</p>
+<p><em>Know a spring medicine teaching? Share it with us. This section grows with your voices.</em></p>
 HTML,
 ]);
 

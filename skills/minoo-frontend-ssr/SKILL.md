@@ -10,9 +10,12 @@ description: Use when working on Minoo templates, CSS design system, or SSR rend
 Files: `templates/`, `public/css/minoo.css`, SSR rendering in `src/Controller/`
 Tests: Playwright E2E in `e2e/`
 
+> **Note — restructure in progress.** A `layouts/ + pages/<domain>/ + components/{shared,domain}/` reorganization is planned per the 2026-04-17 validation report. Phases 0 + 1 are complete (Tier-2 semantic tokens + collapsed `@layer components` + explicit routes for previously path-resolved static pages). Template and component directories have **not yet moved** — continue following the current conventions documented below.
+
 ## Template Architecture
 
-All templates extend `base.html.twig` which defines the page shell (`.site` > `.site-header` + `.site-main` + `.site-footer`). Two blocks available: `title` and `content`.
+All templates extend `base.html.twig` which defines the page shell (`.site` > `.site-header` + `.site-main` + `.site-footer`). It exposes nine blocks:
+`title`, `meta_description`, `og_title`, `og_description`, `og_image`, `og_type`, `head`, `content`, `scripts`.
 
 ```twig
 {% extends "base.html.twig" %}
@@ -63,9 +66,9 @@ All templates extend `base.html.twig` which defines the page shell (`.site` > `.
 
 ## CSS Design System
 
-Single file `public/css/minoo.css` — no build step, no preprocessor.
+Single file `public/css/minoo.css` (~9500 lines) — no build step, no preprocessor.
 
-**Layer order:** `@layer reset, tokens, base, layout, components, utilities;`
+**Layer order:** `@layer reset, tokens, base, layout, components, utilities;` — **must be the first non-`@font-face` statement in the file** to pin cascade priority before any `@layer` block opens. All component rules live in a **single** `@layer components { ... }` block (collapsed in Phase 0).
 
 **Color palette (OKLCH):**
 - Earth tones: `--color-earth-{50,100,200,700,900}` — primary neutrals
@@ -74,8 +77,9 @@ Single file `public/css/minoo.css` — no build step, no preprocessor.
 - Sun: `--color-sun-500` — warm accent
 - Berry: `--color-berry-600` — error/danger
 
-**Semantic tokens:** `--text-primary`, `--text-secondary`, `--surface`, `--surface-raised`, `--border`, `--accent`, `--link`, `--error`
-**Domain tokens:** `--domain-events`, `--domain-groups`, `--domain-teachings`, `--domain-language`, `--domain-people`, `--domain-elders`
+**Semantic tokens (Tier 2, existing):** `--text-primary`, `--text-secondary`, `--surface`, `--surface-raised`, `--border`, `--accent`, `--link`, `--error`, `--warning`, `--info`, `--success`
+**Semantic tokens (Tier 2, shadcn-style — added Phase 0):** `--background`, `--foreground`, `--surface-default`, `--surface-sunken`, `--surface-overlay`, `--text-inverse`, `--border-default`, `--border-strong`, `--accent-default`, `--accent-hover`, `--accent-foreground`, `--muted`, `--muted-default`, `--muted-foreground`, `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--destructive`, `--destructive-foreground`, `--input`, `--ring`
+**Domain tokens:** `--domain-events`, `--domain-groups`, `--domain-teachings`, `--domain-language`, `--domain-people`, `--domain-elders`, `--domain-businesses`, `--domain-communities`, `--domain-newsletter`, `--domain-feed`, `--domain-search`
 
 **Type scale (fluid clamp):** `--text-sm` through `--text-3xl`
 **Space scale (fluid clamp):** `--space-3xs` through `--space-2xl`, `--gutter: var(--space-sm)`

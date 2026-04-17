@@ -1,5 +1,7 @@
 # Frontend SSR Specification
 
+> **Note — restructure in progress.** A `layouts/ + pages/<domain>/ + components/{shared,domain}/` reorganization is planned per the 2026-04-17 template/CSS architecture validation report. This spec reflects the **current** (pre-restructure) layout; it will be rewritten per-phase. Tier-2 semantic tokens (shadcn-style: `--background`, `--foreground`, `--muted`, `--card`, `--popover`, `--destructive`, `--ring`, `--input`, plus missing domain tokens) have been added as of Phase 0 without any structural moves.
+
 ## File Map
 
 | File | Purpose |
@@ -7,7 +9,6 @@
 | `templates/base.html.twig` | Page shell: header, nav, footer, mobile menu JS |
 | `templates/feed.html.twig` | Authenticated homepage/feed layout (extends base) |
 | `templates/home.html.twig` | Public homepage layout if used (extends base) |
-| `templates/page.html.twig` | Default page (extends base) |
 | `templates/403.html.twig` | Permission-denied page (extends base) |
 | `templates/404.html.twig` | Not-found page (extends base) |
 | `templates/events.html.twig` | Events listing + detail (extends base) |
@@ -76,19 +77,26 @@
 | `templates/components/empty-state.html.twig` | Generic empty/zero-state block |
 | `templates/components/chat.html.twig` | Chat widget shell |
 | `templates/components/resource-person-card.html.twig` | Resource person card partial |
-| `public/css/minoo.css` | Design system: tokens, layout, components (~5500 lines) |
+| `public/css/minoo.css` | Design system: tokens, layout, components (~9500 lines) |
 | `public/js/shkoda.js` | Shkoda game engine: modes, keyboard, campfire state, share |
 
 ## Template Architecture
 
 ### Inheritance
-All pages extend `base.html.twig` and override blocks:
+All pages extend `base.html.twig` and override blocks. `base.html.twig` exposes
+nine blocks (not two as earlier drafts suggested):
 
 ```
 base.html.twig
   {% block title %}Minoo{% endblock %}
+  {% block meta_description %}...{% endblock %}
+  {% block og_title %}{{ block('title') }}{% endblock %}
+  {% block og_description %}...{% endblock %}
+  {% block og_image %}...{% endblock %}
+  {% block og_type %}website{% endblock %}
   {% block head %}{% endblock %}
   {% block content %}{% endblock %}
+  {% block scripts %}{% endblock %}
 ```
 
 ### Path-Based Routing
@@ -231,9 +239,18 @@ Components accept variables via `{% include %}` with `with`:
 Single file `public/css/minoo.css` — no build step, no preprocessor.
 
 ### Layer Order
+
+The layer-order declaration **must be the first non-`@font-face` statement** in
+`minoo.css` to pin cascade priority before any `@layer` block opens:
+
 ```css
 @layer reset, tokens, base, layout, components, utilities;
 ```
+
+All component rules live in a **single** `@layer components { ... }` block.
+Previous drafts scattered components across 12 separate `@layer components`
+blocks, one of which opened before the order declaration and silently
+demoted `components` to the lowest-priority layer (fixed; see git history).
 
 ### Layer Contents
 

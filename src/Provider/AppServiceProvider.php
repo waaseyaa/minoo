@@ -3529,6 +3529,138 @@ final class AppServiceProvider extends ServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        // =====================================================================
+        // Route lockdown (Phase 1): explicit routes for pages that previously
+        // depended on `RenderController::tryRenderPathTemplate()` fallback.
+        // Preserves URLs and behavior exactly; no new render logic.
+        // =====================================================================
+
+        $router->addRoute(
+            'static.about',
+            RouteBuilder::create('/about')
+                ->controller('App\Controller\StaticPageController::about')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'games.agim',
+            RouteBuilder::create('/agim')
+                ->controller('App\Controller\AgimController::page')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'games.crossword',
+            RouteBuilder::create('/crossword')
+                ->controller('App\Controller\CrosswordController::page')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.data_sovereignty',
+            RouteBuilder::create('/data-sovereignty')
+                ->controller('App\Controller\StaticPageController::dataSovereignty')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.elders',
+            RouteBuilder::create('/elders')
+                ->controller('App\Controller\StaticPageController::elders')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.games',
+            RouteBuilder::create('/games')
+                ->controller('App\Controller\StaticPageController::games')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.get_involved',
+            RouteBuilder::create('/get-involved')
+                ->controller('App\Controller\StaticPageController::getInvolved')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.how_it_works',
+            RouteBuilder::create('/how-it-works')
+                ->controller('App\Controller\StaticPageController::howItWorks')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.journey',
+            RouteBuilder::create('/journey')
+                ->controller('App\Controller\StaticPageController::journey')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.legal',
+            RouteBuilder::create('/legal')
+                ->controller('App\Controller\StaticPageController::legal')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.legal.section',
+            RouteBuilder::create('/legal/{section}')
+                ->controller('App\Controller\StaticPageController::legal')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.matcher',
+            RouteBuilder::create('/matcher')
+                ->controller('App\Controller\StaticPageController::matcher')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.messages',
+            RouteBuilder::create('/messages')
+                ->controller('App\Controller\StaticPageController::messages')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.safety',
+            RouteBuilder::create('/safety')
+                ->controller('App\Controller\StaticPageController::safety')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.search',
+            RouteBuilder::create('/search')
+                ->controller('App\Controller\StaticPageController::search')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'games.shkoda',
+            RouteBuilder::create('/shkoda')
+                ->controller('App\Controller\ShkodaController::page')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.studio',
+            RouteBuilder::create('/studio')
+                ->controller('App\Controller\StaticPageController::studio')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.volunteer',
+            RouteBuilder::create('/volunteer')
+                ->controller('App\Controller\StaticPageController::volunteer')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
     }
 
     public function boot(): void
