@@ -93,7 +93,7 @@ final class StaticPageController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function search(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('search.html.twig', '/search', $account);
+        return $this->render('pages/search/index.html.twig', '/search', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
