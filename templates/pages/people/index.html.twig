@@ -1,0 +1,79 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('people.title') }} — Minoo{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+    <div class="flow-lg">
+      <div class="listing-hero">
+        <h1>{{ trans('people.title') }}</h1>
+        <p class="listing-hero__subtitle">{{ trans('people.subtitle') }}</p>
+      </div>
+
+      {% if location is defined and location.hasLocation() %}
+        <p class="text-secondary">{{ trans('people.nearby_notice', {community: location.communityName}) }} <a href="{{ lang_url('/people') }}?all=1">{{ trans('people.show_all') }}</a></p>
+      {% endif %}
+
+      {% if people is defined and people|length > 0 %}
+        <div class="people-search">
+          <label for="people-search" class="visually-hidden">{{ trans('people.search_placeholder') }}</label>
+          <input type="search" class="form__input people-search__input" id="people-search" placeholder="{{ trans('people.search_placeholder') }}" autocomplete="off">
+        </div>
+
+        <div class="people-filters" id="people-filters">
+          {% if all_roles is defined and all_roles|length > 0 %}
+            <div class="people-filters__group">
+              <label class="people-filters__label" for="filter-role">{{ trans('people.filter_role') }}</label>
+              <select class="form__select people-filters__select" id="filter-role" data-filter="role">
+                <option value="">{{ trans('people.filter_all_roles') }}</option>
+                {% for role in all_roles|sort %}
+                  <option value="{{ role }}">{{ role }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+          {% if all_offerings is defined and all_offerings|length > 0 %}
+            <div class="people-filters__group">
+              <label class="people-filters__label" for="filter-offering">{{ trans('people.filter_offering') }}</label>
+              <select class="form__select people-filters__select" id="filter-offering" data-filter="offering">
+                <option value="">{{ trans('people.filter_all_offerings') }}</option>
+                {% for offering in all_offerings|sort %}
+                  <option value="{{ offering }}">{{ offering }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+          <button class="people-filters__clear" id="filters-clear" type="button" hidden>{{ trans('people.clear_filters') }}</button>
+        </div>
+
+        <div class="mentor-callout">
+          <p>{{ trans('people.mentor_callout') }}</p>
+        </div>
+
+        <div class="card-grid" id="people-grid">
+          {% for p in people %}
+            {% include "components/domain/people/card.html.twig" with {
+              name: p.get('name'),
+              role: p.get('roles') is iterable ? p.get('roles')|first : '',
+              community: p.get('community'),
+              business_name: p.get('business_name'),
+              offerings: p.get('offerings') is iterable ? p.get('offerings') : [],
+              bio: p.get('bio') ? p.get('bio')|striptags : '',
+              excerpt: p.get('bio') ? p.get('bio')|striptags|slice(0, 160) ~ '…' : '',
+              url: "/people/" ~ p.get('slug'),
+              photo_url: photo_urls[p.get('media_id')] ?? ''
+            } %}
+          {% endfor %}
+        </div>
+        <p class="people-filters__empty" id="filters-empty" hidden>{{ trans('people.filters_empty') }}</p>
+      {% else %}
+        {% include "components/shared/feedback/empty-state.html.twig" with {
+          heading: trans('people.empty_heading'),
+          body: trans('people.empty_body'),
+          action_url: lang_url('/elders/volunteer'),
+          action_label: trans('people.volunteer_button')
+        } %}
+      {% endif %}
+    </div>
+{% endblock %}

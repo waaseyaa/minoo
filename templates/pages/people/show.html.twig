@@ -1,0 +1,132 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}
+  {%- if person is defined and person -%}
+    {{ person.get('name') }} — Minoo
+  {%- else -%}
+    {{ trans('people.not_found') }} — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block og_type %}{% if person is defined and person %}article{% else %}website{% endif %}{% endblock %}
+{% block og_description %}{% if person is defined and person %}{{ person.get('bio')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block content %}
+  {% if person is defined and person %}
+    <div class="flow-lg detail">
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
+        breadcrumbs: [
+          {label: trans('breadcrumb.home'), url: '/'},
+          {label: trans('people.title'), url: lang_url('/people')},
+          {label: person.get('name')}
+        ]
+      } %}
+      {% include "components/shared/layout/hero-image.html.twig" with {
+        image_url: image_url|default(''),
+        alt: person.get('name'),
+        credit: image_credit|default('')
+      } %}
+      <div class="detail-hero">
+        <a href="{{ lang_url('/people') }}" class="detail-hero__back">{{ trans('people.detail_back') }}</a>
+        <div class="person-photo person-photo--detail">
+          {% if photo_url is defined and photo_url %}
+            <img src="{{ photo_url }}" alt="{{ person.get('name') }}" class="person-photo__img">
+          {% else %}
+            <span class="person-photo__initials">{{ person.get('name')|split(' ')|map(n => n|first|upper)|join('') }}</span>
+          {% endif %}
+        </div>
+        {% if person.get('roles') is iterable and person.get('roles')|length > 0 %}
+          <div class="role-badges">
+            {% for r in person.get('roles') %}
+              <span class="role-badge">{{ r }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <h1 class="detail-hero__title">{{ person.get('name') }}</h1>
+        {% if person.get('business_name') %}
+          <p class="detail__business">{{ person.get('business_name') }}</p>
+        {% endif %}
+        <div class="detail__meta">
+          {% if person.get('community') %}
+            <span>{{ person.get('community') }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="content-well">
+        {% if person.get('offerings') is iterable and person.get('offerings')|length > 0 %}
+          <section class="person-offerings">
+            <h2>{{ trans('people.offerings_title') }}</h2>
+            <div class="tag-list">
+              {% for offering in person.get('offerings') %}
+                <span class="tag">{{ offering }}</span>
+              {% endfor %}
+            </div>
+          </section>
+        {% endif %}
+
+        {% if person.get('bio') %}
+          <div class="detail__body flow">
+            {% for paragraph in person.get('bio')|split("\n\n") %}
+              <p>{{ paragraph }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if person.get('email') or person.get('phone') or person.get('website') %}
+          <div class="detail__contact">
+            {% if person.get('website') %}
+              <a href="{{ person.get('website') }}" class="detail__website" rel="noopener noreferrer" target="_blank">{{ person.get('website')|replace({'https://': '', 'http://': ''})|trim('/') }}</a>
+            {% endif %}
+            {% if person.get('email') %}
+              <a href="mailto:{{ person.get('email') }}">{{ person.get('email') }}</a>
+            {% endif %}
+            {% if person.get('phone') %}
+              <span>{{ person.get('phone') }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>{# .content-well #}
+
+      {% if linked_business is defined and linked_business %}
+        <section class="related-section">
+          <h2>{{ trans('people.linked_business') }}</h2>
+          <a href="/businesses/{{ linked_business.get('slug') }}" class="community-link">
+            {{ linked_business.get('name') }}
+          </a>
+        </section>
+      {% endif %}
+
+      {% if community_entity is defined and community_entity %}
+        <section class="related-section">
+          <h2>{{ trans('people.community') }}</h2>
+          <a href="/communities/{{ community_entity.get('slug') }}" class="community-link">
+            {{ community_entity.get('name') }}
+          </a>
+        </section>
+      {% endif %}
+
+      {% if related_events is defined and related_events|length > 0 %}
+        <section class="related-section">
+          <h2>{{ trans('people.related_events') }}</h2>
+          <div class="card-grid card-grid--compact">
+            {% for event in related_events %}
+              <a href="/events/{{ event.get('slug') }}" class="card card--compact">
+                <h3 class="card__title">{{ event.get('title') }}</h3>
+                {% if event.get('starts_at') %}
+                  <span class="card__meta">{{ event.get('starts_at')|date('F j, Y') }}</span>
+                {% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>{{ trans('people.not_found') }}</h1>
+      <p>{{ trans('people.not_found_message') }}</p>
+      <p><a href="{{ lang_url('/people') }}">{{ trans('people.browse_all') }}</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

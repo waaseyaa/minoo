@@ -69,7 +69,7 @@ final class PeopleController
         $photoUrls = $mediaIds !== [] ? $this->resolvePhotoUrls($mediaIds) : [];
         $location = $this->resolveLocation($request);
 
-        $html = $this->twig->render('people.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/people/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/people',
             'people' => $people,
             'photo_urls' => $photoUrls,
@@ -145,7 +145,7 @@ final class PeopleController
             $relatedEvents = $eventIds !== [] ? $eventStorage->loadMultiple($eventIds) : [];
         }
 
-        $html = $this->twig->render('people.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/people/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/people/' . $slug,
             'person' => $person,
             'photo_url' => $photoUrl,
