@@ -31,7 +31,7 @@ final class HomeController
         $events = $this->loadUpcomingEvents();
         $teachings = $this->loadRecentTeachings();
 
-        $html = $this->twig->render('home.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/home/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/',
             'featured' => $featured,
             'events' => $events,
