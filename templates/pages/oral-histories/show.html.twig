@@ -1,0 +1,141 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}
+  {%- if story is defined and story -%}
+    {{ story.get('title') }} — Minoo
+  {%- else -%}
+    Not Found — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block og_type %}{% if story is defined and story %}article{% else %}website{% endif %}{% endblock %}
+{% block og_description %}{% if story is defined and story %}{{ story.get('summary')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block content %}
+  {% if story is defined and story and story.get('is_living_record') %}
+    <div class="flow-lg detail">
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
+        breadcrumbs: [
+          {label: 'Home', url: '/'},
+          {label: 'Oral Histories', url: '/oral-histories'},
+          {label: story.get('title')}
+        ]
+      } %}
+
+      <div class="detail-hero">
+        <a href="/oral-histories" class="detail-hero__back">Back to Oral Histories</a>
+        <span class="detail-hero__badge card__badge--living-record">Living Record</span>
+        <h1 class="detail-hero__title">{{ story.get('title') }}</h1>
+      </div>
+
+      {% include "components/domain/oral-histories/protocol-notice.html.twig" with { entity: story } %}
+
+      {% if story.get('summary') %}
+        <div class="content-well">
+          <div class="detail__body flow">
+            <p>{{ story.get('summary') }}</p>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if prev_story is defined or next_story is defined %}
+        <nav class="detail-nav">
+          {% if prev_story is defined and prev_story %}
+            <a href="/oral-histories/{{ prev_story.get('slug') }}" class="detail-nav__prev">← {{ prev_story.get('title') }}</a>
+          {% endif %}
+          {% if next_story is defined and next_story %}
+            <a href="/oral-histories/{{ next_story.get('slug') }}" class="detail-nav__next">{{ next_story.get('title') }} →</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    </div>
+
+  {% elseif story is defined and story %}
+    <div class="flow-lg detail">
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
+        breadcrumbs: [
+          {label: 'Home', url: '/'},
+          {label: 'Oral Histories', url: '/oral-histories'},
+          story_collection is defined and story_collection ? {label: story_collection.title, url: '/oral-histories/collections/' ~ story_collection.slug} : null,
+          {label: story.get('title')}
+        ]|filter(b => b is not null)
+      } %}
+
+      <div class="detail-hero">
+        <a href="/oral-histories" class="detail-hero__back">Back to Oral Histories</a>
+        {% if story.get('oral_history_type') %}
+          <span class="detail-hero__badge">{{ story.get('oral_history_type')|capitalize }}</span>
+        {% endif %}
+        <h1 class="detail-hero__title">{{ story.get('title') }}</h1>
+
+        <div class="detail-hero__meta">
+          {% if contributor is defined and contributor %}
+            {% if contributor.consent_public == 1 %}
+              <p>Told by <a href="/contributors/{{ contributor.slug }}">{{ contributor.name }}</a></p>
+            {% else %}
+              <p>Told by {{ contributor.name }}</p>
+            {% endif %}
+          {% elseif story.get('narrator_name') %}
+            <p>Told by {{ story.get('narrator_name') }}</p>
+          {% endif %}
+
+          {% if story.get('community_name') %}
+            <p>{{ story.get('community_name') }}</p>
+          {% endif %}
+
+          {% if story.get('recorded_date') %}
+            <p>Recorded {{ story.get('recorded_date')|date('F j, Y') }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% include "components/domain/oral-histories/protocol-notice.html.twig" with { entity: story } %}
+
+      {% if story.get('media_format') and not story.get('is_living_record') %}
+        <div class="audio-player">
+          {% if story.get('media_type') == 'self_hosted' and story.get('media_path') %}
+            {% if story.get('media_format') == 'audio' %}
+              <audio controls preload="metadata">
+                <source src="/{{ story.get('media_path') }}">
+              </audio>
+            {% elseif story.get('media_format') == 'video' %}
+              <video controls preload="metadata">
+                <source src="/{{ story.get('media_path') }}">
+              </video>
+            {% endif %}
+          {% elseif story.get('media_type') == 'external' and story.get('media_url') %}
+            <iframe src="{{ story.get('media_url') }}" title="{{ story.get('title') }}" allowfullscreen></iframe>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if story.get('transcript') %}
+        <div class="content-well">
+          <div class="detail__body flow">
+            {% for paragraph in story.get('transcript')|split("\n\n") %}
+              <p>{{ paragraph }}</p>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if prev_story is defined or next_story is defined %}
+        <nav class="detail-nav">
+          {% if prev_story is defined and prev_story %}
+            <a href="/oral-histories/{{ prev_story.get('slug') }}" class="detail-nav__prev">← {{ prev_story.get('title') }}</a>
+          {% endif %}
+          {% if next_story is defined and next_story %}
+            <a href="/oral-histories/{{ next_story.get('slug') }}" class="detail-nav__next">{{ next_story.get('title') }} →</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+    </div>
+
+  {% else %}
+    <div class="flow-lg">
+      <h1>{{ trans('oral_histories.not_found') }}</h1>
+      <p>{{ trans('oral_histories.not_found_message') }}</p>
+      <p><a href="/oral-histories">{{ trans('oral_histories.browse_all') }}</a></p>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Our Stories — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    <div class="listing-hero">
+      <h1>{{ trans('oral_histories.title') }}</h1>
+      <p class="listing-hero__subtitle">{{ trans('oral_histories.subtitle') }}</p>
+    </div>
+
+    {% if collections is defined and collections|length > 0 %}
+      <section>
+        <h2>{{ trans('oral_histories.collections') }}</h2>
+        <div class="card-grid">
+          {% for c in collections %}
+            {% include "components/domain/oral-histories/collection-card.html.twig" with {
+              title: c.title,
+              slug: c.slug,
+              description: c.description|default(''),
+              season: c.season|default('all'),
+              protocol_level: c.protocol_level|default('open'),
+              story_count: c.story_count|default(0),
+              curator_name: c.curator_name|default('')
+            } %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if stories is defined and stories|length > 0 %}
+      <section>
+        <h2>{{ trans('oral_histories.stories') }}</h2>
+        <div class="card-grid">
+          {% for s in stories %}
+            {% include "components/domain/oral-histories/card.html.twig" with {
+              title: s.get('title'),
+              url: '/oral-histories/' ~ s.get('slug'),
+              type: s.get('oral_history_type')|default(''),
+              is_living_record: s.get('is_living_record')|default(false),
+              narrator_name: s.get('narrator_name')|default(''),
+              community_name: s.get('community_name')|default(''),
+              media_format: s.get('media_format')|default(''),
+              media_duration: s.get('media_duration')|default(0),
+              summary: s.get('summary')|default('')
+            } %}
+          {% endfor %}
+        </div>
+      </section>
+    {% else %}
+      {% include "components/shared/feedback/empty-state.html.twig" with {
+        heading: 'Stories are being gathered',
+        body: 'Our community members and Knowledge Keepers are sharing their stories. Check back soon.',
+        action_url: '/teachings',
+        action_label: 'Explore Teachings'
+      } %}
+    {% endif %}
+  </div>
+{% endblock %}

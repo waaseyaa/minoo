@@ -37,7 +37,7 @@ final class OralHistoryController
             ->execute();
         $stories = $storyIds !== [] ? array_values($storyStorage->loadMultiple($storyIds)) : [];
 
-        $html = $this->twig->render('oral-histories.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/oral-histories/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/oral-histories',
             'collections' => $collections,
             'stories' => $stories,
@@ -78,7 +78,7 @@ final class OralHistoryController
             }
         }
 
-        $html = $this->twig->render('oral-histories.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/oral-histories/collection.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/oral-histories/collections/' . $slug,
             'collection' => $collection,
             'stories' => $stories,
@@ -143,7 +143,7 @@ final class OralHistoryController
             }
         }
 
-        $html = $this->twig->render('oral-histories.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/oral-histories/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/oral-histories/' . $slug,
             'story' => $story,
             'contributor' => $contributor,

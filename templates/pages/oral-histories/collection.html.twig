@@ -1,0 +1,96 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}
+  {%- if collection is defined and collection -%}
+    {{ collection.title }} — Minoo
+  {%- else -%}
+    Not Found — Minoo
+  {%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% if collection is defined and collection %}
+    <div class="flow-lg detail">
+      {% include "components/shared/layout/breadcrumb.html.twig" with {
+        breadcrumbs: [
+          {label: 'Home', url: '/'},
+          {label: 'Oral Histories', url: '/oral-histories'},
+          {label: collection.title}
+        ]
+      } %}
+
+      <div class="detail-hero">
+        <a href="/oral-histories" class="detail-hero__back">Back to Oral Histories</a>
+        <h1 class="detail-hero__title">{{ collection.title }}</h1>
+        {% if collection.description is defined and collection.description %}
+          <p class="detail-hero__meta">{{ collection.description }}</p>
+        {% endif %}
+        <div class="detail-hero__badges">
+          {% if collection.season is defined and collection.season and collection.season != 'all' %}
+            <span class="badge">
+              {% if collection.season == 'winter' %}❄️{% elseif collection.season == 'spring' %}🌱{% elseif collection.season == 'summer' %}☀️{% elseif collection.season == 'fall' %}🍂{% endif %}
+              {{ collection.season|capitalize }}
+            </span>
+          {% endif %}
+          {% if collection.protocol_level is defined and collection.protocol_level != 'open' %}
+            <span class="badge">{{ collection.protocol_level|replace({'_': ' '})|capitalize }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% include "components/domain/oral-histories/protocol-notice.html.twig" with { entity: collection } %}
+
+      {% if collection_stories is defined and collection_stories|length > 0 %}
+        {% set is_sequential = collection.story_cycle_order_type|default('') == 'sequential' %}
+        {% if is_sequential %}
+          <ol class="flow">
+            {% for s in collection_stories %}
+              <li>
+                {% include "components/domain/oral-histories/card.html.twig" with {
+                  title: s.get('title'),
+                  url: '/oral-histories/' ~ s.get('slug'),
+                  type: s.get('oral_history_type')|default(''),
+                  is_living_record: s.get('is_living_record')|default(false),
+                  narrator_name: s.get('narrator_name')|default(''),
+                  community_name: s.get('community_name')|default(''),
+                  media_format: s.get('media_format')|default(''),
+                  media_duration: s.get('media_duration')|default(0),
+                  summary: s.get('summary')|default('')
+                } %}
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <div class="card-grid">
+            {% for s in collection_stories %}
+              {% include "components/domain/oral-histories/card.html.twig" with {
+                title: s.get('title'),
+                url: '/oral-histories/' ~ s.get('slug'),
+                type: s.get('oral_history_type')|default(''),
+                is_living_record: s.get('is_living_record')|default(false),
+                narrator_name: s.get('narrator_name')|default(''),
+                community_name: s.get('community_name')|default(''),
+                media_format: s.get('media_format')|default(''),
+                media_duration: s.get('media_duration')|default(0),
+                summary: s.get('summary')|default('')
+              } %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if collection.curator_name is defined and collection.curator_name %}
+        <div class="teaching-source">
+          <span class="teaching-source__label">Curated by</span>
+          <span>{{ collection.curator_name }}</span>
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>{{ trans('oral_histories.not_found') }}</h1>
+      <p>{{ trans('oral_histories.not_found_message') }}</p>
+      <p><a href="/oral-histories">{{ trans('oral_histories.browse_all') }}</a></p>
+    </div>
+  {% endif %}
+{% endblock %}
