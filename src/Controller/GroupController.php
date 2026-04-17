@@ -43,7 +43,7 @@ final class GroupController
 
         $communities = CommunityLookup::build($this->entityTypeManager, $groups);
 
-        $html = $this->twig->render('groups.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/groups/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/groups',
             'groups' => $groups,
             'communities' => $communities,
@@ -106,7 +106,7 @@ final class GroupController
             $relatedTeachings = $teachingIds ? array_values($teachingStorage->loadMultiple($teachingIds)) : [];
         }
 
-        $html = $this->twig->render('groups.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/groups/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/groups/' . $slug,
             'group' => $group,
             'related_people' => $relatedPeople,
