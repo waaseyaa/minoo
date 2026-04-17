@@ -1048,57 +1048,8 @@
     font-size: var(--text-xs);
   }
 
-  /* === App Layout (sidebar + main) === */
-  .app-layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    min-block-size: calc(100dvh - 3.5rem);
-  }
-
-  .app-layout--no-sidebar {
-    grid-template-columns: 1fr;
-  }
-
-  .app-sidebar {
-    position: sticky;
-    inset-block-start: 0;
-    block-size: 100dvh;
-    overflow-y: auto;
-    background-color: var(--surface-dark);
-    border-inline-end: 1px solid var(--border-dark);
-    padding: var(--space-sm) 0;
-    z-index: 50;
-  }
-
   .app-sidebar__overlay {
     display: none;
-  }
-
-  .app-main {
-    padding-block: var(--space-md);
-    padding-inline: var(--gutter);
-    min-block-size: 60vh;
-    min-inline-size: 0; /* grid: let 1fr column shrink and fill correctly */
-  }
-
-  /* Large-screen containment — standard breakpoints */
-  @media (min-width: 1280px) {
-    .app-main {
-      padding-inline: var(--space-lg);
-    }
-  }
-
-  @media (min-width: 1536px) {
-    .app-layout {
-      max-inline-size: 1400px;
-      margin-inline: auto;
-    }
-
-    /* Atlas needs the main column to use the full viewport (map + list), not a centered 1400px shell */
-    .app-layout:has(.community-map) {
-      max-inline-size: none;
-      margin-inline: 0;
-    }
   }
 
   /* === Sidebar Navigation === */
@@ -1156,18 +1107,6 @@
   /* === Responsive: Tablet + Mobile — off-canvas sidebar === */
   @media (max-width: 1024px) {
     .sidebar-toggle { display: flex; }
-    .app-layout { grid-template-columns: 1fr; }
-
-    .app-sidebar {
-      position: fixed;
-      inset-block-start: 3.5rem;
-      inset-inline-start: 0;
-      inline-size: 260px;
-      block-size: calc(100dvh - 3.5rem);
-      transform: translateX(-100%);
-      transition: transform var(--duration-normal) var(--ease-out);
-      z-index: 100;
-    }
 
     .app-sidebar--open {
       transform: translateX(0);
@@ -7306,27 +7245,27 @@ a.btn--ghost:hover {
     overflow: hidden;
   }
 
-  /* Full-width atlas column: main uses .app-main (not .site-main) */
-  .app-main:has(.community-map) {
+  /* Full-width atlas column */
+  .app__main:has(.community-map) {
     padding-inline: 0;
   }
 
-  .app-main:has(.community-map) .content-max {
+  .app__main:has(.community-map) .content-max {
     max-inline-size: none;
     margin-inline: 0;
     inline-size: 100%;
   }
 
-  .app-main:has(.community-map) .flash-messages {
+  .app__main:has(.community-map) .flash-messages {
     padding-inline: var(--gutter);
   }
 
-  .app-main:has(.community-map) .location-bar {
+  .app__main:has(.community-map) .location-bar {
     max-inline-size: none;
     padding-inline: var(--gutter);
   }
 
-  .app-main:has(.community-map) .location-bar__inner {
+  .app__main:has(.community-map) .location-bar__inner {
     max-inline-size: none;
     margin-inline: 0;
   }
@@ -9107,58 +9046,7 @@ a.btn--ghost:hover {
   }
 }
 
-/* ===== HOMEPAGE ===== */
 @layer components {
-  .home-hero {
-    text-align: center;
-    padding-block: var(--space-xl) var(--space-lg);
-  }
-  .home-hero__title {
-    font-size: var(--text-2xl);
-    font-weight: var(--weight-bold);
-    color: var(--text-primary);
-  }
-  .home-hero__subtitle {
-    max-inline-size: 60ch;
-    margin-inline: auto;
-    margin-block-start: var(--space-sm);
-    color: var(--text-secondary);
-    font-size: var(--text-md);
-    line-height: 1.6;
-  }
-  .home-hero__actions {
-    display: flex;
-    gap: var(--space-sm);
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-block-start: var(--space-md);
-  }
-
-  .home-section {
-    padding-block: var(--space-sm);
-  }
-  .home-section__header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    margin-block-end: var(--space-md);
-  }
-  .home-section__heading {
-    font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
-    color: var(--text-primary);
-  }
-  .home-section__link {
-    font-size: var(--text-sm);
-    color: var(--link);
-  }
-  .home-section__intro {
-    color: var(--text-secondary);
-    max-inline-size: 65ch;
-  }
-
   .home-cta {
     text-align: center;
     padding: var(--space-xl) var(--space-md);
