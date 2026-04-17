@@ -67,7 +67,7 @@ final class IngestionDashboardControllerTest extends TestCase
             $twig->expects($this->once())
                 ->method('render')
                 ->with(
-                    'admin/ingestion.html.twig',
+                    'pages/admin/ingestion.html.twig',
                     $this->callback(fn (array $vars): bool => is_array($vars['nc_sync']) && ($vars['nc_sync']['created'] ?? null) === 2),
                 )
                 ->willReturn('<html>ok</html>');
@@ -118,7 +118,7 @@ final class IngestionDashboardControllerTest extends TestCase
         $twig->expects($this->once())
             ->method('render')
             ->with(
-                'admin/ingestion.html.twig',
+                'pages/admin/ingestion.html.twig',
                 $this->callback(function (array $vars): bool {
                     return $vars['logs'] === []
                         && $vars['total_count'] === 0
@@ -183,7 +183,7 @@ final class IngestionDashboardControllerTest extends TestCase
         $twig->expects($this->once())
             ->method('render')
             ->with(
-                'admin/ingestion.html.twig',
+                'pages/admin/ingestion.html.twig',
                 $this->callback(fn (array $vars): bool => $vars['status_filter'] === 'failed' && $vars['total_count'] === 10 && $vars['last_envelope_log'] === 1711468800 && count($vars['logs']) === 1),
             )
             ->willReturn('<html>ok</html>');
@@ -228,7 +228,7 @@ final class IngestionDashboardControllerTest extends TestCase
         $twig->expects($this->once())
             ->method('render')
             ->with(
-                'admin/ingestion.html.twig',
+                'pages/admin/ingestion.html.twig',
                 $this->callback(fn (array $vars): bool => $vars['status_filter'] === null),
             )
             ->willReturn('<html>ok</html>');

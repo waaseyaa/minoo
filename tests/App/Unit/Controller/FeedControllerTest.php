@@ -39,7 +39,7 @@ final class FeedControllerTest extends TestCase
         );
         $twig->expects($this->once())
             ->method('render')
-            ->with('feed.html.twig', $this->anything())
+            ->with('pages/feed/index.html.twig', $this->anything())
             ->willReturn('<html>feed</html>');
 
         $controller = new FeedController($assembler, $twig, $etm);
@@ -92,7 +92,7 @@ final class FeedControllerTest extends TestCase
         $capturedContext = null;
         $twig->expects($this->once())
             ->method('render')
-            ->with('feed.html.twig', $this->callback(function (array $ctx) use (&$capturedContext): bool {
+            ->with('pages/feed/index.html.twig', $this->callback(function (array $ctx) use (&$capturedContext): bool {
                 $capturedContext = $ctx;
 
                 return true;

@@ -24,7 +24,7 @@ final class LanguageTemplateTest extends TestCase
         $templateRoot = dirname(__DIR__, 4) . '/templates';
         $loader = new ChainLoader([
             new ArrayLoader([
-                'base.html.twig' => '{% block title %}{% endblock %}{% block content %}{% endblock %}',
+                'layouts/base.html.twig' => '{% block title %}{% endblock %}{% block content %}{% endblock %}',
             ]),
             new FilesystemLoader($templateRoot),
         ]);
@@ -45,7 +45,7 @@ final class LanguageTemplateTest extends TestCase
             'attribution_source' => "Ojibwe People's Dictionary, University of Minnesota",
         ]);
 
-        $html = $this->twig->render('language.html.twig', [
+        $html = $this->twig->render('pages/language/show.html.twig', [
             'path' => '/language/makwa',
             'entry' => $entry,
             'inflected_forms' => ['plural: makwag', 'diminutive: makoons'],

@@ -30,8 +30,8 @@ final class CoordinatorApplicationsTest extends TestCase
     {
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
         $this->twig = new Environment(new ArrayLoader([
-            'dashboard/coordinator-applications.html.twig' => 'apps',
-            'dashboard/coordinator.html.twig' => 'dash',
+            'pages/dashboard/coordinator-applications.html.twig' => 'apps',
+            'pages/dashboard/coordinator.html.twig' => 'dash',
         ]));
         $this->account = $this->createMock(AccountInterface::class);
     }

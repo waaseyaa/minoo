@@ -52,11 +52,11 @@ final class AuthControllerTest extends TestCase
             ->willReturn($this->userStorage);
 
         $this->twig = new Environment(new ArrayLoader([
-            'auth/login.html.twig' => '{{ errors.email|default("") }}',
-            'auth/register.html.twig' => '{{ errors.name|default("") }}{{ errors.email|default("") }}{{ errors.password|default("") }}',
-            'auth/forgot-password.html.twig' => '{% if submitted|default(false) %}submitted{% endif %}',
-            'auth/check-email.html.twig' => 'check-email',
-            'auth/verify-email.html.twig' => '{% if verified %}verified{% else %}{{ error }}{% endif %}',
+            'pages/auth/login.html.twig' => '{{ errors.email|default("") }}',
+            'pages/auth/register.html.twig' => '{{ errors.name|default("") }}{{ errors.email|default("") }}{{ errors.password|default("") }}',
+            'pages/auth/forgot-password.html.twig' => '{% if submitted|default(false) %}submitted{% endif %}',
+            'pages/auth/check-email.html.twig' => 'check-email',
+            'pages/auth/verify-email.html.twig' => '{% if verified %}verified{% else %}{{ error }}{% endif %}',
         ]));
 
         $this->authMailer = $this->createMock(AuthMailer::class);

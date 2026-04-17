@@ -44,7 +44,9 @@ final class LanguageControllerTest extends TestCase
             ->willReturn($this->storage);
 
         $this->twig = new Environment(new ArrayLoader([
-            'language.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
+            'pages/language/index.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
+            'pages/language/show.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
+            'pages/language/search.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
         ]));
 
         $this->northCloudClient = $this->createMock(NorthCloudCommunityDictionaryClientInterface::class);

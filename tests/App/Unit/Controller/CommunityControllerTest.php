@@ -44,8 +44,8 @@ final class CommunityControllerTest extends TestCase
             ->willReturn($this->storage);
 
         $this->twig = new Environment(new ArrayLoader([
-            'communities/list.html.twig' => '{{ path }}|{{ communities_json|raw }}',
-            'communities/detail.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
+            'pages/communities/index.html.twig' => '{{ path }}|{{ communities_json|raw }}',
+            'pages/communities/show.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -127,7 +127,7 @@ final class CommunityControllerTest extends TestCase
         $this->storage->method('load')->with(1)->willReturn($sagamok);
 
         $this->twig = new Environment(new ArrayLoader([
-            'communities/detail.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
+            'pages/communities/show.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
         ]));
 
         $this->northCloudClient

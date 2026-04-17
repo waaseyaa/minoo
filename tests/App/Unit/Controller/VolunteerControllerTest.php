@@ -29,8 +29,8 @@ final class VolunteerControllerTest extends TestCase
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
 
         $this->twig = new Environment(new ArrayLoader([
-            'elders/volunteer.html.twig' => '{{ errors|keys|join(",") }}',
-            'elders/volunteer-confirmation.html.twig' => 'ok',
+            'pages/elders/volunteer.html.twig' => '{{ errors|keys|join(",") }}',
+            'pages/elders/volunteer-confirmation.html.twig' => 'ok',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);

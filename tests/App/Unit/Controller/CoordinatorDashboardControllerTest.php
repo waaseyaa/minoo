@@ -68,7 +68,7 @@ final class CoordinatorDashboardControllerTest extends TestCase
         );
 
         $this->twig = new Environment(new ArrayLoader([
-            'dashboard/coordinator.html.twig' => 'pending:{{ pending_application_count }}{% for r in open_requests %}|{{ r.get("name") }}{% endfor %}{% for rv in ranked_by_request[open_requests[0].id()] ?? [] %}|{{ rv.volunteer.get("name") }}{% if rv.hasDistance() %}:{{ rv.formattedDistance() }}{% endif %}{% endfor %}',
+            'pages/dashboard/coordinator.html.twig' => 'pending:{{ pending_application_count }}{% for r in open_requests %}|{{ r.get("name") }}{% endfor %}{% for rv in ranked_by_request[open_requests[0].id()] ?? [] %}|{{ rv.volunteer.get("name") }}{% if rv.hasDistance() %}:{{ rv.formattedDistance() }}{% endif %}{% endfor %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -156,7 +156,7 @@ final class CoordinatorDashboardControllerTest extends TestCase
             ->willReturn([1 => $volNear, 2 => $volSame]);
 
         $this->twig = new Environment(new ArrayLoader([
-            'dashboard/coordinator.html.twig' => '{% for rv in ranked_by_request[10] %}{{ rv.volunteer.get("name") }}:{{ rv.formattedDistance()|raw }};{% endfor %}{% for id, name in community_names %}[{{ id }}={{ name }}]{% endfor %}',
+            'pages/dashboard/coordinator.html.twig' => '{% for rv in ranked_by_request[10] %}{{ rv.volunteer.get("name") }}:{{ rv.formattedDistance()|raw }};{% endfor %}{% for id, name in community_names %}[{{ id }}={{ name }}]{% endfor %}',
         ]));
 
         $controller = new CoordinatorDashboardController($this->entityTypeManager, $this->twig);

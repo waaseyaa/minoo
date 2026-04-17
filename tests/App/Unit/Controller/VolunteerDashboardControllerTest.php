@@ -56,7 +56,7 @@ final class VolunteerDashboardControllerTest extends TestCase
         );
 
         $this->twig = new Environment(new ArrayLoader([
-            'dashboard/volunteer.html.twig' => '{% for r in requests %}|{{ r.get("name") }}{% endfor %}',
+            'pages/dashboard/volunteer.html.twig' => '{% for r in requests %}|{{ r.get("name") }}{% endfor %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -117,7 +117,7 @@ final class VolunteerDashboardControllerTest extends TestCase
         );
 
         $this->twig = new Environment(new ArrayLoader([
-            'dashboard/volunteer-edit.html.twig' => 'edit:{{ volunteer.get("name") }}',
+            'pages/dashboard/volunteer-edit.html.twig' => 'edit:{{ volunteer.get("name") }}',
         ]));
 
         $account = $this->createMock(AccountInterface::class);

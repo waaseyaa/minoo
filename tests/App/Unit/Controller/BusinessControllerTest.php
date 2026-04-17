@@ -41,7 +41,8 @@ final class BusinessControllerTest extends TestCase
             ->willReturn($this->storage);
 
         $this->twig = new Environment(new ArrayLoader([
-            'businesses.html.twig' => '{{ path }}{% for b in businesses|default([]) %}|{{ b.get("name") }}{% endfor %}{% if business is defined and business %}|{{ business.get("name") }}{% endif %}',
+            'pages/businesses/index.html.twig' => '{{ path }}{% for b in businesses|default([]) %}|{{ b.get("name") }}{% endfor %}{% if business is defined and business %}|{{ business.get("name") }}{% endif %}',
+            'pages/businesses/show.html.twig' => '{{ path }}{% for b in businesses|default([]) %}|{{ b.get("name") }}{% endfor %}{% if business is defined and business %}|{{ business.get("name") }}{% endif %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);

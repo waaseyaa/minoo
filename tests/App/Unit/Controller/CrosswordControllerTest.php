@@ -46,7 +46,7 @@ final class CrosswordControllerTest extends TestCase
             });
 
         $this->twig = new Environment(new ArrayLoader([
-            'crossword.html.twig' => '{{ path }}',
+            'pages/games/crossword.html.twig' => '{{ path }}',
         ]));
 
         $this->gate = $this->createMock(GateInterface::class);

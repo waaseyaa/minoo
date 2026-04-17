@@ -40,7 +40,7 @@ final class HomeControllerTest extends TestCase
 
         $twig->expects($this->once())
             ->method('render')
-            ->with('home.html.twig', $this->callback(function (array $ctx): bool {
+            ->with('pages/home/index.html.twig', $this->callback(function (array $ctx): bool {
                 return $ctx['path'] === '/'
                     && array_key_exists('featured', $ctx)
                     && array_key_exists('events', $ctx)
@@ -81,7 +81,7 @@ final class HomeControllerTest extends TestCase
         $capturedContext = null;
         $twig->expects($this->once())
             ->method('render')
-            ->with('home.html.twig', $this->callback(function (array $ctx) use (&$capturedContext): bool {
+            ->with('pages/home/index.html.twig', $this->callback(function (array $ctx) use (&$capturedContext): bool {
                 $capturedContext = $ctx;
 
                 return true;

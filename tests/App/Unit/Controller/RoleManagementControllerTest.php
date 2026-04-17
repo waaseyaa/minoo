@@ -255,7 +255,7 @@ final class RoleManagementControllerTest extends TestCase
 
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('dashboard/coordinator-users.html.twig', $this->callback(function (array $vars) {
+            ->with('pages/dashboard/coordinator-users.html.twig', $this->callback(function (array $vars) {
                 return $vars['can_manage_coordinator'] === false
                     && $vars['path'] === '/dashboard/coordinator/users'
                     && count($vars['users']) === 2
@@ -286,7 +286,7 @@ final class RoleManagementControllerTest extends TestCase
 
         $this->twig->expects($this->once())
             ->method('render')
-            ->with('admin/users.html.twig', $this->callback(function (array $vars) {
+            ->with('pages/admin/users.html.twig', $this->callback(function (array $vars) {
                 return $vars['can_manage_coordinator'] === true
                     && $vars['path'] === '/admin/users'
                     && count($vars['users']) === 1;

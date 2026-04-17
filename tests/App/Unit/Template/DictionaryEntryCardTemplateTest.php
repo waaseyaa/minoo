@@ -24,7 +24,7 @@ final class DictionaryEntryCardTemplateTest extends TestCase
     #[Test]
     public function it_renders_attribution_link_when_provided(): void
     {
-        $html = $this->twig->render('components/dictionary-entry-card.html.twig', [
+        $html = $this->twig->render('components/domain/language/entry-card.html.twig', [
             'word' => 'makwa',
             'definition' => 'bear',
             'part_of_speech' => 'na',
@@ -39,7 +39,7 @@ final class DictionaryEntryCardTemplateTest extends TestCase
     #[Test]
     public function it_omits_attribution_block_when_not_provided(): void
     {
-        $html = $this->twig->render('components/dictionary-entry-card.html.twig', [
+        $html = $this->twig->render('components/domain/language/entry-card.html.twig', [
             'word' => 'makwa',
             'definition' => 'bear',
             'part_of_speech' => 'na',
@@ -52,7 +52,7 @@ final class DictionaryEntryCardTemplateTest extends TestCase
     #[Test]
     public function it_renders_plain_text_attribution_when_url_is_missing(): void
     {
-        $html = $this->twig->render('components/dictionary-entry-card.html.twig', [
+        $html = $this->twig->render('components/domain/language/entry-card.html.twig', [
             'word' => 'makwa',
             'definition' => 'bear',
             'part_of_speech' => 'na',

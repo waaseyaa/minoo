@@ -42,7 +42,8 @@ final class PeopleControllerTest extends TestCase
             ->willReturn($this->storage);
 
         $this->twig = new Environment(new ArrayLoader([
-            'people.html.twig' => '{{ path }}{% for p in people|default([]) %}|{{ p.get("name") }}{% endfor %}{% if person is defined and person %}|{{ person.get("name") }}{% endif %}',
+            'pages/people/index.html.twig' => '{{ path }}{% for p in people|default([]) %}|{{ p.get("name") }}{% endfor %}{% if person is defined and person %}|{{ person.get("name") }}{% endif %}',
+            'pages/people/show.html.twig' => '{{ path }}{% for p in people|default([]) %}|{{ p.get("name") }}{% endfor %}{% if person is defined and person %}|{{ person.get("name") }}{% endif %}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);

@@ -38,7 +38,7 @@ final class AccountHomeControllerTest extends TestCase
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
             ->method('render')
-            ->with('account/home.html.twig', $this->callback(function (array $vars) {
+            ->with('pages/account/index.html.twig', $this->callback(function (array $vars) {
                 return $vars['account'] instanceof AccountInterface
                     && $vars['roles'] === []
                     && $vars['path'] === '/account';
@@ -62,7 +62,7 @@ final class AccountHomeControllerTest extends TestCase
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
             ->method('render')
-            ->with('account/home.html.twig', $this->callback(function (array $vars) {
+            ->with('pages/account/index.html.twig', $this->callback(function (array $vars) {
                 return $vars['roles'] === ['volunteer'];
             }))
             ->willReturn('<html>account home</html>');
@@ -81,7 +81,7 @@ final class AccountHomeControllerTest extends TestCase
         $capturedContext = null;
         $twig->expects($this->once())
             ->method('render')
-            ->with('account/home.html.twig', $this->callback(function (array $ctx) use (&$capturedContext) {
+            ->with('pages/account/index.html.twig', $this->callback(function (array $ctx) use (&$capturedContext) {
                 $capturedContext = $ctx;
 
                 return true;
@@ -105,7 +105,7 @@ final class AccountHomeControllerTest extends TestCase
         $capturedContext = null;
         $twig->expects($this->once())
             ->method('render')
-            ->with('account/home.html.twig', $this->callback(function (array $ctx) use (&$capturedContext) {
+            ->with('pages/account/index.html.twig', $this->callback(function (array $ctx) use (&$capturedContext) {
                 $capturedContext = $ctx;
 
                 return true;

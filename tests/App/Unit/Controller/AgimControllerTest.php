@@ -40,7 +40,7 @@ final class AgimControllerTest extends TestCase
             });
 
         $this->twig = new Environment(new ArrayLoader([
-            'agim.html.twig' => '{{ path }}',
+            'pages/games/agim.html.twig' => '{{ path }}',
         ]));
 
         $this->gate = $this->createMock(GateInterface::class);

@@ -29,7 +29,7 @@ final class LanguageControllerSearchTest extends TestCase
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
 
         $this->twig = new Environment(new ArrayLoader([
-            'language.html.twig' => '{{ path }}|{{ search_query|default("") }}|{{ search_total|default(0) }}{% for r in search_results|default([]) %}|{{ r.lemma|default(r.word|default("")) }}{% endfor %}',
+            'pages/language/search.html.twig' => '{{ path }}|{{ search_query|default("") }}|{{ search_total|default(0) }}{% for r in search_results|default([]) %}|{{ r.lemma|default(r.word|default("")) }}{% endfor %}',
         ]));
 
         $this->northCloudClient = $this->createMock(NorthCloudCommunityDictionaryClientInterface::class);
