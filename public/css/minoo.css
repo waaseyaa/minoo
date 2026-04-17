@@ -6868,8 +6868,8 @@ a.btn--ghost:hover {
   .app__main {
     min-width: 0;
     padding: var(--space-md) var(--space-lg);
-    max-width: var(--width-content);
-    margin: 0 auto;
+    max-inline-size: var(--width-content);
+    justify-self: center;
     width: 100%;
   }
 }
