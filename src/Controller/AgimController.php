@@ -78,7 +78,7 @@ final class AgimController
     /** Render the Agim game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $html = $this->twig->render('agim.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/games/agim.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/agim',
         ]));
         return new Response($html);

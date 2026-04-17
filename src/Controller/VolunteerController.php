@@ -34,7 +34,7 @@ final class VolunteerController
 
         $location = $this->resolveLocation($request);
 
-        $html = $this->twig->render('elders/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/elders/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
             'values' => [],
             'location' => $location,
@@ -78,7 +78,7 @@ final class VolunteerController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('elders/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
+            $html = $this->twig->render('pages/elders/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => $errors,
                 'values' => compact('name', 'phone', 'community', 'availability', 'skills', 'notes', 'maxTravelKm'),
             ]));
@@ -125,7 +125,7 @@ final class VolunteerController
             }
         }
 
-        $html = $this->twig->render('elders/volunteer-confirmation.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/elders/volunteer-confirmation.html.twig', LayoutTwigContext::withAccount($account, [
             'entity' => $entity,
         ]));
 

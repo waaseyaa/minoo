@@ -26,7 +26,7 @@ final class ElderSupportController
     {
         $location = $this->resolveLocation($request);
 
-        $html = $this->twig->render('elders/request.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/elders/request.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
             'values' => [],
             'location' => $location,
@@ -69,7 +69,7 @@ final class ElderSupportController
         }
 
         if ($errors !== []) {
-            $html = $this->twig->render('elders/request.html.twig', LayoutTwigContext::withAccount($account, [
+            $html = $this->twig->render('pages/elders/request.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => $errors,
                 'values' => compact('name', 'phone', 'community', 'type', 'notes', 'isRepresentative', 'elderName', 'consent'),
             ]));
@@ -113,7 +113,7 @@ final class ElderSupportController
             }
         }
 
-        $html = $this->twig->render('elders/request-confirmation.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/elders/request-confirmation.html.twig', LayoutTwigContext::withAccount($account, [
             'entity' => $entity,
         ]));
 

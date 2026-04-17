@@ -39,13 +39,13 @@ final class StaticPageController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function elders(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('elders.html.twig', '/elders', $account);
+        return $this->render('pages/elders/index.html.twig', '/elders', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function games(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        return $this->render('games.html.twig', '/games', $account);
+        return $this->render('pages/games/index.html.twig', '/games', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */

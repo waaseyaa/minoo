@@ -39,7 +39,7 @@ final class ShkodaController
     /** Render the game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $html = $this->twig->render('shkoda.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/games/shkoda.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/shkoda',
         ]));
 

@@ -32,7 +32,7 @@ final class CrosswordController
     /** Render the crossword game page. */
     public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $html = $this->twig->render('crossword.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/games/crossword.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/crossword',
         ]));
         return new Response($html);
