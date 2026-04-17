@@ -25,73 +25,58 @@
 <body>
   <script>(function(){var t=localStorage.getItem('minoo-theme')||((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);})()</script>
   <a href="#main-content" class="skip-link">{{ trans('base.skip_link') }}</a>
-  <div class="site">
-    <header class="site-header">
-      <div class="site-header__inner">
-        <div class="site-header__left">
-          <button class="sidebar-toggle" id="sidebar-toggle" aria-label="{{ trans('base.menu') }}" aria-expanded="false">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </button>
-          <a href="{{ lang_url('/') }}" class="site-header__logo" aria-label="{{ trans('base.home_label') }}">
-            <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-name__wordmark" width="100" height="28" fetchpriority="high">
-          </a>
+  <div class="app">
+    <header class="hdr">
+      <div class="hdr__bar">
+        <button class="hdr__menu" id="sidebar-toggle" aria-label="Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <a href="{{ lang_url('/') }}">
+          <img class="hdr__logo" src="/img/minoo-wordmark.svg" alt="Minoo">
+        </a>
+        <div class="hdr__search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search Teachings, Events, communities…" name="q">
         </div>
-        <div class="site-header__center">
-          <form class="header-search" action="{{ lang_url('/search') }}" method="get">
-            <svg class="header-search__icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
-            <input class="header-search__input" type="search" name="q" placeholder="{{ trans('search.placeholder') }}" autocomplete="off">
-          </form>
-        </div>
-        <div class="site-header__right">
-          {% include "components/language-switcher.html.twig" %}
-          {% if account is defined and account.isAuthenticated() %}
-          <div class="messages-popover" id="messages-popover">
-            <button class="messages-popover__trigger" id="messages-popover-trigger" data-user-id="{{ account.id() }}" data-hub-url="/.well-known/mercure" aria-expanded="false" aria-controls="messages-popover-dropdown" aria-label="Messages">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              <span class="messages-badge" id="messages-badge" hidden>0</span>
-            </button>
-            <div class="messages-popover__dropdown" id="messages-popover-dropdown" hidden></div>
-          </div>
-          {% endif %}
-          {% include "components/user-menu.html.twig" %}
-        </div>
+        {% include "components/language-switcher.html.twig" %}
+        {% include "components/theme-toggle.html.twig" %}
+        {% if account is defined and account.isAuthenticated() %}
+          <div class="hdr__avatar" title="{{ account.get('display_name')|default('A') }}">{{ account.get('display_name')|default('A')|first|upper }}</div>
+        {% else %}
+          <a href="{{ lang_url('/auth/login') }}" class="btn btn--ghost">Sign in</a>
+        {% endif %}
       </div>
+      <div class="ribbon" aria-hidden="true"></div>
     </header>
 
-    <div class="ribbon" aria-hidden="true"></div>
-
-    <div class="app-layout{% if hide_sidebar is defined and hide_sidebar %} app-layout--no-sidebar{% endif %}">
+    <div class="app__body{% if hide_sidebar is defined and hide_sidebar %} app__body--no-sidebar{% endif %}">
       {% if hide_sidebar is not defined or not hide_sidebar %}
-        <aside class="app-sidebar" id="app-sidebar">
+        <aside class="sbx" id="app-sidebar">
           {% include "components/sidebar-nav.html.twig" %}
         </aside>
         <div class="app-sidebar__overlay" id="sidebar-overlay"></div>
       {% endif %}
-      <main class="app-main" id="main-content">
+      <main class="app__main" id="main-content">
         {% include "components/location-bar.html.twig" %}
         {% include "components/flash-messages.html.twig" %}
         {% block content %}{% endblock %}
       </main>
     </div>
 
-    <div class="ribbon" aria-hidden="true"></div>
-
-    <footer class="site-footer">
-      <div class="site-footer__inner">
-        <div class="site-footer__brand">
-          <img src="/img/minoo-wordmark.svg" alt="Minoo" class="site-footer__wordmark" width="80" height="22">
-          <p class="site-footer__tagline">{{ trans('footer.tagline') }}</p>
+    <footer class="ftr">
+      <div class="ribbon" aria-hidden="true"></div>
+      <div class="ftr__inner">
+        <div>
+          <img src="/img/minoo-wordmark.svg" style="height: 18px; display: block; margin-bottom: 8px; filter: var(--wordmark-filter, invert(1) brightness(2));" alt="Minoo">
+          <div>&copy; 2026 Minoo Live. All our relations.</div>
+          <div style="margin-top: 4px;">Built on Anishinaabe territory.</div>
         </div>
-        <div class="site-footer__bottom">
-          <p>&copy; {{ "now"|date("Y") }} {{ trans('footer.copyright') }}</p>
-          <p class="site-footer__license">{{ trans('footer.license')|raw }}</p>
-          <nav class="site-footer__links" aria-label="{{ trans('footer.nav_label') }}">
-            <a href="{{ lang_url('/about') }}">{{ trans('footer.about') }}</a>
-            <a href="{{ lang_url('/legal/privacy') }}">{{ trans('footer.privacy') }}</a>
-            <a href="{{ lang_url('/legal/terms') }}">{{ trans('footer.terms') }}</a>
-            <a href="{{ lang_url('/legal/accessibility') }}">{{ trans('footer.accessibility') }}</a>
-            <a href="{{ lang_url('/data-sovereignty') }}">{{ trans('footer.data_sovereignty') }}</a>
-          </nav>
+        <div>
+          <a href="{{ lang_url('/about') }}">About</a>
+          <a href="{{ lang_url('/contact') }}">Contact</a>
+          <a href="{{ lang_url('/safety') }}">Protocols</a>
+          <a href="{{ lang_url('/legal/privacy') }}">Privacy</a>
+          <a href="{{ lang_url('/language') }}">Anishinaabemowin</a>
         </div>
       </div>
     </footer>
