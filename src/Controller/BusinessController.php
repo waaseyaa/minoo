@@ -44,7 +44,7 @@ final class BusinessController
 
         $communities = CommunityLookup::build($this->entityTypeManager, $businesses);
 
-        $html = $this->twig->render('businesses.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/businesses/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/businesses',
             'businesses' => $businesses,
             'communities' => $communities,
@@ -129,7 +129,7 @@ final class BusinessController
             }
         }
 
-        $html = $this->twig->render('businesses.html.twig', LayoutTwigContext::withAccount($account, [
+        $html = $this->twig->render('pages/businesses/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/businesses/' . $slug,
             'business' => $business,
             'owner' => $owner,

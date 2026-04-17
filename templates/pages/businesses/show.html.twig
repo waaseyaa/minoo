@@ -1,58 +1,18 @@
 {% extends "layouts/base.html.twig" %}
 
 {% block title %}
-  {%- if path == '/businesses' -%}
-    {{ trans('businesses.title') }} — Minoo
-  {%- elseif business is defined and business -%}
+  {%- if business is defined and business -%}
     {{ business.get('name') }} — Minoo
   {%- else -%}
     {{ trans('businesses.not_found') }} — Minoo
   {%- endif -%}
 {% endblock %}
 
-{% block head %}
-  {% if path starts with '/businesses/' and business is defined and business.get('latitude') and business.get('longitude') %}
-    <link rel="stylesheet" href="/css/leaflet.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="/css/leaflet.css"></noscript>
-  {% endif %}
-{% endblock %}
-
-{% block og_type %}{% if path starts with '/businesses/' and business is defined %}article{% else %}website{% endif %}{% endblock %}
-{% block og_description %}{% if path starts with '/businesses/' and business is defined %}{{ business.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+{% block og_type %}{% if business is defined and business %}article{% else %}website{% endif %}{% endblock %}
+{% block og_description %}{% if business is defined and business %}{{ business.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
 
 {% block content %}
-  {% if path == '/businesses' %}
-    <div class="flow-lg">
-      <div class="listing-hero">
-        <h1>{{ trans('businesses.title') }}</h1>
-        <p class="listing-hero__subtitle">{{ trans('businesses.subtitle') }}</p>
-      </div>
-
-      {% if businesses is defined and businesses|length > 0 %}
-        <div class="card-grid">
-          {% for b in businesses %}
-            {% set comm = communities[b.get('community_id')]|default({}) %}
-            {% include "components/domain/businesses/card.html.twig" with {
-              name: b.get('name'),
-              excerpt: b.get('description')|default('')|split("\n\n")|first|length > 120 ? b.get('description')|default('')|split("\n\n")|first|slice(0, 120) ~ '…' : b.get('description')|default('')|split("\n\n")|first,
-              url: "/businesses/" ~ b.get('slug'),
-              booking_url: b.get('booking_url')|default(''),
-              community_name: comm.name|default(''),
-              community_slug: comm.slug|default('')
-            } %}
-          {% endfor %}
-        </div>
-      {% else %}
-        {% include "components/shared/feedback/empty-state.html.twig" with {
-          heading: trans('businesses.empty_heading'),
-          body: trans('businesses.empty_body'),
-          action_url: lang_url('/communities'),
-          action_label: trans('businesses.explore_button')
-        } %}
-      {% endif %}
-    </div>
-
-  {% elseif business is defined and business %}
+  {% if business is defined and business %}
     <div class="flow-lg business-detail">
       {% include "components/shared/layout/breadcrumb.html.twig" with {
         breadcrumbs: [
