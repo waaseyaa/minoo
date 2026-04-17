@@ -1,3 +1,5 @@
+{# Required: calendarMonth
+   Optional: —  #}
 <div class="event-calendar-wrap">
   <nav class="event-calendar__nav" aria-label="{{ calendarMonth.label() }}">
     <a class="btn btn--ghost" href="{{ lang_url('/events') ~ filters.toQueryString({'view': 'calendar', 'month': calendarMonth.prevMonth, 'page': null}) }}" rel="prev">

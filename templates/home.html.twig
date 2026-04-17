@@ -46,7 +46,7 @@
         </div>
         <div class="ds-grid">
           {% for e in events|slice(0, 4) %}
-            {% include "components/event-card.html.twig" with {
+            {% include "components/domain/events/card.html.twig" with {
               title: e.get('title'),
               type: e.get('type')|default('')|capitalize,
               date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',

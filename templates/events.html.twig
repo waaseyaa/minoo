@@ -26,16 +26,16 @@
       </section>
 
       {% if filters is defined %}
-        {% include "components/event-filters.html.twig" with { filters: filters, feed: feed|default(null), location: location|default(null) } %}
+        {% include "components/domain/events/filters.html.twig" with { filters: filters, feed: feed|default(null), location: location|default(null) } %}
       {% endif %}
 
       {% if filters is defined and filters.view == 'calendar' and feed is defined and feed.calendarMonth %}
-        {% include "components/event-calendar.html.twig" with {
+        {% include "components/domain/events/calendar.html.twig" with {
           calendarMonth: feed.calendarMonth,
           filters: filters
         } %}
       {% elseif (filters is defined and filters.view == 'list') or (feed is defined and feed.flatList|length > 0) %}
-        {% include "components/event-list.html.twig" with {
+        {% include "components/domain/events/list.html.twig" with {
           events: (feed is defined and feed.flatList is defined) ? feed.flatList : (events|default([])),
           groups: (feed is defined and feed.flatList is defined) ? feed.monthGroups() : null,
           pagination: (feed is defined and feed.pagination is defined) ? feed.pagination : null,
@@ -43,7 +43,7 @@
           communities: communities
         } %}
       {% elseif feed is defined %}
-        {% include "components/event-feed.html.twig" with { feed: feed, communities: communities } %}
+        {% include "components/domain/events/feed.html.twig" with { feed: feed, communities: communities } %}
       {% else %}
         {% include "components/empty-state.html.twig" with {
           heading: trans('events.empty_heading'),
@@ -200,7 +200,7 @@
           <h2>{{ trans('events.similar_upcoming') }}</h2>
           <div class="card-grid card-grid--compact">
             {% for e in similar_upcoming %}
-              {% include "components/event-card.html.twig" with {
+              {% include "components/domain/events/card.html.twig" with {
                 title: e.get('title'),
                 type: e.get('type')|default('')|capitalize,
                 date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',

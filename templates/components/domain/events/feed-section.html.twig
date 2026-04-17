@@ -1,3 +1,5 @@
+{# Required: title, events (list), communities (map)
+   Optional: variant ('featured'|'now') #}
 {# Expects: title, events (list), communities (map), variant (optional: 'featured'|'now') #}
 <section class="event-feed__section{% if variant is defined %} event-feed__section--{{ variant }}{% endif %}">
   <header class="event-feed__section-header">
@@ -7,7 +9,7 @@
   <div class="card-grid">
     {% for e in events %}
       {% set comm = communities[e.get('community_id')]|default({}) %}
-      {% include "components/event-card.html.twig" with {
+      {% include "components/domain/events/card.html.twig" with {
         title: e.get('title'),
         type: e.get('type')|default('')|capitalize,
         date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',

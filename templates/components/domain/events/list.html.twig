@@ -1,3 +1,5 @@
+{# Required: events, filters
+   Optional: groups (pre-grouped), pagination, communities #}
 {#
   Event list view grouped by month.
   Expects:
@@ -51,7 +53,7 @@
           {% for e in group.events %}
             {% set comm = communities[e.get('community_id')]|default({}) %}
             <li class="event-list__item">
-              {% include "components/event-card.html.twig" with {
+              {% include "components/domain/events/card.html.twig" with {
                 title: e.get('title'),
                 type: e.get('type')|default('')|capitalize,
                 date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',

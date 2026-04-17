@@ -1,3 +1,5 @@
+{# Required: title, type, slug
+   Optional: starts_at, starts_at_iso, starts_at_raw, date, distance_km, location, featured, variant, community_id, communities #}
 <article class="card card--event{% if happening_now|default(false) %} card--happening-now{% endif %}" data-event-type="{{ type|default('')|lower }}">
   {% if photo_url is defined and photo_url %}
     <div class="card__thumbnail">
