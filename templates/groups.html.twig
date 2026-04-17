@@ -25,7 +25,7 @@
         <div class="card-grid">
           {% for g in groups %}
             {% set comm = communities[g.get('community_id')]|default({}) %}
-            {% include "components/group-card.html.twig" with {
+            {% include "components/domain/groups/card.html.twig" with {
               name: g.get('name'),
               type: g.get('type')|default('')|capitalize,
               region: g.get('region')|default(''),
