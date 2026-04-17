@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Fraunces';
   src: url('/fonts/fraunces-variable.woff2') format('woff2');
-  font-weight: 400 900;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
@@ -537,7 +537,7 @@
 @font-face {
   font-family: 'Fraunces';
   src: url('/fonts/fraunces-italic-variable.woff2') format('woff2');
-  font-weight: 400 900;
+  font-weight: 100 900;
   font-style: italic;
   font-display: swap;
 }
@@ -545,7 +545,7 @@
 @font-face {
   font-family: 'DM Sans';
   src: url('/fonts/dm-sans-variable.woff2') format('woff2');
-  font-weight: 400 700;
+  font-weight: 100 1000;
   font-style: normal;
   font-display: swap;
 }
@@ -679,6 +679,7 @@
     --error:          #ff4d5a;
     --warning:        var(--color-teachings);
     --info:           var(--color-communities);
+    --success:        var(--color-language);
 
     /* Typography */
     --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
