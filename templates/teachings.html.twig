@@ -16,13 +16,14 @@
 {% block content %}
   {% if path == '/teachings' %}
     <div class="flow-lg">
-      <div class="listing-hero">
+      <section class="hero">
+        <p class="hero__eyebrow">{{ trans('teachings.eyebrow')|default('Oral teachings from Knowledge Keepers') }}</p>
         <h1>{{ trans('teachings.title') }}</h1>
-        <p class="listing-hero__subtitle">{{ trans('teachings.subtitle') }}</p>
-      </div>
+        <p>{{ trans('teachings.subtitle') }}</p>
+      </section>
 
       {% if teachings is defined and teachings|length > 0 %}
-        <div class="card-grid">
+        <div class="ds-grid">
           {% for t in teachings %}
             {% set comm = communities[t.get('community_id')]|default({}) %}
             {% include "components/teaching-card.html.twig" with {
@@ -60,60 +61,66 @@
         alt: teaching.get('title'),
         credit: image_credit|default('')
       } %}
-      <div class="detail-hero">
-        <a href="{{ lang_url('/teachings') }}" class="detail-hero__back">{{ trans('teachings.detail_back') }}</a>
-        {% if teaching.get('type') is not empty %}
-          <span class="detail-hero__badge">{{ teaching.get('type')|capitalize }}</span>
-        {% endif %}
-        <h1 class="detail-hero__title">{{ teaching.get('title') }}</h1>
-      </div>
-      <div class="content-well">
+      <a href="{{ lang_url('/teachings') }}" class="btn btn--ghost" style="margin-bottom: var(--space-sm); padding: 4px 0;">&larr; Back</a>
+      <span class="badge badge--teachings">{{ teaching.get('type')|default('Teaching')|capitalize }}</span>
+      <h1>{{ teaching.get('title') }}</h1>
+
+      {% if teaching.get('duration') is defined and teaching.get('duration') is not empty or teaching.get('language') is defined and teaching.get('language') is not empty %}
+        <div class="detail__meta">
+          {% if teaching.get('duration') is not empty %}
+            <span>{{ teaching.get('duration') }}</span>
+          {% endif %}
+          {% if teaching.get('language') is not empty %}
+            <span>{{ teaching.get('language') }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="detail__layout">
         <div class="detail__body flow">
           {% for paragraph in teaching.get('content')|default('')|split("\n\n") %}
             <p>{{ paragraph }}</p>
           {% endfor %}
+
+          {% if teaching.get('source') is not empty %}
+            <div class="teaching-source">
+              <span class="teaching-source__label">{{ trans('teachings.source_label') }}</span>
+              <span>{{ teaching.get('source') }}</span>
+            </div>
+          {% endif %}
         </div>
-      </div>{# .content-well #}
 
-      {% if teaching.get('source') is not empty %}
-        <div class="teaching-source">
-          <span class="teaching-source__label">{{ trans('teachings.source_label') }}</span>
-          <span>{{ teaching.get('source') }}</span>
-        </div>
-      {% endif %}
+        <aside class="detail__aside">
+          {% if knowledge_keepers is defined and knowledge_keepers|length > 0 %}
+            <div class="aside-card">
+              <h2 class="aside-card__title">{{ trans('teachings.knowledge_keepers') }}</h2>
+              {% for person in knowledge_keepers %}
+                <a href="/people/{{ person.get('slug') }}" class="card card--compact">
+                  <h3 class="card__title">{{ person.get('name') }}</h3>
+                  {% if person.get('community') %}
+                    <span class="card__meta">{{ person.get('community') }}</span>
+                  {% endif %}
+                </a>
+              {% endfor %}
+            </div>
+          {% endif %}
 
-      {% if related_events is defined and related_events|length > 0 %}
-        <section class="related-section">
-          <h2>{{ trans('teachings.related_events') }}</h2>
-          <div class="card-grid card-grid--compact">
-            {% for event in related_events %}
-              <a href="/events/{{ event.get('slug') }}" class="card card--compact">
-                <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
-                <h3 class="card__title">{{ event.get('title') }}</h3>
-                {% if event.get('starts_at') %}
-                  <span class="card__meta">{{ event.get('starts_at')|date('F j, Y') }}</span>
-                {% endif %}
-              </a>
-            {% endfor %}
-          </div>
-        </section>
-      {% endif %}
-
-      {% if knowledge_keepers is defined and knowledge_keepers|length > 0 %}
-        <section class="related-section">
-          <h2>{{ trans('teachings.knowledge_keepers') }}</h2>
-          <div class="card-grid card-grid--compact">
-            {% for person in knowledge_keepers %}
-              <a href="/people/{{ person.get('slug') }}" class="card card--compact">
-                <h3 class="card__title">{{ person.get('name') }}</h3>
-                {% if person.get('community') %}
-                  <span class="card__meta">{{ person.get('community') }}</span>
-                {% endif %}
-              </a>
-            {% endfor %}
-          </div>
-        </section>
-      {% endif %}
+          {% if related_events is defined and related_events|length > 0 %}
+            <div class="aside-card">
+              <h2 class="aside-card__title">{{ trans('teachings.related_events') }}</h2>
+              {% for event in related_events %}
+                <a href="/events/{{ event.get('slug') }}" class="card card--compact">
+                  <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
+                  <h3 class="card__title">{{ event.get('title') }}</h3>
+                  {% if event.get('starts_at') %}
+                    <span class="card__meta">{{ event.get('starts_at')|date('F j, Y') }}</span>
+                  {% endif %}
+                </a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </aside>
+      </div>
     </div>
   {% else %}
     <div class="flow-lg">
