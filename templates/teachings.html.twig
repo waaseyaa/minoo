@@ -93,7 +93,7 @@
         <aside class="detail__aside">
           {% if knowledge_keepers is defined and knowledge_keepers|length > 0 %}
             <div class="aside-card">
-              <h2 class="aside-card__title">{{ trans('teachings.knowledge_keepers') }}</h2>
+              <h3 class="aside-card__title">{{ trans('teachings.knowledge_keepers') }}</h3>
               {% for person in knowledge_keepers %}
                 <a href="/people/{{ person.get('slug') }}" class="card card--compact">
                   <h3 class="card__title">{{ person.get('name') }}</h3>
@@ -107,7 +107,7 @@
 
           {% if related_events is defined and related_events|length > 0 %}
             <div class="aside-card">
-              <h2 class="aside-card__title">{{ trans('teachings.related_events') }}</h2>
+              <h3 class="aside-card__title">{{ trans('teachings.related_events') }}</h3>
               {% for event in related_events %}
                 <a href="/events/{{ event.get('slug') }}" class="card card--compact">
                   <span class="card__badge card__badge--event">{{ event.get('type')|default('')|capitalize }}</span>
