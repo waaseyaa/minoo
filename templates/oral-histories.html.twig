@@ -29,7 +29,7 @@
           <h2>{{ trans('oral_histories.collections') }}</h2>
           <div class="card-grid">
             {% for c in collections %}
-              {% include "components/collection-card.html.twig" with {
+              {% include "components/domain/oral-histories/collection-card.html.twig" with {
                 title: c.title,
                 slug: c.slug,
                 description: c.description|default(''),
@@ -48,7 +48,7 @@
           <h2>{{ trans('oral_histories.stories') }}</h2>
           <div class="card-grid">
             {% for s in stories %}
-              {% include "components/oral-history-card.html.twig" with {
+              {% include "components/domain/oral-histories/card.html.twig" with {
                 title: s.get('title'),
                 url: '/oral-histories/' ~ s.get('slug'),
                 type: s.get('oral_history_type')|default(''),
@@ -102,7 +102,7 @@
         </div>
       </div>
 
-      {% include "components/protocol-notice.html.twig" with { entity: collection } %}
+      {% include "components/domain/oral-histories/protocol-notice.html.twig" with { entity: collection } %}
 
       {% if collection_stories is defined and collection_stories|length > 0 %}
         {% set is_sequential = collection.story_cycle_order_type|default('') == 'sequential' %}
@@ -110,7 +110,7 @@
           <ol class="flow">
             {% for s in collection_stories %}
               <li>
-                {% include "components/oral-history-card.html.twig" with {
+                {% include "components/domain/oral-histories/card.html.twig" with {
                   title: s.get('title'),
                   url: '/oral-histories/' ~ s.get('slug'),
                   type: s.get('oral_history_type')|default(''),
@@ -127,7 +127,7 @@
         {% else %}
           <div class="card-grid">
             {% for s in collection_stories %}
-              {% include "components/oral-history-card.html.twig" with {
+              {% include "components/domain/oral-histories/card.html.twig" with {
                 title: s.get('title'),
                 url: '/oral-histories/' ~ s.get('slug'),
                 type: s.get('oral_history_type')|default(''),
@@ -168,7 +168,7 @@
         <h1 class="detail-hero__title">{{ story.get('title') }}</h1>
       </div>
 
-      {% include "components/protocol-notice.html.twig" with { entity: story } %}
+      {% include "components/domain/oral-histories/protocol-notice.html.twig" with { entity: story } %}
 
       {% if story.get('summary') %}
         <div class="content-well">
@@ -230,7 +230,7 @@
         </div>
       </div>
 
-      {% include "components/protocol-notice.html.twig" with { entity: story } %}
+      {% include "components/domain/oral-histories/protocol-notice.html.twig" with { entity: story } %}
 
       {% if story.get('media_format') and not story.get('is_living_record') %}
         <div class="audio-player">

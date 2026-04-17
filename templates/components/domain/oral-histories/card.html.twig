@@ -1,3 +1,5 @@
+{# Required: title, url
+   Optional: season, protocol_level, narrator, community_name #}
 <article class="card card--oral-history{% if is_living_record|default(false) %} card--living-record{% endif %}">
   <a href="{{ url }}" class="card__link">
     {% if is_living_record|default(false) %}
