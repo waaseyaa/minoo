@@ -25,7 +25,7 @@
        data-label-post-btn="{{ trans('feed.post_comment') }}"
        data-label-error="{{ trans('feed.error') }}">
     <div class="feed-main">
-      {% include "components/feed-create-post.html.twig" %}
+      {% include "components/domain/feed/create-post.html.twig" %}
 
       {# === Filter Chips === #}
       <nav class="feed-chips" aria-label="Filter feed">
@@ -40,7 +40,7 @@
       {# === Feed Container === #}
       <div class="feed-container" id="feed" data-next-cursor="{{ nextCursor }}" data-active-filter="{{ activeFilter }}">
         {% for item in response.items %}
-          {% include "components/feed-card.html.twig" with { item: item, account: account } only %}
+          {% include "components/domain/feed/card.html.twig" with { item: item, account: account } only %}
         {% endfor %}
       </div>
 
@@ -54,7 +54,7 @@
       {% endif %}
     </div>
 
-    {% include "components/feed-sidebar-right.html.twig" %}
+    {% include "components/domain/feed/sidebar-right.html.twig" %}
   </div>
 
   {# === Edit Post Modal === #}

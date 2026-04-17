@@ -1,3 +1,4 @@
+{# Required: item (post with communityName, communitySlug, relativeTime, meta) #}
 {# Post card — user-generated post in the community feed #}
 <article class="feed-card feed-card--post" data-id="{{ item.id }}" data-entity-type="post">
   <div class="feed-card__attribution">
@@ -8,5 +9,5 @@
     </div>
   </div>
   <p class="feed-card__body">{{ item.meta|default('') }}</p>
-  {% include "components/feed-engagement.html.twig" with { item: item } only %}
+  {% include "components/domain/feed/engagement.html.twig" with { item: item } only %}
 </article>

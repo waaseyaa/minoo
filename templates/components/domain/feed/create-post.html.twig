@@ -1,3 +1,5 @@
+{# Required: account
+   Optional: user_communities #}
 {% if account is defined and account.isAuthenticated() and user_communities is defined and user_communities|length > 0 %}
 <div class="feed-create">
     <div class="feed-create__prompt" id="create-post-trigger">

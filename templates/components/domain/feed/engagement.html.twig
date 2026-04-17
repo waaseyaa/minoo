@@ -1,3 +1,4 @@
+{# Required: item (with reactionCount, commentCount, ...) #}
 {# Engagement row — included in each feed card for reactions, comments, sharing #}
 <div class="feed-card__engagement">
   {% if (item.reactionCount is defined and item.reactionCount > 0) or (item.commentCount is defined and item.commentCount > 0) %}
