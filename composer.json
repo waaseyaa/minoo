@@ -78,6 +78,11 @@
         "sort-packages": true,
         "allow-plugins": {
             "phpstan/extension-installer": true
+        },
+        "audit": {
+            "ignore": {
+                "PKSA-5jz8-6tcw-pbk4": "PHPUnit argument-injection advisory (GHSA-qrr6-mg7r-m243). Dev-only dep; exploitation requires attacker-controlled -d INI flags. 10.5.x line is not backported; upgrade to ^12.5.22 tracked in #735."
+            }
         }
     },
     "scripts": {
