@@ -21,6 +21,7 @@ node_modules/
 test-results/
 playwright-report/
 .superpowers/
+.claude/scheduled_tasks.lock
 .build/
 data/
 scripts/.venv/
