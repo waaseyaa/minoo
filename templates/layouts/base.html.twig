@@ -17,7 +17,7 @@
   {% if csrf_token is defined %}
     <meta name="csrf-token" content="{{ csrf_token }}">
   {% endif %}
-  <link rel="stylesheet" href="/css/minoo.css?v=62">
+  <link rel="stylesheet" href="/css/minoo.css?v=63">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   {% block head %}{% endblock %}
   <script defer src="https://analytics.minoo.live/script.js" data-website-id="b357d196-9464-42e1-a93b-5f85743f20c9"></script>
@@ -31,7 +31,7 @@
         <button class="hdr__menu" id="sidebar-toggle" aria-label="Menu" aria-expanded="false" aria-controls="app-sidebar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
-        <a href="{{ lang_url('/') }}">
+        <a href="{{ lang_url('/') }}" class="hdr__brand">
           <img class="hdr__logo" src="/img/minoo-wordmark.svg" alt="Minoo">
         </a>
         <div class="hdr__search">

@@ -5013,8 +5013,16 @@
     color: var(--text-primary);
   }
 
+  .hdr__brand {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
   .hdr__logo {
     height: 22px;
+    width: auto;
+    max-inline-size: none;
     display: block;
   }
 
