@@ -5,9 +5,9 @@
   {% set current = current_language() %}
   {% for lang in available_languages() %}
     {% if lang.id == current.id %}
-      <span class="language-switcher__item language-switcher__item--active" aria-current="true" lang="{{ lang.id }}">{{ lang.label }}</span>
+      <span class="language-switcher__item language-switcher__item--active" aria-current="true" lang="{{ lang.id }}" title="{{ lang.label }}">{{ lang.id|upper }}</span>
     {% else %}
-      <a href="{{ lang_switch_url(lang.id, request_path|default('/')) }}" class="language-switcher__item" lang="{{ lang.id }}" hreflang="{{ lang.id }}">{{ lang.label }}</a>
+      <a href="{{ lang_switch_url(lang.id, request_path|default('/')) }}" class="language-switcher__item" lang="{{ lang.id }}" hreflang="{{ lang.id }}" title="{{ lang.label }}">{{ lang.id|upper }}</a>
     {% endif %}
   {% endfor %}
 </nav>
