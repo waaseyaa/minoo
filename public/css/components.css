@@ -5000,6 +5000,10 @@
     margin: 0 auto;
   }
 
+  .hdr__bar .hdr__search {
+    margin-inline: auto;
+  }
+
   .hdr__menu {
     background: none;
     border: 0;
@@ -5040,8 +5044,7 @@
   }
 
   .hdr__search {
-    flex: 1;
-    max-width: 420px;
+    flex: 0 1 420px;
     background: var(--surface-card);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-full);
