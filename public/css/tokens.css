@@ -78,30 +78,6 @@
     --info:           var(--color-communities);
     --success:        var(--color-language);
 
-    /* ── Extended semantic aliases (shadcn-style) ── */
-    --background:             var(--surface-dark);
-    --foreground:             var(--text-primary);
-    --surface-default:        var(--surface-dark);
-    --surface-sunken:         var(--surface-dark);
-    --surface-overlay:        var(--surface-card);
-    --text-inverse:           var(--text-dark);
-    --border-default:         var(--border-dark);
-    --border-strong:          var(--border-subtle);
-    --accent-default:         var(--color-events);
-    --accent-hover:           var(--color-events);
-    --accent-foreground:      var(--text-primary);
-    --muted:                  var(--surface-raised);
-    --muted-default:          var(--surface-raised);
-    --muted-foreground:       var(--text-muted);
-    --card:                   var(--surface-card);
-    --card-foreground:        var(--text-primary);
-    --popover:                var(--surface-raised);
-    --popover-foreground:     var(--text-primary);
-    --destructive:            var(--error);
-    --destructive-foreground: var(--text-primary);
-    --input:                  var(--border-subtle);
-    --ring:                   var(--color-events);
-
     /* Typography */
     --font-body:    'DM Sans', system-ui, -apple-system, sans-serif;
     --font-heading: 'Fraunces', Charter, 'Bitstream Charter', Cambria, serif;
@@ -119,12 +95,9 @@
     --leading-loose:  1.8;
 
     --tracking-tight:  -0.01em;
-    --tracking-normal: 0;
     --tracking-wide:   0.02em;
 
     /* Spacing — fluid 1.5 ratio */
-    --baseline: 0.25rem;
-
     --space-3xs: clamp(0.25rem, 0.23rem + 0.11vw, 0.313rem);
     --space-2xs: clamp(0.5rem, 0.46rem + 0.23vw, 0.625rem);
     --space-xs:  clamp(0.75rem, 0.68rem + 0.34vw, 0.938rem);
@@ -192,24 +165,6 @@
     --border-subtle:     #d4cfc8;
     --accent:            var(--color-events);
     --link:              var(--color-events);
-    --background:        var(--surface-light);
-    --foreground:        var(--text-dark);
-    --surface-default:   var(--surface-light);
-    --surface-sunken:    var(--surface-light);
-    --surface-overlay:   var(--surface-light-card);
-    --text-inverse:      #f0ece6;
-    --border-default:    var(--border-light);
-    --border-strong:     #d4cfc8;
-    --accent-foreground: var(--text-dark);
-    --muted:             #eae5df;
-    --muted-default:     #eae5df;
-    --muted-foreground:  #666;
-    --card:              var(--surface-light-card);
-    --card-foreground:   var(--text-dark);
-    --popover:           var(--surface-light-card);
-    --popover-foreground: var(--text-dark);
-    --input:             #d4cfc8;
-    --ring:              var(--color-events);
     color-scheme: light;
   }
 
@@ -227,24 +182,6 @@
       --border-subtle:     #d4cfc8;
       --accent:            var(--color-events);
       --link:              var(--color-events);
-      --background:        var(--surface-light);
-      --foreground:        var(--text-dark);
-      --surface-default:   var(--surface-light);
-      --surface-sunken:    var(--surface-light);
-      --surface-overlay:   var(--surface-light-card);
-      --text-inverse:      #f0ece6;
-      --border-default:    var(--border-light);
-      --border-strong:     #d4cfc8;
-      --accent-foreground: var(--text-dark);
-      --muted:             #eae5df;
-      --muted-default:     #eae5df;
-      --muted-foreground:  #666;
-      --card:              var(--surface-light-card);
-      --card-foreground:   var(--text-dark);
-      --popover:           var(--surface-light-card);
-      --popover-foreground: var(--text-dark);
-      --input:             #d4cfc8;
-      --ring:              var(--color-events);
       color-scheme: light;
     }
   }
