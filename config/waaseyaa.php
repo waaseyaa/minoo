@@ -8,7 +8,18 @@ return [
     'sovereignty_profile' => getenv('WAASEYAA_SOVEREIGNTY_PROFILE') ?: 'northops',
 
     // SQLite database path. WAASEYAA_DB env var takes precedence.
-    'database' => getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/storage/waaseyaa.sqlite',
+    // Relative paths resolve against project root (not CWD) so `php -S` (docroot=public) works.
+    'database' => (static function (): string {
+        $env = getenv('WAASEYAA_DB');
+        $default = dirname(__DIR__) . '/storage/waaseyaa.sqlite';
+        if ($env === false || $env === '') {
+            return $default;
+        }
+        if ($env === ':memory:' || str_starts_with($env, '/')) {
+            return $env;
+        }
+        return dirname(__DIR__) . '/' . ltrim($env, './');
+    })(),
 
     // Config sync directory. Override with WAASEYAA_CONFIG_DIR env var.
     'config_dir' => getenv('WAASEYAA_CONFIG_DIR') ?: __DIR__ . '/sync',
