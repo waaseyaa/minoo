@@ -8,6 +8,7 @@ use App\Support\NorthCloudCache;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Clock\MockClock;
 
 #[CoversClass(NorthCloudCache::class)]
 final class NorthCloudCacheTest extends TestCase
@@ -39,12 +40,25 @@ final class NorthCloudCacheTest extends TestCase
     }
 
     #[Test]
-    public function expired_entry_returns_null(): void
+    public function entry_remains_valid_until_ttl_elapses(): void
     {
-        $cache = new NorthCloudCache($this->pdo, ttl: 0);
+        $clock = new MockClock('2026-04-18T00:00:00Z');
+        $cache = new NorthCloudCache($this->pdo, ttl: 60, clock: $clock);
 
         $cache->set('people:123', '{"people":[]}');
-        sleep(1);
+        $clock->modify('+59 seconds');
+
+        self::assertSame('{"people":[]}', $cache->get('people:123'));
+    }
+
+    #[Test]
+    public function entry_expires_once_ttl_elapsed(): void
+    {
+        $clock = new MockClock('2026-04-18T00:00:00Z');
+        $cache = new NorthCloudCache($this->pdo, ttl: 60, clock: $clock);
+
+        $cache->set('people:123', '{"people":[]}');
+        $clock->modify('+60 seconds');
 
         self::assertNull($cache->get('people:123'));
     }

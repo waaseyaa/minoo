@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use Psr\Clock\ClockInterface;
+use Symfony\Component\Clock\NativeClock;
+
 final class NorthCloudCache
 {
     private bool $tableEnsured = false;
+    private readonly ClockInterface $clock;
 
     public function __construct(
         private readonly \PDO $pdo,
         private readonly int $ttl = 3600,
-    ) {}
+        ?ClockInterface $clock = null,
+    ) {
+        $this->clock = $clock ?? new NativeClock();
+    }
 
     public function get(string $key): ?string
     {
@@ -20,7 +27,7 @@ final class NorthCloudCache
         $stmt = $this->pdo->prepare(
             'SELECT response_body FROM nc_api_cache WHERE cache_key = :key AND expires_at > :now',
         );
-        $stmt->execute(['key' => $key, 'now' => time()]);
+        $stmt->execute(['key' => $key, 'now' => $this->clock->now()->getTimestamp()]);
         $result = $stmt->fetchColumn();
 
         return $result !== false ? (string) $result : null;
@@ -36,7 +43,7 @@ final class NorthCloudCache
         $stmt->execute([
             'key' => $key,
             'body' => $value,
-            'expires' => time() + $this->ttl,
+            'expires' => $this->clock->now()->getTimestamp() + $this->ttl,
         ]);
     }
 
