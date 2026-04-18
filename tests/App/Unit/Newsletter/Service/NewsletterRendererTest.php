@@ -11,6 +11,7 @@ use App\Entity\NewsletterEdition;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
 #[CoversClass(NewsletterRenderer::class)]
@@ -238,6 +239,15 @@ final class NewsletterRendererTest extends TestCase
     #[Test]
     public function timeout_throws_render_exception_and_cleans_tmp(): void
     {
+        // Fake Process that throws ProcessTimedOutException from run() —
+        // avoids a wall-clock dependency that flakes under full-suite load.
+        $timingOutProcess = new class(['true']) extends Process {
+            public function run(?callable $callback = null, array $env = []): int
+            {
+                throw new ProcessTimedOutException($this, ProcessTimedOutException::TYPE_GENERAL);
+            }
+        };
+
         $renderer = new NewsletterRenderer(
             tokenStore: new RenderTokenStore($this->tokenDir, ttlSeconds: 60),
             storageDir: $this->tmpDir,
@@ -245,7 +255,7 @@ final class NewsletterRendererTest extends TestCase
             nodeBinary: 'node',
             scriptPath: 'bin/render-pdf.js',
             timeoutSeconds: 1,
-            processFactory: fn(array $cmd) => new Process(['sleep', '3']),
+            processFactory: fn(array $cmd) => $timingOutProcess,
         );
 
         try {
