@@ -36,9 +36,9 @@ final class CommunityController
             ->sort('name', 'ASC');
 
         if ($typeFilter === 'first-nations') {
-            $queryBuilder->condition('is_municipality', 0);
+            $queryBuilder->condition('community_type', 'first_nation');
         } elseif ($typeFilter === 'municipalities') {
-            $queryBuilder->condition('is_municipality', 1);
+            $queryBuilder->condition('community_type', 'first_nation', '!=');
         }
 
         $ids = $queryBuilder->execute();
@@ -69,7 +69,7 @@ final class CommunityController
                 'nation' => $community->get('nation'),
                 'population' => (int) $community->get('population'),
                 'population_year' => (int) $community->get('population_year'),
-                'is_municipality' => (bool) $community->get('is_municipality'),
+                'community_type' => (string) ($community->get('community_type') ?? ''),
             ];
         }
 

@@ -121,8 +121,8 @@ function atlasDiscovery() {
         if (self.searchQuery && c.name.toLowerCase().indexOf(self.searchQuery.toLowerCase()) === -1) return false;
 
         // Type
-        if (self.typeFilter === 'fn' && c.is_municipality) return false;
-        if (self.typeFilter === 'mun' && !c.is_municipality) return false;
+        if (self.typeFilter === 'fn' && c.community_type !== 'first_nation') return false;
+        if (self.typeFilter === 'mun' && c.community_type === 'first_nation') return false;
 
         // Province
         if (self.provinceFilter.length > 0 && self.provinceFilter.indexOf(c.province) === -1) return false;
@@ -147,8 +147,8 @@ function atlasDiscovery() {
       var self2 = this;
       var forNationDropdown = this.allCommunities.filter(function(c) {
         if (self2.searchQuery && c.name.toLowerCase().indexOf(self2.searchQuery.toLowerCase()) === -1) return false;
-        if (self2.typeFilter === 'fn' && c.is_municipality) return false;
-        if (self2.typeFilter === 'mun' && !c.is_municipality) return false;
+        if (self2.typeFilter === 'fn' && c.community_type !== 'first_nation') return false;
+        if (self2.typeFilter === 'mun' && c.community_type === 'first_nation') return false;
         if (self2.provinceFilter.length > 0 && self2.provinceFilter.indexOf(c.province) === -1) return false;
         if (self2.populationFilter !== 'all') {
           var pop = c.population || 0;
@@ -266,7 +266,7 @@ function atlasDiscovery() {
         if (!c.lat || !c.lng) return;
         var marker = L.marker([c.lat, c.lng])
           .bindPopup('<strong>' + c.name + '</strong><br>' +
-            (c.is_municipality ? 'Municipality' : 'First Nation') +
+            (c.community_type === 'first_nation' ? 'First Nation' : 'Municipality') +
             (c.nation ? ' · ' + c.nation : ''));
         marker.on('click', function() {
           window.location.href = '/communities/' + c.slug;

@@ -133,7 +133,7 @@
                 <div>
                   <div class="card__title" x-text="c.name"></div>
                   <div class="card__meta">
-                    <span class="card__badge" x-text="c.is_municipality ? '{{ trans('communities.municipalities') }}' : '{{ trans('communities.first_nations') }}'"></span>
+                    <span class="card__badge" x-text="c.community_type === 'first_nation' ? '{{ trans('communities.first_nations') }}' : '{{ trans('communities.municipalities') }}'"></span>
                     <span x-show="c.nation" x-text="c.nation" ></span>
                     <span >·</span>
                     <span x-text="c.province" ></span>
@@ -159,7 +159,7 @@
             <div>
               <div class="card__title" x-text="c.name"></div>
               <div class="card__meta">
-                <span class="card__badge" x-text="c.is_municipality ? '{{ trans('communities.municipalities') }}' : '{{ trans('communities.first_nations') }}'"></span>
+                <span class="card__badge" x-text="c.community_type === 'first_nation' ? '{{ trans('communities.first_nations') }}' : '{{ trans('communities.municipalities') }}'"></span>
                 <span x-show="c.nation" x-text="c.nation" ></span>
                 <span >·</span>
                 <span x-text="c.province" ></span>

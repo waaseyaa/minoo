@@ -19,7 +19,7 @@
   {# --- Hero --- #}
   <div class="community-detail-hero">
     <div class="community-detail-hero__badge">
-      {{ community.get('is_municipality') ? trans('community.municipality') : trans('community.first_nation') }}
+      {{ community.get('community_type') == 'first_nation' ? trans('community.first_nation') : trans('community.municipality') }}
     </div>
     <h1 class="community-detail-hero__name">{{ community.get('name') }}</h1>
     <div class="community-detail-hero__subtitle">
@@ -134,7 +134,7 @@
       <a href="{{ lang_url('/communities/' ~ item.community.get('slug')) }}" class="card card--compact card--community">
         <div class="card__title">{{ item.community.get('name') }}</div>
         <div class="card__meta">
-          {{ item.community.get('is_municipality') ? trans('community.municipality') : item.community.get('nation') ?: trans('community.first_nation') }}
+          {{ item.community.get('community_type') == 'first_nation' ? (item.community.get('nation') ?: trans('community.first_nation')) : trans('community.municipality') }}
           · {{ item.distanceKm|number_format(0) }} {{ trans('community.km_away') }}
         </div>
       </a>
