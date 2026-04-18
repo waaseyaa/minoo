@@ -1,7 +1,13 @@
 name: Deploy Production
 
+# Gated on CI completion. Deploys only fire after the CI workflow reports
+# `success` on a push to main. Manual dispatch is still available for
+# out-of-band deploys (e.g. infra-only changes) and deliberately skips the
+# CI gate — use with care.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -14,10 +20,20 @@ jobs:
     name: Build & Deploy
     runs-on: ubuntu-latest
     environment: production
+    # For workflow_run, only proceed if the upstream CI run succeeded.
+    # workflow_dispatch events have no workflow_run payload, so this
+    # guard lets them through unconditionally.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
 
     steps:
       # -----------------------------------------------------------------------
       # Checkout
+      #
+      # For workflow_run events, pin to the exact SHA that passed CI so we
+      # don't deploy a newer commit that hasn't been verified yet. The
+      # head_sha value is provided by GitHub and is not user-controllable.
       #
       # Both repos are needed side-by-side because composer.json uses path
       # repositories pointing to ../waaseyaa/packages/*.
@@ -27,6 +43,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: minoo
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Checkout waaseyaa framework
         uses: actions/checkout@v4
@@ -47,51 +64,14 @@ jobs:
           coverage: none
 
       # -----------------------------------------------------------------------
-      # Node.js setup (Playwright)
-      # -----------------------------------------------------------------------
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '25'
-          cache: 'npm'
-          cache-dependency-path: minoo/package-lock.json
-
-      - name: Install Node dependencies
-        working-directory: minoo
-        run: npm ci
-
-      - name: Install Playwright browsers
-        working-directory: minoo
-        run: npx playwright install --with-deps chromium
-
-      # -----------------------------------------------------------------------
-      # Run tests (install all deps including dev first)
-      # -----------------------------------------------------------------------
-
-      - name: Install all Composer dependencies (with dev)
-        working-directory: minoo
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Run PHPUnit tests
-        working-directory: minoo
-        run: ./vendor/bin/phpunit
-
-      # Playwright smoke has pre-existing failures (auth, messages, feed chips)
-      # tracked in a follow-up issue. Marked non-blocking here so deploys aren't
-      # gated on flaky tests; CI workflow runs the full suite as a regression gate.
-      - name: Run Playwright smoke tests
-        working-directory: minoo
-        continue-on-error: true
-        env:
-          APP_ENV: testing
-        run: npx playwright test --ignore-snapshots
-
-      # -----------------------------------------------------------------------
       # Install production-only dependencies for the artifact
+      #
+      # Tests (PHPUnit + Playwright) are run by the CI workflow; deploy trusts
+      # that gate and skips redundant work. Only prod dependencies are needed
+      # here.
       # -----------------------------------------------------------------------
 
-      - name: Strip dev dependencies
+      - name: Install production Composer dependencies
         working-directory: minoo
         run: |
           composer install \
