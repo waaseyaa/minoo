@@ -1,25 +1,25 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method Minoo\\Controller\\AgimController\:\:getEntityTypeManager\(\) is unused\.$#'
+			message: '#^Method App\\Controller\\AgimController\:\:getEntityTypeManager\(\) is unused\.$#'
 			identifier: method.unused
 			count: 1
 			path: src/Controller/AgimController.php
 
 		-
-			message: '#^Parameter \#1 \$community of method Minoo\\Controller\\CommunityController\:\:findNearbyCommunities\(\) expects Waaseyaa\\Entity\\ContentEntityBase, Waaseyaa\\Entity\\EntityInterface given\.$#'
+			message: '#^Parameter \#1 \$community of method App\\Controller\\CommunityController\:\:findNearbyCommunities\(\) expects Waaseyaa\\Entity\\ContentEntityBase, Waaseyaa\\Entity\\EntityInterface given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Controller/CommunityController.php
 
 		-
-			message: '#^Parameter \#2 \$communities of method Minoo\\Service\\LocationResolver\:\:resolveNearbyCommunities\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			message: '#^Parameter \#2 \$communities of method App\\Service\\LocationResolver\:\:resolveNearbyCommunities\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Controller/CommunityController.php
 
 		-
-			message: '#^Parameter \#3 \$communities of method Minoo\\Domain\\Geo\\Service\\CommunityFinder\:\:findNearby\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			message: '#^Parameter \#3 \$communities of method App\\Domain\\Geo\\Service\\CommunityFinder\:\:findNearby\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Controller/CommunityController.php
@@ -31,22 +31,28 @@ parameters:
 			path: src/Controller/CommunityController.php
 
 		-
-			message: '#^Parameter \#1 \$entities of method Minoo\\Controller\\CoordinatorDashboardController\:\:buildCommunityNameMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, array\<int\|string, Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			message: '#^Parameter \#1 \$entities of method App\\Controller\\CoordinatorDashboardController\:\:buildCommunityNameMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, array\<int\|string, Waaseyaa\\Entity\\EntityInterface\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Controller/CoordinatorDashboardController.php
 
 		-
-			message: '#^Parameter \#2 \$openRequests of method Minoo\\Controller\\CoordinatorDashboardController\:\:buildRankedMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			message: '#^Parameter \#2 \$openRequests of method App\\Controller\\CoordinatorDashboardController\:\:buildRankedMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Controller/CoordinatorDashboardController.php
 
 		-
-			message: '#^Parameter \#3 \$volunteers of method Minoo\\Controller\\CoordinatorDashboardController\:\:buildRankedMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, array\<int\|string, Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			message: '#^Parameter \#3 \$volunteers of method App\\Controller\\CoordinatorDashboardController\:\:buildRankedMap\(\) expects array\<Waaseyaa\\Entity\\ContentEntityBase\>, array\<int\|string, Waaseyaa\\Entity\\EntityInterface\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Controller/CoordinatorDashboardController.php
+
+		-
+			message: '#^Parameter \#1 \$event of method App\\Controller\\EventController\:\:findSimilarUpcoming\(\) expects Waaseyaa\\Entity\\ContentEntityBase\|null, Waaseyaa\\Entity\\EntityInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/EventController.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -67,13 +73,13 @@ parameters:
 			path: src/Controller/FeedController.php
 
 		-
-			message: '#^Parameter \#1 \$log of method Minoo\\Ingestion\\IngestMaterializer\:\:materialize\(\) expects Minoo\\Entity\\IngestLog, Waaseyaa\\Entity\\EntityInterface given\.$#'
+			message: '#^Parameter \#1 \$log of method App\\Ingestion\\IngestMaterializer\:\:materialize\(\) expects App\\Entity\\IngestLog, Waaseyaa\\Entity\\EntityInterface given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Controller/IngestionApiController.php
 
 		-
-			message: '#^Property Minoo\\Controller\\LocationController\:\:\$twig is never read, only written\.$#'
+			message: '#^Property App\\Controller\\LocationController\:\:\$twig is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
 			path: src/Controller/LocationController.php
@@ -97,19 +103,61 @@ parameters:
 			path: src/Controller/MessagingController.php
 
 		-
-			message: '#^Method Minoo\\Controller\\VolunteerDashboardController\:\:findVolunteerByAccount\(\) should return Waaseyaa\\Entity\\ContentEntityBase\|null but returns Waaseyaa\\Entity\\EntityInterface\|null\.$#'
+			message: '#^Parameter \#1 \$data of method App\\Controller\\NewsletterAdminApiController\:\:json\(\) expects array\<string, mixed\>, list\<array\<string, mixed\>\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/NewsletterAdminApiController.php
+
+		-
+			message: '#^Property App\\Controller\\NewsletterAdminApiController\:\:\$twig is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Controller/NewsletterAdminApiController.php
+
+		-
+			message: '#^Method App\\Controller\\VolunteerDashboardController\:\:findVolunteerByAccount\(\) should return Waaseyaa\\Entity\\ContentEntityBase\|null but returns Waaseyaa\\Entity\\EntityInterface\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Controller/VolunteerDashboardController.php
 
 		-
-			message: '#^Method Minoo\\Domain\\Geo\\Service\\LocationService\:\:loadAllCommunities\(\) should return array\<Waaseyaa\\Entity\\ContentEntityBase\> but returns array\<int\|string, Waaseyaa\\Entity\\EntityInterface\>\.$#'
+			message: '#^Method App\\Domain\\Events\\Service\\EventFeedBuilder\:\:loadForFilter\(\) should return list\<Waaseyaa\\Entity\\ContentEntityBase\> but returns list\<Waaseyaa\\Entity\\EntityInterface\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Domain/Events/Service/EventFeedBuilder.php
+
+		-
+			message: '#^Method App\\Domain\\Events\\Service\\EventFeedBuilder\:\:loadUpcomingAndActive\(\) should return list\<Waaseyaa\\Entity\\ContentEntityBase\> but returns list\<Waaseyaa\\Entity\\EntityInterface\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Domain/Events/Service/EventFeedBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<Waaseyaa\\Entity\\ContentEntityBase\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Domain/Events/Service/EventFeedBuilder.php
+
+		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(Waaseyaa\\Entity\\EntityInterface\)\: bool\)\|null, Closure\(Waaseyaa\\Entity\\ContentEntityBase\)\: bool given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Domain/Events/Service/EventFeedBuilder.php
+
+		-
+			message: '#^Parameter \#3 \$events of static method App\\Domain\\Events\\ValueObject\\CalendarMonth\:\:fromEvents\(\) expects list\<Waaseyaa\\Entity\\ContentEntityBase\>, list\<Waaseyaa\\Entity\\EntityInterface\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Domain/Events/Service/EventFeedBuilder.php
+
+		-
+			message: '#^Method App\\Domain\\Geo\\Service\\LocationService\:\:loadAllCommunities\(\) should return array\<Waaseyaa\\Entity\\ContentEntityBase\> but returns array\<int\|string, Waaseyaa\\Entity\\EntityInterface\>\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Domain/Geo/Service/LocationService.php
 
 		-
-			message: '#^Method Minoo\\Feed\\EntityLoaderService\:\:loadFeaturedItems\(\) should return list\<array\{featured\: mixed, entity\: mixed, url\: string\}\> but returns list\<array\{featured\: Waaseyaa\\Entity\\EntityInterface, entity\: Waaseyaa\\Entity\\EntityInterface\}\>\.$#'
+			message: '#^Method App\\Feed\\EntityLoaderService\:\:loadFeaturedItems\(\) should return list\<array\{featured\: mixed, entity\: mixed, url\: string\}\> but returns list\<array\{featured\: Waaseyaa\\Entity\\EntityInterface, entity\: Waaseyaa\\Entity\\EntityInterface\}\>\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Feed/EntityLoaderService.php
@@ -133,7 +181,7 @@ parameters:
 			path: src/Support/CrosswordEngine.php
 
 		-
-			message: '#^Parameter &\$grid by\-ref type of method Minoo\\Support\\CrosswordEngine\:\:placeWordOnGrid\(\) expects list\<list\<string\|null\>\>, non\-empty\-list\<non\-empty\-array\<int, string\|null\>\> given\.$#'
+			message: '#^Parameter &\$grid by\-ref type of method App\\Support\\CrosswordEngine\:\:placeWordOnGrid\(\) expects list\<list\<string\|null\>\>, non\-empty\-list\<non\-empty\-array\<int, string\|null\>\> given\.$#'
 			identifier: parameterByRef.type
 			count: 1
 			path: src/Support/CrosswordEngine.php

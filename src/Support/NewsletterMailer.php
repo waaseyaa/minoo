@@ -6,24 +6,18 @@ namespace App\Support;
 
 use SendGrid;
 use SendGrid\Mail\Mail;
-use Waaseyaa\Mail\MailDriverInterface;
 
 /**
- * Thin SendGrid adapter that adds attachment support on top of the framework's
- * MailDriverInterface (which only supports plain text/html bodies).
- *
- * Used by NewsletterDispatcher. The framework Mail driver remains the source
- * of truth for whether mail is configured (isConfigured() proxies through).
+ * Thin SendGrid adapter with attachment support for NewsletterDispatcher.
+ * The framework Waaseyaa\Mail\Mailer only supports plain text/html bodies;
+ * this class talks to SendGrid directly so it can attach a PDF.
  *
  * NOTE: This class has no unit tests — the SendGrid SDK client is constructed
- * inline and cannot be mocked without a refactor to inject a factory. It is
- * covered only by manual smoke tests against SendGrid staging. If you refactor
- * to inject a SendGrid\Client, add tests at that time.
+ * inline and cannot be mocked without a refactor to inject a factory.
  */
 final class NewsletterMailer
 {
     public function __construct(
-        private readonly ?MailDriverInterface $driver,
         private readonly string $apiKey,
         private readonly string $fromAddress,
         private readonly string $fromName = 'Minoo Newsroom',
@@ -32,7 +26,7 @@ final class NewsletterMailer
 
     public function isConfigured(): bool
     {
-        return $this->driver !== null && $this->driver->isConfigured() && $this->apiKey !== '' && $this->fromAddress !== '';
+        return $this->apiKey !== '' && $this->fromAddress !== '';
     }
 
     public function sendWithAttachment(string $to, string $subject, string $body, string $path): bool

@@ -78,7 +78,6 @@ use Waaseyaa\I18n\LanguageManagerInterface;
 use Waaseyaa\I18n\Translator;
 use Waaseyaa\I18n\TranslatorInterface;
 use Waaseyaa\I18n\Twig\TranslationTwigExtension;
-use Waaseyaa\Mail\MailDriverInterface;
 use Waaseyaa\Mail\MailerInterface;
 use Waaseyaa\Media\UploadHandler;
 use Waaseyaa\NorthCloud\Client\NorthCloudClient as PackageNorthCloudClient;
@@ -1765,14 +1764,7 @@ final class AppServiceProvider extends ServiceProvider
             $config = require __DIR__ . '/../../config/newsletter.php';
             $mailConfig = $this->config['mail'] ?? [];
 
-            try {
-                $driver = $this->resolve(MailDriverInterface::class);
-            } catch (\Throwable) {
-                $driver = null;
-            }
-
             $mailer = new NewsletterMailer(
-                driver: $driver,
                 apiKey: (string) ($mailConfig['sendgrid_api_key'] ?? ''),
                 fromAddress: (string) ($mailConfig['from_address'] ?? ''),
                 fromName: (string) ($mailConfig['from_name'] ?? 'Minoo Newsroom'),
