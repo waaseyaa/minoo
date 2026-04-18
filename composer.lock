@@ -4759,16 +4759,16 @@
         },
         {
             "name": "waaseyaa/northcloud",
-            "version": "v0.1.0-alpha.144",
+            "version": "v0.1.0-alpha.147",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/northcloud.git",
-                "reference": "d7837f9eae55cbc096999c7312df319b76b838c5"
+                "reference": "4662ea33c1f6a4c4f50bf9d9abd2c6f7582e2d61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/northcloud/zipball/d7837f9eae55cbc096999c7312df319b76b838c5",
-                "reference": "d7837f9eae55cbc096999c7312df319b76b838c5",
+                "url": "https://api.github.com/repos/waaseyaa/northcloud/zipball/4662ea33c1f6a4c4f50bf9d9abd2c6f7582e2d61",
+                "reference": "4662ea33c1f6a4c4f50bf9d9abd2c6f7582e2d61",
                 "shasum": ""
             },
             "require": {
@@ -4807,9 +4807,9 @@
             "description": "North Cloud client, content sync, and search provider for Waaseyaa applications",
             "support": {
                 "issues": "https://github.com/waaseyaa/northcloud/issues",
-                "source": "https://github.com/waaseyaa/northcloud/tree/v0.1.0-alpha.144"
+                "source": "https://github.com/waaseyaa/northcloud/tree/v0.1.0-alpha.147"
             },
-            "time": "2026-04-16T21:13:31+00:00"
+            "time": "2026-04-18T14:27:20+00:00"
         },
         {
             "name": "waaseyaa/path",
