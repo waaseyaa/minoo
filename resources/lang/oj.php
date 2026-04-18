@@ -926,4 +926,12 @@ return [
     'oral_histories.not_found' => '', // needs translation
     'oral_histories.not_found_message' => '', // needs translation
     'oral_histories.browse_all' => '', // needs translation
+
+    // User Menu
+    'usermenu.open' => '', // needs translation
+    'usermenu.messages' => '', // needs translation
+    'usermenu.profile' => '', // needs translation
+    'usermenu.dashboard' => '', // needs translation
+    'usermenu.sign_out' => '', // needs translation
+    'usermenu.log_in' => '', // needs translation
 ];

@@ -904,10 +904,10 @@ return [
     'get_involved.no_wrong_text' => 'You don\'t need special skills or a big time commitment. If you care about your community, you\'re already qualified. Start with whatever feels right and go from there.',
 
     // User Menu
+    'usermenu.open' => 'Open account menu',
+    'usermenu.messages' => 'Messages',
     'usermenu.profile' => 'My Profile',
     'usermenu.dashboard' => 'Dashboard',
-    'usermenu.theme' => 'Theme',
-    'usermenu.language' => 'Language',
     'usermenu.sign_out' => 'Sign Out',
     'usermenu.log_in' => 'Log In',
 

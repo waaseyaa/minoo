@@ -1,0 +1,32 @@
+{# Required: —
+   Optional: account
+   Authenticated: avatar opens a dropdown (identity + Messages/Profile/Dashboard/Sign out).
+   Guest: renders a Sign in button. Theme + language toggles are sibling header components. #}
+{% if account is defined and account.isAuthenticated() %}
+<div class="user-menu" id="user-menu">
+  <button type="button" class="user-menu__trigger" aria-expanded="false" aria-controls="user-menu-dropdown" aria-label="{{ trans('usermenu.open') }}">
+    <span class="hdr__avatar" title="{{ account_display_name(account) }}">{{ account_display_initial(account) }}</span>
+  </button>
+  <div class="user-menu__dropdown" id="user-menu-dropdown" hidden>
+    <div class="user-menu__identity">
+      <span class="user-menu__avatar">{{ account_display_initial(account) }}</span>
+      <div class="user-menu__who">
+        <div class="user-menu__name">{{ account_display_name(account) }}</div>
+        <div class="user-menu__email">{{ account_display_email(account) }}</div>
+      </div>
+    </div>
+    <div class="user-menu__section">
+      <a href="{{ lang_url('/messages') }}" class="user-menu__item">{{ trans('usermenu.messages') }}</a>
+      <a href="{{ lang_url('/account') }}" class="user-menu__item">{{ trans('usermenu.profile') }}</a>
+      {% if 'elder_coordinator' in account.getRoles() %}
+        <a href="{{ lang_url('/dashboard/coordinator') }}" class="user-menu__item">{{ trans('usermenu.dashboard') }}</a>
+      {% endif %}
+    </div>
+    <div class="user-menu__section">
+      <a href="{{ lang_url('/logout') }}" class="user-menu__item user-menu__item--danger">{{ trans('usermenu.sign_out') }}</a>
+    </div>
+  </div>
+</div>
+{% else %}
+<a href="{{ lang_url('/login') }}" class="btn btn--ghost">{{ trans('usermenu.log_in') }}</a>
+{% endif %}
