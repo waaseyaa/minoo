@@ -1,9 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
-
-test.beforeAll(() => {
-  execSync('php bin/seed-test-user', { cwd: process.cwd() });
-});
 
 test.describe('Auth flows', () => {
   // ── Login ──────────────────────────────────────────────────────────
@@ -172,6 +167,6 @@ test.describe('Auth flows', () => {
 
   test('403 page includes link to homepage', async ({ page }) => {
     await page.goto('/dashboard/volunteer');
-    await expect(page.locator('a[href="/"]')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'return to the homepage' })).toBeVisible();
   });
 });

@@ -1,9 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
-
-test.beforeAll(() => {
-  execSync('php bin/seed-test-user', { cwd: process.cwd() });
-});
 
 test.describe('Account Home — member user', () => {
   test.describe.configure({ mode: 'serial' });

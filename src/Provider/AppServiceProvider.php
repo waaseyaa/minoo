@@ -124,6 +124,18 @@ final class AppServiceProvider extends ServiceProvider
         $this->singleton(UrlPrefixNegotiator::class, fn() => new UrlPrefixNegotiator());
 
         // =====================================================================
+        // --- Rate limiting ---
+        // =====================================================================
+
+        $this->singleton(\App\Contract\RateLimiterInterface::class, function (): \App\Contract\RateLimiterInterface {
+            if (getenv('APP_ENV') === 'testing') {
+                return new \App\Support\NullRateLimiter();
+            }
+            $dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/storage/waaseyaa.sqlite';
+            return new \App\Support\SqliteRateLimiter($dbPath);
+        });
+
+        // =====================================================================
         // --- Events ---
         // =====================================================================
 

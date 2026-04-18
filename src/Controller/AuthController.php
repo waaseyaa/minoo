@@ -7,13 +7,13 @@ namespace App\Controller;
 use Waaseyaa\Auth\Config\AuthConfig;
 use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\User\AuthMailer;
+use App\Contract\RateLimiterInterface;
 use App\Support\LayoutTwigContext;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use App\Middleware\RateLimitMiddleware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\User\User;
@@ -26,6 +26,7 @@ final class AuthController
         private readonly AuthMailer $authMailer,
         private readonly AuthTokenRepositoryInterface $tokenRepo,
         private readonly AuthConfig $authConfig,
+        private readonly RateLimiterInterface $limiter,
     ) {}
 
     public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
@@ -41,19 +42,16 @@ final class AuthController
 
     public function submitLogin(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $limiter = new RateLimitMiddleware(
-            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/storage/waaseyaa.sqlite'
-        );
         $ip = $request->getClientIp() ?? '0.0.0.0';
 
-        if (!$limiter->check($ip, '/login', 5, 300)) {
+        if (!$this->limiter->check($ip, '/login', 5, 300)) {
             $html = $this->twig->render('pages/auth/login.html.twig', LayoutTwigContext::withAccount($account, [
                 'errors' => ['email' => 'Too many attempts. Please try again in 5 minutes.'],
                 'values' => [],
             ]));
             return new Response($html, 429);
         }
-        $limiter->record($ip, '/login');
+        $this->limiter->record($ip, '/login');
 
         $email = trim((string) $request->request->get('email', ''));
         $password = (string) $request->request->get('password', '');
@@ -218,12 +216,9 @@ final class AuthController
 
     public function submitForgotPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $limiter = new RateLimitMiddleware(
-            getenv('WAASEYAA_DB') ?: dirname(__DIR__, 2) . '/storage/waaseyaa.sqlite'
-        );
         $ip = $request->getClientIp() ?? '0.0.0.0';
 
-        if (!$limiter->check($ip, '/forgot-password', 3, 300)) {
+        if (!$this->limiter->check($ip, '/forgot-password', 3, 300)) {
             // Return 200 even when rate-limited to prevent enumeration via status codes
             $html = $this->twig->render('pages/auth/forgot-password.html.twig', LayoutTwigContext::withAccount($account, [
                 'submitted' => true,
@@ -231,7 +226,7 @@ final class AuthController
             ]));
             return new Response($html);
         }
-        $limiter->record($ip, '/forgot-password');
+        $this->limiter->record($ip, '/forgot-password');
 
         $email = trim((string) $request->request->get('email', ''));
 

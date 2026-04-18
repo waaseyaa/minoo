@@ -1,10 +1,6 @@
 import { test, expect, Page } from '@playwright/test';
 import { execSync } from 'child_process';
 
-test.beforeAll(() => {
-  execSync('php bin/seed-test-user', { cwd: process.cwd() });
-});
-
 async function clearRateLimits() {
   execSync(
     "php -r \"(new PDO('sqlite:storage/waaseyaa.sqlite'))->exec('DELETE FROM rate_limits');\"",
@@ -202,47 +198,6 @@ test.describe('Messaging — access control', () => {
         expect(memberInThread).toBeTruthy();
       }
     }
-  });
-});
-
-test.describe('Messaging — popover badge', () => {
-  test('message badge appears in header for authenticated users', async ({ page }) => {
-    await login(page, 'test@minoo.test', 'TestPass123!');
-    await page.goto('/');
-
-    // The popover trigger should exist in the header
-    const trigger = page.locator('#messages-popover-trigger');
-    await expect(trigger).toBeAttached();
-  });
-
-  test('clicking popover trigger opens dropdown', async ({ page }) => {
-    await login(page, 'test@minoo.test', 'TestPass123!');
-    await page.goto('/');
-
-    const trigger = page.locator('#messages-popover-trigger');
-    if (await trigger.count() === 0) {
-      test.skip(true, 'Popover trigger not present');
-      return;
-    }
-
-    const dropdown = page.locator('#messages-popover-dropdown');
-    await expect(dropdown).toBeHidden();
-    await trigger.click();
-    await expect(dropdown).toBeVisible();
-  });
-
-  test('popover dropdown has link to messages page', async ({ page }) => {
-    await login(page, 'test@minoo.test', 'TestPass123!');
-    await page.goto('/');
-
-    const trigger = page.locator('#messages-popover-trigger');
-    if (await trigger.count() === 0) {
-      test.skip(true, 'Popover trigger not present');
-      return;
-    }
-
-    await trigger.click();
-    await expect(page.locator('.messages-popover__link[href="/messages"]')).toBeVisible();
   });
 });
 

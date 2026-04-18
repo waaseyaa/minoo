@@ -2,6 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/playwright',
+  globalSetup: require.resolve('./tests/playwright/global-setup'),
   timeout: 30000,
   expect: {
     toHaveScreenshot: {

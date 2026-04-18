@@ -1,9 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { execSync } from 'child_process';
-
-test.beforeAll(() => {
-  execSync('php bin/seed-test-user', { cwd: process.cwd() });
-});
 
 test.describe('Flash messages', () => {
   test('login shows success flash that disappears on next navigation', async ({ page }) => {

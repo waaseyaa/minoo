@@ -87,6 +87,7 @@ final class AuthControllerTest extends TestCase
             $this->authMailer,
             $this->tokenRepo,
             $this->authConfig,
+            new \App\Support\NullRateLimiter(),
         );
     }
 
