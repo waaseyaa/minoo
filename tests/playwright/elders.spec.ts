@@ -58,7 +58,11 @@ test.describe('Elders Portal', () => {
 
   test('request form has safety link', async ({ page }) => {
     await page.goto('/elders/request');
-    await expect(page.locator('a[href="/safety"]')).toBeVisible();
+    // Scope to the form footer — the global site footer also links /safety
+    // (as "Protocols"), and a bare selector hits strict-mode with 2 matches.
+    await expect(
+      page.locator('.elders-form-page__footer a[href="/safety"]')
+    ).toBeVisible();
   });
 
   test('request form includes CSRF token', async ({ page }) => {

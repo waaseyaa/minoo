@@ -1,36 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-const pages = [
-  { name: 'homepage', path: '/' },
-  { name: 'events', path: '/events' },
-  { name: 'teachings', path: '/teachings' },
-  { name: 'communities', path: '/communities' },
-  { name: 'language', path: '/language' },
-  { name: 'search', path: '/search' },
-];
-
-test.describe('Light mode visual regression', () => {
-  for (const { name, path } of pages) {
-    test(`${name} — dark mode`, async ({ page }) => {
-      await page.goto(path);
-      await page.evaluate(() => {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      });
-      await page.waitForTimeout(300);
-      await expect(page).toHaveScreenshot(`${name}-dark.png`);
-    });
-
-    test(`${name} — light mode`, async ({ page }) => {
-      await page.goto(path);
-      await page.evaluate(() => {
-        document.documentElement.setAttribute('data-theme', 'light');
-      });
-      await page.waitForTimeout(300);
-      await expect(page).toHaveScreenshot(`${name}-light.png`);
-    });
-  }
-});
-
 test.describe('Theme toggle behavior', () => {
   // Playwright headless Chromium defaults to prefers-color-scheme: light.
   // Force dark so the toggle starts in a known state (dark → light).

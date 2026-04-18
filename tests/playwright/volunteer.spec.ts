@@ -43,7 +43,8 @@ test.describe('Volunteer Portal', () => {
   test('submitting valid signup redirects to confirmation', async ({ page }) => {
     await page.goto('/elders/volunteer');
     await page.locator('#name').fill('John Volunteer');
-    await page.locator('#phone').fill('705-555-5678');
+    // Unique phone per run — the DB persists across runs and phoneExists() rejects duplicates.
+    await page.locator('#phone').fill(`705-555-${String(Date.now()).slice(-4)}`);
     await page.locator('.form button[type="submit"]').click();
     await expect(page).toHaveURL(/\/elders\/volunteer\/[a-f0-9-]+/);
   });
@@ -67,7 +68,9 @@ test.describe('Volunteer Portal', () => {
   test('skills selection appears on confirmation page', async ({ page }) => {
     await page.goto('/elders/volunteer');
     await page.locator('#name').fill('Jane Helper');
-    await page.locator('#phone').fill('705-555-4321');
+    // Unique phone per run — see note above.
+    const phoneSuffix = String(Date.now() + 1).slice(-4);
+    await page.locator('#phone').fill(`705-555-${phoneSuffix}`);
     // Check two skill checkboxes
     await page.locator('input[name="skills[]"][value="Rides"]').check();
     await page.locator('input[name="skills[]"][value="Groceries"]').check();

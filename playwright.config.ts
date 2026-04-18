@@ -13,7 +13,10 @@ export default defineConfig({
     headless: true,
   },
   webServer: {
-    command: 'php -S localhost:8081 -t public',
+    // Router script is required because public/admin/ and public/newsletter/
+    // directories exist — without it, PHP's built-in server 404s those paths
+    // instead of falling through to index.php. See #674.
+    command: 'php -S localhost:8081 -t public public/index.php',
     port: 8081,
     reuseExistingServer: true,
     timeout: 10000,

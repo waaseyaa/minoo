@@ -24,11 +24,10 @@ test.describe('Legal Pages', () => {
     await expect(main.locator('a[href="/legal/accessibility"]')).toBeVisible();
   });
 
-  test('footer has legal links', async ({ page }) => {
+  test('footer links to privacy policy', async ({ page }) => {
+    // Footer intentionally only links Privacy. Terms & Accessibility live
+    // on the /legal index page, not the global footer.
     await page.goto('/');
-    const footer = page.locator('.site-footer');
-    await expect(footer.locator('a[href="/legal/privacy"]')).toBeVisible();
-    await expect(footer.locator('a[href="/legal/terms"]')).toBeVisible();
-    await expect(footer.locator('a[href="/legal/accessibility"]')).toBeVisible();
+    await expect(page.locator('.ftr').locator('a[href="/legal/privacy"]')).toBeVisible();
   });
 });
