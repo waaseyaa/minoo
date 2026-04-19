@@ -22,7 +22,7 @@
         "waaseyaa/entity": "^0.1.0-alpha.148",
         "waaseyaa/entity-storage": "^0.1.0-alpha.148",
         "waaseyaa/field": "^0.1.0-alpha.148",
-        "waaseyaa/foundation": "^0.1",
+        "waaseyaa/foundation": "^0.1.0-alpha.148",
         "waaseyaa/geo": "^0.1",
         "waaseyaa/graphql": "^0.1",
         "waaseyaa/groups": "^0.1",
