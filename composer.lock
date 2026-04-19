@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ccd8e6b7dd7e621b2674674f75ba62f3",
+    "content-hash": "4d9ab65ee7bc0c9bf512d5e6da046141",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4005,16 +4005,16 @@
         },
         {
             "name": "waaseyaa/entity",
-            "version": "v0.1.0-alpha.145",
+            "version": "v0.1.0-alpha.148",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/entity.git",
-                "reference": "0ffbd91c5e87150959c1ce478f0a1f145212e926"
+                "reference": "71bc0911b313551e6e03daba0667e5d0f943d728"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/entity/zipball/0ffbd91c5e87150959c1ce478f0a1f145212e926",
-                "reference": "0ffbd91c5e87150959c1ce478f0a1f145212e926",
+                "url": "https://api.github.com/repos/waaseyaa/entity/zipball/71bc0911b313551e6e03daba0667e5d0f943d728",
+                "reference": "71bc0911b313551e6e03daba0667e5d0f943d728",
                 "shasum": ""
             },
             "require": {
@@ -4054,22 +4054,22 @@
             "description": "Entity type system — types, interfaces, lifecycle, queries. No storage.",
             "support": {
                 "issues": "https://github.com/waaseyaa/entity/issues",
-                "source": "https://github.com/waaseyaa/entity/tree/v0.1.0-alpha.145"
+                "source": "https://github.com/waaseyaa/entity/tree/v0.1.0-alpha.148"
             },
-            "time": "2026-04-12T18:29:10+00:00"
+            "time": "2026-04-19T17:32:28+00:00"
         },
         {
             "name": "waaseyaa/entity-storage",
-            "version": "v0.1.0-alpha.145",
+            "version": "v0.1.0-alpha.148",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/entity-storage.git",
-                "reference": "ff5c182f8258b6d05373d3a317b5d028136623ce"
+                "reference": "b04c59e08d8f5e3a63956c05b3737faa0f69e4ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/entity-storage/zipball/ff5c182f8258b6d05373d3a317b5d028136623ce",
-                "reference": "ff5c182f8258b6d05373d3a317b5d028136623ce",
+                "url": "https://api.github.com/repos/waaseyaa/entity-storage/zipball/b04c59e08d8f5e3a63956c05b3737faa0f69e4ec",
+                "reference": "b04c59e08d8f5e3a63956c05b3737faa0f69e4ec",
                 "shasum": ""
             },
             "require": {
@@ -4102,22 +4102,22 @@
             "description": "Pluggable entity persistence. v0.1.0: SQL storage behind clean interfaces.",
             "support": {
                 "issues": "https://github.com/waaseyaa/entity-storage/issues",
-                "source": "https://github.com/waaseyaa/entity-storage/tree/v0.1.0-alpha.145"
+                "source": "https://github.com/waaseyaa/entity-storage/tree/v0.1.0-alpha.148"
             },
-            "time": "2026-04-16T22:19:15+00:00"
+            "time": "2026-04-19T17:32:28+00:00"
         },
         {
             "name": "waaseyaa/field",
-            "version": "v0.1.0-alpha.145",
+            "version": "v0.1.0-alpha.148",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/field.git",
-                "reference": "640018def7792000f3989d6833a85b4bae04a4ce"
+                "reference": "fb060fe55d04a73dc15c99faef90adbfb555c7fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/field/zipball/640018def7792000f3989d6833a85b4bae04a4ce",
-                "reference": "640018def7792000f3989d6833a85b4bae04a4ce",
+                "url": "https://api.github.com/repos/waaseyaa/field/zipball/fb060fe55d04a73dc15c99faef90adbfb555c7fb",
+                "reference": "fb060fe55d04a73dc15c99faef90adbfb555c7fb",
                 "shasum": ""
             },
             "require": {
@@ -4148,9 +4148,9 @@
             "description": "Field type system — pluggable field types, definitions, formatters for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/field/issues",
-                "source": "https://github.com/waaseyaa/field/tree/v0.1.0-alpha.145"
+                "source": "https://github.com/waaseyaa/field/tree/v0.1.0-alpha.148"
             },
-            "time": "2026-04-12T18:29:10+00:00"
+            "time": "2026-04-19T17:32:28+00:00"
         },
         {
             "name": "waaseyaa/foundation",
