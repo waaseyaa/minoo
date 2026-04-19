@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "26b517daa1a887ac91e173c0bab258a9",
+    "content-hash": "ccd8e6b7dd7e621b2674674f75ba62f3",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4310,6 +4310,58 @@
                 "source": "https://github.com/waaseyaa/graphql/tree/v0.1.0-alpha.145"
             },
             "time": "2026-04-09T22:44:35+00:00"
+        },
+        {
+            "name": "waaseyaa/groups",
+            "version": "v0.1.0-alpha.148",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waaseyaa/groups.git",
+                "reference": "0c31e14583973d3efa5c86dee4837a638131163d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waaseyaa/groups/zipball/0c31e14583973d3efa5c86dee4837a638131163d",
+                "reference": "0c31e14583973d3efa5c86dee4837a638131163d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4",
+                "waaseyaa/entity": "^0.1",
+                "waaseyaa/entity-storage": "^0.1",
+                "waaseyaa/field": "^0.1",
+                "waaseyaa/foundation": "^0.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "extra": {
+                "waaseyaa": {
+                    "providers": [
+                        "Waaseyaa\\Groups\\GroupsServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev",
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\Groups\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Multi-bundle Group content entity type for Waaseyaa (extracted from Minoo)",
+            "support": {
+                "issues": "https://github.com/waaseyaa/groups/issues",
+                "source": "https://github.com/waaseyaa/groups/tree/v0.1.0-alpha.148"
+            },
+            "time": "2026-04-19T17:32:28+00:00"
         },
         {
             "name": "waaseyaa/http-client",
