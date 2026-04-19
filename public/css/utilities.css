@@ -174,7 +174,7 @@
 
   /* ── Community list (replaces atlas-header, atlas-filters, atlas-chips, atlas-list) ── */
   .community-header {
-    padding: var(--space-lg) var(--gutter);
+    padding: var(--space-md) var(--gutter);
     background: var(--surface-dark);
   }
   .community-header__label {
@@ -447,7 +447,7 @@
 
   /* ── Community detail (replaces atlas-detail-hero) ── */
   .community-detail-hero {
-    padding: var(--space-md) var(--gutter) var(--space-sm);
+    padding: var(--space-sm) var(--gutter) var(--space-xs);
     background: var(--surface-dark);
   }
   .community-detail-hero__badge {
