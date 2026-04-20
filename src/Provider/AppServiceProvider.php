@@ -24,8 +24,6 @@ use App\Entity\EventType;
 use App\Entity\ExampleSentence;
 use App\Entity\FeaturedItem;
 use App\Entity\GameSession;
-use App\Entity\Group;
-use App\Entity\GroupType;
 use App\Entity\IngestLog;
 use App\Entity\Leader;
 use App\Entity\NewsletterEdition;
@@ -71,6 +69,7 @@ use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Event\EntityEvent;
 use Waaseyaa\Entity\Event\EntityEvents;
+use Waaseyaa\Field\FieldDefinition;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\I18n\Language;
 use Waaseyaa\I18n\LanguageManager;
@@ -273,168 +272,6 @@ final class AppServiceProvider extends ServiceProvider
             class: EventType::class,
             keys: ['id' => 'type', 'label' => 'name'],
             group: 'events',
-        ));
-
-        // =====================================================================
-        // --- Groups ---
-        // =====================================================================
-
-        $this->entityType(new EntityType(
-            id: 'group',
-            label: 'Community Group',
-            class: Group::class,
-            keys: ['id' => 'gid', 'uuid' => 'uuid', 'label' => 'name', 'bundle' => 'type'],
-            group: 'community',
-            fieldDefinitions: [
-                'name' => [
-                    'type' => 'string',
-                    'label' => 'Name',
-                    'weight' => 0,
-                ],
-                'type' => [
-                    'type' => 'string',
-                    'label' => 'Type',
-                    'weight' => -1,
-                ],
-                'slug' => [
-                    'type' => 'string',
-                    'label' => 'URL Slug',
-                    'weight' => 1,
-                ],
-                'description' => [
-                    'type' => 'text_long',
-                    'label' => 'Description',
-                    'weight' => 5,
-                ],
-                'url' => [
-                    'type' => 'uri',
-                    'label' => 'Website',
-                    'description' => 'External website URL.',
-                    'weight' => 10,
-                ],
-                'region' => [
-                    'type' => 'string',
-                    'label' => 'Region',
-                    'description' => 'Geographic region.',
-                    'weight' => 15,
-                ],
-                'community_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Community',
-                    'settings' => ['target_type' => 'community'],
-                    'weight' => 16,
-                ],
-                'phone' => [
-                    'type' => 'string',
-                    'label' => 'Phone',
-                    'description' => 'Business phone number in E.164 format.',
-                    'weight' => 17,
-                ],
-                'email' => [
-                    'type' => 'string',
-                    'label' => 'Email',
-                    'weight' => 18,
-                ],
-                'address' => [
-                    'type' => 'string',
-                    'label' => 'Address',
-                    'description' => 'Physical address.',
-                    'weight' => 19,
-                ],
-                'booking_url' => [
-                    'type' => 'uri',
-                    'label' => 'Booking URL',
-                    'description' => 'External booking link.',
-                    'weight' => 20,
-                ],
-                'media_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Image',
-                    'settings' => ['target_type' => 'media'],
-                    'weight' => 21,
-                ],
-                'copyright_status' => [
-                    'type' => 'string',
-                    'label' => 'Copyright Status',
-                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
-                    'default_value' => 'unknown',
-                    'weight' => 99,
-                ],
-                'consent_public' => [
-                    'type' => 'boolean',
-                    'label' => 'Public Consent',
-                    'description' => 'Whether this content may be shown on public pages.',
-                    'weight' => 28,
-                    'default' => 1,
-                ],
-                'consent_ai_training' => [
-                    'type' => 'boolean',
-                    'label' => 'AI Training Consent',
-                    'description' => 'Whether this content may be used for AI training. Default: no.',
-                    'weight' => 29,
-                    'default' => 0,
-                ],
-                'source' => [
-                    'type' => 'string',
-                    'label' => 'Source',
-                    'description' => 'Provenance tag (e.g. manual:russell:2026-03-15).',
-                    'weight' => 95,
-                ],
-                'verified_at' => [
-                    'type' => 'datetime',
-                    'label' => 'Verified At',
-                    'description' => 'When this record was last verified.',
-                    'weight' => 96,
-                ],
-                'social_posts' => [
-                    'type' => 'text_long',
-                    'label' => 'Social Posts',
-                    'description' => 'JSON array of recent social media posts.',
-                    'weight' => 97,
-                ],
-                'latitude' => [
-                    'type' => 'float',
-                    'label' => 'Latitude',
-                    'description' => 'Geocoded from address, or community fallback.',
-                    'weight' => 98,
-                ],
-                'longitude' => [
-                    'type' => 'float',
-                    'label' => 'Longitude',
-                    'description' => 'Geocoded from address, or community fallback.',
-                    'weight' => 99,
-                ],
-                'coordinate_source' => [
-                    'type' => 'string',
-                    'label' => 'Coordinate Source',
-                    'description' => 'How coordinates were obtained: address or community.',
-                    'weight' => 100,
-                ],
-                'status' => [
-                    'type' => 'boolean',
-                    'label' => 'Published',
-                    'weight' => 30,
-                    'default' => 1,
-                ],
-                'created_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Created',
-                    'weight' => 40,
-                ],
-                'updated_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Updated',
-                    'weight' => 41,
-                ],
-            ],
-        ));
-
-        $this->entityType(new EntityType(
-            id: 'group_type',
-            label: 'Group Type',
-            class: GroupType::class,
-            keys: ['id' => 'type', 'label' => 'name'],
-            group: 'community',
         ));
 
         // =====================================================================
@@ -3668,6 +3505,167 @@ final class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // =====================================================================
+        // --- Groups: register business-bundle fields ---
+        // =====================================================================
+
+        /** @var EntityTypeManager $etm */
+        $etm = $this->resolve(EntityTypeManager::class);
+        $etm->addBundleFields('group', 'business', [
+            new FieldDefinition(
+                name: 'slug',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'URL Slug',
+            ),
+            new FieldDefinition(
+                name: 'description',
+                type: 'text_long',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Description',
+            ),
+            new FieldDefinition(
+                name: 'url',
+                type: 'uri',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Website',
+                description: 'External website URL.',
+            ),
+            new FieldDefinition(
+                name: 'region',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Region',
+                description: 'Geographic region.',
+            ),
+            new FieldDefinition(
+                name: 'community_id',
+                type: 'entity_reference',
+                settings: ['target_type' => 'community'],
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Community',
+            ),
+            new FieldDefinition(
+                name: 'phone',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Phone',
+                description: 'Business phone number in E.164 format.',
+            ),
+            new FieldDefinition(
+                name: 'email',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Email',
+            ),
+            new FieldDefinition(
+                name: 'address',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Address',
+                description: 'Physical address.',
+            ),
+            new FieldDefinition(
+                name: 'booking_url',
+                type: 'uri',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Booking URL',
+                description: 'External booking link.',
+            ),
+            new FieldDefinition(
+                name: 'media_id',
+                type: 'entity_reference',
+                settings: ['target_type' => 'media'],
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Image',
+            ),
+            new FieldDefinition(
+                name: 'copyright_status',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                defaultValue: 'unknown',
+                label: 'Copyright Status',
+                description: 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
+            ),
+            new FieldDefinition(
+                name: 'consent_public',
+                type: 'boolean',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                defaultValue: 1,
+                label: 'Public Consent',
+                description: 'Whether this content may be shown on public pages.',
+            ),
+            new FieldDefinition(
+                name: 'consent_ai_training',
+                type: 'boolean',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                defaultValue: 0,
+                label: 'AI Training Consent',
+                description: 'Whether this content may be used for AI training. Default: no.',
+            ),
+            new FieldDefinition(
+                name: 'source',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Source',
+                description: 'Provenance tag (e.g. manual:russell:2026-03-15).',
+            ),
+            new FieldDefinition(
+                name: 'verified_at',
+                type: 'datetime',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Verified At',
+                description: 'When this record was last verified.',
+            ),
+            new FieldDefinition(
+                name: 'social_posts',
+                type: 'text_long',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Social Posts',
+                description: 'JSON array of recent social media posts.',
+            ),
+            new FieldDefinition(
+                name: 'latitude',
+                type: 'float',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Latitude',
+                description: 'Geocoded from address, or community fallback.',
+            ),
+            new FieldDefinition(
+                name: 'longitude',
+                type: 'float',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Longitude',
+                description: 'Geocoded from address, or community fallback.',
+            ),
+            new FieldDefinition(
+                name: 'coordinate_source',
+                type: 'string',
+                targetEntityTypeId: 'group',
+                targetBundle: 'business',
+                label: 'Coordinate Source',
+                description: 'How coordinates were obtained: address or community.',
+            ),
+        ]);
+
         // =====================================================================
         // --- I18n: Translation Twig extension ---
         // =====================================================================
