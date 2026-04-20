@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/dm-sans-variable.woff2" as="font" type="font/woff2" crossorigin>
+  <title>Indigenous Businesses — Minoo</title>
+  <meta name="description" content="Connecting Indigenous communities, Elders, and volunteers across Turtle Island.">
+  <meta property="og:title" content="Indigenous Businesses — Minoo">
+  <meta property="og:description" content="Connecting Indigenous communities, Elders, and volunteers across Turtle Island.">
+  <meta property="og:image" content="https://minoo.live/img/og-default.png">
+  <meta property="og:url" content="https://minoo.live/businesses">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Minoo">
+  <meta name="twitter:card" content="summary_large_image">
+      <meta name="csrf-token" content="<CSRF>">
+    <link rel="stylesheet" href="/css/minoo.css?v=<VERSION>">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script defer src="https://analytics.minoo.live/script.js" data-website-id="<UUID>"></script>
+</head>
+<body>
+  <script>(function(){var t=localStorage.getItem('minoo-theme')||((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);})()</script>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div class="app">
+    <header class="hdr">
+      <div class="hdr__bar">
+        <button class="hdr__menu" id="sidebar-toggle" aria-label="Menu" aria-expanded="false" aria-controls="app-sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <a href="/" class="hdr__brand">
+          <img class="hdr__logo" src="/img/minoo-wordmark.svg" alt="Minoo">
+        </a>
+        <div class="hdr__search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search Teachings, Events, communities…" name="q">
+        </div>
+        <nav class="language-switcher" aria-label="Language">
+              <span class="language-switcher__item language-switcher__item--active" aria-current="true" lang="en" title="English">EN</span>
+                <a href="/oj/" class="language-switcher__item" lang="oj" hreflang="oj" title="Anishinaabemowin">OJ</a>
+      </nav>
+        <button class="theme-toggle" aria-label="Toggle light/dark theme" title="Toggle theme" type="button">
+  <svg class="theme-toggle__icon theme-toggle__icon--dark" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <svg class="theme-toggle__icon theme-toggle__icon--light" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+</button>
+        <a href="/login" class="btn btn--ghost">Log In</a>
+      </div>
+      <div class="ribbon" aria-hidden="true"></div>
+    </header>
+
+    <div class="app__body">
+              <aside class="sbx" id="app-sidebar">
+          <nav aria-label="Navigate">
+  <div class="sbx__group">
+    <a href="/" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+        <a href="/studio" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      <span>Watch Live</span>
+    </a>
+    <a href="/communities" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Communities</span>
+    </a>
+    <a href="/events" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="2"/></svg>
+      <span>Events</span>
+    </a>
+    <a href="/teachings" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="13" y2="11"/></svg>
+      <span>Teachings</span>
+    </a>
+    <a href="/people" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <span>People</span>
+    </a>
+    <a href="/businesses" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 8v12a2 2 0 002 2h14a2 2 0 002-2V8l-3-6z"/><line x1="3" y1="8" x2="21" y2="8"/><path d="M16 12a4 4 0 01-8 0"/></svg>
+      <span>Businesses</span>
+    </a>
+    <a href="/oral-histories" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      <span>Our Stories</span>
+    </a>
+    <a href="/games" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      <span>Games</span>
+    </a>
+      </div>
+
+  <div class="sbx__group">
+    <div class="sbx__label">Programs</div>
+    <a href="/elders" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <span>Elder Support Program</span>
+    </a>
+    <a href="/elders/request" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.24 12.24a6 6 0 00-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+      <span>Request Help</span>
+    </a>
+    <a href="/elders/volunteer" class="sbx__item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      <span>Volunteer</span>
+    </a>
+  </div>
+
+  </nav>
+        </aside>
+        <div class="app-sidebar__overlay" id="sidebar-overlay"></div>
+            <main class="app__main" id="main-content">
+        <div class="location-bar" id="location-bar" data-cookie-name="minoo_location"
+     data-trans-near="Near {community}"
+     data-trans-set="Set your location"
+     data-trans-change="Change"
+     data-trans-detecting="Detecting location…"
+     data-trans-error="Error loading results">
+  <div class="location-bar__inner">
+    <svg class="location-bar__icon" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+      <path d="M10 2a6 6 0 016 6c0 4.5-6 10-6 10S4 12.5 4 8a6 6 0 016-6z"/><circle cx="10" cy="8" r="2"/>
+    </svg>
+    <span class="location-bar__text" id="location-text">Set your location</span>
+    <button class="location-bar__toggle" id="location-toggle" type="button" aria-expanded="false" aria-label="Change"></button>
+  </div>
+  <noscript>
+    <p class="location-bar__noscript">Location features require JavaScript.</p>
+  </noscript>
+  <div class="location-bar__dropdown" id="location-dropdown" hidden>
+    <label for="location-search" class="visually-hidden">Search communities</label>
+    <input class="location-bar__input" id="location-search" type="search"
+           placeholder="Search communities…" autocomplete="off">
+    <ul class="location-bar__results" id="location-results" role="listbox"></ul>
+  </div>
+</div>
+                    <div class="flow-lg">
+      <div class="listing-hero">
+        <h1>Indigenous Businesses</h1>
+        <p class="listing-hero__subtitle">Support Indigenous-owned businesses in your community.</p>
+      </div>
+
+              <div class="card-grid">
+                                  <article class="card card--business">
+    <span class="card__badge card__badge--business">Business</span>
+  <h3 class="card__title"><a href="/businesses/nginaajiiw-salon-spa">Nginaajiiw Salon &amp; Spa</a></h3>
+        <p class="card__body">A community-owned wellness studio.</p>
+    </article>
+                                  <article class="card card--business">
+    <span class="card__badge card__badge--business">Business</span>
+  <h3 class="card__title"><a href="/businesses/cedar-and-stone">Cedar &amp; Stone</a></h3>
+        <p class="card__body">Private business record.</p>
+    </article>
+                  </div>
+          </div>
+
+      </main>
+    </div>
+
+    <footer class="ftr">
+      <div class="ribbon" aria-hidden="true"></div>
+      <div class="ftr__inner">
+        <div>
+          <img src="/img/minoo-wordmark.svg" style="height: 18px; display: block; margin-bottom: 8px; filter: var(--wordmark-filter, invert(1) brightness(2));" alt="Minoo">
+          <div>&copy; 2026 Minoo Live. All our relations.</div>
+          <div style="margin-top: 4px;">Built on Anishinaabe territory.</div>
+        </div>
+        <div>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+          <a href="/safety">Protocols</a>
+          <a href="/legal/privacy">Privacy</a>
+          <a href="/language">Anishinaabemowin</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script>
+    // Sidebar toggle (mobile)
+    document.getElementById('sidebar-toggle')?.addEventListener('click', function() {
+      const sidebar = document.getElementById('app-sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const isOpen = sidebar?.classList.toggle('app-sidebar--open');
+      overlay?.classList.toggle('app-sidebar__overlay--visible', isOpen);
+      this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    document.getElementById('sidebar-overlay')?.addEventListener('click', function() {
+      document.getElementById('app-sidebar')?.classList.remove('app-sidebar--open');
+      this.classList.remove('app-sidebar__overlay--visible');
+      document.getElementById('sidebar-toggle')?.setAttribute('aria-expanded', 'false');
+    });
+    // User menu dropdown
+    (function() {
+      const trigger = document.querySelector('.user-menu__trigger');
+      const dropdown = document.getElementById('user-menu-dropdown');
+      if (!trigger || !dropdown) return;
+      function close() {
+        dropdown.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = !dropdown.hidden;
+        dropdown.hidden = isOpen;
+        trigger.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      });
+      dropdown.addEventListener('click', function(e) { e.stopPropagation(); });
+      document.addEventListener('click', close);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
+    })();
+    // Theme toggle
+    (function() {
+      function currentTheme() {
+        return document.documentElement.getAttribute('data-theme') ||
+          (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      }
+      function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('minoo-theme', theme);
+      }
+      var btn = document.querySelector('.theme-toggle');
+      if (btn) btn.addEventListener('click', function() {
+        applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+      });
+    })();
+  </script>
+  <script>
+  (function() {
+    const bar = document.getElementById('location-bar');
+    if (!bar) return;
+    const textEl = document.getElementById('location-text');
+    const toggle = document.getElementById('location-toggle');
+    const dropdown = document.getElementById('location-dropdown');
+    const searchInput = document.getElementById('location-search');
+    const resultsList = document.getElementById('location-results');
+    const cookieName = bar.dataset.cookieName || 'minoo_location';
+
+    function readCookie() {
+      const match = document.cookie.split('; ').find(c => c.startsWith(cookieName + '='));
+      if (!match) return null;
+      try { return JSON.parse(decodeURIComponent(match.split('=').slice(1).join('='))); }
+      catch { return null; }
+    }
+
+    const transNear = bar.dataset.transNear || 'Near {community}';
+    const transSet = bar.dataset.transSet || 'Set your location';
+    const transChange = bar.dataset.transChange || 'Change';
+    const transDetecting = bar.dataset.transDetecting || 'Detecting location\u2026';
+    const transError = bar.dataset.transError || 'Error loading results';
+
+    function render(loc) {
+      if (loc && loc.communityName) {
+        textEl.textContent = transNear.replace('{community}', loc.communityName);
+        toggle.textContent = transChange;
+      } else {
+        textEl.textContent = transSet;
+        toggle.textContent = '';
+      }
+    }
+
+    render(readCookie());
+
+    toggle.addEventListener('click', function() {
+      const open = dropdown.hidden;
+      dropdown.hidden = !open;
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open) searchInput.focus();
+    });
+    textEl.addEventListener('click', function() {
+      if (!readCookie()) {
+        dropdown.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+        searchInput.focus();
+      }
+    });
+    textEl.style.cursor = 'pointer';
+
+    let debounce;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(debounce);
+      debounce = setTimeout(async () => {
+        const q = searchInput.value.trim();
+        if (q.length < 2) { resultsList.replaceChildren(); return; }
+        try {
+          const res = await fetch('/api/communities/autocomplete?q=' + encodeURIComponent(q));
+          const items = await res.json();
+          resultsList.replaceChildren();
+          items.forEach(c => {
+            const li = document.createElement('li');
+            li.className = 'location-bar__result';
+            li.setAttribute('role', 'option');
+            li.dataset.id = c.id;
+            li.textContent = c.name;
+            if (c.community_type) {
+              const small = document.createElement('small');
+              small.textContent = ' (' + c.community_type.replace('_', ' ') + ')';
+              li.appendChild(small);
+            }
+            resultsList.appendChild(li);
+          });
+        } catch {
+          resultsList.replaceChildren();
+          const li = document.createElement('li');
+          li.textContent = transError;
+          resultsList.appendChild(li);
+        }
+      }, 300);
+    });
+
+    resultsList.addEventListener('click', async function(e) {
+      const li = e.target.closest('[data-id]');
+      if (!li) return;
+      try {
+        const res = await fetch('/api/location/set', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({community_id: li.dataset.id})
+        });
+        const data = await res.json();
+        if (data.success) location.reload();
+      } catch {}
+    });
+
+    const loc = readCookie();
+    if ((!loc || loc.source === 'ip' || loc.source === 'none') && navigator.geolocation && !sessionStorage.getItem('minoo_geo_asked')) {
+      sessionStorage.setItem('minoo_geo_asked', '1');
+      textEl.textContent = transDetecting;
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        try {
+          const res = await fetch('/api/location/update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
+          });
+          const data = await res.json();
+          if (data.success) {
+            render({communityName: data.communityName, source: 'browser'});
+          } else {
+            render(null);
+          }
+        } catch { render(null); }
+      }, () => { render(null); }, {timeout: 10000, maximumAge: 300000});
+    }
+  })();
+  </script>
+    <script>
+  (function() {
+    const widget = document.getElementById('chat-widget');
+    if (!widget) return;
+
+    const toggle = widget.querySelector('.chat-widget__toggle');
+    const panel = document.getElementById('chat-panel');
+    const closeBtn = widget.querySelector('.chat-widget__close');
+    const form = widget.querySelector('.chat-widget__form');
+    const input = document.getElementById('chat-input');
+    const messages = widget.querySelector('.chat-widget__messages');
+    const sendBtn = widget.querySelector('.chat-widget__send');
+
+    const transThinking = widget.dataset.transThinking || 'Thinking\u2026';
+    const transError = widget.dataset.transError || 'Something went wrong. Please try again.';
+
+    const history = [];
+
+    function openPanel() {
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      input.focus();
+    }
+
+    function closePanel() {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    function addMessage(role, text) {
+      const div = document.createElement('div');
+      div.className = 'chat-widget__message chat-widget__message--' + role;
+      const p = document.createElement('p');
+      p.textContent = text;
+      div.appendChild(p);
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'chat-widget__typing';
+      div.id = 'chat-typing';
+      div.textContent = transThinking;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('chat-typing');
+      if (el) el.remove();
+    }
+
+    toggle.addEventListener('click', function() {
+      if (panel.hidden) openPanel(); else closePanel();
+    });
+    closeBtn.addEventListener('click', closePanel);
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      addMessage('user', text);
+      history.push({role: 'user', content: text});
+      sendBtn.disabled = true;
+      showTyping();
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({message: text, history: history.slice(0, -1)})
+        });
+        const data = await res.json();
+        removeTyping();
+
+        if (data.error) {
+          addMessage('error', data.error);
+        } else {
+          addMessage('assistant', data.reply);
+          history.push({role: 'assistant', content: data.reply});
+        }
+      } catch {
+        removeTyping();
+        addMessage('error', transError);
+      }
+
+      sendBtn.disabled = false;
+      input.focus();
+    });
+  })();
+  </script>
+  <script>
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.related-section').forEach(el => { el.style.opacity = '0'; el.style.transition = 'opacity 0.4s ease'; observer.observe(el); });
+  }
+  </script>
+  </body>
+</html>
