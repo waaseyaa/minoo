@@ -3503,15 +3503,18 @@ final class AppServiceProvider extends ServiceProvider
         );
     }
 
-    public function boot(): void
+    /**
+     * Bundle field definitions for `group:business`.
+     *
+     * Single source of truth shared by `boot()` and the test contract suite
+     * (`ConsentFieldsTest`, `GroupTest`). Tests register these into a minimal
+     * `FieldDefinitionRegistry` to assert shape without booting the kernel.
+     *
+     * @return list<FieldDefinition>
+     */
+    public static function groupBusinessBundleFields(): array
     {
-        // =====================================================================
-        // --- Groups: register business-bundle fields ---
-        // =====================================================================
-
-        /** @var EntityTypeManager $etm */
-        $etm = $this->resolve(EntityTypeManager::class);
-        $etm->addBundleFields('group', 'business', [
+        return [
             new FieldDefinition(
                 name: 'slug',
                 type: 'string',
@@ -3664,7 +3667,18 @@ final class AppServiceProvider extends ServiceProvider
                 label: 'Coordinate Source',
                 description: 'How coordinates were obtained: address or community.',
             ),
-        ]);
+        ];
+    }
+
+    public function boot(): void
+    {
+        // =====================================================================
+        // --- Groups: register business-bundle fields ---
+        // =====================================================================
+
+        /** @var EntityTypeManager $etm */
+        $etm = $this->resolve(EntityTypeManager::class);
+        $etm->addBundleFields('group', 'business', self::groupBusinessBundleFields());
 
         // =====================================================================
         // --- I18n: Translation Twig extension ---

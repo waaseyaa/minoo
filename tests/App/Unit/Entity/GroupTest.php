@@ -9,6 +9,7 @@ use App\Provider\AppServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Field\FieldDefinitionRegistry;
 
 #[CoversClass(Group::class)]
 final class GroupTest extends TestCase
@@ -40,17 +41,15 @@ final class GroupTest extends TestCase
     }
 
     #[Test]
-    public function it_defines_community_id_field(): void
+    public function it_defines_community_id_field_on_business_bundle(): void
     {
-        $provider = new AppServiceProvider();
-        $provider->register();
+        $registry = new FieldDefinitionRegistry();
+        $registry->registerBundleFields('group', 'business', AppServiceProvider::groupBusinessBundleFields());
 
-        $types = $provider->getEntityTypes();
-        $groupType = array_values(array_filter($types, fn($t) => $t->id() === 'group'))[0];
-        $fields = $groupType->getFieldDefinitions();
+        $fields = $registry->bundleFieldsFor('group', 'business');
 
         $this->assertArrayHasKey('community_id', $fields);
-        $this->assertSame('entity_reference', $fields['community_id']['type']);
-        $this->assertSame('community', $fields['community_id']['settings']['target_type']);
+        $this->assertSame('entity_reference', $fields['community_id']->getType());
+        $this->assertSame('community', $fields['community_id']->getSetting('target_type'));
     }
 }
