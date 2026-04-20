@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Storage;
 
 use App\Entity\Group;
+use App\Provider\AppServiceProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Database\DBALDatabase;
+use Waaseyaa\Field\FieldDefinition;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
 
@@ -31,30 +33,21 @@ use Waaseyaa\Foundation\Kernel\HttpKernel;
 #[CoversNothing]
 final class GroupBundleRoutingTest extends TestCase
 {
-    /** @var list<string> The 19 fields registered via addBundleFields() in AppServiceProvider. */
-    private const BUNDLE_FIELDS = [
-        'slug',
-        'description',
-        'url',
-        'region',
-        'community_id',
-        'phone',
-        'email',
-        'address',
-        'booking_url',
-        'media_id',
-        'copyright_status',
-        'consent_public',
-        'consent_ai_training',
-        'source',
-        'verified_at',
-        'social_posts',
-        'latitude',
-        'longitude',
-        'coordinate_source',
-    ];
-
     private static HttpKernel $kernel;
+
+    /**
+     * Derived from `AppServiceProvider::groupBusinessBundleFields()` so adding
+     * a new bundle field to the provider auto-extends the routing assertion.
+     *
+     * @return list<string>
+     */
+    private function expectedBundleFields(): array
+    {
+        return array_map(
+            static fn (FieldDefinition $field): string => $field->getName(),
+            AppServiceProvider::groupBusinessBundleFields(),
+        );
+    }
 
     public static function setUpBeforeClass(): void
     {
@@ -121,13 +114,15 @@ final class GroupBundleRoutingTest extends TestCase
         self::assertInstanceOf(DBALDatabase::class, $database);
         $connection = $database->getConnection();
 
+        $expectedFields = $this->expectedBundleFields();
+
         $subtableRow = $connection->fetchAssociative(
             'SELECT * FROM group__business WHERE gid = :gid',
             ['gid' => $gid],
         );
         self::assertIsArray($subtableRow, 'group__business row should exist after save.');
 
-        foreach (self::BUNDLE_FIELDS as $field) {
+        foreach ($expectedFields as $field) {
             self::assertArrayHasKey(
                 $field,
                 $subtableRow,
@@ -142,7 +137,7 @@ final class GroupBundleRoutingTest extends TestCase
         $baseData = $baseDataJson === '' ? [] : json_decode($baseDataJson, true, flags: JSON_THROW_ON_ERROR);
         self::assertIsArray($baseData);
 
-        foreach (self::BUNDLE_FIELDS as $field) {
+        foreach ($expectedFields as $field) {
             self::assertArrayNotHasKey(
                 $field,
                 $baseData,
