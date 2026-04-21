@@ -1768,6 +1768,15 @@ final class AppServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        $router->addRoute(
+            'og.crisis.sagamok_spanish_river_flood.png',
+            RouteBuilder::create('/og/crisis/sagamok-spanish-river-flood.png')
+                ->controller('App\\Controller\\OpenGraphController::sagamokSpanishRiverFloodPng')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
         // =====================================================================
         // --- Language ---
         // =====================================================================

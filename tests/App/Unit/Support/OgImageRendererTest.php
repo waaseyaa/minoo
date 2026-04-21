@@ -42,8 +42,16 @@ final class OgImageRendererTest extends TestCase
             $font,
         );
         $png = $renderer->renderPng('Test Title For Open Graph', 'Business', [200, 80, 60]);
+        $pngEmergency = $renderer->renderPng(
+            'Test Title For Open Graph',
+            'Business',
+            [200, 80, 60],
+            OgImageRenderer::STYLE_EMERGENCY,
+        );
 
         self::assertStringStartsWith("\x89PNG\r\n\x1a\n", $png);
         self::assertGreaterThan(5000, strlen($png));
+        self::assertStringStartsWith("\x89PNG\r\n\x1a\n", $pngEmergency);
+        self::assertGreaterThan(5000, strlen($pngEmergency));
     }
 }

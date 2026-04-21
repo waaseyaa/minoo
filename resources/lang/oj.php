@@ -373,6 +373,7 @@ return [
     // Sagamok — Spanish River flood status (EN until community translation review)
     'sagamok_flood.title' => 'Spanish River flood response — {community}',
     'sagamok_flood.meta_description' => 'Community flood status for Sagamok Anishnawbek: river levels, boil water advisory, road access, contacts, and how to stay prepared.',
+    'sagamok_flood.og_subtitle' => 'State of emergency — last verified {date}',
     'sagamok_flood.breadcrumb' => 'Spanish River flood response',
     'sagamok_flood.translation_pending' => 'Anishinaabemowin for this page is still being reviewed with a community speaker. Important safety details are shown in English for now.',
     'sagamok_flood.community_callout_title' => 'Spanish River flood response',

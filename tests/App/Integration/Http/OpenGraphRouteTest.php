@@ -71,6 +71,15 @@ final class OpenGraphRouteTest extends HttpKernelTestCase
             'copyright_status' => 'community_owned',
         ]);
         $teachingStorage->save($teaching);
+
+        $sagamok = new Community([
+            'name' => 'Sagamok Anishnawbek',
+            'slug' => 'sagamok-anishnawbek',
+            'type' => 'first_nation',
+            'status' => 1,
+            'content' => 'Sagamok Anishnawbek First Nation.',
+        ]);
+        $communityStorage->save($sagamok);
     }
 
     #[Test]
@@ -124,6 +133,22 @@ final class OpenGraphRouteTest extends HttpKernelTestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('image/png', $response->headers->get('Content-Type'));
         self::assertStringStartsWith("\x89PNG\r\n\x1a\n", (string) $response->getContent());
+    }
+
+    #[Test]
+    public function sagamok_spanish_river_flood_crisis_og_png_ok(): void
+    {
+        if (!extension_loaded('gd')) {
+            self::markTestSkipped('ext-gd not loaded');
+        }
+
+        $response = $this->send('GET', '/og/crisis/sagamok-spanish-river-flood.png');
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('image/png', $response->headers->get('Content-Type'));
+        $body = (string) $response->getContent();
+        self::assertStringStartsWith("\x89PNG\r\n\x1a\n", $body);
+        $cache = strtolower((string) $response->headers->get('Cache-Control'));
+        self::assertStringContainsString('public', $cache);
     }
 
     #[Test]

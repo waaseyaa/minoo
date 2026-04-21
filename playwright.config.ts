@@ -27,6 +27,7 @@ export default defineConfig({
       ...process.env,
       APP_ENV: 'testing',
       WAASEYAA_DEV_FALLBACK_ACCOUNT: 'false',
+      MINOO_BASE_URL: 'http://localhost:8081',
     },
   },
 });

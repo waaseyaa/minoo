@@ -406,6 +406,7 @@ return [
     // Sagamok — Spanish River flood status (sub-page)
     'sagamok_flood.title' => 'Spanish River flood response — {community}',
     'sagamok_flood.meta_description' => 'Community flood status for Sagamok Anishnawbek: river levels, boil water advisory, road access, contacts, and how to stay prepared.',
+    'sagamok_flood.og_subtitle' => 'State of emergency — last verified {date}',
     'sagamok_flood.breadcrumb' => 'Spanish River flood response',
     'sagamok_flood.translation_pending' => '',
     'sagamok_flood.community_callout_title' => 'Spanish River flood response',

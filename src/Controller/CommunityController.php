@@ -137,9 +137,13 @@ final class CommunityController
             return $this->communityListNotFoundResponse($account);
         }
 
+        /** @var array{emergency_open_graph: bool} $floodConfig */
+        $floodConfig = require dirname(__DIR__, 2) . '/config/sagamok_flood.php';
+
         $html = $this->twig->render('pages/communities/spanish-river-flood.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/communities/' . $slug . '/spanish-river-flood',
             'community' => $community,
+            'sagamok_flood_emergency_og' => $floodConfig['emergency_open_graph'],
         ]));
 
         return new Response($html);

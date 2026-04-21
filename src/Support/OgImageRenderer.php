@@ -15,6 +15,10 @@ final class OgImageRenderer
 
     public const HEIGHT = 630;
 
+    public const STYLE_DEFAULT = 'default';
+
+    public const STYLE_EMERGENCY = 'emergency';
+
     /** @var list<string> */
     private array $fontCandidates;
 
@@ -34,8 +38,12 @@ final class OgImageRenderer
     /**
      * @param array{0: int, 1: int, 2: int} $accentRgb
      */
-    public function renderPng(string $title, string $subtitle, array $accentRgb): string
-    {
+    public function renderPng(
+        string $title,
+        string $subtitle,
+        array $accentRgb,
+        string $style = self::STYLE_DEFAULT,
+    ): string {
         if (!extension_loaded('gd')) {
             throw new RuntimeException('PHP GD extension is required for Open Graph images.');
         }
@@ -52,7 +60,11 @@ final class OgImageRenderer
             throw new RuntimeException('imagecreatetruecolor failed.');
         }
 
-        $bg = imagecolorallocate($im, 10, 10, 10);
+        $isEmergency = $style === self::STYLE_EMERGENCY;
+        $bgRgb = $isEmergency ? [22, 8, 8] : [10, 10, 10];
+        $accentBarWidth = $isEmergency ? 22 : 14;
+
+        $bg = imagecolorallocate($im, $bgRgb[0], $bgRgb[1], $bgRgb[2]);
         $textPrimary = imagecolorallocate($im, 240, 236, 230);
         $textMuted = imagecolorallocate($im, 160, 160, 150);
         $accent = imagecolorallocate(
@@ -63,7 +75,7 @@ final class OgImageRenderer
         );
 
         imagefilledrectangle($im, 0, 0, self::WIDTH, self::HEIGHT, $bg);
-        imagefilledrectangle($im, 0, 0, 14, self::HEIGHT, $accent);
+        imagefilledrectangle($im, 0, 0, $accentBarWidth, self::HEIGHT, $accent);
 
         $paddingX = 72;
         $paddingY = 64;
