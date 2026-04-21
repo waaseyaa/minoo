@@ -9,8 +9,8 @@
   <meta name="description" content="{% block meta_description %}{{ trans('og.default_description') }}{% endblock %}">
   <meta property="og:title" content="{% block og_title %}{{ block('title') }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}{{ trans('og.default_description') }}{% endblock %}">
-  <meta property="og:image" content="{% block og_image %}https://minoo.live/img/og-default.png{% endblock %}">
-  <meta property="og:url" content="https://minoo.live{{ path is defined ? lang_url(path) : lang_url('/') }}">
+  <meta property="og:image" content="{% block og_image %}{{ site_base_url }}/img/og-default.png{% endblock %}">
+  <meta property="og:url" content="{{ site_base_url }}{{ path is defined ? lang_url(path) : lang_url('/') }}">
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:site_name" content="Minoo">
   <meta name="twitter:card" content="summary_large_image">

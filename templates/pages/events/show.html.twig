@@ -10,6 +10,7 @@
 
 {% block og_type %}{% if event is defined and event %}article{% else %}website{% endif %}{% endblock %}
 {% block og_description %}{% if event is defined and event %}{{ event.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+{% block og_image %}{% if event is defined and event %}{{ site_base_url }}/og/event/{{ event.get('slug') }}.png{% else %}{{ parent() }}{% endif %}{% endblock %}
 
 {% block content %}
   {% if event is defined and event %}

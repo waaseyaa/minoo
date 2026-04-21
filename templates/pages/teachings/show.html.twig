@@ -10,6 +10,7 @@
 
 {% block og_type %}{% if teaching is defined and teaching %}article{% else %}website{% endif %}{% endblock %}
 {% block og_description %}{% if teaching is defined and teaching %}{{ teaching.get('content')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+{% block og_image %}{% if teaching is defined and teaching %}{{ site_base_url }}/og/teaching/{{ teaching.get('slug') }}.png{% else %}{{ parent() }}{% endif %}{% endblock %}
 
 {% block content %}
   {% if teaching is defined and teaching %}

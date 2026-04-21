@@ -3,10 +3,25 @@ FROM php:8.4-fpm-alpine AS base
 RUN apk add --no-cache \
     sqlite-libs \
     icu-libs \
-    && docker-php-ext-install \
+    freetype \
+    libpng \
+    libjpeg-turbo \
+    ttf-dejavu \
+    freetype-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+    gd \
     intl \
     opcache \
-    pdo_sqlite
+    pdo_sqlite \
+    && apk del --no-cache \
+    freetype-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    $PHPIZE_DEPS
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
