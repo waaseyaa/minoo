@@ -151,6 +151,7 @@ final class CommunityController
             'path' => '/communities',
             'communities_json' => '[]',
             'location_json' => 'null',
+            'businesses_json' => json_encode([], JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR),
         ]));
 
         return new Response($html, 404);
@@ -173,13 +174,7 @@ final class CommunityController
         $community = $ids !== [] ? $storage->load(reset($ids)) : null;
 
         if ($community === null) {
-            $html = $this->twig->render('pages/communities/index.html.twig', LayoutTwigContext::withAccount($account, [
-                'path' => '/communities',
-                'communities_json' => '[]',
-                'location_json' => 'null',
-            ]));
-
-            return new Response($html, 404);
+            return $this->communityListNotFoundResponse($account);
         }
 
         $nearby = [];
