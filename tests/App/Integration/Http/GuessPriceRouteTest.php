@@ -28,4 +28,12 @@ final class GuessPriceRouteTest extends HttpKernelTestCase
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
         $this->assertStringContainsString('guess-price-game', (string) $response->getContent());
     }
+
+    #[Test]
+    public function guess_price_trailing_slash_redirects_to_canonical(): void
+    {
+        $response = $this->send('GET', '/games/guess-price/');
+        $this->assertSame(Response::HTTP_PERMANENTLY_REDIRECT, $response->getStatusCode());
+        $this->assertSame('/games/guess-price', $response->headers->get('Location'));
+    }
 }

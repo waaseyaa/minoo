@@ -3188,6 +3188,15 @@ final class AppServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        $router->addRoute(
+            'games.guess_price.trailing_redirect',
+            RouteBuilder::create('/games/guess-price/')
+                ->controller(static fn (): Response => new RedirectResponse('/games/guess-price', Response::HTTP_PERMANENTLY_REDIRECT))
+                ->allowAll()
+                ->methods('GET', 'HEAD')
+                ->build(),
+        );
+
         // --- Journey routes ---
 
         $router->addRoute(
@@ -3485,6 +3494,15 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
+            'games.guess_price.short.trailing_redirect',
+            RouteBuilder::create('/guess-price/')
+                ->controller(static fn (): Response => new RedirectResponse('/guess-price', Response::HTTP_PERMANENTLY_REDIRECT))
+                ->allowAll()
+                ->methods('GET', 'HEAD')
+                ->build(),
+        );
+
+        $router->addRoute(
             'games.crossword.short',
             RouteBuilder::create('/crossword')
                 ->controller('App\Controller\CrosswordController::page')
@@ -3510,6 +3528,15 @@ final class AppServiceProvider extends ServiceProvider
             RouteBuilder::create('/games')
                 ->controller('App\Controller\StaticPageController::games')
                 ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'static.games.trailing_redirect',
+            RouteBuilder::create('/games/')
+                ->controller(static fn (): Response => new RedirectResponse('/games', Response::HTTP_PERMANENTLY_REDIRECT))
+                ->allowAll()
+                ->methods('GET', 'HEAD')
+                ->build(),
         );
 
         $router->addRoute(
