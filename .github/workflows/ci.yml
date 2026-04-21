@@ -18,7 +18,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Verify deploy rsync rules
         run: ./bin/verify-deploy-rsync
@@ -40,12 +40,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout minoo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: minoo
 
       - name: Checkout waaseyaa framework
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: waaseyaa/framework
           ref: ${{ env.WAASEYAA_FRAMEWORK_REF }}
@@ -82,12 +82,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout minoo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: minoo
 
       - name: Checkout waaseyaa framework
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: waaseyaa/framework
           ref: ${{ env.WAASEYAA_FRAMEWORK_REF }}
@@ -128,12 +128,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout minoo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: minoo
 
       - name: Checkout waaseyaa framework
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: waaseyaa/framework
           ref: ${{ env.WAASEYAA_FRAMEWORK_REF }}
@@ -148,7 +148,7 @@ jobs:
           coverage: none
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '25'
           cache: 'npm'
@@ -187,12 +187,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout minoo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: minoo
 
       - name: Checkout waaseyaa framework
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: waaseyaa/framework
           ref: ${{ env.WAASEYAA_FRAMEWORK_REF }}
@@ -243,7 +243,7 @@ jobs:
     name: Commercial Use Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check for commercial/payment code
         run: |
