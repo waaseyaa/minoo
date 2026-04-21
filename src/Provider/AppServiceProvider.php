@@ -1935,6 +1935,17 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
+            'communities.spanish_river_flood',
+            RouteBuilder::create('/communities/{slug}/spanish-river-flood')
+                ->controller('App\\Controller\\CommunityController::spanishRiverFlood')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
+        $router->addRoute(
             'communities.show',
             RouteBuilder::create('/communities/{slug}')
                 ->controller('App\\Controller\\CommunityController::show')

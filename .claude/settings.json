@@ -3,6 +3,10 @@
     "minoo": {
       "command": "node",
       "args": ["mcp/server.js"]
+    },
+    "bimaaji": {
+      "command": "node",
+      "args": ["../waaseyaa/packages/bimaaji/mcp/server.js"]
     }
   },
   "hooks": {
