@@ -930,6 +930,99 @@
     text-underline-offset: 3px;
   }
 
+  .crisis-share-wrap {
+    padding-block: var(--space-3xs);
+    padding-inline: var(--gutter);
+  }
+
+  .share-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-xs);
+    padding: var(--space-3xs) var(--space-2xs);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface-raised);
+  }
+
+  .share-toolbar__heading {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 650;
+    color: var(--text-muted);
+    flex: 0 0 auto;
+    margin-inline-end: var(--space-3xs);
+    line-height: 1.2;
+  }
+
+  .share-toolbar__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--space-3xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .share-toolbar__item {
+    display: flex;
+  }
+
+  .share-toolbar__icon {
+    display: inline-flex;
+    line-height: 0;
+    flex-shrink: 0;
+    color: var(--color-communities);
+  }
+
+  .share-toolbar__icon svg {
+    display: block;
+  }
+
+  .share-toolbar__link,
+  .share-toolbar__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-communities);
+    text-decoration: none;
+    background: transparent;
+    border: 0;
+    padding: 0.35rem;
+    min-inline-size: 2.25rem;
+    min-block-size: 2.25rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 0;
+  }
+
+  .share-toolbar__link:hover,
+  .share-toolbar__btn:hover {
+    color: var(--text-primary);
+    background: oklch(from var(--color-communities) l c h / 0.12);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .share-toolbar__link:focus-visible,
+  .share-toolbar__btn:focus-visible {
+    outline: 2px solid var(--color-communities);
+    outline-offset: 2px;
+  }
+
+  .share-toolbar__status {
+    flex: 1 0 100%;
+    margin: 0;
+    min-block-size: 1.1em;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    padding-inline-start: 0.05rem;
+  }
+
   /* ══════════════════════════════════════════════
      Agim Number Game
      ══════════════════════════════════════════════ */

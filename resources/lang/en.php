@@ -25,6 +25,18 @@ return [
     'nav.login' => 'Login',
     'nav.messages' => 'Messages',
 
+    // Share toolbar (reusable on pages, posts, etc.)
+    'share.toolbar_aria' => 'Share this page',
+    'share.page_heading' => 'Share',
+    'share.facebook' => 'Facebook',
+    'share.twitter' => 'X',
+    'share.linkedin' => 'LinkedIn',
+    'share.email' => 'Email',
+    'share.copy_link' => 'Copy link',
+    'share.copy_success' => 'Link copied to clipboard.',
+    'share.copy_fail' => 'Could not copy automatically — select the address in your browser bar.',
+    'share.native' => 'Share using device',
+
     // Base layout - Footer
     'footer.tagline' => 'A living map of community',
     'footer.copyright' => 'Minoo',

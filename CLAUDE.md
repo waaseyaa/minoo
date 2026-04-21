@@ -134,7 +134,7 @@ All entity types are registered in `App\Provider\AppServiceProvider`.
 
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
-php -S localhost:8080 -t public public/index.php  # Dev server (router script required — public/admin/ dir exists)
+php -S 0.0.0.0:8080 -t public public/index.php  # Dev server (router script required — public/admin/ dir exists). Use `0.0.0.0` not `localhost` on WSL2 so Windows browsers can open http://localhost:8080/… via port forwarding.
 ./vendor/bin/phpunit                          # All tests (914 tests, 2568 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)

@@ -1,0 +1,95 @@
+{# Required: share_url (absolute), share_title, share_summary
+   Icon-only controls: aria-label + title from share.* strings. #}
+<nav
+  class="share-toolbar"
+  aria-label="{{ trans('share.toolbar_aria') }}"
+  data-share-toolbar-root
+  data-share-url="{{ share_url|e('html_attr') }}"
+  data-share-title="{{ share_title|e('html_attr') }}"
+  data-share-text="{{ share_summary|e('html_attr') }}"
+>
+  <span class="share-toolbar__heading" id="share-toolbar-heading">{{ trans('share.page_heading') }}</span>
+  <ul class="share-toolbar__list" aria-labelledby="share-toolbar-heading">
+    <li class="share-toolbar__item">
+      <a
+        class="share-toolbar__link"
+        href="https://www.facebook.com/sharer/sharer.php?u={{ share_url|url_encode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="{{ trans('share.facebook') }}"
+        title="{{ trans('share.facebook') }}"
+      >
+        <span class="share-toolbar__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </span>
+      </a>
+    </li>
+    <li class="share-toolbar__item">
+      <a
+        class="share-toolbar__link"
+        href="https://twitter.com/intent/tweet?url={{ share_url|url_encode }}&text={{ share_title|url_encode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="{{ trans('share.twitter') }}"
+        title="{{ trans('share.twitter') }}"
+      >
+        <span class="share-toolbar__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </span>
+      </a>
+    </li>
+    <li class="share-toolbar__item">
+      <a
+        class="share-toolbar__link"
+        href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url|url_encode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="{{ trans('share.linkedin') }}"
+        title="{{ trans('share.linkedin') }}"
+      >
+        <span class="share-toolbar__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </span>
+      </a>
+    </li>
+    <li class="share-toolbar__item">
+      <a
+        class="share-toolbar__link"
+        href="mailto:?subject={{ share_title|url_encode }}&body={{ (share_summary ~ "\n\n" ~ share_url)|url_encode }}"
+        aria-label="{{ trans('share.email') }}"
+        title="{{ trans('share.email') }}"
+      >
+        <span class="share-toolbar__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </span>
+      </a>
+    </li>
+    <li class="share-toolbar__item">
+      <button
+        type="button"
+        class="share-toolbar__btn"
+        data-share-copy
+        aria-label="{{ trans('share.copy_link') }}"
+        title="{{ trans('share.copy_link') }}"
+      >
+        <span class="share-toolbar__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </span>
+      </button>
+    </li>
+    <li class="share-toolbar__item share-toolbar__item--native" data-share-native-wrap hidden>
+      <button
+        type="button"
+        class="share-toolbar__btn"
+        data-share-native
+        aria-label="{{ trans('share.native') }}"
+        title="{{ trans('share.native') }}"
+      >
+        <span class="share-toolbar__icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </span>
+      </button>
+    </li>
+  </ul>
+  <p class="share-toolbar__status" role="status" aria-live="polite" data-share-status></p>
+</nav>

@@ -3,6 +3,9 @@
 {% set sagamok_flood_notice = 'https://www.sagamokanishnawbek.com/sagamok-news/sudbury-district-has-issued-an-updated-flood-warning-notice-for-the-spanish-river' %}
 {% set sagamok_flood_news = 'https://www.sagamokanishnawbek.com/sagamok-news' %}
 {% set sagamok_flood_verified = '2026-04-21' %}
+{% set sagamok_flood_share_url = 'https://minoo.live' ~ lang_url(path) %}
+{% set sagamok_flood_share_title = trans('sagamok_flood.title', {community: community.get('name')}) ~ ' — Minoo' %}
+{% set sagamok_flood_share_summary = trans('sagamok_flood.meta_description') %}
 
 {% block title %}{{ trans('sagamok_flood.title', {community: community.get('name')}) }} — Minoo{% endblock %}
 
@@ -38,6 +41,14 @@
       {{ trans('sagamok_flood.official_text_before') }}
       <a href="{{ sagamok_flood_news }}" rel="noopener" target="_blank">{{ trans('sagamok_flood.official_link') }}</a>.
     </span>
+  </div>
+
+  <div class="content-max crisis-share-wrap">
+    {% include 'components/shared/ui/share-toolbar.html.twig' with {
+      share_url: sagamok_flood_share_url,
+      share_title: sagamok_flood_share_title,
+      share_summary: sagamok_flood_share_summary
+    } %}
   </div>
 
   <div class="content-max crisis-page">
@@ -177,4 +188,55 @@
       </p>
     </footer>
   </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var root = document.querySelector('[data-share-toolbar-root]');
+  if (!root) return;
+  var url = root.getAttribute('data-share-url') || '';
+  var title = root.getAttribute('data-share-title') || '';
+  var text = root.getAttribute('data-share-text') || '';
+  var statusEl = root.querySelector('[data-share-status]');
+  var copyBtn = root.querySelector('[data-share-copy]');
+  var nativeWrap = root.querySelector('[data-share-native-wrap]');
+  var nativeBtn = root.querySelector('[data-share-native]');
+  var copyOk = {{ trans('share.copy_success')|json_encode|raw }};
+  var copyFail = {{ trans('share.copy_fail')|json_encode|raw }};
+
+  function setStatus(msg) {
+    if (statusEl) statusEl.textContent = msg || '';
+  }
+
+  if (copyBtn && url) {
+    copyBtn.addEventListener('click', function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          setStatus(copyOk);
+        }).catch(function () {
+          try {
+            window.prompt(copyFail, url);
+          } catch (e) {
+            setStatus(copyFail);
+          }
+        });
+      } else {
+        try {
+          window.prompt(copyFail, url);
+        } catch (e2) {
+          setStatus(copyFail);
+        }
+      }
+    });
+  }
+
+  if (nativeBtn && nativeWrap && typeof navigator.share === 'function') {
+    nativeWrap.hidden = false;
+    nativeBtn.addEventListener('click', function () {
+      navigator.share({ url: url, title: title, text: text }).catch(function () {});
+    });
+  }
+})();
+</script>
 {% endblock %}

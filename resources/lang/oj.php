@@ -77,6 +77,18 @@ return [
     'nav.login' => 'Biindigen', // dict: biindige: "enter, go inside"
     'nav.messages' => 'Mazina\'iganan', // dict: mazina'igan: letter/message/document
 
+    // Share toolbar (EN until community review)
+    'share.toolbar_aria' => 'Share this page',
+    'share.page_heading' => 'Share',
+    'share.facebook' => 'Facebook',
+    'share.twitter' => 'X',
+    'share.linkedin' => 'LinkedIn',
+    'share.email' => 'Email',
+    'share.copy_link' => 'Copy link',
+    'share.copy_success' => 'Link copied to clipboard.',
+    'share.copy_fail' => 'Could not copy automatically — select the address in your browser bar.',
+    'share.native' => 'Share using device',
+
     // Footer
     'footer.tagline' => "Bimaadiziwin oodena-mazina'igan", // "A living community-map" — natural Ojibwe word order (modifier before noun)
     'footer.copyright' => 'Minoo',
