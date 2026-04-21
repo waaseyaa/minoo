@@ -59,7 +59,55 @@
       <span class="ingest-summary__label">NC Failed</span>
       <span class="ingest-summary__value">{{ nc_sync.failed|default(0) }}</span>
     </div>
+    <div class="ingest-summary__card">
+      <span class="ingest-summary__label">NC Hits (last cycle)</span>
+      <span class="ingest-summary__value">{{ nc_sync.fetched|default('—') }}</span>
+    </div>
+    <div class="ingest-summary__card">
+      <span class="ingest-summary__label">NC Worker Cycles</span>
+      <span class="ingest-summary__value">{{ nc_sync.cycles|default('—') }}</span>
+    </div>
+    <div class="ingest-summary__card{% if nc_sync.fetch_failed|default(false) %} ingest-summary__card--failed{% endif %}">
+      <span class="ingest-summary__label">NC Fetch OK</span>
+      <span class="ingest-summary__value">{% if nc_sync.fetch_failed|default(false) %}no{% else %}yes{% endif %}</span>
+    </div>
   </div>
+
+  <section class="ingest-nc-detail flow-md" aria-labelledby="ingest-nc-h">
+    <h2 id="ingest-nc-h" class="section-title" style="font-size:1.15rem;">North Cloud → Minoo (search ingest)</h2>
+    <p class="dashboard__lede" style="max-width:65ch;">
+      The <code>minoo-nc-sync</code> service runs <code>scripts/nc-sync-worker.php</code> every <strong>30 minutes</strong>,
+      pulls up to <strong>20</strong> recent hits from North Cloud Search (<code>topics[]=indigenous</code>, quality floor from config),
+      and maps them to <strong>teaching</strong> / <strong>event</strong> rows (deduped on <code>source_url</code>).
+      This page reads <code>storage/nc-sync-status.json</code>; the same payload is available at
+      <a href="/api/admin/nc-sync-status"><code>/api/admin/nc-sync-status</code></a> (JSON).
+    </p>
+    {% if nc_sync.skip_reasons is defined and nc_sync.skip_reasons|length > 0 %}
+      <div>
+        <h3 class="section-title" style="font-size:1rem;">Skip reasons (last cycle)</h3>
+        <dl class="ingest-skip-reasons">
+          {% for reason, count in nc_sync.skip_reasons %}
+            <div class="ingest-skip-reasons__row">
+              <dt><code>{{ reason }}</code></dt>
+              <dd>{{ count }}</dd>
+            </div>
+          {% endfor %}
+        </dl>
+      </div>
+    {% endif %}
+    {% if nc_sync.skipped_samples is defined and nc_sync.skipped_samples|length > 0 %}
+      <details class="ingest-json-details">
+        <summary>Skipped hit samples ({{ nc_sync.skipped_samples|length }})</summary>
+        <pre class="ingest-json-pre">{{ nc_sync.skipped_samples|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+      </details>
+    {% endif %}
+    {% if nc_sync.created_samples is defined and nc_sync.created_samples|length > 0 %}
+      <details class="ingest-json-details">
+        <summary>Created hit samples ({{ nc_sync.created_samples|length }})</summary>
+        <pre class="ingest-json-pre">{{ nc_sync.created_samples|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+      </details>
+    {% endif %}
+  </section>
 
   <nav class="ingest-filters" aria-label="Filter by status">
     <a href="/admin/ingestion" class="feed-chip{% if not status_filter %} feed-chip--active{% endif %}">All</a>
