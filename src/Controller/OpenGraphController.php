@@ -99,8 +99,9 @@ final class OpenGraphController
         $name = (string) $community->get('name');
         $title = $this->translator->trans('sagamok_flood.title', ['community' => $name], 'en');
         $subtitle = $this->translator->trans('sagamok_flood.og_subtitle', [], 'en');
+        $imageCta = $this->translator->trans('sagamok_flood.og_image_cta', [], 'en');
 
-        $etagPayload = $title . '|' . $subtitle . '|' . (string) $config['og_image_revision']
+        $etagPayload = $title . '|' . $subtitle . '|' . $imageCta . '|' . (string) $config['og_image_revision']
             . '|' . ($config['emergency_open_graph'] ? '1' : '0');
         $etag = '"' . hash('sha256', $etagPayload) . '"';
 
@@ -119,6 +120,7 @@ final class OpenGraphController
             $subtitle,
             self::ACCENT_SAGAMOK_FLOOD,
             OgImageRenderer::STYLE_EMERGENCY,
+            $imageCta,
         );
         $response->setContent($binary);
 

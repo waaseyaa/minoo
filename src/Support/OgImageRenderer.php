@@ -37,12 +37,14 @@ final class OgImageRenderer
 
     /**
      * @param array{0: int, 1: int, 2: int} $accentRgb
+     * @param string|null $imageCta Optional line(s) above the domain footer (emergency style only).
      */
     public function renderPng(
         string $title,
         string $subtitle,
         array $accentRgb,
         string $style = self::STYLE_DEFAULT,
+        ?string $imageCta = null,
     ): string {
         if (!extension_loaded('gd')) {
             throw new RuntimeException('PHP GD extension is required for Open Graph images.');
@@ -101,6 +103,28 @@ final class OgImageRenderer
         foreach ($lines as $line) {
             $this->drawTtfLine($im, $font, $titleSize, $paddingX, $y, $textPrimary, $line);
             $y += $titleLineAdvance;
+        }
+
+        $ctaText = $imageCta !== null ? trim($imageCta) : '';
+        if ($ctaText !== '' && $isEmergency) {
+            $ctaSize = 24;
+            $ctaColor = imagecolorallocate($im, 255, 196, 188);
+            $ctaLines = $this->wrapTitle($font, $ctaText, $ctaSize, $maxTextWidth, 2);
+            $ctaLineAdvance = (int) round($ctaSize * 1.28);
+            $footerReserve = 56;
+            $ctaBaseline = self::HEIGHT - $footerReserve - $ctaSize
+                - ($ctaLineAdvance * max(0, count($ctaLines) - 1));
+            foreach ($ctaLines as $i => $ctaLine) {
+                $this->drawTtfLine(
+                    $im,
+                    $font,
+                    $ctaSize,
+                    $paddingX,
+                    $ctaBaseline + $i * $ctaLineAdvance,
+                    $ctaColor,
+                    $ctaLine,
+                );
+            }
         }
 
         $footer = 'minoo.live';

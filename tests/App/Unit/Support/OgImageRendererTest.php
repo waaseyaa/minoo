@@ -47,6 +47,7 @@ final class OgImageRendererTest extends TestCase
             'Business',
             [200, 80, 60],
             OgImageRenderer::STYLE_EMERGENCY,
+            'Tap for updates →',
         );
 
         self::assertStringStartsWith("\x89PNG\r\n\x1a\n", $png);
