@@ -2521,7 +2521,10 @@ final class AppServiceProvider extends ServiceProvider
                 }
                 return new Response('Admin interface not available.', 404);
             })
-            ->requirement('path', '(?!_surface(/|$)).*')
+            // Do not capture SSR admin pages (e.g. /admin/ingestion, /admin/users) — those
+            // are real routes; if {path} matches them, Symfony can hit this catch-all first
+            // and return 404 when no public/admin/index.html exists.
+            ->requirement('path', '(?!_surface(/|$))(?!ingestion$)(?!users$).*')
             ->default('path', '')
             ->build());
 
@@ -3156,6 +3159,16 @@ final class AppServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        $router->addRoute(
+            'games.guess_price',
+            RouteBuilder::create('/games/guess-price')
+                ->controller('App\\Controller\\GuessPriceController::page')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
         // --- Journey routes ---
 
         $router->addRoute(
@@ -3442,6 +3455,13 @@ final class AppServiceProvider extends ServiceProvider
             'games.agim.short',
             RouteBuilder::create('/agim')
                 ->controller('App\Controller\AgimController::page')
+                ->allowAll()->render()->methods('GET')->build(),
+        );
+
+        $router->addRoute(
+            'games.guess_price.short',
+            RouteBuilder::create('/guess-price')
+                ->controller('App\Controller\GuessPriceController::page')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
