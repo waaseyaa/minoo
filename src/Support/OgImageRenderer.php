@@ -88,11 +88,19 @@ final class OgImageRenderer
         $y = $paddingY + $subtitleSize;
         $this->drawTtfLine($im, $font, $subtitleSize, $paddingX, $y, $textMuted, $subtitle);
 
-        $y += (int) ($subtitleSize * 1.8);
+        $y += (int) round($subtitleSize * 1.85);
+        if ($isEmergency) {
+            $y += 18;
+        }
+
+        // Baseline advance between lines: imagettftext() y is the baseline; 1.15× pt size
+        // was too tight (descenders collided with the line below). ~1.38–1.42 reads cleanly.
+        $titleLineAdvance = (int) round($titleSize * ($isEmergency ? 1.42 : 1.32));
+
         $lines = $this->wrapTitle($font, $title, $titleSize, $maxTextWidth, 4);
         foreach ($lines as $line) {
             $this->drawTtfLine($im, $font, $titleSize, $paddingX, $y, $textPrimary, $line);
-            $y += (int) ($titleSize * 1.15);
+            $y += $titleLineAdvance;
         }
 
         $footer = 'minoo.live';

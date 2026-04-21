@@ -82,7 +82,7 @@ final class OpenGraphController
         AccountInterface $account,
         HttpRequest $request,
     ): Response {
-        /** @var array{emergency_open_graph: bool, og_image_revision: int, last_verified_date: string} $config */
+        /** @var array{emergency_open_graph: bool, og_image_revision: int} $config */
         $config = require dirname(__DIR__, 2) . '/config/sagamok_flood.php';
 
         $storage = $this->entityTypeManager->getStorage('community');
@@ -98,11 +98,7 @@ final class OpenGraphController
 
         $name = (string) $community->get('name');
         $title = $this->translator->trans('sagamok_flood.title', ['community' => $name], 'en');
-        $subtitle = $this->translator->trans(
-            'sagamok_flood.og_subtitle',
-            ['date' => $config['last_verified_date']],
-            'en',
-        );
+        $subtitle = $this->translator->trans('sagamok_flood.og_subtitle', [], 'en');
 
         $etagPayload = $title . '|' . $subtitle . '|' . (string) $config['og_image_revision']
             . '|' . ($config['emergency_open_graph'] ? '1' : '0');
