@@ -17,6 +17,7 @@ Minoo and the Waaseyaa Framework version independently.
 | 19 | V1 Release | Content model and UX stable — product ready for public launch (due 2026-04-22) | Open | 0/30 |
 | 20 | v1.0 - Admin Surface | Admin UI for content management | Open | 0/4 |
 | 21 | Anishinaabemowin Localization | OPD pipeline, Nishnaabemwin research, string translations | Open | 4/0 |
+| 22 | Minoo Live — Guess the Price Game | Portrait/tabletop pricing mini-game on `/games/guess-price`; static catalog; no session or leaderboard | Open | 0/0 |
 
 **Note:** Milestones 18, 19, 20 have no open issues — may be stale or complete. Review before assigning new work.
 

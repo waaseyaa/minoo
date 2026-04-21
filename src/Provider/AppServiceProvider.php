@@ -60,6 +60,7 @@ use App\Support\NorthCloudCommunityDictionaryClient;
 use App\Twig\AccountDisplayTwigExtension;
 use App\Twig\DateTwigExtension;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
@@ -2220,12 +2221,13 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         // =====================================================================
-        // --- Ingestion Dashboard ---
+        // --- Staff tools (SSR) — under /staff and /api/staff (not /admin/*) ---
+        // --- so they never collide with the admin-surface /admin/{path} SPA. ---
         // =====================================================================
 
         $router->addRoute(
-            'admin.ingestion',
-            RouteBuilder::create('/admin/ingestion')
+            'staff.ingestion',
+            RouteBuilder::create('/staff/ingestion')
                 ->controller('App\Controller\IngestionDashboardController::index')
                 ->requirePermission('administer content')
                 ->render()
@@ -2234,8 +2236,8 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'admin.ingestion.status',
-            RouteBuilder::create('/api/admin/nc-sync-status')
+            'staff.ingestion.nc_sync_status',
+            RouteBuilder::create('/api/staff/nc-sync-status')
                 ->controller('App\Controller\IngestionApiController::status')
                 ->requirePermission('administer content')
                 ->methods('GET')
@@ -2243,8 +2245,8 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'admin.ingestion.envelope',
-            RouteBuilder::create('/api/ingestion/envelope')
+            'staff.ingestion.envelope',
+            RouteBuilder::create('/api/staff/ingestion/envelope')
                 ->controller('App\Controller\IngestionApiController::ingestEnvelope')
                 ->requirePermission('administer content')
                 ->methods('POST')
@@ -2252,8 +2254,8 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'admin.ingestion.approve',
-            RouteBuilder::create('/api/admin/ingestion/{id}/approve')
+            'staff.ingestion.approve',
+            RouteBuilder::create('/api/staff/ingestion/{id}/approve')
                 ->controller('App\Controller\IngestionApiController::approve')
                 ->requirePermission('administer content')
                 ->methods('POST')
@@ -2262,8 +2264,8 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'admin.ingestion.reject',
-            RouteBuilder::create('/api/admin/ingestion/{id}/reject')
+            'staff.ingestion.reject',
+            RouteBuilder::create('/api/staff/ingestion/{id}/reject')
                 ->controller('App\Controller\IngestionApiController::reject')
                 ->requirePermission('administer content')
                 ->methods('POST')
@@ -2272,12 +2274,30 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'admin.ingestion.materialize',
-            RouteBuilder::create('/api/admin/ingestion/{id}/materialize')
+            'staff.ingestion.materialize',
+            RouteBuilder::create('/api/staff/ingestion/{id}/materialize')
                 ->controller('App\Controller\IngestionApiController::materialize')
                 ->requirePermission('administer content')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'legacy.staff.ingestion',
+            RouteBuilder::create('/admin/ingestion')
+                ->controller(static fn (): Response => new RedirectResponse('/staff/ingestion', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'legacy.staff.users',
+            RouteBuilder::create('/admin/users')
+                ->controller(static fn (): Response => new RedirectResponse('/staff/users', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()
+                ->methods('GET')
                 ->build(),
         );
 
@@ -2332,8 +2352,8 @@ final class AppServiceProvider extends ServiceProvider
         );
 
         $router->addRoute(
-            'admin.users',
-            RouteBuilder::create('/admin/users')
+            'staff.users',
+            RouteBuilder::create('/staff/users')
                 ->controller('App\Controller\RoleManagementController::adminList')
                 ->requireRole('admin')
                 ->render()
@@ -2521,10 +2541,7 @@ final class AppServiceProvider extends ServiceProvider
                 }
                 return new Response('Admin interface not available.', 404);
             })
-            // Do not capture SSR admin pages (e.g. /admin/ingestion, /admin/users) — those
-            // are real routes; if {path} matches them, Symfony can hit this catch-all first
-            // and return 404 when no public/admin/index.html exists.
-            ->requirement('path', '(?!_surface(/|$))(?!ingestion$)(?!users$).*')
+            ->requirement('path', '(?!_surface(/|$)).*')
             ->default('path', '')
             ->build());
 

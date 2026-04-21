@@ -964,6 +964,34 @@ return [
     'games.error' => '', // needs translation
     'games.connection_error' => '', // needs translation
     'games.copied' => '', // needs translation
+    'games.live_game_badge' => '', // needs translation
+    'games.guess_price_title' => '', // needs translation — proper title may stay English in UI
+    'games.guess_price_description' => '', // needs translation
+    'games.guess_price_select_title' => '', // needs translation
+    'games.guess_price_select_hint' => '', // needs translation
+    'games.guess_price_continue' => '', // needs translation
+    'games.guess_price_guess_heading' => '', // needs translation
+    'games.guess_price_guess_for' => '', // needs translation
+    'games.guess_price_lock_in' => '', // needs translation
+    'games.guess_price_reveal_front' => '', // needs translation
+    'games.guess_price_reveal_back' => '', // needs translation
+    'games.guess_price_you_guessed' => '', // needs translation
+    'games.guess_price_actual_price' => '', // needs translation
+    'games.guess_price_win_title' => '', // needs translation
+    'games.guess_price_lose_title' => '', // needs translation
+    'games.guess_price_win_explain' => '', // needs translation
+    'games.guess_price_lose_explain' => '', // needs translation
+    'games.guess_price_next_item' => '', // needs translation
+    'games.guess_price_finish_round' => '', // needs translation
+    'games.guess_price_all_done_title' => '', // needs translation
+    'games.guess_price_all_done_body' => '', // needs translation
+    'games.guess_price_loading' => '', // needs translation
+    'games.guess_price_error_load' => '', // needs translation
+    'games.guess_price_retry' => '', // needs translation
+    'games.guess_price_item_progress' => '', // needs translation
+    'games.guess_price_currency' => 'CAD',
+    'games.guess_price_slider_label' => '', // needs translation
+    'games.guess_price_number_label' => '', // needs translation
 
     // Messages — additional
     'messages.chats_title' => '', // needs translation

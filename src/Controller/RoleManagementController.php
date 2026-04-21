@@ -121,7 +121,7 @@ final class RoleManagementController
         $html = $this->twig->render('pages/admin/users.html.twig', LayoutTwigContext::withAccount($account, [
             'users' => $users,
             'can_manage_coordinator' => true,
-            'path' => '/admin/users',
+            'path' => '/staff/users',
         ]));
 
         return new Response($html);

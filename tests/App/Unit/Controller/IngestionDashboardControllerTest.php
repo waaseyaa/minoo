@@ -68,7 +68,7 @@ final class IngestionDashboardControllerTest extends TestCase
                 ->method('render')
                 ->with(
                     'pages/admin/ingestion.html.twig',
-                    $this->callback(fn (array $vars): bool => is_array($vars['nc_sync']) && ($vars['nc_sync']['created'] ?? null) === 2),
+                    $this->callback(fn (array $vars): bool => is_array($vars['nc_sync']) && ($vars['nc_sync']['created'] ?? null) === 2 && ($vars['path'] ?? null) === '/staff/ingestion'),
                 )
                 ->willReturn('<html>ok</html>');
 
@@ -131,7 +131,8 @@ final class IngestionDashboardControllerTest extends TestCase
                             'rejected' => 0,
                             'failed' => 0,
                         ]
-                        && $vars['hide_sidebar'] === true;
+                        && $vars['hide_sidebar'] === true
+                        && ($vars['path'] ?? null) === '/staff/ingestion';
                 }),
             )
             ->willReturn('<html>ok</html>');
@@ -184,7 +185,7 @@ final class IngestionDashboardControllerTest extends TestCase
             ->method('render')
             ->with(
                 'pages/admin/ingestion.html.twig',
-                $this->callback(fn (array $vars): bool => $vars['status_filter'] === 'failed' && $vars['total_count'] === 10 && $vars['last_envelope_log'] === 1711468800 && count($vars['logs']) === 1),
+                $this->callback(fn (array $vars): bool => $vars['status_filter'] === 'failed' && $vars['total_count'] === 10 && $vars['last_envelope_log'] === 1711468800 && count($vars['logs']) === 1 && ($vars['path'] ?? null) === '/staff/ingestion'),
             )
             ->willReturn('<html>ok</html>');
 
@@ -229,7 +230,7 @@ final class IngestionDashboardControllerTest extends TestCase
             ->method('render')
             ->with(
                 'pages/admin/ingestion.html.twig',
-                $this->callback(fn (array $vars): bool => $vars['status_filter'] === null),
+                $this->callback(fn (array $vars): bool => $vars['status_filter'] === null && ($vars['path'] ?? null) === '/staff/ingestion'),
             )
             ->willReturn('<html>ok</html>');
 

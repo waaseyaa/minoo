@@ -93,6 +93,22 @@
                 <span class="game-card__cta">{{ trans('games.play_now') }}</span>
             </div>
         </a>
+        <a href="/games/guess-price" class="game-card game-card--featured">
+            <div class="game-card__icon">
+                <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                    <ellipse cx="40" cy="58" rx="22" ry="8" fill="currentColor" opacity="0.2"/>
+                    <path fill="currentColor" opacity="0.85" d="M28 22h24c3 0 6 2 6 6v28H22V28c0-4 3-6 6-6z"/>
+                    <text x="40" y="46" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">$</text>
+                    <circle cx="52" cy="30" r="5" fill="currentColor" opacity="0.5"/>
+                </svg>
+            </div>
+            <div class="game-card__content">
+                <span class="game-card__badge">{{ trans('games.live_game_badge') }}</span>
+                <h3 class="game-card__title">{{ trans('games.guess_price_title') }}</h3>
+                <p class="game-card__description">{{ trans('games.guess_price_description') }}</p>
+                <span class="game-card__cta">{{ trans('games.play_now') }}</span>
+            </div>
+        </a>
     </section>
 
     <section class="games-hub__coming">

@@ -13,6 +13,8 @@ storage/tmp/
 /phpstan/
 /waaseyaa-sync-*/
 .playwright-mcp/
+# Local Cursor MCP server config (machine-specific paths)
+.cursor/mcp.json
 /*.png
 mcp/node_modules/
 worktrees/

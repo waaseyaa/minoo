@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="">
+  <rect width="120" height="120" fill="oklch(0.93 0.02 90)"/>
+  <rect x="24" y="22" width="72" height="76" rx="4" fill="oklch(0.95 0.01 90)" stroke="oklch(0.7 0.02 90)" stroke-width="2"/>
+  <path stroke="oklch(0.75 0.03 85)" stroke-width="1" d="M30 36h60M30 48h60M30 60h40"/>
+</svg>

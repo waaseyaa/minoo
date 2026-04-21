@@ -38,6 +38,7 @@ final class IngestionDashboardController
             'nc_sync' => $this->loadNcSyncStatus(),
             'status_filter' => $statusFilter,
             'hide_sidebar' => true,
+            'path' => '/staff/ingestion',
         ]));
 
         return new Response($html);

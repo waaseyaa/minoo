@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="">
+  <rect width="120" height="120" fill="oklch(0.88 0.02 280)"/>
+  <rect x="28" y="32" width="64" height="72" rx="6" fill="oklch(0.35 0.02 40)"/>
+  <ellipse cx="60" cy="52" rx="22" ry="10" fill="oklch(0.55 0.08 95)"/>
+  <ellipse cx="60" cy="72" rx="22" ry="10" fill="oklch(0.5 0.07 95)"/>
+  <ellipse cx="60" cy="92" rx="22" ry="10" fill="oklch(0.45 0.06 95)"/>
+</svg>

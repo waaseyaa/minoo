@@ -288,7 +288,7 @@ final class RoleManagementControllerTest extends TestCase
             ->method('render')
             ->with('pages/admin/users.html.twig', $this->callback(function (array $vars) {
                 return $vars['can_manage_coordinator'] === true
-                    && $vars['path'] === '/admin/users'
+                    && $vars['path'] === '/staff/users'
                     && count($vars['users']) === 1;
             }))
             ->willReturn('<html>admin list</html>');

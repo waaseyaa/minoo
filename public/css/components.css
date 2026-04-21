@@ -3151,6 +3151,7 @@
   .crossword  { --game-accent: var(--crossword-correct); }
   .matcher    { --game-accent: var(--matcher-accent); }
   .agim       { --game-accent: var(--color-language); }
+  .guess-price { --game-accent: var(--color-events); }
 
   /* Shared stat block (used in reveal/completion screens) */
   .game-stat {
@@ -3404,6 +3405,228 @@
 
     .game-card__cta {
       justify-content: center;
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     Guess the Price (Minoo Live)
+     ══════════════════════════════════════════════ */
+
+  .guess-price {
+    max-width: min(100%, 28rem);
+    margin-inline: auto;
+    padding: var(--space-sm) var(--space-md) max(var(--space-xl), env(safe-area-inset-bottom, 0px));
+  }
+
+  .guess-price__loading,
+  .guess-price__error {
+    text-align: center;
+    padding: var(--space-md);
+  }
+
+  .guess-price__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .guess-price__progress {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-block-end: var(--space-xs);
+  }
+
+  .guess-price__h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    margin-block: 0 var(--space-2xs);
+  }
+
+  .guess-price__lead {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    margin-block-start: 0;
+  }
+
+  .guess-price__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--space-sm);
+    margin-block: var(--space-md);
+  }
+
+  .guess-price__pick {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-xs);
+    background: transparent;
+    cursor: pointer;
+    text-align: center;
+    font: inherit;
+    color: inherit;
+    transition: border-color 0.2s var(--ease-out, ease), box-shadow 0.2s var(--ease-out, ease);
+  }
+
+  .guess-price__pick:focus-visible {
+    outline: 2px solid var(--game-accent);
+    outline-offset: 2px;
+  }
+
+  .guess-price__pick:hover,
+  .guess-price__pick--active {
+    border-color: var(--game-accent);
+    box-shadow: 0 4px 16px oklch(from var(--game-accent) l c h / 0.12);
+  }
+
+  .guess-price__pick-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    align-items: center;
+  }
+
+  .guess-price__pick img {
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    aspect-ratio: 1;
+    width: 100%;
+    max-width: 7.5rem;
+    height: auto;
+  }
+
+  .guess-price__pick-name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .guess-price__cta {
+    width: 100%;
+    max-width: 17.5rem;
+    margin-inline: auto;
+    display: block;
+    margin-block-start: var(--space-sm);
+  }
+
+  .guess-price__item-figure {
+    margin: 0;
+    text-align: center;
+  }
+
+  .guess-price__item-img {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    max-width: 100%;
+    height: auto;
+  }
+
+  .guess-price__item-name {
+    margin-block-start: var(--space-xs);
+    font-weight: 600;
+  }
+
+  .guess-price__guess-for {
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+
+  .guess-price__controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-block: var(--space-md);
+  }
+
+  .guess-price__label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .guess-price__slider {
+    width: 100%;
+    accent-color: var(--game-accent);
+  }
+
+  .guess-price__number {
+    font-size: var(--text-lg);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface-card);
+    color: var(--text-primary);
+  }
+
+  .guess-price__flip-scene {
+    perspective: 62.5rem;
+    max-width: 17.5rem;
+    margin: var(--space-lg) auto;
+    aspect-ratio: 1;
+  }
+
+  .guess-price__flip-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .guess-price__flip-card--flipped {
+    transform: rotateY(180deg);
+  }
+
+  .guess-price__flip-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border);
+    backface-visibility: hidden;
+    background: var(--surface-card);
+  }
+
+  .guess-price__flip-face--back {
+    transform: rotateY(180deg);
+    border-color: oklch(from var(--game-accent) l c h / 0.35);
+    background: oklch(from var(--game-accent) l c h / 0.08);
+  }
+
+  .guess-price__flip-label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .guess-price__flip-value {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    font-family: var(--font-heading);
+  }
+
+  .guess-price__result-body {
+    text-align: center;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-block-end: var(--space-md);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .guess-price__flip-card {
+      transition: none;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .guess-price {
+      max-width: min(100%, 36rem);
     }
   }
 

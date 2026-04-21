@@ -1,0 +1,115 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('games.guess_price_title') }} — Minoo{% endblock %}
+
+{% block content %}
+<script type="application/json" id="guess-price-i18n">{{ {
+  selectTitle: trans('games.guess_price_select_title'),
+  selectHint: trans('games.guess_price_select_hint'),
+  continue: trans('games.guess_price_continue'),
+  guessHeading: trans('games.guess_price_guess_heading'),
+  guessFor: trans('games.guess_price_guess_for'),
+  lockIn: trans('games.guess_price_lock_in'),
+  revealFront: trans('games.guess_price_reveal_front'),
+  revealBack: trans('games.guess_price_reveal_back'),
+  youGuessed: trans('games.guess_price_you_guessed'),
+  actualPrice: trans('games.guess_price_actual_price'),
+  winTitle: trans('games.guess_price_win_title'),
+  loseTitle: trans('games.guess_price_lose_title'),
+  winExplain: trans('games.guess_price_win_explain'),
+  loseExplain: trans('games.guess_price_lose_explain'),
+  nextItem: trans('games.guess_price_next_item'),
+  finishRound: trans('games.guess_price_finish_round'),
+  allDoneTitle: trans('games.guess_price_all_done_title'),
+  allDoneBody: trans('games.guess_price_all_done_body'),
+  playAgain: trans('games.play_again'),
+  loading: trans('games.guess_price_loading'),
+  errorLoad: trans('games.guess_price_error_load'),
+  retry: trans('games.guess_price_retry'),
+  itemProgress: trans('games.guess_price_item_progress'),
+  currency: trans('games.guess_price_currency'),
+  sliderLabel: trans('games.guess_price_slider_label'),
+  numberLabel: trans('games.guess_price_number_label'),
+}|json_encode|raw }}</script>
+
+<div
+  class="guess-price"
+  id="guess-price-game"
+  data-catalog-url="/data/games/guess-price/items.json"
+>
+  <div class="game-header">
+    <div class="game-header__title">
+      <nav class="game-header__breadcrumb" aria-label="{{ trans('games.breadcrumb') }}">
+        <a href="/games">{{ trans('games.title') }}</a> /
+      </nav>
+      <h1>{{ trans('games.guess_price_title') }}</h1>
+    </div>
+  </div>
+
+  <p class="guess-price__loading" id="guess-price-loading">{{ trans('games.guess_price_loading') }}</p>
+  <div class="guess-price__error" id="guess-price-error" hidden>
+    <p id="guess-price-error-msg"></p>
+    <button type="button" class="game-btn game-btn--primary" id="guess-price-retry">{{ trans('games.guess_price_retry') }}</button>
+  </div>
+
+  <div class="guess-price__main" id="guess-price-main" hidden>
+    <p class="guess-price__progress" id="guess-price-progress" aria-live="polite"></p>
+
+    <section class="guess-price__screen" data-phase="select" id="guess-price-screen-select" hidden aria-labelledby="guess-price-select-heading">
+      <h2 class="guess-price__h2" id="guess-price-select-heading">{{ trans('games.guess_price_select_title') }}</h2>
+      <p class="guess-price__lead">{{ trans('games.guess_price_select_hint') }}</p>
+      <div class="guess-price__grid" id="guess-price-select-grid" role="radiogroup" aria-labelledby="guess-price-select-heading"></div>
+      <button type="button" class="game-btn game-btn--primary guess-price__cta" id="guess-price-btn-continue" disabled>{{ trans('games.guess_price_continue') }}</button>
+    </section>
+
+    <section class="guess-price__screen" data-phase="guess" id="guess-price-screen-guess" hidden aria-labelledby="guess-price-guess-heading">
+      <h2 class="guess-price__h2 visually-hidden" id="guess-price-guess-heading">{{ trans('games.guess_price_guess_heading') }}</h2>
+      <figure class="guess-price__item-figure">
+        <img class="guess-price__item-img" id="guess-price-item-img" alt="" src="" width="200" height="200" decoding="async">
+        <figcaption class="guess-price__item-name" id="guess-price-item-name"></figcaption>
+      </figure>
+      <p class="guess-price__guess-for" id="guess-price-guess-for"></p>
+      <div class="guess-price__controls">
+        <label class="guess-price__label" for="guess-price-slider"><span id="guess-price-slider-label-text">{{ trans('games.guess_price_slider_label') }}</span></label>
+        <input type="range" class="guess-price__slider" id="guess-price-slider" min="0" max="100" value="0" step="0.25">
+        <label class="guess-price__label" for="guess-price-number"><span id="guess-price-number-label-text">{{ trans('games.guess_price_number_label') }}</span></label>
+        <input type="number" class="guess-price__number" id="guess-price-number" min="0" step="0.01" inputmode="decimal" autocomplete="off">
+      </div>
+      <button type="button" class="game-btn game-btn--primary guess-price__cta" id="guess-price-btn-lock">{{ trans('games.guess_price_lock_in') }}</button>
+    </section>
+
+    <section class="guess-price__screen" data-phase="reveal" id="guess-price-screen-reveal" hidden aria-labelledby="guess-price-reveal-heading">
+      <h2 class="visually-hidden" id="guess-price-reveal-heading">{{ trans('games.guess_price_reveal_front') }}</h2>
+      <div class="guess-price__flip-scene">
+        <div class="guess-price__flip-card" id="guess-price-flip-card" tabindex="-1" aria-hidden="true">
+          <div class="guess-price__flip-face guess-price__flip-face--front">
+            <span class="guess-price__flip-label">{{ trans('games.guess_price_you_guessed') }}</span>
+            <span class="guess-price__flip-value" id="guess-price-flip-guess"></span>
+          </div>
+          <div class="guess-price__flip-face guess-price__flip-face--back">
+            <span class="guess-price__flip-label">{{ trans('games.guess_price_actual_price') }}</span>
+            <span class="guess-price__flip-value" id="guess-price-flip-actual"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="guess-price__screen" data-phase="result" id="guess-price-screen-result" hidden aria-live="polite">
+      <h2 class="guess-price__h2" id="guess-price-result-title"></h2>
+      <p class="guess-price__result-body" id="guess-price-result-body"></p>
+      <button type="button" class="game-btn game-btn--primary guess-price__cta" id="guess-price-btn-next"></button>
+    </section>
+
+    <section class="guess-price__screen" data-phase="again" id="guess-price-screen-again" hidden aria-labelledby="guess-price-again-heading">
+      <h2 class="guess-price__h2" id="guess-price-again-heading">{{ trans('games.guess_price_all_done_title') }}</h2>
+      <p class="guess-price__lead">{{ trans('games.guess_price_all_done_body') }}</p>
+      <button type="button" class="game-btn game-btn--primary guess-price__cta" id="guess-price-btn-play-again">{{ trans('games.play_again') }}</button>
+    </section>
+  </div>
+
+  <div class="visually-hidden" aria-live="polite" aria-atomic="true" id="guess-price-announcer"></div>
+</div>
+
+<script src="/js/games-common.js" defer></script>
+<script src="/js/guess-price.js" defer></script>
+{% endblock %}

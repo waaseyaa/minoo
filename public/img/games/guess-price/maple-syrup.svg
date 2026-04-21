@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="">
+  <rect width="120" height="120" fill="oklch(0.92 0.04 75)"/>
+  <path fill="oklch(0.45 0.12 55)" d="M40 28h40c4 0 8 4 8 10v52c0 8-6 14-14 14H46c-8 0-14-6-14-14V38c0-6 4-10 8-10z"/>
+  <ellipse cx="60" cy="38" rx="18" ry="6" fill="oklch(0.55 0.14 55)"/>
+  <text x="60" y="88" text-anchor="middle" font-size="14" fill="oklch(0.25 0.02 60)" font-family="system-ui,sans-serif">1L</text>
+</svg>
