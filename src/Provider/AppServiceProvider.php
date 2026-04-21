@@ -2229,7 +2229,9 @@ final class AppServiceProvider extends ServiceProvider
             'staff.ingestion',
             RouteBuilder::create('/staff/ingestion')
                 ->controller('App\Controller\IngestionDashboardController::index')
-                ->requirePermission('administer content')
+                // Match /staff/users: site admins use role `admin`, not the flat `permissions`
+                // array (Waaseyaa only auto-grants all perms for role `administrator`).
+                ->requireRole('admin,elder_coordinator')
                 ->render()
                 ->methods('GET')
                 ->build(),
@@ -2239,7 +2241,7 @@ final class AppServiceProvider extends ServiceProvider
             'staff.ingestion.nc_sync_status',
             RouteBuilder::create('/api/staff/nc-sync-status')
                 ->controller('App\Controller\IngestionApiController::status')
-                ->requirePermission('administer content')
+                ->requireRole('admin,elder_coordinator')
                 ->methods('GET')
                 ->build(),
         );
@@ -2248,7 +2250,7 @@ final class AppServiceProvider extends ServiceProvider
             'staff.ingestion.envelope',
             RouteBuilder::create('/api/staff/ingestion/envelope')
                 ->controller('App\Controller\IngestionApiController::ingestEnvelope')
-                ->requirePermission('administer content')
+                ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->build(),
         );
@@ -2257,7 +2259,7 @@ final class AppServiceProvider extends ServiceProvider
             'staff.ingestion.approve',
             RouteBuilder::create('/api/staff/ingestion/{id}/approve')
                 ->controller('App\Controller\IngestionApiController::approve')
-                ->requirePermission('administer content')
+                ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
                 ->build(),
@@ -2267,7 +2269,7 @@ final class AppServiceProvider extends ServiceProvider
             'staff.ingestion.reject',
             RouteBuilder::create('/api/staff/ingestion/{id}/reject')
                 ->controller('App\Controller\IngestionApiController::reject')
-                ->requirePermission('administer content')
+                ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
                 ->build(),
@@ -2277,7 +2279,7 @@ final class AppServiceProvider extends ServiceProvider
             'staff.ingestion.materialize',
             RouteBuilder::create('/api/staff/ingestion/{id}/materialize')
                 ->controller('App\Controller\IngestionApiController::materialize')
-                ->requirePermission('administer content')
+                ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
                 ->build(),

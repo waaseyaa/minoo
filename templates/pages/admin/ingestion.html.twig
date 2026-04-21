@@ -95,6 +95,13 @@
         </dl>
       </div>
     {% endif %}
+    {% set dup_skips = nc_sync.skip_reasons['duplicate_dedup']|default(0) %}
+    {% if (nc_sync.created|default(0)) == 0 and (nc_sync.skipped|default(0)) > 0 and dup_skips == (nc_sync.skipped|default(0)) %}
+      <p class="dashboard__lede" style="max-width:65ch; color:#9ca3af;">
+        In the last cycle, every hit was skipped as <code>duplicate_dedup</code>: those <code>source_url</code> values already match
+        teachings or events in Minoo. The worker ran successfully; there was nothing new to insert.
+      </p>
+    {% endif %}
     {% if nc_sync.skipped_samples is defined and nc_sync.skipped_samples|length > 0 %}
       <details class="ingest-json-details">
         <summary>Skipped hit samples ({{ nc_sync.skipped_samples|length }})</summary>
