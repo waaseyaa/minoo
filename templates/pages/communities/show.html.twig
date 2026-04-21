@@ -48,6 +48,14 @@
     {% endif %}
   </div>
 
+  {% if community.get('slug') == 'sagamok-anishnawbek' %}
+  <div class="crisis-callout" role="region" aria-labelledby="sagamok-flood-callout-title">
+    <h2 id="sagamok-flood-callout-title" class="crisis-callout__title">{{ trans('sagamok_flood.community_callout_title') }}</h2>
+    <p class="crisis-callout__body">{{ trans('sagamok_flood.community_callout_body') }}</p>
+    <a class="crisis-callout__cta" href="{{ lang_url('/communities/' ~ community.get('slug') ~ '/spanish-river-flood') }}">{{ trans('sagamok_flood.community_callout_cta') }}</a>
+  </div>
+  {% endif %}
+
   {% include "components/domain/communities/contact-card.html.twig" with {
     people: people,
     band_office: band_office

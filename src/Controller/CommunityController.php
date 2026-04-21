@@ -16,6 +16,8 @@ use Waaseyaa\Geo\GeoDistance;
 
 final class CommunityController
 {
+    private const SAGAMOK_SPANISH_RIVER_FLOOD_SLUG = 'sagamok-anishnawbek';
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
@@ -112,6 +114,46 @@ final class CommunityController
         ]));
 
         return new Response($html);
+    }
+
+    /** @param array<string, mixed> $params */
+    /** @param array<string, mixed> $query */
+    public function spanishRiverFlood(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $slug = (string) ($params['slug'] ?? '');
+        if ($slug !== self::SAGAMOK_SPANISH_RIVER_FLOOD_SLUG) {
+            return $this->communityListNotFoundResponse($account);
+        }
+
+        $storage = $this->entityTypeManager->getStorage('community');
+        $ids = $storage->getQuery()
+            ->condition('slug', $slug)
+            ->condition('status', 1)
+            ->execute();
+
+        $community = $ids !== [] ? $storage->load(reset($ids)) : null;
+
+        if ($community === null) {
+            return $this->communityListNotFoundResponse($account);
+        }
+
+        $html = $this->twig->render('pages/communities/spanish-river-flood.html.twig', LayoutTwigContext::withAccount($account, [
+            'path' => '/communities/' . $slug . '/spanish-river-flood',
+            'community' => $community,
+        ]));
+
+        return new Response($html);
+    }
+
+    private function communityListNotFoundResponse(AccountInterface $account): Response
+    {
+        $html = $this->twig->render('pages/communities/index.html.twig', LayoutTwigContext::withAccount($account, [
+            'path' => '/communities',
+            'communities_json' => '[]',
+            'location_json' => 'null',
+        ]));
+
+        return new Response($html, 404);
     }
 
     private const NEARBY_LIMIT = 6;
