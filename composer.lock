@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8e11c288f5baf8e86e6ef8ea46db1b3",
+    "content-hash": "5a97abdb18894461b8b123891167bb34",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -3713,27 +3713,29 @@
         },
         {
             "name": "waaseyaa/bimaaji",
-            "version": "v0.1.0-alpha.145",
+            "version": "v0.1.0-alpha.153",
             "source": {
                 "type": "git",
                 "url": "https://github.com/waaseyaa/bimaaji.git",
-                "reference": "5126e070b98739143e5244b18110ed0b2cf12c3b"
+                "reference": "0cf228e246d8e59a206e72cc9cadf8ddf64de3ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/bimaaji/zipball/5126e070b98739143e5244b18110ed0b2cf12c3b",
-                "reference": "5126e070b98739143e5244b18110ed0b2cf12c3b",
+                "url": "https://api.github.com/repos/waaseyaa/bimaaji/zipball/0cf228e246d8e59a206e72cc9cadf8ddf64de3ab",
+                "reference": "0cf228e246d8e59a206e72cc9cadf8ddf64de3ab",
                 "shasum": ""
             },
             "require": {
                 "nikic/php-parser": "^5.0",
                 "php": ">=8.4",
                 "symfony/routing": "^7.0",
-                "waaseyaa/entity": "^0.1",
-                "waaseyaa/foundation": "^0.1"
+                "waaseyaa/entity": "^0.1.0-alpha.150",
+                "waaseyaa/foundation": "^0.1.0-alpha.150"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.5"
+                "phpunit/phpunit": "^10.5",
+                "waaseyaa/access": "^0.1.0-alpha.150",
+                "waaseyaa/field": "^0.1.0-alpha.150"
             },
             "type": "library",
             "extra": {
@@ -3754,9 +3756,9 @@
             "description": "Bimaaji — application graph introspection and agent-safe mutation for Waaseyaa",
             "support": {
                 "issues": "https://github.com/waaseyaa/bimaaji/issues",
-                "source": "https://github.com/waaseyaa/bimaaji/tree/v0.1.0-alpha.145"
+                "source": "https://github.com/waaseyaa/bimaaji/tree/v0.1.0-alpha.153"
             },
-            "time": "2026-04-13T18:47:41+00:00"
+            "time": "2026-04-21T14:06:58+00:00"
         },
         {
             "name": "waaseyaa/cache",
@@ -7344,9 +7346,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "waaseyaa/bimaaji": 15
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

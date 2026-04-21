@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "bimaaji": {
+      "command": "node",
+      "args": ["vendor/waaseyaa/bimaaji/mcp/bimaaji-server.js"]
+    }
+  }
+}
