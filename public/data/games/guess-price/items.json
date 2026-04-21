@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cedar",
+    "name": "Cedar bundle",
+    "image": "/img/games/guess-price/cedar.svg",
+    "actual_price": 18.5
+  },
+  {
+    "id": "wild-rice",
+    "name": "Hand-harvested wild rice (500 g)",
+    "image": "/img/games/guess-price/wild-rice.svg",
+    "actual_price": 14.25
+  },
+  {
+    "id": "maple-syrup",
+    "name": "Maple syrup (500 mL)",
+    "image": "/img/games/guess-price/maple-syrup.svg",
+    "actual_price": 16.99
+  },
+  {
+    "id": "tea",
+    "name": "Medicine tea blend",
+    "image": "/img/games/guess-price/tea.svg",
+    "actual_price": 12
+  },
+  {
+    "id": "birch-card",
+    "name": "Birch bark greeting cards (set of 5)",
+    "image": "/img/games/guess-price/birch-card.svg",
+    "actual_price": 22
+  },
+  {
+    "id": "keychain",
+    "name": "Beaded keychain",
+    "image": "/img/games/guess-price/keychain.svg",
+    "actual_price": 15.75
+  }
+]

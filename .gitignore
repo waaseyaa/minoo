@@ -25,7 +25,8 @@ playwright-report/
 .superpowers/
 .claude/scheduled_tasks.lock
 .build/
-data/
+# Repo-root data dumps / populate inputs only (not public/static JSON).
+/data/
 scripts/.venv/
 __pycache__/
 *.pyc
