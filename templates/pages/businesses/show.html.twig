@@ -10,6 +10,7 @@
 
 {% block og_type %}{% if business is defined and business %}article{% else %}website{% endif %}{% endblock %}
 {% block og_description %}{% if business is defined and business %}{{ business.get('description')|default('')|striptags|slice(0, 160) }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+{% block og_image %}{% if business is defined and business %}{{ site_base_url }}/og/business/{{ business.get('slug') }}.png{% else %}{{ parent() }}{% endif %}{% endblock %}
 
 {% block content %}
   {% if business is defined and business %}

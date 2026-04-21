@@ -61,6 +61,7 @@ use App\Twig\AccountDisplayTwigExtension;
 use App\Twig\DateTwigExtension;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
 use Waaseyaa\AdminSurface\Host\GenericAdminSurfaceHost;
 use Waaseyaa\Api\Schema\SchemaPresenter;
@@ -121,6 +122,10 @@ final class AppServiceProvider extends ServiceProvider
         });
 
         $this->singleton(UrlPrefixNegotiator::class, fn() => new UrlPrefixNegotiator());
+
+        $this->singleton(\App\Support\OgImageRenderer::class, function (): \App\Support\OgImageRenderer {
+            return new \App\Support\OgImageRenderer(dirname(__DIR__, 2));
+        });
 
         // =====================================================================
         // --- Rate limiting ---
@@ -1662,6 +1667,16 @@ final class AppServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        $router->addRoute(
+            'og.event.png',
+            RouteBuilder::create('/og/event/{slug}.png')
+                ->controller('App\\Controller\\OpenGraphController::eventPng')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
         // =====================================================================
         // --- Groups ---
         // =====================================================================
@@ -1708,6 +1723,16 @@ final class AppServiceProvider extends ServiceProvider
                 ->build(),
         );
 
+        $router->addRoute(
+            'og.business.png',
+            RouteBuilder::create('/og/business/{slug}.png')
+                ->controller('App\\Controller\\OpenGraphController::businessPng')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
         // =====================================================================
         // --- Teachings ---
         // =====================================================================
@@ -1728,6 +1753,16 @@ final class AppServiceProvider extends ServiceProvider
                 ->controller('App\\Controller\\TeachingController::show')
                 ->allowAll()
                 ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'og.teaching.png',
+            RouteBuilder::create('/og/teaching/{slug}.png')
+                ->controller('App\\Controller\\OpenGraphController::teachingPng')
+                ->allowAll()
                 ->methods('GET')
                 ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
                 ->build(),
@@ -3765,6 +3800,22 @@ final class AppServiceProvider extends ServiceProvider
                 $event->entity->set('updated_at', time());
             }
         });
+
+        // =====================================================================
+        // --- Twig: site_base_url for og:image / og:url absolute URLs ---
+        // =====================================================================
+
+        $siteBase = rtrim((string) ($this->config['mail']['base_url'] ?? 'https://minoo.live'), '/');
+        /** @var array<int, Environment> $twigTargets */
+        $twigTargets = [];
+        foreach ([SsrServiceProvider::getTwigEnvironment(), ThemeServiceProvider::getTwigEnvironment()] as $env) {
+            if ($env instanceof Environment) {
+                $twigTargets[spl_object_id($env)] = $env;
+            }
+        }
+        foreach ($twigTargets as $env) {
+            $env->addGlobal('site_base_url', $siteBase);
+        }
     }
 
     /**
