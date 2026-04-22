@@ -17,6 +17,7 @@
 {% block og_image %}{% if sagamok_flood_emergency_og|default(true) %}{{ site_base_url }}/og/crisis/sagamok-spanish-river-flood.png{% else %}{{ parent() }}{% endif %}{% endblock %}
 
 {% block content %}
+<div class="crisis-doc">
   {% include "components/shared/layout/breadcrumb.html.twig" with {
     breadcrumbs: [
       {label: trans('breadcrumb.home'), url: '/'},
@@ -32,26 +33,57 @@
   </div>
   {% endif %}
 
-  <div class="crisis-banner crisis-banner--emergency" role="region" aria-label="{{ trans('sagamok_flood.soe_title')|e('html_attr') }}">
-    <p class="crisis-banner__eyebrow">{{ trans('sagamok_flood.soe_eyebrow') }}</p>
-    <h1 class="crisis-banner__title">{{ trans('sagamok_flood.soe_title') }}</h1>
-    <p class="crisis-banner__meta">{{ trans('sagamok_flood.soe_meta', {date: sagamok_flood_verified}) }}</p>
-  </div>
+  <header class="crisis-hero">
+    <div class="crisis-banner crisis-banner--emergency" role="region" aria-label="{{ trans('sagamok_flood.soe_title')|e('html_attr') }}">
+      <p class="crisis-banner__eyebrow">{{ trans('sagamok_flood.soe_eyebrow') }}</p>
+      <h1 class="crisis-banner__title">{{ trans('sagamok_flood.soe_title') }}</h1>
+      <p class="crisis-banner__meta">{{ trans('sagamok_flood.soe_meta', {date: sagamok_flood_verified}) }}</p>
+    </div>
 
-  <div class="crisis-official-strip" role="region" aria-label="{{ trans('sagamok_flood.official_label')|e('html_attr') }}">
-    <span class="crisis-official-strip__label">{{ trans('sagamok_flood.official_label') }}</span>
-    <span class="crisis-official-strip__text">
-      {{ trans('sagamok_flood.official_text_before') }}
-      <a href="{{ sagamok_flood_news }}" rel="noopener" target="_blank">{{ trans('sagamok_flood.official_link') }}</a>.
-    </span>
-  </div>
+    <div class="crisis-official-strip" role="region" aria-label="{{ trans('sagamok_flood.official_label')|e('html_attr') }}">
+      <span class="crisis-official-strip__label">{{ trans('sagamok_flood.official_label') }}</span>
+      <span class="crisis-official-strip__text">
+        {{ trans('sagamok_flood.official_text_before') }}
+        <a href="{{ sagamok_flood_news }}" rel="noopener" target="_blank">{{ trans('sagamok_flood.official_link') }}</a>.
+      </span>
+    </div>
+  </header>
 
-  <div class="content-max">
+  <div class="content-max crisis-gallery-band">
     {% include 'components/shared/ui/media-carousel.html.twig' with {
       carousel_id: 'sagamok-flood-gallery',
       heading_key: 'sagamok_flood.gallery_h',
+      heading_class: 'crisis-gallery__title',
       slides: sagamok_flood_gallery
     } %}
+  </div>
+
+  <div class="content-max crisis-timeline-band">
+    <section class="crisis-section crisis-section--timeline" aria-labelledby="crisis-timeline-h">
+      <h2 id="crisis-timeline-h" class="crisis-section__h">{{ trans('sagamok_flood.timeline_h') }}</h2>
+      <ol class="crisis-timeline">
+        <li>
+          <time class="crisis-timeline__time" datetime="2026-04-22">{{ trans('sagamok_flood.t_22_date') }}</time>
+          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_22_body') }}</p>
+        </li>
+        <li>
+          <time class="crisis-timeline__time" datetime="2026-04-21">{{ trans('sagamok_flood.t_21_date') }}</time>
+          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_21_body') }}</p>
+        </li>
+        <li>
+          <time class="crisis-timeline__time" datetime="2026-04-19">{{ trans('sagamok_flood.t_19_date') }}</time>
+          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_19_body') }}</p>
+        </li>
+        <li>
+          <time class="crisis-timeline__time" datetime="2026-04-18">{{ trans('sagamok_flood.t_18_date') }}</time>
+          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_18_body') }}</p>
+        </li>
+        <li>
+          <time class="crisis-timeline__time" datetime="2026-04-14">{{ trans('sagamok_flood.t_14_date') }}</time>
+          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_14_body') }}</p>
+        </li>
+      </ol>
+    </section>
   </div>
 
   <div class="content-max crisis-share-wrap">
@@ -62,7 +94,7 @@
     } %}
   </div>
 
-  <div class="content-max crisis-page">
+  <div class="content-max crisis-page crisis-page--flood">
     <section class="crisis-section" aria-labelledby="crisis-glance-h">
       <h2 id="crisis-glance-h" class="crisis-section__h">{{ trans('sagamok_flood.glance_h') }}</h2>
       <div class="crisis-tiles">
@@ -133,7 +165,7 @@
 
     <section class="crisis-section" aria-labelledby="crisis-bwa-h">
       <h2 id="crisis-bwa-h" class="crisis-section__h">{{ trans('sagamok_flood.bwa_h') }}</h2>
-      <div class="card crisis-card">
+      <div class="card crisis-card crisis-card--accent-emergency">
         <p class="crisis-card__tag crisis-card__tag--emergency">{{ trans('sagamok_flood.bwa_tag') }}</p>
         <h3 class="crisis-card__h">{{ trans('sagamok_flood.bwa_how_h') }}</h3>
         <p>{{ trans('sagamok_flood.bwa_how_p') }}</p>
@@ -144,7 +176,7 @@
 
     <section class="crisis-section" aria-labelledby="crisis-roads-h">
       <h2 id="crisis-roads-h" class="crisis-section__h">{{ trans('sagamok_flood.roads_h') }}</h2>
-      <div class="card crisis-card">
+      <div class="card crisis-card crisis-card--accent-warn">
         <p class="crisis-card__tag crisis-card__tag--warn">{{ trans('sagamok_flood.roads_tag') }}</p>
         <h3 class="crisis-card__h">{{ trans('sagamok_flood.roads_7300_h') }}</h3>
         <p>{{ trans('sagamok_flood.roads_7300_p') }}</p>
@@ -155,41 +187,7 @@
 
     <section class="crisis-section" aria-labelledby="crisis-prep-h">
       <h2 id="crisis-prep-h" class="crisis-section__h">{{ trans('sagamok_flood.prep_h') }}</h2>
-      <ul class="crisis-checklist">
-        <li>{{ trans('sagamok_flood.prep_1') }}</li>
-        <li>{{ trans('sagamok_flood.prep_2') }}</li>
-        <li>{{ trans('sagamok_flood.prep_3') }}</li>
-        <li>{{ trans('sagamok_flood.prep_4') }}</li>
-        <li>{{ trans('sagamok_flood.prep_5') }}</li>
-        <li>{{ trans('sagamok_flood.prep_6') }}</li>
-        <li>{{ trans('sagamok_flood.prep_7') }}</li>
-      </ul>
-    </section>
-
-    <section class="crisis-section" aria-labelledby="crisis-timeline-h">
-      <h2 id="crisis-timeline-h" class="crisis-section__h">{{ trans('sagamok_flood.timeline_h') }}</h2>
-      <ol class="crisis-timeline">
-        <li>
-          <time class="crisis-timeline__time" datetime="2026-04-22">{{ trans('sagamok_flood.t_22_date') }}</time>
-          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_22_body') }}</p>
-        </li>
-        <li>
-          <time class="crisis-timeline__time" datetime="2026-04-21">{{ trans('sagamok_flood.t_21_date') }}</time>
-          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_21_body') }}</p>
-        </li>
-        <li>
-          <time class="crisis-timeline__time" datetime="2026-04-19">{{ trans('sagamok_flood.t_19_date') }}</time>
-          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_19_body') }}</p>
-        </li>
-        <li>
-          <time class="crisis-timeline__time" datetime="2026-04-18">{{ trans('sagamok_flood.t_18_date') }}</time>
-          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_18_body') }}</p>
-        </li>
-        <li>
-          <time class="crisis-timeline__time" datetime="2026-04-14">{{ trans('sagamok_flood.t_14_date') }}</time>
-          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_14_body') }}</p>
-        </li>
-      </ol>
+      {% include 'components/domain/crisis/sagamok-flood-prep-checklist.html.twig' %}
     </section>
 
     <footer class="crisis-footer">
@@ -203,6 +201,7 @@
       </p>
     </footer>
   </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
