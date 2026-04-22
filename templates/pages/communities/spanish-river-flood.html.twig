@@ -47,6 +47,14 @@
     </span>
   </div>
 
+  <div class="content-max">
+    {% include 'components/shared/ui/media-carousel.html.twig' with {
+      carousel_id: 'sagamok-flood-gallery',
+      heading_key: 'sagamok_flood.gallery_h',
+      slides: sagamok_flood_gallery
+    } %}
+  </div>
+
   <div class="content-max crisis-share-wrap">
     {% include 'components/shared/ui/share-toolbar.html.twig' with {
       share_url: sagamok_flood_share_url,
@@ -195,6 +203,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="/js/media-carousel.js" defer></script>
 <script>
 (function () {
   var root = document.querySelector('[data-share-toolbar-root]');

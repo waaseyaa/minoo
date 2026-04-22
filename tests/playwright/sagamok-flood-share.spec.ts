@@ -29,4 +29,25 @@ test.describe('Sagamok Spanish River flood page', () => {
     await expect(page.getByRole('link', { name: 'Email' })).toHaveAttribute('href', /^mailto:/);
     await expect(page.getByRole('button', { name: 'Copy link' })).toBeVisible();
   });
+
+  test('photo carousel and lightbox', async ({ page }) => {
+    const response = await page.goto('/communities/sagamok-anishnawbek/spanish-river-flood');
+    if (response?.status() === 404) {
+      test.skip(true, 'Sagamok community not seeded in this environment');
+    }
+    expect(response?.status()).toBe(200);
+
+    const carousel = page.locator('[data-media-carousel]');
+    await expect(carousel).toBeVisible();
+
+    const firstImg = carousel.locator('.media-carousel__img').first();
+    await expect(firstImg).toHaveAttribute('src', /\/img\/crisis\/sagamok-spanish-river-flood\/flood-01\.jpg$/);
+
+    await page.getByRole('button', { name: 'View larger' }).first().click();
+    const dialog = page.locator('[data-mc-dialog]');
+    await expect(dialog).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+  });
 });

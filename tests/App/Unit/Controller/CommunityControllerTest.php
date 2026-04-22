@@ -46,7 +46,7 @@ final class CommunityControllerTest extends TestCase
         $this->twig = new Environment(new ArrayLoader([
             'pages/communities/index.html.twig' => '{{ path }}|{{ communities_json|raw }}',
             'pages/communities/show.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
-            'pages/communities/spanish-river-flood.html.twig' => '{{ path }}|flood:{{ community.get("name") }}',
+            'pages/communities/spanish-river-flood.html.twig' => '{{ path }}|flood:{{ community.get("name") }}|{{ sagamok_flood_gallery[0].src|default("") }}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -127,6 +127,7 @@ final class CommunityControllerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsString('/communities/sagamok-anishnawbek/spanish-river-flood', $response->getContent());
         $this->assertStringContainsString('flood:Sagamok Anishnawbek', $response->getContent());
+        $this->assertStringContainsString('/img/crisis/sagamok-spanish-river-flood/flood-01.jpg', $response->getContent());
     }
 
     #[Test]
@@ -165,7 +166,7 @@ final class CommunityControllerTest extends TestCase
 
         $this->twig = new Environment(new ArrayLoader([
             'pages/communities/show.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
-            'pages/communities/spanish-river-flood.html.twig' => '{{ path }}|flood:{{ community.get("name") }}',
+            'pages/communities/spanish-river-flood.html.twig' => '{{ path }}|flood:{{ community.get("name") }}|{{ sagamok_flood_gallery[0].src|default("") }}',
         ]));
 
         $this->northCloudClient

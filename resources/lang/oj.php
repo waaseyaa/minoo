@@ -89,6 +89,17 @@ return [
     'share.copy_fail' => 'Could not copy automatically — select the address in your browser bar.',
     'share.native' => 'Share using device',
 
+    // Media carousel (EN until reused on Anishinaabemowin pages)
+    'media_carousel.toolbar_aria' => 'Carousel controls',
+    'media_carousel.prev' => 'Previous slide',
+    'media_carousel.next' => 'Next slide',
+    'media_carousel.roledescription' => 'carousel',
+    'media_carousel.view_larger' => 'View larger',
+    'media_carousel.tabs_aria' => 'Choose slide',
+    'media_carousel.slide_n' => 'Slide {n} of {total}',
+    'media_carousel.lightbox_title' => 'Enlarged image',
+    'media_carousel.close' => 'Close',
+
     // Footer
     'footer.tagline' => "Bimaadiziwin oodena-mazina'igan", // "A living community-map" — natural Ojibwe word order (modifier before noun)
     'footer.copyright' => 'Minoo',
@@ -445,6 +456,15 @@ return [
     'sagamok_flood.disclaimer_2' => 'We host this page in Canada on infrastructure we operate with Indigenous partners.',
     'sagamok_flood.footer_updated' => 'Last updated {date}.',
     'sagamok_flood.back_top' => 'Back to top',
+    'sagamok_flood.gallery_h' => 'Photos from the territory',
+    'sagamok_flood.gallery_alt_1' => 'Flooding and high water affecting roads or low-lying areas near Sagamok Anishnawbek.',
+    'sagamok_flood.gallery_alt_2' => 'River or overland flood conditions along the Spanish River corridor, April 2026.',
+    'sagamok_flood.gallery_alt_3' => 'Community flood response: roads, shoreline, or infrastructure under high water.',
+    'sagamok_flood.gallery_alt_4' => 'Flood conditions on territory — use caution near moving water and washed-out shoulders.',
+    'sagamok_flood.gallery_cap_1' => 'Spanish River flood — road and water levels in the area.',
+    'sagamok_flood.gallery_cap_2' => 'Spanish River flood — shoreline and access routes.',
+    'sagamok_flood.gallery_cap_3' => 'Spanish River flood — interior roads and low-lying ground.',
+    'sagamok_flood.gallery_cap_4' => 'Spanish River flood — conditions on Sagamok Anishnawbek territory.',
 
     // About
     'about.title' => 'Dibaajimowin', // dict: dibaajimowin: "a story; a narrative; a report"

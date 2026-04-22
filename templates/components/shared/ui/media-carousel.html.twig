@@ -1,0 +1,102 @@
+{# Reusable horizontal media carousel + native dialog lightbox.
+   Required:
+     - carousel_id: string, unique on page (used in id="" attributes)
+     - heading_key: translation key for visible section title (also labels the carousel region)
+     - slides: list of { src, width, height, alt_key, caption_key } (caption_key optional)
+   Optional:
+     - heading_class: extra CSS class on the h2
+#}
+{% if slides is defined and slides|length > 0 %}
+<div
+  class="media-carousel"
+  data-media-carousel
+  id="{{ carousel_id|e('html_attr') }}"
+>
+  <h2 id="{{ carousel_id }}-heading" class="media-carousel__heading {{ heading_class|default('') }}">{{ trans(heading_key) }}</h2>
+
+  <div class="media-carousel__controls" role="group" aria-label="{{ trans('media_carousel.toolbar_aria')|e('html_attr') }}">
+    <button
+      type="button"
+      class="media-carousel__btn media-carousel__btn--nav"
+      data-mc-prev
+      aria-controls="{{ carousel_id }}-viewport"
+      disabled
+    >{{ trans('media_carousel.prev') }}</button>
+    <button
+      type="button"
+      class="media-carousel__btn media-carousel__btn--nav"
+      data-mc-next
+      aria-controls="{{ carousel_id }}-viewport"
+    >{{ trans('media_carousel.next') }}</button>
+  </div>
+
+  <div
+    class="media-carousel__viewport"
+    id="{{ carousel_id }}-viewport"
+    data-mc-viewport
+    tabindex="0"
+    role="region"
+    aria-roledescription="{{ trans('media_carousel.roledescription')|e('html_attr') }}"
+    aria-labelledby="{{ carousel_id }}-heading"
+  >
+    {% for slide in slides %}
+    <figure class="media-carousel__slide" id="{{ carousel_id }}-slide-{{ loop.index0 }}" data-mc-slide>
+      <div class="media-carousel__frame">
+        <img
+          class="media-carousel__img"
+          src="{{ slide.src }}"
+          alt="{{ trans(slide.alt_key) }}"
+          width="{{ slide.width }}"
+          height="{{ slide.height }}"
+          sizes="(max-width: 48rem) 100vw, 48rem"
+          decoding="async"
+          {% if loop.first %}fetchpriority="high" loading="eager"{% else %}loading="lazy"{% endif %}
+        >
+        <button
+          type="button"
+          class="media-carousel__expand"
+          data-mc-open
+          aria-haspopup="dialog"
+          aria-controls="{{ carousel_id }}-dialog"
+          aria-label="{{ trans('media_carousel.view_larger')|e('html_attr') }}"
+        >{{ trans('media_carousel.view_larger') }}</button>
+      </div>
+      {% if slide.caption_key is defined and slide.caption_key %}
+      <figcaption class="media-carousel__caption" data-mc-caption>{{ trans(slide.caption_key) }}</figcaption>
+      {% endif %}
+    </figure>
+    {% endfor %}
+  </div>
+
+  <div class="media-carousel__dots" role="tablist" aria-label="{{ trans('media_carousel.tabs_aria')|e('html_attr') }}">
+    {% for slide in slides %}
+    <button
+      type="button"
+      class="media-carousel__dot"
+      role="tab"
+      id="{{ carousel_id }}-tab-{{ loop.index0 }}"
+      data-mc-tab
+      aria-selected="{% if loop.first %}true{% else %}false{% endif %}"
+      aria-controls="{{ carousel_id }}-slide-{{ loop.index0 }}"
+      tabindex="{% if loop.first %}0{% else %}-1{% endif %}"
+      aria-label="{{ trans('media_carousel.slide_n', {n: loop.index, total: slides|length})|e('html_attr') }}"
+    ><span class="media-carousel__dot-inner" aria-hidden="true"></span></button>
+    {% endfor %}
+  </div>
+
+  <dialog class="media-carousel__dialog" data-mc-dialog id="{{ carousel_id }}-dialog" aria-modal="true" aria-labelledby="{{ carousel_id }}-dialog-title">
+    <div class="media-carousel__dialog-inner">
+      <div class="media-carousel__dialog-toolbar">
+        <h2 class="media-carousel__dialog-title" id="{{ carousel_id }}-dialog-title">{{ trans('media_carousel.lightbox_title') }}</h2>
+        <button type="button" class="media-carousel__btn media-carousel__btn--close" data-mc-close>{{ trans('media_carousel.close') }}</button>
+      </div>
+      <div class="media-carousel__dialog-stage">
+        <button type="button" class="media-carousel__btn media-carousel__btn--nav media-carousel__btn--floating" data-mc-dprev aria-label="{{ trans('media_carousel.prev')|e('html_attr') }}">{{ trans('media_carousel.prev') }}</button>
+        <img class="media-carousel__dialog-img" data-mc-dialog-img src="" alt="">
+        <button type="button" class="media-carousel__btn media-carousel__btn--nav media-carousel__btn--floating" data-mc-dnext aria-label="{{ trans('media_carousel.next')|e('html_attr') }}">{{ trans('media_carousel.next') }}</button>
+      </div>
+      <p class="media-carousel__dialog-caption" data-mc-dialog-caption hidden></p>
+    </div>
+  </dialog>
+</div>
+{% endif %}

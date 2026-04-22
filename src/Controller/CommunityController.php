@@ -137,13 +137,26 @@ final class CommunityController
             return $this->communityListNotFoundResponse($account);
         }
 
-        /** @var array{emergency_open_graph: bool} $floodConfig */
+        /** @var array{emergency_open_graph: bool, gallery?: list<array{file: string, width: int, height: int, alt_key: string, caption_key: string}>} $floodConfig */
         $floodConfig = require dirname(__DIR__, 2) . '/config/sagamok_flood.php';
+
+        $galleryBase = '/img/crisis/sagamok-spanish-river-flood';
+        $sagamokFloodGallery = [];
+        foreach ($floodConfig['gallery'] ?? [] as $row) {
+            $sagamokFloodGallery[] = [
+                'src' => $galleryBase . '/' . $row['file'],
+                'width' => $row['width'],
+                'height' => $row['height'],
+                'alt_key' => $row['alt_key'],
+                'caption_key' => $row['caption_key'],
+            ];
+        }
 
         $html = $this->twig->render('pages/communities/spanish-river-flood.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/communities/' . $slug . '/spanish-river-flood',
             'community' => $community,
             'sagamok_flood_emergency_og' => $floodConfig['emergency_open_graph'],
+            'sagamok_flood_gallery' => $sagamokFloodGallery,
         ]));
 
         return new Response($html);
