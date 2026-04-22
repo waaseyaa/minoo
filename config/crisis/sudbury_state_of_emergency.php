@@ -25,8 +25,8 @@ return [
     'translation_pending_lang' => 'oj',
     'translation_pending_key' => 'sudbury_soe.translation_pending',
 
-    'notice_url' => 'https://www.greatersudbury.ca/',
-    'official_feed_url' => 'https://www.greatersudbury.ca/',
+    'notice_url' => 'https://www.greatersudbury.ca/live/emergency-services/emergency-management/spring-flooding/',
+    'official_feed_url' => 'https://www.greatersudbury.ca/live/emergency-services/emergency-management/spring-flooding/',
 
     'title_key' => 'sudbury_soe.title',
     'og_subtitle_key' => 'sudbury_soe.og_subtitle',
@@ -45,12 +45,14 @@ return [
 
     'timeline_heading_key' => 'sudbury_soe.timeline_h',
     'timeline' => [
-        ['datetime' => '2026-04-22', 'date_key' => 'sudbury_soe.t_placeholder_date', 'body_key' => 'sudbury_soe.t_placeholder_body'],
+        ['datetime' => '2026-04-22', 'date_key' => 'sudbury_soe.t_22_date', 'body_key' => 'sudbury_soe.t_22_body'],
+        ['datetime' => '2026-04-21', 'date_key' => 'sudbury_soe.t_21_date', 'body_key' => 'sudbury_soe.t_21_body'],
     ],
 
     'tiles_heading_key' => 'crisis.common.glance_h',
     'tiles' => [
         ['label_key' => 'sudbury_soe.tile_status_label', 'pill_key' => 'sudbury_soe.tile_status_pill', 'pill_tone' => 'emergency', 'note_key' => 'sudbury_soe.tile_status_note'],
+        ['label_key' => 'sudbury_soe.tile_watershed_label', 'pill_key' => 'sudbury_soe.tile_watershed_pill', 'pill_tone' => 'warn', 'note_key' => 'sudbury_soe.tile_watershed_note'],
     ],
 
     'contacts_heading_key' => 'crisis.common.contacts_h',
@@ -60,6 +62,7 @@ return [
     'contacts_notice_link_short_key' => 'sudbury_soe.contacts_notice_link_short',
     'contacts' => [
         ['name_key' => 'sudbury_soe.c_911_name', 'role_key' => 'sudbury_soe.c_911_role', 'tel_href' => 'tel:911', 'tel_display' => '911', 'emergency' => true],
+        ['name_key' => 'sudbury_soe.c_311_name', 'role_key' => 'sudbury_soe.c_311_role', 'tel_href' => 'tel:+17056712489', 'tel_display' => '311 · 705-671-2489', 'emergency' => false],
     ],
 
     'info_cards' => [
@@ -70,6 +73,7 @@ return [
             'tag_key' => 'sudbury_soe.info_tag',
             'subsections' => [
                 ['title_key' => 'sudbury_soe.info_p1_h', 'body_key' => 'sudbury_soe.info_p1_body'],
+                ['title_key' => 'sudbury_soe.info_p2_h', 'body_key' => 'sudbury_soe.info_p2_body'],
             ],
         ],
     ],
@@ -79,6 +83,9 @@ return [
         'crisis.common.prep_1',
         'crisis.common.prep_2',
         'crisis.common.prep_3',
+        'sudbury_soe.prep_cs',
+        'sudbury_soe.prep_311',
+        'sudbury_soe.prep_roads',
     ],
 
     'disclaimer_keys' => [

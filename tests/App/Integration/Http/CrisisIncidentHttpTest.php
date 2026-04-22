@@ -68,7 +68,7 @@ final class CrisisIncidentHttpTest extends HttpKernelTestCase
         $html = $response->getContent();
         self::assertStringContainsString('<title>Municipal emergency status — Greater Sudbury — Minoo</title>', $html);
         self::assertStringContainsString('property="og:image" content="https://minoo.live/img/og-default.png"', $html);
-        self::assertStringContainsString('name="description" content="Municipal emergency status for Greater Sudbury.', $html);
+        self::assertStringContainsString('name="description" content="Greater Sudbury declared a municipal state of emergency in April 2026 amid spring flooding', $html);
     }
 
     #[Test]
