@@ -123,6 +123,8 @@ jobs:
         working-directory: minoo
         env:
           MINOO_CRISIS_OG_AUTO: "1"
+          # ConsoleKernel boots the full stack; runners have no storage/waaseyaa.sqlite file.
+          WAASEYAA_DB: ":memory:"
         run: php bin/waaseyaa crisis:og-assets --dry-run
 
       - name: Run integration tests
