@@ -1,0 +1,9 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{% block genealogy_page_title %}Genealogy{% endblock %} — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg detail genealogy-page">
+    {% block genealogy_content %}{% endblock %}
+  </div>
+{% endblock %}
