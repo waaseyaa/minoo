@@ -20,6 +20,11 @@ for wf in .github/workflows/*.yml .github/workflows/*.yaml; do
         echo "verify-deploy-rsync: ERROR: $wf uses unanchored --exclude='docs/' (use --exclude='/docs/' for repo-root docs only)." >&2
         bad=1
     fi
+    # Same pitfall as docs/: unanchored mcp/ drops vendor/waaseyaa/mcp (Composer package).
+    if grep -qE -- "--exclude=['\"]mcp/" "$wf"; then
+        echo "verify-deploy-rsync: ERROR: $wf uses unanchored --exclude='mcp/' (use --exclude='/mcp/' for repo-root mcp/ only)." >&2
+        bad=1
+    fi
 done
 
 if [[ $bad -ne 0 ]]; then

@@ -95,7 +95,7 @@ jobs:
             --exclude='.build/' \
             --exclude='tests/' \
             --exclude='/docs/' \
-            --exclude='mcp/' \
+            --exclude='/mcp/' \
             --exclude='skills/' \
             --exclude='worktrees/' \
             --exclude='*.sqlite' \
