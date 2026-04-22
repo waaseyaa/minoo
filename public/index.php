@@ -17,8 +17,10 @@ use Symfony\Component\HttpFoundation\Response;
 require __DIR__ . '/../vendor/autoload.php';
 
 $projectRoot = dirname(__DIR__);
-if (file_exists($projectRoot . '/.env')) {
-    (new \Symfony\Component\Dotenv\Dotenv())->loadEnv($projectRoot . '/.env');
+if (is_file($projectRoot . '/.env')) {
+    // Default missing APP_ENV to production (not Symfony's implicit "dev") so production
+    // deploys never accidentally run with the wrong environment if the line is omitted.
+    (new \Symfony\Component\Dotenv\Dotenv())->loadEnv($projectRoot . '/.env', 'APP_ENV', 'production');
 }
 
 $kernel = new \Waaseyaa\Foundation\Kernel\HttpKernel($projectRoot);
