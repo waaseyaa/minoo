@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 /**
- * Draft municipal emergency page — hidden from public resolver until draft is cleared in registry.
- * Copy and official URLs must be verified against City of Greater Sudbury communications before publish.
+ * Municipal emergency companion page for Greater Sudbury (live in registry — public at
+ * /communities/sudbury/state-of-emergency). Copy and official URLs must stay aligned with City of Greater Sudbury communications.
  *
  * Open Graph image (`og_image_path`):
  * - Leave empty (`''`) so `crisis-incident.html.twig` uses `{{ parent() }}` for `og:image`, i.e. the same

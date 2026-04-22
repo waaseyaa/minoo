@@ -39,10 +39,12 @@ final class CrisisIncidentResolverTest extends TestCase
     }
 
     #[Test]
-    public function resolve_returns_null_for_draft_sudbury_on_public_web(): void
+    public function resolve_returns_sudbury_on_public_web(): void
     {
         $r = new CrisisIncidentResolver($this->projectRoot);
-        self::assertNull($r->resolve('sudbury', 'state-of-emergency', CrisisResolveContext::publicWeb()));
+        $out = $r->resolve('sudbury', 'state-of-emergency', CrisisResolveContext::publicWeb());
+        self::assertNotNull($out);
+        self::assertSame('sudbury_soe.title', $out['incident']['title_key']);
     }
 
     #[Test]
@@ -65,9 +67,12 @@ final class CrisisIncidentResolverTest extends TestCase
     }
 
     #[Test]
-    public function hub_callout_skips_draft_sudbury(): void
+    public function hub_callout_returns_sudbury_when_show_on_hub(): void
     {
         $r = new CrisisIncidentResolver($this->projectRoot);
-        self::assertNull($r->hubCalloutForCommunity('sudbury', CrisisResolveContext::publicWeb()));
+        $c = $r->hubCalloutForCommunity('sudbury', CrisisResolveContext::publicWeb());
+        self::assertNotNull($c);
+        self::assertSame('sudbury_soe.community_callout_title', $c['title_key']);
+        self::assertStringContainsString('state-of-emergency', $c['href']);
     }
 }

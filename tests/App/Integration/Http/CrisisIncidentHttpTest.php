@@ -31,6 +31,19 @@ final class CrisisIncidentHttpTest extends HttpKernelTestCase
             'province' => 'ON',
         ]);
         $communityStorage->save($sagamok);
+
+        $sudbury = new Community([
+            'name' => 'Greater Sudbury',
+            'slug' => 'sudbury',
+            'community_type' => 'municipality',
+            'type' => 'unceded',
+            'status' => 1,
+            'content' => 'Greater Sudbury.',
+            'latitude' => 46.49,
+            'longitude' => -80.99,
+            'province' => 'ON',
+        ]);
+        $communityStorage->save($sudbury);
     }
 
     #[Test]
@@ -48,10 +61,14 @@ final class CrisisIncidentHttpTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function draft_sudbury_incident_returns_404(): void
+    public function sudbury_state_of_emergency_returns_200_with_expected_meta(): void
     {
         $response = $this->send('GET', '/communities/sudbury/state-of-emergency');
-        self::assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode(), $response->getContent());
+        $html = $response->getContent();
+        self::assertStringContainsString('<title>Municipal emergency status — Greater Sudbury — Minoo</title>', $html);
+        self::assertStringContainsString('property="og:image" content="https://minoo.live/img/og-default.png"', $html);
+        self::assertStringContainsString('name="description" content="Municipal emergency status for Greater Sudbury.', $html);
     }
 
     #[Test]
