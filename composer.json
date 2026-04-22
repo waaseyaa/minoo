@@ -3,6 +3,20 @@
     "description": "Indigenous knowledge platform powered by NorthCloud ingestion",
     "type": "project",
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../waaseyaa/packages/entity"
+        },
+        {
+            "type": "path",
+            "url": "../waaseyaa/packages/field"
+        },
+        {
+            "type": "path",
+            "url": "../waaseyaa/packages/genealogy"
+        }
+    ],
     "require": {
         "php": ">=8.4",
         "geoip2/geoip2": "^3.0",
@@ -21,8 +35,9 @@
         "waaseyaa/engagement": "^0.1",
         "waaseyaa/entity": "^0.1.0-alpha.153",
         "waaseyaa/entity-storage": "^0.1.0-alpha.153",
-        "waaseyaa/field": "0.1.0-alpha.152",
+        "waaseyaa/field": "^0.1.0-alpha.153",
         "waaseyaa/foundation": "^0.1.0-alpha.153",
+        "waaseyaa/genealogy": "@dev",
         "waaseyaa/geo": "^0.1",
         "waaseyaa/graphql": "^0.1",
         "waaseyaa/groups": "^0.1.0-alpha.153",
@@ -72,6 +87,22 @@
             "admin_path": "../waaseyaa/packages/admin",
             "providers": [
                 "App\\Provider\\AppServiceProvider",
+                "App\\Provider\\Entity\\EntityFoundationProvider",
+                "App\\Provider\\Entity\\EntityCommunityProvider",
+                "App\\Provider\\Entity\\EntityContentProvider",
+                "App\\Provider\\Entity\\EntityFeedProvider",
+                "App\\Provider\\Entity\\EntityNewsletterProvider",
+                "App\\Provider\\Routing\\PublicContentRouteProvider",
+                "App\\Provider\\Routing\\PublicCommunityRouteProvider",
+                "App\\Provider\\Routing\\PublicAccountRouteProvider",
+                "App\\Provider\\Routing\\PublicHomeFeedRouteProvider",
+                "App\\Provider\\Routing\\AuthApiRouteProvider",
+                "App\\Provider\\Routing\\SocialApiRouteProvider",
+                "App\\Provider\\Routing\\GamesApiRouteProvider",
+                "App\\Provider\\Routing\\NewsletterApiRouteProvider",
+                "App\\Provider\\Routing\\AdminRouteProvider",
+                "App\\Provider\\AppBootServiceProvider",
+                "App\\Provider\\AppCommandServiceProvider",
                 "App\\Provider\\BimaajiBridgeProvider"
             ]
         }

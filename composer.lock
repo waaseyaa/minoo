@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5bb8e59a74aae06daa85cdf0d5faf839",
+    "content-hash": "e608b7e6c3e701758392591346bfeb58",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4005,17 +4005,11 @@
         },
         {
             "name": "waaseyaa/entity",
-            "version": "v0.1.0-alpha.153",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/waaseyaa/entity.git",
-                "reference": "895cd6cd92ff16325469adc0494e9c93bf266ba3"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/entity/zipball/895cd6cd92ff16325469adc0494e9c93bf266ba3",
-                "reference": "895cd6cd92ff16325469adc0494e9c93bf266ba3",
-                "shasum": ""
+                "type": "path",
+                "url": "../waaseyaa/packages/entity",
+                "reference": "1a59a58fecb68d20176ece5298ff088ada8c2aeb"
             },
             "require": {
                 "php": ">=8.4",
@@ -4047,16 +4041,18 @@
                     "Waaseyaa\\Entity\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\Entity\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "Entity type system — types, interfaces, lifecycle, queries. No storage.",
-            "support": {
-                "issues": "https://github.com/waaseyaa/entity/issues",
-                "source": "https://github.com/waaseyaa/entity/tree/v0.1.0-alpha.153"
-            },
-            "time": "2026-04-20T21:00:18+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "waaseyaa/entity-storage",
@@ -4108,17 +4104,11 @@
         },
         {
             "name": "waaseyaa/field",
-            "version": "v0.1.0-alpha.152",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/waaseyaa/field.git",
-                "reference": "8fefd73ac7faedef1dd2ad71c99a3f3cd5a33afa"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/field/zipball/8fefd73ac7faedef1dd2ad71c99a3f3cd5a33afa",
-                "reference": "8fefd73ac7faedef1dd2ad71c99a3f3cd5a33afa",
-                "shasum": ""
+                "type": "path",
+                "url": "../waaseyaa/packages/field",
+                "reference": "7993e65c6fbe7800d65944ce2ecb38d93b641ee3"
             },
             "require": {
                 "php": ">=8.4",
@@ -4141,16 +4131,18 @@
                     "Waaseyaa\\Field\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\Field\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "Field type system — pluggable field types, definitions, formatters for Waaseyaa",
-            "support": {
-                "issues": "https://github.com/waaseyaa/field/issues",
-                "source": "https://github.com/waaseyaa/field/tree/v0.1.0-alpha.152"
-            },
-            "time": "2026-04-20T00:08:16+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "waaseyaa/foundation",
@@ -4207,6 +4199,67 @@
                 "source": "https://github.com/waaseyaa/foundation/tree/v0.1.0-alpha.153"
             },
             "time": "2026-04-20T21:00:18+00:00"
+        },
+        {
+            "name": "waaseyaa/genealogy",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../waaseyaa/packages/genealogy",
+                "reference": "2ec658e78cbe6cc81902cfd103783aefce48e07c"
+            },
+            "require": {
+                "php": ">=8.4",
+                "waaseyaa/access": "^0.1.0-alpha.150",
+                "waaseyaa/entity": "^0.1.0-alpha.150",
+                "waaseyaa/field": "^0.1.0-alpha.150",
+                "waaseyaa/foundation": "^0.1.0-alpha.150",
+                "waaseyaa/relationship": "^0.1.0-alpha.150",
+                "waaseyaa/routing": "^0.1.0-alpha.150",
+                "waaseyaa/ssr": "^0.1.0-alpha.150",
+                "waaseyaa/user": "^0.1.0-alpha.150",
+                "waaseyaa/workflows": "^0.1.0-alpha.150"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5",
+                "waaseyaa/api": "^0.1.0-alpha.150",
+                "waaseyaa/database-legacy": "^0.1.0-alpha.150",
+                "waaseyaa/entity-storage": "^0.1.0-alpha.150"
+            },
+            "type": "library",
+            "extra": {
+                "waaseyaa": {
+                    "providers": [
+                        "Waaseyaa\\Genealogy\\GenealogyServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev",
+                    "dev-develop/v1.1": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\Genealogy\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\Genealogy\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "verify:no-api-coupling": [
+                    "@php scripts/check-no-waaseyaa-api-coupling.php"
+                ]
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Genealogy domain entities, graph traversal, and public SSR for Waaseyaa",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "waaseyaa/geo",
@@ -7345,7 +7398,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "waaseyaa/genealogy": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
