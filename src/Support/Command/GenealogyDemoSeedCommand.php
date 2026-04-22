@@ -9,13 +9,21 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Genealogy\GenealogyLocalDemoMarkers;
 use Waaseyaa\Genealogy\GenealogyRelationshipType;
 use Waaseyaa\User\User;
 
 #[AsCommand(name: 'genealogy:demo-seed', description: 'Create demo genealogy tree, persons, family, and edges for local SSR testing')]
 final class GenealogyDemoSeedCommand extends Command
 {
+    /** Display names for idempotent demo seeding (was {@see GenealogyLocalDemoMarkers} in waaseyaa/genealogy; inlined for split-package parity). */
+    private const string DEMO_CHILD_DISPLAY = '[Genealogy demo] Child';
+
+    private const string DEMO_PARENT_DISPLAY = '[Genealogy demo] Parent';
+
+    private const string DEMO_FAMILY_DISPLAY = '[Genealogy demo] Family';
+
+    private const string DEMO_TREE_DISPLAY = '[Genealogy demo] Tree';
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
     ) {
@@ -26,7 +34,7 @@ final class GenealogyDemoSeedCommand extends Command
     {
         $personStorage = $this->entityTypeManager->getStorage('genealogy_person');
         $existing = $personStorage->getQuery()
-            ->condition('display_name', GenealogyLocalDemoMarkers::CHILD_PERSON_DISPLAY)
+            ->condition('display_name', self::DEMO_CHILD_DISPLAY)
             ->accessCheck(false)
             ->range(0, 1)
             ->execute();
@@ -39,7 +47,7 @@ final class GenealogyDemoSeedCommand extends Command
             $this->ensureOwnerGenealogyOptIn();
             $this->ensureDemoTreePublishedForAnonymousSsr();
             $familyIds = $familyStorage->getQuery()
-                ->condition('display_name', GenealogyLocalDemoMarkers::FAMILY_DISPLAY)
+                ->condition('display_name', self::DEMO_FAMILY_DISPLAY)
                 ->accessCheck(false)
                 ->range(0, 1)
                 ->execute();
@@ -53,7 +61,7 @@ final class GenealogyDemoSeedCommand extends Command
         $treeStorage = $this->entityTypeManager->getStorage('genealogy_tree');
 
         $tree = $treeStorage->create([
-            'display_name' => GenealogyLocalDemoMarkers::TREE_DISPLAY,
+            'display_name' => self::DEMO_TREE_DISPLAY,
             'owner_uid' => 1,
             // Published so anonymous SSR (and CDN-style caches) can exercise the demo URLs.
             'status' => 1,
@@ -62,21 +70,21 @@ final class GenealogyDemoSeedCommand extends Command
         $treeId = (int) $tree->id();
 
         $family = $familyStorage->create([
-            'display_name' => GenealogyLocalDemoMarkers::FAMILY_DISPLAY,
+            'display_name' => self::DEMO_FAMILY_DISPLAY,
             'tree_id' => $treeId,
             'status' => 1,
         ]);
         $familyStorage->save($family);
 
         $parent = $personStorage->create([
-            'display_name' => GenealogyLocalDemoMarkers::PARENT_PERSON_DISPLAY,
+            'display_name' => self::DEMO_PARENT_DISPLAY,
             'tree_id' => $treeId,
             'status' => 1,
             'is_living' => true,
         ]);
         $personStorage->save($parent);
         $child = $personStorage->create([
-            'display_name' => GenealogyLocalDemoMarkers::CHILD_PERSON_DISPLAY,
+            'display_name' => self::DEMO_CHILD_DISPLAY,
             'tree_id' => $treeId,
             'status' => 1,
             'is_living' => true,
@@ -133,7 +141,7 @@ final class GenealogyDemoSeedCommand extends Command
     {
         $treeStorage = $this->entityTypeManager->getStorage('genealogy_tree');
         $ids = $treeStorage->getQuery()
-            ->condition('display_name', GenealogyLocalDemoMarkers::TREE_DISPLAY)
+            ->condition('display_name', self::DEMO_TREE_DISPLAY)
             ->accessCheck(false)
             ->range(0, 1)
             ->execute();
