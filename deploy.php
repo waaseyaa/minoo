@@ -38,6 +38,10 @@ set('shared_files', ['.env']);
 // Directories that must be writable by the web server
 set('writable_dirs', ['storage', 'storage/framework']);
 
+// PHP-FPM pool user (Debian/Ubuntu default). Required so deploy:writable can
+// grant the web server write access to shared storage (uploads, caches).
+set('http_user', 'www-data');
+
 // ---------------------------------------------------------------------------
 // Hosts
 // ---------------------------------------------------------------------------
@@ -83,11 +87,19 @@ task('minoo:migrate', function (): void {
     run('set -a && . {{deploy_path}}/shared/.env && set +a && php {{release_path}}/bin/migrate');
 });
 
-desc('Clear Waaseyaa framework manifest cache');
+desc('Clear Waaseyaa framework manifest cache (manual recovery only)');
 task('minoo:clear-manifest', function (): void {
-    // packages.php is compiled from composer.json on first boot.
-    // Remove any stale cache so the new release discovers providers fresh.
+    // Prefer `minoo:compile-manifest` on deploy: deleting packages.php forces a
+    // first-request recompile as the FPM user, which often cannot write under
+    // shared/storage when owned by deployer — boot fails with a generic 500.
     run('rm -f {{release_path}}/storage/framework/packages.php');
+});
+
+desc('Compile package manifest into shared storage (runs as deploy user)');
+task('minoo:compile-manifest', function (): void {
+    // Must run before deploy:symlink so vendor/ matches this release when the
+    // fingerprint is computed. Writes through release/storage → shared/storage.
+    run('cd {{release_path}} && php bin/waaseyaa optimize:manifest');
 });
 
 desc('Reload PHP-FPM to pick up new release');
@@ -129,7 +141,7 @@ task('deploy', [
     'deploy:writable',
     'minoo:backup-db',
     'minoo:migrate',
-    'minoo:clear-manifest',
+    'minoo:compile-manifest',
     'deploy:symlink',
     'deploy:unlock',
     'php-fpm:reload',
