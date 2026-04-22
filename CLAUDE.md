@@ -2,7 +2,7 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
-Last framework sync: Waaseyaa alpha.133 (entity arity #1222, skeleton conventions)
+Last framework sync: Waaseyaa alpha.155 (provider stacks, routing duplicate guard, entity manifest hooks)
 
 ## Architecture
 
@@ -217,7 +217,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **`trans()` is a Twig function, not PHP**: Controllers cannot call `trans()`. Use hardcoded English strings for `Flash::success()`/`Flash::error()` — this matches all existing controllers (AuthController, ElderSupportWorkflowController, etc.).
 - **App-specific identity fields belong in Minoo, not framework**: Use `ElderIdentity::isElder($user)` / `ElderIdentity::setElder($user, bool)` from `src/Support/ElderIdentity.php`. Never add Minoo domain concepts to the framework `User` class.
 - **Validate Referer before redirecting**: `$request->headers->get('Referer')` can be an external URL. Use `RoleManagementController::safeReferrer()` pattern — reject anything that doesn't start with `/` or starts with `//`.
-- **Vendor packages are versioned, not symlinked**: `vendor/waaseyaa/*` is installed from version tags (e.g. `^0.1.0-alpha.70`), not path repositories. Framework changes require: tag new release in waaseyaa → `composer update 'waaseyaa/*'` in Minoo. Editing `vendor/` directly is lost on next update. Run `composer install` locally — do NOT use a vendor symlink (breaks after monorepo package extraction).
+- **Vendor packages are versioned from Packagist**: Core `waaseyaa/*` packages resolve to tagged releases (e.g. `^0.1.0-alpha.155`). Framework changes require: tag new release on the monorepo → wait for split/Packagist → `composer update 'waaseyaa/*'` in Minoo. Optional **path** `repositories` in `composer.json` exist only for sibling-repo work on `entity`, `field`, and `genealogy` (`@dev`); do not add path overrides for `foundation`/`routing` in normal flows. Editing `vendor/` directly is lost on next update.
 - **`ServiceProvider::boot()` takes no parameters**: Cannot inject via `boot()` signature. Use `$this->resolve(EventDispatcherInterface::class)` inside `boot()` body.
 - **Feed scoring config**: All ranking constants (decay half-life, affinity signals, engagement weights, diversity thresholds) are in `config/feed_scoring.php`. Tunable without code changes.
 - **Conditional grid columns**: Use `:has()` when grid layouts have optional children (e.g. `.search-layout:has(.search-filters)`). Without it, empty grid columns waste space.
