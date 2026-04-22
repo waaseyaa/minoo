@@ -481,6 +481,8 @@ return [
     // Sudbury SOE — EN placeholders (same as en.php until community translation review)
     'sudbury_soe.translation_pending' => 'Anishinaabemowin for this page is still being reviewed. Important safety details are shown in English for now.',
     'sudbury_soe.title' => 'Municipal emergency status — {community}',
+    'sudbury_soe.og_subtitle' => 'Municipal emergency',
+    'sudbury_soe.og_image_cta' => '',
     'sudbury_soe.meta_description' => 'Placeholder emergency status page for Greater Sudbury. Verify against official city communications before relying on this page.',
     'sudbury_soe.breadcrumb' => 'Municipal emergency status',
     'sudbury_soe.gallery_h' => 'Photos',
@@ -508,6 +510,7 @@ return [
     'sudbury_soe.disclaimer_1' => 'This draft page is not an official City of Greater Sudbury channel. Do not rely on it until Minoo marks the incident as published.',
     'sudbury_soe.disclaimer_2' => 'We host crisis companion pages in Canada on infrastructure we operate with Indigenous partners.',
     'sudbury_soe.footer_updated' => 'Last updated {date}.',
+    'sudbury_soe.back_top' => 'Back to top',
     'sudbury_soe.community_callout_title' => 'Greater Sudbury emergency status',
     'sudbury_soe.community_callout_body' => 'When published, this page will summarize official municipal notices in one place.',
     'sudbury_soe.community_callout_cta' => 'Open emergency status page',

@@ -5,12 +5,20 @@ declare(strict_types=1);
 /**
  * Draft municipal emergency page — hidden from public resolver until draft is cleared in registry.
  * Copy and official URLs must be verified against City of Greater Sudbury communications before publish.
+ *
+ * Open Graph image (`og_image_path`):
+ * - Leave empty (`''`) so `crisis-incident.html.twig` uses `{{ parent() }}` for `og:image`, i.e. the same
+ *   default as the base layout: `/img/og-default.png` (see `templates/layouts/base.html.twig`).
+ * - When you ship a Sudbury-specific card, set `og_image_path` to a public URL such as
+ *   `/og/crisis/sudbury-state-of-emergency.png`, register the route or add the static file under `public/`,
+ *   and bump `og_image_revision` when the visual or copy on the card changes.
  */
 return [
     'emergency_open_graph' => true,
     'og_image_revision' => 1,
     'last_verified_date' => '2026-04-22',
-    'og_image_path' => '/og/crisis/sagamok-spanish-river-flood.png',
+    // '' → Twig `og_image` block calls `parent()` → site default `/img/og-default.png` (not a Sudbury-specific asset).
+    'og_image_path' => '',
     'gallery_base_path' => '',
     'page_theme' => 'flood',
     'carousel_id' => 'sudbury-soe-gallery',
@@ -21,6 +29,8 @@ return [
     'official_feed_url' => 'https://www.greatersudbury.ca/',
 
     'title_key' => 'sudbury_soe.title',
+    'og_subtitle_key' => 'sudbury_soe.og_subtitle',
+    'og_image_cta_key' => 'sudbury_soe.og_image_cta',
     'meta_description_key' => 'sudbury_soe.meta_description',
     'breadcrumb_key' => 'sudbury_soe.breadcrumb',
     'gallery_heading_key' => 'sudbury_soe.gallery_h',
@@ -76,7 +86,7 @@ return [
         'sudbury_soe.disclaimer_2',
     ],
     'footer_updated_key' => 'sudbury_soe.footer_updated',
-    'back_top_key' => 'sagamok_flood.back_top',
+    'back_top_key' => 'sudbury_soe.back_top',
 
     'gallery' => [],
 ];

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Support\CrisisOgAutomationPolicy;
+use App\Support\CrisisOgImageService;
+use App\Support\CrisisIncidentResolver;
+use App\Support\CrisisResolveContext;
 use App\Support\OgImageRenderer;
 use App\Support\PublicOgEntityLoader;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -11,13 +15,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\I18n\TranslatorInterface;
 
 final class OpenGraphController
 {
     private const CACHE_MAX_AGE = 86400;
 
-    private const SAGAMOK_SPANISH_RIVER_FLOOD_SLUG = 'sagamok-anishnawbek';
+    private const SAGAMOK_COMMUNITY_SLUG = 'sagamok-anishnawbek';
+
+    private const SAGAMOK_INCIDENT_SLUG = 'spanish-river-flood';
 
     /** @var array{0: int, 1: int, 2: int} */
     private const ACCENT_BUSINESS = [216, 86, 64];
@@ -28,14 +33,11 @@ final class OpenGraphController
     /** @var array{0: int, 1: int, 2: int} */
     private const ACCENT_TEACHING = [244, 162, 97];
 
-    /** Crisis red (230, 57, 70 — same as event accent). */
-    /** @var array{0: int, 1: int, 2: int} */
-    private const ACCENT_SAGAMOK_FLOOD = [230, 57, 70];
-
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly OgImageRenderer $ogImageRenderer,
-        private readonly TranslatorInterface $translator,
+        private readonly CrisisIncidentResolver $crisisIncidentResolver,
+        private readonly CrisisOgImageService $crisisOgImageService,
     ) {}
 
     /** @param array<string, mixed> $params */
@@ -82,27 +84,71 @@ final class OpenGraphController
         AccountInterface $account,
         HttpRequest $request,
     ): Response {
-        /** @var array{emergency_open_graph: bool, og_image_revision: int} $config */
-        $config = require dirname(__DIR__, 2) . '/config/crisis/sagamok_spanish_river_flood.php';
+        return $this->crisisIncidentPngInternal($request, self::SAGAMOK_COMMUNITY_SLUG, self::SAGAMOK_INCIDENT_SLUG);
+    }
 
-        $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()
-            ->condition('slug', self::SAGAMOK_SPANISH_RIVER_FLOOD_SLUG)
-            ->condition('status', 1)
-            ->execute();
+    /**
+     * Generic crisis OG PNG: static file under public/ when present, else dynamic GD render per policy.
+     *
+     * @param array<string, mixed> $params
+     * @param array<string, mixed> $query
+     */
+    public function crisisIncidentPng(
+        array $params,
+        array $query,
+        AccountInterface $account,
+        HttpRequest $request,
+    ): Response {
+        $community = (string) ($params['community_slug'] ?? '');
+        $incident = (string) ($params['incident_slug'] ?? '');
 
-        $community = $ids !== [] ? $storage->load(reset($ids)) : null;
+        return $this->crisisIncidentPngInternal($request, $community, $incident);
+    }
+
+    private function crisisIncidentPngInternal(HttpRequest $request, string $communitySlug, string $incidentSlug): Response
+    {
+        $resolved = $this->crisisIncidentResolver->resolve($communitySlug, $incidentSlug, CrisisResolveContext::publicWeb());
+        if ($resolved === null) {
+            return new Response('', 404);
+        }
+
+        $registry = $resolved['registry'];
+        $incident = $resolved['incident'];
+        $webPath = trim((string) ($incident['og_image_path'] ?? ''));
+        if ($webPath === '' || !CrisisOgAutomationPolicy::isManagedGeneratedWebPath($webPath)) {
+            return new Response('', 404);
+        }
+
+        $community = $this->crisisOgImageService->loadPublishedCommunity($communitySlug);
         if ($community === null) {
             return new Response('', 404);
         }
 
-        $name = (string) $community->get('name');
-        $title = $this->translator->trans('sagamok_flood.title', ['community' => $name], 'en');
-        $subtitle = $this->translator->trans('sagamok_flood.og_subtitle', [], 'en');
-        $imageCta = $this->translator->trans('sagamok_flood.og_image_cta', [], 'en');
+        $abs = $this->crisisOgImageService->absolutePublicFilePath($webPath);
+        $static = $this->crisisOgImageService->readStaticPngIfPresent($webPath);
+        if ($static !== null) {
+            $etag = $this->crisisOgImageService->etagForStaticFile($resolved, $abs);
+            $response = new Response($static);
+            $response->headers->set('Content-Type', 'image/png');
+            $response->setPublic();
+            $response->setMaxAge(self::CACHE_MAX_AGE);
+            $response->setEtag($etag);
+            if ($response->isNotModified($request)) {
+                return $response;
+            }
 
-        $etagPayload = $title . '|' . $subtitle . '|' . $imageCta . '|' . (string) $config['og_image_revision']
-            . '|' . ($config['emergency_open_graph'] ? '1' : '0');
+            return $response;
+        }
+
+        if (CrisisOgAutomationPolicy::httpDynamicWhenMissingIneligibilityReason($registry, $incident) !== null) {
+            return new Response('', 404);
+        }
+
+        if (!extension_loaded('gd')) {
+            return new Response('', 503);
+        }
+
+        $etagPayload = $this->crisisOgImageService->etagPayloadForDynamic($resolved, $community);
         $etag = '"' . hash('sha256', $etagPayload) . '"';
 
         $response = new Response();
@@ -115,14 +161,10 @@ final class OpenGraphController
             return $response;
         }
 
-        $binary = $this->ogImageRenderer->renderPng(
-            $title,
-            $subtitle,
-            self::ACCENT_SAGAMOK_FLOOD,
-            OgImageRenderer::STYLE_EMERGENCY,
-            $imageCta,
-        );
+        $binary = $this->crisisOgImageService->buildDynamicPngBinary($resolved, $community);
         $response->setContent($binary);
+
+        $this->crisisOgImageService->dispatchBackgroundMaterialize($communitySlug, $incidentSlug, $resolved);
 
         return $response;
     }

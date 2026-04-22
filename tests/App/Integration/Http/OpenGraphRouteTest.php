@@ -152,6 +152,19 @@ final class OpenGraphRouteTest extends HttpKernelTestCase
     }
 
     #[Test]
+    public function sagamok_crisis_og_png_ok_via_parameterized_route(): void
+    {
+        if (!extension_loaded('gd')) {
+            self::markTestSkipped('ext-gd not loaded');
+        }
+
+        $response = $this->send('GET', '/og/crisis/sagamok-anishnawbek/spanish-river-flood.png');
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('image/png', $response->headers->get('Content-Type'));
+        self::assertStringStartsWith("\x89PNG\r\n\x1a\n", (string) $response->getContent());
+    }
+
+    #[Test]
     public function business_og_png_returns_304_when_etag_matches(): void
     {
         if (!extension_loaded('gd')) {

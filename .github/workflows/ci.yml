@@ -119,6 +119,12 @@ jobs:
         working-directory: minoo
         run: ./vendor/bin/phpunit --testsuite MinooUnit
 
+      - name: Crisis OG assets command (dry-run)
+        working-directory: minoo
+        env:
+          MINOO_CRISIS_OG_AUTO: "1"
+        run: php bin/waaseyaa crisis:og-assets --dry-run
+
       - name: Run integration tests
         working-directory: minoo
         run: ./vendor/bin/phpunit --testsuite MinooIntegration

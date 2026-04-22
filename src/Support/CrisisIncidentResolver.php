@@ -28,16 +28,9 @@ final class CrisisIncidentResolver
             return null;
         }
 
-        $configPath = (string) $row['config_path'];
-        if ($configPath === '') {
-            return null;
-        }
-
-        if (!str_starts_with($configPath, '/')) {
-            $configPath = $this->projectRoot . '/' . ltrim($configPath, '/');
-        }
-
-        if (!is_file($configPath)) {
+        $rawConfigPath = (string) $row['config_path'];
+        $configPath = CrisisIncidentConfigPathSafety::validatedAbsoluteConfigPath($this->projectRoot, $rawConfigPath);
+        if ($configPath === null) {
             return null;
         }
 

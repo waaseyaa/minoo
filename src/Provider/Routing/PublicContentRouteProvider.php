@@ -253,6 +253,17 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
                                     ->build(),
                             );
 
+                            $router->addRoute(
+                                'og.crisis.incident.png',
+                                RouteBuilder::create('/og/crisis/{community_slug}/{incident_slug}.png')
+                                    ->controller('App\\Controller\\OpenGraphController::crisisIncidentPng')
+                                    ->allowAll()
+                                    ->methods('GET')
+                                    ->requirement('community_slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                                    ->requirement('incident_slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                                    ->build(),
+                            );
+
                             // =====================================================================
                             // --- Language ---
                             // =====================================================================

@@ -36,7 +36,7 @@ final class CrisisIncidentConfigSchemaTest extends TestCase
 
             foreach ([
                 'emergency_open_graph', 'last_verified_date', 'og_image_path', 'page_theme',
-                'carousel_id', 'title_key', 'meta_description_key', 'breadcrumb_key',
+                'carousel_id', 'title_key', 'og_subtitle_key', 'og_image_cta_key', 'meta_description_key', 'breadcrumb_key',
                 'soe_eyebrow_key', 'soe_title_key', 'soe_meta_key',
                 'official_label_key', 'official_text_before_key', 'official_link_key',
                 'notice_url', 'official_feed_url',

@@ -25,6 +25,8 @@ return [
     'official_feed_url' => 'https://www.sagamokanishnawbek.com/sagamok-news',
 
     'title_key' => 'sagamok_flood.title',
+    'og_subtitle_key' => 'sagamok_flood.og_subtitle',
+    'og_image_cta_key' => 'sagamok_flood.og_image_cta',
     'meta_description_key' => 'sagamok_flood.meta_description',
     'breadcrumb_key' => 'sagamok_flood.breadcrumb',
     'gallery_heading_key' => 'sagamok_flood.gallery_h',

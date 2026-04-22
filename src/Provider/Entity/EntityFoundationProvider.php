@@ -147,6 +147,21 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         return new \App\Support\OgImageRenderer(dirname(__DIR__, 3));
                     });
 
+                    $this->singleton(\App\Support\CrisisIncidentResolver::class, function (): \App\Support\CrisisIncidentResolver {
+                        return new \App\Support\CrisisIncidentResolver(dirname(__DIR__, 3));
+                    });
+
+                    $this->singleton(\App\Support\CrisisOgImageService::class, function (): \App\Support\CrisisOgImageService {
+                        return new \App\Support\CrisisOgImageService(
+                            dirname(__DIR__, 3),
+                            $this->resolve(EntityTypeManager::class),
+                            $this->resolve(\App\Support\OgImageRenderer::class),
+                            $this->resolve(TranslatorInterface::class),
+                            $this->resolve(\App\Support\CrisisIncidentResolver::class),
+                            new \Waaseyaa\Foundation\Log\NullLogger(),
+                        );
+                    });
+
                     // =====================================================================
                     // --- Rate limiting ---
                     // =====================================================================

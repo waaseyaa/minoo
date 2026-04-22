@@ -51,6 +51,7 @@ use App\Feed\Scoring\EngagementCalculator;
 use App\Feed\Scoring\FeedScorer;
 use App\Ingestion\EntityMapper\NcArticleToEventMapper;
 use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
+use App\Support\Command\CrisisOgAssetsCommand;
 use App\Support\Command\GenealogyDemoSeedCommand;
 use App\Support\Command\MailTestCommand;
 use App\Support\Command\MessagingDigestCommand;
@@ -129,6 +130,10 @@ class AppCommandServiceProvider extends AppCoreServiceProvider
             );
 
             return [
+                new CrisisOgAssetsCommand(
+                    $this->resolve(\App\Support\CrisisIncidentResolver::class),
+                    $this->resolve(\App\Support\CrisisOgImageService::class),
+                ),
                 new GenealogyDemoSeedCommand($entityTypeManager),
                 new NcSyncCommand(
                     $this->resolve(NcSyncService::class),
