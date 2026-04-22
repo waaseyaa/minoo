@@ -1,0 +1,12 @@
+<section class="crisis-section" aria-labelledby="crisis-glance-h">
+  <h2 id="crisis-glance-h" class="crisis-section__h">{{ trans(crisis.tiles_heading_key) }}</h2>
+  <div class="crisis-tiles">
+    {% for tile in crisis.tiles %}
+    <div class="crisis-tile">
+      <div class="crisis-tile__label">{{ trans(tile.label_key) }}</div>
+      <div class="crisis-tile__value"><span class="crisis-pill crisis-pill--{{ tile.pill_tone }}">{{ trans(tile.pill_key) }}</span></div>
+      <p class="crisis-tile__note">{{ trans(tile.note_key) }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>

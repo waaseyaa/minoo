@@ -1,0 +1,10 @@
+{% if crisis_gallery is defined and crisis_gallery|length > 0 %}
+  <div class="content-max crisis-gallery-band">
+    {% include 'components/shared/ui/media-carousel.html.twig' with {
+      carousel_id: crisis.carousel_id,
+      heading_key: crisis.gallery_heading_key,
+      heading_class: 'crisis-gallery__title',
+      slides: crisis_gallery
+    } %}
+  </div>
+{% endif %}

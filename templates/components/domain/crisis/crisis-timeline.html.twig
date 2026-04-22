@@ -1,0 +1,13 @@
+<div class="content-max crisis-timeline-band">
+  <section class="crisis-section crisis-section--timeline" aria-labelledby="crisis-timeline-h">
+    <h2 id="crisis-timeline-h" class="crisis-section__h">{{ trans(crisis.timeline_heading_key) }}</h2>
+    <ol class="crisis-timeline">
+      {% for row in crisis.timeline %}
+      <li>
+        <time class="crisis-timeline__time" datetime="{{ row.datetime }}">{{ trans(row.date_key) }}</time>
+        <p class="crisis-timeline__body">{{ trans(row.body_key) }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+</div>

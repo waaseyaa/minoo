@@ -46,7 +46,7 @@ final class CommunityControllerTest extends TestCase
         $this->twig = new Environment(new ArrayLoader([
             'pages/communities/index.html.twig' => '{{ path }}|{{ communities_json|raw }}',
             'pages/communities/show.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
-            'pages/communities/spanish-river-flood.html.twig' => '{{ path }}|flood:{{ community.get("name") }}|{{ sagamok_flood_gallery[0].src|default("") }}',
+            'pages/communities/crisis-incident.html.twig' => '{{ path }}|flood:{{ community.get("name") }}|{{ crisis_gallery[0].src|default("") }}|{{ crisis.title_key }}',
         ]));
 
         $this->account = $this->createMock(AccountInterface::class);
@@ -114,7 +114,7 @@ final class CommunityControllerTest extends TestCase
     }
 
     #[Test]
-    public function spanish_river_flood_returns_200_for_sagamok(): void
+    public function crisis_incident_returns_200_for_sagamok_spanish_river_flood(): void
     {
         $sagamok = new Community(['cid' => 1, 'name' => 'Sagamok Anishnawbek', 'slug' => 'sagamok-anishnawbek', 'community_type' => 'first_nation']);
 
@@ -122,30 +122,44 @@ final class CommunityControllerTest extends TestCase
         $this->storage->method('load')->with(1)->willReturn($sagamok);
 
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
-        $response = $controller->spanishRiverFlood(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
+        $response = $controller->crisisIncident(['slug' => 'sagamok-anishnawbek', 'incident' => 'spanish-river-flood'], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsString('/communities/sagamok-anishnawbek/spanish-river-flood', $response->getContent());
         $this->assertStringContainsString('flood:Sagamok Anishnawbek', $response->getContent());
         $this->assertStringContainsString('/img/crisis/sagamok-spanish-river-flood/flood-01.jpg', $response->getContent());
+        $this->assertStringContainsString('sagamok_flood.title', $response->getContent());
     }
 
     #[Test]
-    public function spanish_river_flood_returns_404_for_other_community_slug(): void
+    public function crisis_incident_returns_404_for_unknown_registry_pair(): void
     {
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
-        $response = $controller->spanishRiverFlood(['slug' => 'blind-river'], [], $this->account, $this->request);
+        $response = $controller->crisisIncident(['slug' => 'blind-river', 'incident' => 'spanish-river-flood'], [], $this->account, $this->request);
 
         $this->assertSame(404, $response->getStatusCode());
     }
 
     #[Test]
-    public function spanish_river_flood_returns_404_when_sagamok_missing(): void
+    public function crisis_incident_returns_404_for_unknown_incident_slug(): void
+    {
+        $sagamok = new Community(['cid' => 1, 'name' => 'Sagamok Anishnawbek', 'slug' => 'sagamok-anishnawbek', 'community_type' => 'first_nation']);
+        $this->query->method('execute')->willReturn([1]);
+        $this->storage->method('load')->with(1)->willReturn($sagamok);
+
+        $controller = new CommunityController($this->entityTypeManager, $this->twig);
+        $response = $controller->crisisIncident(['slug' => 'sagamok-anishnawbek', 'incident' => 'not-listed'], [], $this->account, $this->request);
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[Test]
+    public function crisis_incident_returns_404_when_community_missing(): void
     {
         $this->query->method('execute')->willReturn([]);
 
         $controller = new CommunityController($this->entityTypeManager, $this->twig);
-        $response = $controller->spanishRiverFlood(['slug' => 'sagamok-anishnawbek'], [], $this->account, $this->request);
+        $response = $controller->crisisIncident(['slug' => 'sagamok-anishnawbek', 'incident' => 'spanish-river-flood'], [], $this->account, $this->request);
 
         $this->assertSame(404, $response->getStatusCode());
     }
@@ -166,7 +180,7 @@ final class CommunityControllerTest extends TestCase
 
         $this->twig = new Environment(new ArrayLoader([
             'pages/communities/show.html.twig' => '{{ path }}|{{ community.get("name") }}{% if people is defined and people %}|people:{{ people|length }}{% endif %}{% if band_office is defined and band_office %}|office:{{ band_office.phone }}{% endif %}',
-            'pages/communities/spanish-river-flood.html.twig' => '{{ path }}|flood:{{ community.get("name") }}|{{ sagamok_flood_gallery[0].src|default("") }}',
+            'pages/communities/crisis-incident.html.twig' => '{{ path }}|flood:{{ community.get("name") }}|{{ crisis_gallery[0].src|default("") }}|{{ crisis.title_key }}',
         ]));
 
         $this->northCloudClient

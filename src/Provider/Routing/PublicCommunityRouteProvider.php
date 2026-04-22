@@ -275,13 +275,14 @@ final class PublicCommunityRouteProvider extends AppCoreServiceProvider
                             );
 
                             $router->addRoute(
-                                'communities.spanish_river_flood',
-                                RouteBuilder::create('/communities/{slug}/spanish-river-flood')
-                                    ->controller('App\\Controller\\CommunityController::spanishRiverFlood')
+                                'communities.crisis_incident',
+                                RouteBuilder::create('/communities/{slug}/{incident}')
+                                    ->controller('App\\Controller\\CommunityController::crisisIncident')
                                     ->allowAll()
                                     ->render()
                                     ->methods('GET')
                                     ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                                    ->requirement('incident', '[a-z0-9][a-z0-9-]*[a-z0-9]')
                                     ->build(),
                             );
 

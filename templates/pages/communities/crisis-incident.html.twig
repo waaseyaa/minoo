@@ -1,0 +1,113 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% set crisis_share_url = site_base_url ~ lang_url(path) %}
+{% set crisis_share_title = trans(crisis.title_key, {community: community.get('name')}) ~ ' — Minoo' %}
+{% set crisis_share_summary = trans(crisis.meta_description_key) %}
+
+{% block title %}{{ trans(crisis.title_key, {community: community.get('name')}) }} — Minoo{% endblock %}
+
+{% block meta_description %}{{ trans(crisis.meta_description_key) }}{% endblock %}
+
+{% block og_description %}{{ trans(crisis.meta_description_key) }}{% endblock %}
+
+{% block og_type %}article{% endblock %}
+
+{% block og_image %}{% if crisis.emergency_open_graph|default(true) and crisis.og_image_path|default('') != '' %}{{ site_base_url }}{{ crisis.og_image_path }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="crisis-doc">
+  {% include "components/shared/layout/breadcrumb.html.twig" with {
+    breadcrumbs: [
+      {label: trans('breadcrumb.home'), url: '/'},
+      {label: trans('communities.all_communities'), url: lang_url('/communities')},
+      {label: community.get('name'), url: lang_url('/communities/' ~ community.get('slug'))},
+      {label: trans(crisis.breadcrumb_key)}
+    ]
+  } %}
+
+  {% include 'components/domain/crisis/crisis-lang-pending.html.twig' %}
+
+  {% include 'components/domain/crisis/crisis-hero.html.twig' %}
+
+  {% include 'components/domain/crisis/crisis-gallery-band.html.twig' %}
+
+  {% include 'components/domain/crisis/crisis-timeline.html.twig' %}
+
+  <div class="content-max crisis-share-wrap">
+    {% include 'components/shared/ui/share-toolbar.html.twig' with {
+      share_url: crisis_share_url,
+      share_title: crisis_share_title,
+      share_summary: crisis_share_summary
+    } %}
+  </div>
+
+  <div class="content-max crisis-page crisis-page--{{ crisis.page_theme|default('flood') }}">
+    {% include 'components/domain/crisis/crisis-tiles.html.twig' %}
+
+    {% include 'components/domain/crisis/crisis-contacts.html.twig' %}
+
+    {% include 'components/domain/crisis/crisis-info-cards.html.twig' %}
+
+    <section class="crisis-section" aria-labelledby="crisis-prep-h">
+      <h2 id="crisis-prep-h" class="crisis-section__h">{{ trans(crisis.prep_heading_key) }}</h2>
+      {% include 'components/domain/crisis/crisis-prep-checklist.html.twig' with { items: crisis.prep_checklist_keys } %}
+    </section>
+
+    {% include 'components/domain/crisis/crisis-footer.html.twig' %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if crisis_gallery is defined and crisis_gallery|length > 0 %}
+<script src="/js/media-carousel.js" defer></script>
+{% endif %}
+<script>
+(function () {
+  var root = document.querySelector('[data-share-toolbar-root]');
+  if (!root) return;
+  var url = root.getAttribute('data-share-url') || '';
+  var title = root.getAttribute('data-share-title') || '';
+  var text = root.getAttribute('data-share-text') || '';
+  var statusEl = root.querySelector('[data-share-status]');
+  var copyBtn = root.querySelector('[data-share-copy]');
+  var nativeWrap = root.querySelector('[data-share-native-wrap]');
+  var nativeBtn = root.querySelector('[data-share-native]');
+  var copyOk = {{ trans('share.copy_success')|json_encode|raw }};
+  var copyFail = {{ trans('share.copy_fail')|json_encode|raw }};
+
+  function setStatus(msg) {
+    if (statusEl) statusEl.textContent = msg || '';
+  }
+
+  if (copyBtn && url) {
+    copyBtn.addEventListener('click', function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          setStatus(copyOk);
+        }).catch(function () {
+          try {
+            window.prompt(copyFail, url);
+          } catch (e) {
+            setStatus(copyFail);
+          }
+        });
+      } else {
+        try {
+          window.prompt(copyFail, url);
+        } catch (e2) {
+          setStatus(copyFail);
+        }
+      }
+    });
+  }
+
+  if (nativeBtn && nativeWrap && typeof navigator.share === 'function') {
+    nativeWrap.hidden = false;
+    nativeBtn.addEventListener('click', function () {
+      navigator.share({ url: url, title: title, text: text }).catch(function () {});
+    });
+  }
+})();
+</script>
+{% endblock %}

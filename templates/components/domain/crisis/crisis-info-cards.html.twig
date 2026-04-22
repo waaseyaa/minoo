@@ -1,0 +1,14 @@
+<div class="crisis-bwa-roads-grid">
+  {% for card in crisis.info_cards %}
+  <section class="crisis-section" aria-labelledby="{{ card.section_id }}">
+    <h2 id="{{ card.section_id }}" class="crisis-section__h">{{ trans(card.heading_key) }}</h2>
+    <div class="card crisis-card crisis-card--accent-{{ card.tone }}">
+      <p class="crisis-card__tag crisis-card__tag--{{ card.tone }}">{{ trans(card.tag_key) }}</p>
+      {% for sub in card.subsections %}
+      <h3 class="crisis-card__h">{{ trans(sub.title_key) }}</h3>
+      <p>{{ trans(sub.body_key) }}</p>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>

@@ -1,0 +1,15 @@
+<header class="crisis-hero">
+  <div class="crisis-banner crisis-banner--emergency" role="region" aria-label="{{ trans(crisis.soe_title_key)|e('html_attr') }}">
+    <p class="crisis-banner__eyebrow">{{ trans(crisis.soe_eyebrow_key) }}</p>
+    <h1 class="crisis-banner__title">{{ trans(crisis.soe_title_key) }}</h1>
+    <p class="crisis-banner__meta">{{ trans(crisis.soe_meta_key, {date: crisis_verified}) }}</p>
+  </div>
+
+  <div class="crisis-official-strip" role="region" aria-label="{{ trans(crisis.official_label_key)|e('html_attr') }}">
+    <span class="crisis-official-strip__label">{{ trans(crisis.official_label_key) }}</span>
+    <span class="crisis-official-strip__text">
+      {{ trans(crisis.official_text_before_key) }}
+      <a href="{{ crisis.official_feed_url }}" rel="noopener" target="_blank">{{ trans(crisis.official_link_key) }}</a>.
+    </span>
+  </div>
+</header>

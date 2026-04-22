@@ -1,0 +1,11 @@
+<footer class="crisis-footer">
+  <div class="crisis-disclaimer">
+    {% for dk in crisis.disclaimer_keys %}
+    <p>{{ trans(dk) }}</p>
+    {% endfor %}
+  </div>
+  <p class="crisis-footer__updated">
+    {{ trans(crisis.footer_updated_key, {date: crisis_verified|date('F j, Y')}) }}
+    <a href="#main-content">{{ trans(crisis.back_top_key) }}</a>
+  </p>
+</footer>

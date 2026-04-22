@@ -83,7 +83,7 @@ final class OpenGraphController
         HttpRequest $request,
     ): Response {
         /** @var array{emergency_open_graph: bool, og_image_revision: int} $config */
-        $config = require dirname(__DIR__, 2) . '/config/sagamok_flood.php';
+        $config = require dirname(__DIR__, 2) . '/config/crisis/sagamok_spanish_river_flood.php';
 
         $storage = $this->entityTypeManager->getStorage('community');
         $ids = $storage->getQuery()

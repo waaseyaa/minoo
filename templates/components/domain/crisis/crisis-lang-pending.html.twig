@@ -1,0 +1,8 @@
+{% if crisis.translation_pending_lang is defined and current_language().id == crisis.translation_pending_lang %}
+  {% set pending = trans(crisis.translation_pending_key) %}
+  {% if pending|trim != '' %}
+  <div class="crisis-lang-banner" role="status">
+    <p>{{ pending }}</p>
+  </div>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,22 @@
+<section class="crisis-section" aria-labelledby="crisis-contacts-h">
+  <h2 id="crisis-contacts-h" class="crisis-section__h">{{ trans(crisis.contacts_heading_key) }}</h2>
+  <p class="crisis-lede">
+    {{ trans(crisis.contacts_verified_key, {date: crisis_verified}) }}
+    <a href="{{ crisis.notice_url }}" rel="noopener" target="_blank">{{ trans(crisis.contacts_notice_link_key) }}</a>
+  </p>
+  <div class="crisis-contacts">
+    {% for c in crisis.contacts %}
+    <div class="crisis-contact{% if c.emergency %} crisis-contact--emergency{% endif %}">
+      <div class="crisis-contact__who">
+        <span class="crisis-contact__name">{{ trans(c.name_key) }}</span>
+        <span class="crisis-contact__role">{{ trans(c.role_key) }}</span>
+      </div>
+      <a class="crisis-contact__tel" href="{{ c.tel_href }}"{% if c.emergency|default(false) %} aria-label="911"{% endif %}>{{ c.tel_display }}</a>
+    </div>
+    {% endfor %}
+  </div>
+  <p class="crisis-lede crisis-lede--tight">
+    {{ trans(crisis.contacts_note_key) }}
+    <a href="{{ crisis.notice_url }}" rel="noopener" target="_blank">{{ trans(crisis.contacts_notice_link_short_key) }}</a>.
+  </p>
+</section>

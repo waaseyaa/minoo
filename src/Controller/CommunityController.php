@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Contract\NorthCloudCommunityDictionaryClientInterface;
+use App\Support\CrisisIncidentResolver;
+use App\Support\CrisisResolveContext;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -16,8 +18,6 @@ use Waaseyaa\Geo\GeoDistance;
 
 final class CommunityController
 {
-    private const SAGAMOK_SPANISH_RIVER_FLOOD_SLUG = 'sagamok-anishnawbek';
-
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
@@ -118,10 +118,14 @@ final class CommunityController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function spanishRiverFlood(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function crisisIncident(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = (string) ($params['slug'] ?? '');
-        if ($slug !== self::SAGAMOK_SPANISH_RIVER_FLOOD_SLUG) {
+        $incident = (string) ($params['incident'] ?? '');
+
+        $resolver = new CrisisIncidentResolver(dirname(__DIR__, 2));
+        $resolved = $resolver->resolve($slug, $incident, CrisisResolveContext::publicWeb());
+        if ($resolved === null) {
             return $this->communityListNotFoundResponse($account);
         }
 
@@ -137,30 +141,44 @@ final class CommunityController
             return $this->communityListNotFoundResponse($account);
         }
 
-        /** @var array{emergency_open_graph: bool, last_verified_date?: string, gallery?: list<array{file: string, width: int, height: int, alt_key: string, caption_key: string}>} $floodConfig */
-        $floodConfig = require dirname(__DIR__, 2) . '/config/sagamok_flood.php';
+        /** @var array<string, mixed> $incidentConfig */
+        $incidentConfig = $resolved['incident'];
+        $crisisGallery = $this->buildCrisisGallerySlides($incidentConfig);
+        $verified = (string) ($incidentConfig['last_verified_date'] ?? '');
 
-        $galleryBase = '/img/crisis/sagamok-spanish-river-flood';
-        $sagamokFloodGallery = [];
-        foreach ($floodConfig['gallery'] ?? [] as $row) {
-            $sagamokFloodGallery[] = [
-                'src' => $galleryBase . '/' . $row['file'],
-                'width' => $row['width'],
-                'height' => $row['height'],
-                'alt_key' => $row['alt_key'],
-                'caption_key' => $row['caption_key'],
-            ];
-        }
-
-        $html = $this->twig->render('pages/communities/spanish-river-flood.html.twig', LayoutTwigContext::withAccount($account, [
-            'path' => '/communities/' . $slug . '/spanish-river-flood',
+        $html = $this->twig->render('pages/communities/crisis-incident.html.twig', LayoutTwigContext::withAccount($account, [
+            'path' => '/communities/' . $slug . '/' . $incident,
             'community' => $community,
-            'sagamok_flood_emergency_og' => $floodConfig['emergency_open_graph'],
-            'sagamok_flood_verified' => (string) ($floodConfig['last_verified_date'] ?? '2026-04-22'),
-            'sagamok_flood_gallery' => $sagamokFloodGallery,
+            'crisis' => $incidentConfig,
+            'crisis_verified' => $verified,
+            'crisis_gallery' => $crisisGallery,
         ]));
 
         return new Response($html);
+    }
+
+    /**
+     * @param array<string, mixed> $incident
+     * @return list<array{src: string, width: int, height: int, alt_key: string, caption_key: string}>
+     */
+    private function buildCrisisGallerySlides(array $incident): array
+    {
+        $galleryBase = (string) ($incident['gallery_base_path'] ?? '');
+        $slides = [];
+        foreach ($incident['gallery'] ?? [] as $row) {
+            if ($galleryBase === '' || !isset($row['file'], $row['width'], $row['height'], $row['alt_key'], $row['caption_key'])) {
+                continue;
+            }
+            $slides[] = [
+                'src' => $galleryBase . '/' . $row['file'],
+                'width' => (int) $row['width'],
+                'height' => (int) $row['height'],
+                'alt_key' => (string) $row['alt_key'],
+                'caption_key' => (string) $row['caption_key'],
+            ];
+        }
+
+        return $slides;
     }
 
     private function communityListNotFoundResponse(AccountInterface $account): Response
@@ -260,6 +278,9 @@ final class CommunityController
             ->execute();
         $localPeople = $personIds !== [] ? array_values($personStorage->loadMultiple($personIds)) : [];
 
+        $crisisResolver = new CrisisIncidentResolver(dirname(__DIR__, 2));
+        $crisisCallout = $crisisResolver->hubCalloutForCommunity((string) $community->get('slug'), CrisisResolveContext::publicWeb());
+
         $html = $this->twig->render('pages/communities/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/communities/' . $slug,
             'community' => $community,
@@ -272,6 +293,7 @@ final class CommunityController
             'local_teachings' => $localTeachings,
             'local_businesses' => $localBusinesses,
             'local_people' => $localPeople,
+            'crisis_callout' => $crisisCallout,
         ]));
 
         return new Response($html);
