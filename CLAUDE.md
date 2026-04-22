@@ -14,9 +14,9 @@ minoo/
 │   ├── Access/        # 10 access policy classes
 │   ├── Controller/    # 35 HTTP controllers (incl. HomeController, FeedController)
 │   ├── Domain/        # Bounded contexts (Geo/)
-│   ├── Entity/        # 17 custom entity classes
+│   ├── Entity/        # 31 entity class files (content + config types)
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
-│   ├── Provider/      # AppServiceProvider (single consolidated provider)
+│   ├── Provider/      # 5 composer-registered providers + internal stacks (entity, routing)
 │   ├── Search/        # Search providers, autocomplete
 │   ├── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
 │   └── Support/       # Cross-cutting utilities (GeoDistance, SlugGenerator, CrosswordEngine)
@@ -55,7 +55,7 @@ minoo/
 | `tests/App/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
 | `src/Ingestion/*` | `minoo:ingestion` | `docs/specs/ingestion-pipeline.md` |
 | `src/Search/*` | `minoo:search` | `docs/specs/search.md` |
-| `src/Controller/*`, routes in `src/Provider/AppServiceProvider.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
+| `src/Controller/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*`, `src/Support/GeoDistance.php`, `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
 | `src/Contract/NorthCloudCommunityDictionaryClientInterface.php`, `src/Support/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
@@ -88,9 +88,22 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 | Ingestion | `ingest_log` | `IngestAccessPolicy` |
 | Editorial | `featured_item` | `FeaturedItemAccessPolicy` |
 
-All entity types are registered in `App\Provider\AppServiceProvider`.
+Entity types and bindings are registered through `App\Provider\MinooEntityStackProvider`, which composes `EntityFoundationProvider`, `EntityCommunityProvider`, `EntityContentProvider`, `EntityFeedProvider`, `NewsletterEntityDefinitionsProvider`, and `EntityNewsletterProvider`. HTTP routes are composed by `MinooRoutingStackProvider` (public, API, admin, games, newsletter, social).
 
 **Note:** `post` has its own `PostAccessPolicy` (public-read, auth-create, author+coordinator delete), separate from `EngagementAccessPolicy` which covers `reaction`, `comment`, `follow`.
+
+### Entity provider ownership (split boundaries)
+
+| Provider | Role |
+|----------|------|
+| `EntityFoundationProvider` | Core platform types (`post`, engagement, taxonomy, menu, user-facing helpers), MCP bindings, shared infrastructure. |
+| `EntityCommunityProvider` | Community, group, cultural group, contributor, volunteer, leader, resource person, elder support. |
+| `EntityContentProvider` | Teachings, events, language/dictionary, games, featured items, oral history. |
+| `EntityFeedProvider` | Feed-oriented bindings. |
+| `NewsletterEntityDefinitionsProvider` | Newsletter entity `EntityType` definitions (editions, items, submissions). |
+| `EntityNewsletterProvider` | Newsletter services, dispatchers, routes-adjacent bindings (not the three `entityType` blocks moved to `NewsletterEntityDefinitionsProvider`). |
+
+Further mechanical splits should move whole type families together with their `singleton`/`bind` pairs so `MinooEntityStackProvider` stays the only composer-facing entity entry point.
 
 ## Frontend / SSR
 
@@ -115,7 +128,7 @@ All entity types are registered in `App\Provider\AppServiceProvider`.
 
 **Adding a Minoo entity type:**
 1. Create entity class in `src/Entity/` extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`, accept optional constructor params for arity
-2. Register `EntityType` in `AppServiceProvider::register()` method
+2. Register `EntityType` in the appropriate `src/Provider/Entity/*Provider` (merged by `MinooEntityStackProvider`)
 3. Create or update `AccessPolicy` in `src/Access/` with `#[PolicyAttribute]`
 4. Write unit test in `tests/App/Unit/Entity/`
 5. Run `./vendor/bin/phpunit` — delete `storage/framework/packages.php` if entity type isn't discovered
@@ -212,7 +225,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **"Did you mean" suggestion slot**: Template and CSS exist in `search.html.twig` but `SearchResult` has no `suggestion` field yet. See #519 for backend wiring.
 - **Migration tables must use `_data` CLOB schema**: Content entities use `{id} INTEGER PRIMARY KEY AUTOINCREMENT, uuid CLOB, bundle CLOB, {label} CLOB, langcode CLOB, _data CLOB`. Config entities use `{id} TEXT PRIMARY KEY, bundle CLOB, langcode CLOB, _data CLOB`. All field values are stored in the `_data` JSON blob — do NOT create individual columns for fields. `SqlEntityStorage` will error with "no column named _data" if the schema is wrong.
 - **Dictionary `definition` field is JSON-wrapped**: Values like `["bear"]` need `json_decode()` before display. Use `cleanDefinition()` pattern in controllers.
-- **Single AppServiceProvider**: All entity types, routes, and services are registered in `App\Provider\AppServiceProvider`. Add new entity types and routes there — no need to create separate providers.
+- **Composer providers**: `extra.waaseyaa.providers` lists five classes (`MinooEntityStackProvider`, `MinooRoutingStackProvider`, `AppBootServiceProvider`, `AppCommandServiceProvider`, `BimaajiBridgeProvider`). CI asserts this list matches the trailing segment of the compiled package manifest (`ComposerProviderParityTest`).
 - **Worktree vendor corruption**: Worktrees don't share the main repo's `vendor/`. After worktree cleanup, run `composer install` in the main repo to restore dependencies.
 - **CSS cache bust is manual**: Bump `?v=N` in `base.html.twig` after CSS changes. Stale CSS on production is the #1 cause of "it looks broken after deploy."
 - **Crossword puzzle tiers**: Only easy-tier puzzles exist in the database. Practice mode for medium/hard returns 500. Generate puzzles via CLI before testing those tiers. See #558, #560.

@@ -3,6 +3,13 @@
 declare(strict_types=1);
 
 return [
+    // When true, registers entity types from #[AsEntityType] + DefinesEntityType scan (see ProviderRegistry).
+    // Default false. Override with WAASEYAA_ENTITY_AUTO_REGISTER=true.
+    'entity_auto_register' => filter_var(
+        getenv('WAASEYAA_ENTITY_AUTO_REGISTER') ?: false,
+        FILTER_VALIDATE_BOOLEAN,
+    ),
+
     // Sovereignty profile for this deployment: 'local', 'self_hosted', or 'northops'.
     // Override per environment with WAASEYAA_SOVEREIGNTY_PROFILE.
     'sovereignty_profile' => getenv('WAASEYAA_SOVEREIGNTY_PROFILE') ?: 'northops',

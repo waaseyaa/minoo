@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Provider;
 
-use App\Provider\AppServiceProvider;
+use App\Provider\AppBootServiceProvider;
+use App\Provider\MinooEntityStackProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,7 +28,7 @@ final class ConsentFieldsTest extends TestCase
      */
     public static function contentProviderDataProvider(): array
     {
-        $provider = new AppServiceProvider();
+        $provider = new MinooEntityStackProvider();
 
         return [
             'teaching' => [$provider, 'teaching'],
@@ -125,7 +126,7 @@ final class ConsentFieldsTest extends TestCase
     private function bundleField(string $name): FieldDefinition
     {
         $registry = new FieldDefinitionRegistry();
-        $registry->registerBundleFields('group', 'business', AppServiceProvider::groupBusinessBundleFields());
+        $registry->registerBundleFields('group', 'business', AppBootServiceProvider::groupBusinessBundleFields());
 
         $fields = $registry->bundleFieldsFor('group', 'business');
 

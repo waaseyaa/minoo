@@ -99,6 +99,8 @@ use Waaseyaa\Search\SearchProviderInterface;
 use Waaseyaa\Search\Twig\SearchTwigExtension;
 use Waaseyaa\Mcp\Auth\BearerTokenAuth;
 use Waaseyaa\Mcp\Auth\McpAuthInterface;
+use App\Mcp\MinooNoopToolRegistry;
+use App\Mcp\MinooUnknownToolExecutor;
 use Waaseyaa\Mcp\Bridge\ToolExecutorInterface;
 use Waaseyaa\Mcp\Bridge\ToolRegistryInterface;
 use Waaseyaa\SSR\SsrServiceProvider;
@@ -730,18 +732,8 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         return new BearerTokenAuth($tokens);
                     });
 
-                    // MCP tool registry and executor: no tools registered by default.
-                    // Add tool definitions and execution logic when MCP tools are wired up.
-                    $this->singleton(ToolRegistryInterface::class, fn(): ToolRegistryInterface => new class implements ToolRegistryInterface {
-                        public function getTools(): array { return []; }
-                        public function getTool(string $name): ?\Waaseyaa\AI\Schema\Mcp\McpToolDefinition { return null; }
-                    });
-
-                    $this->singleton(ToolExecutorInterface::class, fn(): ToolExecutorInterface => new class implements ToolExecutorInterface {
-                        public function execute(string $toolName, array $arguments): array {
-                            return ['content' => [['type' => 'text', 'text' => "Unknown tool: {$toolName}"]], 'isError' => true];
-                        }
-                    });
+                    $this->singleton(ToolRegistryInterface::class, static fn(): ToolRegistryInterface => new MinooNoopToolRegistry());
+                    $this->singleton(ToolExecutorInterface::class, static fn(): ToolExecutorInterface => new MinooUnknownToolExecutor());
 
                     // =====================================================================
                     // --- Ingestion ---

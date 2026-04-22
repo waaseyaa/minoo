@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Provider;
 
-use App\Provider\AppServiceProvider;
+use App\Provider\MinooEntityStackProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(AppServiceProvider::class)]
+#[CoversClass(MinooEntityStackProvider::class)]
 final class IngestServiceProviderTest extends TestCase
 {
     #[Test]
     public function it_registers_ingest_log_entity_type(): void
     {
-        $provider = new AppServiceProvider();
+        $provider = new MinooEntityStackProvider();
         $provider->register();
 
         $types = $provider->getEntityTypes();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e608b7e6c3e701758392591346bfeb58",
+    "content-hash": "e4c2df9e2b03eb0272bb2a3b5fda9106",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4146,17 +4146,11 @@
         },
         {
             "name": "waaseyaa/foundation",
-            "version": "v0.1.0-alpha.153",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/waaseyaa/foundation.git",
-                "reference": "3574545d14486788cd804a83ee690583997d4501"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/foundation/zipball/3574545d14486788cd804a83ee690583997d4501",
-                "reference": "3574545d14486788cd804a83ee690583997d4501",
-                "shasum": ""
+                "type": "path",
+                "url": "../waaseyaa/packages/foundation",
+                "reference": "0250d1188103b71462b01e74fa0913725ed4768e"
             },
             "require": {
                 "doctrine/dbal": "^4.0",
@@ -4189,16 +4183,18 @@
                     "Waaseyaa\\Foundation\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\Foundation\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "Core framework primitives: service providers, domain events, results, error handling",
-            "support": {
-                "issues": "https://github.com/waaseyaa/foundation/issues",
-                "source": "https://github.com/waaseyaa/foundation/tree/v0.1.0-alpha.153"
-            },
-            "time": "2026-04-20T21:00:18+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "waaseyaa/genealogy",
@@ -5110,17 +5106,11 @@
         },
         {
             "name": "waaseyaa/routing",
-            "version": "v0.1.0-alpha.153",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/waaseyaa/routing.git",
-                "reference": "9f27adeb67de53c458f8b9c70bd9ae1649dce5ee"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/waaseyaa/routing/zipball/9f27adeb67de53c458f8b9c70bd9ae1649dce5ee",
-                "reference": "9f27adeb67de53c458f8b9c70bd9ae1649dce5ee",
-                "shasum": ""
+                "type": "path",
+                "url": "../waaseyaa/packages/routing",
+                "reference": "8aa3fa4c5f580f37f3f94387d44e31a6e1f5cbe7"
             },
             "require": {
                 "php": ">=8.4",
@@ -5144,16 +5134,18 @@
                     "Waaseyaa\\Routing\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Waaseyaa\\Routing\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "HTTP routing and controller resolution for Waaseyaa",
-            "support": {
-                "issues": "https://github.com/waaseyaa/routing/issues",
-                "source": "https://github.com/waaseyaa/routing/tree/v0.1.0-alpha.153"
-            },
-            "time": "2026-04-20T00:08:16+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "waaseyaa/search",

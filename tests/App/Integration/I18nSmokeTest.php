@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
-use App\Provider\AppServiceProvider;
+use App\Provider\MinooEntityStackProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ final class I18nSmokeTest extends TestCase
 {
     private static string $projectRoot;
     private static HttpKernel $kernel;
-    private static AppServiceProvider $appProvider;
+    private static MinooEntityStackProvider $appProvider;
 
     public static function setUpBeforeClass(): void
     {
@@ -36,13 +36,13 @@ final class I18nSmokeTest extends TestCase
         $boot = new \ReflectionMethod(AbstractKernel::class, 'boot');
         $boot->invoke(self::$kernel);
 
-        // Access providers via reflection to find AppServiceProvider
+        // Access providers via reflection to find MinooEntityStackProvider
         $prop = new \ReflectionProperty(AbstractKernel::class, 'providers');
         /** @var list<ServiceProvider> $providers */
         $providers = $prop->getValue(self::$kernel);
 
         foreach ($providers as $provider) {
-            if ($provider instanceof AppServiceProvider) {
+            if ($provider instanceof MinooEntityStackProvider) {
                 self::$appProvider = $provider;
                 break;
             }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Storage;
 
 use App\Entity\Group;
-use App\Provider\AppServiceProvider;
+use App\Provider\AppBootServiceProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -36,7 +36,7 @@ final class GroupBundleRoutingTest extends TestCase
     private static HttpKernel $kernel;
 
     /**
-     * Derived from `AppServiceProvider::groupBusinessBundleFields()` so adding
+     * Derived from `AppBootServiceProvider::groupBusinessBundleFields()` so adding
      * a new bundle field to the provider auto-extends the routing assertion.
      *
      * @return list<string>
@@ -45,7 +45,7 @@ final class GroupBundleRoutingTest extends TestCase
     {
         return array_map(
             static fn (FieldDefinition $field): string => $field->getName(),
-            AppServiceProvider::groupBusinessBundleFields(),
+            AppBootServiceProvider::groupBusinessBundleFields(),
         );
     }
 

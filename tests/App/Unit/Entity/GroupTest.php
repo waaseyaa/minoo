@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Group;
-use App\Provider\AppServiceProvider;
+use App\Provider\AppBootServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -44,7 +44,7 @@ final class GroupTest extends TestCase
     public function it_defines_community_id_field_on_business_bundle(): void
     {
         $registry = new FieldDefinitionRegistry();
-        $registry->registerBundleFields('group', 'business', AppServiceProvider::groupBusinessBundleFields());
+        $registry->registerBundleFields('group', 'business', AppBootServiceProvider::groupBusinessBundleFields());
 
         $fields = $registry->bundleFieldsFor('group', 'business');
 

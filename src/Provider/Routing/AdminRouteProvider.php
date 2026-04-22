@@ -431,8 +431,12 @@ final class AdminRouteProvider extends AppCoreServiceProvider
                     );
 
                     // AdminSurface generic CRUD (static call — _surface API routes only)
+                    // Package `AdminSurfaceServiceProvider` also registers these from the manifest;
+                    // strip its routes so Minoo can register the same names with a custom host.
 
                     if ($entityTypeManager !== null) {
+                        self::removePackageAdminSurfaceRoutes($router);
+
                         $host = new GenericAdminSurfaceHost(
                             entityTypeManager: $entityTypeManager,
                             schemaPresenter: new SchemaPresenter(),
@@ -447,8 +451,9 @@ final class AdminRouteProvider extends AppCoreServiceProvider
                     // Re-add admin_spa catch-all AFTER newsletter routes so specific
                     // /admin/api/newsletter/* and /admin/newsletter/* routes match first.
                     // The framework's AdminSurfaceServiceProvider registers admin_spa in its
-                    // own routes() which runs before AppServiceProvider. Re-adding with the
-                    // same name moves it to the end of Symfony's RouteCollection.
+                    // own routes() which runs earlier; remove then add so WaaseyaaRouter rejects
+                    // duplicate route names.
+                    $router->removeRoute('admin_spa');
                     $projectRoot = dirname(__DIR__, 2);
                     $vendorDistDir = dirname(__DIR__, 2) . '/vendor/waaseyaa/admin-surface/dist';
                     $vendorDistContent = is_file($vendorDistDir . '/index.html')
@@ -478,5 +483,14 @@ final class AdminRouteProvider extends AppCoreServiceProvider
                         ->requirement('path', '(?!_surface(/|$)).*')
                         ->default('path', '')
                         ->build());
+    }
+
+    private static function removePackageAdminSurfaceRoutes(WaaseyaaRouter $router): void
+    {
+        foreach (array_keys($router->getRouteCollection()->all()) as $name) {
+            if (str_starts_with($name, 'admin_surface.') || $name === 'admin_spa') {
+                $router->removeRoute($name);
+            }
+        }
     }
 }

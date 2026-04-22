@@ -15,6 +15,14 @@
         {
             "type": "path",
             "url": "../waaseyaa/packages/genealogy"
+        },
+        {
+            "type": "path",
+            "url": "../waaseyaa/packages/foundation"
+        },
+        {
+            "type": "path",
+            "url": "../waaseyaa/packages/routing"
         }
     ],
     "require": {
@@ -86,21 +94,8 @@
         "waaseyaa": {
             "admin_path": "../waaseyaa/packages/admin",
             "providers": [
-                "App\\Provider\\AppServiceProvider",
-                "App\\Provider\\Entity\\EntityFoundationProvider",
-                "App\\Provider\\Entity\\EntityCommunityProvider",
-                "App\\Provider\\Entity\\EntityContentProvider",
-                "App\\Provider\\Entity\\EntityFeedProvider",
-                "App\\Provider\\Entity\\EntityNewsletterProvider",
-                "App\\Provider\\Routing\\PublicContentRouteProvider",
-                "App\\Provider\\Routing\\PublicCommunityRouteProvider",
-                "App\\Provider\\Routing\\PublicAccountRouteProvider",
-                "App\\Provider\\Routing\\PublicHomeFeedRouteProvider",
-                "App\\Provider\\Routing\\AuthApiRouteProvider",
-                "App\\Provider\\Routing\\SocialApiRouteProvider",
-                "App\\Provider\\Routing\\GamesApiRouteProvider",
-                "App\\Provider\\Routing\\NewsletterApiRouteProvider",
-                "App\\Provider\\Routing\\AdminRouteProvider",
+                "App\\Provider\\MinooEntityStackProvider",
+                "App\\Provider\\MinooRoutingStackProvider",
                 "App\\Provider\\AppBootServiceProvider",
                 "App\\Provider\\AppCommandServiceProvider",
                 "App\\Provider\\BimaajiBridgeProvider"
