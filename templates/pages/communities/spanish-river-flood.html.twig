@@ -2,7 +2,6 @@
 
 {% set sagamok_flood_notice = 'https://www.sagamokanishnawbek.com/sagamok-news/sudbury-district-has-issued-an-updated-flood-warning-notice-for-the-spanish-river' %}
 {% set sagamok_flood_news = 'https://www.sagamokanishnawbek.com/sagamok-news' %}
-{% set sagamok_flood_verified = '2026-04-21' %}
 {% set sagamok_flood_share_url = site_base_url ~ lang_url(path) %}
 {% set sagamok_flood_share_title = trans('sagamok_flood.title', {community: community.get('name')}) ~ ' — Minoo' %}
 {% set sagamok_flood_share_summary = trans('sagamok_flood.meta_description') %}
@@ -170,6 +169,10 @@
     <section class="crisis-section" aria-labelledby="crisis-timeline-h">
       <h2 id="crisis-timeline-h" class="crisis-section__h">{{ trans('sagamok_flood.timeline_h') }}</h2>
       <ol class="crisis-timeline">
+        <li>
+          <time class="crisis-timeline__time" datetime="2026-04-22">{{ trans('sagamok_flood.t_22_date') }}</time>
+          <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_22_body') }}</p>
+        </li>
         <li>
           <time class="crisis-timeline__time" datetime="2026-04-21">{{ trans('sagamok_flood.t_21_date') }}</time>
           <p class="crisis-timeline__body">{{ trans('sagamok_flood.t_21_body') }}</p>

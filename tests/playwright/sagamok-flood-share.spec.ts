@@ -46,6 +46,7 @@ test.describe('Sagamok Spanish River flood page', () => {
     await page.getByRole('button', { name: 'View larger' }).first().click();
     const dialog = page.locator('[data-mc-dialog]');
     await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('heading', { level: 2 })).toContainText(/Image 1 of 4/);
 
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();

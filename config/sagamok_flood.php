@@ -13,7 +13,7 @@ if ($rawEmergency === false || trim((string) $rawEmergency) === '') {
 return [
     'emergency_open_graph' => $emergencyOpenGraph,
     'og_image_revision' => (int) (getenv('MINOO_SAGAMOK_FLOOD_OG_REVISION') ?: '1'),
-    'last_verified_date' => getenv('MINOO_SAGAMOK_FLOOD_VERIFIED') ?: '2026-04-21',
+    'last_verified_date' => getenv('MINOO_SAGAMOK_FLOOD_VERIFIED') ?: '2026-04-22',
     /**
      * Public gallery images under public/img/crisis/sagamok-spanish-river-flood/.
      * alt_key / caption_key are translation keys (resources/lang).

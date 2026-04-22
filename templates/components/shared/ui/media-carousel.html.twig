@@ -11,6 +11,7 @@
   class="media-carousel"
   data-media-carousel
   id="{{ carousel_id|e('html_attr') }}"
+  data-mc-title-pattern="{{ trans('media_carousel.lightbox_title_pattern')|e('html_attr') }}"
 >
   <h2 id="{{ carousel_id }}-heading" class="media-carousel__heading {{ heading_class|default('') }}">{{ trans(heading_key) }}</h2>
 
@@ -68,15 +69,14 @@
     {% endfor %}
   </div>
 
-  <div class="media-carousel__dots" role="tablist" aria-label="{{ trans('media_carousel.tabs_aria')|e('html_attr') }}">
+  <div class="media-carousel__dots" role="group" data-mc-dot-list aria-label="{{ trans('media_carousel.tabs_aria')|e('html_attr') }}">
     {% for slide in slides %}
     <button
       type="button"
       class="media-carousel__dot"
-      role="tab"
-      id="{{ carousel_id }}-tab-{{ loop.index0 }}"
+      id="{{ carousel_id }}-dot-{{ loop.index0 }}"
       data-mc-tab
-      aria-selected="{% if loop.first %}true{% else %}false{% endif %}"
+      aria-current="{% if loop.first %}true{% else %}false{% endif %}"
       aria-controls="{{ carousel_id }}-slide-{{ loop.index0 }}"
       tabindex="{% if loop.first %}0{% else %}-1{% endif %}"
       aria-label="{{ trans('media_carousel.slide_n', {n: loop.index, total: slides|length})|e('html_attr') }}"
@@ -86,8 +86,9 @@
 
   <dialog class="media-carousel__dialog" data-mc-dialog id="{{ carousel_id }}-dialog" aria-modal="true" aria-labelledby="{{ carousel_id }}-dialog-title">
     <div class="media-carousel__dialog-inner">
+      <div class="visually-hidden" aria-live="polite" aria-atomic="true" data-mc-live></div>
       <div class="media-carousel__dialog-toolbar">
-        <h2 class="media-carousel__dialog-title" id="{{ carousel_id }}-dialog-title">{{ trans('media_carousel.lightbox_title') }}</h2>
+        <h2 class="media-carousel__dialog-title" id="{{ carousel_id }}-dialog-title" data-mc-dialog-title>{{ trans('media_carousel.lightbox_title') }}</h2>
         <button type="button" class="media-carousel__btn media-carousel__btn--close" data-mc-close>{{ trans('media_carousel.close') }}</button>
       </div>
       <div class="media-carousel__dialog-stage">
@@ -95,7 +96,7 @@
         <img class="media-carousel__dialog-img" data-mc-dialog-img src="" alt="">
         <button type="button" class="media-carousel__btn media-carousel__btn--nav media-carousel__btn--floating" data-mc-dnext aria-label="{{ trans('media_carousel.next')|e('html_attr') }}">{{ trans('media_carousel.next') }}</button>
       </div>
-      <p class="media-carousel__dialog-caption" data-mc-dialog-caption hidden></p>
+      <p class="media-carousel__dialog-caption" id="{{ carousel_id }}-dialog-caption" data-mc-dialog-caption hidden></p>
     </div>
   </dialog>
 </div>

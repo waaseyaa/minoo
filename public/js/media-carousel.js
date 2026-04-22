@@ -37,11 +37,17 @@
     viewport.scrollTo(scrollOpts(slide.offsetLeft));
   }
 
+  function formatLightboxHeading(pattern, oneBasedIndex, total) {
+    return pattern
+      .replace(/__MC_N__/g, String(oneBasedIndex))
+      .replace(/__MC_T__/g, String(total));
+  }
+
   function updateChrome(viewport, slides, tabs, btnPrev, btnNext) {
     var i = nearestIndex(viewport, slides);
     for (var t = 0; t < tabs.length; t++) {
       var sel = t === i;
-      tabs[t].setAttribute('aria-selected', sel ? 'true' : 'false');
+      tabs[t].setAttribute('aria-current', sel ? 'true' : 'false');
       tabs[t].tabIndex = sel ? 0 : -1;
     }
     if (btnPrev) {
@@ -72,9 +78,13 @@
     var dialog = root.querySelector('[data-mc-dialog]');
     var dialogImg = dialog ? dialog.querySelector('[data-mc-dialog-img]') : null;
     var dialogCaption = dialog ? dialog.querySelector('[data-mc-dialog-caption]') : null;
+    var dialogTitle = dialog ? dialog.querySelector('[data-mc-dialog-title]') : null;
+    var dialogLive = dialog ? dialog.querySelector('[data-mc-live]') : null;
     var btnClose = dialog ? dialog.querySelector('[data-mc-close]') : null;
     var dPrev = dialog ? dialog.querySelector('[data-mc-dprev]') : null;
     var dNext = dialog ? dialog.querySelector('[data-mc-dnext]') : null;
+    var titlePattern =
+      root.getAttribute('data-mc-title-pattern') || 'Image __MC_N__ of __MC_T__';
 
     if (!viewport || slides.length === 0) {
       return;
@@ -126,12 +136,18 @@
       } else if (ev.key === 'ArrowRight') {
         ev.preventDefault();
         goToIndex(viewport, slidesArr, Math.min(slidesArr.length - 1, currentIdx() + 1));
+      } else if (ev.key === 'Home') {
+        ev.preventDefault();
+        goToIndex(viewport, slidesArr, 0);
+      } else if (ev.key === 'End') {
+        ev.preventDefault();
+        goToIndex(viewport, slidesArr, slidesArr.length - 1);
       }
     });
 
-    var tablist = root.querySelector('[role="tablist"]');
-    if (tablist) {
-      tablist.addEventListener('keydown', function (ev) {
+    var dotList = root.querySelector('[data-mc-dot-list]');
+    if (dotList) {
+      dotList.addEventListener('keydown', function (ev) {
         if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') {
           return;
         }
@@ -161,16 +177,26 @@
         return;
       }
       var m = readSlideMedia(slide);
+      var total = slidesArr.length;
+      var heading = formatLightboxHeading(titlePattern, lightboxIndex + 1, total);
       dialogImg.setAttribute('src', m.src);
       dialogImg.setAttribute('alt', m.alt);
+      if (dialogTitle) {
+        dialogTitle.textContent = heading;
+      }
       if (dialogCaption) {
         if (m.caption) {
           dialogCaption.textContent = m.caption;
           dialogCaption.hidden = false;
+          dialog.setAttribute('aria-describedby', dialogCaption.id);
         } else {
           dialogCaption.textContent = '';
           dialogCaption.hidden = true;
+          dialog.removeAttribute('aria-describedby');
         }
+      }
+      if (dialogLive) {
+        dialogLive.textContent = m.caption ? heading + '. ' + m.caption : heading;
       }
       if (dPrev) {
         dPrev.disabled = lightboxIndex <= 0;
@@ -246,13 +272,6 @@
           openLightbox(idx);
         });
       });
-      var img = slide.querySelector('.media-carousel__img');
-      if (img) {
-        img.addEventListener('click', function () {
-          openLightbox(idx);
-        });
-        img.style.cursor = 'zoom-in';
-      }
     });
 
     updateChrome(viewport, slidesArr, tabsArr, btnPrev, btnNext);

@@ -137,7 +137,7 @@ final class CommunityController
             return $this->communityListNotFoundResponse($account);
         }
 
-        /** @var array{emergency_open_graph: bool, gallery?: list<array{file: string, width: int, height: int, alt_key: string, caption_key: string}>} $floodConfig */
+        /** @var array{emergency_open_graph: bool, last_verified_date?: string, gallery?: list<array{file: string, width: int, height: int, alt_key: string, caption_key: string}>} $floodConfig */
         $floodConfig = require dirname(__DIR__, 2) . '/config/sagamok_flood.php';
 
         $galleryBase = '/img/crisis/sagamok-spanish-river-flood';
@@ -156,6 +156,7 @@ final class CommunityController
             'path' => '/communities/' . $slug . '/spanish-river-flood',
             'community' => $community,
             'sagamok_flood_emergency_og' => $floodConfig['emergency_open_graph'],
+            'sagamok_flood_verified' => (string) ($floodConfig['last_verified_date'] ?? '2026-04-22'),
             'sagamok_flood_gallery' => $sagamokFloodGallery,
         ]));
 
