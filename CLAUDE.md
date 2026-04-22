@@ -65,7 +65,7 @@ minoo/
 | `src/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
 | GitHub issues, milestones, new features, roadmap | — | `docs/specs/workflow.md` |
 
-For Minoo-level specs, use the Minoo MCP tools:
+For Minoo-level specs, use the Minoo MCP tools (Claude Code: **`.claude/settings.json`** registers **`minoo`** → `mcp/server.js` and **`bimaaji`** → `vendor/waaseyaa/bimaaji/mcp/server.js`). After `composer install`, run **`composer bimaaji-mcp-install`** (or rely on `post-create-project-cmd`) so both MCP servers have Node deps. **`.cursor/mcp.json`** is gitignored—do not use it for team MCP config):
 - `minoo_list_specs` — list all available specs
 - `minoo_get_spec <name>` — full spec content (e.g. `entity-model`, `ingestion-pipeline`, `search`, `frontend-ssr`)
 - `minoo_search_specs <query>` — keyword search across all Minoo specs

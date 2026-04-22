@@ -6,7 +6,7 @@
     },
     "bimaaji": {
       "command": "node",
-      "args": ["../waaseyaa/packages/bimaaji/mcp/server.js"]
+      "args": ["vendor/waaseyaa/bimaaji/mcp/server.js"]
     }
   },
   "hooks": {

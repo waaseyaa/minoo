@@ -3,20 +3,6 @@
     "description": "Indigenous knowledge platform powered by NorthCloud ingestion",
     "type": "project",
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../waaseyaa/packages/entity"
-        },
-        {
-            "type": "path",
-            "url": "../waaseyaa/packages/field"
-        },
-        {
-            "type": "path",
-            "url": "../waaseyaa/packages/genealogy"
-        }
-    ],
     "require": {
         "php": ">=8.4",
         "geoip2/geoip2": "^3.0",
@@ -37,7 +23,7 @@
         "waaseyaa/entity-storage": "^0.1.0-alpha.155",
         "waaseyaa/field": "^0.1.0-alpha.155",
         "waaseyaa/foundation": "^0.1.0-alpha.155",
-        "waaseyaa/genealogy": "@dev",
+        "waaseyaa/genealogy": "^0.1.0-alpha.155",
         "waaseyaa/geo": "^0.1",
         "waaseyaa/graphql": "^0.1",
         "waaseyaa/groups": "^0.1.0-alpha.155",
@@ -116,6 +102,13 @@
         "dev:wsl": [
             "Composer\\Config::disableProcessTimeout",
             "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve & npm --prefix ../waaseyaa/packages/admin run dev -- --host && kill $!"
+        ],
+        "bimaaji-mcp-install": [
+            "npm --prefix mcp install",
+            "npm --prefix vendor/waaseyaa/bimaaji/mcp install"
+        ],
+        "post-install-cmd": [
+            "@php bin/install-mcp-npm.php"
         ],
         "post-create-project-cmd": [
             "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync bin/waaseyaa-audit-site",

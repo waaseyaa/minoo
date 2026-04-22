@@ -64,8 +64,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
-use Twig\Loader\ChainLoader;
-use Twig\Loader\FilesystemLoader;
 use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
 use Waaseyaa\AdminSurface\Host\GenericAdminSurfaceHost;
 use Waaseyaa\Api\Schema\SchemaPresenter;
@@ -314,21 +312,6 @@ class AppBootServiceProvider extends AppCoreServiceProvider
             $twig = SsrServiceProvider::getTwigEnvironment();
             if ($twig !== null) {
                 $twig->addExtension($extension);
-            }
-
-            // =====================================================================
-            // --- Genealogy: Composer path installs live under vendor/; add templates until Minoo tracks a ssr release that loads vendor package dirs ---
-            // =====================================================================
-
-            $twigGenealogy = ThemeServiceProvider::getTwigEnvironment();
-            if ($twigGenealogy !== null) {
-                $genealogyTemplates = dirname(__DIR__, 2) . '/vendor/waaseyaa/genealogy/templates';
-                if (is_dir($genealogyTemplates)) {
-                    $loader = $twigGenealogy->getLoader();
-                    if ($loader instanceof ChainLoader) {
-                        $loader->addLoader(new FilesystemLoader($genealogyTemplates));
-                    }
-                }
             }
 
             // =====================================================================
