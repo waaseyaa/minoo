@@ -9,7 +9,7 @@ requirement_refs:
 - FR-007
 planning_base_branch: main
 merge_target_branch: main
-branch_strategy: Direct work on main (after WP02–WP04). Verification only — produces a research log.
+branch_strategy: Planning artifacts for this feature were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
 subtasks:
 - T028
 - T029

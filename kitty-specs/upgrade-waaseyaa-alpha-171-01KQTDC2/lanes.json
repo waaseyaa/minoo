@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "mission_slug": "upgrade-waaseyaa-alpha-171-01KQTDC2",
+  "mission_id": "01KQTDC29F9RE12JDY569GFAW1",
+  "mission_branch": "kitty/mission-upgrade-waaseyaa-alpha-171-01KQTDC2",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01",
+        "WP02",
+        "WP03",
+        "WP04",
+        "WP05",
+        "WP10"
+      ],
+      "write_scope": [
+        ".github/workflows/**",
+        "composer.json",
+        "composer.lock",
+        "migrations/**",
+        "phpstan-baseline.neon",
+        "src/Access/**",
+        "src/Entity/**",
+        "src/Provider/Entity/**",
+        "tests/App/Integration/**",
+        "tests/App/Unit/**"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "legacy-cleanup",
+        "tests"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP08"
+      ],
+      "write_scope": [
+        "CLAUDE.md"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "tracker-integration"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-planning",
+      "wp_ids": [
+        "WP06",
+        "WP07",
+        "WP09"
+      ],
+      "write_scope": [
+        "kitty-specs/upgrade-waaseyaa-alpha-171-01KQTDC2/research/bimaaji-verification.md",
+        "kitty-specs/upgrade-waaseyaa-alpha-171-01KQTDC2/research/production-deploy-log.md",
+        "kitty-specs/upgrade-waaseyaa-alpha-171-01KQTDC2/research/smoke-test-results.md"
+      ],
+      "predicted_surfaces": [
+        "planning"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    }
+  ],
+  "computed_at": "2026-05-04T21:32:50.047601+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [
+    "WP06",
+    "WP07",
+    "WP09"
+  ],
+  "collapse_report": {
+    "events": [
+      {
+        "wp_a": "WP02",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP02 depends on WP01"
+      },
+      {
+        "wp_a": "WP03",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP03 depends on WP01"
+      },
+      {
+        "wp_a": "WP04",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP04 depends on WP01"
+      },
+      {
+        "wp_a": "WP05",
+        "wp_b": "WP02",
+        "rule": "dependency",
+        "evidence": "WP05 depends on WP02"
+      },
+      {
+        "wp_a": "WP10",
+        "wp_b": "WP04",
+        "rule": "dependency",
+        "evidence": "WP10 depends on WP04"
+      }
+    ],
+    "total_merges": 5,
+    "independent_wps_collapsed": 0,
+    "by_rule": {
+      "dependency": 5
+    }
+  }
+}
