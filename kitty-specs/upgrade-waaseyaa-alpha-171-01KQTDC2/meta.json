@@ -1,0 +1,10 @@
+{
+  "created_at": "2026-05-04T21:12:41.341004+00:00",
+  "friendly_name": "upgrade waaseyaa alpha 171",
+  "mission_id": "01KQTDC29F9RE12JDY569GFAW1",
+  "mission_number": null,
+  "mission_slug": "upgrade-waaseyaa-alpha-171-01KQTDC2",
+  "mission_type": "software-dev",
+  "slug": "upgrade-waaseyaa-alpha-171-01KQTDC2",
+  "target_branch": "main"
+}
