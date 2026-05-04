@@ -103,12 +103,6 @@ parameters:
 			path: src/Controller/MessagingController.php
 
 		-
-			message: '#^Parameter \#1 \$data of method App\\Controller\\NewsletterAdminApiController\:\:json\(\) expects array\<string, mixed\>, list\<array\<string, mixed\>\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Controller/NewsletterAdminApiController.php
-
-		-
 			message: '#^Property App\\Controller\\NewsletterAdminApiController\:\:\$twig is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
