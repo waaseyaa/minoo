@@ -23,7 +23,7 @@ final class NewsletterEntityDefinitionsProvider extends ServiceProvider
             class: NewsletterEdition::class,
             keys: ['id' => 'neid', 'uuid' => 'uuid', 'label' => 'headline'],
             group: 'newsletter',
-            fieldDefinitions: [
+            _fieldDefinitions: [
                 'community_id' => ['type' => 'string', 'label' => 'Community ID', 'description' => 'Null = regional issue.'],
                 'volume' => ['type' => 'integer', 'label' => 'Volume', 'default' => 1],
                 'issue_number' => ['type' => 'integer', 'label' => 'Issue Number', 'default' => 1],
@@ -45,7 +45,7 @@ final class NewsletterEntityDefinitionsProvider extends ServiceProvider
             class: NewsletterItem::class,
             keys: ['id' => 'nitid', 'uuid' => 'uuid', 'label' => 'editor_blurb'],
             group: 'newsletter',
-            fieldDefinitions: [
+            _fieldDefinitions: [
                 'edition_id' => ['type' => 'integer', 'label' => 'Edition ID'],
                 'position' => ['type' => 'integer', 'label' => 'Position', 'default' => 0],
                 'section' => ['type' => 'string', 'label' => 'Section'],
@@ -64,7 +64,7 @@ final class NewsletterEntityDefinitionsProvider extends ServiceProvider
             class: NewsletterSubmission::class,
             keys: ['id' => 'nsuid', 'uuid' => 'uuid', 'label' => 'title'],
             group: 'newsletter',
-            fieldDefinitions: [
+            _fieldDefinitions: [
                 'community_id' => ['type' => 'string', 'label' => 'Community ID'],
                 'submitted_by' => ['type' => 'integer', 'label' => 'Submitted By'],
                 'submitted_at' => ['type' => 'datetime', 'label' => 'Submitted At'],

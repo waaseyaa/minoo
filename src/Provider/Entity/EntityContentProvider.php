@@ -118,7 +118,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: OralHistory::class,
                         keys: ['id' => 'ohid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
                         group: 'knowledge',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'title' => [
                                 'type' => 'string',
                                 'label' => 'Title',
@@ -260,7 +260,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: OralHistoryCollection::class,
                         keys: ['id' => 'ohcid', 'uuid' => 'uuid', 'label' => 'title'],
                         group: 'knowledge',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'title' => [
                                 'type' => 'string',
                                 'label' => 'Title',
@@ -324,7 +324,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: Contributor::class,
                         keys: ['id' => 'coid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'contributor',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                             'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                             'code' => ['type' => 'string', 'label' => 'Speaker Code', 'description' => 'Abbreviation (e.g., es, nj, gh).', 'weight' => 5],
@@ -359,7 +359,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: Post::class,
                         keys: ['id' => 'pid', 'uuid' => 'uuid', 'label' => 'body'],
                         group: 'engagement',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'body' => [
                                 'type' => 'text_long',
                                 'label' => 'Body',
@@ -413,7 +413,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: GameSession::class,
                         keys: ['id' => 'gsid', 'uuid' => 'uuid', 'label' => 'mode'],
                         group: 'games',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'mode' => ['type' => 'string', 'label' => 'Mode', 'weight' => 0],
                             'direction' => ['type' => 'string', 'label' => 'Direction', 'weight' => 1],
                             'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 5],
@@ -439,7 +439,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: DailyChallenge::class,
                         keys: ['id' => 'date', 'label' => 'date'],
                         group: 'games',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'date' => ['type' => 'string', 'label' => 'Date', 'weight' => 0],
                             'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 5],
                             'direction' => ['type' => 'string', 'label' => 'Direction', 'weight' => 10, 'default' => 'english_to_ojibwe'],
@@ -453,7 +453,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: CrosswordPuzzle::class,
                         keys: ['id' => 'id', 'label' => 'id'],
                         group: 'games',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'grid_size' => ['type' => 'integer', 'label' => 'Grid Size', 'weight' => 0],
                             'words' => ['type' => 'text_long', 'label' => 'Words', 'description' => 'JSON array of word placements.', 'weight' => 5],
                             'clues' => ['type' => 'text_long', 'label' => 'Clues', 'description' => 'JSON map of word index to clue data.', 'weight' => 10],
@@ -472,7 +472,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         class: Leader::class,
                         keys: ['id' => 'lid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'people',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => [
                                 'type' => 'string',
                                 'label' => 'Name',

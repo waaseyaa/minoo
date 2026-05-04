@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
-use Waaseyaa\Api\JsonResponseTrait;
+use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 use Symfony\Component\HttpFoundation\Response;
 

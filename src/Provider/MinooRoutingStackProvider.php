@@ -39,10 +39,9 @@ final class MinooRoutingStackProvider extends ServiceProvider
             new NewsletterApiRouteProvider(),
             new AdminRouteProvider(),
         ] as $child) {
-            $child->setKernelContext($this->projectRoot, $this->config, $this->manifestFormatters);
-            if ($this->kernelResolver !== null) {
-                $child->setKernelResolver($this->kernelResolver);
-            }
+            // mergeChildProvider() forwards both kernel context and the kernel-services
+            // resolver introduced in alpha.171 (replaces the older setKernelResolver path).
+            $this->mergeChildProvider($child);
             $child->routes($router, $entityTypeManager);
         }
     }

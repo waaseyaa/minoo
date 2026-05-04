@@ -197,7 +197,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: Event::class,
                         keys: ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
                         group: 'events',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'title' => [
                                 'type' => 'string',
                                 'label' => 'Title',
@@ -324,7 +324,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: CulturalGroup::class,
                         keys: ['id' => 'cgid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'community',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => [
                                 'type' => 'string',
                                 'label' => 'Name',
@@ -422,7 +422,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: Teaching::class,
                         keys: ['id' => 'tid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
                         group: 'knowledge',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'title' => [
                                 'type' => 'string',
                                 'label' => 'Title',
@@ -533,7 +533,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: CulturalCollection::class,
                         keys: ['id' => 'ccid', 'uuid' => 'uuid', 'label' => 'title'],
                         group: 'knowledge',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'title' => [
                                 'type' => 'string',
                                 'label' => 'Title',
@@ -624,7 +624,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: DictionaryEntry::class,
                         keys: ['id' => 'deid', 'uuid' => 'uuid', 'label' => 'word'],
                         group: 'language',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'word' => ['type' => 'string', 'label' => 'Word', 'weight' => 0],
                             'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                             'definition' => ['type' => 'string', 'label' => 'Definition', 'weight' => 5],
@@ -649,7 +649,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: ExampleSentence::class,
                         keys: ['id' => 'esid', 'uuid' => 'uuid', 'label' => 'ojibwe_text'],
                         group: 'language',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'ojibwe_text' => ['type' => 'string', 'label' => 'Ojibwe Text', 'weight' => 0],
                             'english_text' => ['type' => 'string', 'label' => 'English Translation', 'weight' => 5],
                             'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 10],
@@ -669,7 +669,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: WordPart::class,
                         keys: ['id' => 'wpid', 'uuid' => 'uuid', 'label' => 'form'],
                         group: 'language',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'form' => ['type' => 'string', 'label' => 'Form', 'weight' => 0],
                             'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                             'type' => ['type' => 'string', 'label' => 'Type', 'description' => 'initial, medial, or final.', 'weight' => 5],
@@ -687,7 +687,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: Speaker::class,
                         keys: ['id' => 'spid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'language',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                             'code' => ['type' => 'string', 'label' => 'Code', 'weight' => 1],
                             'bio' => ['type' => 'text', 'label' => 'Biography', 'weight' => 5],
@@ -760,7 +760,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         class: IngestLog::class,
                         keys: ['id' => 'ilid', 'uuid' => 'uuid', 'label' => 'title'],
                         group: 'ingestion',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'title' => [
                                 'type' => 'string',
                                 'label' => 'Title',
