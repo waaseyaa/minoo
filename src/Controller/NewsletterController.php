@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Domain\Newsletter\Service\RenderTokenStore;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,7 +29,7 @@ final class NewsletterController
      * Internal endpoint hit by Playwright during PDF generation.
      * Public route, but requires a single-use one-time token.
      */
-    public function printPreview(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function printPreview(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = (string) $request->query->get('token', '');
         $editionId = (int) ($params['id'] ?? 0);
@@ -73,7 +75,7 @@ final class NewsletterController
         ]));
     }
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('newsletter_edition');
         $editions = array_filter(
@@ -91,7 +93,7 @@ final class NewsletterController
         ]));
     }
 
-    public function showCommunity(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function showCommunity(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $community = (string) ($params['community'] ?? '');
         $storage = $this->entityTypeManager->getStorage('newsletter_edition');
@@ -110,7 +112,7 @@ final class NewsletterController
         ]));
     }
 
-    public function showEdition(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function showEdition(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $edition = $this->loadPublicEdition($params);
         if ($edition === null) {
@@ -122,7 +124,7 @@ final class NewsletterController
         ]));
     }
 
-    public function downloadPdf(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function downloadPdf(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $edition = $this->loadPublicEdition($params);
         if ($edition === null) {
@@ -144,7 +146,7 @@ final class NewsletterController
         ]);
     }
 
-    public function submitForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (! $account->isAuthenticated()) {
             return new RedirectResponse('/login?redirect=/newsletter/submit');
@@ -153,7 +155,7 @@ final class NewsletterController
         return new Response($this->twig->render('pages/newsletter/public/submit.html.twig'));
     }
 
-    public function submitPost(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitPost(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         // TODO: rate-limit this endpoint explicitly. For v1 it inherits any
         // global rate limiting from RateLimitMiddleware. See #648.
@@ -206,7 +208,7 @@ final class NewsletterController
         return new RedirectResponse('/newsletter');
     }
 
-    private function loadPublicEdition(array $params): ?EntityInterface
+    private function loadPublicEdition(#[MapRoute] array $params): ?EntityInterface
     {
         $community = (string) ($params['community'] ?? '');
         $vol = (int) ($params['volume'] ?? 0);
