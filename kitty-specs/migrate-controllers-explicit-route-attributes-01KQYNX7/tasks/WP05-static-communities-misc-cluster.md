@@ -206,3 +206,7 @@ grep -F 'dispatcher.deprecation' /tmp/wp05-server.log | \
 | HomeController `/` ↔ `/feed` redirect logic depends on auth state | Smoke unauthenticated; expect 200 to home page |
 | OpenGraphController returns PNG bytes | `curl -o /dev/null -w "%{size_download}"` to confirm size without dumping bytes |
 | Slug-bearing routes 404 with non-zero body | 404 + body > 0 = success; the migration verifies dispatcher binding, not record existence |
+
+## Activity Log
+
+- 2026-05-06T17:06:42Z – unknown – Done override: PR #758 squash-merged
