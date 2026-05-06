@@ -338,3 +338,7 @@ When reviewing this WP's PR:
 | Husky pre-push runs phpunit but worktree lacks `vendor/` | Use `git push --no-verify`; tests already passed locally |
 | Smoke URL requires a CSRF token / session | 302/401 + non-zero body counts as success — the dispatcher booted, the controller dispatched |
 | Reviewer pattern drift between WP01 and later WPs | This WP01 PR is the canonical pattern; WPs 02–06 reviewers compare against it |
+
+## Activity Log
+
+- 2026-05-06T14:23:34Z – unknown – Done override: PR #754 squash-merged to main as commit 788338f; status updates lost in squash. Replay.
