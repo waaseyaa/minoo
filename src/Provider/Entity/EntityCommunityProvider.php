@@ -118,7 +118,7 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
                         class: ResourcePerson::class,
                         keys: ['id' => 'rpid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'people',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                             'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                             'bio' => ['type' => 'text_long', 'label' => 'Biography', 'weight' => 5],
@@ -186,7 +186,7 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
                         class: ElderSupportRequest::class,
                         keys: ['id' => 'esrid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'elders',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                             'phone' => ['type' => 'string', 'label' => 'Phone', 'weight' => 1],
                             'community' => ['type' => 'entity_reference', 'label' => 'Community', 'settings' => ['target_type' => 'community'], 'weight' => 5],
@@ -217,7 +217,7 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
                         class: Volunteer::class,
                         keys: ['id' => 'vid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'elders',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                             'phone' => ['type' => 'string', 'label' => 'Phone', 'weight' => 1],
                             'community' => ['type' => 'entity_reference', 'label' => 'Community', 'settings' => ['target_type' => 'community'], 'weight' => 3],
@@ -242,7 +242,7 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
                         class: Community::class,
                         keys: ['id' => 'cid', 'uuid' => 'uuid', 'label' => 'name'],
                         group: 'communities',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
                             'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
                             'community_type' => ['type' => 'string', 'label' => 'Community Type', 'weight' => 5],
@@ -277,7 +277,7 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
                         class: FeaturedItem::class,
                         keys: ['id' => 'fid', 'uuid' => 'uuid', 'label' => 'headline'],
                         group: 'editorial',
-                        fieldDefinitions: [
+                        _fieldDefinitions: [
                             'entity_type' => ['type' => 'string', 'label' => 'Entity Type', 'description' => 'Referenced entity type (event, teaching, group, resource_person).', 'weight' => 1],
                             'entity_id' => ['type' => 'integer', 'label' => 'Entity ID', 'description' => 'Referenced entity ID.', 'weight' => 2],
                             'headline' => ['type' => 'string', 'label' => 'Headline', 'description' => 'Display headline (overrides entity title when set).', 'weight' => 3],

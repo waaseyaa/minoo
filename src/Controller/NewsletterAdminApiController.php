@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
-use Waaseyaa\Api\JsonResponseTrait;
+use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 
 final class NewsletterAdminApiController

@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Bimaaji\Graph\ApplicationGraphGenerator;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Foundation\ServiceProvider\KernelServicesInterface;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 
 #[CoversClass(BimaajiBridgeProvider::class)]
@@ -23,12 +24,19 @@ final class BimaajiBridgeProviderTest extends TestCase
 
         $etm = $this->createMock(EntityTypeManager::class);
 
-        $this->provider->setKernelResolver(function (string $abstract) use ($etm): ?object {
-            if ($abstract === EntityTypeManager::class) {
-                return $etm;
+        $kernelServices = new class ($etm) implements KernelServicesInterface {
+            public function __construct(private readonly EntityTypeManager $etm) {}
+
+            public function get(string $abstract): ?object
+            {
+                if ($abstract === EntityTypeManager::class) {
+                    return $this->etm;
+                }
+                return null;
             }
-            return null;
-        });
+        };
+
+        $this->provider->setKernelServices($kernelServices);
 
         $this->provider->register();
     }
