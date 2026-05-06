@@ -16,6 +16,8 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 final class OpenGraphController
 {
     private const CACHE_MAX_AGE = 86400;
@@ -42,7 +44,7 @@ final class OpenGraphController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function businessPng(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function businessPng(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = (string) ($params['slug'] ?? '');
         $entity = PublicOgEntityLoader::loadBusiness($this->entityTypeManager, $slug);
@@ -54,7 +56,7 @@ final class OpenGraphController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function eventPng(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function eventPng(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = (string) ($params['slug'] ?? '');
         $entity = PublicOgEntityLoader::loadEvent($this->entityTypeManager, $slug);
@@ -66,7 +68,7 @@ final class OpenGraphController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function teachingPng(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function teachingPng(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = (string) ($params['slug'] ?? '');
         $entity = PublicOgEntityLoader::loadTeaching($this->entityTypeManager, $slug);
@@ -79,8 +81,8 @@ final class OpenGraphController
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
     public function sagamokSpanishRiverFloodPng(
-        array $params,
-        array $query,
+        #[MapRoute] array $params,
+        #[MapQuery] array $query,
         AccountInterface $account,
         HttpRequest $request,
     ): Response {
@@ -94,8 +96,8 @@ final class OpenGraphController
      * @param array<string, mixed> $query
      */
     public function crisisIncidentPng(
-        array $params,
-        array $query,
+        #[MapRoute] array $params,
+        #[MapQuery] array $query,
         AccountInterface $account,
         HttpRequest $request,
     ): Response {

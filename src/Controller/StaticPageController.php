@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 /**
  * Minimal render-only controller for pages that have no domain logic.
  *
@@ -25,85 +27,85 @@ final class StaticPageController
     ) {}
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function about(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function about(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/about.html.twig', '/about', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function dataSovereignty(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function dataSovereignty(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/data-sovereignty.html.twig', '/data-sovereignty', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function elders(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function elders(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/elders/index.html.twig', '/elders', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function games(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function games(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/games/index.html.twig', '/games', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function getInvolved(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function getInvolved(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/get-involved.html.twig', '/get-involved', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function howItWorks(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function howItWorks(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/how-it-works.html.twig', '/how-it-works', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function journey(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function journey(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/journey.html.twig', '/journey', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function legal(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function legal(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/legal/index.html.twig', $request->getPathInfo(), $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function matcher(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function matcher(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/matcher.html.twig', '/matcher', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function messages(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function messages(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/messages.html.twig', '/messages', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function safety(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function safety(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/safety.html.twig', '/safety', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function search(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function search(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/search/index.html.twig', '/search', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function studio(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function studio(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/studio.html.twig', '/studio', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function volunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function volunteer(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/volunteer.html.twig', '/volunteer', $account);
     }

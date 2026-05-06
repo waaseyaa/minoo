@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\Response;
 
 final class OralHistoryController
@@ -20,7 +22,7 @@ final class OralHistoryController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $collectionStorage = $this->entityTypeManager->getStorage('oral_history_collection');
         $collectionIds = $collectionStorage->getQuery()
@@ -48,7 +50,7 @@ final class OralHistoryController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function collection(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function collection(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $collectionStorage = $this->entityTypeManager->getStorage('oral_history_collection');
@@ -90,7 +92,7 @@ final class OralHistoryController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function show(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storyStorage = $this->entityTypeManager->getStorage('oral_history');
