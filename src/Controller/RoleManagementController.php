@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Support\ElderIdentity;
 use App\Support\LayoutTwigContext;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
@@ -25,7 +27,7 @@ final class RoleManagementController
         private readonly Environment $twig,
     ) {}
 
-    public function changeRole(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function changeRole(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $targetUid = (int) $params['uid'];
         $action = $request->request->get('action', '');
@@ -101,7 +103,7 @@ final class RoleManagementController
         return new RedirectResponse($referrer);
     }
 
-    public function coordinatorList(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function coordinatorList(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $users = $this->loadUserRows($account);
 
@@ -114,7 +116,7 @@ final class RoleManagementController
         return new Response($html);
     }
 
-    public function adminList(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function adminList(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $users = $this->loadUserRows($account);
 

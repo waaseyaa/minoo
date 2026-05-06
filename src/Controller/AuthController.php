@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use Waaseyaa\Auth\Config\AuthConfig;
 use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\User\AuthMailer;
 use App\Contract\RateLimiterInterface;
 use App\Support\LayoutTwigContext;
@@ -29,7 +31,7 @@ final class AuthController
         private readonly RateLimiterInterface $limiter,
     ) {}
 
-    public function loginForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function loginForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('pages/auth/login.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
@@ -40,7 +42,7 @@ final class AuthController
         return new Response($html);
     }
 
-    public function submitLogin(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitLogin(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $ip = $request->getClientIp() ?? '0.0.0.0';
 
@@ -116,7 +118,7 @@ final class AuthController
         return new RedirectResponse($redirect);
     }
 
-    public function registerForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function registerForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('pages/auth/register.html.twig', LayoutTwigContext::withAccount($account, [
             'errors' => [],
@@ -126,7 +128,7 @@ final class AuthController
         return new Response($html);
     }
 
-    public function submitRegister(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitRegister(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $name = trim((string) $request->request->get('name', ''));
         $email = trim((string) $request->request->get('email', ''));
@@ -205,7 +207,7 @@ final class AuthController
         return new RedirectResponse('/');
     }
 
-    public function forgotPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function forgotPasswordForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('pages/auth/forgot-password.html.twig', LayoutTwigContext::withAccount($account, [
             'values' => [],
@@ -214,7 +216,7 @@ final class AuthController
         return new Response($html);
     }
 
-    public function submitForgotPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitForgotPassword(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $ip = $request->getClientIp() ?? '0.0.0.0';
 
@@ -255,7 +257,7 @@ final class AuthController
         return new Response($html);
     }
 
-    public function resetPasswordForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function resetPasswordForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = (string) $request->query->get('token', '');
         $tokenError = null;
@@ -278,7 +280,7 @@ final class AuthController
         return new Response($html);
     }
 
-    public function submitResetPassword(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitResetPassword(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = (string) $request->request->get('token', '');
         $password = (string) $request->request->get('password', '');
@@ -338,7 +340,7 @@ final class AuthController
         return new RedirectResponse('/login');
     }
 
-    public function verifyEmail(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function verifyEmail(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $token = (string) $request->query->get('token', '');
 
@@ -389,7 +391,7 @@ final class AuthController
         return new Response($html);
     }
 
-    public function logout(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function logout(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (session_status() === \PHP_SESSION_ACTIVE) {
             session_destroy();
