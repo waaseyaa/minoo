@@ -14,12 +14,12 @@
 | T004  | Cold-boot smoke routes per `quickstart.md` WP01 table                                                     | WP01  |          | [D] |
 | T005  | Cold-boot log scan; zero `dispatcher.deprecation` entries for cluster controllers                        | WP01  |          | [D] |
 | T006  | Commit, push, open PR with "Part of #753"                                                                 | WP01  |          | [D] |
-| T007  | Recreate transient migration tool locally                                                                 | WP02  | [P]      |
-| T008  | Apply migration to WP02 cluster (Games, 6 controllers)                                                   | WP02  | [P]      |
-| T009  | Run `./vendor/bin/phpunit`                                                                                | WP02  | [P]      |
-| T010  | Cold-boot smoke routes per `quickstart.md` WP02 table                                                     | WP02  | [P]      |
-| T011  | Cold-boot log scan; zero entries for cluster                                                              | WP02  | [P]      |
-| T012  | Commit, push, open PR with "Part of #753"                                                                 | WP02  | [P]      |
+| T007  | Recreate transient migration tool locally                                                                 | WP02  | [D] |
+| T008  | Apply migration to WP02 cluster (Games, 6 controllers)                                                   | WP02  | [D] |
+| T009  | Run `./vendor/bin/phpunit`                                                                                | WP02  | [D] |
+| T010  | Cold-boot smoke routes per `quickstart.md` WP02 table                                                     | WP02  | [D] |
+| T011  | Cold-boot log scan; zero entries for cluster                                                              | WP02  | [D] |
+| T012  | Commit, push, open PR with "Part of #753"                                                                 | WP02  | [D] |
 | T013  | Recreate transient migration tool locally                                                                 | WP03  | [P]      |
 | T014  | Apply migration to WP03 cluster (Newsletter, 3 controllers)                                              | WP03  | [P]      |
 | T015  | Run `./vendor/bin/phpunit`                                                                                | WP03  | [P]      |
@@ -134,12 +134,12 @@ None.
 
 #### Included subtasks
 
-- [ ] T007 Recreate transient migration tool locally (WP02)
-- [ ] T008 Apply migration to WP02 cluster (Games, 6 controllers) (WP02)
-- [ ] T009 Run `./vendor/bin/phpunit` (WP02)
-- [ ] T010 Cold-boot smoke routes per `quickstart.md` WP02 table (WP02)
-- [ ] T011 Cold-boot log scan; zero entries for cluster (WP02)
-- [ ] T012 Commit, push, open PR with "Part of #753" (WP02)
+- [x] T007 Recreate transient migration tool locally (WP02)
+- [x] T008 Apply migration to WP02 cluster (Games, 6 controllers) (WP02)
+- [x] T009 Run `./vendor/bin/phpunit` (WP02)
+- [x] T010 Cold-boot smoke routes per `quickstart.md` WP02 table (WP02)
+- [x] T011 Cold-boot log scan; zero entries for cluster (WP02)
+- [x] T012 Commit, push, open PR with "Part of #753" (WP02)
 
 #### Risks
 
