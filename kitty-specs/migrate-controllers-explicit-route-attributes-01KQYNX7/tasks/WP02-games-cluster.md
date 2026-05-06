@@ -242,3 +242,7 @@ grep -E 'AgimController|CrosswordController|GuessPriceController|JourneyControll
 | GameControllerTrait carries implicit-array params not in the inventory | Dry-run extractor on the trait file separately; escalate if non-empty (out of WP02 scope) |
 | Crossword medium/hard tier 500s during smoke | Only smoke the landing page `/games/crossword`, not deep puzzle URLs |
 | Smoke fails on a recently-added game route | Verify route exists in `MinooRoutingStackProvider` / game-specific provider; if route was removed, drop from smoke list |
+
+## Activity Log
+
+- 2026-05-06T14:40:15Z – unknown – Done override: PR #755 squash-merged
