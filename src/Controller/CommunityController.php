@@ -16,6 +16,8 @@ use Waaseyaa\Entity\EntityTypeManager;
 use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Geo\GeoDistance;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 final class CommunityController
 {
     public function __construct(
@@ -26,7 +28,7 @@ final class CommunityController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('community');
         $location = $this->resolveLocation($request);
@@ -118,7 +120,7 @@ final class CommunityController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function crisisIncident(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function crisisIncident(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = (string) ($params['slug'] ?? '');
         $incident = (string) ($params['incident'] ?? '');
@@ -198,7 +200,7 @@ final class CommunityController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function show(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('community');
@@ -343,7 +345,7 @@ final class CommunityController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function autocomplete(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
+    public function autocomplete(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
         $term = trim($request->query->getString('q'));
 

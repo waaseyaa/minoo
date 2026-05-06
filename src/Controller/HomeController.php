@@ -12,6 +12,8 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 final class HomeController
 {
     public function __construct(
@@ -21,7 +23,7 @@ final class HomeController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if ($account->isAuthenticated()) {
             return new RedirectResponse('/feed', 302);

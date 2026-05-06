@@ -18,6 +18,8 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\Response;
 
 final class EventController
@@ -30,7 +32,7 @@ final class EventController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $filters  = EventFilters::fromRequest($request);
         $location = $this->resolveLocation($request);
@@ -101,7 +103,7 @@ final class EventController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function show(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('event');
@@ -184,7 +186,7 @@ final class EventController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function ics(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function ics(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = (string) ($params['slug'] ?? '');
         if ($slug === '') {

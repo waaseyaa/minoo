@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\Response;
 
 final class LanguageController
@@ -25,7 +27,7 @@ final class LanguageController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $page = max(1, (int) ($query['page'] ?? 1));
         $offset = ($page - 1) * self::PAGE_SIZE;
@@ -56,7 +58,7 @@ final class LanguageController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function show(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
@@ -81,7 +83,7 @@ final class LanguageController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function search(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function search(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $q = trim((string) ($query['q'] ?? ''));
 

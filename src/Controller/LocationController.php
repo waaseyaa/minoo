@@ -11,6 +11,8 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 final class LocationController
 {
     public function __construct(
@@ -20,7 +22,7 @@ final class LocationController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function current(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
+    public function current(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
         $service = $this->makeService();
         $ctx = $service->fromRequest($request);
@@ -33,7 +35,7 @@ final class LocationController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function set(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
+    public function set(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
         $body = json_decode($request->getContent(), true) ?? [];
         $communityId = $body['community_id'] ?? null;
@@ -64,7 +66,7 @@ final class LocationController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function update(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
+    public function update(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
         $body = json_decode($request->getContent(), true) ?? [];
         $latitude = $body['latitude'] ?? null;
