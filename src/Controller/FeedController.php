@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +26,7 @@ final class FeedController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!$account->isAuthenticated()) {
             return new RedirectResponse('/', 302);
@@ -63,7 +65,7 @@ final class FeedController
         return new Response($html, 200, $headers);
     }
 
-    public function api(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function api(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $ctx = $this->buildContext($request, $query, $account);
         $response = $this->assembler->assemble($ctx);
@@ -83,7 +85,7 @@ final class FeedController
         return new Response($json, 200, ['Content-Type' => 'application/json']);
     }
 
-    public function explore(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function explore(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $type = $query['type'] ?? 'all';
         $q = trim($query['q'] ?? '');
@@ -423,7 +425,7 @@ final class FeedController
         ];
     }
 
-    private function buildContext(HttpRequest $request, array $query, ?AccountInterface $account = null, ?string $resolvedFilter = null): FeedContext
+    private function buildContext(HttpRequest $request, #[MapQuery] array $query, ?AccountInterface $account = null, ?string $resolvedFilter = null): FeedContext
     {
         $locationCookie = $request->cookies->get('minoo_location');
         $lat = null;
