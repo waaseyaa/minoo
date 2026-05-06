@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "mission_slug": "migrate-controllers-explicit-route-attributes-01KQYNX7",
+  "mission_id": "01KQYNX7DWR7QNFK6XAZRKMWHV",
+  "mission_branch": "kitty/mission-migrate-controllers-explicit-route-attributes-01KQYNX7",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01",
+        "WP02",
+        "WP03",
+        "WP04",
+        "WP05",
+        "WP06"
+      ],
+      "write_scope": [
+        "scripts/check-implicit-array-params.php",
+        "src/Controller/AccountHomeController.php",
+        "src/Controller/AgimController.php",
+        "src/Controller/AuthController.php",
+        "src/Controller/BlockController.php",
+        "src/Controller/BusinessController.php",
+        "src/Controller/ChatController.php",
+        "src/Controller/CommunityController.php",
+        "src/Controller/ContributorController.php",
+        "src/Controller/CoordinatorDashboardController.php",
+        "src/Controller/CrosswordController.php",
+        "src/Controller/ElderSupportController.php",
+        "src/Controller/ElderSupportWorkflowController.php",
+        "src/Controller/EngagementController.php",
+        "src/Controller/EventController.php",
+        "src/Controller/FeedController.php",
+        "src/Controller/GroupController.php",
+        "src/Controller/GuessPriceController.php",
+        "src/Controller/HomeController.php",
+        "src/Controller/IngestionApiController.php",
+        "src/Controller/IngestionDashboardController.php",
+        "src/Controller/JourneyController.php",
+        "src/Controller/LanguageController.php",
+        "src/Controller/LocationController.php",
+        "src/Controller/MatcherController.php",
+        "src/Controller/MessagingController.php",
+        "src/Controller/NewsletterAdminApiController.php",
+        "src/Controller/NewsletterController.php",
+        "src/Controller/NewsletterEditorController.php",
+        "src/Controller/OpenGraphController.php",
+        "src/Controller/OralHistoryController.php",
+        "src/Controller/PeopleController.php",
+        "src/Controller/RoleManagementController.php",
+        "src/Controller/ShkodaController.php",
+        "src/Controller/StaticPageController.php",
+        "src/Controller/TeachingController.php",
+        "src/Controller/VolunteerController.php",
+        "src/Controller/VolunteerDashboardController.php"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering",
+        "dashboard",
+        "legacy-cleanup",
+        "tests"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    }
+  ],
+  "computed_at": "2026-05-06T13:20:05.424988+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [],
+  "collapse_report": {
+    "events": [
+      {
+        "wp_a": "WP06",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP06 depends on WP01"
+      },
+      {
+        "wp_a": "WP06",
+        "wp_b": "WP02",
+        "rule": "dependency",
+        "evidence": "WP06 depends on WP02"
+      },
+      {
+        "wp_a": "WP06",
+        "wp_b": "WP03",
+        "rule": "dependency",
+        "evidence": "WP06 depends on WP03"
+      },
+      {
+        "wp_a": "WP06",
+        "wp_b": "WP04",
+        "rule": "dependency",
+        "evidence": "WP06 depends on WP04"
+      },
+      {
+        "wp_a": "WP06",
+        "wp_b": "WP05",
+        "rule": "dependency",
+        "evidence": "WP06 depends on WP05"
+      }
+    ],
+    "total_merges": 5,
+    "independent_wps_collapsed": 0,
+    "by_rule": {
+      "dependency": 5
+    }
+  }
+}

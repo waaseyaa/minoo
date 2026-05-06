@@ -27,7 +27,7 @@ requirement_refs:
 - NFR-004
 planning_base_branch: main
 merge_target_branch: main
-branch_strategy: Per-lane worktree off main, taken AFTER WP01..WP05 have squash-merged so reconciliation reflects the final state.
+branch_strategy: Planning artifacts for this feature were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
 subtasks:
 - T031
 - T032
