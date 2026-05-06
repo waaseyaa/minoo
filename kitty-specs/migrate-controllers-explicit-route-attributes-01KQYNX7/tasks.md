@@ -8,12 +8,12 @@
 
 | ID    | Description                                                                                              | WP    | Parallel |
 |-------|----------------------------------------------------------------------------------------------------------|-------|----------|
-| T001  | Create transient migration tool locally per `contracts/migrate-cli.md` (NOT committed)                   | WP01  |          |
-| T002  | Apply migration to WP01 cluster (Auth + Account, 6 controllers)                                          | WP01  |          |
-| T003  | Run `./vendor/bin/phpunit`; expect green baseline                                                         | WP01  |          |
-| T004  | Cold-boot smoke routes per `quickstart.md` WP01 table                                                     | WP01  |          |
-| T005  | Cold-boot log scan; zero `dispatcher.deprecation` entries for cluster controllers                        | WP01  |          |
-| T006  | Commit, push, open PR with "Part of #753"                                                                 | WP01  |          |
+| T001  | Create transient migration tool locally per `contracts/migrate-cli.md` (NOT committed)                   | WP01  |          | [D] |
+| T002  | Apply migration to WP01 cluster (Auth + Account, 6 controllers)                                          | WP01  |          | [D] |
+| T003  | Run `./vendor/bin/phpunit`; expect green baseline                                                         | WP01  |          | [D] |
+| T004  | Cold-boot smoke routes per `quickstart.md` WP01 table                                                     | WP01  |          | [D] |
+| T005  | Cold-boot log scan; zero `dispatcher.deprecation` entries for cluster controllers                        | WP01  |          | [D] |
+| T006  | Commit, push, open PR with "Part of #753"                                                                 | WP01  |          | [D] |
 | T007  | Recreate transient migration tool locally                                                                 | WP02  | [P]      |
 | T008  | Apply migration to WP02 cluster (Games, 6 controllers)                                                   | WP02  | [P]      |
 | T009  | Run `./vendor/bin/phpunit`                                                                                | WP02  | [P]      |
@@ -77,12 +77,12 @@ No foundational WP. The mission's design (transient migration tool, file-disjoin
 
 #### Included subtasks
 
-- [ ] T001 Create transient migration tool locally per `contracts/migrate-cli.md` (NOT committed) (WP01)
-- [ ] T002 Apply migration to WP01 cluster (Auth + Account, 6 controllers) (WP01)
-- [ ] T003 Run `./vendor/bin/phpunit`; expect green baseline (WP01)
-- [ ] T004 Cold-boot smoke routes per `quickstart.md` WP01 table (WP01)
-- [ ] T005 Cold-boot log scan; zero `dispatcher.deprecation` entries for cluster controllers (WP01)
-- [ ] T006 Commit, push, open PR with "Part of #753" (WP01)
+- [x] T001 Create transient migration tool locally per `contracts/migrate-cli.md` (NOT committed) (WP01)
+- [x] T002 Apply migration to WP01 cluster (Auth + Account, 6 controllers) (WP01)
+- [x] T003 Run `./vendor/bin/phpunit`; expect green baseline (WP01)
+- [x] T004 Cold-boot smoke routes per `quickstart.md` WP01 table (WP01)
+- [x] T005 Cold-boot log scan; zero `dispatcher.deprecation` entries for cluster controllers (WP01)
+- [x] T006 Commit, push, open PR with "Part of #753" (WP01)
 
 #### Implementation sketch
 
