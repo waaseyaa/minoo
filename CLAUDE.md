@@ -2,7 +2,7 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
-Last framework sync: Waaseyaa alpha.157 (HTTP boot-failure JSON hints; skeleton index Dotenv default; composer waaseyaa/* bump)
+Last framework sync: Waaseyaa alpha.173 (controller dispatcher implicit-array compatibility shim — closes framework#1390; resumes parked alpha-171 mission; composer waaseyaa/* bump). Tracking: #750.
 
 ## Architecture
 
