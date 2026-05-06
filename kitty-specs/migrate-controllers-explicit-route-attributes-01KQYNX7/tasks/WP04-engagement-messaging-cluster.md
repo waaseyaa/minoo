@@ -175,3 +175,7 @@ grep -F 'dispatcher.deprecation' /tmp/wp04-server.log | grep -E 'BlockController
 | ChatController POST-only — hard to smoke directly | Smoke a different cluster route to prove server boot; rely on phpunit for ChatController binding |
 | Reaction field rename gotcha | Visual diff review confirms no `reaction_type`/`emoji` lines touched |
 | Feed homepage/redirect logic | `/feed` returns 302 anonymous; that's expected — confirm 302 + non-zero body |
+
+## Activity Log
+
+- 2026-05-06T16:58:37Z – unknown – Done override: PR #757 squash-merged
