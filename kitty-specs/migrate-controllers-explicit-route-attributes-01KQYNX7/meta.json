@@ -1,0 +1,10 @@
+{
+  "created_at": "2026-05-06T12:58:50.460101+00:00",
+  "friendly_name": "migrate controllers explicit route attributes",
+  "mission_id": "01KQYNX7DWR7QNFK6XAZRKMWHV",
+  "mission_number": null,
+  "mission_slug": "migrate-controllers-explicit-route-attributes-01KQYNX7",
+  "mission_type": "software-dev",
+  "slug": "migrate-controllers-explicit-route-attributes-01KQYNX7",
+  "target_branch": "main"
+}
