@@ -77,6 +77,7 @@ use Waaseyaa\Entity\Event\EntityEvent;
 use Waaseyaa\Entity\Event\EntityEvents;
 use Waaseyaa\Field\FieldDefinition;
 use Waaseyaa\Field\FieldStorage;
+use Waaseyaa\Foundation\ServiceProvider\Capability\HasCommandsInterface;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\I18n\Language;
 use Waaseyaa\I18n\LanguageManager;
@@ -103,12 +104,12 @@ use Waaseyaa\Mcp\Bridge\ToolRegistryInterface;
 use Waaseyaa\SSR\SsrServiceProvider;
 use Waaseyaa\SSR\ThemeServiceProvider;
 
-class AppCommandServiceProvider extends AppCoreServiceProvider
+class AppCommandServiceProvider extends AppCoreServiceProvider implements HasCommandsInterface
 {
     public function commands(
             EntityTypeManager $entityTypeManager,
             \Waaseyaa\Database\DatabaseInterface $database,
-            \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $dispatcher,
+            \Waaseyaa\Foundation\Event\EventDispatcherInterface $dispatcher,
         ): array {
             // --- Mail: MailTestCommand + MessagingDigestCommand ---
             $mailConfig = $this->config['mail'] ?? [];
