@@ -1,7 +1,7 @@
 {
-  "event_count": 8,
-  "last_event_id": "01KQYVPY0DAC37T23F172YTGT9",
-  "materialized_at": "2026-05-06T14:40:14.861754+00:00",
+  "event_count": 9,
+  "last_event_id": "01KQYXYDGKEWSY1SDEHWE7KSD2",
+  "materialized_at": "2026-05-06T15:19:17.267731+00:00",
   "mission_number": "",
   "mission_slug": "migrate-controllers-explicit-route-attributes-01KQYNX7",
   "mission_type": "software-dev",
@@ -10,11 +10,11 @@
     "blocked": 0,
     "canceled": 0,
     "claimed": 0,
-    "done": 2,
+    "done": 3,
     "for_review": 0,
     "in_progress": 0,
     "in_review": 0,
-    "planned": 4
+    "planned": 3
   },
   "work_packages": {
     "WP01": {
@@ -32,11 +32,11 @@
       "last_transition_at": "2026-05-06T14:40:14.861754+00:00"
     },
     "WP03": {
-      "actor": "finalize-tasks",
-      "force_count": 1,
-      "lane": "planned",
-      "last_event_id": "01KQYQ457HY3C3WJGX1SS9QJZC",
-      "last_transition_at": "2026-05-06T13:20:05.361477+00:00"
+      "actor": "user",
+      "force_count": 2,
+      "lane": "done",
+      "last_event_id": "01KQYXYDGKEWSY1SDEHWE7KSD2",
+      "last_transition_at": "2026-05-06T15:19:17.267731+00:00"
     },
     "WP04": {
       "actor": "finalize-tasks",

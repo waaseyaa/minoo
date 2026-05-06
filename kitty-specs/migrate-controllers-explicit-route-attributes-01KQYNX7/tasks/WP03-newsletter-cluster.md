@@ -179,3 +179,7 @@ grep -F 'dispatcher.deprecation' /tmp/wp03-server.log | grep -E 'NewsletterAdmin
 | Dense per-file diffs (24 splice points in one file) — easy to miss one | Token-aware splice + idempotency check; PHPUnit + smoke as backstops |
 | Admin newsletter routes require auth | 401/302 + non-zero body is success |
 | Newsletter generation logic is complex (PDF, email, Mailgun) — migration must not affect dispatch | Pure parameter decoration; no behavioral change |
+
+## Activity Log
+
+- 2026-05-06T15:19:17Z – unknown – Done override: PR #756 squash-merged
