@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Domain\Geo\Service\VolunteerRanker;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -22,7 +24,7 @@ final class CoordinatorDashboardController
         private readonly Environment $twig,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $requestStorage = $this->entityTypeManager->getStorage('elder_support_request');
 
@@ -89,7 +91,7 @@ final class CoordinatorDashboardController
     }
 
     /** @param array<string, mixed> $params */
-    public function applications(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function applications(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('volunteer');
         $ids = $storage->getQuery()
@@ -107,7 +109,7 @@ final class CoordinatorDashboardController
     }
 
     /** @param array<string, mixed> $params */
-    public function approveApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function approveApplication(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->loadVolunteerByUuid($params['uuid'] ?? '');
 
@@ -137,7 +139,7 @@ final class CoordinatorDashboardController
     }
 
     /** @param array<string, mixed> $params */
-    public function denyApplication(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function denyApplication(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->loadVolunteerByUuid($params['uuid'] ?? '');
 

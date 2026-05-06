@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\SSR\Flash\Flash;
@@ -25,7 +27,7 @@ final class VolunteerController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function signupForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function signupForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if ($account->isAuthenticated() && $this->hasExistingVolunteer($account)) {
             Flash::info("You're already registered as a volunteer.");
@@ -45,7 +47,7 @@ final class VolunteerController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function submitSignup(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitSignup(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $name = trim((string) $request->request->get('name', ''));
         $phone = trim((string) $request->request->get('phone', ''));
@@ -112,7 +114,7 @@ final class VolunteerController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function signupDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function signupDetail(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $uuid = $params['uuid'] ?? '';
         $entity = null;

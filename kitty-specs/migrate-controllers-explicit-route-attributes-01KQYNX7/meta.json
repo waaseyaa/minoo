@@ -1,0 +1,12 @@
+{
+  "created_at": "2026-05-06T12:58:50.460101+00:00",
+  "friendly_name": "Migrate Controllers to Explicit Route Attributes",
+  "mission_id": "01KQYNX7DWR7QNFK6XAZRKMWHV",
+  "mission_number": null,
+  "mission_slug": "migrate-controllers-explicit-route-attributes-01KQYNX7",
+  "mission_type": "software-dev",
+  "slug": "migrate-controllers-explicit-route-attributes-01KQYNX7",
+  "source_description": "Migrate 346 unannotated array $params/$query parameters across 173 methods in 37 src/Controller/*.php files to explicit Waaseyaa\\Routing\\Attribute\\MapRoute / MapQuery attributes. Closes waaseyaa/minoo#753 (v0.14 milestone). Follow-up to alpha.173 dispatcher implicit-array compatibility shim (framework#1390).",
+  "target_branch": "main",
+  "vcs": "git"
+}

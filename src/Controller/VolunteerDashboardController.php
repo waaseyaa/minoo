@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -20,7 +22,7 @@ final class VolunteerDashboardController
         private readonly Environment $twig,
     ) {}
 
-    public function index(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
 
@@ -51,7 +53,7 @@ final class VolunteerDashboardController
         return new Response($html);
     }
 
-    public function editForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function editForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->findVolunteerByAccount($account);
         if ($volunteer === null) {
@@ -67,7 +69,7 @@ final class VolunteerDashboardController
         return new Response($html);
     }
 
-    public function submitEdit(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitEdit(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->findVolunteerByAccount($account);
         if ($volunteer === null) {
@@ -120,7 +122,7 @@ final class VolunteerDashboardController
         return new RedirectResponse('/dashboard/volunteer');
     }
 
-    public function toggleAvailability(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function toggleAvailability(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $volunteer = $this->findVolunteerByAccount($account);
         if ($volunteer === null) {
