@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 /**
  * SSR page for the Guess the Price mini-game (no API, no GameSession).
  *
@@ -23,7 +25,7 @@ final class GuessPriceController
     ) {}
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function page(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('pages/games/guess-price.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => $request->getPathInfo(),
