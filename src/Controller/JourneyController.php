@@ -13,6 +13,8 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -45,7 +47,7 @@ class JourneyController
     // ── Page ──────────────────────────────────────────────────────────────
 
     /** GET /games/journey */
-    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function page(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('pages/static/journey.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/journey',
@@ -56,7 +58,7 @@ class JourneyController
     // ── Scene listing and loading ─────────────────────────────────────────
 
     /** GET /api/games/journey/scenes — list all scenes (no hotspot coords). */
-    public function scenes(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function scenes(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->json(['scenes' => JourneyEngine::listScenes()]);
     }
@@ -67,7 +69,7 @@ class JourneyController
      * Returns scene data safe for the client (no hotspot coordinates) plus
      * a session token used for all subsequent tap/hint/complete calls.
      */
-    public function scene(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function scene(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         if ($slug === '') {
@@ -99,7 +101,7 @@ class JourneyController
      * The client never receives hotspot coordinates. It sends where the
      * player tapped; the server decides if it hit anything.
      */
-    public function tap(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function tap(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data  = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -170,7 +172,7 @@ class JourneyController
      * hint ("top-left", "bottom-right", etc.) — enough for the player to
      * narrow the search without revealing the exact location.
      */
-    public function hint(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function hint(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data  = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -232,7 +234,7 @@ class JourneyController
      * Called when the client detects scene_complete in a tap response.
      * Returns star rating, narrative card, and homestead unlock (if any).
      */
-    public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function complete(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data  = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -279,7 +281,7 @@ class JourneyController
     // ── Stats ─────────────────────────────────────────────────────────────
 
     /** GET /api/games/journey/stats */
-    public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'journey', ['abandoned'], ['completed']));
     }

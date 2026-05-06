@@ -12,6 +12,8 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\Response;
 
 final class CrosswordController
@@ -30,7 +32,7 @@ final class CrosswordController
     }
 
     /** Render the crossword game page. */
-    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function page(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('pages/games/crossword.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/crossword',
@@ -39,7 +41,7 @@ final class CrosswordController
     }
 
     /** GET /api/games/crossword/daily — today's puzzle. */
-    public function daily(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function daily(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $today = date('Y-m-d');
         $puzzleId = "daily-{$today}";
@@ -72,7 +74,7 @@ final class CrosswordController
     }
 
     /** GET /api/games/crossword/random — random practice puzzle. */
-    public function random(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function random(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $tier = $query['tier'] ?? 'easy';
         if (!in_array($tier, ['easy', 'medium', 'hard'], true)) {
@@ -119,7 +121,7 @@ final class CrosswordController
     }
 
     /** GET /api/games/crossword/themes — list theme packs with progress. */
-    public function themes(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function themes(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
         $allIds = $puzzleStorage->getQuery()->execute();
@@ -172,7 +174,7 @@ final class CrosswordController
     }
 
     /** GET /api/games/crossword/theme/{slug} — next unsolved puzzle in theme. */
-    public function theme(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function theme(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
         if ($slug === '') {
@@ -244,7 +246,7 @@ final class CrosswordController
     }
 
     /** POST /api/games/crossword/check — validate a word. */
-    public function check(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function check(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -326,7 +328,7 @@ final class CrosswordController
     }
 
     /** POST /api/games/crossword/complete — submit finished puzzle. */
-    public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function complete(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -415,13 +417,13 @@ final class CrosswordController
     }
 
     /** GET /api/games/crossword/stats — player stats (auth required). */
-    public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'crossword', ['abandoned'], ['completed']));
     }
 
     /** POST /api/games/crossword/hint — reveal a letter (tracked server-side). */
-    public function hint(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function hint(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -477,7 +479,7 @@ final class CrosswordController
     }
 
     /** POST /api/games/crossword/abandon — give up on current puzzle. */
-    public function abandon(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function abandon(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';

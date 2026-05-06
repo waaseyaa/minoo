@@ -12,6 +12,8 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\Response;
 
 final class MatcherController
@@ -30,7 +32,7 @@ final class MatcherController
     }
 
     /** Render the game page. */
-    public function page(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function page(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $html = $this->twig->render('pages/static/matcher.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/games/matcher',
@@ -40,7 +42,7 @@ final class MatcherController
     }
 
     /** GET /api/games/matcher/daily — today's matching pairs. */
-    public function daily(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function daily(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $today = date('Y-m-d');
         $difficulty = 'easy';
@@ -71,7 +73,7 @@ final class MatcherController
     }
 
     /** GET /api/games/matcher/practice — random pairs by difficulty. */
-    public function practice(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function practice(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $difficulty = $query['difficulty'] ?? 'easy';
         if (!in_array($difficulty, ['easy', 'medium', 'hard'], true)) {
@@ -107,7 +109,7 @@ final class MatcherController
     }
 
     /** POST /api/games/matcher/match — validate a single match attempt. */
-    public function match(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function match(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -152,7 +154,7 @@ final class MatcherController
     }
 
     /** POST /api/games/matcher/complete — finish game, record stats. */
-    public function complete(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function complete(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $data = $this->jsonBody($request);
         $token = $data['session_token'] ?? '';
@@ -201,7 +203,7 @@ final class MatcherController
     }
 
     /** GET /api/games/matcher/stats — player stats. */
-    public function stats(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->json(GameStatsCalculator::build(
             $this->entityTypeManager,
