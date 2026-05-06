@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
@@ -17,7 +19,7 @@ final class ElderSupportWorkflowController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
-    public function assignVolunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function assignVolunteer(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
             return new Response('Forbidden', 403);
@@ -50,7 +52,7 @@ final class ElderSupportWorkflowController
         return new RedirectResponse('/dashboard/coordinator');
     }
 
-    public function startRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function startRequest(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->volunteerTransition(
             $params,
@@ -61,7 +63,7 @@ final class ElderSupportWorkflowController
         );
     }
 
-    public function completeRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function completeRequest(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $esrid = (int) ($params['esrid'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
@@ -92,7 +94,7 @@ final class ElderSupportWorkflowController
         return new RedirectResponse('/dashboard/volunteer');
     }
 
-    public function confirmRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function confirmRequest(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
             return new Response('Forbidden', 403);
@@ -118,7 +120,7 @@ final class ElderSupportWorkflowController
         return new RedirectResponse('/dashboard/coordinator');
     }
 
-    public function cancelRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function cancelRequest(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
             return new Response('Forbidden', 403);
@@ -148,7 +150,7 @@ final class ElderSupportWorkflowController
         return new RedirectResponse('/dashboard/coordinator');
     }
 
-    public function declineRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function declineRequest(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $esrid = (int) ($params['esrid'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
@@ -176,7 +178,7 @@ final class ElderSupportWorkflowController
         return new RedirectResponse('/dashboard/volunteer');
     }
 
-    public function reassignVolunteer(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function reassignVolunteer(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         if (!in_array('elder_coordinator', $account->getRoles(), true) && !$account->hasPermission('administer content')) {
             return new Response('Forbidden', 403);
@@ -210,7 +212,7 @@ final class ElderSupportWorkflowController
     }
 
     private function volunteerTransition(
-        array $params,
+        #[MapRoute] array $params,
         AccountInterface $account,
         string $fromStatus,
         string $toStatus,

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -22,7 +24,7 @@ final class ElderSupportController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function requestForm(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function requestForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $location = $this->resolveLocation($request);
 
@@ -37,7 +39,7 @@ final class ElderSupportController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function submitRequest(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submitRequest(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $name = trim((string) $request->request->get('name', ''));
         $phone = trim((string) $request->request->get('phone', ''));
@@ -100,7 +102,7 @@ final class ElderSupportController
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function requestDetail(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function requestDetail(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $uuid = $params['uuid'] ?? '';
         $entity = null;

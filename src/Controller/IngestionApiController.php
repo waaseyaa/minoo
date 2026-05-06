@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Symfony\Component\HttpFoundation\Response;
 
 final class IngestionApiController
@@ -21,7 +23,7 @@ final class IngestionApiController
         private readonly EntityTypeManager $entityTypeManager,
     ) {}
 
-    public function status(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function status(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $status = $this->readNcStatusFile();
         if ($status === null) {
@@ -31,7 +33,7 @@ final class IngestionApiController
         return $this->json(['status' => $status]);
     }
 
-    public function ingestEnvelope(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function ingestEnvelope(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $payload = $this->jsonBody($request);
         if ($payload === []) {
@@ -53,17 +55,17 @@ final class IngestionApiController
         ], 201);
     }
 
-    public function approve(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function approve(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->updateStatus((int) ($params['id'] ?? 0), IngestStatus::Approved->value, (int) $account->id());
     }
 
-    public function reject(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function reject(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->updateStatus((int) ($params['id'] ?? 0), 'rejected', (int) $account->id());
     }
 
-    public function materialize(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function materialize(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
