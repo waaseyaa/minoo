@@ -17,6 +17,8 @@ use Waaseyaa\Access\AccountInterface;
 use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 final class NewsletterAdminApiController
 {
     use JsonResponseTrait;
@@ -32,7 +34,7 @@ final class NewsletterAdminApiController
         private readonly RenderTokenStore $tokenStore,
     ) {}
 
-    public function listEditions(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function listEditions(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('newsletter_edition');
         $editions = $storage->loadMultiple();
@@ -53,7 +55,7 @@ final class NewsletterAdminApiController
         return $this->json($result);
     }
 
-    public function createEdition(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function createEdition(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $body = $this->jsonBody($request);
         if ($body === []) {
@@ -96,7 +98,7 @@ final class NewsletterAdminApiController
         ], 201);
     }
 
-    public function getEdition(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function getEdition(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
@@ -168,7 +170,7 @@ final class NewsletterAdminApiController
         ]);
     }
 
-    public function addItem(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function addItem(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('newsletter_edition');
@@ -218,7 +220,7 @@ final class NewsletterAdminApiController
         ], 201);
     }
 
-    public function removeItem(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function removeItem(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $editionId = (int) ($params['id'] ?? 0);
         $itemId = (int) ($params['itemId'] ?? 0);
@@ -234,7 +236,7 @@ final class NewsletterAdminApiController
         return $this->json(['deleted' => true]);
     }
 
-    public function reorderItem(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function reorderItem(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $editionId = (int) ($params['id'] ?? 0);
         $itemId = (int) ($params['itemId'] ?? 0);
@@ -264,7 +266,7 @@ final class NewsletterAdminApiController
         ]);
     }
 
-    public function entitySearch(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function entitySearch(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $q = trim($query['q'] ?? '');
         if ($q === '') {
@@ -300,7 +302,7 @@ final class NewsletterAdminApiController
         return $this->json(['results' => $results]);
     }
 
-    public function previewToken(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function previewToken(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
@@ -320,7 +322,7 @@ final class NewsletterAdminApiController
         ]);
     }
 
-    public function generate(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function generate(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
@@ -350,7 +352,7 @@ final class NewsletterAdminApiController
         }
     }
 
-    public function download(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function download(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
@@ -378,7 +380,7 @@ final class NewsletterAdminApiController
         ]);
     }
 
-    public function send(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function send(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
         if ($id <= 0) {
@@ -407,7 +409,7 @@ final class NewsletterAdminApiController
         }
     }
 
-    public function spaFallback(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function spaFallback(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $indexPath = dirname(__DIR__, 2) . '/public/admin/newsletter/index.html';
 

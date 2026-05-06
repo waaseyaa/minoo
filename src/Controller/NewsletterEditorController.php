@@ -10,6 +10,8 @@ use App\Domain\Newsletter\Service\EditionLifecycle;
 use App\Domain\Newsletter\Service\NewsletterAssembler;
 use App\Domain\Newsletter\Service\NewsletterDispatcher;
 use App\Domain\Newsletter\Service\NewsletterRenderer;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -31,7 +33,7 @@ final class NewsletterEditorController
     ) {
     }
 
-    public function list(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('newsletter_edition');
         $editions = $storage->loadMultiple();
@@ -41,7 +43,7 @@ final class NewsletterEditorController
         ]));
     }
 
-    public function create(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function create(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $communityId = $request->request->get('community_id') ?: null;
         $publishDate = (string) $request->request->get('publish_date');
@@ -75,7 +77,7 @@ final class NewsletterEditorController
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
     }
 
-    public function assemble(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function assemble(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $edition = $this->loadEditionOrFail($params['id'] ?? null);
 
@@ -92,7 +94,7 @@ final class NewsletterEditorController
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
     }
 
-    public function show(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function show(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $edition = $this->loadEditionOrFail($params['id'] ?? null);
 
@@ -113,7 +115,7 @@ final class NewsletterEditorController
         ]));
     }
 
-    public function approve(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function approve(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $edition = $this->loadEditionOrFail($params['id'] ?? null);
 
@@ -128,7 +130,7 @@ final class NewsletterEditorController
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
     }
 
-    public function generate(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function generate(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $edition = $this->loadEditionOrFail($params['id'] ?? null);
 
@@ -146,7 +148,7 @@ final class NewsletterEditorController
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
     }
 
-    public function send(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function send(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $edition = $this->loadEditionOrFail($params['id'] ?? null);
 
@@ -177,7 +179,7 @@ final class NewsletterEditorController
         return new RedirectResponse('/coordinator/newsletter/' . $edition->id());
     }
 
-    public function submissionsList(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submissionsList(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $coordinatorCommunity = $this->resolveCoordinatorCommunity($request);
 
@@ -193,7 +195,7 @@ final class NewsletterEditorController
         ]));
     }
 
-    public function submissionApprove(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submissionApprove(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('newsletter_submission');
         $sub = $storage->load((int) ($params['id'] ?? 0));
@@ -213,7 +215,7 @@ final class NewsletterEditorController
         return new RedirectResponse('/coordinator/newsletter/submissions');
     }
 
-    public function submissionReject(array $params, array $query, AccountInterface $account, HttpRequest $request): Response
+    public function submissionReject(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('newsletter_submission');
         $sub = $storage->load((int) ($params['id'] ?? 0));
