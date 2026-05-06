@@ -34,6 +34,12 @@ return [
     // File storage root for LocalFileRepository (media package).
     'files_dir' => getenv('WAASEYAA_FILES_DIR') ?: __DIR__ . '/../files',
 
+    // Minimum log level. Default 'notice' so the framework's dispatcher.deprecation
+    // shim notices (post-#1390 implicit-array migration backlog) reach error_log().
+    // Without this, the framework default is 'warning' and notice-level signals are
+    // dropped silently. Override with WAASEYAA_LOG_LEVEL (debug|info|notice|warning|error|...).
+    'log_level' => getenv('WAASEYAA_LOG_LEVEL') ?: 'notice',
+
     // Application identity — used by AuthMailer for reset/verify URL generation.
     'app' => [
         'name' => getenv('APP_NAME') ?: 'Minoo',
