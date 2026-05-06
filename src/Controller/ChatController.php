@@ -10,11 +10,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
 final class ChatController
 {
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */
-    public function send(array $params, array $query, AccountInterface $account, HttpRequest $request): JsonResponse
+    public function send(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): JsonResponse
     {
         $config = self::loadConfig();
 
