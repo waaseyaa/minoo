@@ -169,7 +169,7 @@ grep -F 'dispatcher.deprecation' /tmp/wp03-server.log | grep -E 'NewsletterAdmin
 ## Reviewer Guidance
 
 - Spot-check `NewsletterAdminApiController.php` (24 entries — largest single-file diff in this WP).
-- Confirm `use Waaseyaa\Routing\Attribute\MapRoute;` and `use Waaseyaa\Routing\Attribute\MapQuery;` are alphabetical among other `Waaseyaa\` uses.
+- Confirm `use Waaseyaa\SSR\Attribute\MapRoute;` and `use Waaseyaa\SSR\Attribute\MapQuery;` are alphabetical among other `Waaseyaa\` uses.
 - Pull, run phpunit, smoke `/newsletter`, confirm log silence.
 
 ## Risks & Mitigations

@@ -32,7 +32,7 @@ For each `*.php` file in the resolved set, the script:
    - Checks whether the parameter is already preceded by an `T_ATTRIBUTE` block containing `MapRoute` (for `$params`) or `MapQuery` (for `$query`). If so, **skip**.
    - Records the byte offset of the `T_ARRAY` token's start as a splice point.
 5. **Inserts** the appropriate attribute prefix (`#[MapRoute] ` or `#[MapQuery] `) at each recorded offset (working from highest offset to lowest, so earlier offsets remain valid).
-6. **Ensures** `use Waaseyaa\Routing\Attribute\MapRoute;` and `use Waaseyaa\Routing\Attribute\MapQuery;` are present, alphabetically positioned among the file's `Waaseyaa\` use statements (idempotent — skip if already present).
+6. **Ensures** `use Waaseyaa\SSR\Attribute\MapRoute;` and `use Waaseyaa\SSR\Attribute\MapQuery;` are present, alphabetically positioned among the file's `Waaseyaa\` use statements (idempotent — skip if already present).
 7. **Writes** the modified bytes back to the file (only under `--apply`).
 
 ## Exit codes

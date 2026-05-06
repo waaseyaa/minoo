@@ -24,7 +24,7 @@ Issue #753 inventoried **346 unannotated array params across 173 methods in 37 c
 
 1. **Given** a controller method with `public function name(array $params, array $query, ...)`,
    **When** the migration runs,
-   **Then** the method signature becomes `public function name(#[MapRoute] array $params, #[MapQuery] array $query, ...)` and the file imports `Waaseyaa\Routing\Attribute\MapRoute` and `Waaseyaa\Routing\Attribute\MapQuery`.
+   **Then** the method signature becomes `public function name(#[MapRoute] array $params, #[MapQuery] array $query, ...)` and the file imports `Waaseyaa\SSR\Attribute\MapRoute` and `Waaseyaa\SSR\Attribute\MapQuery`.
 
 2. **Given** the full mission has merged,
    **When** `php scripts/check-implicit-array-params.php` runs,
@@ -36,7 +36,7 @@ Issue #753 inventoried **346 unannotated array params across 173 methods in 37 c
 
 4. **Given** any work package merges,
    **When** `./vendor/bin/phpunit` runs,
-   **Then** all 914 tests pass and 2568 assertions hold (no regression).
+   **Then** the suite stays green at the current `main` baseline (1091 tests / 3375 assertions / 3 skipped as of 2026-05-06; verify against `main` before each WP).
 
 5. **Given** smoke routes for each migrated controller cluster,
    **When** they are exercised against the local dev server,
@@ -57,7 +57,7 @@ Issue #753 inventoried **346 unannotated array params across 173 methods in 37 c
 | ID      | Requirement                                                                                                                                                        | Status   |
 |---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
 | FR-001  | All 346 inventoried `array $params` / `array $query` parameters in `src/Controller/*.php` SHALL be decorated with `#[MapRoute]` / `#[MapQuery]` respectively.       | Proposed |
-| FR-002  | Every modified controller file SHALL import `Waaseyaa\Routing\Attribute\MapRoute` and `Waaseyaa\Routing\Attribute\MapQuery` via `use` statements (alphabetical).    | Proposed |
+| FR-002  | Every modified controller file SHALL import `Waaseyaa\SSR\Attribute\MapRoute` and `Waaseyaa\SSR\Attribute\MapQuery` via `use` statements (alphabetical).    | Proposed |
 | FR-003  | The migration SHALL NOT change parameter names, types, defaults, or order; it SHALL NOT rename methods or alter return types.                                     | Proposed |
 | FR-004  | The migration SHALL be split into 6 work packages grouped by controller cluster (per `tasks.md`), each independently mergeable.                                   | Proposed |
 | FR-005  | A standalone PHP script SHALL be committed at `scripts/check-implicit-array-params.php` that uses `token_get_all` to detect any remaining unannotated `array $params` / `array $query` parameters in `src/Controller/*.php`. | Proposed |
@@ -69,7 +69,7 @@ Issue #753 inventoried **346 unannotated array params across 173 methods in 37 c
 
 | ID       | Requirement                                                                                                                       | Threshold                                          | Status   |
 |----------|-----------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|----------|
-| NFR-001  | Each work package merges with `./vendor/bin/phpunit` green.                                                                       | 914 tests, 2568 assertions, 0 failures             | Proposed |
+| NFR-001  | Each work package merges with `./vendor/bin/phpunit` green.                                                                       | Current `main` baseline (1091/3375/3 skipped as of 2026-05-06; rebaseline per WP). | Proposed |
 | NFR-002  | Smoke check of migrated routes returns the same HTTP status and non-zero `<title>` content-length as before the WP.               | Status code identical; body size > 0 (no WSOD)     | Proposed |
 | NFR-003  | The extractor script is fast enough to run on every push (lefthook / pre-push) without becoming a bottleneck.                     | < 2s on the full `src/Controller/` tree            | Proposed |
 | NFR-004  | The migration introduces no behavioral change to request dispatch — same routes, same parameter binding, same controller output. | Production parity                                  | Proposed |
@@ -99,8 +99,8 @@ Issue #753 inventoried **346 unannotated array params across 173 methods in 37 c
 
 | Entity                                              | Type             | Notes                                                                                                                              |
 |-----------------------------------------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| `Waaseyaa\Routing\Attribute\MapRoute`               | Framework class  | Existing PHP attribute applied to `array $params`.                                                                                  |
-| `Waaseyaa\Routing\Attribute\MapQuery`               | Framework class  | Existing PHP attribute applied to `array $query`.                                                                                   |
+| `Waaseyaa\SSR\Attribute\MapRoute`               | Framework class  | Existing PHP attribute applied to `array $params`.                                                                                  |
+| `Waaseyaa\SSR\Attribute\MapQuery`               | Framework class  | Existing PHP attribute applied to `array $query`.                                                                                   |
 | `App\Controller\*`                                  | Application code | 37 controllers under `src/Controller/`. Inventory in #753 lists all 173 affected methods.                                          |
 | `scripts/check-implicit-array-params.php`           | Tool             | New file. Walks `src/Controller/*.php` with `token_get_all`, prints offending entries, exits non-zero on count > 0.                |
 | `Waaseyaa\Foundation\Routing\AppControllerMethodInvoker` | Framework class | Owns the `$specCache` that emits the dispatcher.deprecation notice. Mission consumes its observations as the migration ground truth. |
@@ -133,7 +133,7 @@ Six work packages grouped by controller cluster. Order is the suggested sequence
 ## Assumptions
 
 - The `dispatcher.deprecation` channel emits exactly one notice per `(controller_class::method, parameter_name)` triple per FPM worker lifetime / `php -S` process, dedup'd inside `AppControllerMethodInvoker::$specCache`. Verifying "no notice on cold boot" is sufficient evidence of full migration.
-- The `Waaseyaa\Routing\Attribute\MapRoute` and `Waaseyaa\Routing\Attribute\MapQuery` attribute classes already exist in the framework (alpha.173). The mission only consumes them — it does not need to add anything to `vendor/`.
+- The `Waaseyaa\SSR\Attribute\MapRoute` and `Waaseyaa\SSR\Attribute\MapQuery` attribute classes already exist in the framework (alpha.173). The mission only consumes them — it does not need to add anything to `vendor/`.
 - The 346-entry inventory in #753 is current as of the alpha.173 sync (commit `1293350` / merge `afbfc84`). Any controller added between #753 filing and WP execution will be picked up by the extractor and added to the closing WP if applicable.
 - Branch protection allows squash-merge of stacked WP PRs; the team can review and land six PRs in sequence within the v0.14 milestone window.
 - `dispatcher.deprecation` log analysis uses the existing `WAASEYAA_LOG_LEVEL=notice` configuration (per `config/waaseyaa.php` and CLAUDE.md gotcha) — no log-level changes required for this mission.
@@ -142,7 +142,7 @@ Six work packages grouped by controller cluster. Order is the suggested sequence
 
 - Waaseyaa framework alpha.173 (already merged via #750/#751 — `composer.json` `waaseyaa/*: ^0.1.0-alpha.173`).
 - Issue #753 inventory (the 346-line table in the issue body is the migration ground truth).
-- Framework attribute classes `Waaseyaa\Routing\Attribute\MapRoute` and `Waaseyaa\Routing\Attribute\MapQuery` (shipped pre-alpha.173).
+- Framework attribute classes `Waaseyaa\SSR\Attribute\MapRoute` and `Waaseyaa\SSR\Attribute\MapQuery` (shipped pre-alpha.173).
 - `AppControllerMethodInvoker::$specCache` static cache (framework-side) — used as the verification source for "no notice on cold boot."
 
 ## Glossary

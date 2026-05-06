@@ -13,9 +13,9 @@ The technical approach is intentionally mechanical: no new behavior, no method r
 ## Technical Context
 
 **Language/Version**: PHP 8.4+, `declare(strict_types=1)` mandatory
-**Primary Dependencies**: Waaseyaa framework alpha.173 (`waaseyaa/foundation`, `waaseyaa/routing`); attribute classes `Waaseyaa\Routing\Attribute\MapRoute` and `Waaseyaa\Routing\Attribute\MapQuery`
+**Primary Dependencies**: Waaseyaa framework alpha.173 (`waaseyaa/foundation`, `waaseyaa/ssr`); attribute classes `Waaseyaa\SSR\Attribute\MapRoute` and `Waaseyaa\SSR\Attribute\MapQuery`
 **Storage**: N/A (no schema or persistence change)
-**Testing**: PHPUnit 10.5 (914 tests / 2568 assertions baseline), `./vendor/bin/phpunit`
+**Testing**: PHPUnit 10.5 (current `main` baseline 1091 tests / 3375 assertions / 3 skipped, as of 2026-05-06; re-baseline before each WP), `./vendor/bin/phpunit`
 **Target Platform**: Linux + WSL2; PHP-FPM in production, `php -S` in dev
 **Project Type**: Single PHP application (Minoo on Waaseyaa CMF)
 **Performance Goals**: Extractor < 2s on full `src/Controller/` tree (NFR-003); migration script < 10s end-to-end per cluster
@@ -108,7 +108,7 @@ tests/App/                              # No new tests; existing PHPUnit suite i
 
 ## Complexity Tracking
 
-No charter, no gate violations to justify. Migration follows existing project conventions (PHP 8.4 strict types, namespace `App\`, framework attribute classes from `waaseyaa/routing`).
+No charter, no gate violations to justify. Migration follows existing project conventions (PHP 8.4 strict types, namespace `App\`, framework attribute classes from `waaseyaa/ssr`).
 
 ## Phase 0: Research
 

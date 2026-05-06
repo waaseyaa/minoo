@@ -55,6 +55,12 @@
 
 No foundational WP. The mission's design (transient migration tool, file-disjoint clusters) means every WP is self-contained.
 
+## Status (2026-05-06)
+
+- **WP01 LANDED** — PR [#754](https://github.com/waaseyaa/minoo/pull/754) squash-merged to `main` as commit `788338f`. 26 methods / 52 attribute splices; phpunit green at 1091/3375/3-skipped; cold-boot log silent for cluster.
+- **Spec-doc correction applied (post-WP01)**: framework attribute namespace is `Waaseyaa\SSR\Attribute\*` (not `Waaseyaa\Routing\Attribute\*`). All mission docs and remaining WP prompts updated. WP02..WP06 use the corrected namespace.
+- **Smoke-route paths**: implementer used live paths from `src/Provider/Routing/*.php` (some `quickstart.md` URLs were stale — `/admin/coordinator` → `/dashboard/coordinator`, `/volunteer/signup` → `/elders/volunteer`, `/account/volunteer` → `/dashboard/volunteer`, etc.). Per-WP smoke tables in this file are reference; reviewers/implementers should cross-check with the live route providers.
+
 ---
 
 ## Work Packages

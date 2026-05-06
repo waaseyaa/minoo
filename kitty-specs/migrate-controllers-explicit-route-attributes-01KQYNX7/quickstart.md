@@ -178,6 +178,15 @@ The WP06 PR description should include `Closes #753` so the issue auto-closes on
 
 One representative URL per controller. For `POST` routes and routes requiring CSRF, the smoke is "boot the server, request the GET form that would precede the POST" (which still loads the controller class and exercises the dispatcher).
 
+> **Note (post-WP01)**: Some URLs in this table are stale. Always cross-check against `src/Provider/Routing/*.php` for the live path before smoking. Confirmed corrections from WP01 (Auth + Account):
+> - `/admin/coordinator` → `/dashboard/coordinator`
+> - `/admin/coordinator/applications` → `/dashboard/coordinator/applications`
+> - `/admin/role-management` → `/staff/users`
+> - `/volunteer/signup` → `/elders/volunteer`
+> - `/account/volunteer` → `/dashboard/volunteer`
+>
+> Subsequent WPs should follow the same pattern: read the live route provider before smoking.
+
 ### WP01 — Auth + Account
 
 | Controller | URL | Expected |

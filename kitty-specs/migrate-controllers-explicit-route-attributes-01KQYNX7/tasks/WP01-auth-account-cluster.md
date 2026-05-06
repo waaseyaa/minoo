@@ -88,7 +88,7 @@ Migrate 6 controllers in the Auth + Account cluster from implicit `array $params
      e. Otherwise record the byte offset where the `T_ARRAY` token starts, and the attribute prefix to splice.
 3. Implement the use-statement insertion as a separate narrow regex pass (per Decision 2 in `research.md`):
    - Find lines matching `^use Waaseyaa\\.*;$`.
-   - Insert `use Waaseyaa\Routing\Attribute\MapQuery;` and `use Waaseyaa\Routing\Attribute\MapRoute;` alphabetically among the existing `Waaseyaa\` uses, idempotent (skip if already present).
+   - Insert `use Waaseyaa\SSR\Attribute\MapQuery;` and `use Waaseyaa\SSR\Attribute\MapRoute;` alphabetically among the existing `Waaseyaa\` uses, idempotent (skip if already present).
 4. Implement byte splicing:
    - Sort splice points descending by byte offset.
    - Apply each splice as `substr($source, 0, $offset) . $prefix . substr($source, $offset)`.

@@ -24,7 +24,7 @@
 **Rationale**:
 - `use` statements are top-level, file-scoped, and never appear inside method bodies. There's no risk of false matches.
 - Insertion order: alphabetical among `Waaseyaa\` uses. The pattern is `^use Waaseyaa\\.*;$` — find the last match, insert the new ones after it. If no `Waaseyaa\` uses exist (rare for these controllers), insert before the first `^use ` statement.
-- Idempotency: skip the insert if a `use Waaseyaa\Routing\Attribute\MapRoute;` (or `MapQuery`) line already exists.
+- Idempotency: skip the insert if a `use Waaseyaa\SSR\Attribute\MapRoute;` (or `MapQuery`) line already exists.
 
 **Alternatives considered**:
 - **Token-walk the use block**: works but adds complexity. The regex pass is ~10 lines and unambiguous because `use` statements have a strict, file-level grammar.
