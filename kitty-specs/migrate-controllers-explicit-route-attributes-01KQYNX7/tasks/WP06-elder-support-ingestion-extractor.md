@@ -370,3 +370,7 @@ When reviewing this WP's PR:
 | Migration tool accidentally committed | T038 step 2 grep-checks staged files; reviewer also checks PR diff |
 | `Closes` keyword not recognized by GitHub | Confirm exact spelling: `Closes #753` (lowercase `c` also works; `closes`, `close`, `closed` all valid; do not use `closing` — not recognized) |
 | Mission auto-closes #753 on merge — irreversible | Reconciliation evidence in PR body must be explicit so reviewer can verify before approving |
+
+## Activity Log
+
+- 2026-05-06T17:17:12Z – unknown – Done override: PR #759 squash-merged; #753 closed
