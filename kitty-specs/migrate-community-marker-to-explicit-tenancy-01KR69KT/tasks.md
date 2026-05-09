@@ -29,13 +29,13 @@ Mission already linked to umbrella issue **#749**. Framework version
 | T007    | WP01 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP01  |          | [D] |
 | T008    | WP01 verification: cold-boot smoke + log scan                                                                                         | WP01  |          | [D] |
 | T009    | WP01 commit (no PR — see plan.md)                                                                                                     | WP01  |          | [D] |
-| T010    | WP02 verification: confirm Event, Teaching registrations live in EntityFoundationProvider.php                                         | WP02  |          |
-| T011    | Add `tenancy:` to both EntityType registrations in EntityFoundationProvider.php                                                       | WP02  |          |
-| T012    | Remove marker from `src/Entity/Event.php`                                                                                            | WP02  | [P]      |
-| T013    | Remove marker from `src/Entity/Teaching.php`                                                                                         | WP02  | [P]      |
-| T014    | WP02 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP02  |          |
-| T015    | WP02 verification: cold-boot smoke + log scan                                                                                         | WP02  |          |
-| T016    | WP02 commit (no PR)                                                                                                                  | WP02  |          |
+| T010    | WP02 verification: confirm Event, Teaching registrations live in EntityFoundationProvider.php                                         | WP02  |          | [D] |
+| T011    | Add `tenancy:` to both EntityType registrations in EntityFoundationProvider.php                                                       | WP02  |          | [D] |
+| T012    | Remove marker from `src/Entity/Event.php`                                                                                            | WP02  | [D] |
+| T013    | Remove marker from `src/Entity/Teaching.php`                                                                                         | WP02  | [D] |
+| T014    | WP02 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP02  |          | [D] |
+| T015    | WP02 verification: cold-boot smoke + log scan                                                                                         | WP02  |          | [D] |
+| T016    | WP02 commit (no PR)                                                                                                                  | WP02  |          | [D] |
 | T017    | WP03 verification: confirm Group remains unregistered (no EntityType migration to perform for Group)                                  | WP03  |          |
 | T018    | Remove marker from `src/Entity/Group.php`                                                                                            | WP03  |          |
 | T019    | Final repo-wide grep `grep -rn HasCommunityInterface src/ tests/` → expected 0                                                        | WP03  |          |
@@ -86,13 +86,13 @@ to explicit `tenancy: ['scope' => 'community']`.
 
 **Included subtasks**:
 
-- [ ] T010 Confirm Event and Teaching live at EntityFoundationProvider.php lines 195/420 (WP02)
-- [ ] T011 Add `tenancy:` to both EntityType registrations (WP02)
-- [ ] T012 [P] Remove marker from `src/Entity/Event.php` (WP02)
-- [ ] T013 [P] Remove marker from `src/Entity/Teaching.php` (WP02)
-- [ ] T014 Delete manifest cache, run PHPUnit, confirm green (WP02)
-- [ ] T015 Cold-boot smoke + log scan (WP02)
-- [ ] T016 Commit in worktree (no PR) (WP02)
+- [x] T010 Confirm Event and Teaching live at EntityFoundationProvider.php lines 195/420 (WP02)
+- [x] T011 Add `tenancy:` to both EntityType registrations (WP02)
+- [x] T012 [P] Remove marker from `src/Entity/Event.php` (WP02)
+- [x] T013 [P] Remove marker from `src/Entity/Teaching.php` (WP02)
+- [x] T014 Delete manifest cache, run PHPUnit, confirm green (WP02)
+- [x] T015 Cold-boot smoke + log scan (WP02)
+- [x] T016 Commit in worktree (no PR) (WP02)
 
 **Dependencies**: WP01 (sequencing — for review-load reasons; technically the providers don't share files).
 
