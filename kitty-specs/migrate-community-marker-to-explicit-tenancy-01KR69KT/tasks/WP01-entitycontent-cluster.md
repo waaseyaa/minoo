@@ -20,8 +20,8 @@ subtasks:
 - T007
 - T008
 - T009
-agent: "claude:sonnet:implementer:implementer"
-shell_pid: "14003"
+agent: "claude:opus:reviewer:reviewer"
+shell_pid: "15594"
 history:
 - timestamp: '2026-05-09T12:30:00Z'
   action: rescoped
@@ -278,3 +278,4 @@ spec-kitty agent tasks move-task WP01 --to for_review \
 
 - 2026-05-09T12:35:17Z – claude:sonnet:implementer:implementer – shell_pid=14003 – Started implementation via action command
 - 2026-05-09T12:40:37Z – claude:sonnet:implementer:implementer – shell_pid=14003 – Ready for review
+- 2026-05-09T12:41:47Z – claude:opus:reviewer:reviewer – shell_pid=15594 – Started review via action command
