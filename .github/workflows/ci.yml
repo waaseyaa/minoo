@@ -26,7 +26,9 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          # Pinned to 8.4.20: alpha.173 regresses on PHP 8.4.21
+          # (see waaseyaa/framework issue). Unpin once framework releases a fix.
+          php-version: '8.4.20'
           coverage: none
 
       - name: Validate composer.json
@@ -55,7 +57,9 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          # Pinned to 8.4.20: alpha.173 regresses on PHP 8.4.21
+          # (see waaseyaa/framework issue). Unpin once framework releases a fix.
+          php-version: '8.4.20'
           extensions: pdo_sqlite, sqlite3, mbstring, xml
           coverage: none
 
@@ -97,7 +101,9 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          # Pinned to 8.4.20: alpha.173 regresses on PHP 8.4.21
+          # (see waaseyaa/framework issue). Unpin once framework releases a fix.
+          php-version: '8.4.20'
           extensions: pdo_sqlite, sqlite3, mbstring, xml
           coverage: none
 
@@ -151,7 +157,9 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          # Pinned to 8.4.20: alpha.173 regresses on PHP 8.4.21
+          # (see waaseyaa/framework issue). Unpin once framework releases a fix.
+          php-version: '8.4.20'
           extensions: pdo_sqlite, sqlite3, mbstring, xml
           coverage: none
 
@@ -210,7 +218,9 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          # Pinned to 8.4.20: alpha.173 regresses on PHP 8.4.21
+          # (see waaseyaa/framework issue). Unpin once framework releases a fix.
+          php-version: '8.4.20'
           coverage: none
 
       - name: Install dependencies
