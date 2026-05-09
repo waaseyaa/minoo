@@ -1,0 +1,10 @@
+{
+  "created_at": "2026-05-09T11:57:53.998996+00:00",
+  "friendly_name": "migrate community marker to explicit tenancy",
+  "mission_id": "01KR69KT3D37BGRW76MSYTNR6R",
+  "mission_number": null,
+  "mission_slug": "migrate-community-marker-to-explicit-tenancy-01KR69KT",
+  "mission_type": "software-dev",
+  "slug": "migrate-community-marker-to-explicit-tenancy-01KR69KT",
+  "target_branch": "main"
+}
