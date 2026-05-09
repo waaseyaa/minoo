@@ -38,3 +38,14 @@ bin/mercure
 !/public/admin/newsletter
 storage/waaseyaa.sqlite-shm
 storage/waaseyaa.sqlite-wal
+
+# Local caches and runtime state
+node-compile-cache/
+.kittify/
+.claude/skills/
+
+# Dated SQLite backups (e.g. storage/waaseyaa.sqlite.20260416)
+*.sqlite.*
+
+# Per-community export artifacts
+storage/exports/

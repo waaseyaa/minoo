@@ -171,12 +171,12 @@ None.
 
 #### Included subtasks
 
-- [ ] T013 Recreate transient migration tool locally (WP03)
-- [ ] T014 Apply migration to WP03 cluster (Newsletter, 3 controllers) (WP03)
-- [ ] T015 Run `./vendor/bin/phpunit` (WP03)
-- [ ] T016 Cold-boot smoke routes per `quickstart.md` WP03 table (WP03)
-- [ ] T017 Cold-boot log scan (WP03)
-- [ ] T018 Commit, push, open PR with "Part of #753" (WP03)
+- [x] T013 Recreate transient migration tool locally (WP03)
+- [x] T014 Apply migration to WP03 cluster (Newsletter, 3 controllers) (WP03)
+- [x] T015 Run `./vendor/bin/phpunit` (WP03)
+- [x] T016 Cold-boot smoke routes per `quickstart.md` WP03 table (WP03)
+- [x] T017 Cold-boot log scan (WP03)
+- [x] T018 Commit, push, open PR with "Part of #753" (WP03)
 
 #### Risks
 
@@ -210,12 +210,12 @@ None.
 
 #### Included subtasks
 
-- [ ] T019 Recreate transient migration tool locally (WP04)
-- [ ] T020 Apply migration to WP04 cluster (Engagement + Messaging, 5 controllers) (WP04)
-- [ ] T021 Run `./vendor/bin/phpunit` (WP04)
-- [ ] T022 Cold-boot smoke routes per `quickstart.md` WP04 table (WP04)
-- [ ] T023 Cold-boot log scan (WP04)
-- [ ] T024 Commit, push, open PR with "Part of #753" (WP04)
+- [x] T019 Recreate transient migration tool locally (WP04)
+- [x] T020 Apply migration to WP04 cluster (Engagement + Messaging, 5 controllers) (WP04)
+- [x] T021 Run `./vendor/bin/phpunit` (WP04)
+- [x] T022 Cold-boot smoke routes per `quickstart.md` WP04 table (WP04)
+- [x] T023 Cold-boot log scan (WP04)
+- [x] T024 Commit, push, open PR with "Part of #753" (WP04)
 
 #### Risks
 
@@ -257,12 +257,12 @@ None.
 
 #### Included subtasks
 
-- [ ] T025 Recreate transient migration tool locally (WP05)
-- [ ] T026 Apply migration to WP05 cluster (Static + Communities + Misc, 13 controllers) (WP05)
-- [ ] T027 Run `./vendor/bin/phpunit` (WP05)
-- [ ] T028 Cold-boot smoke routes per `quickstart.md` WP05 table (WP05)
-- [ ] T029 Cold-boot log scan (WP05)
-- [ ] T030 Commit, push, open PR with "Part of #753" (WP05)
+- [x] T025 Recreate transient migration tool locally (WP05)
+- [x] T026 Apply migration to WP05 cluster (Static + Communities + Misc, 13 controllers) (WP05)
+- [x] T027 Run `./vendor/bin/phpunit` (WP05)
+- [x] T028 Cold-boot smoke routes per `quickstart.md` WP05 table (WP05)
+- [x] T029 Cold-boot log scan (WP05)
+- [x] T030 Commit, push, open PR with "Part of #753" (WP05)
 
 #### Risks
 
@@ -298,14 +298,14 @@ None.
 
 #### Included subtasks
 
-- [ ] T031 Recreate transient migration tool locally (WP06)
-- [ ] T032 Apply migration to WP06 cluster (Elder Support + Ingestion, 4 controllers) (WP06)
-- [ ] T033 Create `scripts/check-implicit-array-params.php` per `contracts/check-cli.md` (committed long-lived) (WP06)
-- [ ] T034 Run `./vendor/bin/phpunit` (WP06)
-- [ ] T035 Cold-boot smoke routes per `quickstart.md` WP06 table (WP06)
-- [ ] T036 Cold-boot log scan for cluster controllers (WP06)
-- [ ] T037 Final reconciliation: extractor exit 0 / count 0 against full repo; cold-boot log clean for `App\Controller\*` (WP06)
-- [ ] T038 Commit, push, open PR with "Closes #753" (WP06)
+- [x] T031 Recreate transient migration tool locally (WP06)
+- [x] T032 Apply migration to WP06 cluster (Elder Support + Ingestion, 4 controllers) (WP06)
+- [x] T033 Create `scripts/check-implicit-array-params.php` per `contracts/check-cli.md` (committed long-lived) (WP06)
+- [x] T034 Run `./vendor/bin/phpunit` (WP06)
+- [x] T035 Cold-boot smoke routes per `quickstart.md` WP06 table (WP06)
+- [x] T036 Cold-boot log scan for cluster controllers (WP06)
+- [x] T037 Final reconciliation: extractor exit 0 / count 0 against full repo; cold-boot log clean for `App\Controller\*` (WP06)
+- [x] T038 Commit, push, open PR with "Closes #753" (WP06)
 
 #### Risks
 
