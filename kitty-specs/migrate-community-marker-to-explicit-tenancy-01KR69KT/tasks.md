@@ -36,13 +36,13 @@ Mission already linked to umbrella issue **#749**. Framework version
 | T014    | WP02 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP02  |          | [D] |
 | T015    | WP02 verification: cold-boot smoke + log scan                                                                                         | WP02  |          | [D] |
 | T016    | WP02 commit (no PR)                                                                                                                  | WP02  |          | [D] |
-| T017    | WP03 verification: confirm Group remains unregistered (no EntityType migration to perform for Group)                                  | WP03  |          |
-| T018    | Remove marker from `src/Entity/Group.php`                                                                                            | WP03  |          |
-| T019    | Final repo-wide grep `grep -rn HasCommunityInterface src/ tests/` → expected 0                                                        | WP03  |          |
-| T020    | Reconcile `occurrence_map.yaml` — append `reconciliation_completed` block                                                            | WP03  |          |
-| T021    | WP03 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP03  |          |
-| T022    | WP03 verification: cold-boot smoke + log scan                                                                                         | WP03  |          |
-| T023    | WP03 commit (no PR)                                                                                                                  | WP03  |          |
+| T017    | WP03 verification: confirm Group remains unregistered (no EntityType migration to perform for Group)                                  | WP03  |          | [D] |
+| T018    | Remove marker from `src/Entity/Group.php`                                                                                            | WP03  |          | [D] |
+| T019    | Final repo-wide grep `grep -rn HasCommunityInterface src/ tests/` → expected 0                                                        | WP03  |          | [D] |
+| T020    | Reconcile `occurrence_map.yaml` — append `reconciliation_completed` block                                                            | WP03  |          | [D] |
+| T021    | WP03 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP03  |          | [D] |
+| T022    | WP03 verification: cold-boot smoke + log scan                                                                                         | WP03  |          | [D] |
+| T023    | WP03 commit (no PR)                                                                                                                  | WP03  |          | [D] |
 
 ## Work Packages
 
@@ -110,13 +110,13 @@ mission-level reconciliation to confirm the bulk-edit promise.
 
 **Included subtasks**:
 
-- [ ] T017 Confirm Group is still unregistered (no provider edit needed) (WP03)
-- [ ] T018 Remove marker from `src/Entity/Group.php` (use import + implements clause) (WP03)
-- [ ] T019 Final grep: `grep -rn HasCommunityInterface src/ tests/` → expected 0 (WP03)
-- [ ] T020 Append `reconciliation_completed` block to `occurrence_map.yaml` (WP03)
-- [ ] T021 Delete manifest cache, run PHPUnit, confirm green (WP03)
-- [ ] T022 Cold-boot smoke + log scan (WP03)
-- [ ] T023 Commit in worktree (no PR) (WP03)
+- [x] T017 Confirm Group is still unregistered (no provider edit needed) (WP03)
+- [x] T018 Remove marker from `src/Entity/Group.php` (use import + implements clause) (WP03)
+- [x] T019 Final grep: `grep -rn HasCommunityInterface src/ tests/` → expected 0 (WP03)
+- [x] T020 Append `reconciliation_completed` block to `occurrence_map.yaml` (WP03)
+- [x] T021 Delete manifest cache, run PHPUnit, confirm green (WP03)
+- [x] T022 Cold-boot smoke + log scan (WP03)
+- [x] T023 Commit in worktree (no PR) (WP03)
 
 **Dependencies**: WP01, WP02 (final grep is meaningful only after both have merged into the lane).
 
