@@ -28,6 +28,9 @@ exceptions:
   - path: "vendor/**"
     action: do_not_change
     reason: "Framework owns the timeline for deleting its own marker file at vendor/waaseyaa/entity/src/Community/HasCommunityInterface.php; this mission only stops *using* the marker."
+  - path: ".kittify/**"
+    action: manual_review
+    reason: "Spec-kitty runtime config and state files (config.yaml, charter/, runtime/) change during mission lifecycle (lane allocation, agent profile resolution, runtime state). Not code in scope of this mission."
   - path: "kitty-specs/**"
     action: manual_review
     reason: "Planning artifacts (spec.md, plan.md, occurrence_map.yaml itself, tasks/*.md) reference the marker name in prose for documentation purposes. They may change during planning/rescope and should be human-reviewed, not auto-renamed."
