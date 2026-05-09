@@ -20,15 +20,15 @@ Mission already linked to umbrella issue **#749**. Framework version
 
 | Task ID | Description                                                                                                                          | WP    | Parallel |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----- | -------- |
-| T001    | WP01 verification: confirm OralHistory, Contributor, Post, Leader registrations live in EntityContentProvider.php                    | WP01  |          |
-| T002    | Add `tenancy: ['scope' => 'community']` to all 4 EntityType registrations in EntityContentProvider.php                                | WP01  |          |
-| T003    | Remove marker from `src/Entity/OralHistory.php`                                                                                      | WP01  | [P]      |
-| T004    | Remove marker from `src/Entity/Contributor.php`                                                                                      | WP01  | [P]      |
-| T005    | Remove marker from `src/Entity/Post.php`                                                                                             | WP01  | [P]      |
-| T006    | Remove marker from `src/Entity/Leader.php`                                                                                           | WP01  | [P]      |
-| T007    | WP01 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP01  |          |
-| T008    | WP01 verification: cold-boot smoke + log scan                                                                                         | WP01  |          |
-| T009    | WP01 commit (no PR — see plan.md)                                                                                                     | WP01  |          |
+| T001    | WP01 verification: confirm OralHistory, Contributor, Post, Leader registrations live in EntityContentProvider.php                    | WP01  |          | [D] |
+| T002    | Add `tenancy: ['scope' => 'community']` to all 4 EntityType registrations in EntityContentProvider.php                                | WP01  |          | [D] |
+| T003    | Remove marker from `src/Entity/OralHistory.php`                                                                                      | WP01  | [D] |
+| T004    | Remove marker from `src/Entity/Contributor.php`                                                                                      | WP01  | [D] |
+| T005    | Remove marker from `src/Entity/Post.php`                                                                                             | WP01  | [D] |
+| T006    | Remove marker from `src/Entity/Leader.php`                                                                                           | WP01  | [D] |
+| T007    | WP01 verification: bust manifest cache, run PHPUnit, confirm green                                                                    | WP01  |          | [D] |
+| T008    | WP01 verification: cold-boot smoke + log scan                                                                                         | WP01  |          | [D] |
+| T009    | WP01 commit (no PR — see plan.md)                                                                                                     | WP01  |          | [D] |
 | T010    | WP02 verification: confirm Event, Teaching registrations live in EntityFoundationProvider.php                                         | WP02  |          |
 | T011    | Add `tenancy:` to both EntityType registrations in EntityFoundationProvider.php                                                       | WP02  |          |
 | T012    | Remove marker from `src/Entity/Event.php`                                                                                            | WP02  | [P]      |
@@ -58,15 +58,15 @@ to explicit `tenancy: ['scope' => 'community']`.
 
 **Included subtasks**:
 
-- [ ] T001 Confirm 4 registrations live at EntityContentProvider.php lines 116/322/357/470 (WP01)
-- [ ] T002 Add `tenancy: ['scope' => 'community']` to all 4 EntityType registrations (WP01)
-- [ ] T003 [P] Remove `implements HasCommunityInterface` + `use` from `src/Entity/OralHistory.php` (WP01)
-- [ ] T004 [P] Remove marker from `src/Entity/Contributor.php` (WP01)
-- [ ] T005 [P] Remove marker from `src/Entity/Post.php` (WP01)
-- [ ] T006 [P] Remove marker from `src/Entity/Leader.php` (WP01)
-- [ ] T007 Delete `storage/framework/packages.php`, run `./vendor/bin/phpunit`, confirm green (WP01)
-- [ ] T008 Cold-boot smoke + log scan (WP01)
-- [ ] T009 Commit in worktree (no PR) (WP01)
+- [x] T001 Confirm 4 registrations live at EntityContentProvider.php lines 116/322/357/470 (WP01)
+- [x] T002 Add `tenancy: ['scope' => 'community']` to all 4 EntityType registrations (WP01)
+- [x] T003 [P] Remove `implements HasCommunityInterface` + `use` from `src/Entity/OralHistory.php` (WP01)
+- [x] T004 [P] Remove marker from `src/Entity/Contributor.php` (WP01)
+- [x] T005 [P] Remove marker from `src/Entity/Post.php` (WP01)
+- [x] T006 [P] Remove marker from `src/Entity/Leader.php` (WP01)
+- [x] T007 Delete `storage/framework/packages.php`, run `./vendor/bin/phpunit`, confirm green (WP01)
+- [x] T008 Cold-boot smoke + log scan (WP01)
+- [x] T009 Commit in worktree (no PR) (WP01)
 
 **Implementation sketch**: verify ownership → edit provider (4 named-arg additions) → edit 4 entity classes → bust cache → tests → smoke → commit.
 
