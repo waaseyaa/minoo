@@ -1,96 +1,33 @@
-# Bulk-edit occurrence map for migrate-community-marker-to-explicit-tenancy-01KR69KT
+# Occurrence map for migrate-community-marker-to-explicit-tenancy-01KR69KT
 #
-# Per spec-kitty-bulk-edit-classification: every grep occurrence of the
-# migrated identifier is classified `remove`, `preserve`, or `irrelevant`,
-# across the 8 standard categories.
+# Operation: remove. The `HasCommunityInterface` marker is removed from
+# 7 entity classes (and their `use` import). A parallel `tenancy:` named
+# argument is added to the corresponding `EntityType` constructor calls
+# in their owning providers — this is a NEW string at a different
+# location, not a 1:1 replacement, so `target.replacement` is omitted.
 #
-# The migrated identifier is `HasCommunityInterface` (PHP class/interface
-# token). The parallel addition is `tenancy: ['scope' => 'community']` —
-# this is a NEW string introduced into N files, not a rename, so it does
-# not appear in the occurrence map.
-#
-# Verification command:
-#   grep -rn 'HasCommunityInterface' .
-#
-# Implementer must re-run that command at the start of WP01 and replace
-# this map's contents with the actual hits if drift is detected.
+# Schema reference: src/doctrine/schemas/occurrence-map.schema.yaml
+# Valid actions:  rename | manual_review | do_not_change | rename_if_user_visible
+# Valid operations: rename | remove | deprecate
 
-mission: migrate-community-marker-to-explicit-tenancy-01KR69KT
-identifier: HasCommunityInterface
-fully_qualified: Waaseyaa\Entity\Community\HasCommunityInterface
-change_mode: bulk_edit
+target:
+  term: HasCommunityInterface
+  operation: remove
 
 categories:
-  code_symbols:
-    description: PHP class/interface name references in source code.
-    occurrences:
-      - file: src/Entity/Group.php
-        action: remove
-        notes: implements clause + use import
-        wp: WP01
-      - file: src/Entity/Leader.php
-        action: remove
-        notes: implements clause + use import
-        wp: WP01
-      - file: src/Entity/Contributor.php
-        action: remove
-        notes: implements clause + use import
-        wp: WP01
-      - file: src/Entity/OralHistory.php
-        action: remove
-        notes: implements clause + use import
-        wp: WP02
-      - file: src/Entity/Teaching.php
-        action: remove
-        notes: implements clause + use import
-        wp: WP02
-      - file: src/Entity/Event.php
-        action: remove
-        notes: implements clause + use import
-        wp: WP02
-      - file: src/Entity/Post.php
-        action: remove
-        notes: implements clause + use import
-        wp: WP03
+  code_symbols:         { action: rename }                 # PHP class/interface tokens in src/Entity/ and src/Provider/Entity/
+  import_paths:         { action: rename }                 # `use Waaseyaa\Entity\Community\HasCommunityInterface;` lines
+  filesystem_paths:     { action: do_not_change }          # No filesystem-literal references to the marker exist
+  serialized_keys:      { action: do_not_change }          # Marker is reflected at runtime only; never serialized
+  cli_commands:         { action: do_not_change }          # No CLI commands reference the marker
+  user_facing_strings:  { action: do_not_change }          # No user-facing copy mentions the marker
+  tests_fixtures:       { action: rename }                 # Allow mechanical replacement if a test asserts via instanceof
+  logs_telemetry:       { action: do_not_change }          # No telemetry labels reference the marker
 
-  import_paths:
-    description: PHP `use` statements importing the marker.
-    occurrences: []  # rolled into code_symbols above (each entity removes both clause and import in the same edit)
-
-  filesystem_paths:
-    description: Paths or directory names referencing the identifier.
-    occurrences: []  # the framework's own marker file at packages/entity/src/Community/HasCommunityInterface.php is OUT OF SCOPE — framework owns its own deletion timeline.
-
-  serialized_keys:
-    description: JSON, YAML, environment, or database keys.
-    occurrences: []  # marker is reflected at runtime only; never serialized.
-
-  cli_commands:
-    description: CLI flags, command names, makefile/Taskfile targets.
-    occurrences: []
-
-  user_facing_strings:
-    description: UI labels, copy, translations, error messages exposed to users.
-    occurrences: []
-
-  tests_fixtures:
-    description: Test files, fixtures, snapshots, or mocks referencing the identifier.
-    occurrences: []
-    notes: |
-      Pre-flight grep `grep -rn 'HasCommunityInterface' tests/` is expected
-      to return 0 matches based on prior audit. WP01 re-runs that grep
-      and, if any matches surface, this section is updated and the WP
-      includes mechanical assertion replacement (per FR-004).
-
-  logs_telemetry:
-    description: Log channels, metric names, telemetry attributes.
-    occurrences: []
-
-reconciliation:
-  expected_remaining_after_mission:
-    src/: 0
-    tests/: 0
-    framework_vendor: out_of_scope  # vendor/waaseyaa/entity/src/Community/HasCommunityInterface.php remains until framework deletes it
-  command: |
-    grep -rn 'HasCommunityInterface' src/ tests/ | wc -l
-  expected_value: 0
+exceptions:
+  - path: "vendor/**"
+    action: do_not_change
+    reason: "Framework owns the timeline for deleting its own marker file at vendor/waaseyaa/entity/src/Community/HasCommunityInterface.php; this mission only stops *using* the marker."
+  - path: "kitty-specs/**"
+    action: do_not_change
+    reason: "Planning artifacts (spec.md, plan.md, occurrence_map.yaml itself, tasks/*.md) reference the marker name in prose for documentation purposes. They are not code touched by this mission's diff gate."
