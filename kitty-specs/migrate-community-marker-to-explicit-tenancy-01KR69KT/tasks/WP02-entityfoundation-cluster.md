@@ -19,6 +19,8 @@ subtasks:
 - T014
 - T015
 - T016
+agent: "claude:sonnet:implementer:implementer"
+shell_pid: "19003"
 history:
 - timestamp: '2026-05-09T12:30:00Z'
   action: rescoped
@@ -182,3 +184,7 @@ spec-kitty agent tasks move-task WP02 --to for_review \
 - WP01 / WP03 files (bulk-edit gate enforces `owned_files`).
 - Group's marker removal (WP03).
 - CLAUDE.md drift (#760).
+
+## Activity Log
+
+- 2026-05-09T12:53:05Z – claude:sonnet:implementer:implementer – shell_pid=19003 – Started implementation via action command
