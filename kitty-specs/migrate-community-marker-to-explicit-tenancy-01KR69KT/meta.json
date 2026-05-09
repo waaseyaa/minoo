@@ -1,6 +1,9 @@
 {
   "created_at": "2026-05-09T11:57:53.998996+00:00",
-  "friendly_name": "migrate community marker to explicit tenancy",
+  "friendly_name": "Migrate community marker to explicit tenancy",
+  "source_description": "Replace deprecated HasCommunityInterface marker with explicit tenancy: ['scope' => 'community'] declaration on the 7 community-scoped entities (Group, OralHistory, Teaching, Event, Leader, Contributor, Post). Blocks framework upgrade past alpha.173.",
+  "vcs": "git",
+  "change_mode": "bulk_edit",
   "mission_id": "01KR69KT3D37BGRW76MSYTNR6R",
   "mission_number": null,
   "mission_slug": "migrate-community-marker-to-explicit-tenancy-01KR69KT",

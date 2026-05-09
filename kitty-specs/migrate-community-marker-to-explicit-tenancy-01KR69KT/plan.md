@@ -1,108 +1,139 @@
-# Implementation Plan: [FEATURE]
-*Path: [templates/plan-template.md](templates/plan-template.md)*
+# Implementation Plan: Migrate community marker to explicit tenancy
 
-
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/kitty-specs/[###-feature-name]/spec.md`
-
-**Note**: This template is filled in by the `/spec-kitty.plan` command. See `src/specify_cli/missions/software-dev/command-templates/plan.md` for the execution workflow.
-
-The planner will not begin until all planning questions have been answered—capture those answers in this document before progressing to later phases.
-
-## Summary
-
-[Extract from feature spec: primary requirement + technical approach from research]
+**Mission ID**: `01KR69KT3D37BGRW76MSYTNR6R`
+**Branch contract**: current `main` → planning base `main` → merge target `main`
+**Change mode**: bulk_edit
+**Spec**: [spec.md](spec.md)
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
-
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [Project-specific test approach or NEEDS CLARIFICATION]
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+| Field                  | Value                                                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Language               | PHP 8.4 (`declare(strict_types=1)`)                                                                                |
+| Framework              | Waaseyaa alpha.173                                                                                                 |
+| Test runner            | PHPUnit 10.5                                                                                                       |
+| Build/install tooling  | Composer (path/symlink to `../waaseyaa/packages/*` for sibling work; tagged versions in normal mode)                |
+| Persistence            | SQLite (`storage/waaseyaa.sqlite`); in-memory for integration tests                                                 |
+| Charter                | Not initialized (`.kittify/charter/charter.md` absent); proceed without charter context                              |
 
 ## Charter Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+Skipped — no charter present. No constraints from charter to validate.
 
-[Gates determined based on charter file]
+## Engineering Alignment
 
-## Project Structure
+The framework's tenancy contract (verified against
+`/home/jones/dev/waaseyaa/packages/entity/src/EntityType.php`):
 
-### Documentation (this feature)
+- `EntityType` constructor accepts a named parameter
+  `array{scope: string}|null $tenancy`. Default `null` means non-tenant.
+- Validation is strict: only the `scope` key is accepted, and only the
+  literal value `'community'` is supported today.
+  `\InvalidArgumentException` is thrown for any other shape.
+- The runtime migration message in `EntityTypeManager.php:202` instructs
+  callers to *"declare `tenancy: ['scope' => 'community']` on the
+  EntityType registration."*
 
-```
-kitty-specs/[###-feature]/
-├── plan.md              # This file (/spec-kitty.plan command output)
-├── research.md          # Phase 0 output (/spec-kitty.plan command)
-├── data-model.md        # Phase 1 output (/spec-kitty.plan command)
-├── quickstart.md        # Phase 1 output (/spec-kitty.plan command)
-├── contracts/           # Phase 1 output (/spec-kitty.plan command)
-└── tasks.md             # Phase 2 output (/spec-kitty.tasks command - NOT created by /spec-kitty.plan)
-```
+Minoo's registration style (verified via
+`src/Provider/Entity/EntityCommunityProvider.php`) is uniformly
+`$this->entityType(new EntityType( ... ))`. Adding the `tenancy:` named
+argument to each call is mechanical.
 
-### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
+The 7 entities and their owning providers (per `CLAUDE.md` "Entity provider
+ownership" — to be re-verified per-WP):
 
-```
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+| Entity        | Owning provider                        |
+| ------------- | -------------------------------------- |
+| Group         | `EntityCommunityProvider`              |
+| Leader        | `EntityCommunityProvider`              |
+| Contributor   | `EntityCommunityProvider`              |
+| OralHistory   | `EntityContentProvider`                |
+| Teaching      | `EntityContentProvider`                |
+| Event         | `EntityContentProvider`                |
+| Post          | `EntityFoundationProvider`             |
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+## Sequencing Strategy
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
+Three work packages, grouped by provider. Each WP is independently
+shippable because each provider owns a disjoint set of entities and
+registration sites. This mirrors the controller-dispatcher mission
+structure (cluster-by-cluster PRs to `main`).
 
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+| WP    | Cluster                                        | Entities                                | Files touched                                              |
+| ----- | ---------------------------------------------- | --------------------------------------- | ---------------------------------------------------------- |
+| WP01  | `EntityCommunityProvider`                      | Group, Leader, Contributor              | 1 provider + 3 entity classes                               |
+| WP02  | `EntityContentProvider`                        | OralHistory, Teaching, Event            | 1 provider + 3 entity classes                               |
+| WP03  | `EntityFoundationProvider` + final sweep       | Post                                    | 1 provider + 1 entity class + repo-wide grep reconciliation |
 
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
+Each WP follows this internal pattern (atomicity per C-002):
 
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
-```
+1. Add `tenancy: ['scope' => 'community']` named arg to each affected
+   `new EntityType(...)` call in the provider.
+2. Remove `implements HasCommunityInterface` from the entity class.
+3. Remove the `use Waaseyaa\Entity\Community\HasCommunityInterface;` import
+   from the entity class.
+4. `rm -f storage/framework/packages.php` to bust manifest cache.
+5. Run `./vendor/bin/phpunit` and confirm green.
+6. Cold-boot smoke test for routes that hit the affected entity types.
+7. Commit, push, open PR with `Part of #<umbrella-issue>` (`Closes` for WP03).
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+WP03 additionally:
+- Verifies `grep -rn HasCommunityInterface src/` returns 0 matches
+  (FR-003 / FR-006).
+- Reconciles `occurrence_map.yaml`: every classified occurrence is
+  removed or explicitly preserved.
 
-## Complexity Tracking
+## Risk Register
 
-*Fill ONLY if Charter Check has violations that must be justified*
+| Risk                                                                                              | Likelihood | Mitigation                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| An entity's registration is in a provider not listed above (Newsletter, Feed, etc.)                | Medium     | WP01 starts with a verification pass: grep `entityType(new EntityType` for each of the 7 entity class names and confirm provider ownership before editing.            |
+| A test fixture asserts via `instanceof HasCommunityInterface`                                      | Low        | WP01 grep extends to `tests/`; if any matches surface, the WP includes mechanical assertion updates per FR-004.                                                       |
+| Stale `storage/framework/packages.php` cache breaks discovery after providers change               | Low        | Each WP deletes the cache file before running phpunit (per CLAUDE.md "Stale manifest cache" gotcha).                                                                  |
+| Framework throws on first boot if registration was malformed                                       | Low        | Fail-fast — phpunit will catch this; cold-boot scan will catch any silent path. Atomicity per C-002 ensures we never ship an entity with neither marker nor `tenancy:`. |
+| Subclasses (none today, but possible) inherit `implements` clause                                  | Very low   | WP01 grep recurses; subclasses surface as additional grep hits.                                                                                                       |
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+## Constitution Check
+
+Per CLAUDE.md:
+
+- Behavior preservation maps to C-001 (zero behavioral change).
+- Atomic per-entity changes map to C-002 (provider edit + class edit
+  together).
+- Strict-types and `final class` already in place — no new files needed.
+- No new migrations (NFR-002).
+
+No constitution violations.
+
+## Phase 0 Output
+
+`research.md` consolidates the framework probe results. No
+`[NEEDS CLARIFICATION]` markers remain.
+
+## Phase 1 Outputs
+
+- `data-model.md` — table of 7 entities with current marker, target
+  declaration, owning provider, and verification grep.
+- `contracts/README.md` — explains why this mission introduces no new
+  external contracts (the `EntityType` constructor signature is the
+  contract, and it lives in `vendor/waaseyaa/`).
+- `quickstart.md` — verification commands the implementer runs at the end
+  of each WP.
+- `occurrence_map.yaml` — bulk-edit classification per
+  `spec-kitty-bulk-edit-classification`.
+
+## Branch contract (final restatement)
+
+- Current branch at plan start: `main`
+- Planning/base branch: `main`
+- Final merge target: `main`
+- `branch_matches_target`: true
+
+All mission PRs land on `main`, mirroring the recently completed controller
+dispatcher migration. No mission branch is created (work ships through
+direct per-WP PRs).
+
+## Stop point
+
+Planning is complete. Next: `/spec-kitty.tasks` to materialize the work
+package files.
