@@ -20,6 +20,8 @@ subtasks:
 - T007
 - T008
 - T009
+agent: "claude:sonnet:implementer:implementer"
+shell_pid: "14003"
 history:
 - timestamp: '2026-05-09T12:30:00Z'
   action: rescoped
@@ -271,3 +273,7 @@ spec-kitty agent tasks move-task WP01 --to for_review \
 - Group's marker removal (WP03's job).
 - CLAUDE.md drift fix (#760).
 - The framework's marker file at `vendor/waaseyaa/entity/src/Community/HasCommunityInterface.php` (framework owns its deletion).
+
+## Activity Log
+
+- 2026-05-09T12:35:17Z – claude:sonnet:implementer:implementer – shell_pid=14003 – Started implementation via action command
