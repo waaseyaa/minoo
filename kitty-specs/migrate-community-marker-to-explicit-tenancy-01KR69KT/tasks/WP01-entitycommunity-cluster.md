@@ -22,7 +22,8 @@ subtasks:
 - T006
 - T007
 - T008
-shell_pid: '12543'
+shell_pid: "12543"
+agent: "claude:sonnet:implementer:implementer"
 history:
 - timestamp: '2026-05-09T12:05:51Z'
   action: created
@@ -326,3 +327,7 @@ Reviewers should confirm:
   `vendor/waaseyaa/entity/src/Community/HasCommunityInterface.php`.
   Framework owns its own deletion timeline; this mission only stops
   *using* the marker.
+
+## Activity Log
+
+- 2026-05-09T12:25:33Z – claude:sonnet:implementer:implementer – shell_pid=12543 – Assigned agent via action command
