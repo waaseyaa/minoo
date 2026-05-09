@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "mission_slug": "migrate-community-marker-to-explicit-tenancy-01KR69KT",
+  "mission_id": "01KR69KT3D37BGRW76MSYTNR6R",
+  "mission_branch": "kitty/mission-migrate-community-marker-to-explicit-tenancy-01KR69KT",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01",
+        "WP02",
+        "WP03"
+      ],
+      "write_scope": [
+        "kitty-specs/migrate-community-marker-to-explicit-tenancy-01KR69KT/occurrence_map.yaml",
+        "src/Entity/Contributor.php",
+        "src/Entity/Event.php",
+        "src/Entity/Group.php",
+        "src/Entity/Leader.php",
+        "src/Entity/OralHistory.php",
+        "src/Entity/Post.php",
+        "src/Entity/Teaching.php",
+        "src/Provider/Entity/EntityCommunityProvider.php",
+        "src/Provider/Entity/EntityContentProvider.php",
+        "src/Provider/Entity/EntityFoundationProvider.php"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering",
+        "legacy-cleanup",
+        "workspace"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    }
+  ],
+  "computed_at": "2026-05-09T12:10:30.531183+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [],
+  "collapse_report": {
+    "events": [
+      {
+        "wp_a": "WP02",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP02 depends on WP01"
+      },
+      {
+        "wp_a": "WP03",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP03 depends on WP01"
+      }
+    ],
+    "total_merges": 2,
+    "independent_wps_collapsed": 0,
+    "by_rule": {
+      "dependency": 2
+    }
+  }
+}
