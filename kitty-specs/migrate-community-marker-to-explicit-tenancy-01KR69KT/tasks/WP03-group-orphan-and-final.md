@@ -243,3 +243,4 @@ spec-kitty agent tasks move-task WP03 --to for_review \
 - 2026-05-09T13:02:22Z – claude:sonnet:implementer:implementer – shell_pid=20564 – Ready for review — final WP, mission reconciliation included
 - 2026-05-09T13:02:50Z – claude:opus:reviewer:reviewer – shell_pid=21652 – Started review via action command
 - 2026-05-09T13:03:58Z – claude:opus:reviewer:reviewer – shell_pid=21652 – Mission complete: SC-001/002/003 verified; reconciliation block present; trait preserved; Group orphan tracked in #760
+- 2026-05-09T13:06:25Z – claude:opus:reviewer:reviewer – shell_pid=21652 – Done override: Mission squash-merged to main as d02877e

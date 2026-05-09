@@ -1,16 +1,16 @@
 {
-  "event_count": 28,
-  "last_event_id": "01KR6DH7RMC3D67TJX9M8D860K",
-  "materialized_at": "2026-05-09T13:06:23.636670+00:00",
+  "event_count": 29,
+  "last_event_id": "01KR6DH8SZRETTPTAF4VZPTFJA",
+  "materialized_at": "2026-05-09T13:06:24.703554+00:00",
   "mission_number": "",
   "mission_slug": "migrate-community-marker-to-explicit-tenancy-01KR69KT",
   "mission_type": "software-dev",
   "summary": {
-    "approved": 1,
+    "approved": 0,
     "blocked": 0,
     "canceled": 0,
     "claimed": 0,
-    "done": 2,
+    "done": 3,
     "for_review": 0,
     "in_progress": 0,
     "in_review": 0,
@@ -33,10 +33,10 @@
     },
     "WP03": {
       "actor": "user",
-      "force_count": 3,
-      "lane": "approved",
-      "last_event_id": "01KR6DCSHXE1N7JQGK4S1YC3VD",
-      "last_transition_at": "2026-05-09T13:03:58.013452+00:00"
+      "force_count": 4,
+      "lane": "done",
+      "last_event_id": "01KR6DH8SZRETTPTAF4VZPTFJA",
+      "last_transition_at": "2026-05-09T13:06:24.703554+00:00"
     }
   }
 }
