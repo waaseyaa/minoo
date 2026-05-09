@@ -20,8 +20,8 @@ subtasks:
 - T007
 - T008
 - T009
-agent: "claude:sonnet:implementer:implementer"
-shell_pid: "17478"
+agent: "claude:opus:reviewer:reviewer"
+shell_pid: "18447"
 history:
 - timestamp: '2026-05-09T12:30:00Z'
   action: rescoped
@@ -282,3 +282,4 @@ spec-kitty agent tasks move-task WP01 --to for_review \
 - 2026-05-09T12:47:44Z – claude:opus:reviewer:reviewer – shell_pid=15594 – Review cycle 1: REJECTED — trait removal regression. getCommunityId/setCommunityId undefined after composer dump-autoload. See review-cycle-1.md. Restore HasCommunityTrait import + use in Post/Leader/Contributor/OralHistory; only the implements HasCommunityInterface clause is in scope for removal.
 - 2026-05-09T12:48:25Z – claude:sonnet:implementer:implementer – shell_pid=17478 – Started implementation via action command
 - 2026-05-09T12:50:59Z – claude:sonnet:implementer:implementer – shell_pid=17478 – Cycle 2: restored HasCommunityTrait; only the interface marker is removed. 4 implements_has_community_interface test methods also removed (they tested the removed interface). 23 HasCommunity tests green, 1087 total tests passing.
+- 2026-05-09T12:51:29Z – claude:opus:reviewer:reviewer – shell_pid=18447 – Started review via action command
