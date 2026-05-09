@@ -331,3 +331,5 @@ Reviewers should confirm:
 ## Activity Log
 
 - 2026-05-09T12:25:33Z – claude:sonnet:implementer:implementer – shell_pid=12543 – Assigned agent via action command
+- 2026-05-09T12:27:55Z – claude:sonnet:implementer:implementer – shell_pid=12543 – Blocked at T001: Provider ownership drift confirmed. data-model.md maps Group/Leader/Contributor to EntityCommunityProvider (provisional), but actual code shows: (1) 'group' id not found in ANY provider - Group.php entity class exists but has no EntityType registration visible; (2) 'leader' is registered in EntityContentProvider.php line 470, not EntityCommunityProvider; (3) 'contributor' is registered in EntityContentProvider.php line 322, not EntityCommunityProvider. EntityCommunityProvider.php only contains: resource_person, elder_support_request, volunteer, community, featured_item, dialect_region. Per T001 instructions, halting edits pending WP boundary re-scope. Owned files and data-model.md need correction before implementation can proceed.
+- 2026-05-09T12:30:29Z – claude:sonnet:implementer:implementer – shell_pid=12543 – Moved to planned
