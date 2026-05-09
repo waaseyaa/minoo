@@ -71,7 +71,7 @@ attributable to these entity types.
 
 | ID     | Requirement                                                                                                                                                              | Status |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
-| FR-001 | All 7 listed entities declare `tenancy: ['scope' => 'community']` in their respective `EntityType` registration inside `src/Provider/Entity/*Provider`.                  | open   |
+| FR-001 | All registered entities currently using `HasCommunityInterface` declare `tenancy: ['scope' => 'community']` in their `EntityType` registration. (6 of 7 marker-tagged classes are registered: OralHistory, Contributor, Post, Leader in `EntityContentProvider`; Event, Teaching in `EntityFoundationProvider`. `src/Entity/Group.php` is unregistered orphan code — its marker is removed for FR-006 cleanliness but it has no `EntityType` to update.) | open   |
 | FR-002 | `implements HasCommunityInterface` clause and the matching `use Waaseyaa\Entity\Tenancy\HasCommunityInterface;` import are removed from each of the 7 entity classes.    | open   |
 | FR-003 | A repo-wide search for `HasCommunityInterface` under `src/Entity/` returns zero matches at mission completion.                                                            | open   |
 | FR-004 | The existing PHPUnit suite passes end-to-end without behavioral test changes (only mechanical updates allowed where assertions reference the marker directly).            | open   |

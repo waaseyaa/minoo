@@ -21,21 +21,18 @@
         "src/Entity/OralHistory.php",
         "src/Entity/Post.php",
         "src/Entity/Teaching.php",
-        "src/Provider/Entity/EntityCommunityProvider.php",
         "src/Provider/Entity/EntityContentProvider.php",
         "src/Provider/Entity/EntityFoundationProvider.php"
       ],
       "predicted_surfaces": [
         "api",
-        "artifact-rendering",
-        "legacy-cleanup",
-        "workspace"
+        "legacy-cleanup"
       ],
       "depends_on_lanes": [],
       "parallel_group": 0
     }
   ],
-  "computed_at": "2026-05-09T12:10:30.531183+00:00",
+  "computed_at": "2026-05-09T12:34:53.255594+00:00",
   "computed_from": "dependency_graph+ownership",
   "planning_artifact_wps": [],
   "collapse_report": {

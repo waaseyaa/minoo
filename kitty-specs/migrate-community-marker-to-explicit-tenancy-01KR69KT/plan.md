@@ -39,31 +39,29 @@ Minoo's registration style (verified via
 `$this->entityType(new EntityType( ... ))`. Adding the `tenancy:` named
 argument to each call is mechanical.
 
-The 7 entities and their owning providers (per `CLAUDE.md` "Entity provider
-ownership" — to be re-verified per-WP):
+The 7 marker-tagged entities and their actual code-truth provider sites
+(verified 2026-05-09 via `grep -rn "id: '...'" src/Provider/`; CLAUDE.md
+documentation drift filed as #760):
 
-| Entity        | Owning provider                        |
-| ------------- | -------------------------------------- |
-| Group         | `EntityCommunityProvider`              |
-| Leader        | `EntityCommunityProvider`              |
-| Contributor   | `EntityCommunityProvider`              |
-| OralHistory   | `EntityContentProvider`                |
-| Teaching      | `EntityContentProvider`                |
-| Event         | `EntityContentProvider`                |
-| Post          | `EntityFoundationProvider`             |
+| Entity        | Actual provider                        | Line |
+| ------------- | -------------------------------------- | ---- |
+| OralHistory   | `EntityContentProvider`                | 116  |
+| Contributor   | `EntityContentProvider`                | 322  |
+| Post          | `EntityContentProvider`                | 357  |
+| Leader        | `EntityContentProvider`                | 470  |
+| Event         | `EntityFoundationProvider`             | 195  |
+| Teaching      | `EntityFoundationProvider`             | 420  |
+| Group         | **NOT REGISTERED** (orphan)            | —    |
 
 ## Sequencing Strategy
 
-Three work packages, grouped by provider. Each WP is independently
-shippable because each provider owns a disjoint set of entities and
-registration sites. This mirrors the controller-dispatcher mission
-structure (cluster-by-cluster PRs to `main`).
+Three work packages, sized by provider:
 
-| WP    | Cluster                                        | Entities                                | Files touched                                              |
-| ----- | ---------------------------------------------- | --------------------------------------- | ---------------------------------------------------------- |
-| WP01  | `EntityCommunityProvider`                      | Group, Leader, Contributor              | 1 provider + 3 entity classes                               |
-| WP02  | `EntityContentProvider`                        | OralHistory, Teaching, Event            | 1 provider + 3 entity classes                               |
-| WP03  | `EntityFoundationProvider` + final sweep       | Post                                    | 1 provider + 1 entity class + repo-wide grep reconciliation |
+| WP    | Cluster                                        | Entities                                       | Files touched                                                       |
+| ----- | ---------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------- |
+| WP01  | `EntityContentProvider`                        | OralHistory, Contributor, Post, Leader (4)    | 1 provider + 4 entity classes (5 files)                              |
+| WP02  | `EntityFoundationProvider`                     | Event, Teaching (2)                            | 1 provider + 2 entity classes (3 files)                              |
+| WP03  | Group orphan + final reconciliation            | Group (1, marker-only — no registration)       | 1 entity class + occurrence_map.yaml reconciliation                  |
 
 Each WP follows this internal pattern (atomicity per C-002):
 
