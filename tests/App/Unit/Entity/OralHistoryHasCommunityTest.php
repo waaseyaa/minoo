@@ -8,17 +8,9 @@ use App\Entity\OralHistory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Waaseyaa\Entity\Community\HasCommunityInterface;
-
 #[CoversClass(OralHistory::class)]
 final class OralHistoryHasCommunityTest extends TestCase
 {
-    #[Test]
-    public function implements_has_community_interface(): void
-    {
-        $this->assertInstanceOf(HasCommunityInterface::class, new OralHistory());
-    }
-
     #[Test]
     public function get_community_id_returns_null_when_unset(): void
     {

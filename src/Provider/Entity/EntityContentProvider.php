@@ -117,6 +117,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         label: 'Oral History',
                         class: OralHistory::class,
                         keys: ['id' => 'ohid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
+                        tenancy: ['scope' => 'community'],
                         group: 'knowledge',
                         _fieldDefinitions: [
                             'title' => [
@@ -323,6 +324,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         label: 'Contributor',
                         class: Contributor::class,
                         keys: ['id' => 'coid', 'uuid' => 'uuid', 'label' => 'name'],
+                        tenancy: ['scope' => 'community'],
                         group: 'contributor',
                         _fieldDefinitions: [
                             'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
@@ -358,6 +360,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         label: 'Post',
                         class: Post::class,
                         keys: ['id' => 'pid', 'uuid' => 'uuid', 'label' => 'body'],
+                        tenancy: ['scope' => 'community'],
                         group: 'engagement',
                         _fieldDefinitions: [
                             'body' => [
@@ -471,6 +474,7 @@ final class EntityContentProvider extends AppCoreServiceProvider
                         label: 'Leader',
                         class: Leader::class,
                         keys: ['id' => 'lid', 'uuid' => 'uuid', 'label' => 'name'],
+                        tenancy: ['scope' => 'community'],
                         group: 'people',
                         _fieldDefinitions: [
                             'name' => [

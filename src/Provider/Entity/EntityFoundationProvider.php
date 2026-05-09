@@ -196,6 +196,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         label: 'Event',
                         class: Event::class,
                         keys: ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
+                        tenancy: ['scope' => 'community'],
                         group: 'events',
                         _fieldDefinitions: [
                             'title' => [
@@ -421,6 +422,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                         label: 'Teaching',
                         class: Teaching::class,
                         keys: ['id' => 'tid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
+                        tenancy: ['scope' => 'community'],
                         group: 'knowledge',
                         _fieldDefinitions: [
                             'title' => [

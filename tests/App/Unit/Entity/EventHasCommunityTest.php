@@ -8,17 +8,9 @@ use App\Entity\Event;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Waaseyaa\Entity\Community\HasCommunityInterface;
-
 #[CoversClass(Event::class)]
 final class EventHasCommunityTest extends TestCase
 {
-    #[Test]
-    public function implements_has_community_interface(): void
-    {
-        $this->assertInstanceOf(HasCommunityInterface::class, new Event());
-    }
-
     #[Test]
     public function get_community_id_returns_null_when_unset(): void
     {

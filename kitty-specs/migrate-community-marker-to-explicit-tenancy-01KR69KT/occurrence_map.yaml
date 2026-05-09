@@ -34,3 +34,25 @@ exceptions:
   - path: "kitty-specs/**"
     action: manual_review
     reason: "Planning artifacts (spec.md, plan.md, occurrence_map.yaml itself, tasks/*.md) reference the marker name in prose for documentation purposes. They may change during planning/rescope and should be human-reviewed, not auto-renamed."
+reconciliation_completed:
+  timestamp: "2026-05-09T13:05:00Z"
+  by_wp: "WP03"
+  final_grep_counts:
+    src/: 0
+    tests/: 0
+  notes: |
+    All 7 marker-tagged classes had `HasCommunityInterface` removed
+    (use import + implements clause). 6 of 7 (OralHistory, Contributor,
+    Post, Leader, Event, Teaching) also had `tenancy: ['scope' => 'community']`
+    added to their EntityType registration:
+    - EntityContentProvider.php: oral_history, contributor, post, leader
+    - EntityFoundationProvider.php: event, teaching
+    The 7th class (src/Entity/Group.php) is unregistered orphan code;
+    no provider edit was performed. Orphan disposition tracked in #760.
+    HasCommunityTrait was preserved in all 7 classes (provides runtime
+    getCommunityId/setCommunityId methods used by tests).
+    tests/App/Unit/Entity/GroupHasCommunityTest.php: removed the
+    `implements_has_community_interface` test method (instanceof assertion)
+    per FR-004 / tests_fixtures: rename action. The 3 remaining tests
+    (getCommunityId/setCommunityId via trait) are unchanged and green.
+

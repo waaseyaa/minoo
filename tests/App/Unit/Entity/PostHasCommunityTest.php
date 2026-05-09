@@ -8,17 +8,9 @@ use App\Entity\Post;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Waaseyaa\Entity\Community\HasCommunityInterface;
-
 #[CoversClass(Post::class)]
 final class PostHasCommunityTest extends TestCase
 {
-    #[Test]
-    public function implements_has_community_interface(): void
-    {
-        $this->assertInstanceOf(HasCommunityInterface::class, new Post(['user_id' => 'u1', 'body' => 'hello', 'community_id' => 'nc-uuid-123']));
-    }
-
     #[Test]
     public function get_community_id_returns_value_set_in_constructor(): void
     {

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Waaseyaa\Entity\Community\HasCommunityInterface;
 use Waaseyaa\Entity\Community\HasCommunityTrait;
 use Waaseyaa\Entity\ContentEntityBase;
 
-final class Event extends ContentEntityBase implements HasCommunityInterface
+final class Event extends ContentEntityBase
 {
     use HasCommunityTrait;
 

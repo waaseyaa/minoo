@@ -8,17 +8,10 @@ use App\Entity\Group;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Waaseyaa\Entity\Community\HasCommunityInterface;
 
 #[CoversClass(Group::class)]
 final class GroupHasCommunityTest extends TestCase
 {
-    #[Test]
-    public function implements_has_community_interface(): void
-    {
-        $this->assertInstanceOf(HasCommunityInterface::class, new Group());
-    }
-
     #[Test]
     public function get_community_id_returns_null_when_unset(): void
     {
