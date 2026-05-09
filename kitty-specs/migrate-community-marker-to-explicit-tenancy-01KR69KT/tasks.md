@@ -20,7 +20,7 @@ Mission already linked to umbrella issue **#749**. Framework version
 
 | Task ID | Description                                                                                                                          | WP    | Parallel |
 | ------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----- | -------- |
-| T001    | WP01 verification: confirm OralHistory, Contributor, Post, Leader registrations live in EntityContentProvider.php                    | WP01  |          | [D] |
+| T001    | WP01 verification: confirm OralHistory, Contributor, Post, Leader registrations live in EntityContentProvider.php                    | WP01  |          | [D] | [D] |
 | T002    | Add `tenancy: ['scope' => 'community']` to all 4 EntityType registrations in EntityContentProvider.php                                | WP01  |          | [D] |
 | T003    | Remove marker from `src/Entity/OralHistory.php`                                                                                      | WP01  | [D] |
 | T004    | Remove marker from `src/Entity/Contributor.php`                                                                                      | WP01  | [D] |
