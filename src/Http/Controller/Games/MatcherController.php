@@ -259,7 +259,7 @@ final class MatcherController
         string $difficulty,
         ?string $dailyDate,
         array $pairs,
-    ): \App\Entity\GameSession {
+    ): \App\Entity\Games\GameSession {
         $sessionStorage = $this->entityTypeManager->getStorage('game_session');
         $session = $sessionStorage->create([
             'game_type' => 'matcher',
@@ -273,7 +273,7 @@ final class MatcherController
         ]);
         $sessionStorage->save($session);
 
-        assert($session instanceof \App\Entity\GameSession);
+        assert($session instanceof \App\Entity\Games\GameSession);
 
         return $session;
     }

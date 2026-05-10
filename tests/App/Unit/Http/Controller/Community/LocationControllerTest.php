@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller\Community;
 
-use App\Entity\Community;
+use App\Entity\Community\Community;
 use App\Http\Controller\Community\LocationController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

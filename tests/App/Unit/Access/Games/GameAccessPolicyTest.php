@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Games;
 
 use App\Access\Games\GameAccessPolicy;
-use App\Entity\GameSession;
+use App\Entity\Games\GameSession;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

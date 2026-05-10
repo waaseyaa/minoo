@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\OralHistory;
 
 use App\Access\OralHistory\OralHistoryAccessPolicy;
-use App\Entity\OralHistory;
-use App\Entity\OralHistoryCollection;
+use App\Entity\OralHistory\OralHistory;
+use App\Entity\OralHistory\OralHistoryCollection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

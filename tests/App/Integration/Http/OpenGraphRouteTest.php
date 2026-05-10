@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Http;
 
-use App\Entity\Community;
-use App\Entity\Event;
-use App\Entity\Group;
-use App\Entity\Teaching;
+use App\Entity\Community\Community;
+use App\Entity\Events\Event;
+use App\Entity\Groups\Group;
+use App\Entity\Teachings\Teaching;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;

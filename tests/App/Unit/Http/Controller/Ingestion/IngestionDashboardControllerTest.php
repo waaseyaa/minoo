@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller\Ingestion;
 
-use App\Entity\IngestLog;
+use App\Entity\Ingestion\IngestLog;
 use App\Http\Controller\Ingestion\IngestionDashboardController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

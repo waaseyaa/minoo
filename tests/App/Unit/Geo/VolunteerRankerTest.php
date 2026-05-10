@@ -6,9 +6,9 @@ namespace App\Tests\Unit\Geo;
 
 use App\Domain\Geo\Service\VolunteerRanker;
 use App\Domain\Geo\ValueObject\RankedVolunteer;
-use App\Entity\Community;
-use App\Entity\ElderSupportRequest;
-use App\Entity\Volunteer;
+use App\Entity\Community\Community;
+use App\Entity\Community\Volunteer;
+use App\Entity\ElderSupport\ElderSupportRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

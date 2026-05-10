@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller\Dashboard;
 
-use App\Entity\ElderSupportRequest;
-use App\Entity\Volunteer;
+use App\Entity\Community\Volunteer;
+use App\Entity\ElderSupport\ElderSupportRequest;
 use App\Http\Controller\Dashboard\VolunteerDashboardController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

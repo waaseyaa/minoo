@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Newsletter;
 
 use App\Access\Newsletter\NewsletterAccessPolicy;
-use App\Entity\NewsletterEdition;
-use App\Entity\NewsletterItem;
-use App\Entity\NewsletterSubmission;
+use App\Entity\Newsletter\NewsletterEdition;
+use App\Entity\Newsletter\NewsletterItem;
+use App\Entity\Newsletter\NewsletterSubmission;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

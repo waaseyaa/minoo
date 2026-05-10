@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller\People;
 
-use App\Entity\ResourcePerson;
+use App\Entity\Community\ResourcePerson;
 use App\Http\Controller\People\PeopleController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

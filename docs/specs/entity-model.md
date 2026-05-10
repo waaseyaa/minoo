@@ -4,35 +4,50 @@
 
 | File | Purpose |
 |------|---------|
-| `src/Entity/Event.php` | Event content entity — community gatherings, powwows, ceremonies |
-| `src/Entity/EventType.php` | Event type config entity (powwow, gathering, ceremony) |
-| `src/Entity/Group.php` | Community group content entity |
-| `src/Entity/GroupType.php` | Group type config entity (online, offline, advocacy) |
-| `src/Entity/CulturalGroup.php` | Hierarchical cultural group with `parent_id` self-reference |
-| `src/Entity/Teaching.php` | Teaching content entity with taxonomy tags |
-| `src/Entity/TeachingType.php` | Teaching type config entity (culture, history, language) |
-| `src/Entity/CulturalCollection.php` | Cultural collection with gallery taxonomy + media |
-| `src/Entity/DictionaryEntry.php` | Ojibwe dictionary entry with linguistic metadata |
-| `src/Entity/ExampleSentence.php` | Example sentence referencing dictionary entry + speaker |
-| `src/Entity/WordPart.php` | Word component (initial, medial, final morpheme) |
-| `src/Entity/Speaker.php` | Language speaker profile |
-| `src/Provider/EventServiceProvider.php` | Registers event + event_type entity types |
-| `src/Provider/GroupServiceProvider.php` | Registers group + group_type entity types |
-| `src/Provider/CulturalGroupServiceProvider.php` | Registers cultural_group entity type |
-| `src/Provider/TeachingServiceProvider.php` | Registers teaching + teaching_type entity types |
-| `src/Provider/CulturalCollectionServiceProvider.php` | Registers cultural_collection entity type |
-| `src/Provider/LanguageServiceProvider.php` | Registers dictionary_entry, example_sentence, word_part, speaker |
+| `src/Entity/Events/Event.php` | Event content entity — community gatherings, powwows, ceremonies |
+| `src/Entity/Events/EventType.php` | Event type config entity (powwow, gathering, ceremony) |
+| `src/Entity/Groups/Group.php` | Community group content entity |
+| `src/Entity/Groups/GroupType.php` | Group type config entity (online, offline, advocacy) |
+| `src/Entity/Groups/CulturalGroup.php` | Hierarchical cultural group with `parent_id` self-reference |
+| `src/Entity/Teachings/Teaching.php` | Teaching content entity with taxonomy tags |
+| `src/Entity/Teachings/TeachingType.php` | Teaching type config entity (culture, history, language) |
+| `src/Entity/Teachings/CulturalCollection.php` | Cultural collection with gallery taxonomy + media |
+| `src/Entity/Language/DictionaryEntry.php` | Ojibwe dictionary entry with linguistic metadata |
+| `src/Entity/Language/ExampleSentence.php` | Example sentence referencing dictionary entry + speaker |
+| `src/Entity/Language/WordPart.php` | Word component (initial, medial, final morpheme) |
+| `src/Entity/Language/Speaker.php` | Language speaker profile |
+| `src/Entity/Language/DialectRegion.php` | Dialect region config entity |
+| `src/Entity/Community/Community.php` | First Nation / community profile |
+| `src/Entity/Community/Contributor.php` | Oral history contributor profile |
+| `src/Entity/Community/ResourcePerson.php` | Resource person profile |
+| `src/Entity/Community/Volunteer.php` | Volunteer application entity |
+| `src/Entity/Community/Leader.php` | Community leader profile |
+| `src/Entity/Feed/Post.php` | Feed post content entity |
+| `src/Entity/Games/GameSession.php` | Game session (crossword, shkoda, etc.) |
+| `src/Entity/Games/CrosswordPuzzle.php` | Crossword puzzle content |
+| `src/Entity/Games/DailyChallenge.php` | Daily challenge config |
+| `src/Entity/OralHistory/OralHistory.php` | Oral history recording |
+| `src/Entity/OralHistory/OralHistoryType.php` | Oral history type config |
+| `src/Entity/OralHistory/OralHistoryCollection.php` | Oral history collection |
+| `src/Entity/Newsletter/NewsletterEdition.php` | Newsletter edition |
+| `src/Entity/Newsletter/NewsletterItem.php` | Newsletter item |
+| `src/Entity/Newsletter/NewsletterSubmission.php` | Newsletter submission |
+| `src/Entity/ElderSupport/ElderSupportRequest.php` | Elder support request |
+| `src/Entity/Ingestion/IngestLog.php` | Ingestion log entity |
+| `src/Entity/Editorial/FeaturedItem.php` | Homepage featured item |
+| `src/Provider/Entity/EntityFoundationProvider.php` | Core types (post, engagement, taxonomy, menu, MCP, etc.) |
+| `src/Provider/Entity/EntityCommunityProvider.php` | Community, contributor, volunteer, leader, resource person |
+| `src/Provider/Entity/EntityContentProvider.php` | Teachings, events, language, games, oral history, featured items |
+| `src/Provider/Entity/EntityFeedProvider.php` | Feed-oriented bindings |
+| `src/Provider/Entity/NewsletterEntityDefinitionsProvider.php` | Newsletter entity type definitions |
+| `src/Provider/Entity/EntityNewsletterProvider.php` | Newsletter services + dispatch |
+| `src/Provider/MinooEntityStackProvider.php` | Composer-facing merge of all entity providers above |
 | `src/Access/Events/EventAccessPolicy.php` | Access for `event`, `event_type` |
 | `src/Access/Groups/GroupAccessPolicy.php` | Access for `group`, `group_type` |
 | `src/Access/Groups/CulturalGroupAccessPolicy.php` | Access for `cultural_group` |
 | `src/Access/Teachings/TeachingAccessPolicy.php` | Access for `teaching`, `teaching_type` |
 | `src/Access/Teachings/CulturalCollectionAccessPolicy.php` | Access for `cultural_collection` |
 | `src/Access/Language/LanguageAccessPolicy.php` | Access for dictionary, sentences, word parts, speakers, dialect_region |
-| `src/Entity/MessageThread.php` | Message thread entity |
-| `src/Entity/ThreadParticipant.php` | Thread participant entity |
-| `src/Entity/ThreadMessage.php` | Thread message entity |
-| `src/Provider/MessagingServiceProvider.php` | Registers message thread entities + routes |
-| `src/Access/Messaging/MessagingAccessPolicy.php` | Access for messaging thread entities |
 | `src/Access/Community/CommunityAccessPolicy.php` | Access for `community` |
 | `src/Access/Community/ContributorAccessPolicy.php` | Access for `contributor` |
 | `src/Access/Community/PeopleAccessPolicy.php` | Access for `resource_person` |

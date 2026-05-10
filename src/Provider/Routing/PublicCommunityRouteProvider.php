@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Provider\Routing;
 
-use App\Entity\Community;
+use App\Entity\Community\Community;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Routing\RouteBuilder;

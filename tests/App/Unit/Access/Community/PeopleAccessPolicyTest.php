@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Community;
 
 use App\Access\Community\PeopleAccessPolicy;
-use App\Entity\ResourcePerson;
+use App\Entity\Community\ResourcePerson;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

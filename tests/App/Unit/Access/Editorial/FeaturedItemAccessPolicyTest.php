@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Editorial;
 
 use App\Access\Editorial\FeaturedItemAccessPolicy;
-use App\Entity\FeaturedItem;
+use App\Entity\Editorial\FeaturedItem;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

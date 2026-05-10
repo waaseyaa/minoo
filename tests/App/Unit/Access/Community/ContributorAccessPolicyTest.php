@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Community;
 
 use App\Access\Community\ContributorAccessPolicy;
-use App\Entity\Contributor;
+use App\Entity\Community\Contributor;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

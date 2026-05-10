@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controller\Language;
 
-use App\Entity\DictionaryEntry;
+use App\Entity\Language\DictionaryEntry;
 use App\Http\View\LayoutTwigContext;
 use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;

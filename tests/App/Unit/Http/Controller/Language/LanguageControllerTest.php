@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller\Language;
 
-use App\Entity\DictionaryEntry;
+use App\Entity\Language\DictionaryEntry;
 use App\Http\Controller\Language\LanguageController;
 use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use PHPUnit\Framework\Attributes\CoversClass;

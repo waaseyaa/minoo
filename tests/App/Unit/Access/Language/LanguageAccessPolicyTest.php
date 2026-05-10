@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Language;
 
 use App\Access\Language\LanguageAccessPolicy;
-use App\Entity\DictionaryEntry;
+use App\Entity\Language\DictionaryEntry;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

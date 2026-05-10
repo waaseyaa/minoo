@@ -55,7 +55,7 @@ minoo/
 
 | File pattern | Specialist skill | Cold memory spec |
 |---|---|---|
-| `src/Entity/*`, `src/Provider/*` | `minoo:entities` | `docs/specs/entity-model.md` |
+| `src/Entity/**`, `src/Provider/*` | `minoo:entities` | `docs/specs/entity-model.md`, `docs/architecture/entity-layer.md` |
 | `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/App/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
@@ -70,7 +70,7 @@ minoo/
 | `src/Domain/Games/*` | — | In-browser game engines + `GameStatsCalculator` (`App\Domain\Games\*`); further slices (NC, crisis) live under `src/Infrastructure/` |
 | `src/Infrastructure/*`, `src/Identity/*` | — | Cross-cutting adapters (NC client/cache, crisis/OG, rate limits, fixtures, mail, ICS, MCP); `ElderIdentity` in `src/Identity/`; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
-| `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
+| `src/Entity/**`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md`, `docs/architecture/entity-layer.md` |
 | `src/Http/Controller/*/` (domain subdirs), `src/Routing/*` | `waaseyaa-app-development` | — |
 | Spec Kitty missions, roadmap, release planning | — | `docs/specs/workflow.md` |
 
@@ -136,10 +136,10 @@ Further mechanical splits should move whole type families together with their `s
 ## Operation Checklists
 
 **Adding a Minoo entity type:**
-1. Create entity class in `src/Entity/` extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`, accept optional constructor params for arity
+1. Create entity class in `src/Entity/{Domain}/` (see `docs/architecture/entity-layer.md`) extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`, accept optional constructor params for arity
 2. Register `EntityType` in the appropriate `src/Provider/Entity/*Provider` (merged by `MinooEntityStackProvider`)
 3. Create or update `AccessPolicy` under `src/Access/<Domain>/` (e.g. `Events/`, `Community/`) with `#[PolicyAttribute]`
-4. Write unit test in `tests/App/Unit/Entity/`
+4. Write unit test in `tests/App/Unit/Entity/{Domain}/` (same domain as the entity)
 5. Run `./vendor/bin/phpunit` — delete `storage/framework/packages.php` if entity type isn't discovered
 
 **Adding seed data:**

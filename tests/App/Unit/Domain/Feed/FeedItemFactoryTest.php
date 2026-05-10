@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Feed;
 
 use App\Domain\Feed\FeedItemFactory;
-use App\Entity\Event;
-use App\Entity\Group;
-use App\Entity\ResourcePerson;
+use App\Entity\Community\ResourcePerson;
+use App\Entity\Events\Event;
+use App\Entity\Groups\Group;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

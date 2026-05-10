@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Http\Controller;
 
 use App\Domain\Games\CrosswordEngine;
-use App\Entity\CrosswordPuzzle;
-use App\Entity\GameSession;
+use App\Entity\Games\CrosswordPuzzle;
+use App\Entity\Games\GameSession;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

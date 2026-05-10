@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Feed;
 
 use App\Access\Feed\PostAccessPolicy;
-use App\Entity\Post;
+use App\Entity\Feed\Post;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

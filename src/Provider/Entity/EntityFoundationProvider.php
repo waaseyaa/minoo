@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Entity\CulturalCollection;
-use App\Entity\CulturalGroup;
-use App\Entity\DictionaryEntry;
-use App\Entity\Event;
-use App\Entity\EventType;
-use App\Entity\ExampleSentence;
-use App\Entity\IngestLog;
-use App\Entity\Speaker;
-use App\Entity\Teaching;
-use App\Entity\TeachingType;
-use App\Entity\WordPart;
+use App\Entity\Events\Event;
+use App\Entity\Events\EventType;
+use App\Entity\Groups\CulturalGroup;
+use App\Entity\Ingestion\IngestLog;
+use App\Entity\Language\DictionaryEntry;
+use App\Entity\Language\ExampleSentence;
+use App\Entity\Language\Speaker;
+use App\Entity\Language\WordPart;
+use App\Entity\Teachings\CulturalCollection;
+use App\Entity\Teachings\Teaching;
+use App\Entity\Teachings\TeachingType;
 use App\Infrastructure\Mcp\MinooNoopToolRegistry;
 use App\Infrastructure\Mcp\MinooUnknownToolExecutor;
 use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClient;

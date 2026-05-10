@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controller\Games;
 
-use App\Entity\GameSession;
+use App\Entity\Games\GameSession;
 use App\Http\Controller\Concerns\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 

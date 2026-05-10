@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Entity\Community;
-use App\Entity\DialectRegion;
-use App\Entity\ElderSupportRequest;
-use App\Entity\FeaturedItem;
-use App\Entity\ResourcePerson;
-use App\Entity\Volunteer;
+use App\Entity\Community\Community;
+use App\Entity\Community\ResourcePerson;
+use App\Entity\Community\Volunteer;
+use App\Entity\Editorial\FeaturedItem;
+use App\Entity\ElderSupport\ElderSupportRequest;
+use App\Entity\Language\DialectRegion;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Entity\EntityType;
 

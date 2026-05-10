@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Teachings;
 
 use App\Access\Teachings\CulturalCollectionAccessPolicy;
-use App\Entity\CulturalCollection;
+use App\Entity\Teachings\CulturalCollection;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\ElderSupport;
 
 use App\Access\ElderSupport\ElderSupportAccessPolicy;
-use App\Entity\ElderSupportRequest;
+use App\Entity\ElderSupport\ElderSupportRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

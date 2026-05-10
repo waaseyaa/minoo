@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Newsletter\Service;
 use App\Domain\Newsletter\Exception\InvalidStateTransition;
 use App\Domain\Newsletter\Service\EditionLifecycle;
 use App\Domain\Newsletter\ValueObject\EditionStatus;
-use App\Entity\NewsletterEdition;
+use App\Entity\Newsletter\NewsletterEdition;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

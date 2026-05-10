@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Storage;
 
-use App\Entity\Group;
+use App\Entity\Groups\Group;
 use App\Provider\AppBootServiceProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;

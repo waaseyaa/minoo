@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Ingestion;
 
-use App\Entity\IngestLog;
+use App\Entity\Ingestion\IngestLog;
 use App\Ingestion\IngestMaterializer;
 use App\Ingestion\MaterializationResult;
 use PHPUnit\Framework\Attributes\CoversClass;

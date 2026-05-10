@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Groups;
 
 use App\Access\Groups\GroupAccessPolicy;
-use App\Entity\Group;
+use App\Entity\Groups\Group;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

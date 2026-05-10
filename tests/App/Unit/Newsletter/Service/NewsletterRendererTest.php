@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Newsletter\Service;
 use App\Domain\Newsletter\Exception\RenderException;
 use App\Domain\Newsletter\Service\NewsletterRenderer;
 use App\Domain\Newsletter\Service\RenderTokenStore;
-use App\Entity\NewsletterEdition;
+use App\Entity\Newsletter\NewsletterEdition;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

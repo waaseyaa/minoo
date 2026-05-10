@@ -73,7 +73,7 @@ parameters:
 			path: src/Http/Controller/Feed/FeedController.php
 
 		-
-			message: '#^Parameter \#1 \$log of method App\\Ingestion\\IngestMaterializer\:\:materialize\(\) expects App\\Entity\\IngestLog, Waaseyaa\\Entity\\EntityInterface given\.$#'
+			message: '#^Parameter \#1 \$log of method App\\Ingestion\\IngestMaterializer\:\:materialize\(\) expects App\\Entity\\Ingestion\\IngestLog, Waaseyaa\\Entity\\EntityInterface given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Http/Controller/Ingestion/IngestionApiController.php

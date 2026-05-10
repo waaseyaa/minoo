@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access\Groups;
 
 use App\Access\Groups\CulturalGroupAccessPolicy;
-use App\Entity\CulturalGroup;
+use App\Entity\Groups\CulturalGroup;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
