@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Feed\EntityLoaderService;
-use App\Feed\FeedAssembler;
-use App\Feed\FeedAssemblerInterface;
-use App\Feed\FeedItemFactory;
-use App\Feed\Scoring\AffinityCache;
-use App\Feed\Scoring\AffinityCalculator;
-use App\Feed\Scoring\DecayCalculator;
-use App\Feed\Scoring\DiversityReranker;
-use App\Feed\Scoring\EngagementCalculator;
-use App\Feed\Scoring\FeedScorer;
+use App\Domain\Feed\EntityLoaderService;
+use App\Domain\Feed\FeedAssembler;
+use App\Domain\Feed\FeedAssemblerInterface;
+use App\Domain\Feed\FeedItemFactory;
+use App\Domain\Feed\Scoring\AffinityCache;
+use App\Domain\Feed\Scoring\AffinityCalculator;
+use App\Domain\Feed\Scoring\DecayCalculator;
+use App\Domain\Feed\Scoring\DiversityReranker;
+use App\Domain\Feed\Scoring\EngagementCalculator;
+use App\Domain\Feed\Scoring\FeedScorer;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Cache\Backend\MemoryBackend;
 use Waaseyaa\Entity\EntityTypeManager;

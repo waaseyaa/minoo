@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Support\GameStatsCalculator;
-use App\Support\JourneyEngine;
+use App\Domain\Games\GameStatsCalculator;
+use App\Domain\Games\JourneyEngine;
 use App\Support\JsonResponseTrait;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;

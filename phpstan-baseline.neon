@@ -151,34 +151,34 @@ parameters:
 			path: src/Domain/Geo/Service/LocationService.php
 
 		-
-			message: '#^Method App\\Feed\\EntityLoaderService\:\:loadFeaturedItems\(\) should return list\<array\{featured\: mixed, entity\: mixed, url\: string\}\> but returns list\<array\{featured\: Waaseyaa\\Entity\\EntityInterface, entity\: Waaseyaa\\Entity\\EntityInterface\}\>\.$#'
+			message: '#^Method App\\Domain\\Feed\\EntityLoaderService\:\:loadFeaturedItems\(\) should return list\<array\{featured\: mixed, entity\: mixed, url\: string\}\> but returns list\<array\{featured\: Waaseyaa\\Entity\\EntityInterface, entity\: Waaseyaa\\Entity\\EntityInterface\}\>\.$#'
 			identifier: return.type
 			count: 1
-			path: src/Feed/EntityLoaderService.php
+			path: src/Domain/Feed/EntityLoaderService.php
 
 		-
 			message: '#^Offset ''comments'' on array\{reactions\: int, comments\: int\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
-			path: src/Feed/FeedAssembler.php
+			path: src/Domain/Feed/FeedAssembler.php
 
 		-
 			message: '#^Offset ''reactions'' on array\{reactions\: int, comments\: int\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
-			path: src/Feed/FeedAssembler.php
+			path: src/Domain/Feed/FeedAssembler.php
 
 		-
 			message: '#^Offset ''auto'' on array\{auto\: string, elder\: string\|null, elder_author\: string\|null\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
-			path: src/Support/CrosswordEngine.php
+			path: src/Domain/Games/CrosswordEngine.php
 
 		-
-			message: '#^Parameter &\$grid by\-ref type of method App\\Support\\CrosswordEngine\:\:placeWordOnGrid\(\) expects list\<list\<string\|null\>\>, non\-empty\-list\<non\-empty\-array\<int, string\|null\>\> given\.$#'
+			message: '#^Parameter &\$grid by\-ref type of method App\\Domain\\Games\\CrosswordEngine\:\:placeWordOnGrid\(\) expects list\<list\<string\|null\>\>, non\-empty\-list\<non\-empty\-array\<int, string\|null\>\> given\.$#'
 			identifier: parameterByRef.type
 			count: 1
-			path: src/Support/CrosswordEngine.php
+			path: src/Domain/Games/CrosswordEngine.php
 
 		-
 			message: '#^Variable \$http_response_header on left side of \?\? always exists and is not nullable\.$#'
@@ -190,4 +190,4 @@ parameters:
 			message: '#^Parameter \#1 \$array \(list\<array\{id\: mixed, key\: mixed, label_en\: mixed, label_oj\: mixed\}\>\) of array_values is already a list, call has no effect\.$#'
 			identifier: arrayValues.list
 			count: 1
-			path: src/Support/JourneyEngine.php
+			path: src/Domain/Games/JourneyEngine.php

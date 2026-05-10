@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller;
 
-use App\Feed\FeedAssemblerInterface;
-use App\Feed\FeedItem;
-use App\Feed\FeedResponse;
+use App\Domain\Feed\FeedAssemblerInterface;
+use App\Domain\Feed\FeedItem;
+use App\Domain\Feed\FeedResponse;
 use App\Http\Controller\FeedController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

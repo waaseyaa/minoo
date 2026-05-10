@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Feed\FeedAssemblerInterface;
-use App\Feed\FeedContext;
-use App\Feed\FeedResponse;
+use App\Domain\Feed\FeedAssemblerInterface;
+use App\Domain\Feed\FeedContext;
+use App\Domain\Feed\FeedResponse;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;

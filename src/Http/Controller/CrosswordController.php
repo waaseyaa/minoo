@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Support\CrosswordEngine;
-use App\Support\GameStatsCalculator;
+use App\Domain\Games\CrosswordEngine;
+use App\Domain\Games\GameStatsCalculator;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -581,7 +581,7 @@ final class CrosswordController
     private function generateFallbackDaily(string $puzzleId, string $today): ?object
     {
         $dayOfWeek = (int) date('w', strtotime($today));
-        $tier = \App\Support\GameDifficulty::dailyTier($dayOfWeek);
+        $tier = \App\Domain\Games\GameDifficulty::dailyTier($dayOfWeek);
 
         // Load dictionary words with definitions
         $dictStorage = $this->entityTypeManager->getStorage('dictionary_entry');

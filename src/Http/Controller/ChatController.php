@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Chat\AnthropicChatProvider;
-use App\Chat\ChatRateLimiter;
+use App\Domain\Chat\AnthropicChatProvider;
+use App\Domain\Chat\ChatRateLimiter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;

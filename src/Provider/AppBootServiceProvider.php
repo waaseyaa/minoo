@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
-use App\Feed\Scoring\AffinityCache;
+use App\Domain\Feed\Scoring\AffinityCache;
 use App\Twig\AccountDisplayTwigExtension;
 use App\Twig\DateTwigExtension;
 use Twig\Environment;

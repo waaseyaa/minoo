@@ -16,13 +16,13 @@ minoo/
 │   │   ├── Controller/  # SSR + JSON API controllers (`App\Http\Controller`)
 │   │   └── Middleware/  # HTTP middleware (`App\Http\Middleware`)
 │   ├── Console/       # Native CLI handlers (`App\Console\`)
-│   ├── Domain/        # Bounded contexts (Geo/, Events/, Newsletter/)
+│   ├── Domain/        # Bounded contexts: Geo/, Events/, Newsletter/, Feed/, Chat/, Games/
 │   ├── Entity/        # 31 entity class files (content + config types)
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
 │   ├── Provider/      # 5 composer-registered providers + internal stacks (entity, routing)
 │   ├── Search/        # Search providers, autocomplete
 │   ├── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
-│   └── Support/       # Cross-cutting utilities (engines, crisis OG, NC client, etc.)
+│   └── Support/       # Cross-cutting utilities (crisis OG, NC client, rate limiters, etc.); game engines live in Domain/Games/
 ├── tests/App/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
@@ -62,7 +62,10 @@ minoo/
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`), `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
 | `src/Contract/NorthCloudCommunityDictionaryClientInterface.php`, `src/Support/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
-| `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, Flash, FixtureResolver, ElderIdentity; auth mail is framework `AuthMailer` |
+| `src/Domain/Feed/*`, `src/Domain/Feed/Scoring/*` | `minoo:entities` | `docs/specs/entity-model.md`; feed ranking tunables in `config/feed_scoring.php` |
+| `src/Domain/Chat/*` | `minoo:controllers` | — |
+| `src/Domain/Games/*` | — | In-browser game engines + `GameStatsCalculator` (`App\Domain\Games\*`); further Support slices (NC, crisis) can mirror this under `src/Domain/...` |
+| `src/Support/*` (excluding moved game classes) | — | Cross-cutting: SlugGenerator, Flash, FixtureResolver, ElderIdentity; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
 | `src/Http/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
@@ -205,7 +208,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Squash merge conflict loss**: When squash-merging PRs with overlapping files, the conflict resolution may silently drop one side's changes. Always verify the merged result contains both PRs' intended changes, especially for template/CSS files.
 - **Cross-PR entity field conflicts**: When parallel PRs add required fields to entities (e.g. `community_id` on Post) and other PRs write tests against those entities, the tests will fail after merge. Budget a merge-fix pass when running parallel worktree sprints.
 - **Reaction field rename**: `emoji` was renamed to `reaction_type` with migration `20260322_120000`. Allowed values: `like`, `interested`, `recommend`, `miigwech`, `connect`. All API endpoints, JS, and tests use `reaction_type`.
-- **Game sessions must set `game_type`**: Both `ShkodaController` and `CrosswordController` must include `'game_type' => 'shkoda'`/`'crossword'` when creating game sessions. `GameStatsCalculator::build()` filters by `game_type` — missing it causes stats to silently return zero for authenticated users.
+- **Game sessions must set `game_type`**: Both `ShkodaController` and `CrosswordController` must include `'game_type' => 'shkoda'`/`'crossword'` when creating game sessions. `App\Domain\Games\GameStatsCalculator::build()` filters by `game_type` — missing it causes stats to silently return zero for authenticated users.
 - **Game controllers must inject `GateInterface`**: All game API endpoints that mutate session state (`check`, `complete`, `hint`, `abandon`, `guess`) must call `$this->gate->denies('update', $session, $account)` for session ownership validation.
 - **AuthMailer requires `isConfigured()` guard**: Framework `AuthMailer` skips sends when `authEmailConfigured` is false (no SendGrid key + from address). Without valid credentials, forcing a send would hit SendGrid 401 and throw — crashing registration and password reset flows. CI and local dev typically have no API key.
 - **PHPStan baseline drift**: After adding new files that call `EntityInterface::get()`, regenerate the baseline with `./vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon`. The baseline won't auto-update when new files are added.

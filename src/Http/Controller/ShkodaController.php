@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Support\GameStatsCalculator;
+use App\Domain\Games\GameStatsCalculator;
+use App\Domain\Games\ShkodaEngine;
 use App\Support\LayoutTwigContext;
-use App\Support\ShkodaEngine;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +65,7 @@ final class ShkodaController
             $tier = (string) $challenge->get('difficulty_tier');
         } else {
             // Fallback: deterministic random selection seeded by date
-            $tier = \App\Support\GameDifficulty::dailyTier($dayOfWeek);
+            $tier = \App\Domain\Games\GameDifficulty::dailyTier($dayOfWeek);
             $direction = $dayOfWeek % 2 === 0 ? 'english_to_ojibwe' : 'ojibwe_to_english';
             $entryId = $this->selectRandomWord($tier, $today);
             if ($entryId === null) {
