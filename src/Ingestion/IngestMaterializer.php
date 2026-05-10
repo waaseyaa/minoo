@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ingestion;
 
-use App\Entity\IngestLog;
+use App\Entity\Ingestion\IngestLog;
 use App\Ingestion\EntityMapper\ExampleSentenceMapper;
 use App\Ingestion\EntityMapper\SpeakerMapper;
 use App\Ingestion\EntityMapper\WordPartMapper;

@@ -32,7 +32,7 @@ if ($existingIds !== []) {
     $event = $eventStorage->load(reset($existingIds));
     echo "  Found existing event (eid: {$event->id()}), updating...\n";
 } else {
-    $event = new \App\Entity\Event([
+    $event = new \App\Entity\Events\Event([
         'title' => $eventData['title'] ?? $eventData['name'],
         'slug' => 'little-nhl-2026',
     ]);
@@ -63,7 +63,7 @@ if ($existingIds !== []) {
     $teaching = $teachingStorage->load(reset($existingIds));
     echo "  Found existing teaching (tid: {$teaching->id()}), updating...\n";
 } else {
-    $teaching = new \App\Entity\Teaching([
+    $teaching = new \App\Entity\Teachings\Teaching([
         'title' => $teachingData['title'],
         'slug' => 'the-little-native-hockey-league',
     ]);
@@ -91,7 +91,7 @@ if ($existingIds !== []) {
     $person = $personStorage->load(reset($existingIds));
     echo "  Found existing person (rpid: {$person->id()}), updating...\n";
 } else {
-    $person = new \App\Entity\ResourcePerson([
+    $person = new \App\Entity\Community\ResourcePerson([
         'name' => 'Crystal Shawanda',
         'slug' => 'crystal-shawanda',
     ]);

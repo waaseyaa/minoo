@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Newsletter\Entity;
 
-use App\Entity\NewsletterSubmission;
+use App\Entity\Newsletter\NewsletterSubmission;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

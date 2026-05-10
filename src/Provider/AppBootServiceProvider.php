@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Provider;
 
 use App\Domain\Feed\Scoring\AffinityCache;
-use App\Twig\AccountDisplayTwigExtension;
-use App\Twig\DateTwigExtension;
+use App\Http\Twig\AccountDisplayTwigExtension;
+use App\Http\Twig\DateTwigExtension;
 use Twig\Environment;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Event\EntityEvent;

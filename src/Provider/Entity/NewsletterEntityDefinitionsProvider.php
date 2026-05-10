@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Entity\NewsletterEdition;
-use App\Entity\NewsletterItem;
-use App\Entity\NewsletterSubmission;
+use App\Entity\Newsletter\NewsletterEdition;
+use App\Entity\Newsletter\NewsletterItem;
+use App\Entity\Newsletter\NewsletterSubmission;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 

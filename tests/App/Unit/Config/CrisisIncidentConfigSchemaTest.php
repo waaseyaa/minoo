@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Config;
 
-use App\Support\CrisisIncidentResolver;
-use App\Support\CrisisResolveContext;
+use App\Infrastructure\Crisis\CrisisIncidentResolver;
+use App\Infrastructure\Crisis\CrisisResolveContext;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

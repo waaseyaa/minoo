@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Http;
 
-use App\Entity\Community;
-use App\Entity\Group;
+use App\Entity\Community\Community;
+use App\Entity\Groups\Group;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -19,7 +19,7 @@ use PHPUnit\Framework\Attributes\Test;
  *   - GET /businesses/{private-slug}          → business_show_private.html
  *
  * These baselines are the contract the group-extraction refactor (replacing
- * App\Entity\Group with Waaseyaa\Groups\Group) must preserve. Any byte-level
+ * App\Entity\Groups\Group with Waaseyaa\Groups\Group) must preserve. Any byte-level
  * divergence after the refactor surfaces here.
  *
  * Capture flow:

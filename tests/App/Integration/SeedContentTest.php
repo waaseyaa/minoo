@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
-use App\Entity\Group;
-use App\Entity\ResourcePerson;
-use App\Support\FixtureLoader;
+use App\Entity\Community\ResourcePerson;
+use App\Entity\Groups\Group;
+use App\Infrastructure\Fixture\FixtureLoader;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

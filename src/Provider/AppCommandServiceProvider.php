@@ -57,8 +57,8 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements HasNat
 
         $this->singleton(CrisisOgAssetsHandler::class, function (): CrisisOgAssetsHandler {
             return new CrisisOgAssetsHandler(
-                $this->resolve(\App\Support\CrisisIncidentResolver::class),
-                $this->resolve(\App\Support\CrisisOgImageService::class),
+                $this->resolve(\App\Infrastructure\Crisis\CrisisIncidentResolver::class),
+                $this->resolve(\App\Infrastructure\OpenGraph\CrisisOgImageService::class),
             );
         });
     }

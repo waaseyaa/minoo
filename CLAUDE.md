@@ -11,18 +11,21 @@ Minoo is a **thin application** — custom entity types, access policies, servic
 ```
 minoo/
 ├── src/
-│   ├── Access/        # 10 access policy classes
+│   ├── Access/        # Policies by domain: Events/, Groups/, Community/, Teachings/, … (`App\Access\<Domain>`)
 │   ├── Http/          # HTTP surface
 │   │   ├── Controller/  # SSR + JSON API controllers (`App\Http\Controller`)
-│   │   └── Middleware/  # HTTP middleware (`App\Http\Middleware`)
+│   │   ├── Middleware/  # HTTP middleware (`App\Http\Middleware`)
+│   │   ├── Twig/        # App-only Twig extensions (`App\Http\Twig`)
+│   │   └── View/        # SSR view helpers (`App\Http\View`)
+│   ├── Identity/      # App-specific user flags (`App\Identity`, e.g. ElderIdentity)
+│   ├── Infrastructure/ # Cross-cutting adapters (NorthCloud, crisis/OG, rate limits, fixtures, mail, MCP)
 │   ├── Console/       # Native CLI handlers (`App\Console\`)
 │   ├── Domain/        # Bounded contexts: Geo/, Events/, Newsletter/, Feed/, Chat/, Games/
 │   ├── Entity/        # 31 entity class files (content + config types)
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
 │   ├── Provider/      # 5 composer-registered providers + internal stacks (entity, routing)
 │   ├── Search/        # Search providers, autocomplete
-│   ├── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
-│   └── Support/       # Cross-cutting utilities (crisis OG, NC client, rate limiters, etc.); game engines live in Domain/Games/
+│   └── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
 ├── tests/App/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
@@ -52,23 +55,23 @@ minoo/
 
 | File pattern | Specialist skill | Cold memory spec |
 |---|---|---|
-| `src/Entity/*`, `src/Provider/*` | `minoo:entities` | `docs/specs/entity-model.md` |
+| `src/Entity/**`, `src/Provider/*` | `minoo:entities` | `docs/specs/entity-model.md`, `docs/architecture/entity-layer.md` |
 | `src/Access/*` | `minoo:entities` | `docs/specs/entity-model.md` (access section) |
 | `src/Seed/*` | `minoo:entities` | `docs/specs/entity-model.md` (seed section) |
 | `tests/App/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
 | `src/Ingestion/*` | `minoo:ingestion` | `docs/specs/ingestion-pipeline.md` |
 | `src/Search/*` | `minoo:search` | `docs/specs/search.md` |
-| `src/Http/Controller/*`, `src/Http/Middleware/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
+| `src/Http/Controller/*/` (domain subdirs), `src/Http/Middleware/*`, `src/Http/Twig/*`, `src/Http/View/*`, `src/Http/Controller/Concerns/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/architecture/http-layer.md`, `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
-| `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`), `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
-| `src/Contract/NorthCloudCommunityDictionaryClientInterface.php`, `src/Support/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
+| `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`), `src/Infrastructure/NorthCloud/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
+| `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClientInterface.php`, `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
 | `src/Domain/Feed/*`, `src/Domain/Feed/Scoring/*` | `minoo:entities` | `docs/specs/entity-model.md`; feed ranking tunables in `config/feed_scoring.php` |
 | `src/Domain/Chat/*` | `minoo:controllers` | — |
-| `src/Domain/Games/*` | — | In-browser game engines + `GameStatsCalculator` (`App\Domain\Games\*`); further Support slices (NC, crisis) can mirror this under `src/Domain/...` |
-| `src/Support/*` (excluding moved game classes) | — | Cross-cutting: SlugGenerator, Flash, FixtureResolver, ElderIdentity; auth mail is framework `AuthMailer` |
+| `src/Domain/Games/*` | — | In-browser game engines + `GameStatsCalculator` (`App\Domain\Games\*`); further slices (NC, crisis) live under `src/Infrastructure/` |
+| `src/Infrastructure/*`, `src/Identity/*` | — | Cross-cutting adapters (NC client/cache, crisis/OG, rate limits, fixtures, mail, ICS, MCP); `ElderIdentity` in `src/Identity/`; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
-| `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
-| `src/Http/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
+| `src/Entity/**`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md`, `docs/architecture/entity-layer.md` |
+| `src/Http/Controller/*/` (domain subdirs), `src/Routing/*` | `waaseyaa-app-development` | — |
 | Spec Kitty missions, roadmap, release planning | — | `docs/specs/workflow.md` |
 
 For Minoo-level specs, use the Minoo MCP tools (Claude Code: **`.claude/settings.json`** registers **`minoo`** → `mcp/server.js` and **`bimaaji`** → `vendor/waaseyaa/bimaaji/mcp/server.js`). After `composer install`, run **`composer bimaaji-mcp-install`** (or rely on `post-create-project-cmd`) so both MCP servers have Node deps. **`.cursor/mcp.json`** is gitignored—do not use it for team MCP config):
@@ -133,10 +136,10 @@ Further mechanical splits should move whole type families together with their `s
 ## Operation Checklists
 
 **Adding a Minoo entity type:**
-1. Create entity class in `src/Entity/` extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`, accept optional constructor params for arity
+1. Create entity class in `src/Entity/{Domain}/` (see `docs/architecture/entity-layer.md`) extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`, accept optional constructor params for arity
 2. Register `EntityType` in the appropriate `src/Provider/Entity/*Provider` (merged by `MinooEntityStackProvider`)
-3. Create or update `AccessPolicy` in `src/Access/` with `#[PolicyAttribute]`
-4. Write unit test in `tests/App/Unit/Entity/`
+3. Create or update `AccessPolicy` under `src/Access/<Domain>/` (e.g. `Events/`, `Community/`) with `#[PolicyAttribute]`
+4. Write unit test in `tests/App/Unit/Entity/{Domain}/` (same domain as the entity)
 5. Run `./vendor/bin/phpunit` — delete `storage/framework/packages.php` if entity type isn't discovered
 
 **Adding seed data:**
@@ -224,7 +227,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **NC Search API param**: Uses `size` for pagination, not `page_size` (that's the communities endpoint only).
 - **ConsoleKernel broken on production** (#493): Missing `SqliteEmbeddingStorage` class crashes all CLI commands. Workaround: boot `HttpKernel` via reflection in one-liner scripts (same pattern as `scripts/populate_featured.php`).
 - **`trans()` is a Twig function, not PHP**: Controllers cannot call `trans()`. Use hardcoded English strings for `Flash::success()`/`Flash::error()` — this matches all existing controllers (AuthController, ElderSupportWorkflowController, etc.).
-- **App-specific identity fields belong in Minoo, not framework**: Use `ElderIdentity::isElder($user)` / `ElderIdentity::setElder($user, bool)` from `src/Support/ElderIdentity.php`. Never add Minoo domain concepts to the framework `User` class.
+- **App-specific identity fields belong in Minoo, not framework**: Use `ElderIdentity::isElder($user)` / `ElderIdentity::setElder($user, bool)` from `src/Identity/ElderIdentity.php`. Never add Minoo domain concepts to the framework `User` class.
 - **Validate Referer before redirecting**: `$request->headers->get('Referer')` can be an external URL. Use `RoleManagementController::safeReferrer()` pattern — reject anything that doesn't start with `/` or starts with `//`.
 - **Vendor packages are versioned from Packagist**: Core `waaseyaa/*` packages resolve to tagged releases (e.g. `^0.1.0-alpha.155`). Framework changes require: tag new release on the monorepo → wait for split/Packagist → `composer update 'waaseyaa/*'` in Minoo. Optional **path** `repositories` in `composer.json` exist only for sibling-repo work on `entity`, `field`, and `genealogy` (`@dev`); do not add path overrides for `foundation`/`routing` in normal flows. Editing `vendor/` directly is lost on next update.
 - **`ServiceProvider::boot()` takes no parameters**: Cannot inject via `boot()` signature. Use `$this->resolve(EventDispatcherInterface::class)` inside `boot()` body.

@@ -23,7 +23,7 @@ class NewsletterDispatcher
      *                            sendWithAttachment(string $to, string $subject,
      *                            string $body, string $path): bool. Loose type
      *                            so test fakes (anonymous classes) and the
-     *                            production NewsletterMailer adapter can both
+     *                            production `App\Infrastructure\Mail\NewsletterMailer` adapter can both
      *                            satisfy the contract without sharing an
      *                            interface.
      * @param array<string, array<string, mixed>> $communityConfig

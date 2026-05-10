@@ -11,9 +11,9 @@
 | `src/Domain/Geo/Service/LocationResolver.php` | Application façade: wires `LocationService` + `CommunityFinder` for controllers (nearby lists, coordinates) |
 | `src/Domain/Geo/Service/VolunteerRanker.php` | Ranks Elder Support volunteers by proximity in 3 tiers |
 | `Waaseyaa\Geo\GeoDistance` | Framework static haversine helper (used by controllers, feed scoring, `CommunityFinder`) |
-| `src/Support/CommunityLookup.php` | Builds community ID → name/slug lookup maps |
-| `src/Contract/NorthCloudCommunityDictionaryClientInterface.php` | App-facing seam for North Cloud community + dictionary operations |
-| `src/Support/NorthCloudCommunityDictionaryClient.php` | Adapter that wraps `waaseyaa/northcloud` client behind the app-facing interface |
+| `src/Infrastructure/NorthCloud/CommunityLookup.php` | Builds community ID → name/slug lookup maps |
+| `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClientInterface.php` | App-facing seam for North Cloud community + dictionary operations |
+| `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClient.php` | Adapter that wraps `waaseyaa/northcloud` client behind the app-facing interface |
 
 ## Interface Signatures
 

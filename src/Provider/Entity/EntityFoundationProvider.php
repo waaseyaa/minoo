@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Contract\NorthCloudCommunityDictionaryClientInterface;
-use App\Entity\CulturalCollection;
-use App\Entity\CulturalGroup;
-use App\Entity\DictionaryEntry;
-use App\Entity\Event;
-use App\Entity\EventType;
-use App\Entity\ExampleSentence;
-use App\Entity\IngestLog;
-use App\Entity\Speaker;
-use App\Entity\Teaching;
-use App\Entity\TeachingType;
-use App\Entity\WordPart;
+use App\Entity\Events\Event;
+use App\Entity\Events\EventType;
+use App\Entity\Groups\CulturalGroup;
+use App\Entity\Ingestion\IngestLog;
+use App\Entity\Language\DictionaryEntry;
+use App\Entity\Language\ExampleSentence;
+use App\Entity\Language\Speaker;
+use App\Entity\Language\WordPart;
+use App\Entity\Teachings\CulturalCollection;
+use App\Entity\Teachings\Teaching;
+use App\Entity\Teachings\TeachingType;
+use App\Infrastructure\Mcp\MinooNoopToolRegistry;
+use App\Infrastructure\Mcp\MinooUnknownToolExecutor;
+use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClient;
+use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use App\Ingestion\EntityMapper\NcArticleToEventMapper;
 use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
-use App\Mcp\MinooNoopToolRegistry;
-use App\Mcp\MinooUnknownToolExecutor;
 use App\Provider\AppCoreServiceProvider;
-use App\Support\NorthCloudCommunityDictionaryClient;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\I18n\Language;
@@ -77,21 +77,21 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
 
         $this->singleton(UrlPrefixNegotiator::class, fn () => new UrlPrefixNegotiator());
 
-        $this->singleton(\App\Support\OgImageRenderer::class, function (): \App\Support\OgImageRenderer {
-            return new \App\Support\OgImageRenderer(dirname(__DIR__, 3));
+        $this->singleton(\App\Infrastructure\OpenGraph\OgImageRenderer::class, function (): \App\Infrastructure\OpenGraph\OgImageRenderer {
+            return new \App\Infrastructure\OpenGraph\OgImageRenderer(dirname(__DIR__, 3));
         });
 
-        $this->singleton(\App\Support\CrisisIncidentResolver::class, function (): \App\Support\CrisisIncidentResolver {
-            return new \App\Support\CrisisIncidentResolver(dirname(__DIR__, 3));
+        $this->singleton(\App\Infrastructure\Crisis\CrisisIncidentResolver::class, function (): \App\Infrastructure\Crisis\CrisisIncidentResolver {
+            return new \App\Infrastructure\Crisis\CrisisIncidentResolver(dirname(__DIR__, 3));
         });
 
-        $this->singleton(\App\Support\CrisisOgImageService::class, function (): \App\Support\CrisisOgImageService {
-            return new \App\Support\CrisisOgImageService(
+        $this->singleton(\App\Infrastructure\OpenGraph\CrisisOgImageService::class, function (): \App\Infrastructure\OpenGraph\CrisisOgImageService {
+            return new \App\Infrastructure\OpenGraph\CrisisOgImageService(
                 dirname(__DIR__, 3),
                 $this->resolve(EntityTypeManager::class),
-                $this->resolve(\App\Support\OgImageRenderer::class),
+                $this->resolve(\App\Infrastructure\OpenGraph\OgImageRenderer::class),
                 $this->resolve(TranslatorInterface::class),
-                $this->resolve(\App\Support\CrisisIncidentResolver::class),
+                $this->resolve(\App\Infrastructure\Crisis\CrisisIncidentResolver::class),
                 new \Waaseyaa\Foundation\Log\NullLogger(),
             );
         });
@@ -100,12 +100,12 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
         // --- Rate limiting ---
         // =====================================================================
 
-        $this->singleton(\App\Contract\RateLimiterInterface::class, function (): \App\Contract\RateLimiterInterface {
+        $this->singleton(\App\Infrastructure\RateLimit\RateLimiterInterface::class, function (): \App\Infrastructure\RateLimit\RateLimiterInterface {
             if (getenv('APP_ENV') === 'testing') {
-                return new \App\Support\NullRateLimiter();
+                return new \App\Infrastructure\RateLimit\NullRateLimiter();
             }
             $dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__, 3) . '/storage/waaseyaa.sqlite';
-            return new \App\Support\SqliteRateLimiter($dbPath);
+            return new \App\Infrastructure\RateLimit\SqliteRateLimiter($dbPath);
         });
 
         // =====================================================================

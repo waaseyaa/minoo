@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Entity\Contributor;
-use App\Entity\CrosswordPuzzle;
-use App\Entity\DailyChallenge;
-use App\Entity\GameSession;
-use App\Entity\Leader;
-use App\Entity\OralHistory;
-use App\Entity\OralHistoryCollection;
-use App\Entity\OralHistoryType;
-use App\Entity\Post;
+use App\Entity\Community\Contributor;
+use App\Entity\Community\Leader;
+use App\Entity\Feed\Post;
+use App\Entity\Games\CrosswordPuzzle;
+use App\Entity\Games\DailyChallenge;
+use App\Entity\Games\GameSession;
+use App\Entity\OralHistory\OralHistory;
+use App\Entity\OralHistory\OralHistoryCollection;
+use App\Entity\OralHistory\OralHistoryType;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Media\UploadHandler;

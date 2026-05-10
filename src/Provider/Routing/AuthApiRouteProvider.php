@@ -20,7 +20,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.login_form',
             RouteBuilder::create('/login')
-                ->controller('App\Http\Controller\AuthController::loginForm')
+                ->controller('App\Http\Controller\Auth\AuthController::loginForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -30,7 +30,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.login_submit',
             RouteBuilder::create('/login')
-                ->controller('App\Http\Controller\AuthController::submitLogin')
+                ->controller('App\Http\Controller\Auth\AuthController::submitLogin')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -40,7 +40,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.register_form',
             RouteBuilder::create('/register')
-                ->controller('App\Http\Controller\AuthController::registerForm')
+                ->controller('App\Http\Controller\Auth\AuthController::registerForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -50,7 +50,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.register_submit',
             RouteBuilder::create('/register')
-                ->controller('App\Http\Controller\AuthController::submitRegister')
+                ->controller('App\Http\Controller\Auth\AuthController::submitRegister')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -60,7 +60,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.logout',
             RouteBuilder::create('/logout')
-                ->controller('App\Http\Controller\AuthController::logout')
+                ->controller('App\Http\Controller\Auth\AuthController::logout')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -69,7 +69,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.forgot_password_form',
             RouteBuilder::create('/forgot-password')
-                ->controller('App\Http\Controller\AuthController::forgotPasswordForm')
+                ->controller('App\Http\Controller\Auth\AuthController::forgotPasswordForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -79,7 +79,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.forgot_password_submit',
             RouteBuilder::create('/forgot-password')
-                ->controller('App\Http\Controller\AuthController::submitForgotPassword')
+                ->controller('App\Http\Controller\Auth\AuthController::submitForgotPassword')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -89,7 +89,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.reset_password_form',
             RouteBuilder::create('/reset-password')
-                ->controller('App\Http\Controller\AuthController::resetPasswordForm')
+                ->controller('App\Http\Controller\Auth\AuthController::resetPasswordForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -99,7 +99,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.reset_password_submit',
             RouteBuilder::create('/reset-password')
-                ->controller('App\Http\Controller\AuthController::submitResetPassword')
+                ->controller('App\Http\Controller\Auth\AuthController::submitResetPassword')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -109,7 +109,7 @@ final class AuthApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'auth.verify_email',
             RouteBuilder::create('/verify-email')
-                ->controller('App\Http\Controller\AuthController::verifyEmail')
+                ->controller('App\Http\Controller\Auth\AuthController::verifyEmail')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

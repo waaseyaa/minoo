@@ -10,8 +10,8 @@ use App\Domain\Newsletter\Service\NewsletterDispatcher;
 use App\Domain\Newsletter\Service\NewsletterRenderer;
 use App\Domain\Newsletter\Service\RenderTokenStore;
 use App\Domain\Newsletter\ValueObject\SectionQuota;
+use App\Infrastructure\Mail\NewsletterMailer;
 use App\Provider\AppCoreServiceProvider;
-use App\Support\NewsletterMailer;
 use Waaseyaa\Entity\EntityTypeManager;
 
 final class EntityNewsletterProvider extends AppCoreServiceProvider

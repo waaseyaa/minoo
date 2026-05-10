@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Newsletter\Service;
 
 use App\Domain\Newsletter\Exception\DispatchException;
 use App\Domain\Newsletter\Service\NewsletterDispatcher;
-use App\Entity\NewsletterEdition;
+use App\Entity\Newsletter\NewsletterEdition;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

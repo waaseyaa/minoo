@@ -7,7 +7,7 @@ description: Use when working on Minoo entity types, access policies, service pr
 
 ## Scope
 
-Packages: `src/Entity/`, `src/Provider/`, `src/Access/`, `src/Seed/`
+Packages: `src/Entity/**` (domain subfolders per `docs/architecture/entity-layer.md`), `src/Provider/`, `src/Access/`, `src/Seed/`
 Tests: `tests/Minoo/Unit/`, `tests/Minoo/Integration/`
 
 ## Entity Class Pattern
