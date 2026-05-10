@@ -7,8 +7,8 @@ description: Use when working on Minoo HTTP controllers, routing, or request han
 
 ## Scope
 
-Files: `src/Http/Controller/`, `src/Http/Middleware/`, route definitions in `src/Provider/`
-Tests: `tests/App/Unit/Http/Controller/`, `tests/App/Unit/Http/Middleware/`
+Files: `src/Http/Controller/{Domain}/` (see `docs/architecture/http-layer.md`), `src/Http/Middleware/`, route definitions in `src/Provider/`
+Tests: `tests/App/Unit/Http/Controller/{Domain}/`, `tests/App/Unit/Http/Middleware/`
 Entry point: `public/index.php`
 
 ## Controller Signature
@@ -48,7 +48,7 @@ public function routes(WaaseyaaRouter $router): void
 {
     $router->addRoute('community.list',
         RouteBuilder::create('/communities')
-            ->controller('App\\Http\\Controller\\CommunityController::list')
+            ->controller('App\\Http\\Controller\\Community\\CommunityController::list')
             ->allowAll()
             ->render()        // marks as SSR route
             ->methods('GET')
@@ -56,7 +56,7 @@ public function routes(WaaseyaaRouter $router): void
     );
     $router->addRoute('community.show',
         RouteBuilder::create('/communities/{slug}')
-            ->controller('App\\Http\\Controller\\CommunityController::show')
+            ->controller('App\\Http\\Controller\\Community\\CommunityController::show')
             ->allowAll()
             ->render()
             ->methods('GET')

@@ -61,7 +61,7 @@ minoo/
 | `tests/App/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
 | `src/Ingestion/*` | `minoo:ingestion` | `docs/specs/ingestion-pipeline.md` |
 | `src/Search/*` | `minoo:search` | `docs/specs/search.md` |
-| `src/Http/Controller/*`, `src/Http/Middleware/*`, `src/Http/Twig/*`, `src/Http/View/*`, `src/Http/Controller/Concerns/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
+| `src/Http/Controller/*/` (domain subdirs), `src/Http/Middleware/*`, `src/Http/Twig/*`, `src/Http/View/*`, `src/Http/Controller/Concerns/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/architecture/http-layer.md`, `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`), `src/Infrastructure/NorthCloud/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
 | `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClientInterface.php`, `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
@@ -71,7 +71,7 @@ minoo/
 | `src/Infrastructure/*`, `src/Identity/*` | — | Cross-cutting adapters (NC client/cache, crisis/OG, rate limits, fixtures, mail, ICS, MCP); `ElderIdentity` in `src/Identity/`; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
-| `src/Http/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
+| `src/Http/Controller/*/` (domain subdirs), `src/Routing/*` | `waaseyaa-app-development` | — |
 | Spec Kitty missions, roadmap, release planning | — | `docs/specs/workflow.md` |
 
 For Minoo-level specs, use the Minoo MCP tools (Claude Code: **`.claude/settings.json`** registers **`minoo`** → `mcp/server.js` and **`bimaaji`** → `vendor/waaseyaa/bimaaji/mcp/server.js`). After `composer install`, run **`composer bimaaji-mcp-install`** (or rely on `post-create-project-cmd`) so both MCP servers have Node deps. **`.cursor/mcp.json`** is gitignored—do not use it for team MCP config):
