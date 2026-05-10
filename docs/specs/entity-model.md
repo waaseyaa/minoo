@@ -22,17 +22,27 @@
 | `src/Provider/TeachingServiceProvider.php` | Registers teaching + teaching_type entity types |
 | `src/Provider/CulturalCollectionServiceProvider.php` | Registers cultural_collection entity type |
 | `src/Provider/LanguageServiceProvider.php` | Registers dictionary_entry, example_sentence, word_part, speaker |
-| `src/Access/EventAccessPolicy.php` | Access for `event` type |
-| `src/Access/GroupAccessPolicy.php` | Access for `group` type |
-| `src/Access/CulturalGroupAccessPolicy.php` | Access for `cultural_group` type |
-| `src/Access/TeachingAccessPolicy.php` | Access for `teaching` type |
-| `src/Access/CulturalCollectionAccessPolicy.php` | Access for `cultural_collection` type |
-| `src/Access/LanguageAccessPolicy.php` | Access for all 4 language types |
+| `src/Access/Events/EventAccessPolicy.php` | Access for `event`, `event_type` |
+| `src/Access/Groups/GroupAccessPolicy.php` | Access for `group`, `group_type` |
+| `src/Access/Groups/CulturalGroupAccessPolicy.php` | Access for `cultural_group` |
+| `src/Access/Teachings/TeachingAccessPolicy.php` | Access for `teaching`, `teaching_type` |
+| `src/Access/Teachings/CulturalCollectionAccessPolicy.php` | Access for `cultural_collection` |
+| `src/Access/Language/LanguageAccessPolicy.php` | Access for dictionary, sentences, word parts, speakers, dialect_region |
 | `src/Entity/MessageThread.php` | Message thread entity |
 | `src/Entity/ThreadParticipant.php` | Thread participant entity |
 | `src/Entity/ThreadMessage.php` | Thread message entity |
 | `src/Provider/MessagingServiceProvider.php` | Registers message thread entities + routes |
-| `src/Access/MessagingAccessPolicy.php` | Access for messaging thread entities |
+| `src/Access/Messaging/MessagingAccessPolicy.php` | Access for messaging thread entities |
+| `src/Access/Community/CommunityAccessPolicy.php` | Access for `community` |
+| `src/Access/Community/ContributorAccessPolicy.php` | Access for `contributor` |
+| `src/Access/Community/PeopleAccessPolicy.php` | Access for `resource_person` |
+| `src/Access/Feed/PostAccessPolicy.php` | Access for `post` |
+| `src/Access/Games/GameAccessPolicy.php` | Access for game session entities |
+| `src/Access/Newsletter/NewsletterAccessPolicy.php` | Access for newsletter editions, items, submissions |
+| `src/Access/Ingestion/IngestAccessPolicy.php` | Access for `ingest_log` |
+| `src/Access/Editorial/FeaturedItemAccessPolicy.php` | Access for `featured_item` |
+| `src/Access/OralHistory/OralHistoryAccessPolicy.php` | Access for oral history entities |
+| `src/Access/ElderSupport/ElderSupportAccessPolicy.php` | Access for elder support + volunteer |
 | `src/Seed/TaxonomySeeder.php` | Gallery + teaching_tags vocabulary definitions |
 | `src/Seed/ConfigSeeder.php` | Event, group, teaching type definitions |
 | `src/Http/Controller/*.php` | HTTP SSR + JSON controllers (`App\Http\Controller`); routes wired in `src/Provider/Routing/*.php` |

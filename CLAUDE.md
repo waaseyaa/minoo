@@ -11,7 +11,7 @@ Minoo is a **thin application** — custom entity types, access policies, servic
 ```
 minoo/
 ├── src/
-│   ├── Access/        # 10 access policy classes
+│   ├── Access/        # Policies by domain: Events/, Groups/, Community/, Teachings/, … (`App\Access\<Domain>`)
 │   ├── Http/          # HTTP surface
 │   │   ├── Controller/  # SSR + JSON API controllers (`App\Http\Controller`)
 │   │   ├── Middleware/  # HTTP middleware (`App\Http\Middleware`)
@@ -138,7 +138,7 @@ Further mechanical splits should move whole type families together with their `s
 **Adding a Minoo entity type:**
 1. Create entity class in `src/Entity/` extending `ContentEntityBase` or `ConfigEntityBase` — hardcode `entityTypeId` and `entityKeys`, accept optional constructor params for arity
 2. Register `EntityType` in the appropriate `src/Provider/Entity/*Provider` (merged by `MinooEntityStackProvider`)
-3. Create or update `AccessPolicy` in `src/Access/` with `#[PolicyAttribute]`
+3. Create or update `AccessPolicy` under `src/Access/<Domain>/` (e.g. `Events/`, `Community/`) with `#[PolicyAttribute]`
 4. Write unit test in `tests/App/Unit/Entity/`
 5. Run `./vendor/bin/phpunit` — delete `storage/framework/packages.php` if entity type isn't discovered
 
