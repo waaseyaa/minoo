@@ -159,6 +159,8 @@ composer install                              # Install deps (symlinks to waasey
 npm install                                   # Installs lefthook + registers git hooks (pre-commit / pre-push); clears legacy `core.hooksPath=.husky/_` from older checkouts
 composer cs-fixer                             # Dry-run PHP CS Fixer (same gate as CI)
 composer cs-fixer:fix                         # Apply PHP CS Fixer to the tree
+composer phpstan                              # PHPStan level 5 on `src/` (same gate as CI; `phpstan.neon`)
+composer phpstan:dead-code                    # ShipMonk dead-code detector + Minoo usage providers (`phpstan-dead-code.neon`); shrinks `phpstan-dead-code-baseline.neon` as you fix findings
 php -S 0.0.0.0:8080 -t public public/index.php  # Dev server (router script required — public/admin/ dir exists). Use `0.0.0.0` not `localhost` on WSL2 so Windows browsers can open http://localhost:8080/… via port forwarding.
 ./vendor/bin/phpunit                          # All tests (914 tests, 2568 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
@@ -215,6 +217,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Game controllers must inject `GateInterface`**: All game API endpoints that mutate session state (`check`, `complete`, `hint`, `abandon`, `guess`) must call `$this->gate->denies('update', $session, $account)` for session ownership validation.
 - **AuthMailer requires `isConfigured()` guard**: Framework `AuthMailer` skips sends when `authEmailConfigured` is false (no SendGrid key + from address). Without valid credentials, forcing a send would hit SendGrid 401 and throw — crashing registration and password reset flows. CI and local dev typically have no API key.
 - **PHPStan baseline drift**: After adding new files that call `EntityInterface::get()`, regenerate the baseline with `./vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon`. The baseline won't auto-update when new files are added.
+- **Dead-code pass (ShipMonk)**: `composer phpstan:dead-code` uses `phpstan-dead-code.neon` (not CI by default). Custom providers mark route-string controllers, native CLI `execute`, and `App\Seed` static builders. Remaining findings are in `phpstan-dead-code-baseline.neon` — regenerate with `composer phpstan:dead-code -- --generate-baseline phpstan-dead-code-baseline.neon` after substantive fixes; trim entries you resolve.
 - **Controller DI**: `SsrPageHandler::resolveControllerInstance()` auto-injects constructor params. It checks a hardcoded `$serviceMap` (EntityTypeManager, Twig, HttpRequest, AccountInterface), then falls back to `serviceResolver` for any type registered as a singleton in a service provider. Register new services in providers and they'll be injected automatically.
 - **Production deploy path**: `/home/deployer/minoo/current` (symlink to `releases/N`). DB at `storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.
 - **EntityStorage::create() calls constructors**: `SqlEntityStorage::instantiateEntity()` uses `new $class(values: $values)` — constructor validation IS invoked. EngagementController wraps create()+save() in try/catch for `InvalidArgumentException` as a safety net returning 422.

@@ -1,0 +1,38 @@
+# Optional ShipMonk dead-code pass (not part of default CI — see composer.json
+# phpstan/extension-installer ignore). Run: composer phpstan:dead-code
+#
+# Custom usage providers teach the detector about Waaseyaa route strings and
+# native CLI CommandDefinition handlers.
+
+includes:
+    - vendor/shipmonk/dead-code-detector/rules.neon
+    - phpstan-baseline.neon
+    - phpstan-dead-code-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - src/
+    scanDirectories:
+        - vendor/waaseyaa/
+    tmpDir: storage/phpstan/dead-code
+    shipmonkDeadCode:
+        trackMixedAccess: true
+        reportTransitivelyDeadMethodAsSeparateError: false
+        usageProviders:
+            phpunit:
+                enabled: true
+
+services:
+    -
+        class: App\PHPStan\DeadCode\RoutingControllerStringUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+    -
+        class: App\PHPStan\DeadCode\ConsoleExecuteUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+    -
+        class: App\PHPStan\DeadCode\SeedStaticDataUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider

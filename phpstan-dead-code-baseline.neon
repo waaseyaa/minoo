@@ -1,0 +1,445 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Unused App\\Domain\\Chat\\ChatProviderInterface\:\:sendMessage$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Chat/ChatProviderInterface.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\Service\\EventFeedBuilder\:\:setFeaturedEventIdsForTesting$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/Service/EventFeedBuilder.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\ValueObject\\CalendarMonth\:\:label$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/ValueObject/CalendarMonth.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\ValueObject\\EventFeedResult\:\:hasAnySectionContent$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/ValueObject/EventFeedResult.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\ValueObject\\EventFeedResult\:\:monthGroups$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/ValueObject/EventFeedResult.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\ValueObject\\EventFilters\:\:toQueryString$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/ValueObject/EventFilters.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\ValueObject\\EventFilters\:\:without$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/ValueObject/EventFilters.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\ValueObject\\Pagination\:\:hasNext$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/ValueObject/Pagination.php
+
+		-
+			message: '#^Unused App\\Domain\\Events\\ValueObject\\Pagination\:\:hasPrev$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Events/ValueObject/Pagination.php
+
+		-
+			message: '#^Unused App\\Domain\\Feed\\EngagementCounter\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Feed/EngagementCounter.php
+
+		-
+			message: '#^Unused App\\Domain\\Feed\\EngagementCounter\:\:getCountsForTarget$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Feed/EngagementCounter.php
+
+		-
+			message: '#^Unused App\\Domain\\Feed\\EntityLoaderService\:\:loadPublicPeople$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Feed/EntityLoaderService.php
+
+		-
+			message: '#^Unused App\\Domain\\Feed\\FeedContext\:\:defaults$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Feed/FeedContext.php
+
+		-
+			message: '#^Unused App\\Domain\\Games\\CrosswordEngine\:\:dailyTier$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Games/CrosswordEngine.php
+
+		-
+			message: '#^Unused App\\Domain\\Games\\CrosswordEngine\:\:qualityScore$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Games/CrosswordEngine.php
+
+		-
+			message: '#^Unused App\\Domain\\Games\\ShkodaEngine\:\:dailyTier$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Games/ShkodaEngine.php
+
+		-
+			message: '#^Unused App\\Domain\\Games\\ShkodaEngine\:\:generateShareText$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Games/ShkodaEngine.php
+
+		-
+			message: '#^Unused App\\Domain\\Geo\\Service\\LocationResolver\:\:resolveCoordinates$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Geo/Service/LocationResolver.php
+
+		-
+			message: '#^Unused App\\Domain\\Geo\\Service\\LocationResolver\:\:resolveMixedNearby$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Geo/Service/LocationResolver.php
+
+		-
+			message: '#^Unused App\\Domain\\Geo\\ValueObject\\RankedVolunteer\:\:formattedDistance$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Geo/ValueObject/RankedVolunteer.php
+
+		-
+			message: '#^Unused App\\Domain\\Geo\\ValueObject\\RankedVolunteer\:\:hasDistance$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Domain/Geo/ValueObject/RankedVolunteer.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Account\\AccountHomeController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Account/AccountHomeController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Auth\\AuthController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Auth/AuthController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Community\\CommunityController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Community/CommunityController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Community\\ContributorController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Community/ContributorController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Community\\LocationController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Community/LocationController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Dashboard\\CoordinatorDashboardController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Dashboard/CoordinatorDashboardController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Dashboard\\RoleManagementController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Dashboard/RoleManagementController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Dashboard\\VolunteerDashboardController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Dashboard/VolunteerDashboardController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\ElderSupport\\ElderSupportController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/ElderSupport/ElderSupportController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\ElderSupport\\ElderSupportWorkflowController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/ElderSupport/ElderSupportWorkflowController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Events\\EventController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Events/EventController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Feed\\FeedController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Feed/FeedController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Games\\AgimController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Games/AgimController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Games\\AgimController\:\:getEntityTypeManager$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Games/AgimController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Games\\CrosswordController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Games/CrosswordController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Games\\GuessPriceController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Games/GuessPriceController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Games\\JourneyController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Games/JourneyController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Games\\MatcherController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Games/MatcherController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Games\\ShkodaController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Games/ShkodaController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Groups\\BusinessController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Groups/BusinessController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Groups\\GroupController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Groups/GroupController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Home\\HomeController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Home/HomeController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Ingestion\\IngestionApiController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Ingestion/IngestionApiController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Ingestion\\IngestionDashboardController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Ingestion/IngestionDashboardController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Language\\LanguageController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Language/LanguageController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Newsletter/NewsletterAdminApiController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Newsletter\\NewsletterController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Newsletter/NewsletterController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Newsletter\\NewsletterEditorController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Newsletter/NewsletterEditorController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\OpenGraph\\OpenGraphController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/OpenGraph/OpenGraphController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\OralHistory\\OralHistoryController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/OralHistory/OralHistoryController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\People\\PeopleController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/People/PeopleController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\People\\VolunteerController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/People/VolunteerController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Site\\StaticPageController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Site/StaticPageController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Social\\BlockController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Social/BlockController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Social\\EngagementController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Social/EngagementController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Social\\MessagingController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Social/MessagingController.php
+
+		-
+			message: '#^Unused App\\Http\\Controller\\Teachings\\TeachingController\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Http/Controller/Teachings/TeachingController.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Fixture\\FixtureLoader\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Fixture/FixtureLoader.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Fixture\\FixtureLoader\:\:load$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Fixture/FixtureLoader.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Fixture\\FixtureLoader\:\:validate$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Fixture/FixtureLoader.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Fixture\\FixtureResolver\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Fixture/FixtureResolver.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Fixture\\FixtureResolver\:\:resolveCommunity$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Fixture/FixtureResolver.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Fixture\\FixtureResolver\:\:resolveGroupSlug$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Fixture/FixtureResolver.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Fixture\\FixtureResolver\:\:resolveTaxonomyTerms$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Fixture/FixtureResolver.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\Geocoding\\GeocodingService\:\:geocode$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/Geocoding/GeocodingService.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\NorthCloud\\NorthCloudCache\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/NorthCloud/NorthCloudCache.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\NorthCloud\\NorthCloudCache\:\:clear$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/NorthCloud/NorthCloudCache.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\NorthCloud\\NorthCloudCache\:\:set$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/NorthCloud/NorthCloudCache.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\NorthCloud\\NorthCloudCommunityDictionaryClient\:\:getDictionaryEntries$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClient.php
+
+		-
+			message: '#^Unused App\\Infrastructure\\NorthCloud\\NorthCloudCommunityDictionaryClientInterface\:\:getDictionaryEntries$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClientInterface.php
+
+		-
+			message: '#^Unused App\\Ingestion\\MaterializationResult\:\:addUpdated$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Ingestion/MaterializationResult.php
+
+		-
+			message: '#^Unused App\\Search\\CommunityAutocompleteClient\:\:__construct$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Search/CommunityAutocompleteClient.php
+
+		-
+			message: '#^Unused App\\Search\\CommunityAutocompleteClient\:\:suggest$#'
+			identifier: shipmonk.deadMethod
+			count: 1
+			path: src/Search/CommunityAutocompleteClient.php

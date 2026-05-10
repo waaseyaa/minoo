@@ -55,6 +55,7 @@
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.5",
+        "shipmonk/dead-code-detector": "^0.7",
         "waaseyaa/testing": "^0.1.0-alpha.175"
     },
     "suggest": {
@@ -79,6 +80,11 @@
                 "App\\Provider\\AppBootServiceProvider",
                 "App\\Provider\\AppCommandServiceProvider",
                 "App\\Provider\\BimaajiBridgeProvider"
+            ]
+        },
+        "phpstan/extension-installer": {
+            "ignore": [
+                "shipmonk/dead-code-detector"
             ]
         }
     },
@@ -117,7 +123,9 @@
             "php bin/post-create-setup.php"
         ],
         "cs-fixer": "php-cs-fixer fix --dry-run --diff",
-        "cs-fixer:fix": "php-cs-fixer fix"
+        "cs-fixer:fix": "php-cs-fixer fix",
+        "phpstan": "phpstan analyse --no-progress --memory-limit=512M",
+        "phpstan:dead-code": "phpstan analyse -c phpstan-dead-code.neon --no-progress --memory-limit=768M"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
