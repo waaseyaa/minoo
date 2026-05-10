@@ -14,5 +14,6 @@ final readonly class FeedResponse
         public ?string $nextCursor,
         public string $activeFilter,
         public ?int $totalHint = null,
-    ) {}
+    ) {
+    }
 }

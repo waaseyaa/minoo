@@ -27,7 +27,8 @@ final class EventFilters
         public readonly ?string $date,
         public readonly string $sort,
         public readonly int $page,
-    ) {}
+    ) {
+    }
 
     public static function fromRequest(Request $request): self
     {
@@ -88,14 +89,14 @@ final class EventFilters
     public function without(string $key, ?string $value = null): self
     {
         return new self(
-            types:       $key === 'type'         ? array_values(array_filter($this->types, fn ($t) => $t !== $value)) : $this->types,
+            types:       $key === 'type' ? array_values(array_filter($this->types, fn ($t) => $t !== $value)) : $this->types,
             communityId: $key === 'community_id' ? null : $this->communityId,
-            when:        $key === 'when'         ? 'all' : $this->when,
-            near:        $key === 'near'         ? false : $this->near,
-            q:           $key === 'q'            ? null : $this->q,
+            when:        $key === 'when' ? 'all' : $this->when,
+            near:        $key === 'near' ? false : $this->near,
+            q:           $key === 'q' ? null : $this->q,
             view:        $this->view,
-            month:       $key === 'month'        ? null : $this->month,
-            date:        $key === 'date'         ? null : $this->date,
+            month:       $key === 'month' ? null : $this->month,
+            date:        $key === 'date' ? null : $this->date,
             sort:        $this->sort,
             page:        1,
         );

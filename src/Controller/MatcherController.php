@@ -8,13 +8,13 @@ use App\Support\GameStatsCalculator;
 use App\Support\LayoutTwigContext;
 use App\Support\MatcherEngine;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class MatcherController
 {
@@ -24,7 +24,8 @@ final class MatcherController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly GateInterface $gate,
-    ) {}
+    ) {
+    }
 
     private function getEntityTypeManager(): EntityTypeManager
     {

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
-use Waaseyaa\Engagement\Reaction;
 use App\Feed\EngagementCounter;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Engagement\Reaction;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;

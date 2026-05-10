@@ -14,7 +14,8 @@ final class IngestImporter
 {
     public function __construct(
         private readonly PayloadValidator $validator,
-    ) {}
+    ) {
+    }
 
     public function import(array $envelope): IngestLog
     {

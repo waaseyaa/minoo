@@ -87,9 +87,14 @@ final class FeedItemTest extends TestCase
     {
         $items = [
             new FeedItem(
-                id: 'event:1', type: 'event', title: 'Test',
-                url: '/events/test', badge: 'Event', weight: 0,
-                createdAt: new \DateTimeImmutable(), sortKey: 'key',
+                id: 'event:1',
+                type: 'event',
+                title: 'Test',
+                url: '/events/test',
+                badge: 'Event',
+                weight: 0,
+                createdAt: new \DateTimeImmutable(),
+                sortKey: 'key',
             ),
         ];
         $response = new FeedResponse($items, 'cursor123', 'all');

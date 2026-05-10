@@ -8,8 +8,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
 /**
  * Create the user_block table for user blocking subsystem.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         if ($schema->hasTable('user_block')) {

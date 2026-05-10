@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Domain\Newsletter\Service\RenderTokenStore;
-use Waaseyaa\SSR\Attribute\MapQuery;
-use Waaseyaa\SSR\Attribute\MapRoute;
-use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -16,6 +13,9 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
+use Waaseyaa\SSR\Flash\Flash;
 
 final class NewsletterController
 {
@@ -23,7 +23,8 @@ final class NewsletterController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly RenderTokenStore $tokens,
-    ) {}
+    ) {
+    }
 
     /**
      * Internal endpoint hit by Playwright during PDF generation.
@@ -47,7 +48,7 @@ final class NewsletterController
         $itemStorage = $this->entityTypeManager->getStorage('newsletter_item');
         $items = array_filter(
             $itemStorage->loadMultiple(),
-            fn($i) => (int) $i->get('edition_id') === $editionId,
+            fn ($i) => (int) $i->get('edition_id') === $editionId,
         );
 
         $bySection = [];

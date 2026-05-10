@@ -60,9 +60,15 @@ final class EventFeedResultMonthGroupsTest extends TestCase
     public function empty_flat_list_yields_no_groups(): void
     {
         $result = new EventFeedResult(
-            featured: [], happeningNow: [], thisWeek: [], comingUp: [],
-            onTheHorizon: [], flatList: [], calendarMonth: null,
-            communities: [], totalUpcoming: 0,
+            featured: [],
+            happeningNow: [],
+            thisWeek: [],
+            comingUp: [],
+            onTheHorizon: [],
+            flatList: [],
+            calendarMonth: null,
+            communities: [],
+            totalUpcoming: 0,
             activeFilters: EventFilters::fromRequest(Request::create('/events')),
             availableFilters: ['types' => [], 'communities' => []],
             pagination: null,

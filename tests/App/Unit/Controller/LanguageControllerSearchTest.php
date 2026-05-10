@@ -10,10 +10,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
-use Waaseyaa\Access\AccountInterface;
-use Waaseyaa\Entity\EntityTypeManager;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
+use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\EntityTypeManager;
 
 #[CoversClass(LanguageController::class)]
 final class LanguageControllerSearchTest extends TestCase

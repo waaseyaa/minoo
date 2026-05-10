@@ -10,15 +10,15 @@ use App\Domain\Newsletter\Service\EditionLifecycle;
 use App\Domain\Newsletter\Service\NewsletterDispatcher;
 use App\Domain\Newsletter\Service\NewsletterRenderer;
 use App\Domain\Newsletter\Service\RenderTokenStore;
+use App\Support\JsonResponseTrait;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
-use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
-
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
+
 final class NewsletterAdminApiController
 {
     use JsonResponseTrait;
@@ -32,7 +32,8 @@ final class NewsletterAdminApiController
         private readonly NewsletterRenderer $renderer,
         private readonly NewsletterDispatcher $dispatcher,
         private readonly RenderTokenStore $tokenStore,
-    ) {}
+    ) {
+    }
 
     public function listEditions(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {

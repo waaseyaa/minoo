@@ -103,7 +103,7 @@ final class NewsletterEndToEndTest extends TestCase
         $itemStorage = $etm->getStorage('newsletter_item');
         return array_values(array_filter(
             $itemStorage->loadMultiple(),
-            static fn($i) => (string) $i->get('edition_id') === (string) $edition->id(),
+            static fn ($i) => (string) $i->get('edition_id') === (string) $edition->id(),
         ));
     }
 
@@ -118,7 +118,7 @@ final class NewsletterEndToEndTest extends TestCase
         $this->assembleWithCommunityQuota($edition);
 
         $items = $this->itemsForEdition($edition);
-        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+        $blurbs = array_map(fn ($i) => (string) $i->get('editor_blurb'), $items);
 
         $this->assertContains('Approved one', $blurbs, 'Approved submission should be included');
         $this->assertNotContains('Still pending', $blurbs, 'Pending submission must be excluded');
@@ -134,7 +134,7 @@ final class NewsletterEndToEndTest extends TestCase
         $this->assembleWithCommunityQuota($edition);
 
         $items = $this->itemsForEdition($edition);
-        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+        $blurbs = array_map(fn ($i) => (string) $i->get('editor_blurb'), $items);
 
         $this->assertNotContains('From Sheguiandah', $blurbs, 'Submission from different community must be excluded');
     }
@@ -172,7 +172,7 @@ final class NewsletterEndToEndTest extends TestCase
         $this->assembleWithCommunityQuota($edition);
 
         $items = $this->itemsForEdition($edition);
-        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+        $blurbs = array_map(fn ($i) => (string) $i->get('editor_blurb'), $items);
         $this->assertNotContains('Pending then approved', $blurbs, 'Pending should not appear');
 
         // Approve the submission
@@ -189,7 +189,7 @@ final class NewsletterEndToEndTest extends TestCase
         $this->assembleWithCommunityQuota($edition);
 
         $items = $this->itemsForEdition($edition);
-        $blurbs = array_map(fn($i) => (string) $i->get('editor_blurb'), $items);
+        $blurbs = array_map(fn ($i) => (string) $i->get('editor_blurb'), $items);
         $this->assertContains('Pending then approved', $blurbs, 'After approval, submission should appear');
     }
 
@@ -251,7 +251,7 @@ final class NewsletterEndToEndTest extends TestCase
         $itemStorage = $etm->getStorage('newsletter_item');
         $items = array_filter(
             $itemStorage->loadMultiple(),
-            static fn($i) => (string) $i->get('edition_id') === (string) $edition->id(),
+            static fn ($i) => (string) $i->get('edition_id') === (string) $edition->id(),
         );
         $this->assertGreaterThan(0, count($items), 'Assembler should write newsletter_item rows.');
 

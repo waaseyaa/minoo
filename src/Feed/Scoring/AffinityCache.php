@@ -10,7 +10,9 @@ final class AffinityCache
 {
     private const int TTL = 900; // 15 minutes
 
-    public function __construct(private readonly CacheBackendInterface $cache) {}
+    public function __construct(private readonly CacheBackendInterface $cache)
+    {
+    }
 
     /**
      * @return array<string, float>|null

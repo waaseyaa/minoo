@@ -6,15 +6,15 @@ namespace App\Controller;
 
 use App\Support\ElderIdentity;
 use App\Support\LayoutTwigContext;
-use Waaseyaa\SSR\Attribute\MapQuery;
-use Waaseyaa\SSR\Attribute\MapRoute;
-use Waaseyaa\SSR\Flash\Flash;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
+use Waaseyaa\SSR\Flash\Flash;
 use Waaseyaa\User\User;
 
 final class AccountHomeController
@@ -22,7 +22,8 @@ final class AccountHomeController
     public function __construct(
         private readonly Environment $twig,
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {

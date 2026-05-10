@@ -11,7 +11,8 @@ final class MessagingDigestHandler
 {
     public function __construct(
         private readonly MessageDigestCommand $digest,
-    ) {}
+    ) {
+    }
 
     public function execute(CliIO $io): int
     {

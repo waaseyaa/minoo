@@ -13,8 +13,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
  * - Adds new columns: role, community_id, consent_public, consent_record
  * - Renames `example_sentence.speaker_id` → `contributor_id`
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         $connection = $schema->getConnection();

@@ -6,11 +6,10 @@ namespace App\Tests\Unit\Access;
 
 use App\Access\PostAccessPolicy;
 use App\Entity\Post;
-use Waaseyaa\Access\AccessResult;
-use Waaseyaa\Access\AccountInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Access\AccountInterface;
 
 #[CoversClass(PostAccessPolicy::class)]
 final class PostAccessPolicyTest extends TestCase
@@ -120,42 +119,73 @@ final class PostAccessPolicyTest extends TestCase
 
     private function createAnonymousAccount(): AccountInterface
     {
-        return new class implements AccountInterface {
-            public function id(): int { return 0; }
+        return new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 0;
+            }
             public function hasPermission(string $permission): bool
             {
                 return $permission === 'access content';
             }
-            public function getRoles(): array { return ['anonymous']; }
-            public function isAuthenticated(): bool { return false; }
+            public function getRoles(): array
+            {
+                return ['anonymous'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return false;
+            }
         };
     }
 
     private function createAuthenticatedAccount(int $id): AccountInterface
     {
-        return new class($id) implements AccountInterface {
-            public function __construct(private readonly int $uid) {}
-            public function id(): int { return $this->uid; }
+        return new class ($id) implements AccountInterface {
+            public function __construct(private readonly int $uid)
+            {
+            }
+            public function id(): int
+            {
+                return $this->uid;
+            }
             public function hasPermission(string $permission): bool
             {
                 return $permission === 'access content';
             }
-            public function getRoles(): array { return ['authenticated']; }
-            public function isAuthenticated(): bool { return true; }
+            public function getRoles(): array
+            {
+                return ['authenticated'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
     }
 
     private function createCoordinatorAccount(int $id): AccountInterface
     {
-        return new class($id) implements AccountInterface {
-            public function __construct(private readonly int $uid) {}
-            public function id(): int { return $this->uid; }
+        return new class ($id) implements AccountInterface {
+            public function __construct(private readonly int $uid)
+            {
+            }
+            public function id(): int
+            {
+                return $this->uid;
+            }
             public function hasPermission(string $permission): bool
             {
                 return $permission === 'access content';
             }
-            public function getRoles(): array { return ['authenticated', 'coordinator']; }
-            public function isAuthenticated(): bool { return true; }
+            public function getRoles(): array
+            {
+                return ['authenticated', 'coordinator'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
     }
 }

@@ -147,6 +147,9 @@ Further mechanical splits should move whole type families together with their `s
 
 ```bash
 composer install                              # Install deps (symlinks to waaseyaa packages)
+npm install                                   # Installs lefthook + registers git hooks (pre-commit / pre-push); clears legacy `core.hooksPath=.husky/_` from older checkouts
+composer cs-fixer                             # Dry-run PHP CS Fixer (same gate as CI)
+composer cs-fixer:fix                         # Apply PHP CS Fixer to the tree
 php -S 0.0.0.0:8080 -t public public/index.php  # Dev server (router script required — public/admin/ dir exists). Use `0.0.0.0` not `localhost` on WSL2 so Windows browsers can open http://localhost:8080/… via port forwarding.
 ./vendor/bin/phpunit                          # All tests (914 tests, 2568 assertions)
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
@@ -194,7 +197,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Don't use `final` on services that need mocking**: PHPUnit cannot mock final classes. Use `final` for value objects and entities, but not for services injected via DI that tests need to mock (e.g. `EntityLoaderService`).
 - **Controllers return `Symfony\Component\HttpFoundation\Response`** (migration #631/#632, alpha.106). Use `new Response($html)` for HTML, `new RedirectResponse($url)` for redirects, `new Response($json, 200, ['Content-Type' => 'application/json'])` or a `$this->json()` helper for JSON. Cookies: `$response->headers->setCookie(Cookie::create(...))` — not the legacy SsrResponse `Set-Cookie` header string. Tests use `$response->getStatusCode()` / `getContent()` / `headers->get()`, not readonly properties.
 - **EntityStorageInterface namespace**: `Waaseyaa\Entity\Storage\EntityStorageInterface` (not `Waaseyaa\Entity\EntityStorageInterface`)
-- **Worktree pre-push hook**: `.husky/pre-push` runs `vendor/bin/phpunit` but worktrees don't have `vendor/` linked — push with `--no-verify` from worktrees, or run tests from main repo first.
+- **Worktree pre-push hook**: Lefthook `pre-push` runs PHPUnit when `vendor/bin/phpunit` exists; worktrees often have no `vendor/` — hooks skip tests in that case, or use `git push --no-verify` after running tests from the main repo.
 - **Worktree autoloader corruption**: After parallel worktree agents complete, run `composer dump-autoload` before running tests or pushing. Worktrees can leave stale paths in `vendor/composer/autoload_classmap.php`.
 - **Squash merge conflict loss**: When squash-merging PRs with overlapping files, the conflict resolution may silently drop one side's changes. Always verify the merged result contains both PRs' intended changes, especially for template/CSS files.
 - **Cross-PR entity field conflicts**: When parallel PRs add required fields to entities (e.g. `community_id` on Post) and other PRs write tests against those entities, the tests will fail after merge. Budget a merge-fix pass when running parallel worktree sprints.

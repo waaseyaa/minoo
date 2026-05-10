@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Feed\Scoring;
 
-use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Geo\GeoDistance;
 
 final class AffinityCalculator
 {
@@ -24,7 +24,8 @@ final class AffinityCalculator
         private readonly float $geoMidKm = 150.0,
         private readonly float $geoMidPoints = 1.0,
         private readonly int $lookbackDays = 30,
-    ) {}
+    ) {
+    }
 
     /**
      * @param string[] $sourceKeys

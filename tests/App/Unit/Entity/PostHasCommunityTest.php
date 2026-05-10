@@ -8,6 +8,7 @@ use App\Entity\Post;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 #[CoversClass(Post::class)]
 final class PostHasCommunityTest extends TestCase
 {

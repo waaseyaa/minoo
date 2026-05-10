@@ -14,7 +14,8 @@ final class DiversityReranker
         private readonly int $maxConsecutiveType = 2,
         private readonly int $maxConsecutiveCommunity = 2,
         private readonly int $postGuaranteeSlot = 3,
-    ) {}
+    ) {
+    }
 
     /**
      * @param FeedItem[] $sortedItems

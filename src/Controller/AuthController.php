@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Waaseyaa\Auth\Config\AuthConfig;
-use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
-use Waaseyaa\SSR\Attribute\MapQuery;
-use Waaseyaa\SSR\Attribute\MapRoute;
-use Waaseyaa\User\AuthMailer;
 use App\Contract\RateLimiterInterface;
 use App\Support\LayoutTwigContext;
-use Waaseyaa\SSR\Flash\Flash;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Auth\Config\AuthConfig;
+use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
+use Waaseyaa\SSR\Flash\Flash;
+use Waaseyaa\User\AuthMailer;
 use Waaseyaa\User\User;
 
 final class AuthController
@@ -29,7 +29,8 @@ final class AuthController
         private readonly AuthTokenRepositoryInterface $tokenRepo,
         private readonly AuthConfig $authConfig,
         private readonly RateLimiterInterface $limiter,
-    ) {}
+    ) {
+    }
 
     public function loginForm(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {

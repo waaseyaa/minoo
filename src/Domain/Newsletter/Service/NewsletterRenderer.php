@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Newsletter\Service;
 
-use Closure;
 use App\Domain\Newsletter\Exception\RenderException;
 use App\Domain\Newsletter\ValueObject\PdfArtifact;
+use Closure;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 use Waaseyaa\Entity\EntityInterface;

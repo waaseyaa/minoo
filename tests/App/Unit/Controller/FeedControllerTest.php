@@ -80,9 +80,14 @@ final class FeedControllerTest extends TestCase
         $etm = $this->createEntityTypeManager();
 
         $item = new FeedItem(
-            id: 'event:1', type: 'event', title: 'Pow Wow',
-            url: '/events/pow-wow', badge: 'Event', weight: 0,
-            createdAt: new \DateTimeImmutable(), sortKey: 'key',
+            id: 'event:1',
+            type: 'event',
+            title: 'Pow Wow',
+            url: '/events/pow-wow',
+            badge: 'Event',
+            weight: 0,
+            createdAt: new \DateTimeImmutable(),
+            sortKey: 'key',
         );
 
         $assembler->method('assemble')->willReturn(
@@ -131,9 +136,14 @@ final class FeedControllerTest extends TestCase
         $etm = $this->createEntityTypeManager();
 
         $item = new FeedItem(
-            id: 'event:1', type: 'event', title: 'Test',
-            url: '/events/test', badge: 'Event', weight: 0,
-            createdAt: new \DateTimeImmutable(), sortKey: 'key',
+            id: 'event:1',
+            type: 'event',
+            title: 'Test',
+            url: '/events/test',
+            badge: 'Event',
+            weight: 0,
+            createdAt: new \DateTimeImmutable(),
+            sortKey: 'key',
         );
 
         $assembler->method('assemble')->willReturn(

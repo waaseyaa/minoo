@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Ingestion\EntityMapper;
 
-use Waaseyaa\Foundation\SlugGenerator;
 use App\Ingestion\ValueObject\WordPartFields;
+use Waaseyaa\Foundation\SlugGenerator;
 
 final class WordPartMapper
 {

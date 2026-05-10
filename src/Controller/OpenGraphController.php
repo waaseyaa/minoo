@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Support\CrisisIncidentResolver;
 use App\Support\CrisisOgAutomationPolicy;
 use App\Support\CrisisOgImageService;
-use App\Support\CrisisIncidentResolver;
 use App\Support\CrisisResolveContext;
 use App\Support\OgImageRenderer;
 use App\Support\PublicOgEntityLoader;
@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
+
 final class OpenGraphController
 {
     private const CACHE_MAX_AGE = 86400;
@@ -40,7 +40,8 @@ final class OpenGraphController
         private readonly OgImageRenderer $ogImageRenderer,
         private readonly CrisisIncidentResolver $crisisIncidentResolver,
         private readonly CrisisOgImageService $crisisOgImageService,
-    ) {}
+    ) {
+    }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */

@@ -16,7 +16,8 @@ final class MessageDigestCommand
         private readonly bool $mailConfigured,
         private readonly array $config,
         private readonly string $mailFromAddress,
-    ) {}
+    ) {
+    }
 
     public function execute(): void
     {

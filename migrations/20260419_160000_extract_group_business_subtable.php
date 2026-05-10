@@ -29,7 +29,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
  *
  * Requires SQLite >= 3.35.0 for ALTER TABLE DROP COLUMN.
  */
-return new class extends Migration {
+return new class () extends Migration {
     /** @var list<string> JSON keys removed from base `_data` by this migration. */
     private const DATA_KEYS_MOVED_TO_SUBTABLE = [
         'slug',

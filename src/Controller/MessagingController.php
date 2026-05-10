@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
-use Waaseyaa\Access\AccountInterface;
 use App\Support\JsonResponseTrait;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
+use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 use Waaseyaa\Mercure\MercurePublisher;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class MessagingController
 {
@@ -21,7 +21,8 @@ final class MessagingController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly ?MercurePublisher $mercurePublisher = null,
-    ) {}
+    ) {
+    }
 
     public function editMessage(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
@@ -202,7 +203,7 @@ final class MessagingController
             $threads[$threadId] = $thread;
         }
 
-        usort($threads, static fn(EntityInterface $a, EntityInterface $b): int => ((int) $b->get('last_message_at')) <=> ((int) $a->get('last_message_at')));
+        usort($threads, static fn (EntityInterface $a, EntityInterface $b): int => ((int) $b->get('last_message_at')) <=> ((int) $a->get('last_message_at')));
 
         $limit = max(1, min(100, (int) ($query['limit'] ?? 50)));
         $offset = max(0, (int) ($query['offset'] ?? 0));
@@ -337,7 +338,7 @@ final class MessagingController
         }
 
         $participants = $this->participantsForThread($threadId);
-        $participantPayload = array_map(static fn(EntityInterface $participant): array => [
+        $participantPayload = array_map(static fn (EntityInterface $participant): array => [
             'user_id' => (int) $participant->get('user_id'),
             'role' => (string) $participant->get('role'),
             'joined_at' => (int) $participant->get('joined_at'),
@@ -650,7 +651,7 @@ final class MessagingController
         }
 
         // Sort by recency and limit.
-        usort($allMatches, static fn(array $a, array $b): int => $b['created_at'] <=> $a['created_at']);
+        usort($allMatches, static fn (array $a, array $b): int => $b['created_at'] <=> $a['created_at']);
         $allMatches = array_slice($allMatches, 0, 30);
 
         // Group by thread.

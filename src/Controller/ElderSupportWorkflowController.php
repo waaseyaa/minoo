@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
+use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
 use Waaseyaa\SSR\Flash\Flash;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
-use Waaseyaa\Access\AccountInterface;
-use Waaseyaa\Entity\EntityTypeManager;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 final class ElderSupportWorkflowController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function assignVolunteer(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
@@ -217,8 +218,7 @@ final class ElderSupportWorkflowController
         string $fromStatus,
         string $toStatus,
         string $message,
-    ): Response
-    {
+    ): Response {
         $esrid = (int) ($params['esrid'] ?? 0);
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
         $entity = $esrid > 0 ? $storage->load($esrid) : null;

@@ -15,7 +15,8 @@ final readonly class WordPartFields
         public int $status,
         public int $createdAt,
         public int $updatedAt,
-    ) {}
+    ) {
+    }
 
     /** @return array<string, mixed> */
     public function toArray(): array

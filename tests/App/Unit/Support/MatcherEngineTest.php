@@ -173,7 +173,7 @@ final class MatcherEngineTest extends TestCase
         ];
 
         $pairs = MatcherEngine::selectPairs($entries, 4);
-        $definitions = array_map(fn($p) => $p['english'], $pairs);
+        $definitions = array_map(fn ($p) => $p['english'], $pairs);
         $this->assertSame(count($definitions), count(array_unique($definitions)));
     }
 }

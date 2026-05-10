@@ -56,7 +56,7 @@ final class EventTest extends TestCase
         $provider->register();
 
         $types = $provider->getEntityTypes();
-        $eventType = array_values(array_filter($types, fn($t) => $t->id() === 'event'))[0];
+        $eventType = array_values(array_filter($types, fn ($t) => $t->id() === 'event'))[0];
         $fields = $eventType->getFieldDefinitions();
 
         $this->assertArrayHasKey('community_id', $fields);

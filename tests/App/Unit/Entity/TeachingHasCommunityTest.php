@@ -8,6 +8,7 @@ use App\Entity\Teaching;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 #[CoversClass(Teaching::class)]
 final class TeachingHasCommunityTest extends TestCase
 {

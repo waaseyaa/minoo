@@ -39,7 +39,7 @@ final class DiversityRerankerTest extends TestCase
 
         $this->assertSame(
             ['1', '2', '3', '4', '5'],
-            array_map(fn(FeedItem $item) => $item->id, $result),
+            array_map(fn (FeedItem $item) => $item->id, $result),
         );
     }
 
@@ -57,7 +57,7 @@ final class DiversityRerankerTest extends TestCase
         $result = $this->reranker->rerank($items);
 
         // Item 4 (event) should be swapped forward to break the run
-        $ids = array_map(fn(FeedItem $item) => $item->id, $result);
+        $ids = array_map(fn (FeedItem $item) => $item->id, $result);
         $this->assertSame('4', $ids[2], 'Event should be swapped into position 2 to break type run');
         $this->assertSame('3', $ids[3], 'Displaced post should move to position 3');
     }
@@ -98,7 +98,7 @@ final class DiversityRerankerTest extends TestCase
         // Order unchanged since no different item to swap
         $this->assertSame(
             ['1', '2', '3', '4', '5'],
-            array_map(fn(FeedItem $item) => $item->id, $result),
+            array_map(fn (FeedItem $item) => $item->id, $result),
         );
     }
 
@@ -116,7 +116,7 @@ final class DiversityRerankerTest extends TestCase
         $result = $this->reranker->rerank($items);
 
         // Item 4 (different community) should be swapped forward
-        $ids = array_map(fn(FeedItem $item) => $item->id, $result);
+        $ids = array_map(fn (FeedItem $item) => $item->id, $result);
         $this->assertSame('4', $ids[2], 'Item from different community should be swapped into position 2');
     }
 
@@ -134,7 +134,7 @@ final class DiversityRerankerTest extends TestCase
 
         $result = $this->reranker->rerank($items);
 
-        $ids = array_map(fn(FeedItem $item) => $item->id, $result);
+        $ids = array_map(fn (FeedItem $item) => $item->id, $result);
         // Post should be pulled into slot 3 (the guarantee position)
         $this->assertSame('4', $ids[2], 'Post should be promoted into position 2 (third slot)');
     }
@@ -152,7 +152,7 @@ final class DiversityRerankerTest extends TestCase
 
         $result = $this->reranker->rerank($items);
 
-        $ids = array_map(fn(FeedItem $item) => $item->id, $result);
+        $ids = array_map(fn (FeedItem $item) => $item->id, $result);
         $this->assertSame('2', $ids[1], 'Post stays in place — already in top 3');
     }
 
@@ -170,7 +170,7 @@ final class DiversityRerankerTest extends TestCase
 
         $result = $this->reranker->rerank($items);
 
-        $ids = array_map(fn(FeedItem $item) => $item->id, $result);
+        $ids = array_map(fn (FeedItem $item) => $item->id, $result);
         // Synthetic stays at 0, post pulled into slot 3 (third non-synthetic)
         $this->assertSame('welcome:0', $ids[0]);
         $this->assertSame('4', $ids[3], 'Post promoted to third non-synthetic slot');

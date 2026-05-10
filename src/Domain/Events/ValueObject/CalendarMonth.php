@@ -19,7 +19,8 @@ final class CalendarMonth
         public readonly array $weeks,
         public readonly string $prevMonth,
         public readonly string $nextMonth,
-    ) {}
+    ) {
+    }
 
     /**
      * @param list<ContentEntityBase> $events
@@ -91,10 +92,10 @@ final class CalendarMonth
             $weeks[] = $week;
         }
 
-        $prevYear  = $month === 1  ? $year - 1 : $year;
-        $prevMonth = $month === 1  ? 12        : $month - 1;
+        $prevYear  = $month === 1 ? $year - 1 : $year;
+        $prevMonth = $month === 1 ? 12 : $month - 1;
         $nextYear  = $month === 12 ? $year + 1 : $year;
-        $nextMonth = $month === 12 ? 1         : $month + 1;
+        $nextMonth = $month === 12 ? 1 : $month + 1;
 
         return new self(
             year:      $year,

@@ -12,7 +12,9 @@ final class FixtureLoader
         'events' => ['title', 'slug', 'type', 'community', 'starts_at'],
     ];
 
-    public function __construct(private readonly string $contentDir) {}
+    public function __construct(private readonly string $contentDir)
+    {
+    }
 
     /** @return list<array<string, mixed>> */
     public function load(string $fixtureType): array

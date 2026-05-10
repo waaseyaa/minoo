@@ -62,7 +62,7 @@ final class FeedAssemblerTest extends TestCase
         $ctx = FeedContext::defaults();
         $response = $this->assembler->assemble($ctx);
 
-        $types = array_map(fn($item) => $item->type, $response->items);
+        $types = array_map(fn ($item) => $item->type, $response->items);
 
         // Communities synthetic is always injected; entities interleaved by typeSlot
         $this->assertContains('communities', $types);
@@ -89,8 +89,8 @@ final class FeedAssemblerTest extends TestCase
         $response = $this->assembler->assemble($ctx);
 
         $entityTypes = array_filter(
-            array_map(fn($item) => $item->type, $response->items),
-            fn($t) => !in_array($t, ['communities', 'welcome'], true),
+            array_map(fn ($item) => $item->type, $response->items),
+            fn ($t) => !in_array($t, ['communities', 'welcome'], true),
         );
 
         foreach ($entityTypes as $t) {
@@ -112,7 +112,7 @@ final class FeedAssemblerTest extends TestCase
         $ctx = new FeedContext(isFirstVisit: true);
         $response = $this->assembler->assemble($ctx);
 
-        $types = array_map(fn($item) => $item->type, $response->items);
+        $types = array_map(fn ($item) => $item->type, $response->items);
         $this->assertContains('welcome', $types);
     }
 
@@ -148,8 +148,8 @@ final class FeedAssemblerTest extends TestCase
         $page2 = $this->assembler->assemble($ctx2);
 
         // No ID overlap between pages (excluding synthetic items)
-        $page1Ids = array_map(fn($i) => $i->id, array_filter($page1->items, fn($i) => !$i->isSynthetic()));
-        $page2Ids = array_map(fn($i) => $i->id, array_filter($page2->items, fn($i) => !$i->isSynthetic()));
+        $page1Ids = array_map(fn ($i) => $i->id, array_filter($page1->items, fn ($i) => !$i->isSynthetic()));
+        $page2Ids = array_map(fn ($i) => $i->id, array_filter($page2->items, fn ($i) => !$i->isSynthetic()));
         $this->assertEmpty(array_intersect($page1Ids, $page2Ids));
     }
 
@@ -171,16 +171,16 @@ final class FeedAssemblerTest extends TestCase
         $response = $this->assembler->assemble($ctx);
 
         // Communities card (weight 500) sorts before regular items (weight 0)
-        $ids = array_map(fn($item) => $item->id, $response->items);
+        $ids = array_map(fn ($item) => $item->id, $response->items);
         $commIdx = array_search('communities:global', $ids, true);
-        $entityIds = array_filter($ids, fn($id) => !str_starts_with($id, 'communities:'));
+        $entityIds = array_filter($ids, fn ($id) => !str_starts_with($id, 'communities:'));
 
         $this->assertSame(0, $commIdx, 'Communities card should be first (weight 500)');
         $this->assertNotEmpty($entityIds);
 
         // Run twice — same order
         $response2 = $this->assembler->assemble($ctx);
-        $ids2 = array_map(fn($item) => $item->id, $response2->items);
+        $ids2 = array_map(fn ($item) => $item->id, $response2->items);
         $this->assertSame($ids, $ids2, 'Sort must be deterministic across runs');
     }
 }

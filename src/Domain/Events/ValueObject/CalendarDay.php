@@ -17,5 +17,6 @@ final class CalendarDay
         public readonly bool $inMonth,
         public readonly bool $isToday,
         public readonly array $events,
-    ) {}
+    ) {
+    }
 }

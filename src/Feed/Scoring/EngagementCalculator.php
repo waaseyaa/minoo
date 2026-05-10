@@ -12,7 +12,8 @@ final class EngagementCalculator
         private readonly EntityTypeManager $entityTypeManager,
         private readonly float $reactionWeight = 1.0,
         private readonly float $commentWeight = 3.0,
-    ) {}
+    ) {
+    }
 
     /**
      * Batch-compute engagement weight + raw counts for feed items.

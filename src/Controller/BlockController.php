@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
-use Waaseyaa\Access\AccountInterface;
 use App\Support\JsonResponseTrait;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
+use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class BlockController
 {
     use JsonResponseTrait;
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
@@ -30,7 +31,7 @@ final class BlockController
 
         $blocks = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
-        $payload = array_map(static fn($block): array => [
+        $payload = array_map(static fn ($block): array => [
             'id' => (int) $block->id(),
             'blocker_id' => (int) $block->get('blocker_id'),
             'blocked_id' => (int) $block->get('blocked_id'),

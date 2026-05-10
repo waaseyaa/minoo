@@ -14,7 +14,8 @@ final class FeedScorer
         private readonly DecayCalculator $decay,
         private readonly DiversityReranker $reranker,
         private readonly float $featuredBoost = 100.0,
-    ) {}
+    ) {
+    }
 
     /**
      * Score, sort, and diversify feed items.
@@ -114,7 +115,7 @@ final class FeedScorer
         }
 
         // 4. Sort by score descending
-        usort($scored, static fn(FeedItem $a, FeedItem $b) => ($b->score ?? 0.0) <=> ($a->score ?? 0.0));
+        usort($scored, static fn (FeedItem $a, FeedItem $b) => ($b->score ?? 0.0) <=> ($a->score ?? 0.0));
 
         // 5. Apply diversity reranking
         $scored = $this->reranker->rerank($scored);

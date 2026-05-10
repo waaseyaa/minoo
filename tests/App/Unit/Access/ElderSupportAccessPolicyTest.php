@@ -6,12 +6,10 @@ namespace App\Tests\Unit\Access;
 
 use App\Access\ElderSupportAccessPolicy;
 use App\Entity\ElderSupportRequest;
-use App\Entity\Volunteer;
-use Waaseyaa\Access\AccessResult;
-use Waaseyaa\Access\AccountInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Access\AccountInterface;
 
 #[CoversClass(ElderSupportAccessPolicy::class)]
 final class ElderSupportAccessPolicyTest extends TestCase
@@ -134,45 +132,92 @@ final class ElderSupportAccessPolicyTest extends TestCase
 
     private function createAnonymousAccount(): AccountInterface
     {
-        return new class implements AccountInterface {
-            public function id(): int { return 0; }
+        return new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 0;
+            }
             public function hasPermission(string $permission): bool
             {
                 return $permission === 'access content';
             }
-            public function getRoles(): array { return ['anonymous']; }
-            public function isAuthenticated(): bool { return false; }
+            public function getRoles(): array
+            {
+                return ['anonymous'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return false;
+            }
         };
     }
 
     private function createAdminAccount(): AccountInterface
     {
-        return new class implements AccountInterface {
-            public function id(): int { return 1; }
-            public function hasPermission(string $permission): bool { return true; }
-            public function getRoles(): array { return ['administrator']; }
-            public function isAuthenticated(): bool { return true; }
+        return new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 1;
+            }
+            public function hasPermission(string $permission): bool
+            {
+                return true;
+            }
+            public function getRoles(): array
+            {
+                return ['administrator'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
     }
 
     private function createCoordinatorAccount(): AccountInterface
     {
-        return new class implements AccountInterface {
-            public function id(): int { return 10; }
-            public function hasPermission(string $permission): bool { return false; }
-            public function getRoles(): array { return ['elder_coordinator']; }
-            public function isAuthenticated(): bool { return true; }
+        return new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 10;
+            }
+            public function hasPermission(string $permission): bool
+            {
+                return false;
+            }
+            public function getRoles(): array
+            {
+                return ['elder_coordinator'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
     }
 
     private function createVolunteerAccount(int $accountId): AccountInterface
     {
-        return new class($accountId) implements AccountInterface {
-            public function __construct(private readonly int $accountId) {}
-            public function id(): int { return $this->accountId; }
-            public function hasPermission(string $permission): bool { return false; }
-            public function getRoles(): array { return ['volunteer']; }
-            public function isAuthenticated(): bool { return true; }
+        return new class ($accountId) implements AccountInterface {
+            public function __construct(private readonly int $accountId)
+            {
+            }
+            public function id(): int
+            {
+                return $this->accountId;
+            }
+            public function hasPermission(string $permission): bool
+            {
+                return false;
+            }
+            public function getRoles(): array
+            {
+                return ['volunteer'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
     }
 }

@@ -51,6 +51,7 @@
         "waaseyaa/workflows": "^0.1.0-alpha.175"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.95",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.5",
@@ -112,9 +113,11 @@
             "@php bin/install-mcp-npm.php"
         ],
         "post-create-project-cmd": [
-            "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync bin/waaseyaa-audit-site",
+            "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync bin/waaseyaa-audit-site scripts/lefthook-prepare.sh",
             "php bin/post-create-setup.php"
-        ]
+        ],
+        "cs-fixer": "php-cs-fixer fix --dry-run --diff",
+        "cs-fixer:fix": "php-cs-fixer fix"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

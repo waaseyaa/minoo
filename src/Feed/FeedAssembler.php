@@ -14,7 +14,8 @@ final class FeedAssembler implements FeedAssemblerInterface
         private readonly FeedItemFactory $factory,
         private readonly ?EngagementCounter $engagementCounter = null,
         private readonly ?FeedScorer $scorer = null,
-    ) {}
+    ) {
+    }
 
     public function assemble(FeedContext $ctx): FeedResponse
     {
@@ -87,10 +88,12 @@ final class FeedAssembler implements FeedAssemblerInterface
         }
 
         // 3. Inject synthetic items
-        $communityData = array_map(fn($c) => [
+        $communityData = array_map(
+            fn ($c) => [
             'name' => $c->get('name') ?? '',
             'slug' => $c->get('slug') ?? '',
-        ], $ctx->hasLocation()
+        ],
+            $ctx->hasLocation()
             ? array_slice($this->sortCommunitiesByDistance($communities, $ctx->latitude, $ctx->longitude), 0, 6)
             : array_slice($communities, 0, 6)
         );
@@ -129,7 +132,7 @@ final class FeedAssembler implements FeedAssemblerInterface
             }
         }
         if (!$scored) {
-            usort($items, fn(FeedItem $a, FeedItem $b) => strcmp($a->sortKey, $b->sortKey));
+            usort($items, fn (FeedItem $a, FeedItem $b) => strcmp($a->sortKey, $b->sortKey));
         }
 
         // 6. Paginate
@@ -227,7 +230,7 @@ final class FeedAssembler implements FeedAssemblerInterface
     private function buildUserMap(array $posts): array
     {
         $userIds = array_unique(array_filter(array_map(
-            fn($p) => $p->get('user_id') !== null ? (int) $p->get('user_id') : null,
+            fn ($p) => $p->get('user_id') !== null ? (int) $p->get('user_id') : null,
             $posts,
         )));
 
@@ -346,7 +349,7 @@ final class FeedAssembler implements FeedAssemblerInterface
      */
     private function attachEngagementCounts(array $items): array
     {
-        $ids = array_map(fn(FeedItem $item) => ['type' => $item->type, 'id' => (int) $item->id], $items);
+        $ids = array_map(fn (FeedItem $item) => ['type' => $item->type, 'id' => (int) $item->id], $items);
         $counts = $this->engagementCounter->getCounts($ids);
 
         return array_map(function (FeedItem $item) use ($counts) {

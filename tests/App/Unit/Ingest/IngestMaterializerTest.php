@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Ingest;
 
 use App\Entity\IngestLog;
 use App\Ingestion\IngestMaterializer;
-use App\Ingestion\MaterializationContext;
 use App\Ingestion\MaterializationResult;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

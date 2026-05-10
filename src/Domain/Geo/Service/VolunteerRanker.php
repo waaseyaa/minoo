@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace App\Domain\Geo\Service;
 
 use App\Domain\Geo\ValueObject\RankedVolunteer;
-use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Geo\GeoDistance;
 
 final class VolunteerRanker
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     /**
      * Rank volunteers by distance from the request's community.

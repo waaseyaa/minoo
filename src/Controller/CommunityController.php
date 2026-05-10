@@ -10,21 +10,22 @@ use App\Support\CrisisResolveContext;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Geo\GeoDistance;
-
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
+
 final class CommunityController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly ?NorthCloudCommunityDictionaryClientInterface $northCloudClient = null,
-    ) {}
+    ) {
+    }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */

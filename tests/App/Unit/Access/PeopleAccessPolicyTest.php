@@ -6,10 +6,10 @@ namespace App\Tests\Unit\Access;
 
 use App\Access\PeopleAccessPolicy;
 use App\Entity\ResourcePerson;
-use Waaseyaa\Access\AccountInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Access\AccountInterface;
 
 #[CoversClass(PeopleAccessPolicy::class)]
 final class PeopleAccessPolicyTest extends TestCase
@@ -30,11 +30,23 @@ final class PeopleAccessPolicyTest extends TestCase
         $policy = new PeopleAccessPolicy();
         $person = new ResourcePerson(['name' => 'Mary Trudeau', 'slug' => 'mary-trudeau', 'status' => 1]);
 
-        $account = new class implements AccountInterface {
-            public function id(): int { return 0; }
-            public function hasPermission(string $p): bool { return $p === 'access content'; }
-            public function getRoles(): array { return ['anonymous']; }
-            public function isAuthenticated(): bool { return false; }
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 0;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return $p === 'access content';
+            }
+            public function getRoles(): array
+            {
+                return ['anonymous'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return false;
+            }
         };
 
         $result = $policy->access($person, 'view', $account);
@@ -46,11 +58,23 @@ final class PeopleAccessPolicyTest extends TestCase
     {
         $policy = new PeopleAccessPolicy();
 
-        $account = new class implements AccountInterface {
-            public function id(): int { return 0; }
-            public function hasPermission(string $p): bool { return $p === 'access content'; }
-            public function getRoles(): array { return ['anonymous']; }
-            public function isAuthenticated(): bool { return false; }
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 0;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return $p === 'access content';
+            }
+            public function getRoles(): array
+            {
+                return ['anonymous'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return false;
+            }
         };
 
         $result = $policy->createAccess('resource_person', '', $account);

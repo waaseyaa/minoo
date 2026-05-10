@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -26,9 +27,9 @@ if ($edition === null) {
 
 $items = array_filter(
     $etm->getStorage('newsletter_item')->loadMultiple(),
-    fn($i) => (int) $i->get('edition_id') === $editionId && $i->get('included'),
+    fn ($i) => (int) $i->get('edition_id') === $editionId && $i->get('included'),
 );
-usort($items, fn($a, $b) => (int) $a->get('position') - (int) $b->get('position'));
+usort($items, fn ($a, $b) => (int) $a->get('position') - (int) $b->get('position'));
 
 $bySection = [];
 foreach ($items as $item) {

@@ -10,7 +10,8 @@ final class ChatRateLimiter
 
     public function __construct(
         private readonly int $maxRequestsPerMinute,
-    ) {}
+    ) {
+    }
 
     public function isAllowed(): bool
     {
@@ -39,7 +40,7 @@ final class ChatRateLimiter
         $cutoff = time() - 60;
         $timestamps = $_SESSION[self::SESSION_KEY] ?? [];
         $_SESSION[self::SESSION_KEY] = array_values(
-            array_filter($timestamps, static fn(int $t): bool => $t > $cutoff),
+            array_filter($timestamps, static fn (int $t): bool => $t > $cutoff),
         );
     }
 }

@@ -8,8 +8,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
 /**
  * Create the message_thread table for user messaging.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         if ($schema->hasTable('message_thread')) {

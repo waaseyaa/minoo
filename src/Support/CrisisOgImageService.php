@@ -26,7 +26,8 @@ final class CrisisOgImageService
         private readonly TranslatorInterface $translator,
         private readonly CrisisIncidentResolver $crisisIncidentResolver,
         private readonly LoggerInterface $logger,
-    ) {}
+    ) {
+    }
 
     public function absolutePublicFilePath(string $webPath): string
     {

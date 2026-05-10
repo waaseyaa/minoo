@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Events\ValueObject;
 
-use App\Domain\Events\ValueObject\CalendarMonth;
 use Waaseyaa\Entity\ContentEntityBase;
 
 final class EventFeedResult
@@ -32,7 +31,8 @@ final class EventFeedResult
         public readonly EventFilters $activeFilters,
         public readonly array $availableFilters,
         public readonly ?Pagination $pagination,
-    ) {}
+    ) {
+    }
 
     public function hasAnySectionContent(): bool
     {

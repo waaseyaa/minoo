@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Support\LayoutTwigContext;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\SSR\Flash\Flash;
 
 final class VolunteerController
@@ -20,7 +20,8 @@ final class VolunteerController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
-    ) {}
+    ) {
+    }
 
     private const int MAX_TRAVEL_FLOOR = 1;
     private const int MAX_TRAVEL_CEILING = 1000;

@@ -15,7 +15,8 @@ final class CrisisOgAssetsHandler
     public function __construct(
         private readonly CrisisIncidentResolver $crisisIncidentResolver,
         private readonly CrisisOgImageService $crisisOgImageService,
-    ) {}
+    ) {
+    }
 
     public function execute(CliIO $io): int
     {

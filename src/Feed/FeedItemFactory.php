@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Feed;
 
-use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\Entity\ContentEntityBase;
+use Waaseyaa\Geo\GeoDistance;
 
 final class FeedItemFactory
 {
@@ -346,7 +346,7 @@ final class FeedItemFactory
             payload: array_filter([
                 'images' => is_array($images) && $images !== [] ? $images : null,
                 'authorId' => $entity->get('user_id') !== null ? (int) $entity->get('user_id') : null,
-            ], fn($v) => $v !== null),
+            ], fn ($v) => $v !== null),
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),

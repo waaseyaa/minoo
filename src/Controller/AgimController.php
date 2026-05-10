@@ -6,15 +6,15 @@ namespace App\Controller;
 
 use App\Support\GameStatsCalculator;
 use App\Support\LayoutTwigContext;
-use Waaseyaa\Entity\ContentEntityBase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
+use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class AgimController
 {
@@ -63,7 +63,8 @@ final class AgimController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly GateInterface $gate,
-    ) {}
+    ) {
+    }
 
     private function getEntityTypeManager(): EntityTypeManager
     {
@@ -184,7 +185,7 @@ final class AgimController
         $completed = $guesses['completed'] ?? [];
 
         // Remove from queue regardless of correctness
-        $queue = array_values(array_filter($queue, fn(int $n) => $n !== $numeral));
+        $queue = array_values(array_filter($queue, fn (int $n) => $n !== $numeral));
 
         if ($correct) {
             $completed[] = $numeral;
@@ -242,7 +243,7 @@ final class AgimController
         $numerals = range($first, $last);
 
         // Batch-load dictionary entries
-        $deids = array_map(fn(int $n) => self::NUMBERS[$n]['deid'], $numerals);
+        $deids = array_map(fn (int $n) => self::NUMBERS[$n]['deid'], $numerals);
         $entries = $this->entityTypeManager->getStorage('dictionary_entry')->loadMultiple($deids);
 
         $teachings = [];

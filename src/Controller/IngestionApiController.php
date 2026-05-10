@@ -8,20 +8,21 @@ use App\Ingestion\IngestImporter;
 use App\Ingestion\IngestMaterializer;
 use App\Ingestion\IngestStatus;
 use App\Ingestion\PayloadValidator;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
-use Waaseyaa\Access\AccountInterface;
 use App\Support\JsonResponseTrait;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
+use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class IngestionApiController
 {
     use JsonResponseTrait;
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function status(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {

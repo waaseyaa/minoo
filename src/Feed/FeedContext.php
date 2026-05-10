@@ -19,7 +19,8 @@ final readonly class FeedContext
         public bool $isFirstVisit = false,
         public bool $isAuthenticated = false,
         public ?int $userId = null,
-    ) {}
+    ) {
+    }
 
     public static function defaults(): self
     {

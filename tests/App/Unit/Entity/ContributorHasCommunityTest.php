@@ -8,6 +8,7 @@ use App\Entity\Contributor;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 #[CoversClass(Contributor::class)]
 final class ContributorHasCommunityTest extends TestCase
 {

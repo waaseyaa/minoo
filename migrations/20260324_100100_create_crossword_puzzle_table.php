@@ -8,8 +8,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
 /**
  * Create the crossword_puzzle config entity table.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         if ($schema->hasTable('crossword_puzzle')) {

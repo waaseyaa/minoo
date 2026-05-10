@@ -10,7 +10,8 @@ final class Pagination
         public readonly int $page,
         public readonly int $perPage,
         public readonly int $total,
-    ) {}
+    ) {
+    }
 
     public function totalPages(): int
     {

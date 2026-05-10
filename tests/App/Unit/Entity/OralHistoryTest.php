@@ -76,7 +76,7 @@ final class OralHistoryTest extends TestCase
         $provider->register();
 
         $types = $provider->getEntityTypes();
-        $ohType = array_values(array_filter($types, fn($t) => $t->id() === 'oral_history'))[0];
+        $ohType = array_values(array_filter($types, fn ($t) => $t->id() === 'oral_history'))[0];
         $fields = $ohType->getFieldDefinitions();
 
         $this->assertArrayHasKey('community_id', $fields);

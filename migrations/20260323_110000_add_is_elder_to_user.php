@@ -8,8 +8,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
 /**
  * Add is_elder column to user table for Elder self-identification.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         $schema->getConnection()->executeStatement(

@@ -7,7 +7,6 @@ namespace App\Tests\Integration;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
 

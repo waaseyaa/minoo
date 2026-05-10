@@ -268,25 +268,48 @@ final class ElderSupportWorkflowControllerTest extends TestCase
 
     private function createCoordinatorAccount(): AccountInterface
     {
-        return new class implements AccountInterface {
-            public function id(): int { return 1; }
-            public function hasPermission(string $permission): bool { return true; }
-            public function getRoles(): array { return ['elder_coordinator']; }
-            public function isAuthenticated(): bool { return true; }
+        return new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 1;
+            }
+            public function hasPermission(string $permission): bool
+            {
+                return true;
+            }
+            public function getRoles(): array
+            {
+                return ['elder_coordinator'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
     }
 
     private function createVolunteerAccount(int $uid): AccountInterface
     {
-        return new class($uid) implements AccountInterface {
-            public function __construct(private readonly int $uid) {}
-            public function id(): int { return $this->uid; }
+        return new class ($uid) implements AccountInterface {
+            public function __construct(private readonly int $uid)
+            {
+            }
+            public function id(): int
+            {
+                return $this->uid;
+            }
             public function hasPermission(string $permission): bool
             {
                 return in_array($permission, ['view own assignments', 'update assignment status'], true);
             }
-            public function getRoles(): array { return ['volunteer']; }
-            public function isAuthenticated(): bool { return true; }
+            public function getRoles(): array
+            {
+                return ['volunteer'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
     }
 }

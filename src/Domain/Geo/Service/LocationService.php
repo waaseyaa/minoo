@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Geo\Service;
 
-use GeoIp2\Database\Reader;
 use App\Domain\Geo\ValueObject\LocationContext;
+use GeoIp2\Database\Reader;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;

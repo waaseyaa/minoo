@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Support\CrosswordEngine;
-use App\Support\LayoutTwigContext;
 use App\Support\GameStatsCalculator;
+use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class CrosswordController
 {
@@ -24,7 +24,8 @@ final class CrosswordController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly GateInterface $gate,
-    ) {}
+    ) {
+    }
 
     private function getEntityTypeManager(): EntityTypeManager
     {
@@ -87,7 +88,7 @@ final class CrosswordController
             ->execute();
 
         // Exclude daily puzzles and filter for non-themed practice grids
-        $practiceIds = array_filter($ids, fn($id) => !str_starts_with((string) $id, 'daily-'));
+        $practiceIds = array_filter($ids, fn ($id) => !str_starts_with((string) $id, 'daily-'));
 
         if ($practiceIds === []) {
             // Fallback: use any puzzle at this tier
@@ -565,7 +566,7 @@ final class CrosswordController
      */
     private function buildClientPlacements(array $words): array
     {
-        return array_map(fn($w) => [
+        return array_map(fn ($w) => [
             'row' => $w['row'],
             'col' => $w['col'],
             'direction' => $w['direction'],

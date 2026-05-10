@@ -21,7 +21,8 @@ final readonly class DictionaryEntryFields
         public int $updatedAt,
         public string $attributionSource = '',
         public string $attributionUrl = '',
-    ) {}
+    ) {
+    }
 
     /** @return array<string, mixed> */
     public function toArray(): array

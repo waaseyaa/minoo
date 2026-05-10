@@ -8,12 +8,12 @@ use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Entity\DictionaryEntry;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class LanguageController
 {
@@ -23,7 +23,8 @@ final class LanguageController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly NorthCloudCommunityDictionaryClientInterface $northCloudClient,
-    ) {}
+    ) {
+    }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */

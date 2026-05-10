@@ -95,7 +95,7 @@ final class GraphQlEndpointTest extends TestCase
         ]), []);
         self::assertSame(200, $result['statusCode']);
         $fields = $result['body']['data']['__type']['fields'];
-        $deletePost = array_values(array_filter($fields, fn($f) => $f['name'] === 'deletePost'));
+        $deletePost = array_values(array_filter($fields, fn ($f) => $f['name'] === 'deletePost'));
         self::assertNotEmpty($deletePost, 'deletePost mutation should exist');
         self::assertSame('id', $deletePost[0]['args'][0]['name']);
     }
@@ -108,7 +108,7 @@ final class GraphQlEndpointTest extends TestCase
         ]), []);
         self::assertSame(200, $result['statusCode']);
         $fields = $result['body']['data']['__type']['fields'];
-        $updatePost = array_values(array_filter($fields, fn($f) => $f['name'] === 'updatePost'));
+        $updatePost = array_values(array_filter($fields, fn ($f) => $f['name'] === 'updatePost'));
         self::assertNotEmpty($updatePost, 'updatePost mutation should exist');
         $argNames = array_column($updatePost[0]['args'], 'name');
         self::assertContains('id', $argNames);

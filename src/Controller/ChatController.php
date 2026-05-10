@@ -9,9 +9,9 @@ use App\Chat\ChatRateLimiter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
-
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
+
 final class ChatController
 {
     /** @param array<string, mixed> $params */

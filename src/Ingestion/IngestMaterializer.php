@@ -14,7 +14,8 @@ final class IngestMaterializer
 {
     public function __construct(
         private readonly EntityTypeManagerInterface $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function materialize(IngestLog $log, bool $dryRun = false): MaterializationResult
     {

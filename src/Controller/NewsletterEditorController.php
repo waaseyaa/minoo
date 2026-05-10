@@ -10,9 +10,6 @@ use App\Domain\Newsletter\Service\EditionLifecycle;
 use App\Domain\Newsletter\Service\NewsletterAssembler;
 use App\Domain\Newsletter\Service\NewsletterDispatcher;
 use App\Domain\Newsletter\Service\NewsletterRenderer;
-use Waaseyaa\SSR\Attribute\MapQuery;
-use Waaseyaa\SSR\Attribute\MapRoute;
-use Waaseyaa\SSR\Flash\Flash;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +17,9 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
+use Waaseyaa\SSR\Flash\Flash;
 
 final class NewsletterEditorController
 {

@@ -14,7 +14,8 @@ final class MailTestHandler
         private readonly MailerInterface $mailer,
         private readonly bool $mailConfigured,
         private readonly string $mailFromAddress,
-    ) {}
+    ) {
+    }
 
     public function execute(CliIO $io): int
     {

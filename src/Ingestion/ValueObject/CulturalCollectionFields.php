@@ -15,7 +15,8 @@ final readonly class CulturalCollectionFields
         public int $status,
         public int $createdAt,
         public int $updatedAt,
-    ) {}
+    ) {
+    }
 
     /** @return array<string, mixed> */
     public function toArray(): array

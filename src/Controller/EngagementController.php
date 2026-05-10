@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Support\JsonResponseTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Access\AccountInterface;
-use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Media\UploadHandler;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class EngagementController
 {
@@ -27,7 +27,8 @@ final class EngagementController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly UploadHandler $uploadHandler,
-    ) {}
+    ) {
+    }
 
     public function react(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
@@ -158,7 +159,7 @@ final class EngagementController
 
         $comments = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
 
-        $items = array_map(fn($c) => [
+        $items = array_map(fn ($c) => [
             'id' => $c->id(),
             'body' => $c->get('body'),
             'user_id' => $c->get('user_id'),

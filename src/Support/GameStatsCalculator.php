@@ -50,10 +50,10 @@ final class GameStatsCalculator
         $sessions = array_values($storage->loadMultiple($allIds));
 
         // Sort by created_at DESC for streak calculation
-        usort($sessions, fn($a, $b) => (int) $b->get('created_at') - (int) $a->get('created_at'));
+        usort($sessions, fn ($a, $b) => (int) $b->get('created_at') - (int) $a->get('created_at'));
 
-        $completed = array_filter($sessions, fn($s) => $s->get('status') !== 'in_progress');
-        $wins = array_filter($completed, fn($s) => in_array($s->get('status'), $winStatuses, true));
+        $completed = array_filter($sessions, fn ($s) => $s->get('status') !== 'in_progress');
+        $wins = array_filter($completed, fn ($s) => in_array($s->get('status'), $winStatuses, true));
         $gamesPlayed = count($completed);
         $winRate = $gamesPlayed > 0 ? round(count($wins) / $gamesPlayed, 2) : 0.0;
 

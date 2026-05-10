@@ -8,17 +8,16 @@ use App\Controller\CoordinatorDashboardController;
 use App\Entity\Community;
 use App\Entity\ElderSupportRequest;
 use App\Entity\Volunteer;
-use App\Domain\Geo\Service\VolunteerRanker;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
-use Twig\Environment;
-use Twig\Loader\ArrayLoader;
 
 #[CoversClass(CoordinatorDashboardController::class)]
 final class CoordinatorDashboardControllerTest extends TestCase

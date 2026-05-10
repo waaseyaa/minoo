@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Support\JourneyEngine;
-use App\Support\LayoutTwigContext;
 use App\Support\GameStatsCalculator;
+use App\Support\JourneyEngine;
+use App\Support\JsonResponseTrait;
+use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
-use App\Support\JsonResponseTrait;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * JourneyController — Routes for Minoo's Journey hidden-object game.
@@ -37,7 +37,8 @@ class JourneyController
         private readonly Environment $twig,
         private readonly EntityTypeManager $entityTypeManager,
         private readonly GateInterface $gate,
-    ) {}
+    ) {
+    }
 
     private function getEntityTypeManager(): EntityTypeManager
     {

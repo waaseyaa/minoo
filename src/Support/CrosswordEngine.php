@@ -20,11 +20,11 @@ final class CrosswordEngine
             return null;
         }
 
-        usort($words, fn(string $a, string $b) => mb_strlen($b) - mb_strlen($a));
+        usort($words, fn (string $a, string $b) => mb_strlen($b) - mb_strlen($a));
 
         $words = array_values(array_filter(
             $words,
-            fn(string $w) => mb_strlen($w) <= $gridSize && mb_strlen($w) >= 3,
+            fn (string $w) => mb_strlen($w) <= $gridSize && mb_strlen($w) >= 3,
         ));
 
         if (count($words) < $minWords) {

@@ -47,7 +47,7 @@ $inlineSlugs = array_keys($inlineSections);
 // Clear existing inline items for this edition (source_type = 'inline').
 $existing = array_filter(
     $itemStorage->loadMultiple(),
-    static fn($i) => (int) $i->get('edition_id') === $editionId
+    static fn ($i) => (int) $i->get('edition_id') === $editionId
         && (string) $i->get('source_type') === 'inline',
 );
 if ($existing !== []) {
@@ -58,7 +58,7 @@ if ($existing !== []) {
 // Determine starting position after entity-driven items.
 $entityItems = array_filter(
     $itemStorage->loadMultiple(),
-    static fn($i) => (int) $i->get('edition_id') === $editionId
+    static fn ($i) => (int) $i->get('edition_id') === $editionId
         && (string) $i->get('source_type') !== 'inline',
 );
 $maxPosition = 0;

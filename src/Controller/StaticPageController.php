@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
-
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
+
 /**
  * Minimal render-only controller for pages that have no domain logic.
  *
@@ -24,7 +24,8 @@ final class StaticPageController
 {
     public function __construct(
         private readonly Environment $twig,
-    ) {}
+    ) {
+    }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function about(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response

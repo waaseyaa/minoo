@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller;
 
 use App\Controller\AuthController;
-use Waaseyaa\Auth\Config\AuthConfig;
-use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
-use Waaseyaa\User\AuthMailer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Auth\Config\AuthConfig;
+use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\User\AuthMailer;
 use Waaseyaa\User\User;
-use Twig\Environment;
-use Twig\Loader\ArrayLoader;
 
 #[CoversClass(AuthController::class)]
 final class AuthControllerTest extends TestCase

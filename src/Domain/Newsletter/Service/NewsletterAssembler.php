@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Domain\Newsletter\Service;
@@ -18,7 +19,8 @@ final class NewsletterAssembler
         private readonly EntityTypeManager $entityTypeManager,
         private readonly EditionLifecycle $lifecycle,
         private readonly array $quotas,
-    ) {}
+    ) {
+    }
 
     public function assemble(EntityInterface $edition): void
     {
@@ -75,7 +77,7 @@ final class NewsletterAssembler
             }
         }
 
-        usort($candidates, fn(ItemCandidate $a, ItemCandidate $b) => $b->score <=> $a->score);
+        usort($candidates, fn (ItemCandidate $a, ItemCandidate $b) => $b->score <=> $a->score);
         return $candidates;
     }
 

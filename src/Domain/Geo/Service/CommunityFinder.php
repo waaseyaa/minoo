@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Geo\Service;
 
-use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\Entity\ContentEntityBase;
+use Waaseyaa\Geo\GeoDistance;
 
 final class CommunityFinder
 {
@@ -65,7 +65,7 @@ final class CommunityFinder
             ];
         }
 
-        usort($results, fn(array $a, array $b): int => $a['distanceKm'] <=> $b['distanceKm']);
+        usort($results, fn (array $a, array $b): int => $a['distanceKm'] <=> $b['distanceKm']);
 
         return array_slice($results, 0, $limit);
     }

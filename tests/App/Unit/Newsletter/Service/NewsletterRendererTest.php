@@ -200,7 +200,7 @@ final class NewsletterRendererTest extends TestCase
     #[Test]
     public function process_failure_throws_and_cleans_tmp(): void
     {
-        $renderer = $this->renderer(fn(array $cmd) => new Process(['false']));
+        $renderer = $this->renderer(fn (array $cmd) => new Process(['false']));
 
         try {
             $renderer->render($this->edition());
@@ -211,7 +211,7 @@ final class NewsletterRendererTest extends TestCase
 
         // No tmp files should remain
         $allFiles = glob($this->tmpDir . '/wiikwemkoong/*') ?: [];
-        $tmpFiles = array_filter($allFiles, fn($f) => str_contains($f, '.tmp.'));
+        $tmpFiles = array_filter($allFiles, fn ($f) => str_contains($f, '.tmp.'));
         $this->assertEmpty($tmpFiles, 'Tmp files must be cleaned on failure');
     }
 
@@ -232,7 +232,7 @@ final class NewsletterRendererTest extends TestCase
 
         // No tmp files should remain
         $allFiles = glob($this->tmpDir . '/wiikwemkoong/*') ?: [];
-        $tmpFiles = array_filter($allFiles, fn($f) => str_contains($f, '.tmp.'));
+        $tmpFiles = array_filter($allFiles, fn ($f) => str_contains($f, '.tmp.'));
         $this->assertEmpty($tmpFiles, 'Empty tmp files must be cleaned');
     }
 
@@ -241,7 +241,7 @@ final class NewsletterRendererTest extends TestCase
     {
         // Fake Process that throws ProcessTimedOutException from run() —
         // avoids a wall-clock dependency that flakes under full-suite load.
-        $timingOutProcess = new class(['true']) extends Process {
+        $timingOutProcess = new class (['true']) extends Process {
             public function run(?callable $callback = null, array $env = []): int
             {
                 throw new ProcessTimedOutException($this, ProcessTimedOutException::TYPE_GENERAL);
@@ -255,7 +255,7 @@ final class NewsletterRendererTest extends TestCase
             nodeBinary: 'node',
             scriptPath: 'bin/render-pdf.js',
             timeoutSeconds: 1,
-            processFactory: fn(array $cmd) => $timingOutProcess,
+            processFactory: fn (array $cmd) => $timingOutProcess,
         );
 
         try {

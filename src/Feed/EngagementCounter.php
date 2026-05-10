@@ -10,7 +10,8 @@ final class EngagementCounter
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     /**
      * Batch-query reaction and comment counts for a set of target entities.

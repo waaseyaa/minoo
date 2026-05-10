@@ -10,8 +10,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
  *
  * These columns support map integration for business pages.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         if (!$schema->hasTable('group')) {

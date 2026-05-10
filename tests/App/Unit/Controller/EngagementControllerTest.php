@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller;
 
 use App\Controller\EngagementController;
-use Waaseyaa\Media\UploadHandler;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +14,7 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\Media\UploadHandler;
 
 #[CoversClass(EngagementController::class)]
 final class EngagementControllerTest extends TestCase
@@ -47,7 +47,7 @@ final class EngagementControllerTest extends TestCase
         }
         if ($fieldMap !== []) {
             $entity->method('get')->willReturnMap(
-                array_map(fn($k, $v) => [$k, $v], array_keys($fieldMap), array_values($fieldMap)),
+                array_map(fn ($k, $v) => [$k, $v], array_keys($fieldMap), array_values($fieldMap)),
             );
         }
 

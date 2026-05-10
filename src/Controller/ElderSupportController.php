@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Waaseyaa\SSR\Attribute\MapQuery;
-use Waaseyaa\SSR\Attribute\MapRoute;
-use Waaseyaa\SSR\Flash\Flash;
 use App\Support\LayoutTwigContext;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Waaseyaa\SSR\Attribute\MapQuery;
+use Waaseyaa\SSR\Attribute\MapRoute;
+use Waaseyaa\SSR\Flash\Flash;
 
 final class ElderSupportController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
-    ) {}
+    ) {
+    }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */

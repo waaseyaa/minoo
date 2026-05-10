@@ -11,7 +11,8 @@ final class CrisisResolveContext
 {
     public function __construct(
         public readonly bool $includeDrafts = false,
-    ) {}
+    ) {
+    }
 
     public static function publicWeb(): self
     {

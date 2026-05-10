@@ -11,7 +11,8 @@ final class CrisisIncidentResolver
 {
     public function __construct(
         private readonly string $projectRoot,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<string, mixed>|null

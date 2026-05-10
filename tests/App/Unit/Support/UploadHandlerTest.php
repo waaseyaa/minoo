@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Support;
 
-use Waaseyaa\Media\UploadHandler;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Media\UploadHandler;
 
 #[CoversClass(UploadHandler::class)]
 final class UploadHandlerTest extends TestCase

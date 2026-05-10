@@ -53,7 +53,7 @@ final class NcContentSyncTest extends TestCase
 
     private function createSyncService(string $responseJson): NcSyncService
     {
-        $httpClient = static fn(string $url): string => $responseJson;
+        $httpClient = static fn (string $url): string => $responseJson;
         $client = new NorthCloudClient(baseUrl: 'https://test.northcloud.one', httpClient: $httpClient);
 
         $registry = new MapperRegistry();
@@ -198,7 +198,7 @@ final class NcContentSyncTest extends TestCase
     public function sync_reports_fetch_failed_when_nc_unreachable(): void
     {
         // Return false to simulate a failed HTTP request (null response from client)
-        $httpClient = static fn(string $url): bool => false;
+        $httpClient = static fn (string $url): bool => false;
         $client = new NorthCloudClient(baseUrl: 'https://unreachable.example.com', httpClient: $httpClient);
         $registry = new MapperRegistry();
         $registry->register(new NcArticleToTeachingMapper());

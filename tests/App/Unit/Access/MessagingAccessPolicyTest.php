@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Access;
 
 use App\Access\MessagingAccessPolicy;
-use Waaseyaa\Messaging\ThreadParticipant;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Messaging\ThreadParticipant;
 
 #[CoversClass(MessagingAccessPolicy::class)]
 final class MessagingAccessPolicyTest extends TestCase

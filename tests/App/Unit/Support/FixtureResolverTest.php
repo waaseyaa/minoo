@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManagerInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
+use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(FixtureResolver::class)]
 final class FixtureResolverTest extends TestCase

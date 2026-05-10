@@ -34,7 +34,7 @@ final class AgimControllerTest extends TestCase
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
         $this->entityTypeManager->method('getStorage')
-            ->willReturnCallback(fn(string $type) => match ($type) {
+            ->willReturnCallback(fn (string $type) => match ($type) {
                 'game_session' => $this->sessionStorage,
                 default => $this->createMock(EntityStorageInterface::class),
             });
@@ -53,7 +53,7 @@ final class AgimControllerTest extends TestCase
     {
         $mock = $this->createMock(ContentEntityBase::class);
         $captured = $fields;
-        $mock->method('get')->willReturnCallback(fn(string $f) => $captured[$f] ?? null);
+        $mock->method('get')->willReturnCallback(fn (string $f) => $captured[$f] ?? null);
         $mock->method('set')->willReturnCallback(function (string $f, mixed $v) use ($mock, &$captured) {
             $captured[$f] = $v;
             return $mock;
@@ -222,7 +222,7 @@ final class AgimControllerTest extends TestCase
         $guesses = json_encode(['queue' => [5], 'completed' => [1, 2, 3, 4]]);
         $setValues = [];
         $session = $this->createMock(ContentEntityBase::class);
-        $session->method('get')->willReturnCallback(fn(string $f) => match ($f) {
+        $session->method('get')->willReturnCallback(fn (string $f) => match ($f) {
             'guesses' => $guesses,
             'status' => 'in_progress',
             default => null,

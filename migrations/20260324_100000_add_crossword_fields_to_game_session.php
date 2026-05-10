@@ -11,8 +11,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
  * No-op: game_type, puzzle_id, grid_state, hints_used live in the _data JSON blob.
  * This migration exists for version tracking only.
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         // Fields stored in _data JSON blob — no schema change needed.

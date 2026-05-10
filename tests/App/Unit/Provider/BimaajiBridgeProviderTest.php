@@ -25,7 +25,9 @@ final class BimaajiBridgeProviderTest extends TestCase
         $etm = $this->createMock(EntityTypeManager::class);
 
         $kernelServices = new class ($etm) implements KernelServicesInterface {
-            public function __construct(private readonly EntityTypeManager $etm) {}
+            public function __construct(private readonly EntityTypeManager $etm)
+            {
+            }
 
             public function get(string $abstract): ?object
             {

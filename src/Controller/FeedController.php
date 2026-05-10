@@ -7,16 +7,16 @@ namespace App\Controller;
 use App\Feed\FeedAssemblerInterface;
 use App\Feed\FeedContext;
 use App\Feed\FeedResponse;
-use Waaseyaa\Geo\GeoDistance;
 use App\Support\LayoutTwigContext;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Geo\GeoDistance;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 final class FeedController
 {
@@ -24,7 +24,8 @@ final class FeedController
         private readonly FeedAssemblerInterface $assembler,
         private readonly Environment $twig,
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
@@ -293,7 +294,7 @@ final class FeedController
                 ];
             }
 
-            usort($withDistance, fn(array $a, array $b): int => $a['distance'] <=> $b['distance']);
+            usort($withDistance, fn (array $a, array $b): int => $a['distance'] <=> $b['distance']);
 
             return array_slice($withDistance, 0, 6);
         } catch (\PDOException $e) {
@@ -332,7 +333,7 @@ final class FeedController
             }
 
             $follows = array_values($followStorage->loadMultiple($ids));
-            $communityIds = array_map(fn($f) => $f->get('target_id'), $follows);
+            $communityIds = array_map(fn ($f) => $f->get('target_id'), $follows);
             $communityIds = array_filter($communityIds);
 
             if ($communityIds === []) {

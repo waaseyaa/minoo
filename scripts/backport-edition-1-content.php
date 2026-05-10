@@ -35,7 +35,7 @@ $lifecycle = new EditionLifecycle();
 $editionStorage = $etm->getStorage('newsletter_edition');
 $existing = array_filter(
     $editionStorage->loadMultiple(),
-    static fn($e) => (int) $e->get('volume') === 1 && (int) $e->get('issue_number') === 1,
+    static fn ($e) => (int) $e->get('volume') === 1 && (int) $e->get('issue_number') === 1,
 );
 
 if ($existing !== []) {
@@ -65,7 +65,7 @@ $editionId = (int) $edition->id();
 $itemStorage = $etm->getStorage('newsletter_item');
 $existingItems = array_filter(
     $itemStorage->loadMultiple(),
-    static fn($i) => (int) $i->get('edition_id') === $editionId,
+    static fn ($i) => (int) $i->get('edition_id') === $editionId,
 );
 
 if ($existingItems !== []) {

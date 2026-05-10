@@ -77,6 +77,10 @@ jobs:
         working-directory: minoo
         run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=512M
 
+      - name: Run PHP-CS-Fixer (dry-run)
+        working-directory: minoo
+        run: ./vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+
   test:
     name: PHPUnit
     runs-on: ubuntu-latest

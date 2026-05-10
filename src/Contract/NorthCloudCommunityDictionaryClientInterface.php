@@ -39,4 +39,3 @@ interface NorthCloudCommunityDictionaryClientInterface
      */
     public function getBandOffice(string $ncId): ?array;
 }
-

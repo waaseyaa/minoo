@@ -14,7 +14,9 @@ final class FixtureResolver
     /** @var array<string, int|null> */
     private array $groupSlugCache = [];
 
-    public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
+    public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager)
+    {
+    }
 
     public function resolveCommunity(string $name): ?int
     {

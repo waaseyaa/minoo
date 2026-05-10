@@ -32,7 +32,7 @@ final class LocationServiceTest extends TestCase
         $mock = $this->createMock(ContentEntityBase::class);
         $mock->method('id')->willReturn($id);
         $mock->method('get')->willReturnCallback(
-            fn(string $field): mixed => match ($field) {
+            fn (string $field): mixed => match ($field) {
                 'name' => $name,
                 'latitude' => $lat,
                 'longitude' => $lon,
@@ -45,18 +45,44 @@ final class LocationServiceTest extends TestCase
 
     private function makeQueryObj(array $ids = []): EntityQueryInterface
     {
-        return new class($ids) implements EntityQueryInterface {
+        return new class ($ids) implements EntityQueryInterface {
             /** @param array<int> $ids */
-            public function __construct(private readonly array $ids) {}
-            public function condition(string $field, mixed $value, string $operator = '='): static { return $this; }
-            public function exists(string $field): static { return $this; }
-            public function notExists(string $field): static { return $this; }
-            public function sort(string $field, string $direction = 'ASC'): static { return $this; }
-            public function range(int $offset, int $limit): static { return $this; }
-            public function count(): static { return $this; }
-            public function accessCheck(bool $check = true): static { return $this; }
+            public function __construct(private readonly array $ids)
+            {
+            }
+            public function condition(string $field, mixed $value, string $operator = '='): static
+            {
+                return $this;
+            }
+            public function exists(string $field): static
+            {
+                return $this;
+            }
+            public function notExists(string $field): static
+            {
+                return $this;
+            }
+            public function sort(string $field, string $direction = 'ASC'): static
+            {
+                return $this;
+            }
+            public function range(int $offset, int $limit): static
+            {
+                return $this;
+            }
+            public function count(): static
+            {
+                return $this;
+            }
+            public function accessCheck(bool $check = true): static
+            {
+                return $this;
+            }
             /** @return array<int> */
-            public function execute(): array { return $this->ids; }
+            public function execute(): array
+            {
+                return $this->ids;
+            }
         };
     }
 

@@ -36,7 +36,7 @@ final class CommunityAutocompleteClientTest extends TestCase
             baseUrl: 'https://northcloud.one',
             timeout: 5,
             cacheTtl: 0,
-            httpClient: fn(string $url): string => $apiResponse,
+            httpClient: fn (string $url): string => $apiResponse,
         );
 
         $results = $client->suggest('sa');
@@ -54,7 +54,7 @@ final class CommunityAutocompleteClientTest extends TestCase
             baseUrl: 'https://northcloud.one',
             timeout: 5,
             cacheTtl: 0,
-            httpClient: fn(string $url): string => '{"hits":[]}',
+            httpClient: fn (string $url): string => '{"hits":[]}',
         );
 
         $this->assertSame([], $client->suggest(''));
@@ -68,7 +68,7 @@ final class CommunityAutocompleteClientTest extends TestCase
             baseUrl: 'https://northcloud.one',
             timeout: 5,
             cacheTtl: 0,
-            httpClient: fn(string $url): string => 'not json',
+            httpClient: fn (string $url): string => 'not json',
         );
 
         $this->assertSame([], $client->suggest('test'));
@@ -81,7 +81,7 @@ final class CommunityAutocompleteClientTest extends TestCase
             baseUrl: 'https://northcloud.one',
             timeout: 5,
             cacheTtl: 0,
-            httpClient: fn(string $url): string|false => false,
+            httpClient: fn (string $url): string|false => false,
         );
 
         $this->assertSame([], $client->suggest('test'));

@@ -12,7 +12,8 @@ final readonly class RankedVolunteer
         public ContentEntityBase $volunteer,
         public ?float $distanceKm,
         public bool $exceedsMaxTravel = false,
-    ) {}
+    ) {
+    }
 
     public function hasDistance(): bool
     {

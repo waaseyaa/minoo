@@ -78,9 +78,14 @@ final class FeedScorerTest extends TestCase
     public function synthetic_items_pinned_to_top(): void
     {
         $welcome = new FeedItem(
-            id: 'welcome:0', type: 'welcome', title: 'Welcome',
-            url: '', badge: '', weight: 999,
-            createdAt: new \DateTimeImmutable(), sortKey: '',
+            id: 'welcome:0',
+            type: 'welcome',
+            title: 'Welcome',
+            url: '',
+            badge: '',
+            weight: 999,
+            createdAt: new \DateTimeImmutable(),
+            sortKey: '',
         );
         $items = [$this->item('post:1', 'post', time()), $welcome];
         $result = $this->scorer->score($items, null, null, null, null, ['post:1' => 'user:10']);
@@ -126,8 +131,12 @@ final class FeedScorerTest extends TestCase
     private function item(string $id, string $type, int $createdAt, int $weight = 0): FeedItem
     {
         return new FeedItem(
-            id: $id, type: $type, title: 'Test', url: '/test',
-            badge: $type, weight: $weight,
+            id: $id,
+            type: $type,
+            title: 'Test',
+            url: '/test',
+            badge: $type,
+            weight: $weight,
             createdAt: (new \DateTimeImmutable())->setTimestamp($createdAt),
             sortKey: '',
         );

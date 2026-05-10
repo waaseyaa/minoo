@@ -180,12 +180,26 @@ final class NewsletterAccessPolicyTest extends TestCase
 
     private function makeAccount(array $permissions, int $id = 1): AccountInterface
     {
-        return new class($permissions, $id) implements AccountInterface {
-            public function __construct(private array $perms, private int $uid) {}
-            public function id(): int|string { return $this->uid; }
-            public function isAuthenticated(): bool { return true; }
-            public function hasPermission(string $permission): bool { return in_array($permission, $this->perms, true); }
-            public function getRoles(): array { return []; }
+        return new class ($permissions, $id) implements AccountInterface {
+            public function __construct(private array $perms, private int $uid)
+            {
+            }
+            public function id(): int|string
+            {
+                return $this->uid;
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
+            public function hasPermission(string $permission): bool
+            {
+                return in_array($permission, $this->perms, true);
+            }
+            public function getRoles(): array
+            {
+                return [];
+            }
         };
     }
 }

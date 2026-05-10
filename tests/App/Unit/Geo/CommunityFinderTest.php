@@ -82,7 +82,7 @@ final class CommunityFinderTest extends TestCase
         $mock = $this->createMock(ContentEntityBase::class);
         $mock->method('id')->willReturn($id);
         $mock->method('get')->willReturnCallback(
-            fn(string $field): mixed => match ($field) {
+            fn (string $field): mixed => match ($field) {
                 'name' => $name,
                 'latitude' => $lat,
                 'longitude' => $lon,

@@ -7,6 +7,7 @@
 .env
 storage/geoip/
 .phpunit.cache/
+.php-cs-fixer.cache
 storage/phpstan/
 storage/newsletter/
 storage/tmp/

@@ -38,4 +38,3 @@ final class NorthCloudCommunityDictionaryClient implements NorthCloudCommunityDi
         return $this->client->getBandOffice($ncId);
     }
 }
-

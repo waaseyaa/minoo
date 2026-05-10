@@ -13,6 +13,7 @@ use App\Service\LocationResolver;
 use App\Support\IcsBuilder;
 use App\Support\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityBase;
@@ -20,7 +21,6 @@ use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
-use Symfony\Component\HttpFoundation\Response;
 
 final class EventController
 {
@@ -28,7 +28,8 @@ final class EventController
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
         private readonly EventFeedBuilder $eventFeedBuilder,
-    ) {}
+    ) {
+    }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */

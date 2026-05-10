@@ -6,12 +6,10 @@ namespace App\Tests\Unit\Controller;
 
 use App\Controller\FeedController;
 use App\Feed\FeedAssemblerInterface;
-use App\Feed\FeedContext;
 use App\Feed\FeedResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;

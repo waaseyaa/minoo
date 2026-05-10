@@ -48,7 +48,7 @@ final class TeachingTest extends TestCase
         $provider->register();
 
         $types = $provider->getEntityTypes();
-        $teachingType = array_values(array_filter($types, fn($t) => $t->id() === 'teaching'))[0];
+        $teachingType = array_values(array_filter($types, fn ($t) => $t->id() === 'teaching'))[0];
         $fields = $teachingType->getFieldDefinitions();
 
         $this->assertArrayHasKey('community_id', $fields);

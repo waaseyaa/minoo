@@ -40,7 +40,7 @@ final class CrosswordControllerTest extends TestCase
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
         $this->entityTypeManager->method('getStorage')
-            ->willReturnCallback(fn(string $type) => match ($type) {
+            ->willReturnCallback(fn (string $type) => match ($type) {
                 'crossword_puzzle' => $this->puzzleStorage,
                 default => $this->createMock(EntityStorageInterface::class),
             });

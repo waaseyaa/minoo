@@ -8,6 +8,7 @@ use App\Entity\Leader;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 #[CoversClass(Leader::class)]
 final class LeaderHasCommunityTest extends TestCase
 {

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build:admin": "bash scripts/build-admin-spa.sh",
-    "prepare": "husky",
+    "prepare": "sh scripts/lefthook-prepare.sh",
     "test": "vendor/bin/phpunit",
     "test:unit": "vendor/bin/phpunit --testsuite MinooUnit",
     "test:integration": "vendor/bin/phpunit --testsuite MinooIntegration",
@@ -33,7 +33,7 @@
     "@fontsource-variable/fraunces": "^5.2.9",
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.5.0",
-    "husky": "^9.1.7",
+    "lefthook": "^1.13.6",
     "typescript": "^5.9.3"
   }
 }

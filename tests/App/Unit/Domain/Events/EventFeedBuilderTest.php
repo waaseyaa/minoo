@@ -24,8 +24,8 @@ final class EventFeedBuilderTest extends TestCase
     {
         $now = strtotime('2026-04-14 12:00:00');
         $events = [
-            $this->event(1, type: 'powwow',    starts: $now - 3600, ends: $now + 3600),  // happening
-            $this->event(2, type: 'ceremony',  starts: $now + 7200, ends: $now + 10800), // this week
+            $this->event(1, type: 'powwow', starts: $now - 3600, ends: $now + 3600),  // happening
+            $this->event(2, type: 'ceremony', starts: $now + 7200, ends: $now + 10800), // this week
             $this->event(3, type: 'gathering', starts: $now - 86400, ends: $now - 3600), // past
         ];
         $builder = $this->buildWith($events, $now);
@@ -78,11 +78,11 @@ final class EventFeedBuilderTest extends TestCase
         // 5 powwows chronologically, then a ceremony — greedy picks should never
         // place more than 3 consecutive powwows.
         $events = [
-            $this->event(200, type: 'powwow',   communityId: 'a', starts: $now + 8 * 86400),
-            $this->event(201, type: 'powwow',   communityId: 'b', starts: $now + 9 * 86400),
-            $this->event(202, type: 'powwow',   communityId: 'c', starts: $now + 10 * 86400),
-            $this->event(203, type: 'powwow',   communityId: 'd', starts: $now + 11 * 86400),
-            $this->event(204, type: 'powwow',   communityId: 'e', starts: $now + 12 * 86400),
+            $this->event(200, type: 'powwow', communityId: 'a', starts: $now + 8 * 86400),
+            $this->event(201, type: 'powwow', communityId: 'b', starts: $now + 9 * 86400),
+            $this->event(202, type: 'powwow', communityId: 'c', starts: $now + 10 * 86400),
+            $this->event(203, type: 'powwow', communityId: 'd', starts: $now + 11 * 86400),
+            $this->event(204, type: 'powwow', communityId: 'e', starts: $now + 12 * 86400),
             $this->event(205, type: 'ceremony', communityId: 'f', starts: $now + 13 * 86400),
         ];
         $builder = $this->buildWith($events, $now);
@@ -110,7 +110,7 @@ final class EventFeedBuilderTest extends TestCase
             $this->event(301, type: 't2', communityId: 'alpha', starts: $now + 9 * 86400),
             $this->event(302, type: 't3', communityId: 'alpha', starts: $now + 10 * 86400),
             $this->event(303, type: 't4', communityId: 'alpha', starts: $now + 11 * 86400),
-            $this->event(304, type: 't5', communityId: 'beta',  starts: $now + 12 * 86400),
+            $this->event(304, type: 't5', communityId: 'beta', starts: $now + 12 * 86400),
             $this->event(305, type: 't6', communityId: 'gamma', starts: $now + 13 * 86400),
             $this->event(306, type: 't7', communityId: 'delta', starts: $now + 14 * 86400),
             $this->event(307, type: 't8', communityId: 'epsilon', starts: $now + 15 * 86400),
@@ -157,9 +157,9 @@ final class EventFeedBuilderTest extends TestCase
     {
         $now = strtotime('2026-04-14 12:00:00');
         $events = [
-            $this->event(600, type: 'ceremony',  starts: $now + 2 * 86400),
-            $this->event(601, type: 'powwow',    starts: $now + 3 * 86400),
-            $this->event(602, type: 'ceremony',  starts: $now + 4 * 86400),
+            $this->event(600, type: 'ceremony', starts: $now + 2 * 86400),
+            $this->event(601, type: 'powwow', starts: $now + 3 * 86400),
+            $this->event(602, type: 'ceremony', starts: $now + 4 * 86400),
             $this->event(603, type: 'gathering', starts: $now + 5 * 86400),
         ];
         $builder = $this->buildWith($events, $now);
@@ -182,9 +182,9 @@ final class EventFeedBuilderTest extends TestCase
         $now = strtotime('2026-04-14 12:00:00');
         $events = [
             $this->event(700, starts: $now - 10 * 86400, ends: $now - 10 * 86400 + 3600),
-            $this->event(701, starts: $now - 2 * 86400,  ends: $now - 2 * 86400 + 3600),
-            $this->event(702, starts: $now - 5 * 86400,  ends: $now - 5 * 86400 + 3600),
-            $this->event(703, starts: $now + 86400,      ends: $now + 86400 + 3600),
+            $this->event(701, starts: $now - 2 * 86400, ends: $now - 2 * 86400 + 3600),
+            $this->event(702, starts: $now - 5 * 86400, ends: $now - 5 * 86400 + 3600),
+            $this->event(703, starts: $now + 86400, ends: $now + 86400 + 3600),
         ];
         $builder = $this->buildWith($events, $now);
         $request = Request::create('/events?when=past');
@@ -334,14 +334,37 @@ final class EventFeedBuilderTest extends TestCase
 
         $queryStub = new class ($events) implements EntityQueryInterface {
             /** @param list<ContentEntityBase> $events */
-            public function __construct(private array $events) {}
-            public function condition(string $field, mixed $value, string $operator = '='): static { return $this; }
-            public function exists(string $field): static { return $this; }
-            public function notExists(string $field): static { return $this; }
-            public function sort(string $field, string $direction = 'ASC'): static { return $this; }
-            public function range(int $offset, int $limit): static { return $this; }
-            public function count(): static { return $this; }
-            public function accessCheck(bool $check = true): static { return $this; }
+            public function __construct(private array $events)
+            {
+            }
+            public function condition(string $field, mixed $value, string $operator = '='): static
+            {
+                return $this;
+            }
+            public function exists(string $field): static
+            {
+                return $this;
+            }
+            public function notExists(string $field): static
+            {
+                return $this;
+            }
+            public function sort(string $field, string $direction = 'ASC'): static
+            {
+                return $this;
+            }
+            public function range(int $offset, int $limit): static
+            {
+                return $this;
+            }
+            public function count(): static
+            {
+                return $this;
+            }
+            public function accessCheck(bool $check = true): static
+            {
+                return $this;
+            }
             public function execute(): array
             {
                 return array_map(fn ($e) => $e->id(), $this->events);

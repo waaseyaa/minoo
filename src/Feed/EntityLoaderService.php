@@ -10,7 +10,8 @@ class EntityLoaderService
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function getEntityTypeManager(): EntityTypeManager
     {

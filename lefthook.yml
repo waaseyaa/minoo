@@ -1,0 +1,29 @@
+# https://lefthook.dev/configuration/
+pre-commit:
+  parallel: true
+  commands:
+    composer-validate:
+      run: composer validate --strict --no-check-all
+    php-syntax:
+      glob: "*.php"
+      run: sh -c 'for f in {staged_files}; do php -l "$f" || exit 1; done'
+    php-cs-fixer:
+      glob: "*.php"
+      skip:
+        - run: test ! -x vendor/bin/php-cs-fixer
+      run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: false
+  commands:
+    phpunit-unit:
+      skip:
+        - run: test ! -x vendor/bin/phpunit
+      run: vendor/bin/phpunit --testsuite MinooUnit
+    phpunit-integration:
+      skip:
+        - run: test ! -x vendor/bin/phpunit
+      run: vendor/bin/phpunit --testsuite MinooIntegration
+    composer-audit:
+      run: composer audit --no-interaction || true

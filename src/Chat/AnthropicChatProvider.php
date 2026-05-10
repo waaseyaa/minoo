@@ -11,7 +11,8 @@ final class AnthropicChatProvider implements ChatProviderInterface
         private readonly string $model,
         private readonly int $maxTokens,
         private readonly string $apiUrl,
-    ) {}
+    ) {
+    }
 
     public function sendMessage(array $messages, string $systemPrompt): ChatResponse
     {

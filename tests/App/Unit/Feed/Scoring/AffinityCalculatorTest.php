@@ -39,7 +39,7 @@ final class AffinityCalculatorTest extends TestCase
     public function follow_adds_points(): void
     {
         $follow = $this->createMock(ContentEntityBase::class);
-        $follow->method('get')->willReturnCallback(fn(string $f) => match ($f) {
+        $follow->method('get')->willReturnCallback(fn (string $f) => match ($f) {
             'target_type' => 'user',
             'target_id' => 10,
             default => null,

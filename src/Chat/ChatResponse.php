@@ -10,7 +10,8 @@ final class ChatResponse
         public readonly string $content,
         public readonly bool $success,
         public readonly string $error = '',
-    ) {}
+    ) {
+    }
 
     public static function ok(string $content): self
     {

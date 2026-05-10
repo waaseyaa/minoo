@@ -28,7 +28,7 @@ class JourneyEngine
     public static function listScenes(): array
     {
         return array_map(
-            static fn(array $s) => [
+            static fn (array $s) => [
                 'slug'     => $s['slug'],
                 'title_en' => $s['title_en'],
                 'title_oj' => $s['title_oj'],
@@ -177,7 +177,7 @@ class JourneyEngine
      */
     private static function clientObjects(array $objects): array
     {
-        return array_values(array_map(static fn(array $o) => [
+        return array_values(array_map(static fn (array $o) => [
             'id'       => $o['id'],
             'key'      => $o['key'],
             'label_en' => $o['label_en'],

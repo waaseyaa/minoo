@@ -8,6 +8,7 @@ use App\Entity\Event;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 #[CoversClass(Event::class)]
 final class EventHasCommunityTest extends TestCase
 {

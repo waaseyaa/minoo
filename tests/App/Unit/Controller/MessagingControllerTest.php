@@ -328,4 +328,3 @@ final class MessagingControllerTest extends TestCase
         $this->assertStringContainsString('"unread_count":1', $response->getContent());
     }
 }
-

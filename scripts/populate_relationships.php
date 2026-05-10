@@ -139,13 +139,24 @@ foreach ($entityConfigs as $entityType => $config) {
             if ($isStringField) {
                 // resource_person: community is a string field, store the name
                 $entity->set($config['community_field'], $matchedCommunityName);
-                fprintf(STDOUT, "  Linked %s '%s' to community '%s' (matched by: name)\n",
-                    $entityType, $displayLabel, $matchedCommunityName);
+                fprintf(
+                    STDOUT,
+                    "  Linked %s '%s' to community '%s' (matched by: name)\n",
+                    $entityType,
+                    $displayLabel,
+                    $matchedCommunityName
+                );
             } else {
                 // Other entities: community_id is an entity reference
                 $entity->set($config['community_field'], $matchedCommunityId);
-                fprintf(STDOUT, "  Linked %s '%s' to community '%s' (id: %s, matched by: name)\n",
-                    $entityType, $displayLabel, $matchedCommunityName, $matchedCommunityId);
+                fprintf(
+                    STDOUT,
+                    "  Linked %s '%s' to community '%s' (id: %s, matched by: name)\n",
+                    $entityType,
+                    $displayLabel,
+                    $matchedCommunityName,
+                    $matchedCommunityId
+                );
             }
 
             if (!$dryRun) {
@@ -158,12 +169,20 @@ foreach ($entityConfigs as $entityType => $config) {
     $summary[$entityType] = $updated;
     $total = count($entities);
     $missing = $total - $updated;
-    fprintf(STDOUT, "  %s: %d/%d updated, %d already had community, %d unmatched\n\n",
-        $entityType, $updated, $total,
-        count(array_filter($entities, fn($e) =>
+    fprintf(
+        STDOUT,
+        "  %s: %d/%d updated, %d already had community, %d unmatched\n\n",
+        $entityType,
+        $updated,
+        $total,
+        count(array_filter(
+            $entities,
+            fn ($e) =>
             ($v = $e->get($config['community_field'])) !== null && $v !== '' && $v !== 0 && $v !== '0'
         )) - $updated,
-        $missing - (count(array_filter($entities, fn($e) =>
+        $missing - (count(array_filter(
+            $entities,
+            fn ($e) =>
             ($v = $e->get($config['community_field'])) !== null && $v !== '' && $v !== 0 && $v !== '0'
         )) - $updated)
     );

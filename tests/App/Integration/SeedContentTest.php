@@ -7,7 +7,6 @@ namespace App\Tests\Integration;
 use App\Entity\Group;
 use App\Entity\ResourcePerson;
 use App\Support\FixtureLoader;
-use App\Support\FixtureResolver;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

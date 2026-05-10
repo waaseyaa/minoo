@@ -14,8 +14,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
  *
  * Replaces: migrations/002_add_consent_fields.sql
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     /** @var list<string> */
     private const TABLES = [
         'event',

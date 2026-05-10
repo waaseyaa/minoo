@@ -18,7 +18,7 @@ final class NewsletterDispatcherTest extends TestCase
     #[Test]
     public function unconfigured_mail_service_throws(): void
     {
-        $mailFake = new class {
+        $mailFake = new class () {
             public function isConfigured(): bool
             {
                 return false;
@@ -52,7 +52,7 @@ final class NewsletterDispatcherTest extends TestCase
     #[Test]
     public function missing_printer_email_throws(): void
     {
-        $mailFake = new class {
+        $mailFake = new class () {
             public function isConfigured(): bool
             {
                 return true;
@@ -86,7 +86,7 @@ final class NewsletterDispatcherTest extends TestCase
     #[Test]
     public function successful_dispatch_returns_recipient(): void
     {
-        $mailFake = new class {
+        $mailFake = new class () {
             public ?string $sentTo = null;
             public ?string $sentSubject = null;
             public ?string $sentPath = null;
@@ -143,10 +143,14 @@ final class NewsletterDispatcherTest extends TestCase
     #[Test]
     public function null_community_edition_uses_default_community_config(): void
     {
-        $mail = new class {
+        $mail = new class () {
             public ?string $sentTo = null;
-            public function isConfigured(): bool { return true; }
-            public function sendWithAttachment(string $to, string $subj, string $body, string $path): bool {
+            public function isConfigured(): bool
+            {
+                return true;
+            }
+            public function sendWithAttachment(string $to, string $subj, string $body, string $path): bool
+            {
                 $this->sentTo = $to;
                 return true;
             }

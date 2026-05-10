@@ -6,10 +6,10 @@ namespace App\Tests\Unit\Access;
 
 use App\Access\GameAccessPolicy;
 use App\Entity\GameSession;
-use Waaseyaa\Access\AccountInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Waaseyaa\Access\AccountInterface;
 
 #[CoversClass(GameAccessPolicy::class)]
 final class GameAccessPolicyTest extends TestCase
@@ -34,11 +34,23 @@ final class GameAccessPolicyTest extends TestCase
             'dictionary_entry_id' => 1,
         ]);
 
-        $account = new class implements AccountInterface {
-            public function id(): int { return 0; }
-            public function hasPermission(string $p): bool { return false; }
-            public function getRoles(): array { return ['anonymous']; }
-            public function isAuthenticated(): bool { return false; }
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 0;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return false;
+            }
+            public function getRoles(): array
+            {
+                return ['anonymous'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return false;
+            }
         };
 
         $result = $policy->access($session, 'view', $account);
@@ -50,11 +62,23 @@ final class GameAccessPolicyTest extends TestCase
     {
         $policy = new GameAccessPolicy();
 
-        $account = new class implements AccountInterface {
-            public function id(): int { return 0; }
-            public function hasPermission(string $p): bool { return false; }
-            public function getRoles(): array { return ['anonymous']; }
-            public function isAuthenticated(): bool { return false; }
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 0;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return false;
+            }
+            public function getRoles(): array
+            {
+                return ['anonymous'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return false;
+            }
         };
 
         $result = $policy->createAccess('game_session', '', $account);
@@ -66,11 +90,23 @@ final class GameAccessPolicyTest extends TestCase
     {
         $policy = new GameAccessPolicy();
 
-        $account = new class implements AccountInterface {
-            public function id(): int { return 0; }
-            public function hasPermission(string $p): bool { return false; }
-            public function getRoles(): array { return ['anonymous']; }
-            public function isAuthenticated(): bool { return false; }
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 0;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return false;
+            }
+            public function getRoles(): array
+            {
+                return ['anonymous'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return false;
+            }
         };
 
         $result = $policy->createAccess('daily_challenge', '', $account);
@@ -88,11 +124,23 @@ final class GameAccessPolicyTest extends TestCase
             'user_id' => 5,
         ]);
 
-        $account = new class implements AccountInterface {
-            public function id(): int { return 5; }
-            public function hasPermission(string $p): bool { return false; }
-            public function getRoles(): array { return ['authenticated']; }
-            public function isAuthenticated(): bool { return true; }
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 5;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return false;
+            }
+            public function getRoles(): array
+            {
+                return ['authenticated'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
 
         $result = $policy->access($session, 'update', $account);
@@ -104,11 +152,23 @@ final class GameAccessPolicyTest extends TestCase
     {
         $policy = new GameAccessPolicy();
 
-        $account = new class implements AccountInterface {
-            public function id(): int { return 1; }
-            public function hasPermission(string $p): bool { return true; }
-            public function getRoles(): array { return ['admin']; }
-            public function isAuthenticated(): bool { return true; }
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 1;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return true;
+            }
+            public function getRoles(): array
+            {
+                return ['admin'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
         };
 
         $result = $policy->createAccess('daily_challenge', '', $account);

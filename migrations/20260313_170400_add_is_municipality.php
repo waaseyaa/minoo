@@ -13,8 +13,7 @@ use Waaseyaa\Foundation\Migration\SchemaBuilder;
  *
  * Replaces: migrations/001_add_is_municipality.sql
  */
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(SchemaBuilder $schema): void
     {
         if ($schema->hasTable('community') && !$schema->hasColumn('community', 'is_municipality')) {

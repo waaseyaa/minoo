@@ -35,7 +35,8 @@ final readonly class FeedItem
         public ?string $communityInitial = null,
         public ?string $authorName = null,
         public ?float $score = null,
-    ) {}
+    ) {
+    }
 
     public function isSynthetic(): bool
     {

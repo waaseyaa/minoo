@@ -18,7 +18,8 @@ final class GenealogyDemoSeedHandler
 
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {}
+    ) {
+    }
 
     public function execute(CliIO $io): int
     {

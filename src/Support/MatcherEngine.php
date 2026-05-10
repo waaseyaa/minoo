@@ -119,7 +119,7 @@ final class MatcherEngine
         // Seed-based or random shuffle
         if ($seed !== null) {
             mt_srand($seed);
-            usort($valid, fn() => mt_rand(-1, 1));
+            usort($valid, fn () => mt_rand(-1, 1));
             mt_srand();
         } else {
             shuffle($valid);

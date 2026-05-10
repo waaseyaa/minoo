@@ -10,15 +10,16 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
+
 final class LocationController
 {
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
-    ) {}
+    ) {
+    }
 
     /** @param array<string, mixed> $params */
     /** @param array<string, mixed> $query */

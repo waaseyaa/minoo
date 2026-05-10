@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Feed;
 use App\Entity\Event;
 use App\Entity\Group;
 use App\Entity\ResourcePerson;
-use App\Feed\FeedItem;
 use App\Feed\FeedItemFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
