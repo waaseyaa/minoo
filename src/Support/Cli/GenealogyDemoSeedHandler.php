@@ -2,35 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Command;
+namespace App\Support\Cli;
 
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Waaseyaa\CLI\CliIO;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Genealogy\GenealogyRelationshipType;
 use Waaseyaa\User\User;
 
-#[AsCommand(name: 'genealogy:demo-seed', description: 'Create demo genealogy tree, persons, family, and edges for local SSR testing')]
-final class GenealogyDemoSeedCommand extends Command
+final class GenealogyDemoSeedHandler
 {
-    /** Display names for idempotent demo seeding (was {@see GenealogyLocalDemoMarkers} in waaseyaa/genealogy; inlined for split-package parity). */
     private const string DEMO_CHILD_DISPLAY = '[Genealogy demo] Child';
-
     private const string DEMO_PARENT_DISPLAY = '[Genealogy demo] Parent';
-
     private const string DEMO_FAMILY_DISPLAY = '[Genealogy demo] Family';
-
     private const string DEMO_TREE_DISPLAY = '[Genealogy demo] Tree';
 
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
-    ) {
-        parent::__construct();
-    }
+    ) {}
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function execute(CliIO $io): int
     {
         $personStorage = $this->entityTypeManager->getStorage('genealogy_person');
         $existing = $personStorage->getQuery()
@@ -43,7 +33,7 @@ final class GenealogyDemoSeedCommand extends Command
 
         if ($existing !== []) {
             $childId = (string) $existing[0];
-            $output->writeln('<info>Demo data already present.</info>');
+            $io->writeln('Demo data already present.');
             $this->ensureOwnerGenealogyOptIn();
             $this->ensureDemoTreePublishedForAnonymousSsr();
             $familyIds = $familyStorage->getQuery()
@@ -52,9 +42,9 @@ final class GenealogyDemoSeedCommand extends Command
                 ->range(0, 1)
                 ->execute();
             $familyId = isset($familyIds[0]) ? (string) $familyIds[0] : null;
-            $this->printUrls($output, $childId, $familyId);
+            $this->printUrls($io, $childId, $familyId);
 
-            return self::SUCCESS;
+            return 0;
         }
 
         $relStorage = $this->entityTypeManager->getStorage('relationship');
@@ -63,7 +53,6 @@ final class GenealogyDemoSeedCommand extends Command
         $tree = $treeStorage->create([
             'display_name' => self::DEMO_TREE_DISPLAY,
             'owner_uid' => 1,
-            // Published so anonymous SSR (and CDN-style caches) can exercise the demo URLs.
             'status' => 1,
         ]);
         $treeStorage->save($tree);
@@ -118,10 +107,10 @@ final class GenealogyDemoSeedCommand extends Command
         $this->ensureOwnerGenealogyOptIn();
 
         $childId = (string) $child->id();
-        $output->writeln('<info>Genealogy demo data created.</info>');
-        $this->printUrls($output, $childId, (string) $family->id());
+        $io->writeln('Genealogy demo data created.');
+        $this->printUrls($io, $childId, (string) $family->id());
 
-        return self::SUCCESS;
+        return 0;
     }
 
     private function ensureOwnerGenealogyOptIn(): void
@@ -134,9 +123,6 @@ final class GenealogyDemoSeedCommand extends Command
         }
     }
 
-    /**
-     * Older seeds created the demo tree as draft; anonymous SSR requires a published tree.
-     */
     private function ensureDemoTreePublishedForAnonymousSsr(): void
     {
         $treeStorage = $this->entityTypeManager->getStorage('genealogy_tree');
@@ -160,12 +146,12 @@ final class GenealogyDemoSeedCommand extends Command
         $treeStorage->save($tree);
     }
 
-    private function printUrls(OutputInterface $output, string $childPersonId, ?string $familyId = null): void
+    private function printUrls(CliIO $io, string $childPersonId, ?string $familyId = null): void
     {
-        $output->writeln(sprintf('Person: /genealogy/person/%s', $childPersonId));
-        $output->writeln(sprintf('Ancestors: /genealogy/person/%s/ancestors', $childPersonId));
+        $io->writeln(sprintf('Person: /genealogy/person/%s', $childPersonId));
+        $io->writeln(sprintf('Ancestors: /genealogy/person/%s/ancestors', $childPersonId));
         if ($familyId !== null) {
-            $output->writeln(sprintf('Family: /genealogy/family/%s', $familyId));
+            $io->writeln(sprintf('Family: /genealogy/family/%s', $familyId));
         }
     }
 }

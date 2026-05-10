@@ -2,7 +2,7 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
-Last framework sync: Waaseyaa alpha.173 (controller dispatcher implicit-array compatibility shim — closes framework#1390; resumes parked alpha-171 mission; composer waaseyaa/* bump). Tracking: #750.
+Last framework sync: Waaseyaa alpha.175 (native-CLI-kernel mission — symfony/console hard-cut, `HasCommandsInterface` → `HasNativeCommandsInterface`, command classes split into Handler + `CommandDefinition` pairs; `Waaseyaa\NorthCloud\Command\NcSyncCommand` removed in favor of framework's native `NcSyncHandler`). Minoo's own CLI handlers now live under `src/Support/Cli/`. Tracking: #750.
 
 ## Architecture
 
