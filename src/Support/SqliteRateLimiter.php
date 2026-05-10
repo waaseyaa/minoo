@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Support;
 
 use App\Contract\RateLimiterInterface;
-use App\Middleware\RateLimitMiddleware;
+use App\Http\Middleware\RateLimitMiddleware;
 
 final class SqliteRateLimiter implements RateLimiterInterface
 {

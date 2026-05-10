@@ -35,6 +35,7 @@
 | `src/Access/MessagingAccessPolicy.php` | Access for messaging thread entities |
 | `src/Seed/TaxonomySeeder.php` | Gallery + teaching_tags vocabulary definitions |
 | `src/Seed/ConfigSeeder.php` | Event, group, teaching type definitions |
+| `src/Http/Controller/*.php` | HTTP SSR + JSON controllers (`App\Http\Controller`); routes wired in `src/Provider/Routing/*.php` |
 
 ## Base Classes
 

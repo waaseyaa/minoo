@@ -1,6 +1,12 @@
-# GitHub Workflow Governance
+# Workflow governance
 
-## Versioning Model
+## Execution model (Spec Kitty)
+
+Substantive product work and refactors are **planned, sequenced, and reviewed in Spec Kitty** — missions, work packages, step contracts, and the implement / review / `next` loop. Agents should use the repo’s Spec Kitty skills (`.claude/skills/spec-kitty-*`) as the default operating procedure.
+
+Roadmap and prioritization live in **Spec Kitty** (and human judgment); this repo does not maintain GitHub milestones as a planning surface.
+
+## Versioning model
 
 Minoo and the Waaseyaa Framework version independently.
 
@@ -9,21 +15,9 @@ Minoo and the Waaseyaa Framework version independently.
 - Minoo is a consumer of the framework. Minoo must always target a compatible framework version, but neither repo's version number constrains the other's.
 - Both repos are pre-v1. Pre-v1 minor versions may increment indefinitely. v1.0 is cut only when contracts (framework) or product UX + content model (Minoo) are formally stable.
 
-## Minoo Milestones
+## Framework milestones (Waaseyaa)
 
-| # | Milestone | Description | Status | Issues (open/closed) |
-|---|-----------|-------------|--------|----------------------|
-| 18 | v0.14 — Quality & Polish | Bug fixes, test coverage, copy improvements | Open | 0/10 |
-| 19 | V1 Release | Content model and UX stable — product ready for public launch (due 2026-04-22) | Open | 0/30 |
-| 20 | v1.0 - Admin Surface | Admin UI for content management | Open | 0/4 |
-| 21 | Anishinaabemowin Localization | OPD pipeline, Nishnaabemwin research, string translations | Open | 4/0 |
-| 22 | Minoo Live — Guess the Price Game | Portrait/tabletop pricing mini-game on `/games/guess-price`; static catalog; no session or leaderboard | Open | 0/0 |
-
-**Note:** Milestones 18, 19, 20 have no open issues — may be stale or complete. Review before assigning new work.
-
-**Update this table whenever milestones are added, closed, or redescribed.**
-
-## Framework Milestones
+High-level **framework** release targets (not Minoo GitHub milestones):
 
 | Milestone | Description | Status |
 |-----------|-------------|--------|
@@ -33,27 +27,34 @@ Minoo and the Waaseyaa Framework version independently.
 | v0.10 | Feature flags, tenant migration plan — contract evolution and rollout safety finalized before v1.0 lock | Future |
 | v1.0 | Platform contracts locked. Ingestion, schema registry, ACL, versioning, and CI — stable and semver-committed | Future |
 
-## The 5 Workflow Rules
+## The five working rules
 
-### 1. All work begins with an issue
-No code is generated or written without an open GitHub issue. Claude must ask for the issue number before producing code. If no issue exists, Claude must propose creating one and assign it to the appropriate milestone before proceeding.
+### 1. Spec Kitty tracks intent
 
-### 2. Every issue belongs to a milestone
-Issues must be assigned to exactly one milestone. Unassigned issues represent incomplete triage. Claude must prompt milestone assignment if an issue lacks one. Use `bin/check-milestones` to surface unassigned issues at any time.
+Non-trivial work should be represented as a Spec Kitty mission or work package (or an explicit in-chat brief for small, single-file fixes).
 
-### 3. Milestones define the roadmap
-Milestones are the authoritative plan for the repo. Codified context describes philosophy; milestones describe execution. Claude must align all suggestions with the active milestone structure. Do not invent new milestones without explicit discussion.
+### 2. Use the Spec Kitty control loop
 
-### 4. PRs must reference issues
-Every PR title must include an issue number (e.g. `feat(#42): add search filters`). PRs without issue references should not be merged. Use the PR template checklist.
+Advance missions with runtime `next`, implement-review cycles, and mission review skills as configured. Merge discipline follows your team’s Spec Kitty procedures.
 
-### 5. Claude reads milestones before generating work
-At session start, `bin/check-milestones` runs automatically. Claude must read the report and flag any drift before beginning implementation work. Claude must also check which milestone is active and align output to it.
+### 3. Codified context defines boundaries
 
-## Drift Detection
+`CLAUDE.md`, specialist skills, and MCP specs (`minoo_get_spec`, `waaseyaa_get_spec`) ground architecture and naming. See **Architectural Boundaries** in `CLAUDE.md`.
 
-`bin/check-milestones` runs at every Claude session start via the SessionStart hook. It reports:
-- Open issues with no milestone (incomplete triage)
-- Open milestones with no open issues (possibly stale)
+### 4. PRs describe outcomes
 
-The script exits 0 always. Output is a warning surface for Claude and contributors, not a CI gate.
+PR titles and bodies should summarize what merged and why. Optional links to Spec Kitty mission/WP or GitHub for traceability are fine when useful.
+
+### 5. Read drift output when you run it
+
+Session hooks may run `bin/check-milestones`. It prints **repository boundary** checks only (see below). Treat output as advisory.
+
+## Drift detection (`bin/check-milestones`)
+
+The script exits `0` always — warning surface, not a CI gate. It reports:
+
+- No North Cloud classifier logic leaking into Minoo `src/`
+- No Minoo-specific entity references in sibling `waaseyaa/packages/` (when that tree exists)
+- Note on `indigenous-taxonomy` PHP package presence
+
+These checks protect architectural boundaries.

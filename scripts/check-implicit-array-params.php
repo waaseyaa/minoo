@@ -32,7 +32,7 @@ function usage(): void
         parameters (without the explicit #[MapRoute] / #[MapQuery] attributes).
 
         Options:
-          --path <dir>          Root directory to scan (default: src/Controller).
+          --path <dir>          Root directory to scan (default: src/Http/Controller).
           --format <text|json>  Output format (default: text).
           --quiet               Suppress per-offender lines; emit only the summary.
           --help                Print this message and exit 0.
@@ -53,7 +53,7 @@ function usage(): void
  */
 function parseArgs(array $argv): ?array
 {
-    $path = 'src/Controller';
+    $path = 'src/Http/Controller';
     $format = 'text';
     $quiet = false;
 

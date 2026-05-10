@@ -23,7 +23,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.ishkode.redirect',
             RouteBuilder::create('/games/ishkode')
-                ->controller('App\\Controller\\ShkodaController::redirectLegacy')
+                ->controller('App\\Http\\Controller\\ShkodaController::redirectLegacy')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -33,7 +33,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.shkoda',
             RouteBuilder::create('/games/shkoda')
-                ->controller('App\\Controller\\ShkodaController::page')
+                ->controller('App\\Http\\Controller\\ShkodaController::page')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -44,7 +44,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.shkoda.daily',
             RouteBuilder::create('/api/games/shkoda/daily')
-                ->controller('App\\Controller\\ShkodaController::daily')
+                ->controller('App\\Http\\Controller\\ShkodaController::daily')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -54,7 +54,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.shkoda.word',
             RouteBuilder::create('/api/games/shkoda/word')
-                ->controller('App\\Controller\\ShkodaController::word')
+                ->controller('App\\Http\\Controller\\ShkodaController::word')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -64,7 +64,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.shkoda.guess',
             RouteBuilder::create('/api/games/shkoda/guess')
-                ->controller('App\\Controller\\ShkodaController::guess')
+                ->controller('App\\Http\\Controller\\ShkodaController::guess')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -74,7 +74,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.shkoda.complete',
             RouteBuilder::create('/api/games/shkoda/complete')
-                ->controller('App\\Controller\\ShkodaController::complete')
+                ->controller('App\\Http\\Controller\\ShkodaController::complete')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -84,7 +84,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.shkoda.stats',
             RouteBuilder::create('/api/games/shkoda/stats')
-                ->controller('App\\Controller\\ShkodaController::stats')
+                ->controller('App\\Http\\Controller\\ShkodaController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -95,7 +95,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.crossword',
             RouteBuilder::create('/games/crossword')
-                ->controller('App\\Controller\\CrosswordController::page')
+                ->controller('App\\Http\\Controller\\CrosswordController::page')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -105,7 +105,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.daily',
             RouteBuilder::create('/api/games/crossword/daily')
-                ->controller('App\\Controller\\CrosswordController::daily')
+                ->controller('App\\Http\\Controller\\CrosswordController::daily')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -114,7 +114,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.random',
             RouteBuilder::create('/api/games/crossword/random')
-                ->controller('App\\Controller\\CrosswordController::random')
+                ->controller('App\\Http\\Controller\\CrosswordController::random')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -123,7 +123,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.themes',
             RouteBuilder::create('/api/games/crossword/themes')
-                ->controller('App\\Controller\\CrosswordController::themes')
+                ->controller('App\\Http\\Controller\\CrosswordController::themes')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -132,7 +132,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.theme',
             RouteBuilder::create('/api/games/crossword/theme/{slug}')
-                ->controller('App\\Controller\\CrosswordController::theme')
+                ->controller('App\\Http\\Controller\\CrosswordController::theme')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -141,7 +141,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.check',
             RouteBuilder::create('/api/games/crossword/check')
-                ->controller('App\\Controller\\CrosswordController::check')
+                ->controller('App\\Http\\Controller\\CrosswordController::check')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -150,7 +150,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.complete',
             RouteBuilder::create('/api/games/crossword/complete')
-                ->controller('App\\Controller\\CrosswordController::complete')
+                ->controller('App\\Http\\Controller\\CrosswordController::complete')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -159,7 +159,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.hint',
             RouteBuilder::create('/api/games/crossword/hint')
-                ->controller('App\\Controller\\CrosswordController::hint')
+                ->controller('App\\Http\\Controller\\CrosswordController::hint')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -168,7 +168,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.abandon',
             RouteBuilder::create('/api/games/crossword/abandon')
-                ->controller('App\\Controller\\CrosswordController::abandon')
+                ->controller('App\\Http\\Controller\\CrosswordController::abandon')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -177,7 +177,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.crossword.stats',
             RouteBuilder::create('/api/games/crossword/stats')
-                ->controller('App\\Controller\\CrosswordController::stats')
+                ->controller('App\\Http\\Controller\\CrosswordController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -188,7 +188,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.matcher',
             RouteBuilder::create('/games/matcher')
-                ->controller('App\\Controller\\MatcherController::page')
+                ->controller('App\\Http\\Controller\\MatcherController::page')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -198,7 +198,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.matcher.daily',
             RouteBuilder::create('/api/games/matcher/daily')
-                ->controller('App\\Controller\\MatcherController::daily')
+                ->controller('App\\Http\\Controller\\MatcherController::daily')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -207,7 +207,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.matcher.practice',
             RouteBuilder::create('/api/games/matcher/practice')
-                ->controller('App\\Controller\\MatcherController::practice')
+                ->controller('App\\Http\\Controller\\MatcherController::practice')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -216,7 +216,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.matcher.match',
             RouteBuilder::create('/api/games/matcher/match')
-                ->controller('App\\Controller\\MatcherController::match')
+                ->controller('App\\Http\\Controller\\MatcherController::match')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -225,7 +225,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.matcher.complete',
             RouteBuilder::create('/api/games/matcher/complete')
-                ->controller('App\\Controller\\MatcherController::complete')
+                ->controller('App\\Http\\Controller\\MatcherController::complete')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -234,7 +234,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.matcher.stats',
             RouteBuilder::create('/api/games/matcher/stats')
-                ->controller('App\\Controller\\MatcherController::stats')
+                ->controller('App\\Http\\Controller\\MatcherController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -245,7 +245,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.agim',
             RouteBuilder::create('/games/agim')
-                ->controller('App\\Controller\\AgimController::page')
+                ->controller('App\\Http\\Controller\\AgimController::page')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -255,7 +255,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.agim.start',
             RouteBuilder::create('/api/games/agim/start')
-                ->controller('App\\Controller\\AgimController::start')
+                ->controller('App\\Http\\Controller\\AgimController::start')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -264,7 +264,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.agim.prompt',
             RouteBuilder::create('/api/games/agim/prompt')
-                ->controller('App\\Controller\\AgimController::prompt')
+                ->controller('App\\Http\\Controller\\AgimController::prompt')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -273,7 +273,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.agim.answer',
             RouteBuilder::create('/api/games/agim/answer')
-                ->controller('App\\Controller\\AgimController::answer')
+                ->controller('App\\Http\\Controller\\AgimController::answer')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -282,7 +282,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.agim.complete',
             RouteBuilder::create('/api/games/agim/complete')
-                ->controller('App\\Controller\\AgimController::complete')
+                ->controller('App\\Http\\Controller\\AgimController::complete')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -291,7 +291,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.agim.stats',
             RouteBuilder::create('/api/games/agim/stats')
-                ->controller('App\\Controller\\AgimController::stats')
+                ->controller('App\\Http\\Controller\\AgimController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),
@@ -300,7 +300,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.guess_price',
             RouteBuilder::create('/games/guess-price')
-                ->controller('App\\Controller\\GuessPriceController::page')
+                ->controller('App\\Http\\Controller\\GuessPriceController::page')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -321,7 +321,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.journey',
             RouteBuilder::create('/games/journey')
-                ->controller('App\\Controller\\JourneyController::page')
+                ->controller('App\\Http\\Controller\\JourneyController::page')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -331,7 +331,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.journey.scenes',
             RouteBuilder::create('/api/games/journey/scenes')
-                ->controller('App\\Controller\\JourneyController::scenes')
+                ->controller('App\\Http\\Controller\\JourneyController::scenes')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -340,7 +340,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.journey.scene',
             RouteBuilder::create('/api/games/journey/scene/{slug}')
-                ->controller('App\\Controller\\JourneyController::scene')
+                ->controller('App\\Http\\Controller\\JourneyController::scene')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -349,7 +349,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.journey.tap',
             RouteBuilder::create('/api/games/journey/tap')
-                ->controller('App\\Controller\\JourneyController::tap')
+                ->controller('App\\Http\\Controller\\JourneyController::tap')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -358,7 +358,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.journey.hint',
             RouteBuilder::create('/api/games/journey/hint')
-                ->controller('App\\Controller\\JourneyController::hint')
+                ->controller('App\\Http\\Controller\\JourneyController::hint')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -367,7 +367,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.journey.complete',
             RouteBuilder::create('/api/games/journey/complete')
-                ->controller('App\\Controller\\JourneyController::complete')
+                ->controller('App\\Http\\Controller\\JourneyController::complete')
                 ->allowAll()
                 ->methods('POST')
                 ->build(),
@@ -376,7 +376,7 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.games.journey.stats',
             RouteBuilder::create('/api/games/journey/stats')
-                ->controller('App\\Controller\\JourneyController::stats')
+                ->controller('App\\Http\\Controller\\JourneyController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
                 ->build(),

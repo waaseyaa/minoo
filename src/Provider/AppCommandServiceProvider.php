@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
-use App\Support\Cli\CrisisOgAssetsHandler;
-use App\Support\Cli\GenealogyDemoSeedHandler;
-use App\Support\Cli\MailTestHandler;
-use App\Support\Cli\MessagingDigestHandler;
-use App\Support\MessageDigestCommand;
+use App\Console\CrisisOgAssetsHandler;
+use App\Console\GenealogyDemoSeedHandler;
+use App\Console\MailTestHandler;
+use App\Console\MessageDigestCommand;
+use App\Console\MessagingDigestHandler;
 use Waaseyaa\CLI\ArgumentDefinition;
 use Waaseyaa\CLI\ArgumentMode;
 use Waaseyaa\CLI\CommandDefinition;

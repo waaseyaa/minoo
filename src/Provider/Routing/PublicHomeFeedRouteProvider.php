@@ -20,7 +20,7 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'home.index',
             RouteBuilder::create('/')
-                ->controller('App\\Controller\\HomeController::index')
+                ->controller('App\\Http\\Controller\\HomeController::index')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -30,7 +30,7 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'home.alias',
             RouteBuilder::create('/home')
-                ->controller('App\\Controller\\HomeController::index')
+                ->controller('App\\Http\\Controller\\HomeController::index')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -44,7 +44,7 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'feed.page',
             RouteBuilder::create('/feed')
-                ->controller('App\\Controller\\FeedController::index')
+                ->controller('App\\Http\\Controller\\FeedController::index')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -54,7 +54,7 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'feed.api',
             RouteBuilder::create('/api/feed')
-                ->controller('App\\Controller\\FeedController::api')
+                ->controller('App\\Http\\Controller\\FeedController::api')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -63,7 +63,7 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'explore.redirect',
             RouteBuilder::create('/explore')
-                ->controller('App\\Controller\\FeedController::explore')
+                ->controller('App\\Http\\Controller\\FeedController::explore')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),

@@ -20,7 +20,7 @@ final class PublicAccountRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'account.home',
             RouteBuilder::create('/account')
-                ->controller('App\Controller\AccountHomeController::index')
+                ->controller('App\Http\Controller\AccountHomeController::index')
                 ->requireAuthentication()
                 ->render()
                 ->methods('GET')
@@ -30,7 +30,7 @@ final class PublicAccountRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'account.elder_toggle',
             RouteBuilder::create('/account/elder-toggle')
-                ->controller('App\Controller\AccountHomeController::toggleElder')
+                ->controller('App\Http\Controller\AccountHomeController::toggleElder')
                 ->requireAuthentication()
                 ->methods('POST')
                 ->build(),

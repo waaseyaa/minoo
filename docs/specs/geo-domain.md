@@ -8,8 +8,9 @@
 | `src/Domain/Geo/ValueObject/RankedVolunteer.php` | Readonly VO pairing a volunteer entity with distance data |
 | `src/Domain/Geo/Service/CommunityFinder.php` | Stateless service finding nearest/nearby communities by haversine |
 | `src/Domain/Geo/Service/LocationService.php` | Multi-source location resolver (session → cookie → IP → coordinates) |
+| `src/Domain/Geo/Service/LocationResolver.php` | Application façade: wires `LocationService` + `CommunityFinder` for controllers (nearby lists, coordinates) |
 | `src/Domain/Geo/Service/VolunteerRanker.php` | Ranks Elder Support volunteers by proximity in 3 tiers |
-| `src/Support/GeoDistance.php` | Haversine distance calculation (static utility) |
+| `Waaseyaa\Geo\GeoDistance` | Framework static haversine helper (used by controllers, feed scoring, `CommunityFinder`) |
 | `src/Support/CommunityLookup.php` | Builds community ID → name/slug lookup maps |
 | `src/Contract/NorthCloudCommunityDictionaryClientInterface.php` | App-facing seam for North Cloud community + dictionary operations |
 | `src/Support/NorthCloudCommunityDictionaryClient.php` | Adapter that wraps `waaseyaa/northcloud` client behind the app-facing interface |

@@ -23,7 +23,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.list',
             RouteBuilder::create('/coordinator/newsletter')
-                ->controller('App\Controller\NewsletterEditorController::list')
+                ->controller('App\Http\Controller\NewsletterEditorController::list')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('GET')
@@ -33,7 +33,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.new',
             RouteBuilder::create('/coordinator/newsletter/new')
-                ->controller('App\Controller\NewsletterEditorController::create')
+                ->controller('App\Http\Controller\NewsletterEditorController::create')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -46,7 +46,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.submissions',
             RouteBuilder::create('/coordinator/newsletter/submissions')
-                ->controller('App\Controller\NewsletterEditorController::submissionsList')
+                ->controller('App\Http\Controller\NewsletterEditorController::submissionsList')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('GET')
@@ -56,7 +56,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.submission_approve',
             RouteBuilder::create('/coordinator/newsletter/submissions/{id}/approve')
-                ->controller('App\Controller\NewsletterEditorController::submissionApprove')
+                ->controller('App\Http\Controller\NewsletterEditorController::submissionApprove')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -66,7 +66,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.submission_reject',
             RouteBuilder::create('/coordinator/newsletter/submissions/{id}/reject')
-                ->controller('App\Controller\NewsletterEditorController::submissionReject')
+                ->controller('App\Http\Controller\NewsletterEditorController::submissionReject')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -76,7 +76,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.assemble',
             RouteBuilder::create('/coordinator/newsletter/{id}/assemble')
-                ->controller('App\Controller\NewsletterEditorController::assemble')
+                ->controller('App\Http\Controller\NewsletterEditorController::assemble')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -86,7 +86,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.show',
             RouteBuilder::create('/coordinator/newsletter/{id}')
-                ->controller('App\Controller\NewsletterEditorController::show')
+                ->controller('App\Http\Controller\NewsletterEditorController::show')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('GET')
@@ -96,7 +96,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.approve',
             RouteBuilder::create('/coordinator/newsletter/{id}/approve')
-                ->controller('App\Controller\NewsletterEditorController::approve')
+                ->controller('App\Http\Controller\NewsletterEditorController::approve')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -106,7 +106,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.generate',
             RouteBuilder::create('/coordinator/newsletter/{id}/generate')
-                ->controller('App\Controller\NewsletterEditorController::generate')
+                ->controller('App\Http\Controller\NewsletterEditorController::generate')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -116,7 +116,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.editor.send',
             RouteBuilder::create('/coordinator/newsletter/{id}/send')
-                ->controller('App\Controller\NewsletterEditorController::send')
+                ->controller('App\Http\Controller\NewsletterEditorController::send')
                 ->requireRole('community_coordinator')
                 ->render()
                 ->methods('POST')
@@ -129,7 +129,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.print_preview',
             RouteBuilder::create('/newsletter/_internal/{id}/print')
-                ->controller('App\Controller\NewsletterController::printPreview')
+                ->controller('App\Http\Controller\NewsletterController::printPreview')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -139,7 +139,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.public.index',
             RouteBuilder::create('/newsletter')
-                ->controller('App\Controller\NewsletterController::index')
+                ->controller('App\Http\Controller\NewsletterController::index')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -149,7 +149,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.public.submit_form',
             RouteBuilder::create('/newsletter/submit')
-                ->controller('App\Controller\NewsletterController::submitForm')
+                ->controller('App\Http\Controller\NewsletterController::submitForm')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -159,7 +159,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.public.submit_post',
             RouteBuilder::create('/newsletter/submit')
-                ->controller('App\Controller\NewsletterController::submitPost')
+                ->controller('App\Http\Controller\NewsletterController::submitPost')
                 ->allowAll()
                 ->render()
                 ->methods('POST')
@@ -169,7 +169,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.public.pdf',
             RouteBuilder::create('/newsletter/{community}/{volume}-{issue}.pdf')
-                ->controller('App\Controller\NewsletterController::downloadPdf')
+                ->controller('App\Http\Controller\NewsletterController::downloadPdf')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -179,7 +179,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.public.edition',
             RouteBuilder::create('/newsletter/{community}/{volume}-{issue}')
-                ->controller('App\Controller\NewsletterController::showEdition')
+                ->controller('App\Http\Controller\NewsletterController::showEdition')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -189,7 +189,7 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.public.community',
             RouteBuilder::create('/newsletter/{community}')
-                ->controller('App\Controller\NewsletterController::showCommunity')
+                ->controller('App\Http\Controller\NewsletterController::showCommunity')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -205,21 +205,21 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'static.about',
             RouteBuilder::create('/about')
-                ->controller('App\Controller\StaticPageController::about')
+                ->controller('App\Http\Controller\StaticPageController::about')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'games.agim.short',
             RouteBuilder::create('/agim')
-                ->controller('App\Controller\AgimController::page')
+                ->controller('App\Http\Controller\AgimController::page')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'games.guess_price.short',
             RouteBuilder::create('/guess-price')
-                ->controller('App\Controller\GuessPriceController::page')
+                ->controller('App\Http\Controller\GuessPriceController::page')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
@@ -235,28 +235,28 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.crossword.short',
             RouteBuilder::create('/crossword')
-                ->controller('App\Controller\CrosswordController::page')
+                ->controller('App\Http\Controller\CrosswordController::page')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.data_sovereignty',
             RouteBuilder::create('/data-sovereignty')
-                ->controller('App\Controller\StaticPageController::dataSovereignty')
+                ->controller('App\Http\Controller\StaticPageController::dataSovereignty')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.elders',
             RouteBuilder::create('/elders')
-                ->controller('App\Controller\StaticPageController::elders')
+                ->controller('App\Http\Controller\StaticPageController::elders')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.games',
             RouteBuilder::create('/games')
-                ->controller('App\Controller\StaticPageController::games')
+                ->controller('App\Http\Controller\StaticPageController::games')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
@@ -272,84 +272,84 @@ final class NewsletterApiRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'static.get_involved',
             RouteBuilder::create('/get-involved')
-                ->controller('App\Controller\StaticPageController::getInvolved')
+                ->controller('App\Http\Controller\StaticPageController::getInvolved')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.how_it_works',
             RouteBuilder::create('/how-it-works')
-                ->controller('App\Controller\StaticPageController::howItWorks')
+                ->controller('App\Http\Controller\StaticPageController::howItWorks')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.journey',
             RouteBuilder::create('/journey')
-                ->controller('App\Controller\StaticPageController::journey')
+                ->controller('App\Http\Controller\StaticPageController::journey')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.legal',
             RouteBuilder::create('/legal')
-                ->controller('App\Controller\StaticPageController::legal')
+                ->controller('App\Http\Controller\StaticPageController::legal')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.legal.section',
             RouteBuilder::create('/legal/{section}')
-                ->controller('App\Controller\StaticPageController::legal')
+                ->controller('App\Http\Controller\StaticPageController::legal')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.matcher',
             RouteBuilder::create('/matcher')
-                ->controller('App\Controller\StaticPageController::matcher')
+                ->controller('App\Http\Controller\StaticPageController::matcher')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.messages',
             RouteBuilder::create('/messages')
-                ->controller('App\Controller\StaticPageController::messages')
+                ->controller('App\Http\Controller\StaticPageController::messages')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.safety',
             RouteBuilder::create('/safety')
-                ->controller('App\Controller\StaticPageController::safety')
+                ->controller('App\Http\Controller\StaticPageController::safety')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.search',
             RouteBuilder::create('/search')
-                ->controller('App\Controller\StaticPageController::search')
+                ->controller('App\Http\Controller\StaticPageController::search')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'games.shkoda.short',
             RouteBuilder::create('/shkoda')
-                ->controller('App\Controller\ShkodaController::page')
+                ->controller('App\Http\Controller\ShkodaController::page')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.studio',
             RouteBuilder::create('/studio')
-                ->controller('App\Controller\StaticPageController::studio')
+                ->controller('App\Http\Controller\StaticPageController::studio')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'static.volunteer',
             RouteBuilder::create('/volunteer')
-                ->controller('App\Controller\StaticPageController::volunteer')
+                ->controller('App\Http\Controller\StaticPageController::volunteer')
                 ->allowAll()->render()->methods('GET')->build(),
         );
 

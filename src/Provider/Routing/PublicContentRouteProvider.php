@@ -21,7 +21,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'events.list',
             RouteBuilder::create('/events')
-                ->controller('App\\Controller\\EventController::list')
+                ->controller('App\\Http\\Controller\\EventController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -31,7 +31,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'events.ics',
             RouteBuilder::create('/events/{slug}.ics')
-                ->controller('App\\Controller\\EventController::ics')
+                ->controller('App\\Http\\Controller\\EventController::ics')
                 ->allowAll()
                 ->methods('GET')
                 ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
@@ -41,7 +41,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'events.show',
             RouteBuilder::create('/events/{slug}')
-                ->controller('App\\Controller\\EventController::show')
+                ->controller('App\\Http\\Controller\\EventController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -52,7 +52,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'og.event.png',
             RouteBuilder::create('/og/event/{slug}.png')
-                ->controller('App\\Controller\\OpenGraphController::eventPng')
+                ->controller('App\\Http\\Controller\\OpenGraphController::eventPng')
                 ->allowAll()
                 ->methods('GET')
                 ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
@@ -66,7 +66,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'groups.list',
             RouteBuilder::create('/groups')
-                ->controller('App\\Controller\\GroupController::list')
+                ->controller('App\\Http\\Controller\\GroupController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -76,7 +76,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'groups.show',
             RouteBuilder::create('/groups/{slug}')
-                ->controller('App\\Controller\\GroupController::show')
+                ->controller('App\\Http\\Controller\\GroupController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -87,7 +87,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'businesses.list',
             RouteBuilder::create('/businesses')
-                ->controller('App\\Controller\\BusinessController::list')
+                ->controller('App\\Http\\Controller\\BusinessController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -97,7 +97,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'businesses.show',
             RouteBuilder::create('/businesses/{slug}')
-                ->controller('App\\Controller\\BusinessController::show')
+                ->controller('App\\Http\\Controller\\BusinessController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -108,7 +108,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'og.business.png',
             RouteBuilder::create('/og/business/{slug}.png')
-                ->controller('App\\Controller\\OpenGraphController::businessPng')
+                ->controller('App\\Http\\Controller\\OpenGraphController::businessPng')
                 ->allowAll()
                 ->methods('GET')
                 ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
@@ -122,7 +122,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'teachings.list',
             RouteBuilder::create('/teachings')
-                ->controller('App\\Controller\\TeachingController::list')
+                ->controller('App\\Http\\Controller\\TeachingController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -132,7 +132,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'teachings.show',
             RouteBuilder::create('/teachings/{slug}')
-                ->controller('App\\Controller\\TeachingController::show')
+                ->controller('App\\Http\\Controller\\TeachingController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -143,7 +143,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'og.teaching.png',
             RouteBuilder::create('/og/teaching/{slug}.png')
-                ->controller('App\\Controller\\OpenGraphController::teachingPng')
+                ->controller('App\\Http\\Controller\\OpenGraphController::teachingPng')
                 ->allowAll()
                 ->methods('GET')
                 ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
@@ -153,7 +153,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'og.crisis.sagamok_spanish_river_flood.png',
             RouteBuilder::create('/og/crisis/sagamok-spanish-river-flood.png')
-                ->controller('App\\Controller\\OpenGraphController::sagamokSpanishRiverFloodPng')
+                ->controller('App\\Http\\Controller\\OpenGraphController::sagamokSpanishRiverFloodPng')
                 ->allowAll()
                 ->methods('GET')
                 ->build(),
@@ -162,7 +162,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'og.crisis.incident.png',
             RouteBuilder::create('/og/crisis/{community_slug}/{incident_slug}.png')
-                ->controller('App\\Controller\\OpenGraphController::crisisIncidentPng')
+                ->controller('App\\Http\\Controller\\OpenGraphController::crisisIncidentPng')
                 ->allowAll()
                 ->methods('GET')
                 ->requirement('community_slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
@@ -177,7 +177,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'language.list',
             RouteBuilder::create('/language')
-                ->controller('App\\Controller\\LanguageController::list')
+                ->controller('App\\Http\\Controller\\LanguageController::list')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -187,7 +187,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'language.search',
             RouteBuilder::create('/language/search')
-                ->controller('App\\Controller\\LanguageController::search')
+                ->controller('App\\Http\\Controller\\LanguageController::search')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
@@ -197,7 +197,7 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'language.show',
             RouteBuilder::create('/language/{slug}')
-                ->controller('App\\Controller\\LanguageController::show')
+                ->controller('App\\Http\\Controller\\LanguageController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')

@@ -1,14 +1,14 @@
 ## Summary
-<!-- Short description of change and linked issue(s) -->
+<!-- Short description of change; link Spec Kitty mission/WP or GitHub issue if applicable -->
 
-## Related Issue
-- Closes: #<!-- issue number -->
+## Tracking (optional)
+- Spec Kitty: <!-- mission / WP id or link -->
+- Other: <!-- e.g. GitHub #N if you still link there for traceability -->
 
 ## Checklist (required for V1)
 
-### Issue & Process
-- [ ] PR title includes issue number: `feat(#N): description`
-- [ ] Issue is assigned to V1 milestone
+### Process
+- [ ] PR title reflects the change (e.g. `feat: …`, `fix: …`, `chore: …`)
 - [ ] PR targets `release/v1` branch (not `main`)
 
 ### Tests

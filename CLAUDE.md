@@ -2,7 +2,7 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
-Last framework sync: Waaseyaa alpha.175 (native-CLI-kernel mission — symfony/console hard-cut, `HasCommandsInterface` → `HasNativeCommandsInterface`, command classes split into Handler + `CommandDefinition` pairs; `Waaseyaa\NorthCloud\Command\NcSyncCommand` removed in favor of framework's native `NcSyncHandler`). Minoo's own CLI handlers now live under `src/Support/Cli/`. Tracking: #750.
+Last framework sync: Waaseyaa alpha.175 (native-CLI-kernel mission — symfony/console hard-cut, `HasCommandsInterface` → `HasNativeCommandsInterface`, command classes split into Handler + `CommandDefinition` pairs; `Waaseyaa\NorthCloud\Command\NcSyncCommand` removed in favor of framework's native `NcSyncHandler`). Minoo's own CLI handlers live under `src/Console/` (`App\Console\`). Tracking: #750.
 
 ## Architecture
 
@@ -12,14 +12,17 @@ Minoo is a **thin application** — custom entity types, access policies, servic
 minoo/
 ├── src/
 │   ├── Access/        # 10 access policy classes
-│   ├── Controller/    # 35 HTTP controllers (incl. HomeController, FeedController)
-│   ├── Domain/        # Bounded contexts (Geo/)
+│   ├── Http/          # HTTP surface
+│   │   ├── Controller/  # SSR + JSON API controllers (`App\Http\Controller`)
+│   │   └── Middleware/  # HTTP middleware (`App\Http\Middleware`)
+│   ├── Console/       # Native CLI handlers (`App\Console\`)
+│   ├── Domain/        # Bounded contexts (Geo/, Events/, Newsletter/)
 │   ├── Entity/        # 31 entity class files (content + config types)
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
 │   ├── Provider/      # 5 composer-registered providers + internal stacks (entity, routing)
 │   ├── Search/        # Search providers, autocomplete
 │   ├── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
-│   └── Support/       # Cross-cutting utilities (GeoDistance, SlugGenerator, CrosswordEngine)
+│   └── Support/       # Cross-cutting utilities (engines, crisis OG, NC client, etc.)
 ├── tests/App/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
@@ -55,15 +58,15 @@ minoo/
 | `tests/App/*` | `minoo:entities` | `docs/specs/entity-model.md` (testing section) |
 | `src/Ingestion/*` | `minoo:ingestion` | `docs/specs/ingestion-pipeline.md` |
 | `src/Search/*` | `minoo:search` | `docs/specs/search.md` |
-| `src/Controller/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
+| `src/Http/Controller/*`, `src/Http/Middleware/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
-| `src/Domain/Geo/*`, `src/Support/GeoDistance.php`, `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
+| `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`), `src/Support/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
 | `src/Contract/NorthCloudCommunityDictionaryClientInterface.php`, `src/Support/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
 | `src/Support/*` (other) | — | Cross-cutting: SlugGenerator, Flash, FixtureResolver, ElderIdentity; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/*`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md` |
-| `src/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
-| GitHub issues, milestones, new features, roadmap | — | `docs/specs/workflow.md` |
+| `src/Http/Controller/*`, `src/Routing/*` | `waaseyaa-app-development` | — |
+| Spec Kitty missions, roadmap, release planning | — | `docs/specs/workflow.md` |
 
 For Minoo-level specs, use the Minoo MCP tools (Claude Code: **`.claude/settings.json`** registers **`minoo`** → `mcp/server.js` and **`bimaaji`** → `vendor/waaseyaa/bimaaji/mcp/server.js`). After `composer install`, run **`composer bimaaji-mcp-install`** (or rely on `post-create-project-cmd`) so both MCP servers have Node deps. **`.cursor/mcp.json`** is gitignored—do not use it for team MCP config):
 - `minoo_list_specs` — list all available specs
@@ -230,7 +233,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Dictionary `definition` field is JSON-wrapped**: Values like `["bear"]` need `json_decode()` before display. Use `cleanDefinition()` pattern in controllers.
 - **Composer providers**: `extra.waaseyaa.providers` lists five classes (`MinooEntityStackProvider`, `MinooRoutingStackProvider`, `AppBootServiceProvider`, `AppCommandServiceProvider`, `BimaajiBridgeProvider`). CI asserts this list matches the trailing segment of the compiled package manifest (`ComposerProviderParityTest`).
 - **`HasCommandsInterface` is opt-in (alpha.173+)**: Providers that contribute Symfony console commands MUST `implements Waaseyaa\Foundation\ServiceProvider\Capability\HasCommandsInterface`. The framework removed the no-op default `commands()` from `ServiceProvider`, so without the marker `ConsoleKernel::handle()` skips your commands silently — they appear "not defined" at the CLI even though the provider returns them. Also: the interface signature uses `Waaseyaa\Foundation\Event\EventDispatcherInterface` for the `$dispatcher` param, not Symfony's `EventDispatcherInterface`. Mismatched type → fatal LSP-incompatible signature on boot.
-- **Default `log_level` is `notice` (set in `config/waaseyaa.php`)**: Framework default is `warning`, which silently drops the post-#1390 dispatcher-shim notices (`channel: dispatcher.deprecation`, `event: implicit_array_shim`) that inventory the implicit-array migration backlog. Override via `WAASEYAA_LOG_LEVEL` env var (`debug|info|notice|warning|error|...`). Notices are dedup'd inside `AppControllerMethodInvoker::$specCache` (private static), so under FPM you see one per `(controller_class::method::parameter_name)` triple per worker lifetime; under `php -S` the cache lives for the server process. To extract Minoo's controller-attribute migration backlog from the logs: `grep -F 'dispatcher.deprecation' <log> | sed -E 's/.*Controller ([^ ]+) parameter \$([^ ]+) .*add #\[([^]]+)\].*/\1 $\2 -> #[\3]/' | sort -u`.
+- **Default `log_level` is `notice` (set in `config/waaseyaa.php`)**: Framework default is `warning`, which silently drops the post-#1390 dispatcher-shim notices (`channel: dispatcher.deprecation`, `event: implicit_array_shim`) that inventory the implicit-array migration backlog. Override via `WAASEYAA_LOG_LEVEL` env var (`debug|info|notice|warning|error|...`). Notices are dedup'd inside `AppControllerMethodInvoker::$specCache` (private static), so under FPM you see one per `(controller_class::method::parameter_name)` triple per worker lifetime; under `php -S` the cache lives for the server process. To extract Minoo's controller-attribute migration backlog from the logs: `grep -F 'dispatcher.deprecation' <log> | sed -E 's/.*Controller ([^ ]+) parameter \$([^ ]+) .*add #\[([^]]+)\].*/\1 $\2 -> #[\3]/' | sort -u` (log lines use the concrete controller FQCN, e.g. `App\Http\Controller\...`).
 - **Worktree vendor corruption**: Worktrees don't share the main repo's `vendor/`. After worktree cleanup, run `composer install` in the main repo to restore dependencies.
 - **CSS cache bust is manual**: Bump `?v=N` in `base.html.twig` after CSS changes. Stale CSS on production is the #1 cause of "it looks broken after deploy."
 - **Crossword puzzle tiers**: Only easy-tier puzzles exist in the database. Practice mode for medium/hard returns 500. Generate puzzles via CLI before testing those tiers. See #558, #560.
@@ -246,17 +249,19 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **`public/index.php` must always call `$response->send()`**: Never gate the emit on `PHP_SAPI === 'cli-server'`. Symfony `Response::send()` is SAPI-aware and works correctly under fpm-fcgi, cli, and cli-server. Gating it (as was briefly done in 6c4e755) produces a WSOD under Caddy + PHP-FPM: kernel handles the request, returns the Response object, and nothing emits the body — every route returns 200 with zero content-length. Discovered via a production outage during the alpha.75 → alpha.107 jump. The old SsrResponse-era kernel echoed content during `handle()`, which is why the gate ever seemed to work.
 - **Verify production with body size, not HTTP status**: A `curl -I` or `curl -w "%{http_code}"` returning 200 does NOT prove the app is alive. A crashing kernel can still emit headers. Always `curl -sS -o file -w "%{http_code}/%{size_download}"` and spot-check a `<title>` tag after deploys. Zero-byte 200s are the classic "PHP fatal after headers sent" failure mode.
 
-## GitHub Workflow
+## Workflow (Spec Kitty)
 
-All work in this repo follows a GitHub-first workflow. See `docs/specs/workflow.md` (via `minoo_get_spec workflow`) for the full governance model including the versioning strategy and current milestone structure.
+**Spec Kitty is the canonical execution layer** for Minoo: missions, work packages, step contracts, and the implement / review / `next` loop. Use the Spec Kitty skills under `.claude/skills/spec-kitty-*` (and the copies under `/.claude/skills/` if installed globally) to advance work, not GitHub issue numbers as a hard gate.
 
-**The 5 rules — enforced at every session start via `bin/check-milestones`:**
+See `docs/specs/workflow.md` (via `minoo_get_spec workflow`) for versioning, Spec Kitty governance, and drift tooling.
 
-1. **All work begins with an issue.** Ask for the issue number before writing code. If none exists, create one and assign it to a milestone first.
-2. **Every issue belongs to a milestone.** Unassigned issues are incomplete triage — prompt assignment if missing.
-3. **Milestones define the roadmap.** Check the active milestone before proposing work. Do not invent new milestones without explicit discussion.
-4. **PRs must reference issues.** PR title format: `feat(#N): description`. Use `.github/pull_request_template.md`.
-5. **Read the drift report.** `bin/check-milestones` runs at session start. Flag any warnings before beginning work.
+**Working agreements:**
+
+1. **Track non-trivial work in Spec Kitty** — Features and multi-file refactors should have mission or work-package coverage before implementation; tiny fixes may follow a direct user brief.
+2. **Use the Spec Kitty control loop** — Runtime `next`, implement-review, and mission review skills define sequencing and acceptance.
+3. **Codified context before code** — This file, specialist skills, and `minoo_*` / `waaseyaa_*` specs for the subsystem you touch.
+4. **PRs describe what landed** — Titles and bodies should match the Spec Kitty mission or WP being merged; `.github/pull_request_template.md` is optional guidance, not an issue-number mandate.
+5. **Drift is advisory** — `bin/check-milestones` (often run from SessionStart) prints **repository boundary** checks only (see script and `docs/specs/workflow.md`). Read warnings when present; they do not override Spec Kitty–driven work.
 
 ## Codified Context
 
@@ -268,7 +273,7 @@ All work in this repo follows a GitHub-first workflow. See `docs/specs/workflow.
   - `skills/minoo-controllers/SKILL.md` — HTTP controllers, routing, request handling
   - `skills/minoo-frontend-ssr/SKILL.md` — templates, CSS design system, SSR rendering
 - **Tier 3 (Specs):** Retrieved via `minoo_*` MCP tools:
-  - `docs/specs/workflow.md` — GitHub workflow governance, versioning model, milestone structure
+  - `docs/specs/workflow.md` — Spec Kitty governance, versioning model, framework milestone reference, boundary drift script
   - `docs/specs/entity-model.md` — entity types, access, seeds (318 lines)
   - `docs/specs/ingestion-pipeline.md` — NorthCloud ingest, mappers, materialization
   - `docs/specs/search.md` — search provider, config, template

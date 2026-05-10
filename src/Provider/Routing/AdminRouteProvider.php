@@ -25,7 +25,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.volunteer',
             RouteBuilder::create('/dashboard/volunteer')
-                ->controller('App\Controller\VolunteerDashboardController::index')
+                ->controller('App\Http\Controller\VolunteerDashboardController::index')
                 ->requireRole('volunteer')
                 ->render()
                 ->methods('GET')
@@ -35,7 +35,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.volunteer.edit',
             RouteBuilder::create('/dashboard/volunteer/edit')
-                ->controller('App\Controller\VolunteerDashboardController::editForm')
+                ->controller('App\Http\Controller\VolunteerDashboardController::editForm')
                 ->requireRole('volunteer')
                 ->render()
                 ->methods('GET')
@@ -45,7 +45,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.volunteer.edit.submit',
             RouteBuilder::create('/dashboard/volunteer/edit')
-                ->controller('App\Controller\VolunteerDashboardController::submitEdit')
+                ->controller('App\Http\Controller\VolunteerDashboardController::submitEdit')
                 ->requireRole('volunteer')
                 ->methods('POST')
                 ->build(),
@@ -54,7 +54,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.volunteer.toggle',
             RouteBuilder::create('/dashboard/volunteer/toggle-availability')
-                ->controller('App\Controller\VolunteerDashboardController::toggleAvailability')
+                ->controller('App\Http\Controller\VolunteerDashboardController::toggleAvailability')
                 ->requireRole('volunteer')
                 ->methods('POST')
                 ->build(),
@@ -63,7 +63,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.coordinator',
             RouteBuilder::create('/dashboard/coordinator')
-                ->controller('App\Controller\CoordinatorDashboardController::index')
+                ->controller('App\Http\Controller\CoordinatorDashboardController::index')
                 ->requireRole('elder_coordinator')
                 ->render()
                 ->methods('GET')
@@ -73,7 +73,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.coordinator.applications',
             RouteBuilder::create('/dashboard/coordinator/applications')
-                ->controller('App\Controller\CoordinatorDashboardController::applications')
+                ->controller('App\Http\Controller\CoordinatorDashboardController::applications')
                 ->requireRole('elder_coordinator')
                 ->render()
                 ->methods('GET')
@@ -83,7 +83,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.coordinator.applications.approve',
             RouteBuilder::create('/dashboard/coordinator/applications/{uuid}/approve')
-                ->controller('App\Controller\CoordinatorDashboardController::approveApplication')
+                ->controller('App\Http\Controller\CoordinatorDashboardController::approveApplication')
                 ->requireRole('elder_coordinator')
                 ->methods('POST')
                 ->build(),
@@ -92,7 +92,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.coordinator.applications.deny',
             RouteBuilder::create('/dashboard/coordinator/applications/{uuid}/deny')
-                ->controller('App\Controller\CoordinatorDashboardController::denyApplication')
+                ->controller('App\Http\Controller\CoordinatorDashboardController::denyApplication')
                 ->requireRole('elder_coordinator')
                 ->methods('POST')
                 ->build(),
@@ -106,7 +106,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'staff.ingestion',
             RouteBuilder::create('/staff/ingestion')
-                ->controller('App\Controller\IngestionDashboardController::index')
+                ->controller('App\Http\Controller\IngestionDashboardController::index')
                 // Match /staff/users: site admins use role `admin`, not the flat `permissions`
                 // array (Waaseyaa only auto-grants all perms for role `administrator`).
                 ->requireRole('admin,elder_coordinator')
@@ -118,7 +118,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'staff.ingestion.nc_sync_status',
             RouteBuilder::create('/api/staff/nc-sync-status')
-                ->controller('App\Controller\IngestionApiController::status')
+                ->controller('App\Http\Controller\IngestionApiController::status')
                 ->requireRole('admin,elder_coordinator')
                 ->methods('GET')
                 ->build(),
@@ -127,7 +127,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'staff.ingestion.envelope',
             RouteBuilder::create('/api/staff/ingestion/envelope')
-                ->controller('App\Controller\IngestionApiController::ingestEnvelope')
+                ->controller('App\Http\Controller\IngestionApiController::ingestEnvelope')
                 ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->build(),
@@ -136,7 +136,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'staff.ingestion.approve',
             RouteBuilder::create('/api/staff/ingestion/{id}/approve')
-                ->controller('App\Controller\IngestionApiController::approve')
+                ->controller('App\Http\Controller\IngestionApiController::approve')
                 ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -146,7 +146,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'staff.ingestion.reject',
             RouteBuilder::create('/api/staff/ingestion/{id}/reject')
-                ->controller('App\Controller\IngestionApiController::reject')
+                ->controller('App\Http\Controller\IngestionApiController::reject')
                 ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -156,7 +156,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'staff.ingestion.materialize',
             RouteBuilder::create('/api/staff/ingestion/{id}/materialize')
-                ->controller('App\Controller\IngestionApiController::materialize')
+                ->controller('App\Http\Controller\IngestionApiController::materialize')
                 ->requireRole('admin,elder_coordinator')
                 ->methods('POST')
                 ->requirement('id', '\\d+')
@@ -188,7 +188,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'dashboard.coordinator.users',
             RouteBuilder::create('/dashboard/coordinator/users')
-                ->controller('App\Controller\RoleManagementController::coordinatorList')
+                ->controller('App\Http\Controller\RoleManagementController::coordinatorList')
                 ->requireRole('elder_coordinator')
                 ->render()
                 ->methods('GET')
@@ -198,7 +198,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'staff.users',
             RouteBuilder::create('/staff/users')
-                ->controller('App\Controller\RoleManagementController::adminList')
+                ->controller('App\Http\Controller\RoleManagementController::adminList')
                 ->requireRole('admin')
                 ->render()
                 ->methods('GET')
@@ -208,7 +208,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'api.users.roles',
             RouteBuilder::create('/api/users/{uid}/roles')
-                ->controller('App\Controller\RoleManagementController::changeRole')
+                ->controller('App\Http\Controller\RoleManagementController::changeRole')
                 ->requireRole('elder_coordinator')
                 ->methods('POST')
                 ->build(),
@@ -223,7 +223,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.list',
             RouteBuilder::create('/admin/api/newsletter')
-                ->controller('App\\Controller\\NewsletterAdminApiController::listEditions')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::listEditions')
                 ->requireRole('administrator')
                 ->methods('GET')
                 ->build(),
@@ -232,7 +232,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.create',
             RouteBuilder::create('/admin/api/newsletter')
-                ->controller('App\\Controller\\NewsletterAdminApiController::createEdition')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::createEdition')
                 ->requireRole('administrator')
                 ->methods('POST')
                 ->build(),
@@ -241,7 +241,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.entity_search',
             RouteBuilder::create('/admin/api/newsletter/entity-search')
-                ->controller('App\\Controller\\NewsletterAdminApiController::entitySearch')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::entitySearch')
                 ->requireRole('administrator')
                 ->methods('GET')
                 ->build(),
@@ -250,7 +250,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.get',
             RouteBuilder::create('/admin/api/newsletter/{id}')
-                ->controller('App\\Controller\\NewsletterAdminApiController::getEdition')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::getEdition')
                 ->requireRole('administrator')
                 ->methods('GET')
                 ->build(),
@@ -259,7 +259,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.add_item',
             RouteBuilder::create('/admin/api/newsletter/{id}/items')
-                ->controller('App\\Controller\\NewsletterAdminApiController::addItem')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::addItem')
                 ->requireRole('administrator')
                 ->methods('POST')
                 ->build(),
@@ -268,7 +268,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.remove_item',
             RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}')
-                ->controller('App\\Controller\\NewsletterAdminApiController::removeItem')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::removeItem')
                 ->requireRole('administrator')
                 ->methods('DELETE')
                 ->build(),
@@ -277,7 +277,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.reorder_item',
             RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}/reorder')
-                ->controller('App\\Controller\\NewsletterAdminApiController::reorderItem')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::reorderItem')
                 ->requireRole('administrator')
                 ->methods('POST')
                 ->build(),
@@ -286,7 +286,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.preview_token',
             RouteBuilder::create('/admin/api/newsletter/{id}/preview-token')
-                ->controller('App\\Controller\\NewsletterAdminApiController::previewToken')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::previewToken')
                 ->requireRole('administrator')
                 ->methods('GET')
                 ->build(),
@@ -295,7 +295,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.generate',
             RouteBuilder::create('/admin/api/newsletter/{id}/generate')
-                ->controller('App\\Controller\\NewsletterAdminApiController::generate')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::generate')
                 ->requireRole('administrator')
                 ->methods('POST')
                 ->build(),
@@ -304,7 +304,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.download',
             RouteBuilder::create('/admin/api/newsletter/{id}/download')
-                ->controller('App\\Controller\\NewsletterAdminApiController::download')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::download')
                 ->requireRole('administrator')
                 ->methods('GET')
                 ->build(),
@@ -313,7 +313,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.send',
             RouteBuilder::create('/admin/api/newsletter/{id}/send')
-                ->controller('App\\Controller\\NewsletterAdminApiController::send')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::send')
                 ->requireRole('administrator')
                 ->methods('POST')
                 ->build(),
@@ -324,7 +324,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.spa',
             RouteBuilder::create('/admin/newsletter')
-                ->controller('App\\Controller\\NewsletterAdminApiController::spaFallback')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::spaFallback')
                 ->requireRole('administrator')
                 ->methods('GET')
                 ->build(),
@@ -333,7 +333,7 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'newsletter.admin.spa.catchall',
             RouteBuilder::create('/admin/newsletter/{path}')
-                ->controller('App\\Controller\\NewsletterAdminApiController::spaFallback')
+                ->controller('App\\Http\\Controller\\NewsletterAdminApiController::spaFallback')
                 ->requireRole('administrator')
                 ->methods('GET')
                 ->requirement('path', '.*')
