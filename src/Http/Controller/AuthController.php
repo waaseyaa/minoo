@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Contract\RateLimiterInterface;
-use App\Support\LayoutTwigContext;
+use App\Http\View\LayoutTwigContext;
+use App\Infrastructure\RateLimit\RateLimiterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;

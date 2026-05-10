@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Http\Controller;
 
 use App\Http\Controller\RoleManagementController;
-use App\Support\ElderIdentity;
+use App\Identity\ElderIdentity;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

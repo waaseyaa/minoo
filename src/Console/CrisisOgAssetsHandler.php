@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use App\Support\CrisisIncidentResolver;
-use App\Support\CrisisOgAutomationPolicy;
-use App\Support\CrisisOgImageService;
-use App\Support\CrisisResolveContext;
+use App\Infrastructure\Crisis\CrisisIncidentResolver;
+use App\Infrastructure\Crisis\CrisisResolveContext;
+use App\Infrastructure\OpenGraph\CrisisOgAutomationPolicy;
+use App\Infrastructure\OpenGraph\CrisisOgImageService;
 use Waaseyaa\CLI\CliIO;
 
 final class CrisisOgAssetsHandler

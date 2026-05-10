@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
+use App\Http\Controller\Concerns\JsonResponseTrait;
 use App\Ingestion\IngestImporter;
 use App\Ingestion\IngestMaterializer;
 use App\Ingestion\IngestStatus;
 use App\Ingestion\PayloadValidator;
-use App\Support\JsonResponseTrait;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Access\AccountInterface;

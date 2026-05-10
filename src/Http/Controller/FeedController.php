@@ -7,7 +7,7 @@ namespace App\Http\Controller;
 use App\Domain\Feed\FeedAssemblerInterface;
 use App\Domain\Feed\FeedContext;
 use App\Domain\Feed\FeedResponse;
-use App\Support\LayoutTwigContext;
+use App\Http\View\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;

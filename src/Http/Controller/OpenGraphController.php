@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Support\CrisisIncidentResolver;
-use App\Support\CrisisOgAutomationPolicy;
-use App\Support\CrisisOgImageService;
-use App\Support\CrisisResolveContext;
-use App\Support\OgImageRenderer;
-use App\Support\PublicOgEntityLoader;
+use App\Infrastructure\Crisis\CrisisIncidentResolver;
+use App\Infrastructure\Crisis\CrisisResolveContext;
+use App\Infrastructure\OpenGraph\CrisisOgAutomationPolicy;
+use App\Infrastructure\OpenGraph\CrisisOgImageService;
+use App\Infrastructure\OpenGraph\OgImageRenderer;
+use App\Infrastructure\OpenGraph\PublicOgEntityLoader;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Access\AccountInterface;

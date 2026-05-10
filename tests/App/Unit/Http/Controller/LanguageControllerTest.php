@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller;
 
-use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Entity\DictionaryEntry;
 use App\Http\Controller\LanguageController;
+use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

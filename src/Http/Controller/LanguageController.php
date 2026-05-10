@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Contract\NorthCloudCommunityDictionaryClientInterface;
 use App\Entity\DictionaryEntry;
-use App\Support\LayoutTwigContext;
+use App\Http\View\LayoutTwigContext;
+use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;

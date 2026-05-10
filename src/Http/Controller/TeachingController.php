@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Support\CommunityLookup;
-use App\Support\LayoutTwigContext;
+use App\Http\View\LayoutTwigContext;
+use App\Infrastructure\NorthCloud\CommunityLookup;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;

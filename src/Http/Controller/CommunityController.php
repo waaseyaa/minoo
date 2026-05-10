@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controller;
 
-use App\Contract\NorthCloudCommunityDictionaryClientInterface;
-use App\Support\CrisisIncidentResolver;
-use App\Support\CrisisResolveContext;
-use App\Support\LayoutTwigContext;
+use App\Http\View\LayoutTwigContext;
+use App\Infrastructure\Crisis\CrisisIncidentResolver;
+use App\Infrastructure\Crisis\CrisisResolveContext;
+use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;

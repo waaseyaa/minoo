@@ -10,7 +10,7 @@ use App\Domain\Newsletter\Service\EditionLifecycle;
 use App\Domain\Newsletter\Service\NewsletterDispatcher;
 use App\Domain\Newsletter\Service\NewsletterRenderer;
 use App\Domain\Newsletter\Service\RenderTokenStore;
-use App\Support\JsonResponseTrait;
+use App\Http\Controller\Concerns\JsonResponseTrait;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
