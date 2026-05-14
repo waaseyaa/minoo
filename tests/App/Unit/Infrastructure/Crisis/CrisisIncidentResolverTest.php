@@ -57,13 +57,11 @@ final class CrisisIncidentResolverTest extends TestCase
     }
 
     #[Test]
-    public function hub_callout_returns_sagamok_keys(): void
+    public function hub_callout_omits_sagamok_when_show_on_hub_disabled(): void
     {
         $r = new CrisisIncidentResolver($this->projectRoot);
         $c = $r->hubCalloutForCommunity('sagamok-anishnawbek', CrisisResolveContext::publicWeb());
-        self::assertNotNull($c);
-        self::assertSame('sagamok_flood.community_callout_title', $c['title_key']);
-        self::assertStringContainsString('spanish-river-flood', $c['href']);
+        self::assertNull($c);
     }
 
     #[Test]

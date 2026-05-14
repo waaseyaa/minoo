@@ -29,7 +29,7 @@ return [
         'config_path' => __DIR__ . '/crisis/sagamok_spanish_river_flood.php',
         'og_generate' => true,
         'og_generate_mode' => 'both',
-        'show_on_community_hub' => true,
+        'show_on_community_hub' => false,
         'draft' => false,
         'hub_title_key' => 'sagamok_flood.community_callout_title',
         'hub_body_key' => 'sagamok_flood.community_callout_body',
