@@ -2334,7 +2334,7 @@ final class MessageDigestCommand
             }
         }
 
-        $body .= "\nOpen Messages: https://minoo.sagamok.ca/messages\n";
+        $body .= "\nOpen Messages: https://minoo.live/messages\n";
         $body .= "\n--\nMinoo - Sagamok Anishnawbek Community Platform\n";
 
         $this->mailService->sendPlain($email, $subject, $body);

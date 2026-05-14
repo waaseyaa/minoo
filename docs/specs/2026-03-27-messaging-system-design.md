@@ -166,11 +166,11 @@ You have unread messages in 2 conversations:
 - Volunteer Coordinators (2 new messages)
   Tom: "Schedule updated for next week"
 
--> Open Messages: https://minoo.sagamok.ca/messages
+-> Open Messages: https://minoo.live/messages
 
 --
 Minoo - Sagamok Anishnawbek Community Platform
-Unsubscribe: https://minoo.sagamok.ca/account/notifications
+Unsubscribe: https://minoo.live/account/notifications
 ```
 
 ### User Preferences

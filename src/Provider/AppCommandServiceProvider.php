@@ -38,12 +38,15 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements HasNat
             $messagingConfig = is_array($this->config['messaging'] ?? null)
                 ? $this->config['messaging']
                 : [];
+            $mailConfig = is_array($this->config['mail'] ?? null) ? $this->config['mail'] : [];
+            $baseUrl = (string) ($mailConfig['base_url'] ?? 'https://minoo.live');
             return new MessageDigestCommand(
                 $this->resolve(EntityTypeManager::class),
                 $this->resolve(MailerInterface::class),
                 $configured,
                 $messagingConfig,
                 $fromAddress,
+                $baseUrl,
             );
         });
 

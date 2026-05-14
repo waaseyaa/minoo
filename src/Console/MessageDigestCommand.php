@@ -16,6 +16,7 @@ final class MessageDigestCommand
         private readonly bool $mailConfigured,
         private readonly array $config,
         private readonly string $mailFromAddress,
+        private readonly string $baseUrl,
     ) {
     }
 
@@ -123,7 +124,7 @@ final class MessageDigestCommand
             }
         }
 
-        $body .= "\nOpen Messages: https://minoo.sagamok.ca/messages\n";
+        $body .= "\nOpen Messages: " . rtrim($this->baseUrl, '/') . "/messages\n";
         $body .= "\n--\nMinoo - Sagamok Anishnawbek Community Platform\n";
 
         $this->mailer->send(new Envelope(
