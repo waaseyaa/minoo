@@ -68,7 +68,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/App/"
+            "App\\Tests\\": "tests/App/",
+            "App\\PHPStan\\": "tools/phpstan-dead-code/"
         }
     },
     "extra": {
