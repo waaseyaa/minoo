@@ -81,10 +81,30 @@ jobs:
             --prefer-dist
 
       # -----------------------------------------------------------------------
+      # Build admin SPA from sibling waaseyaa/packages/admin
+      #
+      # Composer's path repository keeps the SPA source in the sibling repo,
+      # so we build it here and copy the dist into public/admin/ before the
+      # artifact rsync picks it up. NUXT_PUBLIC_APP_NAME=Minoo overrides the
+      # framework default brand in both the static <title> and the runtime
+      # config.
+      # -----------------------------------------------------------------------
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build admin SPA (Minoo-branded)
+        working-directory: minoo
+        env:
+          NUXT_PUBLIC_APP_NAME: Minoo
+        run: npm run build:admin
+
+      # -----------------------------------------------------------------------
       # Assemble build artifact
-      # (Admin SPA build removed — waaseyaa/packages/admin was extracted from
-      # the monorepo. The newsletter admin Vue SPA is pre-built and tracked
-      # in public/admin/newsletter. TODO(#726): wire admin-surface if needed.)
+      # (Newsletter admin Vue SPA is pre-built and tracked in
+      # public/admin/newsletter; the main admin SPA is freshly built above.)
       # -----------------------------------------------------------------------
 
       - name: Assemble build artifact
