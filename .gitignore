@@ -50,3 +50,16 @@ node-compile-cache/
 
 # Per-community export artifacts
 storage/exports/
+
+# Newsletter smoke harness leaks tempnam(getcwd(), …) into the project root
+# instead of sys_get_temp_dir(). Drops 0–26-byte placeholder files on every
+# render. Pending a fix in the newsletter render path; ignore the noise so
+# git status stays readable.
+/img*
+/newsletter-test-*
+/php*
+!/phpstan.neon
+!/phpstan-baseline.neon
+!/phpstan-dead-code.neon
+!/phpstan-dead-code-baseline.neon
+!/phpunit.xml.dist
