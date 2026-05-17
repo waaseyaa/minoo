@@ -2,7 +2,16 @@
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.
 
-Last framework sync: Waaseyaa alpha.175 (native-CLI-kernel mission — symfony/console hard-cut, `HasCommandsInterface` → `HasNativeCommandsInterface`, command classes split into Handler + `CommandDefinition` pairs; `Waaseyaa\NorthCloud\Command\NcSyncCommand` removed in favor of framework's native `NcSyncHandler`). Minoo's own CLI handlers live under `src/Console/` (`App\Console\`). Tracking: #750.
+Last framework sync: Waaseyaa alpha.180 (2026-05-17). Highlights since alpha.175:
+- **alpha.176** — PHP 8.5 baseline (`"php": ">=8.5"`); `#[\NoDiscard]` on `AccessResult::{allowed,forbidden,neutral,unauthenticated}` and `EntityRepositoryInterface::{find,findMany,findBy,loadRevision,rollback}` so discarded return values now warn; `@PHP8x5Migration` cs-fixer rules (`0755` → `0o755`, `(new Foo())->bar()` → `new Foo()->bar()`).
+- **alpha.177** — `skeleton-smoke.yml` now hits the HTTP entry point; deleted misfire `v0.1.0` stable tag.
+- **alpha.178** — RETRACTED (release-pipeline bug, do not pin); contained M-001 Entity Storage v2 (multi-backend `SqlBlobBackend`/`SqlColumnBackend`, revisions via `RevisionableEntityInterface`, lifecycle events, `PartialSaveException::$errorCode`, `make:storage-migration` CLI) and M-006 single-axis translations (`TranslatableInterface` expanded, `EntityTranslationException`, `EntityType::translatable: bool`, required `default_langcode` entity-key, `SaveContext::withLangcode()`).
+- **alpha.179** — release infrastructure fixes (`bin/sync-internal-versions` output now committed, `waaseyaa/migration` added to split matrix).
+- **alpha.180** — M-004 two-axis (revisionable × translatable) entity storage. Reference consumer: Minoo `teaching` (not yet opted-in). New `Waaseyaa\EntityStorage\Schema\TranslationSchemaHandler`, `RevisionTableBuilder::buildTwoAxis()`, `RevisionableStorageDriver`, `SaveContext::withTranslations(array $langcodes)`. Existing single-axis types unchanged.
+
+Earlier sync notes (alpha.175): native-CLI-kernel mission — symfony/console hard-cut, `HasCommandsInterface` → `HasNativeCommandsInterface`, command classes split into Handler + `CommandDefinition` pairs; `Waaseyaa\NorthCloud\Command\NcSyncCommand` removed in favor of framework's native `NcSyncHandler`. Minoo's own CLI handlers live under `src/Console/` (`App\Console\`). Tracking: #750.
+
+Local fix applied during alpha.180 bump: removed `finfo_close()` in `src/Http/Controller/Social/EngagementController.php` (deprecated in PHP 8.5; finfo objects free automatically).
 
 ## Architecture
 

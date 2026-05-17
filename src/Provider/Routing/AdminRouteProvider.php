@@ -364,8 +364,8 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         // own routes() which runs earlier; remove then add so WaaseyaaRouter rejects
         // duplicate route names.
         $router->removeRoute('admin_spa');
-        $projectRoot = dirname(__DIR__, 2);
-        $vendorDistDir = dirname(__DIR__, 2) . '/vendor/waaseyaa/admin-surface/dist';
+        $projectRoot = dirname(__DIR__, 3);
+        $vendorDistDir = $projectRoot . '/vendor/waaseyaa/admin-surface/dist';
         $vendorDistContent = is_file($vendorDistDir . '/index.html')
             ? file_get_contents($vendorDistDir . '/index.html')
             : null;

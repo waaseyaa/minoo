@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * PHP Deployer configuration for minoo.live
  *
@@ -158,22 +160,48 @@ desc('Verify production is healthy after deploy');
 task('deploy:test', function (): void {
     $checks = [
         ['url' => 'https://minoo.live/', 'expect' => 200],
-        // TODO(#618): re-enable after admin session auth is fixed
-        // ['url' => 'https://minoo.live/admin/surface/session', 'expect' => 401],
+        // Admin session probe: framework contract is envelope-based — HTTP 200
+        // with {"ok":false,"error":{"status":401}} when anonymous. HTTP 401 would
+        // mean the endpoint is missing or broken. See #618 for the URL-drift
+        // history that previously hid this contract.
+        [
+            'url' => 'https://minoo.live/admin/_surface/session',
+            'expect' => 200,
+            'expectBody' => ['"ok":false', '"status":401'],
+        ],
     ];
 
     foreach ($checks as $check) {
         $url = $check['url'];
         $expect = $check['expect'];
+        $expectBody = $check['expectBody'] ?? [];
 
-        // Use curl on the remote host to avoid local DNS/network differences.
-        $httpCode = (int) run("curl -s -o /dev/null -w '%{http_code}' --max-time 10 " . escapeshellarg($url));
+        $bodyFile = tempnam(sys_get_temp_dir(), 'minoo-deploy-check-');
+        $httpCode = (int) run(
+            'curl -s -o ' . escapeshellarg($bodyFile)
+            . " -w '%{http_code}' --max-time 10 "
+            . escapeshellarg($url),
+        );
+
+        $body = $expectBody !== [] && is_file($bodyFile)
+            ? (string) file_get_contents($bodyFile)
+            : '';
+        @unlink($bodyFile);
 
         if ($httpCode !== $expect) {
             writeln("<error>Health check failed: {$url} returned {$httpCode}, expected {$expect}</error>");
             invoke('deploy:rollback');
 
             throw new \RuntimeException("Post-deploy health check failed — rolled back.");
+        }
+
+        foreach ($expectBody as $needle) {
+            if (!str_contains($body, $needle)) {
+                writeln("<error>Health check failed: {$url} body missing expected substring '{$needle}'</error>");
+                invoke('deploy:rollback');
+
+                throw new \RuntimeException("Post-deploy health check failed — rolled back.");
+            }
         }
 
         writeln("<info>Health check passed: {$url} → {$httpCode}</info>");

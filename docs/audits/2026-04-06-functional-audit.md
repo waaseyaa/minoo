@@ -79,6 +79,8 @@ Inconsistent with every other page (which uses `Page Name — Minoo`). Also miss
 
 This is the admin SPA mount point. Known broken until #618 (admin session auth) lands. Worth a placeholder page that at least says "Admin — coming soon" or redirects to `/login` for unauthenticated visitors so it doesn't look broken to a curious crawler.
 
+**RESOLVED (2026-05-17):** Admin SPA now mounts and redirects anonymous visitors to `/admin/login` (its own SPA-internal login form). Root cause was a `dirname(__DIR__, 2)` off-by-one in `AdminRouteProvider`, not the session-auth contract. See `2026-05-11-framework-app-audit.md` F5 for the full unwinding. Title still reads "Waaseyaa" instead of "Minoo" because the shipped vendor dist isn't branded — separate, lower-priority polish.
+
 #### POLISH — `/notifications` returns 404
 
 Notifications feature isn't built yet (Notifications milestone #43 has 8 open issues). Either:
@@ -139,6 +141,7 @@ gh issue create --title "/messages page: missing <h1>, title doesn't follow 'Pag
 gh issue create --title "/admin returns 1KB shell with no H1, looks broken to crawlers and humans" \
   --body "Admin SPA mount point. Known non-functional until #618 lands. Replace with a placeholder that says 'Admin — coming soon' or redirect unauthenticated visitors to /login. Right now it returns a blank-looking page that shows up in any external scan." \
   --milestone "Polish Sprint" --label polish
+# RESOLVED 2026-05-17: SPA mount fixed (dirname off-by-one). Do not file this issue.
 ```
 
 ```
