@@ -11,6 +11,9 @@ use Waaseyaa\AdminSurface\AdminSurfaceServiceProvider;
 use Waaseyaa\AdminSurface\Host\GenericAdminSurfaceHost;
 use Waaseyaa\Api\Schema\SchemaPresenter;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Foundation\Kernel\Bootstrap\AccessPolicyRegistry;
+use Waaseyaa\Foundation\Kernel\Bootstrap\ManifestBootstrapper;
+use Waaseyaa\Foundation\Log\LoggerInterface;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
 
@@ -347,8 +350,19 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         if ($entityTypeManager !== null) {
             self::removePackageAdminSurfaceRoutes($router);
 
+            // alpha.180 tightened SchemaPresenter::present() and ResourceSerializer::serialize()
+            // to require both $accessHandler and $account, or neither (PARTIAL_ACCESS_CONTEXT
+            // guard). The host populates $currentAccount via resolveSession() at request time,
+            // so we must also pass a real EntityAccessHandler at construction. The framework's
+            // kernel does not expose its handler to providers via KernelServices, so replay
+            // the same discovery here (idempotent — same policies as the kernel uses).
+            $logger = $this->resolve(LoggerInterface::class);
+            $manifest = (new ManifestBootstrapper())->boot(dirname(__DIR__, 3));
+            $accessHandler = (new AccessPolicyRegistry($logger))->discover($manifest);
+
             $host = new GenericAdminSurfaceHost(
                 entityTypeManager: $entityTypeManager,
+                accessHandler: $accessHandler,
                 schemaPresenter: new SchemaPresenter(),
                 tenantId: 'minoo',
                 tenantName: 'Minoo',
