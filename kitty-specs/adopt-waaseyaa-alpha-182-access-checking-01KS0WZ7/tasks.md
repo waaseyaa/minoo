@@ -44,12 +44,12 @@ All work packages execute on the mission branch (per lane); the mission squash-m
 | T028 | Add bypass + audit-doc comment to `src/Console/MessageDigestCommand.php` | WP05 | — | [D] |
 | T029 | Write `docs/security/sql-entity-query-access-check-bypass-audit.md` mirroring framework doc, enumerating every Minoo `accessCheck(false)` site | WP05 | — | [D] |
 | T030 | Verify every `accessCheck(false)` site in `src/` carries an inline comment referencing the audit doc + matches a row in the doc | WP05 | — | [D] |
-| T031 | Update `CLAUDE.md` sync line to `Waaseyaa alpha.182` + add highlights paragraph for alpha.181 (access checking) and alpha.182 (follow-up fixes) | WP06 | — |
-| T032 | Update auto-memory `MEMORY.md` project state line (outside-repo file at `~/.claude/projects/-home-jones-dev-minoo/memory/MEMORY.md`) | WP06 | — |
-| T033 | File 3 GitHub issues for out-of-scope alpha.181 surfaces (#1496 agent executor, #1499 2FA endpoints, #1500 dead-code Phase 4) | WP06 | [P] |
-| T034 | Run full quality gate: `./vendor/bin/phpunit`, `composer phpstan`, `composer cs-fixer`, `bin/check-milestones` — all exit 0 | WP06 | — |
-| T035 | Run curl-based smoke for anonymous `/` (NFR-002) and authenticated `/feed` (NFR-003); confirm `200/` with body size > 1000 and `<title>` present | WP06 | — |
-| T036 | Mark mission ready for review; ensure WP01..WP05 are all approved | WP06 | — |
+| T031 | Update `CLAUDE.md` sync line to `Waaseyaa alpha.182` + add highlights paragraph for alpha.181 (access checking) and alpha.182 (follow-up fixes) | WP06 | — | [D] |
+| T032 | Update auto-memory `MEMORY.md` project state line (outside-repo file at `~/.claude/projects/-home-jones-dev-minoo/memory/MEMORY.md`) | WP06 | — | [D] |
+| T033 | File 3 GitHub issues for out-of-scope alpha.181 surfaces (#1496 agent executor, #1499 2FA endpoints, #1500 dead-code Phase 4) | WP06 | [D] |
+| T034 | Run full quality gate: `./vendor/bin/phpunit`, `composer phpstan`, `composer cs-fixer`, `bin/check-milestones` — all exit 0 | WP06 | — | [D] |
+| T035 | Run curl-based smoke for anonymous `/` (NFR-002) and authenticated `/feed` (NFR-003); confirm `200/` with body size > 1000 and `<title>` present | WP06 | — | [D] |
+| T036 | Mark mission ready for review; ensure WP01..WP05 are all approved | WP06 | — | [D] |
 
 Total: **36 subtasks across 6 work packages.**
 
@@ -206,12 +206,12 @@ Total: **36 subtasks across 6 work packages.**
 
 **Included subtasks**:
 
-- [ ] T031 CLAUDE.md sync line + highlights (WP06)
-- [ ] T032 MEMORY.md project state line (WP06)
-- [ ] T033 File 3 GitHub issues for out-of-scope surfaces (WP06)
-- [ ] T034 Run full quality gate (WP06)
-- [ ] T035 Run curl smokes (NFR-002, NFR-003) (WP06)
-- [ ] T036 Mark mission ready for review (WP06)
+- [x] T031 CLAUDE.md sync line + highlights (WP06)
+- [x] T032 MEMORY.md project state line (WP06)
+- [x] T033 File 3 GitHub issues for out-of-scope surfaces (WP06)
+- [x] T034 Run full quality gate (WP06)
+- [x] T035 Run curl smokes (NFR-002, NFR-003) (WP06)
+- [x] T036 Mark mission ready for review (WP06)
 
 **Implementation sketch**: Sequential. Update docs first, file issues in parallel via `gh issue create`, run gates last. If any gate fails, the WP returns "for_review" with a remediation note; the implement-review loop rolls into a fix cycle.
 
