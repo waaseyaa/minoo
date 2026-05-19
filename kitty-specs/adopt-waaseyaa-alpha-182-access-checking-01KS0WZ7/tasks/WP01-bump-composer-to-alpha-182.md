@@ -17,7 +17,8 @@ subtasks:
 - T002
 - T003
 - T004
-shell_pid: '541227'
+shell_pid: "541227"
+agent: "claude:opus-4-7:implementer:implementer"
 history:
 - at: '2026-05-19'
   by: specify
@@ -196,3 +197,7 @@ No `src/`, `docs/`, or `tests/` files are owned by WP01.
 - The smoke script is the only new src-tree file; it must be unit-test-free and limited to the boot probe.
 - **Do not** attempt to fix any `MissingQueryAccountException` failures in this WP — those belong to WPs 02–05.
 - Approve when the smoke script passes and the lockfile is clean. The full test suite is **not** part of WP01's gate.
+
+## Activity Log
+
+- 2026-05-19T21:18:02Z – claude:opus-4-7:implementer:implementer – shell_pid=541227 – Assigned agent via action command
