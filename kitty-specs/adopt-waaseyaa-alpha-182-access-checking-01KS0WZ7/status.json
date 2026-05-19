@@ -1,0 +1,63 @@
+{
+  "event_count": 6,
+  "last_event_id": "01KS11J7VM3F0XH05K76KKJFYA",
+  "materialized_at": "2026-05-19T21:16:43.252886+00:00",
+  "mission_number": "",
+  "mission_slug": "adopt-waaseyaa-alpha-182-access-checking-01KS0WZ7",
+  "mission_type": "software-dev",
+  "summary": {
+    "approved": 0,
+    "blocked": 0,
+    "canceled": 0,
+    "claimed": 0,
+    "done": 0,
+    "for_review": 0,
+    "in_progress": 0,
+    "in_review": 0,
+    "planned": 6
+  },
+  "work_packages": {
+    "WP01": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KS11J71965J0AZ99XDHRSE45",
+      "last_transition_at": "2026-05-19T21:16:42.409339+00:00"
+    },
+    "WP02": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KS11J7NA30C5WH23RX97TZNA",
+      "last_transition_at": "2026-05-19T21:16:43.050204+00:00"
+    },
+    "WP03": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KS11J7PQZCW09SNETT3ZQVWW",
+      "last_transition_at": "2026-05-19T21:16:43.095678+00:00"
+    },
+    "WP04": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KS11J7R4AZQGXY6AW4CMQ3YW",
+      "last_transition_at": "2026-05-19T21:16:43.140273+00:00"
+    },
+    "WP05": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KS11J7T9B5FCWRQAB0VHK7FM",
+      "last_transition_at": "2026-05-19T21:16:43.209875+00:00"
+    },
+    "WP06": {
+      "actor": "finalize-tasks",
+      "force_count": 1,
+      "lane": "planned",
+      "last_event_id": "01KS11J7VM3F0XH05K76KKJFYA",
+      "last_transition_at": "2026-05-19T21:16:43.252886+00:00"
+    }
+  }
+}

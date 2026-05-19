@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "mission_slug": "adopt-waaseyaa-alpha-182-access-checking-01KS0WZ7",
+  "mission_id": "01KS0WZ7MX6P96NP0V95RBTPG2",
+  "mission_branch": "kitty/mission-adopt-waaseyaa-alpha-182-access-checking-01KS0WZ7",
+  "target_branch": "main",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01",
+        "WP02",
+        "WP03",
+        "WP04",
+        "WP05",
+        "WP06"
+      ],
+      "write_scope": [
+        "CLAUDE.md",
+        "composer.json",
+        "composer.lock",
+        "docs/security/sql-entity-query-access-check-bypass-audit.md",
+        "scripts/smoke/alpha-182-boot.php",
+        "src/Console/**",
+        "src/Domain/**",
+        "src/Http/Controller/Auth/**",
+        "src/Http/Controller/Community/**",
+        "src/Http/Controller/Dashboard/**",
+        "src/Http/Controller/ElderSupport/**",
+        "src/Http/Controller/Events/**",
+        "src/Http/Controller/Feed/**",
+        "src/Http/Controller/Games/**",
+        "src/Http/Controller/Groups/**",
+        "src/Http/Controller/Home/**",
+        "src/Http/Controller/Ingestion/**",
+        "src/Http/Controller/Language/**",
+        "src/Http/Controller/Newsletter/**",
+        "src/Http/Controller/OralHistory/**",
+        "src/Http/Controller/People/**",
+        "src/Http/Controller/Social/**",
+        "src/Http/Controller/Teachings/**",
+        "src/Infrastructure/**",
+        "src/Ingestion/**",
+        "tests/App/Integration/Domain/**",
+        "tests/App/Integration/Ingestion/**",
+        "tests/App/Unit/Console/**",
+        "tests/App/Unit/Domain/**",
+        "tests/App/Unit/Http/Controller/Auth/**",
+        "tests/App/Unit/Http/Controller/Community/**",
+        "tests/App/Unit/Http/Controller/Dashboard/**",
+        "tests/App/Unit/Http/Controller/ElderSupport/**",
+        "tests/App/Unit/Http/Controller/Events/**",
+        "tests/App/Unit/Http/Controller/Feed/**",
+        "tests/App/Unit/Http/Controller/Games/**",
+        "tests/App/Unit/Http/Controller/Groups/**",
+        "tests/App/Unit/Http/Controller/Home/**",
+        "tests/App/Unit/Http/Controller/Ingestion/**",
+        "tests/App/Unit/Http/Controller/Language/**",
+        "tests/App/Unit/Http/Controller/Newsletter/**",
+        "tests/App/Unit/Http/Controller/OralHistory/**",
+        "tests/App/Unit/Http/Controller/People/**",
+        "tests/App/Unit/Http/Controller/Social/**",
+        "tests/App/Unit/Http/Controller/Teachings/**",
+        "tests/App/Unit/Infrastructure/**",
+        "tests/App/Unit/Ingestion/**"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "artifact-rendering",
+        "dashboard",
+        "legacy-cleanup",
+        "tests",
+        "tracker-integration"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    }
+  ],
+  "computed_at": "2026-05-19T21:16:43.300341+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [],
+  "collapse_report": {
+    "events": [
+      {
+        "wp_a": "WP02",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP02 depends on WP01"
+      },
+      {
+        "wp_a": "WP03",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP03 depends on WP01"
+      },
+      {
+        "wp_a": "WP04",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP04 depends on WP01"
+      },
+      {
+        "wp_a": "WP05",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP05 depends on WP01"
+      },
+      {
+        "wp_a": "WP06",
+        "wp_b": "WP01",
+        "rule": "dependency",
+        "evidence": "WP06 depends on WP01"
+      }
+    ],
+    "total_merges": 5,
+    "independent_wps_collapsed": 0,
+    "by_rule": {
+      "dependency": 5
+    }
+  }
+}
