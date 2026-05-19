@@ -35,11 +35,11 @@ All work packages execute on the mission branch (per lane); the mission squash-m
 | T019 | Bind account in `src/Http/Controller/Newsletter/NewsletterAdminApiController.php` | WP03 | [D] |
 | T020 | Bind account in `src/Http/Controller/Feed/FeedController.php` | WP03 | [D] |
 | T021 | Bind account in `src/Http/Controller/Ingestion/IngestionDashboardController.php` | WP03 | [D] |
-| T022 | Thread account into `src/Domain/Feed/{EntityLoaderService,EngagementCounter}.php` + `Scoring/{AffinityCalculator,EngagementCalculator}.php` (4 files) | WP04 | [P] |
-| T023 | Thread account into `src/Domain/{Events/Service/EventFeedBuilder,Games/GameStatsCalculator,Geo/Service/LocationService,Newsletter/Service/NewsletterAssembler}.php` (4 files) | WP04 | [P] |
-| T024 | Thread account or bypass in `src/Infrastructure/{Fixture/FixtureResolver,OpenGraph/CrisisOgImageService,OpenGraph/PublicOgEntityLoader}.php` (3 files) | WP04 | [P] |
-| T025 | Audit + bypass with audit-doc comment in `src/Ingestion/IngestMaterializer.php` (system context) | WP04 | [P] |
-| T026 | Verify all account-threaded service entry points receive an account from every caller (controllers must pass one) | WP04 | — |
+| T022 | Thread account into `src/Domain/Feed/{EntityLoaderService,EngagementCounter}.php` + `Scoring/{AffinityCalculator,EngagementCalculator}.php` (4 files) | WP04 | [D] |
+| T023 | Thread account into `src/Domain/{Events/Service/EventFeedBuilder,Games/GameStatsCalculator,Geo/Service/LocationService,Newsletter/Service/NewsletterAssembler}.php` (4 files) | WP04 | [D] |
+| T024 | Thread account or bypass in `src/Infrastructure/{Fixture/FixtureResolver,OpenGraph/CrisisOgImageService,OpenGraph/PublicOgEntityLoader}.php` (3 files) | WP04 | [D] |
+| T025 | Audit + bypass with audit-doc comment in `src/Ingestion/IngestMaterializer.php` (system context) | WP04 | [D] |
+| T026 | Verify all account-threaded service entry points receive an account from every caller (controllers must pass one) | WP04 | — | [D] |
 | T027 | Verify + tighten `src/Console/GenealogyDemoSeedHandler.php` bypass (already adopted) | WP05 | — |
 | T028 | Add bypass + audit-doc comment to `src/Console/MessageDigestCommand.php` | WP05 | — |
 | T029 | Write `docs/security/sql-entity-query-access-check-bypass-audit.md` mirroring framework doc, enumerating every Minoo `accessCheck(false)` site | WP05 | — |
@@ -151,11 +151,11 @@ Total: **36 subtasks across 6 work packages.**
 
 **Included subtasks**:
 
-- [ ] T022 Feed services (EntityLoaderService, EngagementCounter, Scoring) (WP04)
-- [ ] T023 Domain services (EventFeedBuilder, GameStatsCalculator, LocationService, NewsletterAssembler) (WP04)
-- [ ] T024 Infrastructure adapters (FixtureResolver, CrisisOgImageService, PublicOgEntityLoader) (WP04)
-- [ ] T025 Ingestion materializer (system-context bypass) (WP04)
-- [ ] T026 Audit caller sites (WP04)
+- [x] T022 Feed services (EntityLoaderService, EngagementCounter, Scoring) (WP04)
+- [x] T023 Domain services (EventFeedBuilder, GameStatsCalculator, LocationService, NewsletterAssembler) (WP04)
+- [x] T024 Infrastructure adapters (FixtureResolver, CrisisOgImageService, PublicOgEntityLoader) (WP04)
+- [x] T025 Ingestion materializer (system-context bypass) (WP04)
+- [x] T026 Audit caller sites (WP04)
 
 **Implementation sketch**: For each service method that emits `getQuery()`, add an `AccountInterface $account` parameter and thread it to `->setAccount($account)`. For methods called from controllers (WP02/WP03), the controller bind layer already has the account — just add the parameter. For methods called purely from CLI/console contexts, use `->accessCheck(false)` with an audit-doc inline comment.
 
