@@ -9,11 +9,15 @@ requirement_refs:
 planning_base_branch: main
 merge_target_branch: main
 branch_strategy: Planning artifacts for this feature were generated on main. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into main unless the human explicitly redirects the landing branch.
+base_branch: kitty/mission-adopt-waaseyaa-alpha-182-access-checking-01KS0WZ7
+base_commit: 2d6cbaedaf1534031b9c8a3bc1d8361a64a69e62
+created_at: '2026-05-19T21:18:00.789945+00:00'
 subtasks:
 - T001
 - T002
 - T003
 - T004
+shell_pid: '541227'
 history:
 - at: '2026-05-19'
   by: specify

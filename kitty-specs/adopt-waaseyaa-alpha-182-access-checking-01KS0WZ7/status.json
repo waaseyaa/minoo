@@ -1,7 +1,7 @@
 {
-  "event_count": 6,
-  "last_event_id": "01KS11J7VM3F0XH05K76KKJFYA",
-  "materialized_at": "2026-05-19T21:16:43.252886+00:00",
+  "event_count": 8,
+  "last_event_id": "01KS11MM402003S56D9HJMHQBV",
+  "materialized_at": "2026-05-19T21:18:01.344572+00:00",
   "mission_number": "",
   "mission_slug": "adopt-waaseyaa-alpha-182-access-checking-01KS0WZ7",
   "mission_type": "software-dev",
@@ -12,17 +12,17 @@
     "claimed": 0,
     "done": 0,
     "for_review": 0,
-    "in_progress": 0,
+    "in_progress": 1,
     "in_review": 0,
-    "planned": 6
+    "planned": 5
   },
   "work_packages": {
     "WP01": {
-      "actor": "finalize-tasks",
+      "actor": "implement-command",
       "force_count": 1,
-      "lane": "planned",
-      "last_event_id": "01KS11J71965J0AZ99XDHRSE45",
-      "last_transition_at": "2026-05-19T21:16:42.409339+00:00"
+      "lane": "in_progress",
+      "last_event_id": "01KS11MM402003S56D9HJMHQBV",
+      "last_transition_at": "2026-05-19T21:18:01.344572+00:00"
     },
     "WP02": {
       "actor": "finalize-tasks",
