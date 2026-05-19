@@ -201,3 +201,4 @@ No `src/`, `docs/`, or `tests/` files are owned by WP01.
 ## Activity Log
 
 - 2026-05-19T21:18:02Z – claude:opus-4-7:implementer:implementer – shell_pid=541227 – Assigned agent via action command
+- 2026-05-19T21:21:35Z – claude:opus-4-7:implementer:implementer – shell_pid=541227 – Composer bumped to alpha.182, smoke passes, ready for review
