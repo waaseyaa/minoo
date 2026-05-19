@@ -225,7 +225,7 @@ final class MatcherController
     private function loadDictionaryEntries(int $limit): array
     {
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->range(0, $limit)

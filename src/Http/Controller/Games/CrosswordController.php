@@ -83,7 +83,7 @@ final class CrosswordController
         }
 
         $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $ids = $puzzleStorage->getQuery()
+        $ids = $puzzleStorage->getQuery()->setAccount($account)
             ->condition('difficulty_tier', $tier)
             ->execute();
 
@@ -125,7 +125,7 @@ final class CrosswordController
     public function themes(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $allIds = $puzzleStorage->getQuery()->execute();
+        $allIds = $puzzleStorage->getQuery()->setAccount($account)->execute();
 
         // Group by theme field (not by parsing IDs)
         $themeCounts = [];
@@ -141,7 +141,7 @@ final class CrosswordController
         // Load user's completed crossword sessions once (not per-theme)
         $completedByTheme = [];
         if ($account->isAuthenticated()) {
-            $sessionIds = $this->entityTypeManager->getStorage('game_session')->getQuery()
+            $sessionIds = $this->entityTypeManager->getStorage('game_session')->getQuery()->setAccount($account)
                 ->condition('game_type', 'crossword')
                 ->condition('user_id', $account->id())
                 ->condition('status', 'completed')
@@ -183,7 +183,7 @@ final class CrosswordController
         }
 
         $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $allIds = $puzzleStorage->getQuery()
+        $allIds = $puzzleStorage->getQuery()->setAccount($account)
             ->condition('theme', $slug)
             ->execute();
 
@@ -194,7 +194,7 @@ final class CrosswordController
         // Determine completed puzzles
         $completedPuzzleIds = [];
         if ($account->isAuthenticated()) {
-            $sessionIds = $this->entityTypeManager->getStorage('game_session')->getQuery()
+            $sessionIds = $this->entityTypeManager->getStorage('game_session')->getQuery()->setAccount($account)
                 ->condition('game_type', 'crossword')
                 ->condition('user_id', $account->id())
                 ->condition('status', 'completed')
@@ -378,7 +378,7 @@ final class CrosswordController
                     $teaching['pos'] = (string) $entry->get('part_of_speech');
 
                     // Load example sentence
-                    $exampleIds = $this->entityTypeManager->getStorage('example_sentence')->getQuery()
+                    $exampleIds = $this->entityTypeManager->getStorage('example_sentence')->getQuery()->setAccount($account)
                         ->condition('dictionary_entry_id', $entry->id())
                         ->condition('status', 1)
                         ->range(0, 1)
@@ -585,7 +585,7 @@ final class CrosswordController
 
         // Load dictionary words with definitions
         $dictStorage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $dictStorage->getQuery()
+        $ids = $dictStorage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->range(0, 200)
             ->execute();

@@ -30,6 +30,8 @@ final class BusinessControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->query = $this->createMock(EntityQueryInterface::class);
+        $this->query->method('setAccount')->willReturnSelf();
+        $this->query->method('accessCheck')->willReturnSelf();
         $this->query->method('condition')->willReturnSelf();
         $this->query->method('sort')->willReturnSelf();
 

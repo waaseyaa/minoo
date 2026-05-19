@@ -32,6 +32,8 @@ final class PeopleControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->query = $this->createMock(EntityQueryInterface::class);
+        $this->query->method('setAccount')->willReturnSelf();
+        $this->query->method('accessCheck')->willReturnSelf();
         $this->query->method('condition')->willReturnSelf();
         $this->query->method('sort')->willReturnSelf();
 
@@ -39,6 +41,8 @@ final class PeopleControllerTest extends TestCase
         $this->storage->method('getQuery')->willReturn($this->query);
 
         $this->communityQuery = $this->createMock(EntityQueryInterface::class);
+        $this->communityQuery->method('setAccount')->willReturnSelf();
+        $this->communityQuery->method('accessCheck')->willReturnSelf();
         $this->communityQuery->method('condition')->willReturnSelf();
         $this->communityQuery->method('execute')->willReturn([]);
 

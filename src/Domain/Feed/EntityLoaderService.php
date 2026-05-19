@@ -22,7 +22,7 @@ class EntityLoaderService
     {
         $storage = $this->entityTypeManager->getStorage('event');
         $now = date('Y-m-d\TH:i:s');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('starts_at', $now, '>=')
             ->sort('starts_at', 'ASC')
@@ -48,7 +48,7 @@ class EntityLoaderService
     public function loadGroups(int $limit): array
     {
         $storage = $this->entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('type', 'business', '!=')
             ->range(0, $limit)
@@ -60,7 +60,7 @@ class EntityLoaderService
     public function loadBusinesses(int $limit): array
     {
         $storage = $this->entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('type', 'business')
             ->range(0, $limit)
@@ -72,7 +72,7 @@ class EntityLoaderService
     public function loadPublicPeople(int $limit): array
     {
         $storage = $this->entityTypeManager->getStorage('resource_person');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('consent_public', 1)
             ->condition('status', 1)
             ->range(0, $limit)
@@ -95,7 +95,7 @@ class EntityLoaderService
         }
 
         $now = date('Y-m-d H:i:s');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('starts_at', $now, '<=')
             ->condition('ends_at', $now, '>=')
@@ -149,7 +149,7 @@ class EntityLoaderService
             return [];
         }
 
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->sort('created_at', 'DESC')
             ->range(0, $limit)
@@ -161,7 +161,7 @@ class EntityLoaderService
     public function loadAllCommunities(): array
     {
         $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->execute();
         return $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];

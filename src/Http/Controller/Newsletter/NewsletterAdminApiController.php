@@ -120,7 +120,7 @@ final class NewsletterAdminApiController
 
         // Load items for this edition
         $itemStorage = $this->entityTypeManager->getStorage('newsletter_item');
-        $itemQuery = $itemStorage->getQuery();
+        $itemQuery = $itemStorage->getQuery()->setAccount($account);
         $itemIds = $itemQuery->condition('edition_id', $id)->execute();
         $items = $itemIds !== [] ? $itemStorage->loadMultiple($itemIds) : [];
 
@@ -187,7 +187,7 @@ final class NewsletterAdminApiController
 
         // Auto-assign position as next in section
         $itemStorage = $this->entityTypeManager->getStorage('newsletter_item');
-        $countResult = $itemStorage->getQuery()
+        $countResult = $itemStorage->getQuery()->setAccount($account)
             ->condition('edition_id', $id)
             ->condition('section', $body['section'])
             ->count()
@@ -285,7 +285,7 @@ final class NewsletterAdminApiController
         $results = [];
         foreach ($types as $type) {
             $storage = $this->entityTypeManager->getStorage($type);
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->setAccount($account)
                 ->condition('label', "%{$q}%", 'LIKE')
                 ->range(0, 10)
                 ->execute();

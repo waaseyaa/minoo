@@ -59,7 +59,7 @@ final class IngestionDashboardController
 
     private function loadRecentLogs(EntityStorageInterface $storage, ?string $statusFilter): array
     {
-        $query = $storage->getQuery()
+        $query = $storage->getQuery()->accessCheck(false)
             ->sort('created_at', 'DESC');
 
         if ($statusFilter !== null) {
@@ -87,7 +87,7 @@ final class IngestionDashboardController
 
     private function countLogs(EntityStorageInterface $storage, ?string $status = null): int
     {
-        $query = $storage->getQuery()->count();
+        $query = $storage->getQuery()->accessCheck(false)->count();
         if ($status !== null) {
             $query->condition('status', $status);
         }
@@ -98,7 +98,7 @@ final class IngestionDashboardController
 
     private function loadLastSync(EntityStorageInterface $storage): ?int
     {
-        $ids = $storage->getQuery()->sort('created_at', 'DESC')->range(0, 1)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->sort('created_at', 'DESC')->range(0, 1)->execute();
         if ($ids === []) {
             return null;
         }

@@ -27,7 +27,7 @@ final class GroupController
     public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('type', 'business', '!=')
             ->sort('name', 'ASC')
@@ -61,7 +61,7 @@ final class GroupController
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->execute();
@@ -85,7 +85,7 @@ final class GroupController
             $communityId = $group->get('community_id');
 
             $personStorage = $this->entityTypeManager->getStorage('resource_person');
-            $personIds = $personStorage->getQuery()
+            $personIds = $personStorage->getQuery()->setAccount($account)
                 ->condition('community', $communityId)
                 ->condition('status', 1)
                 ->range(0, 4)
@@ -93,7 +93,7 @@ final class GroupController
             $relatedPeople = $personIds ? array_values($personStorage->loadMultiple($personIds)) : [];
 
             $eventStorage = $this->entityTypeManager->getStorage('event');
-            $eventIds = $eventStorage->getQuery()
+            $eventIds = $eventStorage->getQuery()->setAccount($account)
                 ->condition('community_id', $communityId)
                 ->condition('status', 1)
                 ->range(0, 4)
@@ -101,7 +101,7 @@ final class GroupController
             $relatedEvents = $eventIds ? array_values($eventStorage->loadMultiple($eventIds)) : [];
 
             $teachingStorage = $this->entityTypeManager->getStorage('teaching');
-            $teachingIds = $teachingStorage->getQuery()
+            $teachingIds = $teachingStorage->getQuery()->setAccount($account)
                 ->condition('community_id', $communityId)
                 ->condition('status', 1)
                 ->range(0, 4)

@@ -292,7 +292,7 @@ final class CrisisOgImageService
     public function loadPublishedCommunity(string $communitySlug): ?EntityInterface
     {
         $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('slug', $communitySlug)
             ->condition('status', 1)
             ->execute();

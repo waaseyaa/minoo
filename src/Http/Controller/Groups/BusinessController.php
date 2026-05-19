@@ -28,7 +28,7 @@ final class BusinessController
     public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('type', 'business')
             ->condition('status', 1)
             ->sort('name', 'ASC')
@@ -62,7 +62,7 @@ final class BusinessController
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('type', 'business')
             ->condition('status', 1)
@@ -88,7 +88,7 @@ final class BusinessController
         $owner = null;
         if ($business !== null) {
             $personStorage = $this->entityTypeManager->getStorage('resource_person');
-            $ownerIds = $personStorage->getQuery()
+            $ownerIds = $personStorage->getQuery()->setAccount($account)
                 ->condition('linked_group_id', $business->id())
                 ->condition('status', 1)
                 ->condition('consent_public', 1)
@@ -112,7 +112,7 @@ final class BusinessController
         $community = null;
         if ($business !== null && $business->get('community_id')) {
             $communityStorage = $this->entityTypeManager->getStorage('community');
-            $communityIds = $communityStorage->getQuery()
+            $communityIds = $communityStorage->getQuery()->setAccount($account)
                 ->condition('cid', $business->get('community_id'))
                 ->range(0, 1)
                 ->execute();

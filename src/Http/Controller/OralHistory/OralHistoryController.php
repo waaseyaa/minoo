@@ -26,14 +26,14 @@ final class OralHistoryController
     public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $collectionStorage = $this->entityTypeManager->getStorage('oral_history_collection');
-        $collectionIds = $collectionStorage->getQuery()
+        $collectionIds = $collectionStorage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->sort('title', 'ASC')
             ->execute();
         $collections = $collectionIds !== [] ? array_values($collectionStorage->loadMultiple($collectionIds)) : [];
 
         $storyStorage = $this->entityTypeManager->getStorage('oral_history');
-        $storyIds = $storyStorage->getQuery()
+        $storyIds = $storyStorage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->sort('created_at', 'DESC')
@@ -55,7 +55,7 @@ final class OralHistoryController
     {
         $slug = $params['slug'] ?? '';
         $collectionStorage = $this->entityTypeManager->getStorage('oral_history_collection');
-        $collectionIds = $collectionStorage->getQuery()
+        $collectionIds = $collectionStorage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->execute();
@@ -66,7 +66,7 @@ final class OralHistoryController
 
         if ($collection !== null) {
             $storyStorage = $this->entityTypeManager->getStorage('oral_history');
-            $storyIds = $storyStorage->getQuery()
+            $storyIds = $storyStorage->getQuery()->setAccount($account)
                 ->condition('collection_id', $collection->id())
                 ->condition('status', 1)
                 ->condition('consent_public', 1)
@@ -97,7 +97,7 @@ final class OralHistoryController
     {
         $slug = $params['slug'] ?? '';
         $storyStorage = $this->entityTypeManager->getStorage('oral_history');
-        $storyIds = $storyStorage->getQuery()
+        $storyIds = $storyStorage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->condition('consent_public', 1)
@@ -122,7 +122,7 @@ final class OralHistoryController
                 $collection = $collectionStorage->load($collectionId);
 
                 if ($collection !== null) {
-                    $siblingIds = $storyStorage->getQuery()
+                    $siblingIds = $storyStorage->getQuery()->setAccount($account)
                         ->condition('collection_id', $collectionId)
                         ->condition('status', 1)
                         ->condition('consent_public', 1)

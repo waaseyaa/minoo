@@ -35,7 +35,7 @@ final class LanguageController
 
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
 
-        $allIds = $storage->getQuery()
+        $allIds = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->sort('word', 'ASC')
@@ -63,7 +63,7 @@ final class LanguageController
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->condition('consent_public', 1)

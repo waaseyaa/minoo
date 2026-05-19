@@ -28,7 +28,7 @@ final class TeachingController
     public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('teaching');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->sort('title', 'ASC')
@@ -62,7 +62,7 @@ final class TeachingController
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('teaching');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->condition('consent_public', 1)
@@ -87,7 +87,7 @@ final class TeachingController
 
             if ($communityId !== null && $communityId !== '') {
                 $eventStorage = $this->entityTypeManager->getStorage('event');
-                $eventIds = $eventStorage->getQuery()
+                $eventIds = $eventStorage->getQuery()->setAccount($account)
                     ->condition('community_id', $communityId)
                     ->condition('status', 1)
                     ->range(0, 4)
@@ -95,7 +95,7 @@ final class TeachingController
                 $relatedEvents = $eventIds !== [] ? array_values($eventStorage->loadMultiple($eventIds)) : [];
 
                 $personStorage = $this->entityTypeManager->getStorage('resource_person');
-                $personIds = $personStorage->getQuery()
+                $personIds = $personStorage->getQuery()->setAccount($account)
                     ->condition('community', $communityId)
                     ->condition('status', 1)
                     ->range(0, 4)

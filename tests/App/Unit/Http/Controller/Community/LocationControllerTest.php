@@ -97,6 +97,8 @@ final class LocationControllerTest extends TestCase
         ]);
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([1]);
         $storage->method('getQuery')->willReturn($query);

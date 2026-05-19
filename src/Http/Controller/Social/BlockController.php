@@ -24,7 +24,7 @@ final class BlockController
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->blockStorage();
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('blocker_id', (int) $account->id())
             ->sort('created_at', 'DESC')
             ->execute();
@@ -58,7 +58,7 @@ final class BlockController
         $storage = $this->blockStorage();
 
         // Check for duplicate block.
-        $existing = $storage->getQuery()
+        $existing = $storage->getQuery()->setAccount($account)
             ->condition('blocker_id', $blockerId)
             ->condition('blocked_id', $blockedId)
             ->range(0, 1)
@@ -88,7 +88,7 @@ final class BlockController
         $blockerId = (int) $account->id();
 
         $storage = $this->blockStorage();
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('blocker_id', $blockerId)
             ->condition('blocked_id', $blockedUserId)
             ->range(0, 1)

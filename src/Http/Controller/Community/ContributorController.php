@@ -26,7 +26,7 @@ final class ContributorController
     public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('contributor');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->sort('name', 'ASC')
@@ -47,7 +47,7 @@ final class ContributorController
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('contributor');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->condition('consent_public', 1)

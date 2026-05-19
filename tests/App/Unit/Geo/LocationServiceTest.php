@@ -78,6 +78,10 @@ final class LocationServiceTest extends TestCase
             {
                 return $this;
             }
+            public function setAccount(?\Waaseyaa\Access\AccountInterface $account): static
+            {
+                return $this;
+            }
             /** @return array<int> */
             public function execute(): array
             {

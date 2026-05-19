@@ -83,7 +83,7 @@ final class ElderSupportRoundTripTest extends TestCase
         ]);
         $storage->save($entity);
 
-        $ids = $storage->getQuery()->condition('account_id', 42)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('account_id', 42)->execute();
         $this->assertCount(1, $ids, 'Volunteer should be findable by account_id.');
 
         $loaded = $storage->load(reset($ids));
@@ -142,12 +142,12 @@ final class ElderSupportRoundTripTest extends TestCase
         // assigned_volunteer stores the volunteer *entity* ID, not the account ID.
         // The dashboard controller loads the volunteer by account_id, then uses the
         // volunteer entity's ID as the assigned_volunteer lookup value.
-        $volIds = $volunteerStorage->getQuery()->condition('account_id', 55)->execute();
+        $volIds = $volunteerStorage->getQuery()->accessCheck(false)->condition('account_id', 55)->execute();
         $this->assertCount(1, $volIds);
         $vol = $volunteerStorage->load(reset($volIds));
         $this->assertNotNull($vol);
 
-        $assignedIds = $requestStorage->getQuery()
+        $assignedIds = $requestStorage->getQuery()->accessCheck(false)
             ->condition('assigned_volunteer', $vol->id())
             ->execute();
         $this->assertCount(1, $assignedIds, 'Volunteer dashboard query should find the assigned request.');
@@ -216,7 +216,7 @@ final class ElderSupportRoundTripTest extends TestCase
         $requestStorage->save($req2);
 
         // Vol1's dashboard query should only return req1.
-        $vol1Ids = $requestStorage->getQuery()
+        $vol1Ids = $requestStorage->getQuery()->accessCheck(false)
             ->condition('assigned_volunteer', $vol1->id())
             ->execute();
         $this->assertCount(1, $vol1Ids);
@@ -224,7 +224,7 @@ final class ElderSupportRoundTripTest extends TestCase
         $this->assertNotContains($req2->id(), $vol1Ids);
 
         // Vol2's dashboard query should only return req2.
-        $vol2Ids = $requestStorage->getQuery()
+        $vol2Ids = $requestStorage->getQuery()->accessCheck(false)
             ->condition('assigned_volunteer', $vol2->id())
             ->execute();
         $this->assertCount(1, $vol2Ids);

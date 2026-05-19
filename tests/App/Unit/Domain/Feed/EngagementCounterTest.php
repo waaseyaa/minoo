@@ -31,6 +31,8 @@ final class EngagementCounterTest extends TestCase
     public function it_returns_zero_counts_when_no_engagement(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('count')->willReturnSelf();
         $query->method('execute')->willReturn([]);
@@ -51,6 +53,8 @@ final class EngagementCounterTest extends TestCase
     public function it_counts_reactions_and_comments(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('count')->willReturnSelf();
 
@@ -79,6 +83,8 @@ final class EngagementCounterTest extends TestCase
     public function getCountsReturnsCorrectKeysForMultipleTargets(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('count')->willReturnSelf();
         $query->method('execute')->willReturn([]);
@@ -107,6 +113,8 @@ final class EngagementCounterTest extends TestCase
     public function it_returns_counts_for_single_target(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('count')->willReturnSelf();
         $query->method('execute')->willReturn([]);

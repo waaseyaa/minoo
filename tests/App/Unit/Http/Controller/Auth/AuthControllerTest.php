@@ -39,6 +39,8 @@ final class AuthControllerTest extends TestCase
         $_SESSION = [];
 
         $this->query = $this->createMock(EntityQueryInterface::class);
+        $this->query->method('setAccount')->willReturnSelf();
+        $this->query->method('accessCheck')->willReturnSelf();
         $this->query->method('condition')->willReturnSelf();
         $this->query->method('sort')->willReturnSelf();
         $this->query->method('range')->willReturnSelf();

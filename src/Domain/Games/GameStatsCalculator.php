@@ -33,6 +33,7 @@ final class GameStatsCalculator
 
         $storage = $entityTypeManager->getStorage('game_session');
         $allIds = $storage->getQuery()
+            ->setAccount($account)
             ->condition('user_id', $account->id())
             ->condition('game_type', $gameType)
             ->execute();

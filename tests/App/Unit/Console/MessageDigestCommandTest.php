@@ -42,6 +42,8 @@ final class MessageDigestCommandTest extends TestCase
 
         $participantStorage = $this->createMock(EntityStorageInterface::class);
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('sort')->willReturn($query);
         $query->method('execute')->willReturn([]);
         $participantStorage->method('getQuery')->willReturn($query);

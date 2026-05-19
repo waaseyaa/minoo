@@ -302,7 +302,7 @@ final class ShkodaController
 
         // Load example sentence if available
         $exampleStorage = $this->entityTypeManager->getStorage('example_sentence');
-        $exampleIds = $exampleStorage->getQuery()
+        $exampleIds = $exampleStorage->getQuery()->setAccount($account)
             ->condition('dictionary_entry_id', $entry->id())
             ->condition('status', 1)
             ->range(0, 1)
@@ -335,7 +335,7 @@ final class ShkodaController
     private function selectRandomWord(string $tier, string $seed = ''): ?int
     {
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $query = $storage->getQuery()
+        $query = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('consent_public', 1);
 

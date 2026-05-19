@@ -122,7 +122,7 @@ final class FeedController
             try {
                 $storage = $this->entityTypeManager->getStorage('reaction');
                 $sevenDaysAgo = (new \DateTimeImmutable('-7 days'))->format('Y-m-d H:i:s');
-                $ids = $storage->getQuery()
+                $ids = $storage->getQuery()->accessCheck(false)
                     ->condition('created_at', $sevenDaysAgo, '>=')
                     ->execute();
 
@@ -201,7 +201,7 @@ final class FeedController
         try {
             $storage = $this->entityTypeManager->getStorage('event');
             $now = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->accessCheck(false)
                 ->condition('status', 1)
                 ->condition('starts_at', $now, '>')
                 ->sort('starts_at', 'ASC')
@@ -266,7 +266,7 @@ final class FeedController
 
         try {
             $storage = $this->entityTypeManager->getStorage('community');
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->accessCheck(false)
                 ->condition('status', 1)
                 ->execute();
 
@@ -323,7 +323,7 @@ final class FeedController
 
         try {
             $followStorage = $this->entityTypeManager->getStorage('follow');
-            $ids = $followStorage->getQuery()
+            $ids = $followStorage->getQuery()->setAccount($account)
                 ->condition('user_id', (int) $account->id())
                 ->condition('target_type', 'community')
                 ->execute();

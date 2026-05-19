@@ -27,11 +27,11 @@ final class FixtureResolver
         $storage = $this->entityTypeManager->getStorage('community');
 
         // Exact match first
-        $ids = $storage->getQuery()->condition('name', $name)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('name', $name)->execute();
 
         if ($ids === []) {
             // Case-insensitive fallback — query all and match
-            $allIds = $storage->getQuery()->execute();
+            $allIds = $storage->getQuery()->accessCheck(false)->execute();
             foreach ($allIds as $id) {
                 $entity = $storage->load($id);
                 if ($entity !== null && strcasecmp($entity->get('name'), $name) === 0) {
@@ -55,7 +55,7 @@ final class FixtureResolver
         }
 
         $storage = $this->entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()->condition('slug', $slug)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('slug', $slug)->execute();
 
         $id = $ids !== [] ? reset($ids) : null;
         $this->groupSlugCache[$slug] = $id;
@@ -73,7 +73,7 @@ final class FixtureResolver
         $ids = [];
 
         foreach ($names as $name) {
-            $termIds = $storage->getQuery()
+            $termIds = $storage->getQuery()->accessCheck(false)
                 ->condition('vid', $vocabulary)
                 ->condition('name', $name)
                 ->execute();

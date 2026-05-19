@@ -149,7 +149,7 @@ final class SeedContentTest extends TestCase
         $originalId = $group->id();
 
         // Upsert — find by slug, update
-        $ids = $storage->getQuery()->condition('slug', 'upsert-test')->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('slug', 'upsert-test')->execute();
         $this->assertNotEmpty($ids);
 
         $existing = $storage->load(reset($ids));

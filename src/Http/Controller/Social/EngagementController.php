@@ -149,7 +149,7 @@ final class EngagementController
         $offset = max((int) ($query['offset'] ?? 0), 0);
 
         $storage = $this->entityTypeManager->getStorage('comment');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('target_type', $targetType)
             ->condition('target_id', $targetId)
             ->condition('status', 1)

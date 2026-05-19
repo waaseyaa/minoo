@@ -226,7 +226,7 @@ final class EventFeedBuilder
         // Load events whose [starts_at, ends_at] overlaps [gridStart, gridEnd).
         // starts_at/ends_at are ISO strings; filter in PHP since SQL compares as strings.
         $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()->condition('status', 1)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('status', 1)->execute();
         $loaded = $ids === [] ? [] : array_values($storage->loadMultiple($ids));
         $events = array_values(array_filter($loaded, function (ContentEntityBase $e) use ($gridStart, $gridEnd): bool {
             $s = $this->toTimestamp($e->get('starts_at'));
@@ -301,7 +301,7 @@ final class EventFeedBuilder
     private function loadForFilter(int $now, bool $includePast): array
     {
         $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()->condition('status', 1)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('status', 1)->execute();
         if ($ids === []) {
             return [];
         }
@@ -319,7 +319,7 @@ final class EventFeedBuilder
     private function loadUpcomingAndActive(int $now): array
     {
         $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()->condition('status', 1)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('status', 1)->execute();
         if ($ids === []) {
             return [];
         }
@@ -380,7 +380,7 @@ final class EventFeedBuilder
     private function loadFeaturedEventIds(int $now): array
     {
         $storage = $this->entityTypeManager->getStorage('featured_item');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('entity_type', 'event')
             ->condition('starts_at', $now, '<=')

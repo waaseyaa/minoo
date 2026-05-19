@@ -54,7 +54,7 @@ final class HomeController
         }
 
         $now = date('Y-m-d H:i:s');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('starts_at', $now, '<=')
             ->condition('ends_at', $now, '>=')
@@ -90,7 +90,7 @@ final class HomeController
         }
 
         $now = date('Y-m-d H:i:s');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('starts_at', $now, '>=')
             ->sort('starts_at', 'ASC')
@@ -109,7 +109,7 @@ final class HomeController
             return [];
         }
 
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->sort('created_at', 'DESC')

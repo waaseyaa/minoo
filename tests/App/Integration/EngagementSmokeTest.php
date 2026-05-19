@@ -165,7 +165,7 @@ final class EngagementSmokeTest extends TestCase
         $this->assertNotNull($cid);
 
         // Query comments for this post
-        $ids = $commentStorage->getQuery()
+        $ids = $commentStorage->getQuery()->accessCheck(false)
             ->condition('target_type', 'post')
             ->condition('target_id', (int) $post->id())
             ->execute();

@@ -109,6 +109,7 @@ final class EventController
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('event');
         $ids = $storage->getQuery()
+            ->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->execute();
@@ -128,6 +129,7 @@ final class EventController
         if ($event !== null && $event->get('community_id')) {
             $teachingStorage = $this->entityTypeManager->getStorage('teaching');
             $teachingIds = $teachingStorage->getQuery()
+                ->setAccount($account)
                 ->condition('community_id', $event->get('community_id'))
                 ->condition('status', 1)
                 ->range(0, 4)
@@ -139,6 +141,7 @@ final class EventController
         if ($event !== null && $event->get('community_id')) {
             $personStorage = $this->entityTypeManager->getStorage('resource_person');
             $personIds = $personStorage->getQuery()
+                ->setAccount($account)
                 ->condition('community', $event->get('community_id'))
                 ->condition('status', 1)
                 ->range(0, 4)
@@ -150,6 +153,7 @@ final class EventController
         if ($event !== null && $event->get('community_id')) {
             $communityStorage = $this->entityTypeManager->getStorage('community');
             $communityIds = $communityStorage->getQuery()
+                ->setAccount($account)
                 ->condition('cid', $event->get('community_id'))
                 ->range(0, 1)
                 ->execute();
@@ -169,7 +173,7 @@ final class EventController
             }
         }
 
-        $similarUpcoming = $this->findSimilarUpcoming($event);
+        $similarUpcoming = $this->findSimilarUpcoming($event, $account);
 
         $html = $this->twig->render('pages/events/show.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/events/' . $slug,
@@ -196,9 +200,9 @@ final class EventController
 
         $storage = $this->entityTypeManager->getStorage('event');
         $ids = $storage->getQuery()
+            ->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
-            ->accessCheck(false)
             ->execute();
         if (empty($ids)) {
             return new Response('', 404);
@@ -220,7 +224,7 @@ final class EventController
     /**
      * @return list<ContentEntityBase>
      */
-    private function findSimilarUpcoming(?ContentEntityBase $event): array
+    private function findSimilarUpcoming(?ContentEntityBase $event, AccountInterface $account): array
     {
         if ($event === null) {
             return [];
@@ -236,6 +240,7 @@ final class EventController
 
         $storage = $this->entityTypeManager->getStorage('event');
         $ids = $storage->getQuery()
+            ->setAccount($account)
             ->condition('type', $type)
             ->condition('status', 1)
             ->condition('starts_at', $now, '>')

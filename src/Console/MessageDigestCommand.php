@@ -34,7 +34,7 @@ final class MessageDigestCommand
         $messageStorage = $this->entityTypeManager->getStorage('thread_message');
         $userStorage = $this->entityTypeManager->getStorage('user');
 
-        $allParticipantIds = $participantStorage->getQuery()->sort('user_id', 'ASC')->execute();
+        $allParticipantIds = $participantStorage->getQuery()->accessCheck(false)->sort('user_id', 'ASC')->execute();
         if ($allParticipantIds === []) {
             return;
         }
@@ -76,7 +76,7 @@ final class MessageDigestCommand
                 $threadId = (int) $participant->get('thread_id');
                 $lastReadAt = (int) $participant->get('last_read_at');
 
-                $unreadIds = $messageStorage->getQuery()
+                $unreadIds = $messageStorage->getQuery()->accessCheck(false)
                     ->condition('thread_id', $threadId)
                     ->condition('created_at', $lastReadAt, '>')
                     ->condition('created_at', $debounceThreshold, '<')

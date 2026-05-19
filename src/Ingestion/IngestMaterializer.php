@@ -174,7 +174,7 @@ final class IngestMaterializer
         $storage = $this->entityTypeManager->getStorage('contributor');
 
         try {
-            $ids = $storage->getQuery()->condition('code', $code)->execute();
+            $ids = $storage->getQuery()->accessCheck(false)->condition('code', $code)->execute();
             if ($ids !== []) {
                 return (int) reset($ids);
             }
@@ -194,7 +194,7 @@ final class IngestMaterializer
         $storage = $this->entityTypeManager->getStorage('word_part');
 
         try {
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->accessCheck(false)
                 ->condition('form', $form)
                 ->condition('type', $type)
                 ->execute();

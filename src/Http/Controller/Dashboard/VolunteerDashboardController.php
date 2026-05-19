@@ -27,7 +27,7 @@ final class VolunteerDashboardController
     {
         $storage = $this->entityTypeManager->getStorage('elder_support_request');
 
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('assigned_volunteer', $account->id())
             ->sort('updated_at', 'DESC')
             ->execute();
@@ -43,7 +43,7 @@ final class VolunteerDashboardController
         }
 
         $volStorage = $this->entityTypeManager->getStorage('volunteer');
-        $volIds = $volStorage->getQuery()->condition('account_id', $account->id())->execute();
+        $volIds = $volStorage->getQuery()->setAccount($account)->condition('account_id', $account->id())->execute();
         $volunteer = $volIds !== [] ? $volStorage->load(reset($volIds)) : null;
         $html = $this->twig->render('pages/dashboard/volunteer.html.twig', LayoutTwigContext::withAccount($account, [
             'requests' => $requests,
@@ -145,7 +145,7 @@ final class VolunteerDashboardController
     private function findVolunteerByAccount(AccountInterface $account): ?\Waaseyaa\Entity\ContentEntityBase
     {
         $storage = $this->entityTypeManager->getStorage('volunteer');
-        $ids = $storage->getQuery()->condition('account_id', $account->id())->execute();
+        $ids = $storage->getQuery()->setAccount($account)->condition('account_id', $account->id())->execute();
         if ($ids === []) {
             return null;
         }

@@ -137,7 +137,7 @@ final class RoleManagementController
     {
         try {
             $storage = $this->entityTypeManager->getStorage('user');
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->setAccount($account)
                 ->condition('status', 1)
                 ->sort('name', 'ASC')
                 ->execute();

@@ -31,6 +31,8 @@ final class CrosswordControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->puzzleQuery = $this->createMock(EntityQueryInterface::class);
+        $this->puzzleQuery->method('setAccount')->willReturnSelf();
+        $this->puzzleQuery->method('accessCheck')->willReturnSelf();
         $this->puzzleQuery->method('condition')->willReturnSelf();
         $this->puzzleQuery->method('sort')->willReturnSelf();
         $this->puzzleQuery->method('range')->willReturnSelf();

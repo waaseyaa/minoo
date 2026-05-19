@@ -43,6 +43,8 @@ final class CoordinatorApplicationsTest extends TestCase
 
         $storage = $this->createMock(EntityStorageInterface::class);
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('sort')->willReturnSelf();
         $query->method('execute')->willReturn([1]);
@@ -81,6 +83,8 @@ final class CoordinatorApplicationsTest extends TestCase
 
         $volStorage = $this->createMock(EntityStorageInterface::class);
         $volQuery = $this->createMock(EntityQueryInterface::class);
+        $volQuery->method('setAccount')->willReturnSelf();
+        $volQuery->method('accessCheck')->willReturnSelf();
         $volQuery->method('condition')->willReturnSelf();
         $volQuery->method('execute')->willReturn([1]);
         $volStorage->method('getQuery')->willReturn($volQuery);
@@ -133,6 +137,8 @@ final class CoordinatorApplicationsTest extends TestCase
 
         $storage = $this->createMock(EntityStorageInterface::class);
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([1]);
         $storage->method('getQuery')->willReturn($query);
@@ -160,6 +166,8 @@ final class CoordinatorApplicationsTest extends TestCase
 
         $storage = $this->createMock(EntityStorageInterface::class);
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([1]);
         $storage->method('getQuery')->willReturn($query);
@@ -189,6 +197,8 @@ final class CoordinatorApplicationsTest extends TestCase
 
         $volStorage = $this->createMock(EntityStorageInterface::class);
         $volQuery = $this->createMock(EntityQueryInterface::class);
+        $volQuery->method('setAccount')->willReturnSelf();
+        $volQuery->method('accessCheck')->willReturnSelf();
         $volQuery->method('condition')->willReturnSelf();
         $volQuery->method('execute')->willReturn([1]);
         $volStorage->method('getQuery')->willReturn($volQuery);

@@ -248,6 +248,8 @@ final class NewsletterAdminApiControllerTest extends TestCase
         });
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([10, 11]);
         $this->itemStorage->method('getQuery')->willReturn($query);
@@ -333,6 +335,8 @@ final class NewsletterAdminApiControllerTest extends TestCase
         });
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([20, 21]);
         $this->itemStorage->method('getQuery')->willReturn($query);
@@ -389,6 +393,8 @@ final class NewsletterAdminApiControllerTest extends TestCase
 
         // Count query returns 2 existing items in this section
         $countQuery = $this->createMock(EntityQueryInterface::class);
+        $countQuery->method('setAccount')->willReturnSelf();
+        $countQuery->method('accessCheck')->willReturnSelf();
         $countQuery->method('condition')->willReturnSelf();
         $countQuery->method('count')->willReturnSelf();
         $countQuery->method('execute')->willReturn([2]);
@@ -596,6 +602,8 @@ final class NewsletterAdminApiControllerTest extends TestCase
             $this->entityStorages[$type] = $storage;
 
             $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
             $query->method('condition')->willReturnSelf();
             $query->method('range')->willReturnSelf();
 
@@ -642,6 +650,8 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $this->entityStorages['event'] = $eventStorage;
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('range')->willReturnSelf();
         $query->method('execute')->willReturn([10]);
@@ -683,6 +693,8 @@ final class NewsletterAdminApiControllerTest extends TestCase
         $this->entityStorages['teaching'] = $teachingStorage;
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('range')->willReturnSelf();
         $query->method('execute')->willReturn([30]);

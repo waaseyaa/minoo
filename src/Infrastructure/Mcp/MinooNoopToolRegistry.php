@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Mcp;
 
-use Waaseyaa\AI\Schema\Mcp\McpToolDefinition;
+use Waaseyaa\AI\Tools\AgentTool;
 use Waaseyaa\Mcp\Bridge\ToolRegistryInterface;
 
 /**
  * Explicit no-op MCP tool registry until Minoo registers real tools.
+ *
+ * Updated for alpha.181 (#1496): the McpToolDefinition VO was replaced by
+ * Waaseyaa\AI\Tools\AgentTool. The registry surface now returns AgentTool.
  */
 final class MinooNoopToolRegistry implements ToolRegistryInterface
 {
@@ -17,7 +20,7 @@ final class MinooNoopToolRegistry implements ToolRegistryInterface
         return [];
     }
 
-    public function getTool(string $name): ?McpToolDefinition
+    public function getTool(string $name): ?AgentTool
     {
         return null;
     }

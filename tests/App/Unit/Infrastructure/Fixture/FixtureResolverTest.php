@@ -20,6 +20,8 @@ final class FixtureResolverTest extends TestCase
     public function resolvesCommunityByName(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([42]);
 
@@ -39,6 +41,8 @@ final class FixtureResolverTest extends TestCase
     public function returnsNullForUnknownCommunity(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([]);
 
@@ -58,6 +62,8 @@ final class FixtureResolverTest extends TestCase
     public function resolvesCommunityByCaseInsensitiveFallback(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturnOnConsecutiveCalls([], [5]);
 
@@ -81,6 +87,8 @@ final class FixtureResolverTest extends TestCase
     public function resolvesGroupSlugToId(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([7]);
 
@@ -100,6 +108,8 @@ final class FixtureResolverTest extends TestCase
     public function resolvesTaxonomyTermsByName(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturnOnConsecutiveCalls([101], [102], []);
 

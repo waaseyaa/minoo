@@ -36,7 +36,7 @@ final class CommunityController
 
         $typeFilter = $request->query->getString('type');
 
-        $queryBuilder = $storage->getQuery()
+        $queryBuilder = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->sort('name', 'ASC');
 
@@ -79,7 +79,7 @@ final class CommunityController
         }
 
         $businessStorage = $this->entityTypeManager->getStorage('group');
-        $businessIds = $businessStorage->getQuery()
+        $businessIds = $businessStorage->getQuery()->setAccount($account)
             ->condition('type', 'business')
             ->condition('status', 1)
             ->execute();
@@ -133,7 +133,7 @@ final class CommunityController
         }
 
         $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->execute();
@@ -205,7 +205,7 @@ final class CommunityController
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->execute();
@@ -249,7 +249,7 @@ final class CommunityController
         $communityId = $community->get('cid');
 
         $eventStorage = $this->entityTypeManager->getStorage('event');
-        $eventIds = $eventStorage->getQuery()
+        $eventIds = $eventStorage->getQuery()->setAccount($account)
             ->condition('community_id', $communityId)
             ->condition('status', 1)
             ->range(0, 6)
@@ -257,7 +257,7 @@ final class CommunityController
         $localEvents = $eventIds !== [] ? array_values($eventStorage->loadMultiple($eventIds)) : [];
 
         $teachingStorage = $this->entityTypeManager->getStorage('teaching');
-        $teachingIds = $teachingStorage->getQuery()
+        $teachingIds = $teachingStorage->getQuery()->setAccount($account)
             ->condition('community_id', $communityId)
             ->condition('status', 1)
             ->range(0, 6)
@@ -265,7 +265,7 @@ final class CommunityController
         $localTeachings = $teachingIds !== [] ? array_values($teachingStorage->loadMultiple($teachingIds)) : [];
 
         $groupStorage = $this->entityTypeManager->getStorage('group');
-        $businessIds = $groupStorage->getQuery()
+        $businessIds = $groupStorage->getQuery()->setAccount($account)
             ->condition('community_id', $communityId)
             ->condition('type', 'business')
             ->condition('status', 1)
@@ -274,7 +274,7 @@ final class CommunityController
         $localBusinesses = $businessIds !== [] ? array_values($groupStorage->loadMultiple($businessIds)) : [];
 
         $personStorage = $this->entityTypeManager->getStorage('resource_person');
-        $personIds = $personStorage->getQuery()
+        $personIds = $personStorage->getQuery()->setAccount($account)
             ->condition('community', $community->get('name'))
             ->condition('status', 1)
             ->range(0, 6)
@@ -316,7 +316,7 @@ final class CommunityController
             return [];
         }
 
-        $allIds = $storage->getQuery()
+        $allIds = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->execute();
         $all = $allIds !== [] ? $storage->loadMultiple($allIds) : [];
@@ -355,7 +355,7 @@ final class CommunityController
         }
 
         $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('name', '%' . $term . '%', 'LIKE')
             ->condition('status', 1)
             ->range(0, 10)

@@ -29,7 +29,7 @@ final class CoordinatorDashboardController
     {
         $requestStorage = $this->entityTypeManager->getStorage('elder_support_request');
 
-        $allIds = $requestStorage->getQuery()
+        $allIds = $requestStorage->getQuery()->setAccount($account)
             ->sort('created_at', 'DESC')
             ->execute();
 
@@ -53,7 +53,7 @@ final class CoordinatorDashboardController
         }
 
         $volunteerStorage = $this->entityTypeManager->getStorage('volunteer');
-        $volunteerIds = $volunteerStorage->getQuery()
+        $volunteerIds = $volunteerStorage->getQuery()->setAccount($account)
             ->condition('status', 'active')
             ->sort('name', 'ASC')
             ->execute();
@@ -67,7 +67,7 @@ final class CoordinatorDashboardController
         $ranker = new VolunteerRanker($this->entityTypeManager);
         $rankedByRequest = $this->buildRankedMap($ranker, array_merge($open, $assigned), $volunteers);
 
-        $pendingApplicationIds = $volunteerStorage->getQuery()
+        $pendingApplicationIds = $volunteerStorage->getQuery()->setAccount($account)
             ->condition('status', 'pending')
             ->execute();
         $pendingApplicationCount = count($pendingApplicationIds);
@@ -95,7 +95,7 @@ final class CoordinatorDashboardController
     public function applications(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('volunteer');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('status', 'pending')
             ->sort('created_at', 'DESC')
             ->execute();
@@ -164,7 +164,7 @@ final class CoordinatorDashboardController
         }
 
         $storage = $this->entityTypeManager->getStorage('volunteer');
-        $ids = $storage->getQuery()->condition('uuid', $uuid)->execute();
+        $ids = $storage->getQuery()->accessCheck(false)->condition('uuid', $uuid)->execute();
 
         if ($ids === []) {
             return null;

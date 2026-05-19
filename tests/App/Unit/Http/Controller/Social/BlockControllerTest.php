@@ -55,6 +55,8 @@ final class BlockControllerTest extends TestCase
     private function mockQuery(EntityStorageInterface $storage, array $result = []): EntityQueryInterface
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturn($query);
         $query->method('sort')->willReturn($query);
         $query->method('range')->willReturn($query);

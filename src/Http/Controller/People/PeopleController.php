@@ -27,7 +27,7 @@ final class PeopleController
     public function list(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $storage = $this->entityTypeManager->getStorage('resource_person');
-        $queryBuilder = $storage->getQuery()
+        $queryBuilder = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->sort('name', 'ASC');
 
@@ -90,7 +90,7 @@ final class PeopleController
     {
         $slug = $params['slug'] ?? '';
         $storage = $this->entityTypeManager->getStorage('resource_person');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->execute();
@@ -119,7 +119,7 @@ final class PeopleController
         $linkedBusiness = null;
         if ($person !== null && $person->get('business_name')) {
             $businessStorage = $this->entityTypeManager->getStorage('group');
-            $businessIds = $businessStorage->getQuery()
+            $businessIds = $businessStorage->getQuery()->setAccount($account)
                 ->condition('name', $person->get('business_name'))
                 ->condition('type', 'business')
                 ->range(0, 1)
@@ -130,7 +130,7 @@ final class PeopleController
         $communityEntity = null;
         if ($person !== null && $person->get('community')) {
             $communityStorage = $this->entityTypeManager->getStorage('community');
-            $communityIds = $communityStorage->getQuery()
+            $communityIds = $communityStorage->getQuery()->setAccount($account)
                 ->condition('name', $person->get('community'))
                 ->range(0, 1)
                 ->execute();
@@ -140,7 +140,7 @@ final class PeopleController
         $relatedEvents = [];
         if ($person !== null && $person->get('community')) {
             $eventStorage = $this->entityTypeManager->getStorage('event');
-            $eventIds = $eventStorage->getQuery()
+            $eventIds = $eventStorage->getQuery()->setAccount($account)
                 ->condition('community_id', $person->get('community'))
                 ->condition('status', 1)
                 ->range(0, 4)

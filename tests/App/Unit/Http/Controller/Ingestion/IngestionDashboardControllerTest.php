@@ -246,6 +246,8 @@ final class IngestionDashboardControllerTest extends TestCase
     private function queryMockReturning(array $executeResult, bool $count = false, bool $allowCondition = false): EntityQueryInterface
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('sort')->willReturnSelf();
         $query->method('range')->willReturnSelf();
         if ($count) {

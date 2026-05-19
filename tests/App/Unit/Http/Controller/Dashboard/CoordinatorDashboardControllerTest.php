@@ -35,10 +35,14 @@ final class CoordinatorDashboardControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->requestQuery = $this->createMock(EntityQueryInterface::class);
+        $this->requestQuery->method('setAccount')->willReturnSelf();
+        $this->requestQuery->method('accessCheck')->willReturnSelf();
         $this->requestQuery->method('condition')->willReturnSelf();
         $this->requestQuery->method('sort')->willReturnSelf();
 
         $this->volunteerQuery = $this->createMock(EntityQueryInterface::class);
+        $this->volunteerQuery->method('setAccount')->willReturnSelf();
+        $this->volunteerQuery->method('accessCheck')->willReturnSelf();
         $this->volunteerQuery->method('condition')->willReturnSelf();
         $this->volunteerQuery->method('sort')->willReturnSelf();
 
@@ -49,6 +53,8 @@ final class CoordinatorDashboardControllerTest extends TestCase
         $this->volunteerStorage->method('getQuery')->willReturn($this->volunteerQuery);
 
         $communityQuery = $this->createMock(EntityQueryInterface::class);
+        $communityQuery->method('setAccount')->willReturnSelf();
+        $communityQuery->method('accessCheck')->willReturnSelf();
         $communityQuery->method('condition')->willReturnSelf();
         $communityQuery->method('sort')->willReturnSelf();
 
@@ -110,6 +116,8 @@ final class CoordinatorDashboardControllerTest extends TestCase
 
         $this->communityStorage = $this->createMock(EntityStorageInterface::class);
         $communityQuery2 = $this->createMock(EntityQueryInterface::class);
+        $communityQuery2->method('setAccount')->willReturnSelf();
+        $communityQuery2->method('accessCheck')->willReturnSelf();
         $communityQuery2->method('condition')->willReturnSelf();
         $communityQuery2->method('sort')->willReturnSelf();
         $this->communityStorage->method('getQuery')->willReturn($communityQuery2);

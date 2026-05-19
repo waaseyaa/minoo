@@ -33,6 +33,8 @@ final class VolunteerDashboardControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->query = $this->createMock(EntityQueryInterface::class);
+        $this->query->method('setAccount')->willReturnSelf();
+        $this->query->method('accessCheck')->willReturnSelf();
         $this->query->method('condition')->willReturnSelf();
         $this->query->method('sort')->willReturnSelf();
 
@@ -40,6 +42,8 @@ final class VolunteerDashboardControllerTest extends TestCase
         $this->storage->method('getQuery')->willReturn($this->query);
 
         $this->volunteerQuery = $this->createMock(EntityQueryInterface::class);
+        $this->volunteerQuery->method('setAccount')->willReturnSelf();
+        $this->volunteerQuery->method('accessCheck')->willReturnSelf();
         $this->volunteerQuery->method('condition')->willReturnSelf();
         $this->volunteerQuery->method('execute')->willReturn([]);
 
@@ -100,6 +104,8 @@ final class VolunteerDashboardControllerTest extends TestCase
         $volunteer = new Volunteer(['vid' => 10, 'name' => 'John', 'phone' => '555-1234', 'availability' => 'Weekends', 'max_travel_km' => 50]);
 
         $volQuery = $this->createMock(EntityQueryInterface::class);
+        $volQuery->method('setAccount')->willReturnSelf();
+        $volQuery->method('accessCheck')->willReturnSelf();
         $volQuery->method('condition')->willReturnSelf();
         $volQuery->method('execute')->willReturn([10]);
 
@@ -135,6 +141,8 @@ final class VolunteerDashboardControllerTest extends TestCase
     public function edit_form_returns_404_when_no_volunteer_linked(): void
     {
         $volQuery = $this->createMock(EntityQueryInterface::class);
+        $volQuery->method('setAccount')->willReturnSelf();
+        $volQuery->method('accessCheck')->willReturnSelf();
         $volQuery->method('condition')->willReturnSelf();
         $volQuery->method('execute')->willReturn([]);
 
@@ -162,6 +170,8 @@ final class VolunteerDashboardControllerTest extends TestCase
         $volunteer = new Volunteer(['vid' => 10, 'name' => 'John', 'phone' => '555-1234']);
 
         $volQuery = $this->createMock(EntityQueryInterface::class);
+        $volQuery->method('setAccount')->willReturnSelf();
+        $volQuery->method('accessCheck')->willReturnSelf();
         $volQuery->method('condition')->willReturnSelf();
         $volQuery->method('execute')->willReturn([10]);
 
@@ -203,6 +213,8 @@ final class VolunteerDashboardControllerTest extends TestCase
         $volunteer = new Volunteer(['vid' => 10, 'name' => 'John', 'status' => 'active']);
 
         $volQuery = $this->createMock(EntityQueryInterface::class);
+        $volQuery->method('setAccount')->willReturnSelf();
+        $volQuery->method('accessCheck')->willReturnSelf();
         $volQuery->method('condition')->willReturnSelf();
         $volQuery->method('execute')->willReturn([10]);
 
@@ -236,6 +248,8 @@ final class VolunteerDashboardControllerTest extends TestCase
         $volunteer = new Volunteer(['vid' => 10, 'name' => 'John', 'status' => 'unavailable']);
 
         $volQuery = $this->createMock(EntityQueryInterface::class);
+        $volQuery->method('setAccount')->willReturnSelf();
+        $volQuery->method('accessCheck')->willReturnSelf();
         $volQuery->method('condition')->willReturnSelf();
         $volQuery->method('execute')->willReturn([10]);
 

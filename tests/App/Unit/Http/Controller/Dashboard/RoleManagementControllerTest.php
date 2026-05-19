@@ -237,6 +237,8 @@ final class RoleManagementControllerTest extends TestCase
         $storage = $this->mockStorage();
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('sort')->willReturnSelf();
         $query->method('execute')->willReturn([1, 2, 3]);
@@ -276,6 +278,8 @@ final class RoleManagementControllerTest extends TestCase
         $storage = $this->mockStorage();
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('sort')->willReturnSelf();
         $query->method('execute')->willReturn([2]);

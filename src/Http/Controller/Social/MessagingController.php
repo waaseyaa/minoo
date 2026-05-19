@@ -115,7 +115,7 @@ final class MessagingController
         }
 
         $participantStorage = $this->participantStorage();
-        $ids = $participantStorage->getQuery()
+        $ids = $participantStorage->getQuery()->setAccount($account)
             ->condition('thread_id', $threadId)
             ->condition('user_id', $userId)
             ->range(0, 1)
@@ -256,7 +256,7 @@ final class MessagingController
                 continue;
             }
 
-            $blocked = $blockStorage->getQuery()
+            $blocked = $blockStorage->getQuery()->setAccount($account)
                 ->condition('blocker_id', $participantId)
                 ->condition('blocked_id', $creatorId)
                 ->range(0, 1)
@@ -266,7 +266,7 @@ final class MessagingController
                 return $this->json(['error' => 'Cannot message a user who has blocked you'], 403);
             }
 
-            $blocking = $blockStorage->getQuery()
+            $blocking = $blockStorage->getQuery()->setAccount($account)
                 ->condition('blocker_id', $creatorId)
                 ->condition('blocked_id', $participantId)
                 ->range(0, 1)
@@ -368,7 +368,7 @@ final class MessagingController
         $offset = max(0, (int) ($query['offset'] ?? 0));
 
         $storage = $this->messageStorage();
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('thread_id', $threadId)
             ->sort('created_at', 'ASC')
             ->range($offset, $limit)
@@ -380,7 +380,7 @@ final class MessagingController
         $reactionsByMessage = [];
         if ($ids !== []) {
             $reactionStorage = $this->entityTypeManager->getStorage('reaction');
-            $reactionIds = $reactionStorage->getQuery()
+            $reactionIds = $reactionStorage->getQuery()->setAccount($account)
                 ->condition('target_type', 'thread_message')
                 ->execute();
             if ($reactionIds !== []) {
@@ -540,7 +540,7 @@ final class MessagingController
         }
 
         $participantStorage = $this->participantStorage();
-        $ids = $participantStorage->getQuery()
+        $ids = $participantStorage->getQuery()->setAccount($account)
             ->condition('thread_id', $threadId)
             ->condition('user_id', $targetUserId)
             ->range(0, 1)
@@ -568,7 +568,7 @@ final class MessagingController
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->sort('uid', 'DESC')
             ->range(0, 500)
             ->execute();
@@ -624,7 +624,7 @@ final class MessagingController
         $allMatches = [];
 
         foreach ($threadIds as $threadId) {
-            $ids = $messageStorage->getQuery()
+            $ids = $messageStorage->getQuery()->setAccount($account)
                 ->condition('thread_id', $threadId)
                 ->condition('body', $likeTerm, 'LIKE')
                 ->sort('created_at', 'DESC')
@@ -695,7 +695,7 @@ final class MessagingController
             return false;
         }
 
-        $ids = $this->participantStorage()->getQuery()
+        $ids = $this->participantStorage()->getQuery()->accessCheck(false)
             ->condition('thread_id', $threadId)
             ->condition('user_id', $userId)
             ->range(0, 1)
@@ -724,7 +724,7 @@ final class MessagingController
     private function participantsForThread(int $threadId): array
     {
         $storage = $this->participantStorage();
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('thread_id', $threadId)
             ->sort('joined_at', 'ASC')
             ->execute();
@@ -735,7 +735,7 @@ final class MessagingController
     /** @return list<EntityInterface> */
     private function participantsForUser(EntityStorageInterface $participantStorage, int $userId): array
     {
-        $ids = $participantStorage->getQuery()
+        $ids = $participantStorage->getQuery()->accessCheck(false)
             ->condition('user_id', $userId)
             ->sort('joined_at', 'ASC')
             ->execute();
@@ -745,7 +745,7 @@ final class MessagingController
 
     private function countUnreadMessages(EntityStorageInterface $messageStorage, int $threadId, int $lastReadAt, int $userId): int
     {
-        $ids = $messageStorage->getQuery()
+        $ids = $messageStorage->getQuery()->accessCheck(false)
             ->condition('thread_id', $threadId)
             ->sort('created_at', 'DESC')
             ->range(0, 100)
@@ -769,7 +769,7 @@ final class MessagingController
     /** @return array<string, mixed>|null */
     private function latestMessageForThread(EntityStorageInterface $messageStorage, int $threadId): ?array
     {
-        $ids = $messageStorage->getQuery()
+        $ids = $messageStorage->getQuery()->accessCheck(false)
             ->condition('thread_id', $threadId)
             ->sort('created_at', 'DESC')
             ->range(0, 1)

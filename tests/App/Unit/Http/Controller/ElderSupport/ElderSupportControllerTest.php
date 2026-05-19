@@ -95,6 +95,8 @@ final class ElderSupportControllerTest extends TestCase
         $entity = $this->createMock(EntityInterface::class);
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([1]);
 
@@ -116,6 +118,8 @@ final class ElderSupportControllerTest extends TestCase
     public function request_detail_with_unknown_uuid_returns_404(): void
     {
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([]);
 

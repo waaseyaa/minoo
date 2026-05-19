@@ -76,7 +76,7 @@ final class AuthController
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->setAccount($account)
             ->condition('mail', $email)
             ->execute();
 
@@ -158,7 +158,7 @@ final class AuthController
         }
 
         $storage = $this->entityTypeManager->getStorage('user');
-        $existing = $storage->getQuery()
+        $existing = $storage->getQuery()->setAccount($account)
             ->condition('mail', $email)
             ->execute();
 
@@ -235,7 +235,7 @@ final class AuthController
 
         if ($email !== '') {
             $storage = $this->entityTypeManager->getStorage('user');
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->setAccount($account)
                 ->condition('mail', $email)
                 ->execute();
 

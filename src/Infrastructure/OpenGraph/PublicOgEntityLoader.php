@@ -20,7 +20,7 @@ final class PublicOgEntityLoader
         }
 
         $storage = $entityTypeManager->getStorage('group');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('slug', $slug)
             ->condition('type', 'business')
             ->condition('status', 1)
@@ -51,7 +51,7 @@ final class PublicOgEntityLoader
         }
 
         $storage = $entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->execute();
@@ -77,7 +77,7 @@ final class PublicOgEntityLoader
         }
 
         $storage = $entityTypeManager->getStorage('teaching');
-        $ids = $storage->getQuery()
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->condition('consent_public', 1)

@@ -50,6 +50,8 @@ final class MessagingControllerTest extends TestCase
 
         $participantStorage = $this->createMock(EntityStorageInterface::class);
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturn($query);
         $query->method('range')->willReturn($query);
         $query->method('execute')->willReturn([]);
@@ -75,6 +77,8 @@ final class MessagingControllerTest extends TestCase
         // Participant check passes.
         $participantStorage = $this->createMock(EntityStorageInterface::class);
         $participantQuery = $this->createMock(EntityQueryInterface::class);
+        $participantQuery->method('setAccount')->willReturnSelf();
+        $participantQuery->method('accessCheck')->willReturnSelf();
         $participantQuery->method('condition')->willReturn($participantQuery);
         $participantQuery->method('range')->willReturn($participantQuery);
         $participantQuery->method('execute')->willReturn([1]);
@@ -137,6 +141,8 @@ final class MessagingControllerTest extends TestCase
         // Participant check passes.
         $participantStorage = $this->createMock(EntityStorageInterface::class);
         $participantQuery = $this->createMock(EntityQueryInterface::class);
+        $participantQuery->method('setAccount')->willReturnSelf();
+        $participantQuery->method('accessCheck')->willReturnSelf();
         $participantQuery->method('condition')->willReturn($participantQuery);
         $participantQuery->method('range')->willReturn($participantQuery);
         $participantQuery->method('execute')->willReturn([1]);
@@ -173,6 +179,8 @@ final class MessagingControllerTest extends TestCase
 
         $participantStorage = $this->createMock(EntityStorageInterface::class);
         $participantQuery = $this->createMock(EntityQueryInterface::class);
+        $participantQuery->method('setAccount')->willReturnSelf();
+        $participantQuery->method('accessCheck')->willReturnSelf();
         $participantQuery->method('condition')->willReturn($participantQuery);
         $participantQuery->method('range')->willReturn($participantQuery);
         $participantQuery->method('execute')->willReturn([1]);
@@ -212,6 +220,8 @@ final class MessagingControllerTest extends TestCase
 
         $participantStorage = $this->createMock(EntityStorageInterface::class);
         $participantQuery = $this->createMock(EntityQueryInterface::class);
+        $participantQuery->method('setAccount')->willReturnSelf();
+        $participantQuery->method('accessCheck')->willReturnSelf();
         $participantQuery->method('condition')->willReturn($participantQuery);
         $participantQuery->method('range')->willReturn($participantQuery);
         $participantQuery->method('execute')->willReturn([1]);
@@ -248,12 +258,16 @@ final class MessagingControllerTest extends TestCase
 
         // isParticipant check
         $participantQuery1 = $this->createMock(EntityQueryInterface::class);
+        $participantQuery1->method('setAccount')->willReturnSelf();
+        $participantQuery1->method('accessCheck')->willReturnSelf();
         $participantQuery1->method('condition')->willReturn($participantQuery1);
         $participantQuery1->method('range')->willReturn($participantQuery1);
         $participantQuery1->method('execute')->willReturn([1]);
 
         // markRead query to find the participant row
         $participantQuery2 = $this->createMock(EntityQueryInterface::class);
+        $participantQuery2->method('setAccount')->willReturnSelf();
+        $participantQuery2->method('accessCheck')->willReturnSelf();
         $participantQuery2->method('condition')->willReturn($participantQuery2);
         $participantQuery2->method('range')->willReturn($participantQuery2);
         $participantQuery2->method('execute')->willReturn([42]);
@@ -291,6 +305,8 @@ final class MessagingControllerTest extends TestCase
         ]);
 
         $participantQuery = $this->createMock(EntityQueryInterface::class);
+        $participantQuery->method('setAccount')->willReturnSelf();
+        $participantQuery->method('accessCheck')->willReturnSelf();
         $participantQuery->method('condition')->willReturn($participantQuery);
         $participantQuery->method('sort')->willReturn($participantQuery);
         $participantQuery->method('execute')->willReturn([1]);
@@ -307,6 +323,8 @@ final class MessagingControllerTest extends TestCase
         ]);
 
         $msgQuery = $this->createMock(EntityQueryInterface::class);
+        $msgQuery->method('setAccount')->willReturnSelf();
+        $msgQuery->method('accessCheck')->willReturnSelf();
         $msgQuery->method('condition')->willReturn($msgQuery);
         $msgQuery->method('sort')->willReturn($msgQuery);
         $msgQuery->method('range')->willReturn($msgQuery);

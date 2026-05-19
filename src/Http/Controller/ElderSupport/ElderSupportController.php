@@ -110,7 +110,7 @@ final class ElderSupportController
 
         if ($uuid !== '') {
             $storage = $this->entityTypeManager->getStorage('elder_support_request');
-            $ids = $storage->getQuery()->condition('uuid', $uuid)->execute();
+            $ids = $storage->getQuery()->setAccount($account)->condition('uuid', $uuid)->execute();
             if ($ids !== []) {
                 $entity = $storage->load(reset($ids));
             }

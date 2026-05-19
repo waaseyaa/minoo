@@ -365,6 +365,10 @@ final class EventFeedBuilderTest extends TestCase
             {
                 return $this;
             }
+            public function setAccount(?\Waaseyaa\Access\AccountInterface $account): static
+            {
+                return $this;
+            }
             public function execute(): array
             {
                 return array_map(fn ($e) => $e->id(), $this->events);

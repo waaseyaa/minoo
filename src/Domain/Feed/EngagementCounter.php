@@ -46,14 +46,14 @@ final class EngagementCounter
             foreach ($ids as $id) {
                 $key = $type . ':' . $id;
 
-                $reactionCount = $reactionStorage->getQuery()
+                $reactionCount = $reactionStorage->getQuery()->accessCheck(false)
                     ->condition('target_type', $type)
                     ->condition('target_id', $id)
                     ->count()
                     ->execute();
                 $result[$key]['reactions'] = $reactionCount[0] ?? 0;
 
-                $commentCount = $commentStorage->getQuery()
+                $commentCount = $commentStorage->getQuery()->accessCheck(false)
                     ->condition('target_type', $type)
                     ->condition('target_id', $id)
                     ->condition('status', 1)

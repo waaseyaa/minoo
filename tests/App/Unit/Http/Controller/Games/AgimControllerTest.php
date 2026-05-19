@@ -253,6 +253,8 @@ final class AgimControllerTest extends TestCase
         $completed = $this->makeSession(['status' => 'completed', 'created_at' => '100', 'updated_at' => '180']);
 
         $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('setAccount')->willReturnSelf();
+        $query->method('accessCheck')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([2, 1]);
 

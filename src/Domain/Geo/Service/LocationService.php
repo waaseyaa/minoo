@@ -88,7 +88,7 @@ final class LocationService
         if (is_int($communityId)) {
             $community = $storage->load($communityId);
         } else {
-            $ids = $storage->getQuery()->condition('uuid', $communityId)->execute();
+            $ids = $storage->getQuery()->accessCheck(false)->condition('uuid', $communityId)->execute();
             $community = $ids !== [] ? $storage->load(reset($ids)) : null;
         }
 
@@ -180,7 +180,7 @@ final class LocationService
     private function loadAllCommunities(): array
     {
         $storage = $this->entityTypeManager->getStorage('community');
-        $query = $storage->getQuery();
+        $query = $storage->getQuery()->accessCheck(false);
         $query->condition('status', 1);
         $ids = $query->execute();
 

@@ -28,6 +28,8 @@ final class ElderSupportWorkflowControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->query = $this->createMock(EntityQueryInterface::class);
+        $this->query->method('setAccount')->willReturnSelf();
+        $this->query->method('accessCheck')->willReturnSelf();
         $this->query->method('condition')->willReturnSelf();
 
         $this->requestStorage = $this->createMock(EntityStorageInterface::class);

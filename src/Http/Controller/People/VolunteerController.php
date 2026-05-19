@@ -122,7 +122,7 @@ final class VolunteerController
 
         if ($uuid !== '') {
             $storage = $this->entityTypeManager->getStorage('volunteer');
-            $ids = $storage->getQuery()->condition('uuid', $uuid)->execute();
+            $ids = $storage->getQuery()->setAccount($account)->condition('uuid', $uuid)->execute();
             if ($ids !== []) {
                 $entity = $storage->load(reset($ids));
             }
@@ -138,14 +138,17 @@ final class VolunteerController
     private function hasExistingVolunteer(AccountInterface $account): bool
     {
         $storage = $this->entityTypeManager->getStorage('volunteer');
-        $ids = $storage->getQuery()->condition('account_id', $account->id())->execute();
+        $ids = $storage->getQuery()->setAccount($account)->condition('account_id', $account->id())->execute();
         return $ids !== [];
     }
 
     private function phoneExists(string $phone): bool
     {
         $storage = $this->entityTypeManager->getStorage('volunteer');
-        $ids = $storage->getQuery()->condition('phone', $phone)->execute();
+        // System context: phone uniqueness check spans access boundaries.
+        // No two volunteers may share a phone, regardless of the caller's view scope.
+        // See docs/security/sql-entity-query-access-check-bypass-audit.md.
+        $ids = $storage->getQuery()->accessCheck(false)->condition('phone', $phone)->execute();
         return $ids !== [];
     }
 

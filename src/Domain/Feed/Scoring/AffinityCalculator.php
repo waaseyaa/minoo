@@ -123,7 +123,7 @@ final class AffinityCalculator
     {
         try {
             $storage = $this->entityTypeManager->getStorage('follow');
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->accessCheck(false)
                 ->condition('user_id', $userId)
                 ->execute();
 
@@ -155,7 +155,7 @@ final class AffinityCalculator
             $storage = $this->entityTypeManager->getStorage($entityType);
             $cutoff = time() - ($this->lookbackDays * 86400);
 
-            $ids = $storage->getQuery()
+            $ids = $storage->getQuery()->accessCheck(false)
                 ->condition('user_id', $userId)
                 ->condition('created_at', $cutoff, '>=')
                 ->execute();
