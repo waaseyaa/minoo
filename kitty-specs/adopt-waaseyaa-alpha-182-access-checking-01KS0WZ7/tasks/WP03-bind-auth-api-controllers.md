@@ -200,3 +200,4 @@ These controllers run behind auth middleware (`requires_auth: true` in route def
 ## Activity Log
 
 - 2026-05-19T21:28:01Z – claude:opus-4-7:implementer:implementer – shell_pid=544330 – Started implementation via action command
+- 2026-05-19T21:31:12Z – claude:opus-4-7:implementer:implementer – shell_pid=544330 – 30+ auth API getQuery sites bound; 15 private helpers use audited bypass per framework pattern
