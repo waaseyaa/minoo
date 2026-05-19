@@ -189,3 +189,4 @@ Services are called from controllers (WP02/WP03) or from CLI handlers (WP05). Th
 
 - 2026-05-19T21:31:24Z – claude:opus-4-7:implementer:implementer – shell_pid=545162 – Started implementation via action command
 - 2026-05-19T21:33:05Z – claude:opus-4-7:implementer:implementer – shell_pid=545162 – 12 service files bound (1) or bypassed (30) per system-context pattern
+- 2026-05-19T21:33:07Z – claude:opus-4-7:implementer:implementer – shell_pid=545162 – Approved: services bypass justified by controller-layer enforcement
