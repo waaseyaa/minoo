@@ -14,10 +14,10 @@ All work packages execute on the mission branch (per lane); the mission squash-m
 
 | ID | Description | WP | Parallel? |
 |---|---|---|---|
-| T001 | Bump `composer.json` constraints from `^0.1.0-alpha.180` to `^0.1.0-alpha.182` (40 packages) | WP01 | — |
-| T002 | `composer update 'waaseyaa/*' --with-all-dependencies` and commit `composer.lock` | WP01 | — |
-| T003 | Boot kernel via reflection-style smoke script; confirm autoload + class loading succeed | WP01 | — |
-| T004 | Verify framework `AccountInterface` auto-injection still resolves an anonymous account for unauth requests | WP01 | — |
+| T001 | Bump `composer.json` constraints from `^0.1.0-alpha.180` to `^0.1.0-alpha.182` (40 packages) | WP01 | — | [D] |
+| T002 | `composer update 'waaseyaa/*' --with-all-dependencies` and commit `composer.lock` | WP01 | — | [D] |
+| T003 | Boot kernel via reflection-style smoke script; confirm autoload + class loading succeed | WP01 | — | [D] |
+| T004 | Verify framework `AccountInterface` auto-injection still resolves an anonymous account for unauth requests | WP01 | — | [D] |
 | T005 | Bind account in `src/Http/Controller/Auth/AuthController.php` (conditional fallback — pre-auth context) | WP02 | [P] |
 | T006 | Bind account in `src/Http/Controller/Community/{CommunityController,ContributorController}.php` | WP02 | [P] |
 | T007 | Bind account in `src/Http/Controller/Groups/{GroupController,BusinessController}.php` | WP02 | [P] |
@@ -64,10 +64,10 @@ Total: **36 subtasks across 6 work packages.**
 
 **Included subtasks**:
 
-- [ ] T001 Bump composer.json constraints to alpha.182 (WP01)
-- [ ] T002 composer update + commit lockfile (WP01)
-- [ ] T003 Kernel boot smoke (WP01)
-- [ ] T004 Verify anonymous AccountInterface auto-injection (WP01)
+- [x] T001 Bump composer.json constraints to alpha.182 (WP01)
+- [x] T002 composer update + commit lockfile (WP01)
+- [x] T003 Kernel boot smoke (WP01)
+- [x] T004 Verify anonymous AccountInterface auto-injection (WP01)
 
 **Implementation sketch**: edit `composer.json` (`sed`-friendly — all 40 constraints share the same shape), run `composer update 'waaseyaa/*' --with-all-dependencies`, commit. Write a 10-line PHP smoke script (kernel boot via reflection, same shape as `scripts/populate_featured.php`) and run it to confirm autoload + boot succeed.
 
