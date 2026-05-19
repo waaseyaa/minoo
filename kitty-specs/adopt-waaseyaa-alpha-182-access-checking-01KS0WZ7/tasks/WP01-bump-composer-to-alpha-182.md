@@ -17,8 +17,8 @@ subtasks:
 - T002
 - T003
 - T004
-shell_pid: "541227"
-agent: "claude:opus-4-7:implementer:implementer"
+shell_pid: "542867"
+agent: "claude:opus-4-7:reviewer:reviewer"
 history:
 - at: '2026-05-19'
   by: specify
@@ -202,3 +202,4 @@ No `src/`, `docs/`, or `tests/` files are owned by WP01.
 
 - 2026-05-19T21:18:02Z – claude:opus-4-7:implementer:implementer – shell_pid=541227 – Assigned agent via action command
 - 2026-05-19T21:21:35Z – claude:opus-4-7:implementer:implementer – shell_pid=541227 – Composer bumped to alpha.182, smoke passes, ready for review
+- 2026-05-19T21:21:46Z – claude:opus-4-7:reviewer:reviewer – shell_pid=542867 – Started review via action command
