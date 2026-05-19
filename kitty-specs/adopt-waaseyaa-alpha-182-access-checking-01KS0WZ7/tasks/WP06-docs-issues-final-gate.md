@@ -27,6 +27,8 @@ subtasks:
 - T034
 - T035
 - T036
+agent: "claude:opus-4-7:implementer:implementer"
+shell_pid: "546779"
 history:
 - at: '2026-05-19'
   by: specify
@@ -245,3 +247,7 @@ Each must exit 0. Capture the last 5 lines of each output in the WP completion n
 - Verify each `Definition of Done` checkbox is satisfied by running the commands listed.
 - Spot-check the 3 GitHub issue URLs (open each, confirm body and labels).
 - Approve when all gates pass.
+
+## Activity Log
+
+- 2026-05-19T21:35:56Z – claude:opus-4-7:implementer:implementer – shell_pid=546779 – Started implementation via action command
