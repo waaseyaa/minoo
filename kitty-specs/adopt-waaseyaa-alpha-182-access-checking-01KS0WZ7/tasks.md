@@ -40,10 +40,10 @@ All work packages execute on the mission branch (per lane); the mission squash-m
 | T024 | Thread account or bypass in `src/Infrastructure/{Fixture/FixtureResolver,OpenGraph/CrisisOgImageService,OpenGraph/PublicOgEntityLoader}.php` (3 files) | WP04 | [D] |
 | T025 | Audit + bypass with audit-doc comment in `src/Ingestion/IngestMaterializer.php` (system context) | WP04 | [D] |
 | T026 | Verify all account-threaded service entry points receive an account from every caller (controllers must pass one) | WP04 | — | [D] |
-| T027 | Verify + tighten `src/Console/GenealogyDemoSeedHandler.php` bypass (already adopted) | WP05 | — |
-| T028 | Add bypass + audit-doc comment to `src/Console/MessageDigestCommand.php` | WP05 | — |
-| T029 | Write `docs/security/sql-entity-query-access-check-bypass-audit.md` mirroring framework doc, enumerating every Minoo `accessCheck(false)` site | WP05 | — |
-| T030 | Verify every `accessCheck(false)` site in `src/` carries an inline comment referencing the audit doc + matches a row in the doc | WP05 | — |
+| T027 | Verify + tighten `src/Console/GenealogyDemoSeedHandler.php` bypass (already adopted) | WP05 | — | [D] |
+| T028 | Add bypass + audit-doc comment to `src/Console/MessageDigestCommand.php` | WP05 | — | [D] |
+| T029 | Write `docs/security/sql-entity-query-access-check-bypass-audit.md` mirroring framework doc, enumerating every Minoo `accessCheck(false)` site | WP05 | — | [D] |
+| T030 | Verify every `accessCheck(false)` site in `src/` carries an inline comment referencing the audit doc + matches a row in the doc | WP05 | — | [D] |
 | T031 | Update `CLAUDE.md` sync line to `Waaseyaa alpha.182` + add highlights paragraph for alpha.181 (access checking) and alpha.182 (follow-up fixes) | WP06 | — |
 | T032 | Update auto-memory `MEMORY.md` project state line (outside-repo file at `~/.claude/projects/-home-jones-dev-minoo/memory/MEMORY.md`) | WP06 | — |
 | T033 | File 3 GitHub issues for out-of-scope alpha.181 surfaces (#1496 agent executor, #1499 2FA endpoints, #1500 dead-code Phase 4) | WP06 | [P] |
@@ -180,10 +180,10 @@ Total: **36 subtasks across 6 work packages.**
 
 **Included subtasks**:
 
-- [ ] T027 Verify GenealogyDemoSeedHandler bypass (WP05)
-- [ ] T028 Add bypass to MessageDigestCommand (WP05)
-- [ ] T029 Write Minoo security audit doc (WP05)
-- [ ] T030 Verify audit-doc / call-site parity (WP05)
+- [x] T027 Verify GenealogyDemoSeedHandler bypass (WP05)
+- [x] T028 Add bypass to MessageDigestCommand (WP05)
+- [x] T029 Write Minoo security audit doc (WP05)
+- [x] T030 Verify audit-doc / call-site parity (WP05)
 
 **Implementation sketch**: Read every `src/Console/*.php` file, decide per `getQuery()` site whether it's system-context (bypass) or user-context (thread account from CLI args — uncommon). Write `docs/security/sql-entity-query-access-check-bypass-audit.md` modeled on the framework doc, with sections "Unconditional bypass — pure system context" and "Conditional fallback — set account when available". Each row has file, line, justification, last-reviewed date (`2026-05-19` for this batch).
 
