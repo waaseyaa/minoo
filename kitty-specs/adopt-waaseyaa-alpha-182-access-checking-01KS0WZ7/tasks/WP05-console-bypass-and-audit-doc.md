@@ -218,3 +218,4 @@ CLI handlers run without a request-scoped account. The framework's `EntityListHa
 
 - 2026-05-19T21:33:09Z – claude:opus-4-7:implementer:implementer – shell_pid=545689 – Started implementation via action command
 - 2026-05-19T21:35:42Z – claude:opus-4-7:implementer:implementer – shell_pid=545689 – Audit doc parity 53=53; MessageDigest bypassed; Genealogy seeder verified
+- 2026-05-19T21:35:44Z – claude:opus-4-7:implementer:implementer – shell_pid=545689 – Approved: full audit-doc parity
