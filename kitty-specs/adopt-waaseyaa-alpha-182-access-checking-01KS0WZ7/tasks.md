@@ -28,13 +28,13 @@ All work packages execute on the mission branch (per lane); the mission squash-m
 | T012 | Bind account in `src/Http/Controller/Teachings/TeachingController.php` | WP02 | [D] |
 | T013 | Tighten remaining sites in `src/Http/Controller/Events/EventController.php` (already partially adopted) | WP02 | [D] |
 | T014 | Bind account in `src/Http/Controller/ElderSupport/ElderSupportController.php` | WP02 | [D] |
-| T015 | Bind account in `src/Http/Controller/Social/EngagementController.php` (authenticated only) | WP03 | [P] |
-| T016 | Bind account in `src/Http/Controller/Social/{BlockController,MessagingController}.php` | WP03 | [P] |
-| T017 | Bind account in `src/Http/Controller/Games/{CrosswordController,MatcherController,ShkodaController}.php` | WP03 | [P] |
-| T018 | Bind account in `src/Http/Controller/Dashboard/{CoordinatorDashboardController,RoleManagementController,VolunteerDashboardController}.php` | WP03 | [P] |
-| T019 | Bind account in `src/Http/Controller/Newsletter/NewsletterAdminApiController.php` | WP03 | [P] |
-| T020 | Bind account in `src/Http/Controller/Feed/FeedController.php` | WP03 | [P] |
-| T021 | Bind account in `src/Http/Controller/Ingestion/IngestionDashboardController.php` | WP03 | [P] |
+| T015 | Bind account in `src/Http/Controller/Social/EngagementController.php` (authenticated only) | WP03 | [D] |
+| T016 | Bind account in `src/Http/Controller/Social/{BlockController,MessagingController}.php` | WP03 | [D] |
+| T017 | Bind account in `src/Http/Controller/Games/{CrosswordController,MatcherController,ShkodaController}.php` | WP03 | [D] |
+| T018 | Bind account in `src/Http/Controller/Dashboard/{CoordinatorDashboardController,RoleManagementController,VolunteerDashboardController}.php` | WP03 | [D] |
+| T019 | Bind account in `src/Http/Controller/Newsletter/NewsletterAdminApiController.php` | WP03 | [D] |
+| T020 | Bind account in `src/Http/Controller/Feed/FeedController.php` | WP03 | [D] |
+| T021 | Bind account in `src/Http/Controller/Ingestion/IngestionDashboardController.php` | WP03 | [D] |
 | T022 | Thread account into `src/Domain/Feed/{EntityLoaderService,EngagementCounter}.php` + `Scoring/{AffinityCalculator,EngagementCalculator}.php` (4 files) | WP04 | [P] |
 | T023 | Thread account into `src/Domain/{Events/Service/EventFeedBuilder,Games/GameStatsCalculator,Geo/Service/LocationService,Newsletter/Service/NewsletterAssembler}.php` (4 files) | WP04 | [P] |
 | T024 | Thread account or bypass in `src/Infrastructure/{Fixture/FixtureResolver,OpenGraph/CrisisOgImageService,OpenGraph/PublicOgEntityLoader}.php` (3 files) | WP04 | [P] |
@@ -122,13 +122,13 @@ Total: **36 subtasks across 6 work packages.**
 
 **Included subtasks**:
 
-- [ ] T015 Social/EngagementController (WP03)
-- [ ] T016 Social/Block + Messaging controllers (WP03)
-- [ ] T017 Games controllers (3 files) (WP03)
-- [ ] T018 Dashboard controllers (3 files) (WP03)
-- [ ] T019 Newsletter admin API controller (WP03)
-- [ ] T020 Feed controller (WP03)
-- [ ] T021 Ingestion dashboard controller (WP03)
+- [x] T015 Social/EngagementController (WP03)
+- [x] T016 Social/Block + Messaging controllers (WP03)
+- [x] T017 Games controllers (3 files) (WP03)
+- [x] T018 Dashboard controllers (3 files) (WP03)
+- [x] T019 Newsletter admin API controller (WP03)
+- [x] T020 Feed controller (WP03)
+- [x] T021 Ingestion dashboard controller (WP03)
 
 **Implementation sketch**: Same constructor-DI pattern as WP02. These controllers are routed behind auth middleware, so `setAccount($this->account)` is always valid (no anonymous bind branch needed). Games controllers must also continue calling `$this->gate->denies('update', $session, $account)` per the CLAUDE.md gotcha — this WP does not change that.
 
