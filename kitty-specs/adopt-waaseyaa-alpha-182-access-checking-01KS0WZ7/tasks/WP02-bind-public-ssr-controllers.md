@@ -20,6 +20,8 @@ subtasks:
 - T012
 - T013
 - T014
+agent: "claude:opus-4-7:implementer:implementer"
+shell_pid: "543137"
 history:
 - at: '2026-05-19'
   by: specify
@@ -258,3 +260,7 @@ WP01 bumped the framework to alpha.182. The mission branch is currently red; thi
 - Constructor changes should be the minimal addition of `AccountInterface $account` — don't take this opportunity to refactor the constructor for other reasons.
 - Run `grep -nE 'getQuery\(\)' src/Http/Controller/{Auth,Community,Groups,Home,Language,OralHistory,People,Teachings,Events,ElderSupport}/*.php` and verify every line has a follow-on bind/bypass within 2 lines of the call.
 - Approve when test slice is green and the grep shows full adoption.
+
+## Activity Log
+
+- 2026-05-19T21:22:28Z – claude:opus-4-7:implementer:implementer – shell_pid=543137 – Started implementation via action command
