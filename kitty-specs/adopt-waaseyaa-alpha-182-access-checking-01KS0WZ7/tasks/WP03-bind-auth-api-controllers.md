@@ -17,6 +17,8 @@ subtasks:
 - T019
 - T020
 - T021
+agent: "claude:opus-4-7:implementer:implementer"
+shell_pid: "544330"
 history:
 - at: '2026-05-19'
   by: specify
@@ -194,3 +196,7 @@ These controllers run behind auth middleware (`requires_auth: true` in route def
 - Run `grep -nE 'getQuery\(\)' src/Http/Controller/{Social,Newsletter,Games,Dashboard,Feed,Ingestion}/*.php` and verify every line has a follow-on bind.
 - Verify game gate calls and engagement defense-in-depth try/catch are untouched.
 - Approve when the test slice is green and the grep shows full adoption.
+
+## Activity Log
+
+- 2026-05-19T21:28:01Z – claude:opus-4-7:implementer:implementer – shell_pid=544330 – Started implementation via action command
