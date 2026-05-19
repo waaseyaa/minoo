@@ -18,16 +18,16 @@ All work packages execute on the mission branch (per lane); the mission squash-m
 | T002 | `composer update 'waaseyaa/*' --with-all-dependencies` and commit `composer.lock` | WP01 | — | [D] |
 | T003 | Boot kernel via reflection-style smoke script; confirm autoload + class loading succeed | WP01 | — | [D] |
 | T004 | Verify framework `AccountInterface` auto-injection still resolves an anonymous account for unauth requests | WP01 | — | [D] |
-| T005 | Bind account in `src/Http/Controller/Auth/AuthController.php` (conditional fallback — pre-auth context) | WP02 | [P] |
-| T006 | Bind account in `src/Http/Controller/Community/{CommunityController,ContributorController}.php` | WP02 | [P] |
-| T007 | Bind account in `src/Http/Controller/Groups/{GroupController,BusinessController}.php` | WP02 | [P] |
-| T008 | Bind account in `src/Http/Controller/Home/HomeController.php` (anonymous + authenticated paths) | WP02 | [P] |
-| T009 | Bind account in `src/Http/Controller/Language/LanguageController.php` | WP02 | [P] |
-| T010 | Bind account in `src/Http/Controller/OralHistory/OralHistoryController.php` | WP02 | [P] |
-| T011 | Bind account in `src/Http/Controller/People/{PeopleController,VolunteerController}.php` | WP02 | [P] |
-| T012 | Bind account in `src/Http/Controller/Teachings/TeachingController.php` | WP02 | [P] |
-| T013 | Tighten remaining sites in `src/Http/Controller/Events/EventController.php` (already partially adopted) | WP02 | [P] |
-| T014 | Bind account in `src/Http/Controller/ElderSupport/ElderSupportController.php` | WP02 | [P] |
+| T005 | Bind account in `src/Http/Controller/Auth/AuthController.php` (conditional fallback — pre-auth context) | WP02 | [D] |
+| T006 | Bind account in `src/Http/Controller/Community/{CommunityController,ContributorController}.php` | WP02 | [D] |
+| T007 | Bind account in `src/Http/Controller/Groups/{GroupController,BusinessController}.php` | WP02 | [D] |
+| T008 | Bind account in `src/Http/Controller/Home/HomeController.php` (anonymous + authenticated paths) | WP02 | [D] |
+| T009 | Bind account in `src/Http/Controller/Language/LanguageController.php` | WP02 | [D] |
+| T010 | Bind account in `src/Http/Controller/OralHistory/OralHistoryController.php` | WP02 | [D] |
+| T011 | Bind account in `src/Http/Controller/People/{PeopleController,VolunteerController}.php` | WP02 | [D] |
+| T012 | Bind account in `src/Http/Controller/Teachings/TeachingController.php` | WP02 | [D] |
+| T013 | Tighten remaining sites in `src/Http/Controller/Events/EventController.php` (already partially adopted) | WP02 | [D] |
+| T014 | Bind account in `src/Http/Controller/ElderSupport/ElderSupportController.php` | WP02 | [D] |
 | T015 | Bind account in `src/Http/Controller/Social/EngagementController.php` (authenticated only) | WP03 | [P] |
 | T016 | Bind account in `src/Http/Controller/Social/{BlockController,MessagingController}.php` | WP03 | [P] |
 | T017 | Bind account in `src/Http/Controller/Games/{CrosswordController,MatcherController,ShkodaController}.php` | WP03 | [P] |
@@ -90,16 +90,16 @@ Total: **36 subtasks across 6 work packages.**
 
 **Included subtasks**:
 
-- [ ] T005 Auth controller (WP02)
-- [ ] T006 Community controllers (WP02)
-- [ ] T007 Groups controllers (WP02)
-- [ ] T008 Home controller (WP02)
-- [ ] T009 Language controller (WP02)
-- [ ] T010 OralHistory controller (WP02)
-- [ ] T011 People controllers (WP02)
-- [ ] T012 Teachings controller (WP02)
-- [ ] T013 Events controller — tighten existing (WP02)
-- [ ] T014 ElderSupport controller (WP02)
+- [x] T005 Auth controller (WP02)
+- [x] T006 Community controllers (WP02)
+- [x] T007 Groups controllers (WP02)
+- [x] T008 Home controller (WP02)
+- [x] T009 Language controller (WP02)
+- [x] T010 OralHistory controller (WP02)
+- [x] T011 People controllers (WP02)
+- [x] T012 Teachings controller (WP02)
+- [x] T013 Events controller — tighten existing (WP02)
+- [x] T014 ElderSupport controller (WP02)
 
 **Implementation sketch**: For each controller, add `AccountInterface $account` to the constructor (or reuse the existing field if already injected), store on `$this->account`, append `->setAccount($this->account)` to every `getQuery()` chain. Auth controller likely needs a conditional fallback (some sites run pre-session). Home controller serves both anonymous and authenticated visitors — same `->setAccount($this->account)` works for both.
 
