@@ -15,6 +15,8 @@ subtasks:
 - T024
 - T025
 - T026
+agent: "claude:opus-4-7:implementer:implementer"
+shell_pid: "545162"
 history:
 - at: '2026-05-19'
   by: specify
@@ -182,3 +184,7 @@ Services are called from controllers (WP02/WP03) or from CLI handlers (WP05). Th
 - Grep `grep -rnE 'getQuery\(\)' src/Domain/ src/Infrastructure/ src/Ingestion/` — every match should be within 2 lines of a `->setAccount(` or `->accessCheck(false)`.
 - Each `->accessCheck(false)` must have an inline comment referencing the audit doc; WP05 will enumerate them.
 - Approve when the slice test runs green and the audit step T026 finds no missed callers.
+
+## Activity Log
+
+- 2026-05-19T21:31:24Z – claude:opus-4-7:implementer:implementer – shell_pid=545162 – Started implementation via action command
