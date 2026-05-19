@@ -203,3 +203,4 @@ No `src/`, `docs/`, or `tests/` files are owned by WP01.
 - 2026-05-19T21:18:02Z – claude:opus-4-7:implementer:implementer – shell_pid=541227 – Assigned agent via action command
 - 2026-05-19T21:21:35Z – claude:opus-4-7:implementer:implementer – shell_pid=541227 – Composer bumped to alpha.182, smoke passes, ready for review
 - 2026-05-19T21:21:46Z – claude:opus-4-7:reviewer:reviewer – shell_pid=542867 – Started review via action command
+- 2026-05-19T21:22:02Z – claude:opus-4-7:reviewer:reviewer – shell_pid=542867 – Review passed: composer.json 40 constraints bumped; composer show 'waaseyaa/*' returns only v0.1.0-alpha.182; smoke script exits 0 with all 3 OK lines (MissingQueryAccountException loaded, EntityQueryInterface::setAccount() present, autoload works). SessionMiddleware line 61 confirmed setting _account unconditionally. Diff is mechanical and within owned_files.
