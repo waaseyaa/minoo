@@ -55,12 +55,7 @@ export NUXT_PUBLIC_APP_NAME="${NUXT_PUBLIC_APP_NAME:-Minoo}"
 export NUXT_PUBLIC_BASE_URL="${NUXT_PUBLIC_BASE_URL:-}"
 export NUXT_BACKEND_URL="${NUXT_BACKEND_URL:-http://127.0.0.1:8081}"
 
-# Use `npm install --package-lock=false` instead of `npm ci`: the framework's
-# admin-surface package may ship a lockfile out of sync with its package.json
-# (e.g. missing commander@13.1.0 in the alpha.181/.182 train). `--package-lock=false`
-# regenerates node_modules without mutating the vendored lockfile, so the build
-# keeps moving even when the framework's lockfile is stale.
-(cd "$ADMIN_PKG" && npm install --no-audit --no-fund --package-lock=false && npm run generate)
+(cd "$ADMIN_PKG" && npm ci && npm run generate)
 
 rm -rf "$ROOT/public/admin"
 mkdir -p "$ROOT/public/admin"
