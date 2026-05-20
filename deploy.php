@@ -189,17 +189,25 @@ task('deploy:test', function (): void {
         $passed = false;
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-            $bodyFile = tempnam(sys_get_temp_dir(), 'minoo-deploy-check-');
-            $lastHttpCode = (int) run(
-                'curl -s -o ' . escapeshellarg($bodyFile)
-                . " -w '%{http_code}' --max-time 10 "
+            // curl runs on the REMOTE (Deployer's run()); body cannot be passed
+            // back via a tempnam() path (that path exists only on the runner).
+            // Capture both the status code and the body from the same single
+            // curl invocation by writing the code as a separator-prefixed
+            // trailer after the body in the same stdout stream.
+            $output = (string) run(
+                'curl -sS --max-time 10 -w "\n__HTTP_CODE__:%{http_code}" '
                 . escapeshellarg($url),
             );
 
-            $body = $expectBody !== [] && is_file($bodyFile)
-                ? (string) file_get_contents($bodyFile)
-                : '';
-            @unlink($bodyFile);
+            $sep = "\n__HTTP_CODE__:";
+            $sepPos = strrpos($output, $sep);
+            if ($sepPos !== false) {
+                $body = substr($output, 0, $sepPos);
+                $lastHttpCode = (int) substr($output, $sepPos + strlen($sep));
+            } else {
+                $body = $output;
+                $lastHttpCode = 0;
+            }
 
             if ($lastHttpCode !== $expect) {
                 $lastFailure = "returned {$lastHttpCode}, expected {$expect}";
