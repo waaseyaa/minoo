@@ -171,40 +171,70 @@ task('deploy:test', function (): void {
         ],
     ];
 
+    // Retry checks up to 5 times with 2s sleep between attempts. Tolerates the
+    // opcache-warmup race on first request after the release symlink flips
+    // (the home check has caught real failures since the .183 bump; the admin
+    // session probe has hit the race repeatedly even though the endpoint is
+    // returning the right envelope when checked seconds later).
+    $maxAttempts = 5;
+    $sleepSeconds = 2;
+
     foreach ($checks as $check) {
         $url = $check['url'];
         $expect = $check['expect'];
         $expectBody = $check['expectBody'] ?? [];
 
-        $bodyFile = tempnam(sys_get_temp_dir(), 'minoo-deploy-check-');
-        $httpCode = (int) run(
-            'curl -s -o ' . escapeshellarg($bodyFile)
-            . " -w '%{http_code}' --max-time 10 "
-            . escapeshellarg($url),
-        );
+        $lastFailure = '';
+        $lastHttpCode = 0;
+        $passed = false;
 
-        $body = $expectBody !== [] && is_file($bodyFile)
-            ? (string) file_get_contents($bodyFile)
-            : '';
-        @unlink($bodyFile);
+        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+            $bodyFile = tempnam(sys_get_temp_dir(), 'minoo-deploy-check-');
+            $lastHttpCode = (int) run(
+                'curl -s -o ' . escapeshellarg($bodyFile)
+                . " -w '%{http_code}' --max-time 10 "
+                . escapeshellarg($url),
+            );
 
-        if ($httpCode !== $expect) {
-            writeln("<error>Health check failed: {$url} returned {$httpCode}, expected {$expect}</error>");
-            invoke('deploy:rollback');
+            $body = $expectBody !== [] && is_file($bodyFile)
+                ? (string) file_get_contents($bodyFile)
+                : '';
+            @unlink($bodyFile);
 
-            throw new \RuntimeException("Post-deploy health check failed — rolled back.");
-        }
+            if ($lastHttpCode !== $expect) {
+                $lastFailure = "returned {$lastHttpCode}, expected {$expect}";
+            } else {
+                $bodyOk = true;
+                foreach ($expectBody as $needle) {
+                    if (!str_contains($body, $needle)) {
+                        $bodyOk = false;
+                        $lastFailure = "body missing expected substring '{$needle}'";
+                        break;
+                    }
+                }
+                if ($bodyOk) {
+                    $passed = true;
+                    break;
+                }
+            }
 
-        foreach ($expectBody as $needle) {
-            if (!str_contains($body, $needle)) {
-                writeln("<error>Health check failed: {$url} body missing expected substring '{$needle}'</error>");
-                invoke('deploy:rollback');
-
-                throw new \RuntimeException("Post-deploy health check failed — rolled back.");
+            if ($attempt < $maxAttempts) {
+                writeln("<comment>Health check retry {$attempt}/{$maxAttempts} for {$url}: {$lastFailure}</comment>");
+                sleep($sleepSeconds);
             }
         }
 
-        writeln("<info>Health check passed: {$url} → {$httpCode}</info>");
+        if (!$passed) {
+            // `deploy:rollback` is not defined in this dep config; the previous
+            // invoke() call here only produced a confusing secondary exception.
+            // The next push will re-attempt; manual SSH inspection is the
+            // operator action when this fires.
+            writeln("<error>Health check failed after {$maxAttempts} attempts: {$url} — {$lastFailure}</error>");
+
+            throw new \RuntimeException("Post-deploy health check failed — manual investigation required (no rollback configured).");
+        }
+
+        writeln("<info>Health check passed: {$url} → {$lastHttpCode}</info>");
     }
 });
 
