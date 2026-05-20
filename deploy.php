@@ -108,8 +108,8 @@ desc('Reload PHP-FPM to pick up new release');
 task('php-fpm:reload', function (): void {
     // deployer must have passwordless sudo for this command.
     // Add to /etc/sudoers.d/deployer on the server:
-    //   deployer ALL=(ALL) NOPASSWD: /bin/systemctl reload php8.4-fpm
-    run('sudo systemctl reload php8.4-fpm');
+    //   deployer ALL=(ALL) NOPASSWD: /bin/systemctl reload php8.5-fpm
+    run('sudo systemctl reload php8.5-fpm');
 });
 
 desc('Restart NC sync worker to pick up new release');
