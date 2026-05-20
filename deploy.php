@@ -190,24 +190,20 @@ task('deploy:test', function (): void {
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
             // curl runs on the REMOTE (Deployer's run()); body cannot be passed
-            // back via a tempnam() path (that path exists only on the runner).
-            // Capture both the status code and the body from the same single
-            // curl invocation by writing the code as a separator-prefixed
-            // trailer after the body in the same stdout stream.
-            $output = (string) run(
-                'curl -sS --max-time 10 -w "\n__HTTP_CODE__:%{http_code}" '
-                . escapeshellarg($url),
+            // back via a runner-side tempnam() path. Write body to a known
+            // remote temp path, then `cat` it back via a second run(), which
+            // marshals stdout to the runner. Status code returned by curl -w
+            // is captured via run()'s stdout directly (curl's -w writes only
+            // the code there; --silent suppresses progress/error stream).
+            $remoteBodyPath = '/tmp/minoo-deploy-check-' . posix_getpid() . '.body';
+            $lastHttpCode = (int) run(
+                'curl -sS --max-time 10 -o ' . escapeshellarg($remoteBodyPath)
+                . ' -w "%{http_code}" ' . escapeshellarg($url),
             );
-
-            $sep = "\n__HTTP_CODE__:";
-            $sepPos = strrpos($output, $sep);
-            if ($sepPos !== false) {
-                $body = substr($output, 0, $sepPos);
-                $lastHttpCode = (int) substr($output, $sepPos + strlen($sep));
-            } else {
-                $body = $output;
-                $lastHttpCode = 0;
-            }
+            $body = (string) run(
+                'cat ' . escapeshellarg($remoteBodyPath) . ' 2>/dev/null; '
+                . 'rm -f ' . escapeshellarg($remoteBodyPath),
+            );
 
             if ($lastHttpCode !== $expect) {
                 $lastFailure = "returned {$lastHttpCode}, expected {$expect}";
