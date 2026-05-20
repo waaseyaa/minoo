@@ -7,9 +7,16 @@
  * Usage: bin/seed-test-user
  *
  * Creates:
- *   test@minoo.test / TestPass123! with volunteer role.
- *   member@minoo.test / MemberPass123! with no roles.
+ *   admin@minoo.test  / AdminPass123!  with `administrator` role (full admin SPA access).
+ *   test@minoo.test   / TestPass123!   with `volunteer` role (elder-support flows).
+ *   member@minoo.test / MemberPass123! with no roles (anonymous-but-authenticated baseline).
+ *
  * Skips users that already exist.
+ *
+ * The admin fixture closes #771: the admin SPA gates on permission
+ * `administer content`, which the framework only auto-grants for role
+ * `administrator` (not the unrelated `admin` role). The other two fixtures
+ * stay role-minimal so they continue exercising volunteer / member paths.
  */
 
 declare(strict_types=1);
@@ -29,6 +36,25 @@ $pdo = new PDO('sqlite:' . $dbPath);
 $pdo->exec('CREATE TABLE IF NOT EXISTS rate_limits (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT NOT NULL, path TEXT NOT NULL, created_at INTEGER NOT NULL)');
 $pdo->exec('DELETE FROM rate_limits');
 fprintf(STDOUT, "Rate limits cleared.\n");
+
+// Seed administrator test user (admin SPA access).
+$existingAdmin = $storage->getQuery()->accessCheck(false)->condition('mail', 'admin@minoo.test')->execute();
+
+if ($existingAdmin !== []) {
+    fprintf(STDOUT, "Admin user already exists.\n");
+} else {
+    $admin = $storage->create([
+        'name' => 'Admin User',
+        'mail' => 'admin@minoo.test',
+        'status' => true,
+        'created' => time(),
+        'roles' => ['administrator'],
+        'permissions' => [],
+    ]);
+    $admin->setRawPassword('AdminPass123!');
+    $storage->save($admin);
+    fprintf(STDOUT, "Admin user created: admin@minoo.test / AdminPass123!\n");
+}
 
 // Seed volunteer test user.
 $existing = $storage->getQuery()->accessCheck(false)->condition('mail', 'test@minoo.test')->execute();

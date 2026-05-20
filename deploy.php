@@ -160,20 +160,18 @@ desc('Verify production is healthy after deploy');
 task('deploy:test', function (): void {
     $checks = [
         ['url' => 'https://minoo.live/', 'expect' => 200],
-        // Admin session probe DISABLED: body-substring check is fundamentally
-        // broken in Deployer's cross-host run() boundary — every body-capture
-        // shape attempted (tempnam on runner, stdout sentinel parse, write+cat
-        // through remote /tmp) has returned an empty body to PHP, even though
-        // the endpoint demonstrably returns {"ok":false,...} when probed
-        // manually from the deployer user. Status-code-only check is omitted
-        // because a missing/broken admin route would return 200 from the SPA
-        // fallback anyway. Re-enable after the body-capture mechanism is
-        // properly debugged (file a follow-up).
-        // [
-        //     'url' => 'https://minoo.live/admin/_surface/session',
-        //     'expect' => 200,
-        //     'expectBody' => ['"ok":false', '"status":401'],
-        // ],
+        // Admin session probe. Verifies the framework `/admin/_surface/session`
+        // endpoint is wired and returning the SPA-recognized envelope, not the
+        // SPA HTML fallback (which would return 200 + HTML and silently mask a
+        // broken route). The body capture below uses a single run() call with
+        // a `___STATUS___NNN` trailing sentinel — earlier two-call shapes
+        // (write to remote /tmp + second `cat`) intermittently returned an
+        // empty body across Deployer's run() boundary.
+        [
+            'url' => 'https://minoo.live/admin/_surface/session',
+            'expect' => 200,
+            'expectBody' => ['"ok":false', '"status":401'],
+        ],
     ];
 
     // Retry checks up to 5 times with 2s sleep between attempts. Tolerates the
@@ -194,21 +192,31 @@ task('deploy:test', function (): void {
         $passed = false;
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-            // curl runs on the REMOTE (Deployer's run()); body cannot be passed
-            // back via a runner-side tempnam() path. Write body to a known
-            // remote temp path, then `cat` it back via a second run(), which
-            // marshals stdout to the runner. Status code returned by curl -w
-            // is captured via run()'s stdout directly (curl's -w writes only
-            // the code there; --silent suppresses progress/error stream).
-            $remoteBodyPath = '/tmp/minoo-deploy-check-' . posix_getpid() . '.body';
-            $lastHttpCode = (int) run(
+            // Single remote run(): curl writes the body to a temp file, the
+            // command then `cat`s the body, prints a `___STATUS___NNN`
+            // sentinel, and removes the temp file. PHP parses the sentinel to
+            // recover the status code without a second run() call. The earlier
+            // two-call approach (curl writes /tmp/body, second `cat` reads it)
+            // intermittently returned an empty body across Deployer's run()
+            // boundary; folding both into one shell pipeline removes that race.
+            $remoteBodyPath = '/tmp/minoo-deploy-check-' . posix_getpid() . '-' . $attempt . '.body';
+            $combined = (string) run(
                 'curl -sS --max-time 10 -o ' . escapeshellarg($remoteBodyPath)
-                . ' -w "%{http_code}" ' . escapeshellarg($url),
+                . ' -w "%{http_code}" ' . escapeshellarg($url)
+                . ' > ' . escapeshellarg($remoteBodyPath . '.code')
+                . '; cat ' . escapeshellarg($remoteBodyPath)
+                . '; printf "\n___STATUS___%s" "$(cat ' . escapeshellarg($remoteBodyPath . '.code') . ')"'
+                . '; rm -f ' . escapeshellarg($remoteBodyPath) . ' ' . escapeshellarg($remoteBodyPath . '.code'),
             );
-            $body = (string) run(
-                'cat ' . escapeshellarg($remoteBodyPath) . ' 2>/dev/null; '
-                . 'rm -f ' . escapeshellarg($remoteBodyPath),
-            );
+
+            $sentinelPos = strrpos($combined, "\n___STATUS___");
+            if ($sentinelPos === false) {
+                $lastHttpCode = 0;
+                $body = $combined;
+            } else {
+                $body = substr($combined, 0, $sentinelPos);
+                $lastHttpCode = (int) substr($combined, $sentinelPos + strlen("\n___STATUS___"));
+            }
 
             if ($lastHttpCode !== $expect) {
                 $lastFailure = "returned {$lastHttpCode}, expected {$expect}";
