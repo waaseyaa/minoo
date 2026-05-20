@@ -149,8 +149,8 @@ final class FeedScorerTest extends TestCase
         $etm->method('getStorage')->willReturnCallback(function () {
             $storage = $this->createMock(EntityStorageInterface::class);
             $query = $this->createMock(EntityQueryInterface::class);
-        $query->method('setAccount')->willReturnSelf();
-        $query->method('accessCheck')->willReturnSelf();
+            $query->method('setAccount')->willReturnSelf();
+            $query->method('accessCheck')->willReturnSelf();
             $query->method('condition')->willReturnSelf();
             $query->method('count')->willReturnSelf();
             $query->method('execute')->willReturn([]);

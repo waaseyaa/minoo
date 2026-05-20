@@ -158,8 +158,8 @@ final class AffinityCalculatorTest extends TestCase
 
                 $storage = $this->createMock(EntityStorageInterface::class);
                 $query = $this->createMock(EntityQueryInterface::class);
-        $query->method('setAccount')->willReturnSelf();
-        $query->method('accessCheck')->willReturnSelf();
+                $query->method('setAccount')->willReturnSelf();
+                $query->method('accessCheck')->willReturnSelf();
                 $query->method('condition')->willReturnSelf();
                 $query->method('execute')->willReturn($ids);
                 $storage->method('getQuery')->willReturn($query);

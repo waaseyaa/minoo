@@ -73,8 +73,8 @@ final class EngagementCalculatorTest extends TestCase
             $count = $type === 'reaction' ? $reactionCount : $commentCount;
             $storage = $this->createMock(EntityStorageInterface::class);
             $query = $this->createMock(EntityQueryInterface::class);
-        $query->method('setAccount')->willReturnSelf();
-        $query->method('accessCheck')->willReturnSelf();
+            $query->method('setAccount')->willReturnSelf();
+            $query->method('accessCheck')->willReturnSelf();
             $query->method('condition')->willReturnSelf();
             $query->method('count')->willReturnSelf();
             $query->method('execute')->willReturn([$count]);
