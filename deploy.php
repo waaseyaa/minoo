@@ -170,7 +170,7 @@ task('deploy:test', function (): void {
         [
             'url' => 'https://minoo.live/admin/_surface/session',
             'expect' => 200,
-            'expectBody' => ['"ok":false', '"status":401'],
+            'expectJson' => ['ok' => false, 'error.status' => 401],
         ],
     ];
 
@@ -186,6 +186,11 @@ task('deploy:test', function (): void {
         $url = $check['url'];
         $expect = $check['expect'];
         $expectBody = $check['expectBody'] ?? [];
+        // JSON assertions are pretty-print tolerant: a dotted path → expected
+        // scalar value. e.g. ['ok' => false, 'error.status' => 401] decodes
+        // the body and walks the path. Beats brittle substring matching when
+        // the server toggles JSON_PRETTY_PRINT or whitespace.
+        $expectJson = $check['expectJson'] ?? [];
 
         $lastFailure = '';
         $lastHttpCode = 0;
@@ -222,6 +227,7 @@ task('deploy:test', function (): void {
                 $lastFailure = "returned {$lastHttpCode}, expected {$expect}";
             } else {
                 $bodyOk = true;
+
                 foreach ($expectBody as $needle) {
                     if (!str_contains($body, $needle)) {
                         $bodyOk = false;
@@ -229,6 +235,34 @@ task('deploy:test', function (): void {
                         break;
                     }
                 }
+
+                if ($bodyOk && $expectJson !== []) {
+                    $decoded = json_decode($body, true);
+                    if (!is_array($decoded)) {
+                        $bodyOk = false;
+                        $lastFailure = 'body is not valid JSON';
+                    } else {
+                        foreach ($expectJson as $path => $expectedValue) {
+                            $cursor = $decoded;
+                            $found = true;
+                            foreach (explode('.', $path) as $segment) {
+                                if (!is_array($cursor) || !array_key_exists($segment, $cursor)) {
+                                    $found = false;
+                                    break;
+                                }
+                                $cursor = $cursor[$segment];
+                            }
+                            if (!$found || $cursor !== $expectedValue) {
+                                $bodyOk = false;
+                                $actual = $found ? var_export($cursor, true) : '<missing>';
+                                $expectedStr = var_export($expectedValue, true);
+                                $lastFailure = "JSON path '{$path}' expected {$expectedStr}, got {$actual}";
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 if ($bodyOk) {
                     $passed = true;
                     break;
