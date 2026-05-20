@@ -81,7 +81,7 @@ while (true) {
         // Check if entry already exists by slug.
         $existingIds = [];
         try {
-            $existingIds = $storage->getQuery()
+            $existingIds = $storage->getQuery()->accessCheck(false)
                 ->condition('slug', $fields->slug)
                 ->execute();
         } catch (\PDOException $e) {

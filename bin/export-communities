@@ -40,7 +40,7 @@ $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 
 $entityTypeManager = $kernel->getEntityTypeManager();
 $storage = $entityTypeManager->getStorage('community');
-$ids = $storage->getQuery()->execute();
+$ids = $storage->getQuery()->accessCheck(false)->execute();
 
 $exportFields = [
     'inac_id',

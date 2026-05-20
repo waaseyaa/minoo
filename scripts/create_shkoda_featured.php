@@ -21,7 +21,7 @@ $entityTypeManager = $kernel->getEntityTypeManager();
 $featuredStorage = $entityTypeManager->getStorage('featured_item');
 
 // Check if already exists
-$existing = $featuredStorage->getQuery()
+$existing = $featuredStorage->getQuery()->accessCheck(false)
     ->condition('headline', 'Ishkode — Word Game')
     ->execute();
 

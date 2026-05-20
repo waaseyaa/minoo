@@ -88,7 +88,7 @@ if ($fileFilter === null || $fileFilter === 'taxonomy') {
 
         // Upsert terms
         foreach ($vocabData['terms'] as $termDef) {
-            $existingIds = $termStorage->getQuery()
+            $existingIds = $termStorage->getQuery()->accessCheck(false)
                 ->condition('name', $termDef['name'])
                 ->condition('vid', $vid)
                 ->execute();
@@ -159,7 +159,7 @@ foreach ($seedTypes as $fixtureType => $config) {
     // Validate bundle types against config entities (fall back to ConfigSeeder in dev)
     if ($fixtureType === 'businesses') {
         $validTypes = array_map(fn($id) => $etm->getStorage('group_type')->load($id)?->get('type'),
-            $etm->getStorage('group_type')->getQuery()->execute());
+            $etm->getStorage('group_type')->getQuery()->accessCheck(false)->execute());
         if ($validTypes === []) {
             $validTypes = array_column(ConfigSeeder::groupTypes(), 'type');
         }
@@ -170,7 +170,7 @@ foreach ($seedTypes as $fixtureType => $config) {
         }
     } elseif ($fixtureType === 'events') {
         $validTypes = array_map(fn($id) => $etm->getStorage('event_type')->load($id)?->get('type'),
-            $etm->getStorage('event_type')->getQuery()->execute());
+            $etm->getStorage('event_type')->getQuery()->accessCheck(false)->execute());
         if ($validTypes === []) {
             $validTypes = array_column(ConfigSeeder::eventTypes(), 'type');
         }
@@ -242,7 +242,7 @@ foreach ($seedTypes as $fixtureType => $config) {
         }
 
         // --- Upsert ---
-        $existingIds = $storage->getQuery()->condition('slug', $slug)->execute();
+        $existingIds = $storage->getQuery()->accessCheck(false)->condition('slug', $slug)->execute();
 
         if ($existingIds !== []) {
             // Update — only fields present in fixture
@@ -309,7 +309,7 @@ foreach ($seedTypes as $fixtureType => $config) {
             $defaultBio = "{$record['name']} is a {$typeLabel} in {$community}.";
 
             if ($apply) {
-                $existingIds = $storage->getQuery()->condition('slug', $record['slug'])->execute();
+                $existingIds = $storage->getQuery()->accessCheck(false)->condition('slug', $record['slug'])->execute();
                 if ($existingIds !== []) {
                     $entity = $storage->load(reset($existingIds));
                     if ($entity !== null && ($entity->get('description') ?? '') === '') {
@@ -339,7 +339,7 @@ foreach ($seedTypes as $fixtureType => $config) {
             $defaultBio = "{$record['name']} is a {$rolesJoined} from {$community}.";
 
             if ($apply) {
-                $existingIds = $storage->getQuery()->condition('slug', $record['slug'])->execute();
+                $existingIds = $storage->getQuery()->accessCheck(false)->condition('slug', $record['slug'])->execute();
                 if ($existingIds !== []) {
                     $entity = $storage->load(reset($existingIds));
                     if ($entity !== null && ($entity->get('bio') ?? '') === '') {
@@ -364,7 +364,7 @@ foreach ($seedTypes as $fixtureType => $config) {
             if ($address === '') {
                 continue;
             }
-            $existingIds = $storage->getQuery()->condition('slug', $slug)->execute();
+            $existingIds = $storage->getQuery()->accessCheck(false)->condition('slug', $slug)->execute();
             if ($existingIds === []) {
                 continue;
             }

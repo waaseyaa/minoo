@@ -52,7 +52,7 @@ $client = new NorthCloudClient(
 
 // Load communities with nc_id.
 $storage = $entityTypeManager->getStorage('community');
-$query = $storage->getQuery();
+$query = $storage->getQuery()->accessCheck(false);
 
 if ($communitySlug !== null) {
     $query->condition('slug', $communitySlug);

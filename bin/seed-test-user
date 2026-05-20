@@ -31,7 +31,7 @@ $pdo->exec('DELETE FROM rate_limits');
 fprintf(STDOUT, "Rate limits cleared.\n");
 
 // Seed volunteer test user.
-$existing = $storage->getQuery()->condition('mail', 'test@minoo.test')->execute();
+$existing = $storage->getQuery()->accessCheck(false)->condition('mail', 'test@minoo.test')->execute();
 
 if ($existing !== []) {
     fprintf(STDOUT, "Test user already exists.\n");
@@ -50,7 +50,7 @@ if ($existing !== []) {
 }
 
 // Seed non-volunteer test user.
-$existingMember = $storage->getQuery()->condition('mail', 'member@minoo.test')->execute();
+$existingMember = $storage->getQuery()->accessCheck(false)->condition('mail', 'member@minoo.test')->execute();
 
 if ($existingMember !== []) {
     fprintf(STDOUT, "Member user already exists.\n");

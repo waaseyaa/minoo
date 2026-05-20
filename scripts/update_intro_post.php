@@ -47,7 +47,7 @@ echo "Backed up database to {$backupPath}\n";
 $entityTypeManager = $kernel->getEntityTypeManager();
 $postStorage = $entityTypeManager->getStorage('post');
 
-$postIds = $postStorage->getQuery()
+$postIds = $postStorage->getQuery()->accessCheck(false)
     ->condition('status', 1)
     ->sort('created_at', 'ASC')
     ->range(0, 5)

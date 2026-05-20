@@ -26,7 +26,7 @@ $communityStorage = $etm->getStorage('community');
 $communityIds = [];
 
 foreach (EngagementSeeder::communityNames() as $index => $name) {
-    $ids = $communityStorage->getQuery()->condition('name', $name)->execute();
+    $ids = $communityStorage->getQuery()->accessCheck(false)->condition('name', $name)->execute();
     if ($ids === []) {
         echo "Warning: Community '{$name}' not found. Run community seeding first.\n";
         exit(1);
@@ -41,7 +41,7 @@ $userStorage = $etm->getStorage('user');
 $userIds = [];
 
 foreach (EngagementSeeder::users() as $index => $userData) {
-    $existing = $userStorage->getQuery()->condition('mail', $userData['mail'])->execute();
+    $existing = $userStorage->getQuery()->accessCheck(false)->condition('mail', $userData['mail'])->execute();
 
     if ($existing !== []) {
         $userIds[$index] = (int) reset($existing);

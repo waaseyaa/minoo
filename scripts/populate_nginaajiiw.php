@@ -26,7 +26,7 @@ $socialData = json_decode(file_get_contents(dirname(__DIR__) . '/data/nginaajiiw
 
 // 1. Find and update Nginaajiiw group entity
 $groupStorage = $entityTypeManager->getStorage('group');
-$ids = $groupStorage->getQuery()->condition('slug', 'nginaajiiw-salon-spa')->execute();
+$ids = $groupStorage->getQuery()->accessCheck(false)->condition('slug', 'nginaajiiw-salon-spa')->execute();
 
 if ($ids === []) {
     echo "Warning: Nginaajiiw group entity not found by slug. Check database.\n";
@@ -75,7 +75,7 @@ echo "Updated Nginaajiiw: type=business, fields populated, {$count} social posts
 
 // 2. Create or update Larissa Toulouse ResourcePerson
 $personStorage = $entityTypeManager->getStorage('resource_person');
-$existingIds = $personStorage->getQuery()->condition('slug', 'larissa-toulouse')->execute();
+$existingIds = $personStorage->getQuery()->accessCheck(false)->condition('slug', 'larissa-toulouse')->execute();
 
 if ($existingIds !== []) {
     $person = $personStorage->load(reset($existingIds));
@@ -96,7 +96,7 @@ $person->set('updated_at', time());
 
 // Note: roles and offerings are entity_reference fields — need term IDs
 $termStorage = $entityTypeManager->getStorage('taxonomy_term');
-$roleIds = $termStorage->getQuery()
+$roleIds = $termStorage->getQuery()->accessCheck(false)
     ->condition('name', 'Small Business Owner')
     ->condition('vid', 'person_roles')
     ->execute();
@@ -108,7 +108,7 @@ if ($roleIds !== []) {
 $offeringNames = ['Hair Services', 'Esthetics'];
 $offeringIds = [];
 foreach ($offeringNames as $offeringName) {
-    $tids = $termStorage->getQuery()
+    $tids = $termStorage->getQuery()->accessCheck(false)
         ->condition('name', $offeringName)
         ->condition('vid', 'person_offerings')
         ->execute();

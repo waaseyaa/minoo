@@ -22,13 +22,13 @@ $featuredStorage = $entityTypeManager->getStorage('featured_item');
 
 // 1. Find LNHL event
 $eventStorage = $entityTypeManager->getStorage('event');
-$eventIds = $eventStorage->getQuery()->condition('slug', 'little-nhl-2026')->execute();
+$eventIds = $eventStorage->getQuery()->accessCheck(false)->condition('slug', 'little-nhl-2026')->execute();
 
 if ($eventIds !== []) {
     $eventId = reset($eventIds);
     echo "Found LNHL event (eid: {$eventId})\n";
 
-    $existing = $featuredStorage->getQuery()
+    $existing = $featuredStorage->getQuery()->accessCheck(false)
         ->condition('entity_type', 'event')
         ->condition('entity_id', $eventId)
         ->execute();
@@ -55,13 +55,13 @@ if ($eventIds !== []) {
 
 // 2. Find Crystal Shawanda
 $personStorage = $entityTypeManager->getStorage('resource_person');
-$personIds = $personStorage->getQuery()->condition('slug', 'crystal-shawanda')->execute();
+$personIds = $personStorage->getQuery()->accessCheck(false)->condition('slug', 'crystal-shawanda')->execute();
 
 if ($personIds !== []) {
     $personId = reset($personIds);
     echo "\nFound Crystal Shawanda (rpid: {$personId})\n";
 
-    $existing = $featuredStorage->getQuery()
+    $existing = $featuredStorage->getQuery()->accessCheck(false)
         ->condition('entity_type', 'resource_person')
         ->condition('entity_id', $personId)
         ->execute();

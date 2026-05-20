@@ -27,7 +27,7 @@ $teachingData = json_decode(file_get_contents(dirname(__DIR__) . '/data/lnhl_tea
 echo "Creating LNHL 2026 event...\n";
 $eventStorage = $entityTypeManager->getStorage('event');
 
-$existingIds = $eventStorage->getQuery()->condition('slug', 'little-nhl-2026')->execute();
+$existingIds = $eventStorage->getQuery()->accessCheck(false)->condition('slug', 'little-nhl-2026')->execute();
 if ($existingIds !== []) {
     $event = $eventStorage->load(reset($existingIds));
     echo "  Found existing event (eid: {$event->id()}), updating...\n";
@@ -58,7 +58,7 @@ echo "Saved LNHL 2026 event (eid: {$event->id()})\n";
 echo "\nCreating LNHL teaching...\n";
 $teachingStorage = $entityTypeManager->getStorage('teaching');
 
-$existingIds = $teachingStorage->getQuery()->condition('slug', 'the-little-native-hockey-league')->execute();
+$existingIds = $teachingStorage->getQuery()->accessCheck(false)->condition('slug', 'the-little-native-hockey-league')->execute();
 if ($existingIds !== []) {
     $teaching = $teachingStorage->load(reset($existingIds));
     echo "  Found existing teaching (tid: {$teaching->id()}), updating...\n";
@@ -85,7 +85,7 @@ echo "Saved LNHL teaching (tid: {$teaching->id()})\n";
 // 3. Create Crystal Shawanda as ResourcePerson
 echo "\nCreating Crystal Shawanda resource person...\n";
 $personStorage = $entityTypeManager->getStorage('resource_person');
-$existingIds = $personStorage->getQuery()->condition('slug', 'crystal-shawanda')->execute();
+$existingIds = $personStorage->getQuery()->accessCheck(false)->condition('slug', 'crystal-shawanda')->execute();
 
 if ($existingIds !== []) {
     $person = $personStorage->load(reset($existingIds));
@@ -107,7 +107,7 @@ $person->set('updated_at', time());
 
 // Look up Artist role
 $termStorage = $entityTypeManager->getStorage('taxonomy_term');
-$roleIds = $termStorage->getQuery()
+$roleIds = $termStorage->getQuery()->accessCheck(false)
     ->condition('name', 'Artist')
     ->condition('vid', 'person_roles')
     ->execute();

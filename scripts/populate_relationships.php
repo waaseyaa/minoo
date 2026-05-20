@@ -36,7 +36,7 @@ try {
     exit(1);
 }
 
-$communityIds = $communityStorage->getQuery()->execute();
+$communityIds = $communityStorage->getQuery()->accessCheck(false)->execute();
 $communities = $communityStorage->loadMultiple($communityIds);
 
 if ($communities === []) {
@@ -93,7 +93,7 @@ foreach ($entityConfigs as $entityType => $config) {
         continue;
     }
 
-    $ids = $storage->getQuery()->execute();
+    $ids = $storage->getQuery()->accessCheck(false)->execute();
     $entities = $storage->loadMultiple($ids);
 
     $updated = 0;

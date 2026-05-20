@@ -31,7 +31,7 @@ if (!$apply) {
 
 $geocoder = new GeocodingService();
 $groupStorage = $entityTypeManager->getStorage('group');
-$ids = $groupStorage->getQuery()->execute();
+$ids = $groupStorage->getQuery()->accessCheck(false)->execute();
 
 $geocoded = 0;
 $fallback = 0;

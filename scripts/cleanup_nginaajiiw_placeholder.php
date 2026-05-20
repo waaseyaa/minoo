@@ -22,7 +22,7 @@ $etm = $kernel->getEntityTypeManager();
 $storage = $etm->getStorage('resource_person');
 
 // Find and delete the placeholder
-$ids = $storage->getQuery()->condition('slug', 'nginaajiiw-salon-owner')->execute();
+$ids = $storage->getQuery()->accessCheck(false)->condition('slug', 'nginaajiiw-salon-owner')->execute();
 
 if ($ids === []) {
     echo "No 'nginaajiiw-salon-owner' placeholder found — already cleaned up.\n";
@@ -36,7 +36,7 @@ $storage->delete([$person]);
 echo "Deleted.\n";
 
 // Verify Larissa Toulouse exists
-$larisaIds = $storage->getQuery()->condition('slug', 'larissa-toulouse')->execute();
+$larisaIds = $storage->getQuery()->accessCheck(false)->condition('slug', 'larissa-toulouse')->execute();
 if ($larisaIds !== []) {
     $larissa = $storage->load(reset($larisaIds));
     echo "Verified: Larissa Toulouse exists (rpid: {$larissa->id()})\n";

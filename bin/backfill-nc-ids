@@ -80,7 +80,7 @@ foreach ($allHits as $hit) {
 
 // Load local communities and match by inac_id.
 $storage = $entityTypeManager->getStorage('community');
-$ids = $storage->getQuery()->execute();
+$ids = $storage->getQuery()->accessCheck(false)->execute();
 
 $matched  = 0;
 $skipped  = 0;

@@ -83,7 +83,7 @@ foreach ($auditConfig as $entityType => $config) {
         continue;
     }
 
-    $ids = $storage->getQuery()->execute();
+    $ids = $storage->getQuery()->accessCheck(false)->execute();
     $total = count($ids);
     $grandTotal += $total;
 

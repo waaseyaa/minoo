@@ -31,7 +31,7 @@ $dictStorage = $entityTypeManager->getStorage('dictionary_entry');
 
 echo "Loading dictionary entries...\n";
 
-$ids = $dictStorage->getQuery()
+$ids = $dictStorage->getQuery()->accessCheck(false)
     ->condition('status', 1)
     ->range(0, 200)
     ->execute();
@@ -76,7 +76,7 @@ function buildPuzzle(
     string $tier,
     ?string $theme = null,
 ): ?object {
-    $existing = $puzzleStorage->getQuery()
+    $existing = $puzzleStorage->getQuery()->accessCheck(false)
         ->condition('id', $puzzleId)
         ->execute();
 
@@ -249,7 +249,7 @@ if (count($animalWords) >= 4) {
 echo "\n=== Summary ===\n";
 echo "Created {$created} crossword puzzle(s).\n";
 
-$allIds = $puzzleStorage->getQuery()->execute();
+$allIds = $puzzleStorage->getQuery()->accessCheck(false)->execute();
 echo sprintf("Total puzzles in database: %d\n", count($allIds));
 
 echo "\nDone. Puzzles available at /games/crossword.\n";

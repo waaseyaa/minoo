@@ -86,10 +86,10 @@ foreach ($allHits as $hit) {
     // Upsert by inac_id (authoritative), fall back to name match.
     $existingIds = [];
     if ($inacId !== '') {
-        $existingIds = $storage->getQuery()->condition('inac_id', $inacId)->execute();
+        $existingIds = $storage->getQuery()->accessCheck(false)->condition('inac_id', $inacId)->execute();
     }
     if ($existingIds === []) {
-        $existingIds = $storage->getQuery()->condition('name', $name)->execute();
+        $existingIds = $storage->getQuery()->accessCheck(false)->condition('name', $name)->execute();
     }
 
     $slug = (string) ($hit['slug'] ?? '');
