@@ -45,11 +45,28 @@ jobs:
           path: minoo
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
+      # Resolve the exact waaseyaa monorepo tag composer pinned. Using
+      # `ref: main` here would let upstream-in-flight changes (lock file drift,
+      # admin SPA package.json edits) silently break a deploy of a commit that
+      # passed CI yesterday. The version comes straight from composer.lock so
+      # it stays in lockstep with `composer install` on the same commit.
+      - name: Resolve waaseyaa framework tag from composer.lock
+        id: ws_ref
+        working-directory: minoo
+        run: |
+          REF=$(jq -er '.packages[] | select(.name == "waaseyaa/admin-surface") | .version' composer.lock)
+          if [[ -z "${REF}" || "${REF}" == "null" ]]; then
+            echo "::error::Could not extract waaseyaa/admin-surface version from composer.lock" >&2
+            exit 1
+          fi
+          echo "Resolved waaseyaa framework tag: ${REF}"
+          echo "ref=${REF}" >> "$GITHUB_OUTPUT"
+
       - name: Checkout waaseyaa framework
         uses: actions/checkout@v6
         with:
           repository: waaseyaa/framework
-          ref: main
+          ref: ${{ steps.ws_ref.outputs.ref }}
           path: waaseyaa
 
       # -----------------------------------------------------------------------
