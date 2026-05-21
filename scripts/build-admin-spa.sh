@@ -55,7 +55,18 @@ export NUXT_PUBLIC_APP_NAME="${NUXT_PUBLIC_APP_NAME:-Minoo}"
 export NUXT_PUBLIC_BASE_URL="${NUXT_PUBLIC_BASE_URL:-}"
 export NUXT_BACKEND_URL="${NUXT_BACKEND_URL:-http://127.0.0.1:8081}"
 
-(cd "$ADMIN_PKG" && npm ci && npm run generate)
+# Prefer `npm ci` for reproducibility, but fall back to `npm install` when
+# upstream's package-lock.json has drifted from package.json. Waaseyaa
+# framework tags have shipped with out-of-sync locks more than once; without
+# this fallback, every drifted alpha breaks Minoo deploys for no Minoo reason.
+(
+  cd "$ADMIN_PKG"
+  if ! npm ci --no-audit --no-fund; then
+    echo "build-admin-spa: npm ci failed — falling back to npm install (upstream lock drift)." >&2
+    npm install --no-audit --no-fund
+  fi
+  npm run generate
+)
 
 rm -rf "$ROOT/public/admin"
 mkdir -p "$ROOT/public/admin"
