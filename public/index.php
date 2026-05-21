@@ -12,6 +12,20 @@ if (PHP_SAPI === 'cli-server') {
     }
 }
 
+// Local-dev opt-out for the long-lived SSE broadcast stream. The framework's
+// BroadcastRouter holds a worker for up to 15s after disconnect (keepalive
+// interval), which exhausts `PHP_CLI_SERVER_WORKERS` during rapid navigation.
+// Returning 204 tells EventSource to stop and not reconnect (HTML spec).
+// Off in production (env var unset).
+if (
+    (getenv('WAASEYAA_DISABLE_SSE') ?: '') === '1'
+    && (parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '') === '/api/broadcast'
+) {
+    http_response_code(204);
+    header('Cache-Control: no-store');
+    exit;
+}
+
 use Symfony\Component\HttpFoundation\Response;
 
 require __DIR__ . '/../vendor/autoload.php';
