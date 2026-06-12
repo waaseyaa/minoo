@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Entity\Language\DialectRegion;
 use App\Entity\Editorial\FeaturedItem;
+use App\Entity\Language\DialectRegion;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Entity\EntityType;
 

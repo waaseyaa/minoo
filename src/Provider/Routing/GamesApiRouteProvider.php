@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Provider\Routing;
 
 use App\Provider\AppCoreServiceProvider;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;

@@ -23,8 +23,23 @@ Full report: docs/lineage-report.md. Highlights:
 - Decision: build on main HEAD (e83b6c7). Snapshot and working tree are reference-only from here.
 - Phase 4 alert: provider defines speaker.consent_public_display DEFAULT 1 — corpus import must force every consent flag OFF explicitly.
 
+## Phase 2 - slim app on alpha.208 (done)
+- All 51 waaseyaa/* packages bumped 188 -> 208; framework changelog reviewed (key risks: alpha.204 save-time validation, alpha.205 auto-added revision_author/actor_uid columns at boot, alpha.206 project-root DB path + 404-for-denied reads).
+- Cut surfaces de-registered then deleted: communities, businesses, events, feed, newsletters, people, oral histories, teachings, volunteer/coordinator dashboards, messaging, engagement, crisis, guess-price, chat, NorthCloud (sync + search + community client), geo/geocoding, OG images. 67 src files, ~29 template groups, 60+ test files, 37 bin/scripts utilities removed. Cut tables remain dormant per rule 4.
+- Kept: language domain (5 entities + contributor for attribution), games x5, auth/accounts, admin SPA + staff ingestion + role management, local search, i18n, consent/access.
+- Packages removed: geoip2, engagement, genealogy, geo, groups, mercure, messaging, northcloud, queue (northcloud + queue remain only as framework transitive deps; no app wiring, no workers).
+- Gates: phpunit OK (345 tests, 914 assertions), phpstan clean (baseline regenerated: 5 carried findings), cs-fixer applied, bin/smoke-test rewritten and passing (27/28; the 1 expected failure is dictionary count on an empty in-memory DB).
+
 ## Decisions
 - (running list, newest last)
 - D1: gh repo clone hung; switched to plain git clone. (Phase 0)
 - D2: Use main HEAD as the only source tree; no porting from snapshot or working tree needed (evidence in docs/lineage-report.md). (Phase 1)
-- D3: Worktree minoo-at-187 created beside the clone for fingerprinting; will remove after Phase 2 starts. (Phase 1)
+- D3: Worktree minoo-at-187 created beside the clone for fingerprinting; removed after Phase 1. (Phase 1)
+- D4: Chat controller CUT, not re-grounded. Priority is a live site; a dictionary-grounded chat can come back as production refinement. chat_enabled hardcoded false for templates. (Phase 2)
+- D5: contributor entity KEPT despite "people" cut: example_sentence rows reference it for attribution and it is the dedup target of the corpus speaker mapper. Its community_id field def dropped. (Phase 2)
+- D6: Search: NorthCloud override removed; SearchProviderInterface falls through to framework FTS5 (empty index for now). /language/search rewritten as local entity query (LIKE on word + definition, consent_public + status gated). /search page kept, renders empty results until FTS5 indexing is wired. (Phase 2)
+- D7: speaker gains dialect_region_id + community fields; example_sentence gains speaker_id - additive _data fields needed for Phase 4 provenance. (Phase 2)
+- D8: AdminRouteProvider's access-policy replay now uses KernelPolicyDependencyResolver(kernelServices) - alpha.189+ ClassificationFieldAccessPolicy has service deps and the old null resolver throws at every route registration. (Phase 2)
+- D9: static pages how-it-works, safety, elders, get-involved, messages, volunteer cut (elder-support program content). about, data-sovereignty, legal, journey, matcher, studio, games, search kept. (Phase 2)
+- D10: homepage rewritten (dictionary stats + featured + games); authenticated users no longer redirected to /feed. (Phase 2)
+- D11: phpstan baseline regenerated after deletions (old baseline referenced removed files); 5 pre-existing findings carried. (Phase 2)

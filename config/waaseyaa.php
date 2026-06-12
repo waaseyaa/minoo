@@ -108,28 +108,9 @@ return [
         'cache_max_age' => (int) (getenv('WAASEYAA_SSR_CACHE_MAX_AGE') ?: 300),
     ],
 
-    // Search provider configuration.
+    // Search (framework FTS5 provider; uses the app database by default).
     'search' => [
-        'base_url' => getenv('NORTHCLOUD_SEARCH_URL') ?: 'https://northcloud.one',
-        'timeout' => (int) (getenv('NORTHCLOUD_SEARCH_TIMEOUT') ?: 15),
-        'cache_ttl' => (int) (getenv('NORTHCLOUD_SEARCH_CACHE_TTL') ?: 60),
-        'base_topics' => ['indigenous'],
-    ],
-
-    // NorthCloud community data API.
-    'northcloud' => [
-        'base_url' => getenv('NORTHCLOUD_BASE_URL') ?: 'https://api.northcloud.one',
-        'timeout' => (int) (getenv('NORTHCLOUD_TIMEOUT') ?: 5),
-        'cache_ttl' => (int) (getenv('NORTHCLOUD_CACHE_TTL') ?: 3600),
-        'api_token' => getenv('NORTHCLOUD_API_TOKEN') ?: '',
-    ],
-
-    // Location detection.
-    'location' => [
-        'geoip_db' => getenv('GEOIP_DB_PATH') ?: __DIR__ . '/../storage/geoip/GeoLite2-City.mmdb',
-        'default_coordinates' => [46.49, -81.00], // Sudbury fallback for dev/private IPs
-        'cookie_name' => 'minoo_location',
-        'cookie_ttl' => 86400 * 30, // 30 days
+        'base_topics' => ['anishinaabemowin'],
     ],
 
     // Mail configuration (SendGrid).
@@ -139,9 +120,6 @@ return [
         'from_name' => getenv('MAIL_FROM_NAME') ?: 'Minoo',
         'base_url' => getenv('MINOO_BASE_URL') ?: 'https://minoo.live',
     ],
-
-    // Messaging (digests, Mercure, etc.) — see config/messaging.php.
-    'messaging' => require __DIR__ . '/messaging.php',
 
     // AI embedding pipeline configuration.
     'ai' => [
