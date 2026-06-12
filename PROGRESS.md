@@ -38,6 +38,17 @@ Full report: docs/lineage-report.md. Highlights:
 - alpha.208 boot auto-created audit_event, audit_retention_policy, agent_run tables and additive columns in the restored DB - expected alpha.205 behavior, additive only.
 - Games smoke-tested against restored data: bin/smoke-test 37/37 (pages + data APIs for shkoda, matcher, agim, crossword, journey; agim/prompt correctly 422 without session token). Dormant tables untouched.
 
+## Phase 4 - consent-gated corpus import (done)
+- Source: Projects\LLC\anishinaabemowin\content\corpus (27 items, 1 contributor: Steven Bennett; Facebook reel clips, May 2026). NOTHING from the directory committed to the repo; audio/video/thumbs stay in the community-controlled directory; only provenance paths recorded in the DB.
+- Mapping: each item -> example_sentence (ojibwe_text verbatim, english_text, source_url = reel URL, source_date, source_sentence_id = corpus:<id> for idempotent dedup, provenance = full original item JSON). One speaker row (code sb) linked via speaker_id. Orthography untouched.
+- HARD GATES, all verified by scripts/verify-corpus-gates.php (9/9 PASS):
+  * every corpus row + speaker: consent_public/consent_public_display=0, consent_ai_training=0, status=0
+  * anonymous view DENIED at the access-handler level (LanguageAccessPolicy strengthened: consent flag 0 now blocks public view even if status were flipped to 1)
+  * absent from FTS search index, no embeddings, never entered dictionary_entry
+  * audio_url left empty - no media served
+- example_sentence gained consent_public, consent_ai_training, source_url, source_date, provenance field definitions.
+- Import idempotent (re-run: 27 skipped). Suite still green (345 tests).
+
 ## Decisions
 - (running list, newest last)
 - D1: gh repo clone hung; switched to plain git clone. (Phase 0)

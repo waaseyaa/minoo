@@ -27,11 +27,25 @@ final class LanguageAccessPolicy implements AccessPolicyInterface
         }
 
         return match ($operation) {
-            'view' => (int) $entity->get('status') === 1
-                ? AccessResult::allowed('Published content is publicly viewable.')
-                : AccessResult::neutral('Cannot view unpublished language content.'),
+            'view' => (int) $entity->get('status') === 1 && $this->hasPublicConsent($entity)
+                ? AccessResult::allowed('Published content with public consent is viewable.')
+                : AccessResult::neutral('Cannot view unpublished or consent-gated language content.'),
             default => AccessResult::neutral('Non-admin cannot modify language content.'),
         };
+    }
+
+    /**
+     * Consent gate: a row whose consent flag is explicitly 0 is never
+     * publicly viewable, independent of its published status. Rows from
+     * before the consent fields existed read null and stay viewable.
+     */
+    private function hasPublicConsent(EntityInterface $entity): bool
+    {
+        $flag = $entity->getEntityTypeId() === 'speaker'
+            ? $entity->get('consent_public_display')
+            : $entity->get('consent_public');
+
+        return $flag === null || (int) $flag === 1;
     }
 
     public function createAccess(string $entityTypeId, string $bundle, AccountInterface $account): AccessResult
