@@ -1,19 +1,22 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}Minoo — Indigenous Knowledge &amp; Community{% endblock %}
+{% block title %}Minoo: Learn Anishinaabemowin{% endblock %}
 
-{% block og_description %}Discover Teachings, Events, and community stories shared by Knowledge Keepers and community members across Turtle Island.{% endblock %}
+{% block og_description %}Learn Anishinaabemowin with a community dictionary and word games built for language learners across Turtle Island.{% endblock %}
 
 {% block content %}
 
     {# === Welcome Hero === #}
     <section class="hero">
       <p class="hero__eyebrow">Aanii &middot; Welcome</p>
-      <h1>A place where Indigenous Knowledge, culture, and <em>community</em> come together.</h1>
-      <p>Explore Teachings from Knowledge Keepers, find Events near you, and connect with communities across Turtle Island.</p>
+      <h1>A place to learn and live <em>Anishinaabemowin</em>.</h1>
+      <p>
+        Explore the dictionary{% if entry_count is defined and entry_count > 0 %} with {{ entry_count|number_format }} words{% endif %},
+        practice with daily games, and grow with the language.
+      </p>
       <div class="hero__ctas">
-        <a href="{{ lang_url('/events') }}" class="btn btn--primary btn--lg">Find Events near you</a>
-        <a href="{{ lang_url('/teachings') }}" class="btn btn--secondary btn--lg">Explore Teachings</a>
+        <a href="{{ lang_url('/language') }}" class="btn btn--primary btn--lg">Explore the Dictionary</a>
+        <a href="{{ lang_url('/games') }}" class="btn btn--secondary btn--lg">Play Word Games</a>
       </div>
     </section>
 
@@ -26,7 +29,7 @@
         <div class="ds-grid">
           {% for item in featured %}
             <a href="{{ item.url }}" class="card card--{{ item.entity_type }}">
-              <span class="card__eyebrow">{{ item.entity_type|capitalize }}</span>
+              <span class="card__eyebrow">{{ item.entity_type|replace({'_': ' '})|capitalize }}</span>
               <h3 class="card__title">{{ item.headline }}</h3>
               {% if item.subheadline is defined and item.subheadline %}
                 <p class="card__meta">{{ item.subheadline }}</p>
@@ -37,62 +40,37 @@
       </section>
     {% endif %}
 
-    {# === Upcoming Events === #}
-    {% if events is defined and events|length > 0 %}
-      <section class="sec">
-        <div class="sec__head">
-          <h2>Upcoming Events</h2>
-          <a href="{{ lang_url('/events') }}">View all &rarr;</a>
-        </div>
-        <div class="ds-grid">
-          {% for e in events|slice(0, 4) %}
-            {% include "components/domain/events/card.html.twig" with {
-              title: e.get('title'),
-              type: e.get('type')|default('')|capitalize,
-              date: e.get('starts_at') ? e.get('starts_at')|date('F j, Y') : '',
-              location: e.get('location')|default(''),
-              description: e.get('description')|default(''),
-              url: "/events/" ~ e.get('slug')
-            } only %}
-          {% endfor %}
-        </div>
-      </section>
-    {% endif %}
-
-    {# === Recent Teachings === #}
-    {% if teachings is defined and teachings|length > 0 %}
-      <section class="sec">
-        <div class="sec__head">
-          <h2>Recent Teachings</h2>
-          <a href="{{ lang_url('/teachings') }}">View all &rarr;</a>
-        </div>
-        <div class="ds-grid">
-          {% for t in teachings|slice(0, 4) %}
-            {% include "components/domain/teachings/card.html.twig" with {
-              title: t.get('title'),
-              type: t.get('type')|default('')|capitalize,
-              description: t.get('description')|default(''),
-              url: "/teachings/" ~ t.get('slug')
-            } only %}
-          {% endfor %}
-        </div>
-      </section>
-    {% endif %}
-
-    {# === Community Highlights === #}
+    {# === Games === #}
     <section class="sec">
       <div class="sec__head">
-        <h2>Our Communities</h2>
-        <a href="{{ lang_url('/communities') }}">View all &rarr;</a>
+        <h2>Games</h2>
+        <a href="{{ lang_url('/games') }}">View all &rarr;</a>
       </div>
-      <p style="color: var(--text-secondary); max-width: 60ch;">Minoo connects Indigenous communities across Turtle Island. Find your community, share knowledge, and stay connected.</p>
+      <div class="ds-grid">
+        <a href="{{ lang_url('/games/shkoda') }}" class="card">
+          <h3 class="card__title">Shkoda</h3>
+          <p class="card__meta">Guess the word, letter by letter, before the fire goes out.</p>
+        </a>
+        <a href="{{ lang_url('/matcher') }}" class="card">
+          <h3 class="card__title">Matcher</h3>
+          <p class="card__meta">Match Anishinaabemowin words with their meanings.</p>
+        </a>
+        <a href="{{ lang_url('/games/crossword') }}" class="card">
+          <h3 class="card__title">Crossword</h3>
+          <p class="card__meta">Daily crossword puzzles built from the dictionary.</p>
+        </a>
+        <a href="{{ lang_url('/games/journey') }}" class="card">
+          <h3 class="card__title">Journey</h3>
+          <p class="card__meta">Find the words hidden in scenes from the land.</p>
+        </a>
+      </div>
     </section>
 
     {# === Call to Action === #}
     {% if account is not defined or not account.isAuthenticated() %}
       <section class="sec" style="text-align: center; padding: var(--space-xl) 0;">
-        <h2>Join the Conversation</h2>
-        <p style="color: var(--text-secondary); max-width: 50ch; margin: var(--space-sm) auto var(--space-md);">Create an account to share your stories, follow communities, and stay up to date with Events and Teachings that matter to you.</p>
+        <h2>Track Your Learning</h2>
+        <p style="color: var(--text-secondary); max-width: 50ch; margin: var(--space-sm) auto var(--space-md);">Create an account to keep your game streaks and pick up where you left off.</p>
         <a href="{{ lang_url('/register') }}" class="btn btn--primary btn--lg">Create an Account</a>
       </section>
     {% endif %}

@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Provider;
 
-use App\Provider\AppBootServiceProvider;
 use App\Provider\MinooEntityStackProvider;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Waaseyaa\Field\FieldDefinition;
-use Waaseyaa\Field\FieldDefinitionRegistry;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 
 #[CoversNothing]
@@ -31,12 +28,6 @@ final class ConsentFieldsTest extends TestCase
         $provider = new MinooEntityStackProvider();
 
         return [
-            'teaching' => [$provider, 'teaching'],
-            'event' => [$provider, 'event'],
-            'cultural_group' => [$provider, 'cultural_group'],
-            'cultural_collection' => [$provider, 'cultural_collection'],
-            'resource_person' => [$provider, 'resource_person'],
-            'leader' => [$provider, 'leader'],
             'dictionary_entry' => [$provider, 'dictionary_entry'],
         ];
     }
@@ -97,48 +88,6 @@ final class ConsentFieldsTest extends TestCase
             'Entity type "%s" consent_ai_training should default to 0 (opt-in only).',
             $entityTypeId,
         ));
-    }
-
-    #[Test]
-    public function group_business_bundle_defines_consent_public(): void
-    {
-        self::assertSame('boolean', $this->bundleField('consent_public')->getType());
-    }
-
-    #[Test]
-    public function group_business_bundle_defines_consent_ai_training(): void
-    {
-        self::assertSame('boolean', $this->bundleField('consent_ai_training')->getType());
-    }
-
-    #[Test]
-    public function group_business_consent_public_defaults_to_true(): void
-    {
-        self::assertSame(1, $this->bundleField('consent_public')->getDefaultValue());
-    }
-
-    #[Test]
-    public function group_business_consent_ai_training_defaults_to_false(): void
-    {
-        self::assertSame(0, $this->bundleField('consent_ai_training')->getDefaultValue());
-    }
-
-    private function bundleField(string $name): FieldDefinition
-    {
-        $registry = new FieldDefinitionRegistry();
-        $registry->registerBundleFields('group', 'business', AppBootServiceProvider::groupBusinessBundleFields());
-
-        $fields = $registry->bundleFieldsFor('group', 'business');
-
-        self::assertArrayHasKey($name, $fields, sprintf(
-            'Bundle field "%s" not registered for group:business.',
-            $name,
-        ));
-
-        $field = $fields[$name];
-        self::assertInstanceOf(FieldDefinition::class, $field);
-
-        return $field;
     }
 
     /**

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controller\Home;
 
 use App\Http\View\LayoutTwigContext;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -14,6 +13,10 @@ use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
 
+/**
+ * Language-platform homepage: dictionary stats, featured items, and the
+ * games hub. The old social feed (and its authenticated redirect) is gone.
+ */
 final class HomeController
 {
     public function __construct(
@@ -26,19 +29,10 @@ final class HomeController
     /** @param array<string, mixed> $query */
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        if ($account->isAuthenticated()) {
-            return new RedirectResponse('/feed', 302);
-        }
-
-        $featured = $this->loadFeaturedItems();
-        $events = $this->loadUpcomingEvents();
-        $teachings = $this->loadRecentTeachings();
-
         $html = $this->twig->render('pages/home/index.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/',
-            'featured' => $featured,
-            'events' => $events,
-            'teachings' => $teachings,
+            'featured' => $this->loadFeaturedItems(),
+            'entry_count' => $this->countDictionaryEntries(),
         ]));
 
         return new Response($html);
@@ -68,54 +62,31 @@ final class HomeController
 
         $items = [];
         foreach ($storage->loadMultiple($ids) as $entity) {
-            $entityType = $entity->get('entity_type') ?? 'teaching';
+            $entityType = $entity->get('entity_type') ?? 'dictionary_entry';
             $items[] = [
                 'headline' => $entity->get('headline') ?? '',
                 'subheadline' => $entity->get('subheadline') ?? '',
                 'entity_type' => $entityType,
-                'url' => '/' . $entityType . 's',
+                'url' => '/language',
             ];
         }
 
         return $items;
     }
 
-    /** @return list<\Waaseyaa\Entity\EntityInterface> */
-    private function loadUpcomingEvents(): array
+    private function countDictionaryEntries(): int
     {
         try {
-            $storage = $this->entityTypeManager->getStorage('event');
+            $storage = $this->entityTypeManager->getStorage('dictionary_entry');
         } catch (\RuntimeException|\PDOException) {
-            return [];
+            return 0;
         }
 
-        $now = date('Y-m-d H:i:s');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $result = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
-            ->condition('starts_at', $now, '>=')
-            ->sort('starts_at', 'ASC')
-            ->range(0, 4)
+            ->count()
             ->execute();
 
-        return $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
-    }
-
-    /** @return list<\Waaseyaa\Entity\EntityInterface> */
-    private function loadRecentTeachings(): array
-    {
-        try {
-            $storage = $this->entityTypeManager->getStorage('teaching');
-        } catch (\RuntimeException|\PDOException) {
-            return [];
-        }
-
-        $ids = $storage->getQuery()->accessCheck(false)
-            ->condition('status', 1)
-            ->condition('consent_public', 1)
-            ->sort('created_at', 'DESC')
-            ->range(0, 4)
-            ->execute();
-
-        return $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+        return (int) ($result[0] ?? 0);
     }
 }

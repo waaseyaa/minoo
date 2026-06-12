@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Provider\Routing;
 
 use App\Provider\AppCoreServiceProvider;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -294,25 +292,6 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
                 ->controller('App\\Http\\Controller\\Games\\AgimController::stats')
                 ->requireAuthentication()
                 ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'games.guess_price',
-            RouteBuilder::create('/games/guess-price')
-                ->controller('App\\Http\\Controller\\Games\\GuessPriceController::page')
-                ->allowAll()
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'games.guess_price.trailing_redirect',
-            RouteBuilder::create('/games/guess-price/')
-                ->controller(static fn (): Response => new RedirectResponse('/games/guess-price', Response::HTTP_PERMANENTLY_REDIRECT))
-                ->allowAll()
-                ->methods('GET', 'HEAD')
                 ->build(),
         );
 

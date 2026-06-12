@@ -9,14 +9,14 @@ use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
 
+/**
+ * Language-platform slimming (2026-06): feed and explore routes removed;
+ * the homepage serves everyone.
+ */
 final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
 {
     public function routes(WaaseyaaRouter $router, ?EntityTypeManager $entityTypeManager = null): void
     {
-        // =====================================================================
-        // --- Homepage ---
-        // =====================================================================
-
         $router->addRoute(
             'home.index',
             RouteBuilder::create('/')
@@ -36,38 +36,5 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
                 ->methods('GET')
                 ->build(),
         );
-
-        // =====================================================================
-        // --- Feed ---
-        // =====================================================================
-
-        $router->addRoute(
-            'feed.page',
-            RouteBuilder::create('/feed')
-                ->controller('App\\Http\\Controller\\Feed\\FeedController::index')
-                ->allowAll()
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'feed.api',
-            RouteBuilder::create('/api/feed')
-                ->controller('App\\Http\\Controller\\Feed\\FeedController::api')
-                ->allowAll()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'explore.redirect',
-            RouteBuilder::create('/explore')
-                ->controller('App\\Http\\Controller\\Feed\\FeedController::explore')
-                ->allowAll()
-                ->methods('GET')
-                ->build(),
-        );
-
     }
 }

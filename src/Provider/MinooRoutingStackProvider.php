@@ -7,18 +7,19 @@ namespace App\Provider;
 use App\Provider\Routing\AdminRouteProvider;
 use App\Provider\Routing\AuthApiRouteProvider;
 use App\Provider\Routing\GamesApiRouteProvider;
-use App\Provider\Routing\NewsletterApiRouteProvider;
 use App\Provider\Routing\PublicAccountRouteProvider;
-use App\Provider\Routing\PublicCommunityRouteProvider;
 use App\Provider\Routing\PublicContentRouteProvider;
 use App\Provider\Routing\PublicHomeFeedRouteProvider;
-use App\Provider\Routing\SocialApiRouteProvider;
+use App\Provider\Routing\StaticPagesRouteProvider;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 use Waaseyaa\Routing\WaaseyaaRouter;
 
 /**
  * Registers all Minoo HTTP routes (single composer entry).
+ *
+ * Language-platform slimming (2026-06): community, social (engagement,
+ * messaging, chat), and newsletter route providers de-registered.
  */
 final class MinooRoutingStackProvider extends ServiceProvider
 {
@@ -30,13 +31,11 @@ final class MinooRoutingStackProvider extends ServiceProvider
     {
         foreach ([
             new PublicContentRouteProvider(),
-            new PublicCommunityRouteProvider(),
             new PublicAccountRouteProvider(),
             new PublicHomeFeedRouteProvider(),
             new AuthApiRouteProvider(),
-            new SocialApiRouteProvider(),
             new GamesApiRouteProvider(),
-            new NewsletterApiRouteProvider(),
+            new StaticPagesRouteProvider(),
             new AdminRouteProvider(),
         ] as $child) {
             // mergeChildProvider() forwards both kernel context and the kernel-services

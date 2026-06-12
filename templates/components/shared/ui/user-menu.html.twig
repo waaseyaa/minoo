@@ -16,11 +16,7 @@
       </div>
     </div>
     <div class="user-menu__section">
-      <a href="{{ lang_url('/messages') }}" class="user-menu__item">{{ trans('usermenu.messages') }}</a>
       <a href="{{ lang_url('/account') }}" class="user-menu__item">{{ trans('usermenu.profile') }}</a>
-      {% if 'elder_coordinator' in account.getRoles() %}
-        <a href="{{ lang_url('/dashboard/coordinator') }}" class="user-menu__item">{{ trans('usermenu.dashboard') }}</a>
-      {% endif %}
     </div>
     <div class="user-menu__section">
       <a href="{{ lang_url('/logout') }}" class="user-menu__item user-menu__item--danger">{{ trans('usermenu.sign_out') }}</a>

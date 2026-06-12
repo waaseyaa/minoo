@@ -33,26 +33,6 @@
     {% endif %}
   </div>
 
-  {% if 'volunteer' in roles %}
-  <div class="actions">
-    <h2>{{ trans('account.elder_support') }}</h2>
-    <p class="text-secondary">{{ trans('account.volunteer_text') }}</p>
-    <ul class="links">
-      <li><a href="{{ lang_url('/dashboard/volunteer') }}">{{ trans('account.my_assignments') }}</a></li>
-    </ul>
-  </div>
-  {% endif %}
-
-  {% if 'elder_coordinator' in roles %}
-  <div class="actions">
-    <h2>{{ trans('account.coordination') }}</h2>
-    <p class="text-secondary">{{ trans('account.coordinator_text') }}</p>
-    <ul class="links">
-      <li><a href="{{ lang_url('/dashboard/coordinator') }}">{{ trans('account.coordinator_dashboard') }}</a></li>
-    </ul>
-  </div>
-  {% endif %}
-
   {% if 'admin' in roles %}
   <div class="actions">
     <h2>{{ trans('admin.users_title') }}</h2>

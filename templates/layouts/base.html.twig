@@ -34,10 +34,10 @@
         <a href="{{ lang_url('/') }}" class="hdr__brand">
           <img class="hdr__logo" src="/img/minoo-wordmark.svg" alt="Minoo">
         </a>
-        <div class="hdr__search">
+        <form class="hdr__search" action="{{ lang_url('/language/search') }}" method="get">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input placeholder="Search Teachings, Events, communities…" name="q">
-        </div>
+          <input placeholder="Search the dictionary…" name="q">
+        </form>
         {% include "components/shared/ui/language-switcher.html.twig" %}
         {% include "components/shared/ui/theme-toggle.html.twig" %}
         {% include "components/shared/ui/user-menu.html.twig" %}
@@ -53,7 +53,6 @@
         <div class="app-sidebar__overlay" id="sidebar-overlay"></div>
       {% endif %}
       <main class="app__main" id="main-content">
-        {% include "components/shared/layout/location-bar.html.twig" %}
         {% include "components/shared/feedback/flash-messages.html.twig" %}
         {% block content %}{% endblock %}
       </main>
@@ -69,8 +68,7 @@
         </div>
         <div>
           <a href="{{ lang_url('/about') }}">About</a>
-          <a href="{{ lang_url('/contact') }}">Contact</a>
-          <a href="{{ lang_url('/safety') }}">Protocols</a>
+          <a href="{{ lang_url('/data-sovereignty') }}">Data Sovereignty</a>
           <a href="{{ lang_url('/legal/privacy') }}">Privacy</a>
           <a href="{{ lang_url('/language') }}">Anishinaabemowin</a>
         </div>
@@ -125,220 +123,6 @@
         applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
       });
     })();
-  </script>
-  <script>
-  (function() {
-    const bar = document.getElementById('location-bar');
-    if (!bar) return;
-    const textEl = document.getElementById('location-text');
-    const toggle = document.getElementById('location-toggle');
-    const dropdown = document.getElementById('location-dropdown');
-    const searchInput = document.getElementById('location-search');
-    const resultsList = document.getElementById('location-results');
-    const cookieName = bar.dataset.cookieName || 'minoo_location';
-
-    function readCookie() {
-      const match = document.cookie.split('; ').find(c => c.startsWith(cookieName + '='));
-      if (!match) return null;
-      try { return JSON.parse(decodeURIComponent(match.split('=').slice(1).join('='))); }
-      catch { return null; }
-    }
-
-    const transNear = bar.dataset.transNear || 'Near {community}';
-    const transSet = bar.dataset.transSet || 'Set your location';
-    const transChange = bar.dataset.transChange || 'Change';
-    const transDetecting = bar.dataset.transDetecting || 'Detecting location\u2026';
-    const transError = bar.dataset.transError || 'Error loading results';
-
-    function render(loc) {
-      if (loc && loc.communityName) {
-        textEl.textContent = transNear.replace('{community}', loc.communityName);
-        toggle.textContent = transChange;
-      } else {
-        textEl.textContent = transSet;
-        toggle.textContent = '';
-      }
-    }
-
-    render(readCookie());
-
-    toggle.addEventListener('click', function() {
-      const open = dropdown.hidden;
-      dropdown.hidden = !open;
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      if (open) searchInput.focus();
-    });
-    textEl.addEventListener('click', function() {
-      if (!readCookie()) {
-        dropdown.hidden = false;
-        toggle.setAttribute('aria-expanded', 'true');
-        searchInput.focus();
-      }
-    });
-    textEl.style.cursor = 'pointer';
-
-    let debounce;
-    searchInput.addEventListener('input', function() {
-      clearTimeout(debounce);
-      debounce = setTimeout(async () => {
-        const q = searchInput.value.trim();
-        if (q.length < 2) { resultsList.replaceChildren(); return; }
-        try {
-          const res = await fetch('/api/communities/autocomplete?q=' + encodeURIComponent(q));
-          const items = await res.json();
-          resultsList.replaceChildren();
-          items.forEach(c => {
-            const li = document.createElement('li');
-            li.className = 'location-bar__result';
-            li.setAttribute('role', 'option');
-            li.dataset.id = c.id;
-            li.textContent = c.name;
-            if (c.community_type) {
-              const small = document.createElement('small');
-              small.textContent = ' (' + c.community_type.replace('_', ' ') + ')';
-              li.appendChild(small);
-            }
-            resultsList.appendChild(li);
-          });
-        } catch {
-          resultsList.replaceChildren();
-          const li = document.createElement('li');
-          li.textContent = transError;
-          resultsList.appendChild(li);
-        }
-      }, 300);
-    });
-
-    resultsList.addEventListener('click', async function(e) {
-      const li = e.target.closest('[data-id]');
-      if (!li) return;
-      try {
-        const res = await fetch('/api/location/set', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({community_id: li.dataset.id})
-        });
-        const data = await res.json();
-        if (data.success) location.reload();
-      } catch {}
-    });
-
-    const loc = readCookie();
-    if ((!loc || loc.source === 'ip' || loc.source === 'none') && navigator.geolocation && !sessionStorage.getItem('minoo_geo_asked')) {
-      sessionStorage.setItem('minoo_geo_asked', '1');
-      textEl.textContent = transDetecting;
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-          const res = await fetch('/api/location/update', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
-          });
-          const data = await res.json();
-          if (data.success) {
-            render({communityName: data.communityName, source: 'browser'});
-          } else {
-            render(null);
-          }
-        } catch { render(null); }
-      }, () => { render(null); }, {timeout: 10000, maximumAge: 300000});
-    }
-  })();
-  </script>
-  {% include "components/shared/ui/chat.html.twig" %}
-  <script>
-  (function() {
-    const widget = document.getElementById('chat-widget');
-    if (!widget) return;
-
-    const toggle = widget.querySelector('.chat-widget__toggle');
-    const panel = document.getElementById('chat-panel');
-    const closeBtn = widget.querySelector('.chat-widget__close');
-    const form = widget.querySelector('.chat-widget__form');
-    const input = document.getElementById('chat-input');
-    const messages = widget.querySelector('.chat-widget__messages');
-    const sendBtn = widget.querySelector('.chat-widget__send');
-
-    const transThinking = widget.dataset.transThinking || 'Thinking\u2026';
-    const transError = widget.dataset.transError || 'Something went wrong. Please try again.';
-
-    const history = [];
-
-    function openPanel() {
-      panel.hidden = false;
-      toggle.setAttribute('aria-expanded', 'true');
-      input.focus();
-    }
-
-    function closePanel() {
-      panel.hidden = true;
-      toggle.setAttribute('aria-expanded', 'false');
-    }
-
-    function addMessage(role, text) {
-      const div = document.createElement('div');
-      div.className = 'chat-widget__message chat-widget__message--' + role;
-      const p = document.createElement('p');
-      p.textContent = text;
-      div.appendChild(p);
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    function showTyping() {
-      const div = document.createElement('div');
-      div.className = 'chat-widget__typing';
-      div.id = 'chat-typing';
-      div.textContent = transThinking;
-      messages.appendChild(div);
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    function removeTyping() {
-      const el = document.getElementById('chat-typing');
-      if (el) el.remove();
-    }
-
-    toggle.addEventListener('click', function() {
-      if (panel.hidden) openPanel(); else closePanel();
-    });
-    closeBtn.addEventListener('click', closePanel);
-
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const text = input.value.trim();
-      if (!text) return;
-
-      input.value = '';
-      addMessage('user', text);
-      history.push({role: 'user', content: text});
-      sendBtn.disabled = true;
-      showTyping();
-
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({message: text, history: history.slice(0, -1)})
-        });
-        const data = await res.json();
-        removeTyping();
-
-        if (data.error) {
-          addMessage('error', data.error);
-        } else {
-          addMessage('assistant', data.reply);
-          history.push({role: 'assistant', content: data.reply});
-        }
-      } catch {
-        removeTyping();
-        addMessage('error', transError);
-      }
-
-      sendBtn.disabled = false;
-      input.focus();
-    });
-  })();
   </script>
   <script>
   if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
