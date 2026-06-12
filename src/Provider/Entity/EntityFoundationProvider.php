@@ -4,26 +4,15 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
-use App\Entity\Events\Event;
-use App\Entity\Events\EventType;
-use App\Entity\Groups\CulturalGroup;
 use App\Entity\Ingestion\IngestLog;
 use App\Entity\Language\DictionaryEntry;
 use App\Entity\Language\ExampleSentence;
 use App\Entity\Language\Speaker;
 use App\Entity\Language\WordPart;
-use App\Entity\Teachings\CulturalCollection;
-use App\Entity\Teachings\Teaching;
-use App\Entity\Teachings\TeachingType;
 use App\Infrastructure\Mcp\MinooNoopToolRegistry;
 use App\Infrastructure\Mcp\MinooUnknownToolExecutor;
-use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClient;
-use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
-use App\Ingestion\EntityMapper\NcArticleToEventMapper;
-use App\Ingestion\EntityMapper\NcArticleToTeachingMapper;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Entity\EntityType;
-use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\I18n\Language;
 use Waaseyaa\I18n\LanguageManager;
 use Waaseyaa\I18n\LanguageManagerInterface;
@@ -33,28 +22,19 @@ use Waaseyaa\Mcp\Auth\BearerTokenAuth;
 use Waaseyaa\Mcp\Auth\McpAuthInterface;
 use Waaseyaa\Mcp\Bridge\ToolExecutorInterface;
 use Waaseyaa\Mcp\Bridge\ToolRegistryInterface;
-use Waaseyaa\NorthCloud\Client\NorthCloudClient as PackageNorthCloudClient;
-use Waaseyaa\NorthCloud\Search\NorthCloudSearchProvider;
-use Waaseyaa\NorthCloud\Sync\MapperRegistry;
-use Waaseyaa\NorthCloud\Sync\NcSyncService;
 use Waaseyaa\Routing\Language\UrlPrefixNegotiator;
-use Waaseyaa\Search\SearchProviderInterface;
 
+/**
+ * Foundation services + the language entity domain.
+ *
+ * Language-platform slimming (2026-06): events, teachings, cultural
+ * groups/collections, NorthCloud sync, crisis/OG image services, and the
+ * NorthCloud search override are gone. Search falls through to the
+ * framework's local FTS5 provider; the dictionary search at
+ * /language/search queries entity storage directly.
+ */
 final class EntityFoundationProvider extends AppCoreServiceProvider
 {
-    private ?NorthCloudSearchProvider $searchProvider = null;
-
-    private function shouldAllowInsecureNorthCloudUrl(string $baseUrl): bool
-    {
-        if (!str_starts_with($baseUrl, 'http://')) {
-            return false;
-        }
-
-        $host = strtolower((string) parse_url($baseUrl, PHP_URL_HOST));
-
-        return in_array($host, ['localhost', '127.0.0.1', '::1'], true);
-    }
-
     public function register(): void
     {
         // =====================================================================
@@ -77,25 +57,6 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
 
         $this->singleton(UrlPrefixNegotiator::class, fn () => new UrlPrefixNegotiator());
 
-        $this->singleton(\App\Infrastructure\OpenGraph\OgImageRenderer::class, function (): \App\Infrastructure\OpenGraph\OgImageRenderer {
-            return new \App\Infrastructure\OpenGraph\OgImageRenderer(dirname(__DIR__, 3));
-        });
-
-        $this->singleton(\App\Infrastructure\Crisis\CrisisIncidentResolver::class, function (): \App\Infrastructure\Crisis\CrisisIncidentResolver {
-            return new \App\Infrastructure\Crisis\CrisisIncidentResolver(dirname(__DIR__, 3));
-        });
-
-        $this->singleton(\App\Infrastructure\OpenGraph\CrisisOgImageService::class, function (): \App\Infrastructure\OpenGraph\CrisisOgImageService {
-            return new \App\Infrastructure\OpenGraph\CrisisOgImageService(
-                dirname(__DIR__, 3),
-                $this->resolve(EntityTypeManager::class),
-                $this->resolve(\App\Infrastructure\OpenGraph\OgImageRenderer::class),
-                $this->resolve(TranslatorInterface::class),
-                $this->resolve(\App\Infrastructure\Crisis\CrisisIncidentResolver::class),
-                new \Waaseyaa\Foundation\Log\NullLogger(),
-            );
-        });
-
         // =====================================================================
         // --- Rate limiting ---
         // =====================================================================
@@ -107,448 +68,6 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
             $dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__, 3) . '/storage/waaseyaa.sqlite';
             return new \App\Infrastructure\RateLimit\SqliteRateLimiter($dbPath);
         });
-
-        // =====================================================================
-        // --- Events ---
-        // =====================================================================
-
-        $this->singleton(
-            \App\Domain\Events\Service\EventFeedRanker::class,
-            fn (): \App\Domain\Events\Service\EventFeedRanker => new \App\Domain\Events\Service\EventFeedRanker(),
-        );
-
-        $this->singleton(
-            \App\Domain\Events\Service\EventFeedBuilder::class,
-            fn (): \App\Domain\Events\Service\EventFeedBuilder => new \App\Domain\Events\Service\EventFeedBuilder(
-                $this->resolve(EntityTypeManager::class),
-                $this->resolve(\App\Domain\Events\Service\EventFeedRanker::class),
-            ),
-        );
-
-        $this->entityType(new EntityType(
-            id: 'event',
-            label: 'Event',
-            class: Event::class,
-            keys: ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
-            tenancy: ['scope' => 'community'],
-            group: 'events',
-            _fieldDefinitions: [
-                'title' => [
-                    'type' => 'string',
-                    'label' => 'Title',
-                    'weight' => 0,
-                ],
-                'type' => [
-                    'type' => 'string',
-                    'label' => 'Type',
-                    'weight' => -1,
-                ],
-                'slug' => [
-                    'type' => 'string',
-                    'label' => 'URL Slug',
-                    'weight' => 1,
-                ],
-                'description' => [
-                    'type' => 'text_long',
-                    'label' => 'Description',
-                    'description' => 'Rich text event description.',
-                    'weight' => 5,
-                ],
-                'location' => [
-                    'type' => 'string',
-                    'label' => 'Location',
-                    'description' => 'Physical location or "online".',
-                    'weight' => 10,
-                ],
-                'community_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Community',
-                    'settings' => ['target_type' => 'community'],
-                    'weight' => 12,
-                ],
-                'starts_at' => [
-                    'type' => 'datetime',
-                    'label' => 'Starts At',
-                    'weight' => 15,
-                ],
-                'ends_at' => [
-                    'type' => 'datetime',
-                    'label' => 'Ends At',
-                    'description' => 'Leave empty for open-ended events.',
-                    'weight' => 16,
-                ],
-                'media_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Featured Image',
-                    'settings' => ['target_type' => 'media'],
-                    'weight' => 20,
-                ],
-                'copyright_status' => [
-                    'type' => 'string',
-                    'label' => 'Copyright Status',
-                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
-                    'default_value' => 'unknown',
-                    'weight' => 99,
-                ],
-                'consent_public' => [
-                    'type' => 'boolean',
-                    'label' => 'Public Consent',
-                    'description' => 'Whether this content may be shown on public pages.',
-                    'weight' => 28,
-                    'default' => 1,
-                ],
-                'consent_ai_training' => [
-                    'type' => 'boolean',
-                    'label' => 'AI Training Consent',
-                    'description' => 'Whether this content may be used for AI training. Default: no.',
-                    'weight' => 29,
-                    'default' => 0,
-                ],
-                'source_url' => [
-                    'type' => 'string',
-                    'label' => 'Source URL',
-                    'description' => 'Canonical URL of the original content (for NC deduplication).',
-                    'weight' => 50,
-                ],
-                'source' => [
-                    'type' => 'string',
-                    'label' => 'Source',
-                    'description' => 'Provenance tag (e.g. manual:russell:2026-03-15).',
-                    'weight' => 95,
-                ],
-                'verified_at' => [
-                    'type' => 'datetime',
-                    'label' => 'Verified At',
-                    'description' => 'When this record was last verified.',
-                    'weight' => 96,
-                ],
-                'status' => [
-                    'type' => 'boolean',
-                    'label' => 'Published',
-                    'weight' => 30,
-                    'default' => 1,
-                ],
-                'created_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Created',
-                    'weight' => 40,
-                ],
-                'updated_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Updated',
-                    'weight' => 41,
-                ],
-            ],
-        ));
-
-        $this->entityType(new EntityType(
-            id: 'event_type',
-            label: 'Event Type',
-            class: EventType::class,
-            keys: ['id' => 'type', 'label' => 'name'],
-            group: 'events',
-        ));
-
-        // =====================================================================
-        // --- Cultural Groups ---
-        // =====================================================================
-
-        $this->entityType(new EntityType(
-            id: 'cultural_group',
-            label: 'Cultural Group',
-            class: CulturalGroup::class,
-            keys: ['id' => 'cgid', 'uuid' => 'uuid', 'label' => 'name'],
-            group: 'community',
-            _fieldDefinitions: [
-                'name' => [
-                    'type' => 'string',
-                    'label' => 'Name',
-                    'weight' => 0,
-                ],
-                'slug' => [
-                    'type' => 'string',
-                    'label' => 'URL Slug',
-                    'weight' => 1,
-                ],
-                'parent_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Parent Group',
-                    'description' => 'Self-referential hierarchy.',
-                    'settings' => ['target_type' => 'cultural_group'],
-                    'weight' => 5,
-                ],
-                'depth_label' => [
-                    'type' => 'string',
-                    'label' => 'Depth Label',
-                    'description' => 'Free-text depth descriptor (nation, tribe, band, clan).',
-                    'weight' => 6,
-                ],
-                'description' => [
-                    'type' => 'text_long',
-                    'label' => 'Description',
-                    'weight' => 10,
-                ],
-                'metadata' => [
-                    'type' => 'text',
-                    'label' => 'Metadata',
-                    'description' => 'JSON blob for extensible properties.',
-                    'weight' => 15,
-                ],
-                'media_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Image',
-                    'settings' => ['target_type' => 'media'],
-                    'weight' => 20,
-                ],
-                'copyright_status' => [
-                    'type' => 'string',
-                    'label' => 'Copyright Status',
-                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
-                    'default_value' => 'unknown',
-                    'weight' => 99,
-                ],
-                'sort_order' => [
-                    'type' => 'integer',
-                    'label' => 'Sort Order',
-                    'description' => 'Manual ordering within siblings.',
-                    'weight' => 25,
-                    'default' => 0,
-                ],
-                'consent_public' => [
-                    'type' => 'boolean',
-                    'label' => 'Public Consent',
-                    'description' => 'Whether this content may be shown on public pages.',
-                    'weight' => 28,
-                    'default' => 1,
-                ],
-                'consent_ai_training' => [
-                    'type' => 'boolean',
-                    'label' => 'AI Training Consent',
-                    'description' => 'Whether this content may be used for AI training. Default: no.',
-                    'weight' => 29,
-                    'default' => 0,
-                ],
-                'status' => [
-                    'type' => 'boolean',
-                    'label' => 'Published',
-                    'weight' => 30,
-                    'default' => 1,
-                ],
-                'created_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Created',
-                    'weight' => 40,
-                ],
-                'updated_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Updated',
-                    'weight' => 41,
-                ],
-            ],
-        ));
-
-        // =====================================================================
-        // --- Teachings ---
-        // =====================================================================
-
-        $this->entityType(new EntityType(
-            id: 'teaching',
-            label: 'Teaching',
-            class: Teaching::class,
-            keys: ['id' => 'tid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
-            tenancy: ['scope' => 'community'],
-            group: 'knowledge',
-            _fieldDefinitions: [
-                'title' => [
-                    'type' => 'string',
-                    'label' => 'Title',
-                    'weight' => 0,
-                ],
-                'type' => [
-                    'type' => 'string',
-                    'label' => 'Type',
-                    'weight' => -1,
-                ],
-                'slug' => [
-                    'type' => 'string',
-                    'label' => 'URL Slug',
-                    'weight' => 1,
-                ],
-                'content' => [
-                    'type' => 'text_long',
-                    'label' => 'Content',
-                    'description' => 'Full teaching content.',
-                    'weight' => 5,
-                ],
-                'cultural_group_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Cultural Group',
-                    'settings' => ['target_type' => 'cultural_group'],
-                    'weight' => 10,
-                ],
-                'community_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Community',
-                    'settings' => ['target_type' => 'community'],
-                    'weight' => 12,
-                ],
-                'tags' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Tags',
-                    'description' => 'Cross-cutting topic tags.',
-                    'settings' => ['target_type' => 'taxonomy_term'],
-                    'weight' => 15,
-                ],
-                'media_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Image',
-                    'settings' => ['target_type' => 'media'],
-                    'weight' => 20,
-                ],
-                'source_url' => [
-                    'type' => 'string',
-                    'label' => 'Source URL',
-                    'description' => 'Canonical URL of the original content (for NC deduplication).',
-                    'weight' => 50,
-                ],
-                'copyright_status' => [
-                    'type' => 'string',
-                    'label' => 'Copyright Status',
-                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
-                    'default_value' => 'unknown',
-                    'weight' => 99,
-                ],
-                'consent_public' => [
-                    'type' => 'boolean',
-                    'label' => 'Public Consent',
-                    'description' => 'Whether this content may be shown on public pages.',
-                    'weight' => 28,
-                    'default' => 1,
-                ],
-                'consent_ai_training' => [
-                    'type' => 'boolean',
-                    'label' => 'AI Training Consent',
-                    'description' => 'Whether this content may be used for AI training. Default: no.',
-                    'weight' => 29,
-                    'default' => 0,
-                ],
-                'status' => [
-                    'type' => 'boolean',
-                    'label' => 'Published',
-                    'weight' => 30,
-                    'default' => 1,
-                ],
-                'created_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Created',
-                    'weight' => 40,
-                ],
-                'updated_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Updated',
-                    'weight' => 41,
-                ],
-            ],
-        ));
-
-        $this->entityType(new EntityType(
-            id: 'teaching_type',
-            label: 'Teaching Type',
-            class: TeachingType::class,
-            keys: ['id' => 'type', 'label' => 'name'],
-            group: 'knowledge',
-        ));
-
-        // =====================================================================
-        // --- Cultural Collections ---
-        // =====================================================================
-
-        $this->entityType(new EntityType(
-            id: 'cultural_collection',
-            label: 'Cultural Collection',
-            class: CulturalCollection::class,
-            keys: ['id' => 'ccid', 'uuid' => 'uuid', 'label' => 'title'],
-            group: 'knowledge',
-            _fieldDefinitions: [
-                'title' => [
-                    'type' => 'string',
-                    'label' => 'Title',
-                    'weight' => 0,
-                ],
-                'slug' => [
-                    'type' => 'string',
-                    'label' => 'URL Slug',
-                    'weight' => 1,
-                ],
-                'description' => [
-                    'type' => 'text_long',
-                    'label' => 'Description',
-                    'description' => 'Cultural context and significance.',
-                    'weight' => 5,
-                ],
-                'gallery' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Gallery',
-                    'description' => 'Gallery category (taxonomy term).',
-                    'settings' => ['target_type' => 'taxonomy_term'],
-                    'weight' => 10,
-                ],
-                'source_url' => [
-                    'type' => 'uri',
-                    'label' => 'Source URL',
-                    'description' => 'Original URL from ojibwe.lib.umn.edu.',
-                    'weight' => 15,
-                ],
-                'source_attribution' => [
-                    'type' => 'string',
-                    'label' => 'Source Attribution',
-                    'weight' => 16,
-                ],
-                'media_id' => [
-                    'type' => 'entity_reference',
-                    'label' => 'Primary Image',
-                    'settings' => ['target_type' => 'media'],
-                    'weight' => 20,
-                ],
-                'copyright_status' => [
-                    'type' => 'string',
-                    'label' => 'Copyright Status',
-                    'description' => 'Media copyright status: community_owned, cc_by_nc_sa, requires_permission, unknown.',
-                    'default_value' => 'unknown',
-                    'weight' => 99,
-                ],
-                'consent_public' => [
-                    'type' => 'boolean',
-                    'label' => 'Public Consent',
-                    'description' => 'Whether this content may be shown on public pages.',
-                    'weight' => 28,
-                    'default' => 1,
-                ],
-                'consent_ai_training' => [
-                    'type' => 'boolean',
-                    'label' => 'AI Training Consent',
-                    'description' => 'Whether this content may be used for AI training. Default: no.',
-                    'weight' => 29,
-                    'default' => 0,
-                ],
-                'status' => [
-                    'type' => 'boolean',
-                    'label' => 'Published',
-                    'weight' => 30,
-                    'default' => 1,
-                ],
-                'created_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Created',
-                    'weight' => 40,
-                ],
-                'updated_at' => [
-                    'type' => 'timestamp',
-                    'label' => 'Updated',
-                    'weight' => 41,
-                ],
-            ],
-        ));
 
         // =====================================================================
         // --- Language ---
@@ -590,6 +109,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'english_text' => ['type' => 'string', 'label' => 'English Translation', 'weight' => 5],
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 10],
                 'contributor_id' => ['type' => 'entity_reference', 'label' => 'Contributor', 'settings' => ['target_type' => 'contributor'], 'weight' => 15],
+                'speaker_id' => ['type' => 'entity_reference', 'label' => 'Speaker', 'settings' => ['target_type' => 'speaker'], 'weight' => 16],
                 'audio_url' => ['type' => 'uri', 'label' => 'Audio URL', 'weight' => 20],
                 'source_sentence_id' => ['type' => 'string', 'label' => 'Source Sentence ID', 'description' => 'Unique ID from source for dedup across re-crawls.', 'weight' => 22],
                 'language_code' => ['type' => 'string', 'label' => 'Language Code', 'weight' => 25, 'default' => 'oj'],
@@ -628,6 +148,8 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'code' => ['type' => 'string', 'label' => 'Code', 'weight' => 1],
                 'bio' => ['type' => 'text', 'label' => 'Biography', 'weight' => 5],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 6],
+                'dialect_region_id' => ['type' => 'entity_reference', 'label' => 'Dialect Region', 'settings' => ['target_type' => 'dialect_region'], 'weight' => 10],
+                'community' => ['type' => 'string', 'label' => 'Community', 'description' => 'Home community, free text as the speaker states it.', 'weight' => 11],
                 'consent_public_display' => ['type' => 'boolean', 'label' => 'Public Display Consent', 'description' => 'Whether this speaker may be shown on public pages.', 'weight' => 28, 'default' => 1],
                 'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this speaker data may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
@@ -635,45 +157,6 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
         ));
-
-        $this->singleton(MapperRegistry::class, function (): MapperRegistry {
-            $registry = new MapperRegistry();
-            $registry->register(new NcArticleToTeachingMapper());
-            $registry->register(new NcArticleToEventMapper());
-
-            return $registry;
-        });
-
-        $this->singleton(PackageNorthCloudClient::class, function (): PackageNorthCloudClient {
-            $ncConfig = $this->config['northcloud'] ?? [];
-            $baseUrl = rtrim((string) ($ncConfig['base_url'] ?? 'https://api.northcloud.one'), '/');
-            $timeout = (int) ($ncConfig['timeout'] ?? 5);
-            $apiToken = (string) ($ncConfig['api_token'] ?? '');
-
-            return new PackageNorthCloudClient(
-                baseUrl: $baseUrl,
-                timeout: $timeout,
-                apiToken: $apiToken,
-                allowInsecure: $this->shouldAllowInsecureNorthCloudUrl($baseUrl),
-            );
-        });
-
-        $this->singleton(
-            NorthCloudCommunityDictionaryClientInterface::class,
-            function (): NorthCloudCommunityDictionaryClientInterface {
-                return new NorthCloudCommunityDictionaryClient(
-                    client: $this->resolve(PackageNorthCloudClient::class),
-                );
-            },
-        );
-
-        $this->singleton(NcSyncService::class, function (): NcSyncService {
-            return new NcSyncService(
-                $this->resolve(PackageNorthCloudClient::class),
-                $this->resolve(EntityTypeManager::class),
-                $this->resolve(MapperRegistry::class),
-            );
-        });
 
         // MCP auth: bind BearerTokenAuth with tokens from config.
         // Tokens map bearer token string → AccountInterface. Empty by default
@@ -768,22 +251,5 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 ],
             ],
         ));
-
-        // =====================================================================
-        // --- Search ---
-        // =====================================================================
-
-        $searchConfig = $this->config['search'] ?? [];
-
-        $this->searchProvider = new NorthCloudSearchProvider(
-            client: new PackageNorthCloudClient(
-                baseUrl: (string) ($searchConfig['base_url'] ?? 'https://northcloud.one'),
-                timeout: (int) ($searchConfig['timeout'] ?? 5),
-                allowInsecure: $this->shouldAllowInsecureNorthCloudUrl((string) ($searchConfig['base_url'] ?? 'https://northcloud.one')),
-            ),
-            cacheTtl: (int) ($searchConfig['cache_ttl'] ?? 60),
-        );
-
-        $this->singleton(SearchProviderInterface::class, fn (): SearchProviderInterface => $this->searchProvider);
     }
 }

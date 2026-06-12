@@ -6,7 +6,6 @@ namespace App\Http\Controller\Language;
 
 use App\Entity\Language\DictionaryEntry;
 use App\Http\View\LayoutTwigContext;
-use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -22,7 +21,6 @@ final class LanguageController
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
-        private readonly NorthCloudCommunityDictionaryClientInterface $northCloudClient,
     ) {
     }
 
@@ -92,10 +90,37 @@ final class LanguageController
         $searchTotal = 0;
 
         if ($q !== '') {
-            $response = $this->northCloudClient->searchDictionary($q);
-            if ($response !== null) {
-                $searchResults = array_map($this->normalizeSearchResult(...), $response['entries']);
-                $searchTotal = $response['total'];
+            // Local dictionary search (2026-06 slimming replaced the
+            // NorthCloud-backed search). Word matches rank before
+            // definition matches; both respect status + consent gates.
+            $storage = $this->entityTypeManager->getStorage('dictionary_entry');
+            $like = '%' . addcslashes($q, '%_\\') . '%';
+
+            $wordIds = $storage->getQuery()->setAccount($account)
+                ->condition('status', 1)
+                ->condition('consent_public', 1)
+                ->condition('word', $like, 'LIKE')
+                ->sort('word', 'ASC')
+                ->execute();
+
+            $definitionIds = $storage->getQuery()->setAccount($account)
+                ->condition('status', 1)
+                ->condition('consent_public', 1)
+                ->condition('definition', $like, 'LIKE')
+                ->sort('word', 'ASC')
+                ->execute();
+
+            $ids = array_values(array_unique(array_merge($wordIds, $definitionIds)));
+            $searchTotal = count($ids);
+            $entries = $ids !== [] ? $storage->loadMultiple(array_slice($ids, 0, self::PAGE_SIZE)) : [];
+
+            foreach ($entries as $entry) {
+                $searchResults[] = $this->normalizeSearchResult([
+                    'word' => (string) $entry->get('word'),
+                    'slug' => (string) $entry->get('slug'),
+                    'definitions' => (string) $entry->get('definition'),
+                    'part_of_speech' => (string) $entry->get('part_of_speech'),
+                ]);
             }
         }
 

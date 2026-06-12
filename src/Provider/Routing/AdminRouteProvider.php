@@ -12,6 +12,7 @@ use Waaseyaa\AdminSurface\Host\GenericAdminSurfaceHost;
 use Waaseyaa\Api\Schema\SchemaPresenter;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\Kernel\Bootstrap\AccessPolicyRegistry;
+use Waaseyaa\Foundation\Kernel\Bootstrap\KernelPolicyDependencyResolver;
 use Waaseyaa\Foundation\Kernel\Bootstrap\ManifestBootstrapper;
 use Waaseyaa\Foundation\Log\LoggerInterface;
 use Waaseyaa\Routing\RouteBuilder;
@@ -21,88 +22,11 @@ final class AdminRouteProvider extends AppCoreServiceProvider
 {
     public function routes(WaaseyaaRouter $router, ?EntityTypeManager $entityTypeManager = null): void
     {
-        // =====================================================================
-        // --- Dashboard ---
-        // =====================================================================
-
-        $router->addRoute(
-            'dashboard.volunteer',
-            RouteBuilder::create('/dashboard/volunteer')
-                ->controller('App\Http\Controller\Dashboard\VolunteerDashboardController::index')
-                ->requireRole('volunteer')
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'dashboard.volunteer.edit',
-            RouteBuilder::create('/dashboard/volunteer/edit')
-                ->controller('App\Http\Controller\Dashboard\VolunteerDashboardController::editForm')
-                ->requireRole('volunteer')
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'dashboard.volunteer.edit.submit',
-            RouteBuilder::create('/dashboard/volunteer/edit')
-                ->controller('App\Http\Controller\Dashboard\VolunteerDashboardController::submitEdit')
-                ->requireRole('volunteer')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'dashboard.volunteer.toggle',
-            RouteBuilder::create('/dashboard/volunteer/toggle-availability')
-                ->controller('App\Http\Controller\Dashboard\VolunteerDashboardController::toggleAvailability')
-                ->requireRole('volunteer')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'dashboard.coordinator',
-            RouteBuilder::create('/dashboard/coordinator')
-                ->controller('App\Http\Controller\Dashboard\CoordinatorDashboardController::index')
-                ->requireRole('elder_coordinator')
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'dashboard.coordinator.applications',
-            RouteBuilder::create('/dashboard/coordinator/applications')
-                ->controller('App\Http\Controller\Dashboard\CoordinatorDashboardController::applications')
-                ->requireRole('elder_coordinator')
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'dashboard.coordinator.applications.approve',
-            RouteBuilder::create('/dashboard/coordinator/applications/{uuid}/approve')
-                ->controller('App\Http\Controller\Dashboard\CoordinatorDashboardController::approveApplication')
-                ->requireRole('elder_coordinator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'dashboard.coordinator.applications.deny',
-            RouteBuilder::create('/dashboard/coordinator/applications/{uuid}/deny')
-                ->controller('App\Http\Controller\Dashboard\CoordinatorDashboardController::denyApplication')
-                ->requireRole('elder_coordinator')
-                ->methods('POST')
-                ->build(),
-        );
+        // Language-platform slimming (2026-06): volunteer/coordinator
+        // dashboards and the newsletter admin API removed.
 
         // =====================================================================
-        // --- Staff tools (SSR) — under /staff and /api/staff (not /admin/*) ---
+        // --- Staff tools (SSR) - under /staff and /api/staff (not /admin/*) ---
         // --- so they never collide with the admin-surface /admin/{path} SPA. ---
         // =====================================================================
 
@@ -189,16 +113,6 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         // =====================================================================
 
         $router->addRoute(
-            'dashboard.coordinator.users',
-            RouteBuilder::create('/dashboard/coordinator/users')
-                ->controller('App\Http\Controller\Dashboard\RoleManagementController::coordinatorList')
-                ->requireRole('elder_coordinator')
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
             'staff.users',
             RouteBuilder::create('/staff/users')
                 ->controller('App\Http\Controller\Dashboard\RoleManagementController::adminList')
@@ -221,129 +135,9 @@ final class AdminRouteProvider extends AppCoreServiceProvider
         // --- Admin ---
         // =====================================================================
 
-        // Newsletter Admin API — registered BEFORE AdminSurface catch-all
+        // Newsletter admin API + builder SPA removed in the 2026-06 slimming.
 
-        $router->addRoute(
-            'newsletter.admin.list',
-            RouteBuilder::create('/admin/api/newsletter')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::listEditions')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.create',
-            RouteBuilder::create('/admin/api/newsletter')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::createEdition')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.entity_search',
-            RouteBuilder::create('/admin/api/newsletter/entity-search')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::entitySearch')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.get',
-            RouteBuilder::create('/admin/api/newsletter/{id}')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::getEdition')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.add_item',
-            RouteBuilder::create('/admin/api/newsletter/{id}/items')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::addItem')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.remove_item',
-            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::removeItem')
-                ->requireRole('administrator')
-                ->methods('DELETE')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.reorder_item',
-            RouteBuilder::create('/admin/api/newsletter/{id}/items/{itemId}/reorder')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::reorderItem')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.preview_token',
-            RouteBuilder::create('/admin/api/newsletter/{id}/preview-token')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::previewToken')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.generate',
-            RouteBuilder::create('/admin/api/newsletter/{id}/generate')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::generate')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.download',
-            RouteBuilder::create('/admin/api/newsletter/{id}/download')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::download')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.send',
-            RouteBuilder::create('/admin/api/newsletter/{id}/send')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::send')
-                ->requireRole('administrator')
-                ->methods('POST')
-                ->build(),
-        );
-
-        // Newsletter Builder SPA — before AdminSurface catch-all
-
-        $router->addRoute(
-            'newsletter.admin.spa',
-            RouteBuilder::create('/admin/newsletter')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::spaFallback')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'newsletter.admin.spa.catchall',
-            RouteBuilder::create('/admin/newsletter/{path}')
-                ->controller('App\\Http\\Controller\\Newsletter\\NewsletterAdminApiController::spaFallback')
-                ->requireRole('administrator')
-                ->methods('GET')
-                ->requirement('path', '.*')
-                ->build(),
-        );
-
-        // AdminSurface generic CRUD (static call — _surface API routes only)
+        // AdminSurface generic CRUD (static call - _surface API routes only)
         // Package `AdminSurfaceServiceProvider` also registers these from the manifest;
         // strip its routes so Minoo can register the same names with a custom host.
 
@@ -355,10 +149,18 @@ final class AdminRouteProvider extends AppCoreServiceProvider
             // guard). The host populates $currentAccount via resolveSession() at request time,
             // so we must also pass a real EntityAccessHandler at construction. The framework's
             // kernel does not expose its handler to providers via KernelServices, so replay
-            // the same discovery here (idempotent — same policies as the kernel uses).
+            // the same discovery here (idempotent - same policies as the kernel uses).
+            // alpha.189+ ships policies with service dependencies (e.g.
+            // ClassificationFieldAccessPolicy), so the replay needs the
+            // kernel-services-backed resolver, not the null default.
             $logger = $this->resolve(LoggerInterface::class);
             $manifest = (new ManifestBootstrapper())->boot(dirname(__DIR__, 3));
-            $accessHandler = (new AccessPolicyRegistry($logger))->discover($manifest);
+            $resolver = $this->kernelServices !== null
+                ? new KernelPolicyDependencyResolver($this->kernelServices)
+                : null;
+            $accessHandler = $resolver !== null
+                ? (new AccessPolicyRegistry($logger, $resolver))->discover($manifest)
+                : (new AccessPolicyRegistry($logger))->discover($manifest);
 
             $host = new GenericAdminSurfaceHost(
                 entityTypeManager: $entityTypeManager,

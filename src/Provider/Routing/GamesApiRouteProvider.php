@@ -297,25 +297,6 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
-        $router->addRoute(
-            'games.guess_price',
-            RouteBuilder::create('/games/guess-price')
-                ->controller('App\\Http\\Controller\\Games\\GuessPriceController::page')
-                ->allowAll()
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'games.guess_price.trailing_redirect',
-            RouteBuilder::create('/games/guess-price/')
-                ->controller(static fn (): Response => new RedirectResponse('/games/guess-price', Response::HTTP_PERMANENTLY_REDIRECT))
-                ->allowAll()
-                ->methods('GET', 'HEAD')
-                ->build(),
-        );
-
         // --- Journey routes ---
 
         $router->addRoute(

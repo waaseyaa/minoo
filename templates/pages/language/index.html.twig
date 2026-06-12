@@ -1,4 +1,4 @@
-{% extends "layouts/base.html.twig" %}
+﻿{% extends "layouts/base.html.twig" %}
 
 {% block title %}{{ trans('language.title') }} — Minoo{% endblock %}
 
@@ -47,7 +47,7 @@
       {% include "components/shared/feedback/empty-state.html.twig" with {
         heading: trans('language.empty_heading'),
         body: trans('language.empty_body'),
-        action_url: lang_url('/teachings'),
+        action_url: lang_url('/games'),
         action_label: trans('language.explore_teachings')
       } %}
     {% endif %}

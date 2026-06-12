@@ -40,27 +40,9 @@ final class StaticPageController
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function elders(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/elders/index.html.twig', '/elders', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function games(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/games/index.html.twig', '/games', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function getInvolved(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/static/get-involved.html.twig', '/get-involved', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function howItWorks(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/static/how-it-works.html.twig', '/how-it-works', $account);
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
@@ -82,18 +64,6 @@ final class StaticPageController
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function messages(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/static/messages.html.twig', '/messages', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function safety(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/static/safety.html.twig', '/safety', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function search(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/search/index.html.twig', '/search', $account);
@@ -103,12 +73,6 @@ final class StaticPageController
     public function studio(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/static/studio.html.twig', '/studio', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function volunteer(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/static/volunteer.html.twig', '/volunteer', $account);
     }
 
     private function render(string $template, string $path, AccountInterface $account): Response

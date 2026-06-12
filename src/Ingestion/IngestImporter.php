@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Ingestion;
 
 use App\Entity\Ingestion\IngestLog;
-use App\Ingestion\EntityMapper\CulturalCollectionMapper;
 use App\Ingestion\EntityMapper\DictionaryEntryMapper;
-use App\Ingestion\EntityMapper\LeaderMapper;
 use App\Ingestion\EntityMapper\SpeakerMapper;
 
 final class IngestImporter
@@ -34,8 +32,6 @@ final class IngestImporter
             'dictionary_entry' => (new DictionaryEntryMapper())->map($data, $sourceUrl),
             'speaker' => (new SpeakerMapper())->map($data),
             'contributor' => (new SpeakerMapper())->map($data),
-            'cultural_collection' => (new CulturalCollectionMapper())->map($data, $sourceUrl),
-            'leader' => (new LeaderMapper())->map($data, (string) ($data['community_id'] ?? '')),
             default => throw new \LogicException(
                 sprintf('No mapper registered for validated entity type: %s', $entityType),
             ),

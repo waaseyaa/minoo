@@ -12,8 +12,6 @@ final class PayloadValidator
         'dictionary_entry',
         'speaker',
         'contributor',
-        'cultural_collection',
-        'leader',
     ];
 
     private const array REQUIRED_ENVELOPE_FIELDS = [
@@ -73,13 +71,6 @@ final class PayloadValidator
         if ($envelope['entity_type'] === 'contributor') {
             $errors = [...$errors, ...$this->validateSpeaker($envelope['data'])];
         }
-        if ($envelope['entity_type'] === 'cultural_collection') {
-            $errors = [...$errors, ...$this->validateCulturalCollection($envelope['data'])];
-        }
-        if ($envelope['entity_type'] === 'leader') {
-            $errors = [...$errors, ...$this->validateLeader($envelope['data'])];
-        }
-
         return new ValidationResult($errors);
     }
 
@@ -110,38 +101,6 @@ final class PayloadValidator
 
         if (empty($data['code'])) {
             $errors[] = 'Speaker requires code.';
-        }
-
-        return $errors;
-    }
-
-    /** @return list<string> */
-    private function validateCulturalCollection(array $data): array
-    {
-        $errors = [];
-
-        if (empty($data['title'])) {
-            $errors[] = 'Cultural collection requires title.';
-        }
-
-        return $errors;
-    }
-
-    /** @return list<string> */
-    private function validateLeader(array $data): array
-    {
-        $errors = [];
-
-        if (empty($data['name'])) {
-            $errors[] = 'Leader requires name.';
-        }
-
-        if (empty($data['role'])) {
-            $errors[] = 'Leader requires role.';
-        }
-
-        if (empty($data['community_id'])) {
-            $errors[] = 'Leader requires community_id.';
         }
 
         return $errors;

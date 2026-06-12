@@ -16,14 +16,6 @@ use Waaseyaa\Entity\EntityTypeManager;
 #[CoversClass(HomeController::class)]
 final class HomeControllerTest extends TestCase
 {
-    private function createEntityTypeManager(): EntityTypeManager
-    {
-        $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('hasDefinition')->willReturn(false);
-
-        return $etm;
-    }
-
     private function createAccount(bool $authenticated): AccountInterface
     {
         $account = $this->createMock(AccountInterface::class);
@@ -36,15 +28,15 @@ final class HomeControllerTest extends TestCase
     public function anonymous_user_sees_homepage(): void
     {
         $twig = $this->createMock(Environment::class);
-        $etm = $this->createEntityTypeManager();
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getStorage')->willThrowException(new \RuntimeException('No table'));
 
         $twig->expects($this->once())
             ->method('render')
             ->with('pages/home/index.html.twig', $this->callback(function (array $ctx): bool {
                 return $ctx['path'] === '/'
                     && array_key_exists('featured', $ctx)
-                    && array_key_exists('events', $ctx)
-                    && array_key_exists('teachings', $ctx);
+                    && array_key_exists('entry_count', $ctx);
             }))
             ->willReturn('<html>homepage</html>');
 
@@ -56,26 +48,27 @@ final class HomeControllerTest extends TestCase
     }
 
     #[Test]
-    public function authenticated_user_is_redirected_to_feed(): void
+    public function authenticated_user_sees_homepage_too(): void
     {
         $twig = $this->createMock(Environment::class);
-        $etm = $this->createEntityTypeManager();
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getStorage')->willThrowException(new \RuntimeException('No table'));
 
-        $twig->expects($this->never())->method('render');
+        $twig->expects($this->once())
+            ->method('render')
+            ->willReturn('<html>homepage</html>');
 
         $controller = new HomeController($etm, $twig);
         $response = $controller->index([], [], $this->createAccount(true), HttpRequest::create('/'));
 
-        $this->assertSame(302, $response->getStatusCode());
-        $this->assertSame('/feed', $response->headers->get('Location'));
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     #[Test]
-    public function homepage_passes_empty_arrays_when_storage_unavailable(): void
+    public function homepage_passes_empty_defaults_when_storage_unavailable(): void
     {
         $twig = $this->createMock(Environment::class);
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('hasDefinition')->willReturn(false);
         $etm->method('getStorage')->willThrowException(new \RuntimeException('No table'));
 
         $capturedContext = null;
@@ -93,7 +86,6 @@ final class HomeControllerTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame([], $capturedContext['featured']);
-        $this->assertSame([], $capturedContext['events']);
-        $this->assertSame([], $capturedContext['teachings']);
+        $this->assertSame(0, $capturedContext['entry_count']);
     }
 }

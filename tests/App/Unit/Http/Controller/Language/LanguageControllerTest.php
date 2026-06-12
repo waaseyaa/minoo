@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Http\Controller\Language;
 
 use App\Entity\Language\DictionaryEntry;
 use App\Http\Controller\Language\LanguageController;
-use App\Infrastructure\NorthCloud\NorthCloudCommunityDictionaryClientInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +22,6 @@ final class LanguageControllerTest extends TestCase
 {
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
-    private NorthCloudCommunityDictionaryClientInterface $northCloudClient;
     private EntityStorageInterface $storage;
     private EntityQueryInterface $query;
     private AccountInterface $account;
@@ -50,8 +48,6 @@ final class LanguageControllerTest extends TestCase
             'pages/language/show.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
             'pages/language/search.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
         ]));
-
-        $this->northCloudClient = $this->createMock(NorthCloudCommunityDictionaryClientInterface::class);
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
     }
@@ -67,7 +63,7 @@ final class LanguageControllerTest extends TestCase
             ->with([1, 2])
             ->willReturn([1 => $makwa, 2 => $miigwech]);
 
-        $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -80,7 +76,7 @@ final class LanguageControllerTest extends TestCase
     {
         $this->query->method('execute')->willReturn([]);
 
-        $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -100,7 +96,7 @@ final class LanguageControllerTest extends TestCase
             ->with([1])
             ->willReturn([1 => $entry]);
 
-        $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -126,7 +122,7 @@ final class LanguageControllerTest extends TestCase
             ->with(1)
             ->willReturn($entry);
 
-        $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'makwa'], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -140,7 +136,7 @@ final class LanguageControllerTest extends TestCase
     {
         $this->query->method('execute')->willReturn([]);
 
-        $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'nonexistent'], [], $this->account, $this->request);
 
         $this->assertSame(404, $response->getStatusCode());
@@ -162,7 +158,7 @@ final class LanguageControllerTest extends TestCase
             ->with(1)
             ->willReturn($entry);
 
-        $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'makwa'], [], $this->account, $this->request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -176,7 +172,7 @@ final class LanguageControllerTest extends TestCase
         // so an empty result set gives a 404.
         $this->query->method('execute')->willReturn([]);
 
-        $controller = new LanguageController($this->entityTypeManager, $this->twig, $this->northCloudClient);
+        $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->show(['slug' => 'secret-word'], [], $this->account, $this->request);
 
         $this->assertSame(404, $response->getStatusCode());

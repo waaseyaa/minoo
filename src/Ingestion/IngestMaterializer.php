@@ -46,7 +46,6 @@ final class IngestMaterializer
         return match ($entityType) {
             'dictionary_entry' => $this->materializeDictionaryEntry($parsedFields, $data, $context, $result, $dryRun),
             'speaker', 'contributor' => $this->materializeSpeaker($parsedFields, $result, $dryRun),
-            'cultural_collection' => $this->materializeCulturalCollection($parsedFields, $result, $dryRun),
             default => throw new \InvalidArgumentException(
                 sprintf('Cannot materialize unsupported entity type: %s', $entityType),
             ),
@@ -153,21 +152,6 @@ final class IngestMaterializer
         return $result;
     }
 
-    private function materializeCulturalCollection(array $parsedFields, MaterializationResult $result, bool $dryRun): MaterializationResult
-    {
-        if ($dryRun) {
-            $result->addCreated('cultural_collection', $parsedFields);
-            return $result;
-        }
-
-        $storage = $this->entityTypeManager->getStorage('cultural_collection');
-        $entity = $storage->create($parsedFields);
-        $storage->save($entity);
-        $result->addCreated('cultural_collection', $parsedFields, (int) $entity->id());
-        $result->setPrimaryEntityId((int) $entity->id());
-
-        return $result;
-    }
 
     private function getOrCreateSpeaker(string $code, array $fields): int
     {

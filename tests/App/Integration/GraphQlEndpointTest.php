@@ -60,59 +60,12 @@ final class GraphQlEndpointTest extends TestCase
     }
 
     #[Test]
-    public function post_entity_type_is_registered(): void
-    {
-        self::assertTrue(self::$entityTypeManager->hasDefinition('post'), 'Post entity type must be registered');
-    }
-
-    #[Test]
     public function authenticated_user_can_query_schema(): void
     {
         $result = $this->buildEndpoint()->handle('POST', json_encode(['query' => '{ __typename }']), []);
         self::assertSame(200, $result['statusCode']);
         self::assertArrayHasKey('data', $result['body']);
         self::assertSame('Query', $result['body']['data']['__typename']);
-    }
-
-    #[Test]
-    public function post_mutations_exist_in_schema(): void
-    {
-        $result = $this->buildEndpoint()->handle('POST', json_encode([
-            'query' => '{ __schema { mutationType { fields { name } } } }',
-        ]), []);
-        self::assertSame(200, $result['statusCode']);
-        $fieldNames = array_column($result['body']['data']['__schema']['mutationType']['fields'], 'name');
-        self::assertContains('createPost', $fieldNames);
-        self::assertContains('updatePost', $fieldNames);
-        self::assertContains('deletePost', $fieldNames);
-    }
-
-    #[Test]
-    public function delete_post_mutation_accepts_id_arg(): void
-    {
-        $result = $this->buildEndpoint()->handle('POST', json_encode([
-            'query' => '{ __type(name: "Mutation") { fields { name args { name type { name kind ofType { name } } } } } }',
-        ]), []);
-        self::assertSame(200, $result['statusCode']);
-        $fields = $result['body']['data']['__type']['fields'];
-        $deletePost = array_values(array_filter($fields, fn ($f) => $f['name'] === 'deletePost'));
-        self::assertNotEmpty($deletePost, 'deletePost mutation should exist');
-        self::assertSame('id', $deletePost[0]['args'][0]['name']);
-    }
-
-    #[Test]
-    public function update_post_mutation_accepts_id_and_input(): void
-    {
-        $result = $this->buildEndpoint()->handle('POST', json_encode([
-            'query' => '{ __type(name: "Mutation") { fields { name args { name type { name kind ofType { name } } } } } }',
-        ]), []);
-        self::assertSame(200, $result['statusCode']);
-        $fields = $result['body']['data']['__type']['fields'];
-        $updatePost = array_values(array_filter($fields, fn ($f) => $f['name'] === 'updatePost'));
-        self::assertNotEmpty($updatePost, 'updatePost mutation should exist');
-        $argNames = array_column($updatePost[0]['args'], 'name');
-        self::assertContains('id', $argNames);
-        self::assertContains('input', $argNames);
     }
 
     #[Test]
