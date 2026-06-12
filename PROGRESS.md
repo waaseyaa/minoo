@@ -30,6 +30,14 @@ Full report: docs/lineage-report.md. Highlights:
 - Packages removed: geoip2, engagement, genealogy, geo, groups, mercure, messaging, northcloud, queue (northcloud + queue remain only as framework transitive deps; no app wiring, no workers).
 - Gates: phpunit OK (345 tests, 914 assertions), phpstan clean (baseline regenerated: 5 carried findings), cs-fixer applied, bin/smoke-test rewritten and passing (27/28; the 1 expected failure is dictionary count on an empty in-memory DB).
 
+## Phase 3 - data restore (done)
+- Backup copied (read-only source untouched) to storage/waaseyaa.sqlite (19.7 MB, prod state 2026-05-20).
+- COUNTS VERIFIED post-restore: dictionary_entry 21721 OK, user 4 OK, game_session 118 OK. (Smoke testing then created 14 practice sessions; pruned back to exactly 118 via scripts/prune-smoke-sessions.php.)
+- New tables created: speaker, word_part, contributor, dialect_region (contributor ALSO never existed in prod - example_sentence is 0 rows). Migration file migrations/20260612_160000_create_language_domain_tables.php for fresh installs; applied to the restored DB via scripts/restore-language-tables.php.
+- Migration bookkeeping repaired: prod recorded only 12 of ~20 applied migrations, and alpha.208 attributes the app migrations dir to a DIFFERENT waaseyaa package on every boot (discovery quirk; upstream candidate). Backfilled waaseyaa_migrations under app + all 51 waaseyaa/* namespaces so `bin/waaseyaa migrate` is a deterministic no-op. NEVER run migrate against this DB without checking migrate:status first.
+- alpha.208 boot auto-created audit_event, audit_retention_policy, agent_run tables and additive columns in the restored DB - expected alpha.205 behavior, additive only.
+- Games smoke-tested against restored data: bin/smoke-test 37/37 (pages + data APIs for shkoda, matcher, agim, crossword, journey; agim/prompt correctly 422 without session token). Dormant tables untouched.
+
 ## Decisions
 - (running list, newest last)
 - D1: gh repo clone hung; switched to plain git clone. (Phase 0)

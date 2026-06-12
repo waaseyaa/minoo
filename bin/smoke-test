@@ -98,6 +98,17 @@ $routes = [
     '/register' => 200,
     '/about' => 200,
     '/data-sovereignty' => 200,
+    // Game data APIs - exercise the restored dictionary/puzzle data.
+    '/api/games/shkoda/daily' => 200,
+    '/api/games/shkoda/word' => 200,
+    '/api/games/matcher/daily' => 200,
+    '/api/games/matcher/practice' => 200,
+    '/api/games/agim/start' => 200,
+    // prompt without a session_token correctly rejects with 422.
+    '/api/games/agim/prompt' => 422,
+    '/api/games/crossword/daily' => 200,
+    '/api/games/crossword/random' => 200,
+    '/api/games/journey/scenes' => 200,
 ];
 
 foreach ($routes as $uri => $expected) {
