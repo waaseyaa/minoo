@@ -49,6 +49,13 @@ Full report: docs/lineage-report.md. Highlights:
 - example_sentence gained consent_public, consent_ai_training, source_url, source_date, provenance field definitions.
 - Import idempotent (re-run: 27 skipped). Suite still green (345 tests).
 
+## Phase 5 - deploy (done on the Pi; public cutover blocked on Cloudflare access)
+- waaseyaa/minoo main pushed (merge 9719d1f); infra in jonesrussell/waaseyaa-infra: compose/minoo Dockerfile (multi-stage, MINOO_REF pin, ext-gmp for the sendgrid dep), minoo-app service with own minoo_storage/minoo_files/minoo_public volumes, Caddy php_fastcgi block for minoo.live + www, deploy-minoo.yml CI (Tailscale -> Pi), runbook 06.
+- Database: restored+corpus sqlite seeded into the minoo_storage volume (chown 82), THEN CI db:init (idempotent no-op thanks to the Phase 3 backfill). Static placeholder container removed; caddy force-recreated (twice: new site block, then cache-header fix).
+- VERIFIED on the Pi through the full cloudflared-side path (Host: minoo.live -> caddy -> php-fpm): / 200, /language 200 (21,721-entry list), /language/search?q=makwa 200, /games 200, shkoda daily API returns a real challenge from restored data; corpus example_sentence and speaker return 404 to anonymous API requests; HTML Cache-Control: no-cache (enforced at Caddy because the app's WAASEYAA_SSR_CACHE_MAX_AGE=0 override has a falsy-string bug - upstream candidate), static assets immutable max-age=1y. Sibling sites (oiatc.ca, fnprocure.ca) verified unaffected.
+- Secrets: compose/minoo/secrets/minoo.env on the Pi only (oiatc:oiatc 0600); SENDGRID key + mail identity carried over from the razor-crest backup .env; fresh JWT secret. Nothing secret committed.
+- BLOCKED (needs Russell, ~5 minutes): minoo.live's nameservers still point at Spaceship and the zone is NOT in the Cloudflare account; no CF API token exists on the Pi or in the infra repo, so I cannot do this. Steps (also in waaseyaa-infra/runbooks/06-minoo-deploy.md): 1) Cloudflare -> Add site -> minoo.live; 2) at Spaceship, set the two Cloudflare nameservers; 3) Zero Trust -> Tunnels -> oiatc-pi -> Public Hostnames: add minoo.live AND www.minoo.live -> HTTP -> caddy:80. No Cache-Everything rule. The site goes live the moment step 3 saves.
+
 ## Decisions
 - (running list, newest last)
 - D1: gh repo clone hung; switched to plain git clone. (Phase 0)
