@@ -62,9 +62,16 @@ final class HomeController
 
         $items = [];
         foreach ($storage->loadMultiple($ids) as $entity) {
+            $headline = trim((string) ($entity->get('headline') ?? ''));
+            if ($headline === '') {
+                // Skip placeholder featured items with no headline so the
+                // homepage never renders an empty card (#804). A real
+                // featured-content pipeline replaces these later.
+                continue;
+            }
             $entityType = $entity->get('entity_type') ?? 'dictionary_entry';
             $items[] = [
-                'headline' => $entity->get('headline') ?? '',
+                'headline' => $headline,
                 'subheadline' => $entity->get('subheadline') ?? '',
                 'entity_type' => $entityType,
                 'url' => '/language',

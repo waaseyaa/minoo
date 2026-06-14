@@ -172,7 +172,7 @@ return [
 
     // Events
     'events.title' => 'Events',
-    'events.near_location' => 'Events across Turtle Island',
+    'events.near_location' => 'Events on the north shore of Lake Huron',
     'events.add_to_calendar' => 'Add to calendar',
     'events.subtitle' => 'Powwows, ceremonies, and community gatherings happening across the region.',
     'events.empty_heading' => 'No events scheduled yet',
@@ -279,7 +279,7 @@ return [
     'businesses.community_affiliation' => 'Community',
 
     // Featured
-    'featured.section_title' => 'Featured Across Turtle Island',
+    'featured.section_title' => 'Featured on the north shore of Lake Huron',
 
     // Teachings
     'teachings.title' => 'Teachings',
@@ -935,7 +935,7 @@ return [
     'data.subtitle' => 'Your data belongs to your community. Not to us, not to any corporation, not to any algorithm.',
     'data.what_heading' => 'What We Hold and Why',
     'data.what_intro' => 'Minoo stores information that helps communities connect, support Elders, and keep culture alive. Everything we hold exists to serve you — not to serve us.',
-    'data.what_list_1' => 'Community profiles — names, locations, treaty areas, and contact information for First Nations and municipalities across Turtle Island',
+    'data.what_list_1' => 'Community profiles: names, locations, treaty areas, and contact information for First Nations and municipalities on the north shore of Lake Huron',
     'data.what_list_2' => 'People — Knowledge Keepers, Elders, language speakers, and community leaders who have chosen to be listed',
     'data.what_list_3' => 'Teachings — cultural knowledge shared by community members for the benefit of the next generation',
     'data.what_list_4' => 'Language entries — Anishinaabemowin words, phrases, and example sentences contributed by speakers',
@@ -1092,7 +1092,7 @@ return [
     'feed.image_too_large' => 'Image must be under 5MB',
 
     // Open Graph
-    'og.default_description' => 'Connecting Indigenous communities, Elders, and volunteers across Turtle Island.',
+    'og.default_description' => 'Learn Anishinaabemowin and find your community on the north shore of Lake Huron.',
 
     // Games hub
     'games.title' => 'Games',
