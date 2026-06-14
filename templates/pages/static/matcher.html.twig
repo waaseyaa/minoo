@@ -1,6 +1,6 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}{{ trans('games.word_match_title') }} — Minoo{% endblock %}
+{% block title %}{{ trans('games.matcher_title') }} — Minoo{% endblock %}
 
 {% block content %}
 <div class="matcher" data-game="matcher"
@@ -14,7 +14,7 @@
      data-label-error="{{ trans('games.error') }}"
      data-label-connection-error="{{ trans('games.connection_error') }}"
      data-label-copied="{{ trans('games.copied') }}"
-     data-label-word-match="{{ trans('games.word_match_title') }}"
+     data-label-word-match="{{ trans('games.matcher_title') }}"
      data-label-practice="{{ trans('games.practice') }}"
      data-label-accuracy="{{ trans('games.accuracy') }}">
     {# Compact header: breadcrumb + title + tabs on one row #}
@@ -23,7 +23,7 @@
             <nav class="game-header__breadcrumb" aria-label="{{ trans('games.breadcrumb') }}">
                 <a href="/games">{{ trans('games.title') }}</a> /
             </nav>
-            <h1>{{ trans('games.word_match_title') }}</h1>
+            <h1>{{ trans('games.matcher_title') }}</h1>
         </div>
         <div class="game-header__tabs" role="tablist" aria-label="{{ trans('games.game_mode') }}">
             <button role="tab" class="game-btn game-btn--tab" data-mode="daily" aria-selected="true">{{ trans('games.daily') }}</button>

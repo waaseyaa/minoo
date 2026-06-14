@@ -991,8 +991,10 @@ return [
     'games.shkoda_description' => '', // needs translation
     'games.crossword_title' => '', // needs translation
     'games.crossword_description' => '', // needs translation
-    'games.word_match_title' => '', // needs translation
-    'games.word_match_description' => '', // needs translation
+    'games.matcher_title' => 'Matcher', // proper name, no translation needed
+    'games.matcher_description' => '', // needs translation
+    'games.journey_title' => 'Journey', // proper name, no translation needed
+    'games.journey_description' => '', // needs translation
     'games.play_now' => '', // needs translation
     'games.more_coming' => '', // needs translation
     'games.listening_quiz' => '', // needs translation
