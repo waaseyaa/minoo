@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controller\Games;
 
 use App\Domain\Games\GameStatsCalculator;
+use App\Domain\Games\LearnableWord;
 use App\Domain\Games\ShkodaEngine;
 use App\Http\View\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -335,57 +336,55 @@ final class ShkodaController
     private function selectRandomWord(string $tier, string $seed = ''): ?int
     {
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $query = $storage->getQuery()->accessCheck(false)
+
+        // Draw from the WHOLE dictionary, not the first 500 (alphabetical "aa…")
+        // rows. #793: sample diversely, then keep only learnable words.
+        $allIds = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
-            ->condition('consent_public', 1);
+            ->condition('consent_public', 1)
+            ->condition('definition', '%"%', 'LIKE')
+            ->execute();
 
-        $ids = $query->range(0, 500)->execute();
-
-        if ($ids === []) {
+        if ($allIds === []) {
             return null;
         }
 
-        // Filter by word length for tier
-        $filtered = [];
-        $entries = $storage->loadMultiple($ids);
-        foreach ($entries as $entry) {
-            $word = (string) $entry->get('word');
-            $pos = (string) $entry->get('part_of_speech');
-            $def = (string) $entry->get('definition');
+        // Daily must be stable for the whole day: seed the sample + the pick so
+        // every visitor gets the same word; practice stays freshly random.
+        $isDaily = $seed !== '';
+        if ($isDaily) {
+            mt_srand((int) crc32($seed));
+        }
+        $sample = LearnableWord::sampleIds($allIds, 800);
 
-            if ($def === '') {
+        $tierMatched = [];
+        $anyLearnable = [];
+        foreach ($storage->loadMultiple($sample) as $entry) {
+            $word = (string) $entry->get('word');
+            $def = $this->cleanDefinition((string) $entry->get('definition'));
+            if (!LearnableWord::isLearnable($word, $def)) {
                 continue;
             }
-
-            $entryTier = ShkodaEngine::difficultyTier($word, $pos);
-            if ($entryTier === $tier) {
-                $filtered[] = $entry->id();
+            $anyLearnable[] = $entry->id();
+            if (ShkodaEngine::difficultyTier($word, (string) $entry->get('part_of_speech')) === $tier) {
+                $tierMatched[] = $entry->id();
             }
         }
 
+        $filtered = $tierMatched !== [] ? $tierMatched : $anyLearnable;
         if ($filtered === []) {
-            // Fallback: any word with a definition
-            $filtered = [];
-            foreach ($entries as $entry) {
-                if ((string) $entry->get('definition') !== '') {
-                    $filtered[] = $entry->id();
-                }
+            if ($isDaily) {
+                mt_srand();
             }
-        }
-
-        if ($filtered === []) {
             return null;
         }
 
-        // Shuffle to maintain randomness even with the 500 cap
-        shuffle($filtered);
+        // Deterministic order so the seeded index is stable across requests.
+        sort($filtered);
 
-        // Deterministic selection for daily, random for practice
-        if ($seed !== '') {
-            $index = crc32($seed) % count($filtered);
-            if ($index < 0) {
-                $index += count($filtered);
-            }
+        if ($isDaily) {
+            $index = (int) (abs(crc32($seed)) % count($filtered));
+            mt_srand();
             return $filtered[$index];
         }
 

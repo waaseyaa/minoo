@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controller\Games;
 
 use App\Domain\Games\GameStatsCalculator;
+use App\Domain\Games\LearnableWord;
 use App\Domain\Games\MatcherEngine;
 use App\Http\View\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -50,12 +51,12 @@ final class MatcherController
         $direction = 'ojibwe_to_english';
         $count = MatcherEngine::pairCount($difficulty);
 
-        $entries = $this->loadDictionaryEntries(500);
+        $seed = MatcherEngine::dailySeed($today);
+        $entries = $this->loadDictionaryEntries(500, $seed);
         if ($entries === []) {
             return $this->json(['error' => 'No words available'], 503);
         }
 
-        $seed = MatcherEngine::dailySeed($today);
         $pairs = MatcherEngine::selectPairs($entries, $count, $seed);
 
         if (count($pairs) < $count) {
@@ -222,25 +223,42 @@ final class MatcherController
      *
      * @return list<array{id: int, word: string, definition: string}>
      */
-    private function loadDictionaryEntries(int $limit): array
+    private function loadDictionaryEntries(int $limit, ?int $seed = null): array
     {
         $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $storage->getQuery()->accessCheck(false)
+
+        // Draw from the WHOLE dictionary (#793) rather than the first N rows,
+        // which are alphabetical ("aa…"). Daily passes a seed so the candidate
+        // pool — and therefore the puzzle — is stable for the whole day.
+        $allIds = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('consent_public', 1)
-            ->range(0, $limit)
+            ->condition('definition', '%"%', 'LIKE')
             ->execute();
 
-        if ($ids === []) {
+        if ($allIds === []) {
             return [];
         }
 
+        if ($seed !== null) {
+            mt_srand($seed);
+        }
+        $sample = LearnableWord::sampleIds($allIds, $limit);
+        if ($seed !== null) {
+            mt_srand();
+        }
+
         $entries = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
+        foreach ($storage->loadMultiple($sample) as $entity) {
+            $word = (string) $entity->get('word');
+            $rawDefinition = (string) $entity->get('definition');
+            if (!LearnableWord::isLearnable($word, MatcherEngine::cleanDefinition($rawDefinition))) {
+                continue;
+            }
             $entries[] = [
                 'id' => $entity->id(),
-                'word' => (string) $entity->get('word'),
-                'definition' => (string) $entity->get('definition'),
+                'word' => $word,
+                'definition' => $rawDefinition,
             ];
         }
 
