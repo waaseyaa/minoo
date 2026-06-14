@@ -51,11 +51,21 @@
       </div>
     </section>
 
+    {# === Community (the second truth: language lives in the land and people) === #}
+    <section class="sec">
+      <div class="sec__head">
+        <h2>Rooted in community</h2>
+        <a href="{{ lang_url('/communities') }}">See the map &rarr;</a>
+      </div>
+      <p style="color: var(--text-secondary); max-width: 60ch;">Minoo grows on the north shore of Lake Huron, in Robinson-Huron Treaty territory and the care of the seven First Nations of Mamaweswen, The North Shore Tribal Council. The language lives in the land and the people who carry it.</p>
+      <a href="{{ lang_url('/communities') }}" class="btn btn--secondary">Visit the communities</a>
+    </section>
+
     {# === Call to Action === #}
     {% if account is not defined or not account.isAuthenticated() %}
       <section class="sec" style="text-align: center; padding: var(--space-xl) 0;">
         <h2>Track Your Learning</h2>
-        <p style="color: var(--text-secondary); max-width: 50ch; margin: var(--space-sm) auto var(--space-md);">Create an account to keep your game streaks and pick up where you left off.</p>
+        <p style="color: var(--text-secondary); max-width: 50ch; margin: var(--space-sm) auto var(--space-md);">Create an account to keep your game streaks, save words to your own list, and pick up where you left off.</p>
         <a href="{{ lang_url('/register') }}" class="btn btn--primary btn--lg">Create an Account</a>
       </section>
     {% endif %}
