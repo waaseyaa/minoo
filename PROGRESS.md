@@ -133,3 +133,13 @@ All five W3 issues shipped + closed on main (suite 372 green, phpstan clean):
 - #795 verified game_type set on all 5 session-creates, gate->denies on all 12 mutating endpoints, GameStatsCalculator filters by game_type; added the missing non-owner-cannot-update policy test.
 
 Local game_session count restored to 118 (pruned 33 probe-created rows via prune-smoke-sessions.php). Self-heal generates crossword puzzles on demand per environment, so the Pi needs no puzzle seeding.
+
+## Community living-map batch #797-#799 + #801 (2026-06-14, continue-to-done run)
+
+The community/geo/NorthCloud domains were fully cut in slimming, but the Leaflet assets were still vendored and the contributor + dormant tables remained. Built the community layer from FACTUAL PUBLIC DATA (no re-adding the cut NC client, which needs a non-local backend):
+- #798 living map: Leaflet map of the seven Mamaweswen (North Shore Tribal Council) nations, anchored at Sagamok, Robinson-Huron Treaty. Data curated in App\Domain\Community\MamaweswenNations from Wikipedia/ISC public records (name, reserve, treaty, band number, approx coordinates, leadership). public/js/community-map.js + OSM tiles.
+- #797 nav + index: "Communities" nav group + /communities (map + 7 cards). Public community data only; member listings not published (contributor stays consent-gated, #800).
+- #799 detail: /communities/{slug} shows chief + council compiled from public band profiles with an as-of date and a verify link to the authoritative ISC First Nation Profile governance page (URL format confirmed against band 179).
+- #801 elder-support: re-surfaced the cut workflow against the dormant elder_support_request table — signed-in submit + coordinator/admin-gated inbox. CARE-GATED: authenticated-only, not in public nav; public self-service intake needs a staffed coordinator program + privacy review first. End-to-end verified (form → POST 302 → inbox); test row removed, counts intact.
+
+Gates: suite 390 green (1099 assertions), phpstan clean, CSS ?v=86, schema:check clean for the new table (the only drift is the pre-existing dialect_region.name, flagged for #783). Architectural note: did NOT re-add waaseyaa/northcloud or the NC community client — community data is curated public record, which is the right source per "build from public authoritative data."
