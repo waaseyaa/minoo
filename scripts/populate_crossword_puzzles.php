@@ -4,13 +4,19 @@
 declare(strict_types=1);
 
 /**
- * Generate crossword puzzles from dictionary entries.
+ * Bulk pre-seed crossword puzzles from dictionary entries (optional).
  * Run: php scripts/populate_crossword_puzzles.php
+ *
+ * NOTE: as of #792 the CrosswordController self-heals — daily(), random() and
+ * theme() generate (tier- and theme-aware) puzzles on demand and persist them,
+ * so no environment depends on this script to avoid blank tabs / 500s. It
+ * remains a convenience for warming a richer pool at deploy time. The canonical
+ * theme registry lives in App\Domain\Games\CrosswordThemes.
  *
  * Creates:
  * - One daily puzzle: daily-{today} (7x7, tier based on day of week)
- * - Five practice puzzles: practice-001 through practice-005 (7x7, mixed tiers)
- * - Themed puzzles if enough categorizable words exist
+ * - Nine practice puzzles: practice-001..009 (3 easy / 3 medium / 3 hard)
+ * - Animal-themed puzzles if enough categorizable words exist
  */
 
 require dirname(__DIR__) . '/vendor/autoload.php';

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controller\Games;
 
 use App\Domain\Games\CrosswordEngine;
+use App\Domain\Games\CrosswordThemes;
+use App\Domain\Games\GameDifficulty;
 use App\Domain\Games\GameStatsCalculator;
 use App\Http\View\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -87,12 +89,19 @@ final class CrosswordController
             ->condition('difficulty_tier', $tier)
             ->execute();
 
-        // Exclude daily puzzles and filter for non-themed practice grids
-        $practiceIds = array_filter($ids, fn ($id) => !str_starts_with((string) $id, 'daily-'));
+        // Exclude daily + themed puzzles; practice draws from untagged grids.
+        $practiceIds = array_values(array_filter(
+            $ids,
+            fn ($id) => !str_starts_with((string) $id, 'daily-') && !str_starts_with((string) $id, 'theme-'),
+        ));
 
-        if ($practiceIds === []) {
-            // Fallback: use any puzzle at this tier
-            $practiceIds = $ids;
+        // Self-heal: keep a small practice pool per tier so medium/hard never
+        // dead-end on a fresh database (the seeder adds more variety on deploy).
+        if (count($practiceIds) < 3) {
+            $generated = $this->generatePuzzle($this->nextPuzzleId($puzzleStorage, "practice-{$tier}"), $tier);
+            if ($generated !== null) {
+                $practiceIds[] = (string) $generated->id();
+            }
         }
 
         if ($practiceIds === []) {
@@ -127,18 +136,21 @@ final class CrosswordController
         $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
         $allIds = $puzzleStorage->getQuery()->setAccount($account)->execute();
 
-        // Group by theme field (not by parsing IDs)
+        // Count existing themed puzzles + remember each puzzle's theme.
         $themeCounts = [];
-        $puzzles = $puzzleStorage->loadMultiple($allIds);
-        foreach ($puzzles as $puzzle) {
-            $theme = (string) $puzzle->get('theme');
-            if ($theme === '') {
-                continue;
+        $themeOfPuzzle = [];
+        if ($allIds !== []) {
+            foreach ($puzzleStorage->loadMultiple($allIds) as $puzzle) {
+                $theme = (string) $puzzle->get('theme');
+                if ($theme === '') {
+                    continue;
+                }
+                $themeCounts[$theme] = ($themeCounts[$theme] ?? 0) + 1;
+                $themeOfPuzzle[(string) $puzzle->id()] = $theme;
             }
-            $themeCounts[$theme] = ($themeCounts[$theme] ?? 0) + 1;
         }
 
-        // Load user's completed crossword sessions once (not per-theme)
+        // Completed-per-theme for authenticated users (one session query).
         $completedByTheme = [];
         if ($account->isAuthenticated()) {
             $sessionIds = $this->entityTypeManager->getStorage('game_session')->getQuery()->setAccount($account)
@@ -146,25 +158,25 @@ final class CrosswordController
                 ->condition('user_id', $account->id())
                 ->condition('status', 'completed')
                 ->execute();
-            $sessions = $this->entityTypeManager->getStorage('game_session')->loadMultiple($sessionIds);
-            foreach ($sessions as $s) {
-                $pid = (string) $s->get('puzzle_id');
-                // Match puzzle_id to theme by loading the puzzle's theme
-                foreach ($puzzles as $p) {
-                    if ((string) $p->id() === $pid) {
-                        $t = (string) $p->get('theme');
-                        if ($t !== '') {
-                            $completedByTheme[$t] = ($completedByTheme[$t] ?? 0) + 1;
-                        }
-                        break;
+            if ($sessionIds !== []) {
+                foreach ($this->entityTypeManager->getStorage('game_session')->loadMultiple($sessionIds) as $s) {
+                    $theme = $themeOfPuzzle[(string) $s->get('puzzle_id')] ?? null;
+                    if ($theme !== null) {
+                        $completedByTheme[$theme] = ($completedByTheme[$theme] ?? 0) + 1;
                     }
                 }
             }
         }
 
+        // Always advertise the curated registry so the tab is never blank; the
+        // first visit to a theme self-heals its puzzle pool (see theme()).
         $themes = [];
-        foreach ($themeCounts as $slug => $total) {
-            $entry = ['slug' => $slug, 'name' => ucfirst($slug), 'total' => $total];
+        foreach (CrosswordThemes::all() as $slug => $info) {
+            $entry = [
+                'slug' => $slug,
+                'name' => $info['name'],
+                'total' => $themeCounts[$slug] ?? 0,
+            ];
             if ($account->isAuthenticated()) {
                 $entry['completed'] = $completedByTheme[$slug] ?? 0;
             }
@@ -178,8 +190,8 @@ final class CrosswordController
     public function theme(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
-        if ($slug === '') {
-            return $this->json(['error' => 'Missing theme slug'], 400);
+        if ($slug === '' || !CrosswordThemes::exists($slug)) {
+            return $this->json(['error' => 'Theme not found'], 404);
         }
 
         $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
@@ -187,8 +199,17 @@ final class CrosswordController
             ->condition('theme', $slug)
             ->execute();
 
+        // Self-heal: bootstrap a small themed pool on first visit.
+        if (count($allIds) < 2) {
+            $generated = $this->generatePuzzle($this->nextPuzzleId($puzzleStorage, "theme-{$slug}"), 'easy', $slug);
+            if ($generated !== null) {
+                $allIds[] = (string) $generated->id();
+            }
+        }
+
         if ($allIds === []) {
-            return $this->json(['error' => 'Theme not found'], 404);
+            // Too few words to build this theme yet — graceful, not a 404/500.
+            return $this->json(['error' => 'no_puzzles', 'theme' => $slug, 'theme_complete' => false], 200);
         }
 
         // Determine completed puzzles
@@ -580,68 +601,178 @@ final class CrosswordController
      */
     private function generateFallbackDaily(string $puzzleId, string $today): ?object
     {
-        $dayOfWeek = (int) date('w', strtotime($today));
-        $tier = \App\Domain\Games\GameDifficulty::dailyTier($dayOfWeek);
+        $tier = GameDifficulty::dailyTier((int) date('w', strtotime($today)));
+        return $this->generatePuzzle($puzzleId, $tier);
+    }
 
-        // Load dictionary words with definitions
+    /**
+     * Grid + word-length knobs per difficulty tier. Larger, longer-word grids
+     * for harder tiers; the word bank / hint allowance differentiate further
+     * (see buildWordBank() and CrosswordEngine::maxHints()).
+     *
+     * @return array{grid: int, minWords: int, minLen: int, maxLen: int}
+     */
+    private function tierParams(string $tier): array
+    {
+        return match ($tier) {
+            'medium' => ['grid' => 9, 'minWords' => 5, 'minLen' => 3, 'maxLen' => 8],
+            'hard' => ['grid' => 11, 'minWords' => 6, 'minLen' => 4, 'maxLen' => 10],
+            default => ['grid' => 7, 'minWords' => 4, 'minLen' => 3, 'maxLen' => 6],
+        };
+    }
+
+    /**
+     * Load learnable candidate words from the public dictionary. Consent- and
+     * status-gated; single-token headwords only; optionally narrowed to a
+     * theme's English-gloss keywords (#793 keeps these toward common words).
+     *
+     * @param list<string> $themeKeywords
+     * @return array{0: list<string>, 1: array<string, array{dictionary_entry_id: int, definition: string}>}
+     */
+    private function loadCandidateWords(int $minLen, int $maxLen, array $themeKeywords = []): array
+    {
         $dictStorage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $dictStorage->getQuery()->accessCheck(false)
-            ->condition('status', 1)
-            ->range(0, 200)
-            ->execute();
+
+        if ($themeKeywords === []) {
+            $ids = $dictStorage->getQuery()->accessCheck(false)
+                ->condition('status', 1)
+                ->condition('consent_public', 1)
+                ->condition('definition', '%"%', 'LIKE')
+                ->range(0, 800)
+                ->execute();
+        } else {
+            // Themed: gather matches across the WHOLE dictionary via per-keyword
+            // definition LIKE (scanning only the first N entries starves rarer
+            // themes like animals/family).
+            $idSet = [];
+            foreach ($themeKeywords as $kw) {
+                $kwIds = $dictStorage->getQuery()->accessCheck(false)
+                    ->condition('status', 1)
+                    ->condition('consent_public', 1)
+                    ->condition('definition', '%' . addcslashes($kw, '%_\\') . '%', 'LIKE')
+                    ->range(0, 40)
+                    ->execute();
+                foreach ($kwIds as $id) {
+                    $idSet[$id] = true;
+                }
+                if (count($idSet) >= 400) {
+                    break;
+                }
+            }
+            $ids = array_keys($idSet);
+        }
+
+        if ($ids === []) {
+            return [[], []];
+        }
 
         $words = [];
-        $wordMeta = [];
-        $entries = $dictStorage->loadMultiple($ids);
-        foreach ($entries as $entry) {
+        $meta = [];
+        foreach ($dictStorage->loadMultiple($ids) as $entry) {
             $word = mb_strtolower((string) $entry->get('word'));
             $def = (string) $entry->get('definition');
             $len = mb_strlen($word);
-            if ($def === '' || $len < 3 || $len > 7 || str_contains($word, '-')) {
+            if ($def === '' || $len < $minLen || $len > $maxLen) {
+                continue;
+            }
+            // Single-token, alphabetic headwords keep grids fillable + learnable.
+            if (str_contains($word, '-') || str_contains($word, ' ') || preg_match('/[^a-z\']/u', $word) === 1) {
+                continue;
+            }
+            if ($themeKeywords !== []) {
+                $defLower = mb_strtolower($this->cleanDefinition($def));
+                $hit = false;
+                foreach ($themeKeywords as $kw) {
+                    // Word-boundary match so "owl" doesn't match "slowly", etc.
+                    if (preg_match('/\b' . preg_quote($kw, '/') . '\b/u', $defLower) === 1) {
+                        $hit = true;
+                        break;
+                    }
+                }
+                if (!$hit) {
+                    continue;
+                }
+            }
+            if (isset($meta[$word])) {
                 continue;
             }
             $words[] = $word;
-            $wordMeta[$word] = [
+            $meta[$word] = [
                 'dictionary_entry_id' => (int) $entry->id(),
                 'definition' => $def,
             ];
         }
 
-        $result = CrosswordEngine::generateGrid($words, 7, 4);
+        return [$words, $meta];
+    }
+
+    /**
+     * Generate and persist a crossword puzzle for a tier (and optional theme).
+     * Returns null only when there genuinely aren't enough words to build a
+     * connected grid; callers surface that as a graceful empty state.
+     */
+    private function generatePuzzle(string $puzzleId, string $tier, ?string $theme = null): ?object
+    {
+        $params = $this->tierParams($tier);
+        $keywords = $theme !== null ? CrosswordThemes::keywords($theme) : [];
+        [$words, $meta] = $this->loadCandidateWords($params['minLen'], $params['maxLen'], $keywords);
+        shuffle($words);
+
+        $result = CrosswordEngine::generateGrid($words, $params['grid'], $params['minWords']);
+        // Relax to easy geometry once before giving up (small theme pools, etc.).
+        if ($result === null && ($tier !== 'easy' || $theme !== null)) {
+            $result = CrosswordEngine::generateGrid($words, 7, 4);
+        }
         if ($result === null) {
             return null;
         }
 
-        // Build puzzle data
         $puzzleWords = [];
         $clues = [];
         foreach ($result['placements'] as $idx => $p) {
-            $meta = $wordMeta[$p['word']] ?? null;
+            $m = $meta[$p['word']] ?? null;
             $puzzleWords[] = [
-                'dictionary_entry_id' => $meta['dictionary_entry_id'] ?? null,
+                'dictionary_entry_id' => $m['dictionary_entry_id'] ?? null,
                 'row' => $p['row'],
                 'col' => $p['col'],
                 'direction' => $p['direction'],
                 'word' => $p['word'],
             ];
             $clues[(string) $idx] = [
-                'auto' => $meta !== null ? $this->cleanDefinition($meta['definition']) : $p['word'],
+                'auto' => $m !== null ? $this->cleanDefinition($m['definition']) : $p['word'],
                 'elder' => null,
                 'elder_author' => null,
             ];
         }
 
-        $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $puzzle = $puzzleStorage->create([
+        $values = [
             'id' => $puzzleId,
-            'grid_size' => 7,
+            'grid_size' => $params['grid'],
             'words' => json_encode($puzzleWords),
             'clues' => json_encode($clues),
             'difficulty_tier' => $tier,
-        ]);
+        ];
+        if ($theme !== null) {
+            $values['theme'] = $theme;
+        }
+
+        $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
+        $puzzle = $puzzleStorage->create($values);
         $puzzleStorage->save($puzzle);
 
         return $puzzle;
+    }
+
+    /** First unused "{prefix}-NNN" id so the generated pool grows deterministically. */
+    private function nextPuzzleId(object $puzzleStorage, string $prefix): string
+    {
+        for ($i = 1; $i <= 999; $i++) {
+            $id = sprintf('%s-%03d', $prefix, $i);
+            if ($puzzleStorage->load($id) === null) {
+                return $id;
+            }
+        }
+        return $prefix . '-' . substr(md5(uniqid('', true)), 0, 6);
     }
 
     /**
