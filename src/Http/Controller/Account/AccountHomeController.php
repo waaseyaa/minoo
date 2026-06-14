@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controller\Account;
 
+use App\Domain\Account\SavedWords;
 use App\Http\View\LayoutTwigContext;
 use App\Identity\ElderIdentity;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,6 +31,7 @@ final class AccountHomeController
         $html = $this->twig->render('pages/account/index.html.twig', LayoutTwigContext::withAccount($account, [
             'roles' => $account->getRoles(),
             'is_elder' => $account instanceof User && ElderIdentity::isElder($account),
+            'saved_count' => SavedWords::countFor($this->entityTypeManager, $account),
             'path' => '/account',
         ]));
 

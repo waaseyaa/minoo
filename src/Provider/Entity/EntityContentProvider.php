@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
+use App\Entity\Account\SavedWord;
 use App\Entity\Community\Contributor;
 use App\Entity\Games\CrosswordPuzzle;
 use App\Entity\Games\DailyChallenge;
@@ -111,6 +112,26 @@ final class EntityContentProvider extends AppCoreServiceProvider
                 'clues' => ['type' => 'text_long', 'label' => 'Clues', 'description' => 'JSON map of word index to clue data.', 'weight' => 10],
                 'theme' => ['type' => 'string', 'label' => 'Theme', 'weight' => 15],
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 20, 'default' => 'easy'],
+            ],
+        ));
+
+        // =====================================================================
+        // --- Personal word lists (#806) ---
+        // =====================================================================
+
+        $this->entityType(new EntityType(
+            id: 'saved_word',
+            label: 'Saved Word',
+            class: SavedWord::class,
+            keys: ['id' => 'swid', 'uuid' => 'uuid', 'label' => 'word'],
+            group: 'account',
+            _fieldDefinitions: [
+                'word' => ['type' => 'string', 'label' => 'Word', 'weight' => 0],
+                'user_id' => ['type' => 'integer', 'label' => 'User', 'weight' => 1],
+                'dictionary_entry_id' => ['type' => 'integer', 'label' => 'Dictionary Entry', 'weight' => 2],
+                'slug' => ['type' => 'string', 'label' => 'Slug', 'weight' => 3],
+                'definition' => ['type' => 'text_long', 'label' => 'Definition', 'weight' => 4],
+                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
             ],
         ));
     }

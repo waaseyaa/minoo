@@ -10,6 +10,26 @@
   </div>
 
   <div class="actions">
+    <h2>{{ trans('account.getstarted_title') }}</h2>
+    <ul class="links">
+      <li><a href="{{ lang_url('/language') }}" class="btn btn--primary">{{ trans('account.getstarted_dictionary') }}</a></li>
+      <li><a href="{{ lang_url('/games') }}" class="btn btn--outline">{{ trans('account.getstarted_games') }}</a></li>
+      <li><a href="{{ lang_url('/communities') }}" class="btn btn--outline">{{ trans('account.getstarted_save') }}</a></li>
+    </ul>
+  </div>
+
+  <div class="actions">
+    <h2>{{ trans('account.mywords_title') }} <span class="card__badge">{{ saved_count|default(0) }}</span></h2>
+    {% if saved_count|default(0) > 0 %}
+      <ul class="links">
+        <li><a href="{{ lang_url('/account/words') }}" class="btn btn--primary">{{ trans('account.mywords_view') }}</a></li>
+      </ul>
+    {% else %}
+      <p class="text-secondary">{{ trans('account.mywords_empty') }}</p>
+    {% endif %}
+  </div>
+
+  <div class="actions">
     <h2>{{ trans('account.profile') }}</h2>
     <ul class="links">
       <li><a href="{{ lang_url('/logout') }}" class="btn btn--outline">{{ trans('account.logout') }}</a></li>

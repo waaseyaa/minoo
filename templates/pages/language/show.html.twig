@@ -16,6 +16,14 @@
         <span class="card__badge card__badge--language">{{ entry.get('part_of_speech')|default('') }}</span>
         <h1>{{ entry.get('word') }}</h1>
       </div>
+      {% if account is defined and account.isAuthenticated() and entry_id is defined and entry_id %}
+        <form method="post" action="{{ lang_url('/account/words/toggle') }}" class="detail__save">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="dictionary_entry_id" value="{{ entry_id }}">
+          <input type="hidden" name="slug" value="{{ entry.get('slug') }}">
+          <button type="submit" class="btn btn--primary">{{ is_saved|default(false) ? trans('language.saved') : trans('language.save') }}</button>
+        </form>
+      {% endif %}
       <div class="content-well">
         <div class="detail__body flow">
           <p>{{ entry.get('definition')|default('')|clean_definition }}</p>

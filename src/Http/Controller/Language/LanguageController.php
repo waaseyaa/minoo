@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controller\Language;
 
+use App\Domain\Account\SavedWords;
 use App\Entity\Language\DictionaryEntry;
 use App\Http\View\LayoutTwigContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -94,6 +95,9 @@ final class LanguageController
             // Nishnaabemwin source work (#789) lands.
             'examples' => $entry !== null ? $this->examplesFor($account, (int) $entry->id()) : [],
             'related' => $entry !== null ? $this->relatedByStem($storage, $account, $entry) : [],
+            // #806 personal word lists: show a save/unsave control to members.
+            'entry_id' => $entry !== null ? (int) $entry->id() : 0,
+            'is_saved' => $entry !== null && SavedWords::isSaved($this->entityTypeManager, $account, (int) $entry->id()),
         ]));
 
         return new Response($html, $entry !== null ? 200 : 404);

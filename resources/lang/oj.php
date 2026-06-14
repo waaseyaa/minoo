@@ -279,6 +279,8 @@ return [
     'language.related_heading' => 'Related words', // needs translation
     'language.audio_heading' => 'Pronunciation', // needs translation
     'language.audio_unsupported' => 'Your browser does not support audio playback.', // needs translation
+    'language.save' => 'Save to my words', // needs translation
+    'language.saved' => 'Saved to my words ✓', // needs translation
     'language.entries_label' => 'ikidowinan', // "words"
     'language.prev' => 'Ishkweyaang', // "Back/Previous"
     'language.next' => 'Niigaan', // "Forward/Next"
@@ -606,6 +608,13 @@ return [
     // Account
     'account.welcome' => 'Boozhoo', // dict: boozhoo': "say hello"
     'account.subtitle' => '',
+    'account.getstarted_title' => 'Get started', // needs translation
+    'account.getstarted_dictionary' => 'Browse the dictionary', // needs translation
+    'account.getstarted_games' => 'Play a language game', // needs translation
+    'account.getstarted_save' => 'Save words to your list', // needs translation
+    'account.mywords_title' => 'My words', // needs translation
+    'account.mywords_view' => 'View my words', // needs translation
+    'account.mywords_empty' => 'Save words from the dictionary to build your list.', // needs translation
     'account.profile' => '',
     'account.logout' => 'Zaaga\'an', // dict: zaaga'am: "s/he goes out, exits"
     'account.elder_support' => 'Gichi-aya\'aa Wiidookaagewin', // dict: gichi-aya'aa: "elder" + wiidookaagewin: "help"

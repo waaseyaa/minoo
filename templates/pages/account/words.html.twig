@@ -1,0 +1,25 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}My words — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg content-max">
+    <header class="listing-hero">
+      <h1>My words</h1>
+      <p>Words you have saved from the dictionary. {{ words|length }} saved.</p>
+    </header>
+
+    {% if words|length == 0 %}
+      <p>You have not saved any words yet. Open any entry in the <a href="{{ lang_url('/language') }}">dictionary</a> and tap “Save to my words”.</p>
+    {% else %}
+      <div class="card-grid">
+        {% for w in words %}
+          <a href="{{ lang_url('/language/' ~ w.slug) }}" class="card">
+            <h2 class="card__title">{{ w.word }}</h2>
+            <p class="card__meta">{{ w.definition|clean_definition }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

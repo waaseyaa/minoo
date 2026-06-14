@@ -32,6 +32,7 @@ final class LanguageTemplateTest extends TestCase
         $this->twig = new Environment($loader);
         $this->twig->addFunction(new TwigFunction('trans', static fn (string $key): string => $key));
         $this->twig->addFunction(new TwigFunction('lang_url', static fn (string $path): string => $path));
+        $this->twig->addFunction(new TwigFunction('csrf_token', static fn (): string => 'test-token'));
         $this->twig->addExtension(new \App\Http\Twig\LanguageTwigExtension());
     }
 

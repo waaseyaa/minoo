@@ -36,6 +36,26 @@ final class PublicAccountRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // --- Personal word lists (#806) ---
+        $router->addRoute(
+            'account.words',
+            RouteBuilder::create('/account/words')
+                ->controller('App\Http\Controller\Account\SavedWordController::list')
+                ->requireAuthentication()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'account.words.toggle',
+            RouteBuilder::create('/account/words/toggle')
+                ->controller('App\Http\Controller\Account\SavedWordController::toggle')
+                ->requireAuthentication()
+                ->methods('POST')
+                ->build(),
+        );
+
         // =====================================================================
         // --- Elder-support request workflow (#801) ---
         // Authenticated; the triage inbox gates further to coordinators/admins.

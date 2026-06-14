@@ -953,6 +953,11 @@
     margin: 0;
   }
 
+  /* Save-to-my-words control on a dictionary entry (#806). */
+  .detail__save {
+    margin-block: var(--space-sm) 0;
+  }
+
   /* Community living-map (#798) — Leaflet needs an explicit height. */
   .community-map {
     block-size: clamp(20rem, 50vh, 30rem);
