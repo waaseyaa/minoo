@@ -3,7 +3,11 @@ Allow: /
 
 Disallow: /api/
 Disallow: /dashboard/
+Disallow: /account
+Disallow: /elder-support
 Disallow: /login
 Disallow: /register
 Disallow: /forgot-password
 Disallow: /reset-password
+
+Sitemap: https://minoo.live/sitemap.xml

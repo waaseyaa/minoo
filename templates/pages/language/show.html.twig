@@ -70,3 +70,11 @@
     </div>
   {% endif %}
 {% endblock %}
+
+{% block structured_data %}
+  {%- if entry is defined and entry -%}
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"DefinedTerm","name":{{ entry.get('word')|json_encode|raw }},"description":{{ (entry.get('definition')|default('')|clean_definition)|json_encode|raw }},"inDefinedTermSet":{"@type":"DefinedTermSet","name":"Anishinaabemowin (Ojibwe) dictionary","url":"{{ site_base_url }}/language"}}</script>
+  {%- else -%}
+  {{ parent() }}
+  {%- endif -%}
+{% endblock %}

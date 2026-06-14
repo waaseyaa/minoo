@@ -14,6 +14,9 @@
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:site_name" content="Minoo">
   <meta name="twitter:card" content="summary_large_image">
+  {% block structured_data %}
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Minoo","url":"{{ site_base_url }}","inLanguage":["oj","en"],"potentialAction":{"@type":"SearchAction","target":"{{ site_base_url }}/language/search?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
+  {% endblock %}
   {% if csrf_token is defined %}
     <meta name="csrf-token" content="{{ csrf_token }}">
   {% endif %}
