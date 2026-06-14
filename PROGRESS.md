@@ -122,3 +122,14 @@ CONSENT LEAK FOUND AND FIXED (the reason this batch took a full debugging pass):
 - Documented as a CLAUDE.md gotcha (loadMultiple([]) = load-all footgun). UPSTREAM follow-up: harden the framework so `loadMultiple([])` fails closed (Drupal-style `?array $ids = null`, null=all, []=none) - tracked for a framework release; the app guard is correct usage regardless.
 
 Gates: phpunit 360 green (938 assertions), phpstan clean, CSS bumped `?v=85`. Pre-existing `dialect_region` schema drift (missing `name` column) is unrelated to this batch - flagged for the #783 infra pass.
+
+## Games batch #791-#795 (2026-06-14, continue-to-done run)
+
+All five W3 issues shipped + closed on main (suite 372 green, phpstan clean):
+- #792 crossword tiers + themed packs: generalised daily's on-demand generator into a tier/theme-aware generatePuzzle() (easy 7x7 / medium 9x9 / hard 11x11). random() and theme() now self-heal (generate + persist on demand) like daily(), so no environment dead-ends on "no_puzzles" or a blank themes tab. Curated theme registry App\Domain\Games\CrosswordThemes (animals, land & sky, the body, family) matched by English-gloss keywords with WORD-BOUNDARY matching ("owl" no longer matches "slowly"). themes() always advertises the registry; crossword.js already had empty-state handling. Verified live: medium 9x9, hard 11x11, all 4 themes generate theme-relevant words. The seeder populate_crossword_puzzles.php is now secondary (noted in its header).
+- #791 verified every game's modes + direction toggle on restored data: Shkoda (daily/practice/streak, EN<->OJ), Matcher (daily/practice, OJ<->EN), Agim (levels 1-4), Journey (scenes), Crossword (all). Only breakage was crossword medium practice, fixed by #792.
+- #793 learnable + diverse word selection (App\Domain\Games\LearnableWord): both Shkoda and Matcher drew from the first ~500 alphabetical ("aa…") rows, surfacing obscure verbs and even sacred proper nouns (Midewiwin) as casual answers. Now sample across the WHOLE dictionary id list and keep only lowercase single-token headwords with a concise first sense (<=6 words); drop capitalised proper nouns/sacred terms, abbreviation-only and long glosses. Daily made deterministic (seed the sample + pick) as a bonus.
+- #794 illustrated game cards on the homepage: extracted the 5 rich SVG cards into components/domain/games/cards.html.twig, included on both /games and the homepage (was plain text tiles); also fixed the homepage's stale /matcher link.
+- #795 verified game_type set on all 5 session-creates, gate->denies on all 12 mutating endpoints, GameStatsCalculator filters by game_type; added the missing non-owner-cannot-update policy test.
+
+Local game_session count restored to 118 (pruned 33 probe-created rows via prune-smoke-sessions.php). Self-heal generates crossword puzzles on demand per environment, so the Pi needs no puzzle seeding.
