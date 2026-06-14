@@ -274,6 +274,11 @@ return [
     'language.not_found' => 'Ikidowin gaawiin mikanziin', // "Word not found"
     'language.not_found_message' => 'Ikidowin gaa-nandawaabandaman gaawiin ayaasinoon.', // "The word you're looking for doesn't exist."
     'language.browse_all' => 'Kakina ikidowinan', // "All words"
+    'language.did_you_mean' => 'Did you mean', // needs translation
+    'language.examples_heading' => 'Examples', // needs translation
+    'language.related_heading' => 'Related words', // needs translation
+    'language.audio_heading' => 'Pronunciation', // needs translation
+    'language.audio_unsupported' => 'Your browser does not support audio playback.', // needs translation
     'language.entries_label' => 'ikidowinan', // "words"
     'language.prev' => 'Ishkweyaang', // "Back/Previous"
     'language.next' => 'Niigaan', // "Forward/Next"

@@ -912,6 +912,25 @@
     line-height: var(--leading-loose);
   }
 
+  .detail__section {
+    max-inline-size: var(--width-prose);
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-md);
+    border-block-start: 1px solid var(--border-subtle, var(--border));
+  }
+
+  .detail__section h2 {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-block-end: var(--space-2xs);
+  }
+
+  .detail__example {
+    line-height: var(--leading-loose);
+  }
+
   .detail__contact {
     display: flex;
     flex-wrap: wrap;

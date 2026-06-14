@@ -25,6 +25,29 @@
           {% endif %}
         </div>
 
+        {% if entry.get('audio_url')|default('') %}
+          <section class="detail__section flow">
+            <h2>{{ trans('language.audio_heading') }}</h2>
+            <audio controls preload="none" src="{{ entry.get('audio_url') }}">{{ trans('language.audio_unsupported') }}</audio>
+          </section>
+        {% endif %}
+
+        {% if examples is defined and examples|length > 0 %}
+          <section class="detail__section flow">
+            <h2>{{ trans('language.examples_heading') }}</h2>
+            {% for ex in examples %}
+              <p class="detail__example">{{ ex.ojibwe }}{% if ex.english %} <span class="card__meta">{{ ex.english }}</span>{% endif %}</p>
+            {% endfor %}
+          </section>
+        {% endif %}
+
+        {% if related is defined and related|length > 0 %}
+          <section class="detail__section flow">
+            <h2>{{ trans('language.related_heading') }}</h2>
+            <p>{% for r in related %}<a href="{{ lang_url('/language/' ~ r.slug) }}">{{ r.word }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+          </section>
+        {% endif %}
+
         <footer class="attribution">
           {% if entry.get('attribution_source') %}
             <p>

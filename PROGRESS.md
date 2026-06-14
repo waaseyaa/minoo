@@ -85,3 +85,40 @@ First real surface over the migrated corpus. Routes: `/lesson` (landing), `/less
 - D9: static pages how-it-works, safety, elders, get-involved, messages, volunteer cut (elder-support program content). about, data-sovereignty, legal, journey, matcher, studio, games, search kept. (Phase 2)
 - D10: homepage rewritten (dictionary stats + featured + games); authenticated users no longer redirected to /feed. (Phase 2)
 - D11: phpstan baseline regenerated after deletions (old baseline referenced removed files); 5 pre-existing findings carried. (Phase 2)
+
+## Minoo Resurrection milestone (excellence pass, 2026-06-14)
+
+GitHub milestone "Minoo Resurrection" (#60) opened; 32 issues seeded (#777-#808) across six workstreams (W1 infra, W2 dictionary, W3 games, W4 community map, W5 brand, W6 growth). Run-to-done mode.
+
+SHIPPED + CLOSED this session (all on `main`, suite 360 green, phpstan clean):
+- #777 remove the analytics script + leave a clean seam (no render/game-init gating)
+- #784 dialect label on every dictionary entry (truthful: Southwestern Ojibwe / OPD; never silently mixed; seam for future Nishnaabemwin codes)
+- #785 `clean_definition` Twig filter: no raw JSON or empty arrays render in any view (list/detail/search/card); OPD abbreviations expanded; dictionary + games show identical text
+- #790 one canonical name per game; all five (Shkoda/Matcher/Agim/Crossword/Journey) on /games, homepage, and nav; Matcher page renamed from "Word Match"
+- #796 hide unbuilt game teasers (Listening Quiz, Sentence Builder)
+- #802 English terminology reconciled (Turtle Island -> "north shore of Lake Huron") with judgement; one touched em dash fixed; "Turtle Island News" proper noun untouched
+- #779 legacy origin 147.182.150.145 confirmed decommissioned (no repo refs; apex DNS now Cloudflare)
+- #782 DNSSEC verified clean via DoH: NS at Cloudflare, no DS at the .live registry, Status 0, no orphaned DS (valid unsigned-clean end state)
+
+PARTIAL: #788 single source credit shipped (retired repeated per-card attribution); examples/audio/related remain. #804 homepage skips empty/placeholder featured cards; real featured pipeline + full em-dash sweep remain. #781 app-side verified (AuthMailer no-ops when unconfigured, so email-less auth is correct); remaining is a deploy action (drop SENDGRID_API_KEY on the Pi).
+
+DEPLOY GATE (human): none of this is on minoo.live yet. Pushing this repo's `main` does NOT deploy; promotion requires bumping `MINOO_REF` to the new HEAD in waaseyaa-infra (the deliberate human action). Lesson 1 (alpha.209 commit 5a70376) + this session's commits ship together on that bump. Re-verify on minoo.live by body-size + title after promotion.
+
+BLOCKERS (external/human, see issue comments): #778 + #780 (Cloudflare DNS record deletes), #781-deploy (Pi env), #789 (Nishnaabemwin community partnership), #800-listings (community consent), #803 (Ojibwe Mother Earth word from speakers).
+
+REMAINING (tracked, substantial): #783 staging path; #791-#795 games depth (crossword medium/hard generation, stats, learnable-word selection, illustrated cards to homepage, mode/toggle verification); #797-#799/#801 community living-map (re-surface the cut community domain + Leaflet + ISC/NC governance); #805 full light/dark + EN/OJ parity audit; #806-#808 onboarding/word-lists, OG/SEO/sitemap/structured-data, accessibility + performance.
+
+## Dictionary batch #786/#787/#788 (2026-06-14, continue-to-done run)
+
+SHIPPED:
+- #786 browse ordering: `/language` leads with defined headwords; entries whose definition is the empty JSON `"[]"` are de-ranked to the end (split cheaply at the query layer on the presence of a `"` char). Verified live: first page opens on real words.
+- #787 search relevance + did-you-mean: results rank exact word (0) > prefix (1) > substring (2) > definition-only (3), tie-broken alphabetically. `q=makwa` returns `makwa` first. Did-you-mean (Levenshtein over a same-prefix candidate set) shows on zero-result queries; prefers the sharpest prefix (3->2->1 chars) so the true neighbour stays inside the bounded set (`makwwa` -> `makwa`, distance 1). Early-position typos degrade to no-suggestion rather than a bad one (distance<=3 guard).
+- #788 entry detail: Examples + Related-words sections render consent-respecting, dialect-safe, ONLY when data exists. The OPD import carries no linked examples/audio/stems, so both are empty until the Nishnaabemwin source work (#789); the capability is built and styled (`.detail__section`/`.detail__example`).
+
+CONSENT LEAK FOUND AND FIXED (the reason this batch took a full debugging pass):
+- The entry-detail examples query correctly returned `[]` (consent filter works), but `EntityStorage::loadMultiple([])` treats an empty array as the framework's "load all" sentinel (`if (!empty($ids))` only adds the `IN` filter when non-empty), so it dumped ALL 27 consent-gated corpus sentences onto the public `makwa` page. Caught on live verification (kitchen corpus showing under "bear"), root-caused via kernel probes (query=0, `loadMultiple([])`=27).
+- FIX (app, immediate): guard `if ($ids === []) return [];` before every `loadMultiple($ids)` in `examplesFor`, `relatedByStem`, and the search ranking loop. `list()`/`didYouMean()` already guarded. Crossword/Shkoda use `load(reset($ids))` behind `!== []` and `status=1` (all corpus is status=0) - not leaking. Lesson is intentional admin-gated. Re-verified: 0 examples on `/language/makwa`; `verify-corpus-gates.php` ALL GATES HOLD.
+- Regression-locked: `LanguageControllerTest` asserts the example storage's `loadMultiple` is `never()` called when the id set is empty.
+- Documented as a CLAUDE.md gotcha (loadMultiple([]) = load-all footgun). UPSTREAM follow-up: harden the framework so `loadMultiple([])` fails closed (Drupal-style `?array $ids = null`, null=all, []=none) - tracked for a framework release; the app guard is correct usage regardless.
+
+Gates: phpunit 360 green (938 assertions), phpstan clean, CSS bumped `?v=85`. Pre-existing `dialect_region` schema drift (missing `name` column) is unrelated to this batch - flagged for the #783 infra pass.

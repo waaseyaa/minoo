@@ -34,14 +34,29 @@ final class LanguageControllerTest extends TestCase
         $this->query->method('accessCheck')->willReturnSelf();
         $this->query->method('condition')->willReturnSelf();
         $this->query->method('sort')->willReturnSelf();
+        $this->query->method('range')->willReturnSelf();
 
         $this->storage = $this->createMock(EntityStorageInterface::class);
         $this->storage->method('getQuery')->willReturn($this->query);
 
+        // example_sentence storage backs entry-detail examples (#788); empty by
+        // default so the detail tests exercise the dictionary path only.
+        // When the consent-gated query yields no ids, examplesFor() must return
+        // early WITHOUT calling loadMultiple() — the framework treats an empty
+        // array as "load all", which would surface the gated corpus (#788 leak).
+        $exampleQuery = $this->createMock(EntityQueryInterface::class);
+        $exampleQuery->method('setAccount')->willReturnSelf();
+        $exampleQuery->method('condition')->willReturnSelf();
+        $exampleQuery->method('range')->willReturnSelf();
+        $exampleQuery->method('execute')->willReturn([]);
+        $exampleStorage = $this->createMock(EntityStorageInterface::class);
+        $exampleStorage->method('getQuery')->willReturn($exampleQuery);
+        $exampleStorage->expects($this->never())->method('loadMultiple');
+
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
-        $this->entityTypeManager->method('getStorage')
-            ->with('dictionary_entry')
-            ->willReturn($this->storage);
+        $this->entityTypeManager->method('getStorage')->willReturnCallback(
+            fn (string $type): EntityStorageInterface => $type === 'example_sentence' ? $exampleStorage : $this->storage,
+        );
 
         $this->twig = new Environment(new ArrayLoader([
             'pages/language/index.html.twig' => '{{ path }}{% for e in entries|default([]) %}|{{ e.get("word") }}{% endfor %}{% if entry is defined and entry %}|{{ entry.get("word") }}{% endif %}{% for form in inflected_forms|default([]) %}|{{ form }}{% endfor %}',
