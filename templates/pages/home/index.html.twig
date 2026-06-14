@@ -46,27 +46,8 @@
         <h2>Games</h2>
         <a href="{{ lang_url('/games') }}">View all &rarr;</a>
       </div>
-      <div class="ds-grid">
-        <a href="{{ lang_url('/games/shkoda') }}" class="card">
-          <h3 class="card__title">Shkoda</h3>
-          <p class="card__meta">Guess the word, letter by letter, before the fire goes out.</p>
-        </a>
-        <a href="{{ lang_url('/matcher') }}" class="card">
-          <h3 class="card__title">Matcher</h3>
-          <p class="card__meta">Match Anishinaabemowin words with their meanings.</p>
-        </a>
-        <a href="{{ lang_url('/games/crossword') }}" class="card">
-          <h3 class="card__title">Crossword</h3>
-          <p class="card__meta">Daily crossword puzzles built from the dictionary.</p>
-        </a>
-        <a href="{{ lang_url('/games/journey') }}" class="card">
-          <h3 class="card__title">Journey</h3>
-          <p class="card__meta">Find the words hidden in scenes from the land.</p>
-        </a>
-        <a href="{{ lang_url('/games/agim') }}" class="card">
-          <h3 class="card__title">Agim</h3>
-          <p class="card__meta">Learn to count in Nishnaabemwin.</p>
-        </a>
+      <div class="games-hub__featured">
+        {% include "components/domain/games/cards.html.twig" %}
       </div>
     </section>
 
