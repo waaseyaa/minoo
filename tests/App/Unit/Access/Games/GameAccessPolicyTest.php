@@ -148,6 +148,42 @@ final class GameAccessPolicyTest extends TestCase
     }
 
     #[Test]
+    public function non_owner_cannot_update_another_players_session(): void
+    {
+        // #795: every mutating game endpoint relies on this gate to stop a
+        // player from advancing/closing someone else's session.
+        $policy = new GameAccessPolicy();
+        $session = new GameSession([
+            'mode' => 'daily',
+            'direction' => 'english_to_ojibwe',
+            'dictionary_entry_id' => 1,
+            'user_id' => 5,
+        ]);
+
+        $account = new class () implements AccountInterface {
+            public function id(): int
+            {
+                return 99;
+            }
+            public function hasPermission(string $p): bool
+            {
+                return false;
+            }
+            public function getRoles(): array
+            {
+                return ['authenticated'];
+            }
+            public function isAuthenticated(): bool
+            {
+                return true;
+            }
+        };
+
+        $result = $policy->access($session, 'update', $account);
+        $this->assertFalse($result->isAllowed());
+    }
+
+    #[Test]
     public function admin_can_create_daily_challenge(): void
     {
         $policy = new GameAccessPolicy();
