@@ -18,11 +18,11 @@
         <div class="card-grid">
           {% for result in search_results %}
             {% include "components/domain/language/entry-card.html.twig" with {
-              word: result.lemma|default(result.word|default('')),
-              part_of_speech: result.word_class_normalized|default(result.part_of_speech|default('')),
-              definition: result.definitions|default(result.definition|default('')),
+              word: result.word|default(''),
+              part_of_speech: result.part_of_speech|default(''),
+              definition: result.definition|default(''),
+              language_code: result.language_code|default('oj'),
               attribution_source: result.attribution_source|default(''),
-              attribution_url: result.attribution_url|default(''),
               example: '',
               tags: [],
               url: result.slug is defined ? "/language/" ~ result.slug : ''

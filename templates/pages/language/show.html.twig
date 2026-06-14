@@ -18,7 +18,8 @@
       </div>
       <div class="content-well">
         <div class="detail__body flow">
-          <p>{{ entry.get('definition')|default('') }}</p>
+          <p>{{ entry.get('definition')|default('')|clean_definition }}</p>
+          <p class="card__meta">{{ entry.get('language_code')|default('oj')|dialect_label(entry.get('attribution_source')|default('')) }}</p>
           {% if inflected_forms is defined and inflected_forms %}
             <p>{{ inflected_forms|join(' · ') }}</p>
           {% endif %}

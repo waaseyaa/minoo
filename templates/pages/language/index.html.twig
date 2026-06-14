@@ -23,8 +23,8 @@
             word: e.get('word'),
             part_of_speech: e.get('part_of_speech')|default(''),
             definition: e.get('definition')|default(''),
+            language_code: e.get('language_code')|default('oj'),
             attribution_source: e.get('attribution_source')|default(''),
-            attribution_url: e.get('attribution_url')|default(''),
             example: '',
             tags: [],
             url: "/language/" ~ e.get('slug')

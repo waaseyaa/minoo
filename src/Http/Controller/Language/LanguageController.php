@@ -115,12 +115,17 @@ final class LanguageController
             $entries = $ids !== [] ? $storage->loadMultiple(array_slice($ids, 0, self::PAGE_SIZE)) : [];
 
             foreach ($entries as $entry) {
-                $searchResults[] = $this->normalizeSearchResult([
+                // Pass the raw definition through; the view applies the shared
+                // clean_definition filter so the dictionary and games render
+                // identical text. Dialect is shown on every card.
+                $searchResults[] = [
                     'word' => (string) $entry->get('word'),
                     'slug' => (string) $entry->get('slug'),
-                    'definitions' => (string) $entry->get('definition'),
                     'part_of_speech' => (string) $entry->get('part_of_speech'),
-                ]);
+                    'definition' => (string) $entry->get('definition'),
+                    'language_code' => (string) ($entry->get('language_code') ?: 'oj'),
+                    'attribution_source' => (string) $entry->get('attribution_source'),
+                ];
             }
         }
 
@@ -132,22 +137,6 @@ final class LanguageController
         ]));
 
         return new Response($html);
-    }
-
-    /**
-     * @param array<string, mixed> $entry
-     * @return array<string, mixed>
-     */
-    private function normalizeSearchResult(array $entry): array
-    {
-        $defs = $entry['definitions'] ?? '';
-        if (is_string($defs)) {
-            $decoded = json_decode($defs, true);
-            $entry['definitions'] = is_array($decoded) ? implode('; ', $decoded) : $defs;
-        } elseif (is_array($defs)) {
-            $entry['definitions'] = implode('; ', $defs);
-        }
-        return $entry;
     }
 
     /**

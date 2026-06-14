@@ -6,6 +6,7 @@ namespace App\Provider;
 
 use App\Http\Twig\AccountDisplayTwigExtension;
 use App\Http\Twig\DateTwigExtension;
+use App\Http\Twig\LanguageTwigExtension;
 use Twig\Environment;
 use Waaseyaa\Entity\Event\EntityEvent;
 use Waaseyaa\Entity\Event\EntityEvents;
@@ -39,6 +40,7 @@ class AppBootServiceProvider extends AppCoreServiceProvider
         $twig = SsrServiceProvider::getTwigEnvironment();
         if ($twig !== null) {
             $twig->addExtension($extension);
+            $twig->addExtension(new LanguageTwigExtension());
         }
 
         // =====================================================================
