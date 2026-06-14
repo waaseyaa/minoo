@@ -1,0 +1,54 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Request elder support — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg content-max">
+    <header class="listing-hero">
+      <h1>Request elder support</h1>
+      <p>Send a request to the community coordinators. We treat every request with care; please share only what you are comfortable with.</p>
+    </header>
+
+    <form method="post" action="{{ lang_url('/elder-support') }}" class="form">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form__field">
+        <label class="form__label" for="es-name">Name <span aria-hidden="true">*</span></label>
+        <input type="text" id="es-name" name="name" required class="form__input">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="es-community">Community</label>
+        <select id="es-community" name="community" class="form__input">
+          <option value="">— Select a community —</option>
+          {% for c in communities %}
+            <option value="{{ c.slug }}">{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="es-type">Type of support</label>
+        <input type="text" id="es-type" name="support_type" class="form__input" placeholder="e.g. transportation, a visit, language help">
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="es-message">What support is needed? <span aria-hidden="true">*</span></label>
+        <textarea id="es-message" name="message" required rows="5" class="form__input"></textarea>
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="es-contact">How can a coordinator reach you?</label>
+        <input type="text" id="es-contact" name="contact" class="form__input" placeholder="phone or email">
+      </div>
+
+      <div class="form__actions">
+        <button type="submit" class="form__submit">Send request</button>
+      </div>
+    </form>
+
+    {% if can_triage %}
+      <p class="card__meta"><a href="{{ lang_url('/elder-support/requests') }}">Coordinator inbox →</a></p>
+    {% endif %}
+  </div>
+{% endblock %}

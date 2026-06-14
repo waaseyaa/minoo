@@ -1,0 +1,30 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Elder support requests — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg content-max">
+    <header class="listing-hero">
+      <h1>Elder support requests</h1>
+      <p>Requests submitted by community members, newest first. These contain personal details — handle with care.</p>
+    </header>
+
+    {% if requests|length == 0 %}
+      <p>No requests yet.</p>
+    {% else %}
+      <div class="flow">
+        {% for r in requests %}
+          <article class="card">
+            <h2 class="card__title">{{ r.name }}{% if r.community %} <span class="card__meta">· {{ r.community }}</span>{% endif %}</h2>
+            {% if r.support_type %}<p class="card__meta"><strong>Type:</strong> {{ r.support_type }}</p>{% endif %}
+            <p>{{ r.message }}</p>
+            {% if r.contact %}<p class="card__meta"><strong>Contact:</strong> {{ r.contact }}</p>{% endif %}
+            <p class="card__meta">Status: {{ r.status }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <p class="card__meta"><a href="{{ lang_url('/elder-support') }}">← Back to the request form</a></p>
+  </div>
+{% endblock %}

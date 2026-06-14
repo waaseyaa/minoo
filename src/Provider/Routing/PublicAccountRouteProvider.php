@@ -35,5 +35,40 @@ final class PublicAccountRouteProvider extends AppCoreServiceProvider
                 ->methods('POST')
                 ->build(),
         );
+
+        // =====================================================================
+        // --- Elder-support request workflow (#801) ---
+        // Authenticated; the triage inbox gates further to coordinators/admins.
+        // Not in public nav until a staffed coordinator program exists.
+        // =====================================================================
+
+        $router->addRoute(
+            'elder_support.requests',
+            RouteBuilder::create('/elder-support/requests')
+                ->controller('App\Http\Controller\ElderSupport\ElderSupportController::inbox')
+                ->requireAuthentication()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'elder_support.form',
+            RouteBuilder::create('/elder-support')
+                ->controller('App\Http\Controller\ElderSupport\ElderSupportController::form')
+                ->requireAuthentication()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'elder_support.submit',
+            RouteBuilder::create('/elder-support')
+                ->controller('App\Http\Controller\ElderSupport\ElderSupportController::submit')
+                ->requireAuthentication()
+                ->methods('POST')
+                ->build(),
+        );
     }
 }

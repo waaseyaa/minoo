@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Provider\Entity;
 
 use App\Entity\Editorial\FeaturedItem;
+use App\Entity\ElderSupport\ElderSupportRequest;
 use App\Entity\Language\DialectRegion;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Entity\EntityType;
 
 /**
- * Editorial + dialect regions.
+ * Editorial + dialect regions + elder-support requests.
  *
- * Language-platform slimming (2026-06): community, resource_person,
- * elder_support_request, and volunteer entity types de-registered;
- * their tables stay dormant in the database.
+ * Language-platform slimming (2026-06): community, resource_person, and
+ * volunteer entity types stay de-registered (tables dormant). elder_support_request
+ * was re-registered for the coordinator triage workflow (#801).
  */
 final class EntityCommunityProvider extends AppCoreServiceProvider
 {
@@ -52,6 +53,30 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
             class: DialectRegion::class,
             keys: ['id' => 'code', 'label' => 'name'],
             group: 'language',
+        ));
+
+        // =====================================================================
+        // --- Elder-support requests (#801) ---
+        // Coordinator triage workflow; reads gated to coordinators/admins.
+        // =====================================================================
+
+        $this->entityType(new EntityType(
+            id: 'elder_support_request',
+            label: 'Elder Support Request',
+            class: ElderSupportRequest::class,
+            keys: ['id' => 'esrid', 'uuid' => 'uuid', 'label' => 'name'],
+            group: 'community',
+            _fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'description' => 'Name of the person needing support.', 'weight' => 1],
+                'community' => ['type' => 'string', 'label' => 'Community', 'description' => 'Nation/community slug.', 'weight' => 2],
+                'support_type' => ['type' => 'string', 'label' => 'Support type', 'description' => 'Kind of support requested.', 'weight' => 3],
+                'message' => ['type' => 'text_long', 'label' => 'Message', 'description' => 'Details of the request.', 'weight' => 4],
+                'contact' => ['type' => 'string', 'label' => 'Contact', 'description' => 'How to reach the requester.', 'weight' => 5],
+                'status' => ['type' => 'string', 'label' => 'Status', 'description' => 'open | in_progress | closed.', 'default' => 'open', 'weight' => 6],
+                'assigned_to' => ['type' => 'integer', 'label' => 'Assigned coordinator', 'description' => 'User id of the coordinator handling this.', 'weight' => 7],
+                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 20],
+                'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 21],
+            ],
         ));
     }
 }
