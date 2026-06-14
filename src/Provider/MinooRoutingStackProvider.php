@@ -7,6 +7,7 @@ namespace App\Provider;
 use App\Provider\Routing\AdminRouteProvider;
 use App\Provider\Routing\AuthApiRouteProvider;
 use App\Provider\Routing\GamesApiRouteProvider;
+use App\Provider\Routing\LessonRouteProvider;
 use App\Provider\Routing\PublicAccountRouteProvider;
 use App\Provider\Routing\PublicContentRouteProvider;
 use App\Provider\Routing\PublicHomeFeedRouteProvider;
@@ -35,6 +36,7 @@ final class MinooRoutingStackProvider extends ServiceProvider
             new PublicHomeFeedRouteProvider(),
             new AuthApiRouteProvider(),
             new GamesApiRouteProvider(),
+            new LessonRouteProvider(),
             new StaticPagesRouteProvider(),
             new AdminRouteProvider(),
         ] as $child) {

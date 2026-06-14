@@ -56,6 +56,22 @@ Full report: docs/lineage-report.md. Highlights:
 - Secrets: compose/minoo/secrets/minoo.env on the Pi only (oiatc:oiatc 0600); SENDGRID key + mail identity carried over from the razor-crest backup .env; fresh JWT secret. Nothing secret committed.
 - BLOCKED (needs Russell, ~5 minutes): minoo.live's nameservers still point at Spaceship and the zone is NOT in the Cloudflare account; no CF API token exists on the Pi or in the infra repo, so I cannot do this. Steps (also in waaseyaa-infra/runbooks/06-minoo-deploy.md): 1) Cloudflare -> Add site -> minoo.live; 2) at Spaceship, set the two Cloudflare nameservers; 3) Zero Trust -> Tunnels -> oiatc-pi -> Public Hostnames: add minoo.live AND www.minoo.live -> HTTP -> caddy:80. No Cache-Everything rule. The site goes live the moment step 3 saves.
 
+## Phase 2 increment - alpha.209 (2026-06-14)
+- Latest published alpha is now v0.1.0-alpha.209 (released 2026-06-14): framework repo hygiene sweep + a new `user:assign-role` CLI command. No keep-list impact. Bumped all waaseyaa/* constraints 208 -> 209; `composer update` clean; suite green. (Plan Phase 2 calls for the LATEST alpha.)
+- Also fixed a pre-existing flaky test: `DateTwigExtensionTest::formatsSameYearWithoutYear` used real "now" + a 06-15 date, so it failed on 06-14 (rendered "Tomorrow"). Pinned to a deterministic clock.
+
+## Phase 4B - Lesson 1 (Kitchen) course surface (2026-06-14)
+First real surface over the migrated corpus. Routes: `/lesson` (landing), `/lesson/1` (16 cards), `/lesson/media/{thumb,audio}/{id}` (media stream).
+- 16 kitchen items in the exact order + section groups from `research/elder-and-teacher-input/steven-lesson-1-review.md` (Dishes and containers / Utensils / Cookware / Furniture and appliances), matching the reference impl `code/lesson/lesson.py`.
+- Card = whiteboard thumbnail + Listen (audio) + Anishinaabemowin + English. Practice mode blurs English until tap; mark-known persists in localStorage. Steven Bennett credited in header + footer via https://www.facebook.com/profile.php?id=61582894730998; each card also links its source reel.
+- DATA SOURCING (house rules): Anishinaabemowin read VERBATIM from the migrated corpus (`example_sentence.ojibwe_text`) at runtime, never committed, never altered. `config/lesson1.php` holds only curation metadata (IDs, order, group labels, reviewed English glosses from the review doc, e.g. "stove" not the raw corpus artifact "stoue", "plate" not "Plate"). Audio + thumbnails streamed from the corpus dir via `MINOO_CORPUS_PATH`, never copied into the repo.
+- CONSENT GATE (absolute): lesson + media routes are admin-gated (`requireAuthentication()` + in-controller `hasPermission('administer content')`). Verified anon gets 302->/login on `/lesson/1` and 401 on media; corpus audio/whiteboards/Anishinaabemowin are NOT publicly reachable. `/games` and `/language` stay public. Corpus rows remain consent-OFF/unpublished/out-of-search/no-embeddings (Phase 4 gate verifier re-run 9/9). Going public is a deliberate later step (relax guard + publish rows) gated on WRITTEN consent.
+- Media allowlist: only the 16 lesson IDs and {thumb,audio}; traversal and non-lesson corpus IDs (e.g. sb-002) return 404. 5 security unit tests cover the guard + allowlist.
+- LOCAL REVIEW: `.env` (gitignored) enables the framework dev-fallback admin so `/lesson/1` is reviewable at http://localhost:8080/lesson/1 without a login. OFF in production (Pi minoo.env sets it false).
+- Adversarial review (4-lens workflow: house-rules, consent/security, reference-parity, code-correctness): 0 blockers, 0 majors, 4 minors. Fixed: em dash in a config comment; added the `accessCheck(false)` row to docs/security/sql-entity-query-access-check-bypass-audit.md. Left by design: `audio/ogg` MIME for .opus (plays, faithful to reference); one pre-existing non-user-facing Twig doc-comment em dash (codebase-wide convention, not mine).
+- Gates: phpunit 350 green, phpstan clean, cs-fixer applied. Counts re-verified 21721/4/118 (pruned 1 game_session created by smoke curls).
+- NOT a public surface and NOT deployed: per instruction, stopped before Phase 5. Pi deploy will need the corpus dir provided out-of-band (the /srv/lessons rsync pattern) since corpus content is never committed.
+
 ## Decisions
 - (running list, newest last)
 - D1: gh repo clone hung; switched to plain git clone. (Phase 0)

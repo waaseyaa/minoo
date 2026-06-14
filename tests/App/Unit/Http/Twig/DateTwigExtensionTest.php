@@ -75,12 +75,17 @@ final class DateTwigExtensionTest extends TestCase
     #[Test]
     public function formatsSameYearWithoutYear(): void
     {
-        $date = (new \DateTimeImmutable())->format('Y') . '-06-15 10:00:00';
+        // Pinned "now" so the case is deterministic: a real-now date of
+        // YYYY-06-15 renders as "Tomorrow"/"Today" when the calendar is near
+        // mid-June (and so omits "Jun 15"). Pin now to 2026-04-15 and use a
+        // same-year date two months out, which formats as a plain date.
+        $ext = $this->pinned();
+        $date = '2026-06-15 10:00:00';
 
-        $result = $this->ext->friendlyDate($date);
+        $result = $ext->friendlyDate($date);
 
         self::assertStringContainsString('Jun 15', $result);
-        self::assertStringNotContainsString((new \DateTimeImmutable())->format('Y'), $result);
+        self::assertStringNotContainsString('2026', $result);
     }
 
     #[Test]

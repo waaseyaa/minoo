@@ -1,0 +1,27 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Lessons · Anishinaabemowin{% endblock %}
+
+{% block content %}
+<div class="lesson-page">
+  <header class="lesson-hero">
+    <p class="lesson-hero__eyebrow">Learn</p>
+    <h1>Lessons</h1>
+    <p class="lesson-hero__lede">
+      Short lessons built from the words Knowledge Keepers share. The first is
+      the kitchen, taught by
+      <a href="{{ steven_url }}" target="_blank" rel="noopener">Steven Bennett</a>.
+    </p>
+  </header>
+
+  <div class="lesson-list">
+    {% for lesson in lessons %}
+      <a class="lesson-list__card" href="{{ lesson.url }}">
+        <p class="lesson-hero__eyebrow">Lesson {{ lesson.number }}</p>
+        <div class="lesson-card__oji">{{ lesson.title }}</div>
+        <p class="lesson-hero__credit">{{ lesson.count }} words</p>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

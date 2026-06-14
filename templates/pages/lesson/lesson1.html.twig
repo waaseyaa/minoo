@@ -1,0 +1,57 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ lesson_title }} · Anishinaabemowin{% endblock %}
+
+{% block content %}
+<div class="lesson-page" id="lesson">
+  <header class="lesson-hero">
+    <p class="lesson-hero__eyebrow">Lesson 1 of the Anishinaabemowin corpus</p>
+    <h1>The kitchen, in <em>Anishinaabemowin</em></h1>
+    <p class="lesson-hero__lede">
+      Sixteen everyday objects, taught by Steven Bennett on his Facebook reels.
+      Click any card to play his voice. Turn on Practice to hide the English and
+      test yourself, then tap a card to reveal it.
+    </p>
+    <p class="lesson-hero__credit">
+      Taught by <a href="{{ steven_url }}" target="_blank" rel="noopener">Steven Bennett</a>.
+      Every card is one of his reels, in his voice.
+    </p>
+  </header>
+
+  <div class="lesson-toolbar">
+    <label><input type="checkbox" id="lesson-practice"> Practice mode (hide English)</label>
+    <label><input type="checkbox" id="lesson-autoplay" checked> Autoplay audio on tap</label>
+    <span class="lesson-toolbar__stat"><span id="lesson-known-count">0</span> of {{ total }} marked known</span>
+  </div>
+
+  {% for group in groups %}
+    <h2 class="lesson-group__label">{{ group.label }}</h2>
+    <div class="lesson-grid">
+      {% for item in group.items %}
+        <article class="lesson-card" data-id="{{ item.id }}">
+          <img class="lesson-card__thumb" loading="lazy" src="{{ item.thumb }}" alt="">
+          <div class="lesson-card__body">
+            <div class="lesson-card__oji">{{ item.ojibwe }}</div>
+            <div class="lesson-card__english">{{ item.english }}</div>
+            <div class="lesson-card__actions">
+              <button class="lesson-card__play" type="button" aria-label="Play Steven's audio">Listen</button>
+              <button class="lesson-card__known" type="button" aria-label="Mark known" title="Mark known">&check;</button>
+            </div>
+            {% if item.source_url %}
+              <a class="lesson-card__source" href="{{ item.source_url }}" target="_blank" rel="noopener">Source reel</a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <footer class="lesson-footer">
+    <p>Source. Each card is a real reel from <a href="{{ steven_url }}" target="_blank" rel="noopener">Steven Bennett's Facebook</a>. The audio is his unmodified voice.</p>
+    <p>Orthography. Spellings are transcribed from the whiteboards exactly as written. Steven's local spelling may differ from standard double-vowel; we record what the Elder writes, we do not normalize it.</p>
+    <p>Consent. This lesson is a review surface. The corpus behind it is not yet published; it stays private until written consent records exist.</p>
+  </footer>
+</div>
+
+<script src="/js/lesson.js?v=1" defer></script>
+{% endblock %}
