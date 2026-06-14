@@ -931,6 +931,38 @@
     line-height: var(--leading-loose);
   }
 
+  .detail__facts {
+    display: grid;
+    gap: var(--space-2xs);
+    margin: 0;
+  }
+
+  .detail__facts > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .detail__facts dt {
+    font-weight: 600;
+    color: var(--text-muted);
+    min-inline-size: 11rem;
+  }
+
+  .detail__facts dd {
+    margin: 0;
+  }
+
+  /* Community living-map (#798) — Leaflet needs an explicit height. */
+  .community-map {
+    block-size: clamp(20rem, 50vh, 30rem);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    margin-block: var(--space-md);
+    z-index: 0;
+    background-color: var(--surface-raised);
+  }
+
   .detail__contact {
     display: flex;
     flex-wrap: wrap;

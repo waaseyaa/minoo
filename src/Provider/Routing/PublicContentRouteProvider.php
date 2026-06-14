@@ -51,5 +51,31 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
                 ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
                 ->build(),
         );
+
+        // =====================================================================
+        // --- Community living-map (#797/#798/#799): seven Mamaweswen nations ---
+        // Public factual data only; individual people-listings stay gated (#800).
+        // =====================================================================
+
+        $router->addRoute(
+            'community.list',
+            RouteBuilder::create('/communities')
+                ->controller('App\\Http\\Controller\\Community\\CommunityController::index')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'community.show',
+            RouteBuilder::create('/communities/{slug}')
+                ->controller('App\\Http\\Controller\\Community\\CommunityController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
     }
 }

@@ -1,0 +1,57 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}
+  {%- if nation -%}{{ nation.name }} — Minoo{%- else -%}Community not found — Minoo{%- endif -%}
+{% endblock %}
+{% block meta_description %}
+  {%- if nation -%}{{ nation.name }}: {{ nation.reserve }}, {{ nation.treaty }}, a member of Mamaweswen, The North Shore Tribal Council.{%- else -%}Community not found.{%- endif -%}
+{% endblock %}
+
+{% block content %}
+  {% if nation %}
+    <div class="flow-lg detail">
+      <a href="{{ lang_url('/communities') }}" class="detail__back">← All communities</a>
+      <div class="detail__header">
+        {% if nation.anchor %}<span class="card__badge card__badge--language">Anchor community</span>{% endif %}
+        <h1>{{ nation.name }}</h1>
+      </div>
+
+      <div class="content-well">
+        <div class="detail__body flow">
+          <p class="card__meta">Member of <a href="https://mamaweswen.com/" rel="external noopener">Mamaweswen, The North Shore Tribal Council</a></p>
+          <dl class="detail__facts">
+            <div><dt>Main reserve</dt><dd>{{ nation.reserve }}</dd></div>
+            <div><dt>Treaty</dt><dd>{{ nation.treaty }}</dd></div>
+            <div><dt>Registered population</dt><dd>{{ nation.population|number_format }}</dd></div>
+            <div><dt>ISC band number</dt><dd>{{ nation.band_number }}</dd></div>
+          </dl>
+          {% if nation.website %}
+            <p><a href="{{ nation.website }}" rel="external noopener">Community website →</a></p>
+          {% endif %}
+        </div>
+
+        <section class="detail__section flow">
+          <h2>Leadership</h2>
+          <p><strong>Chief:</strong> {{ nation.chief }}</p>
+          {% if nation.council|length > 0 %}
+            <p><strong>Council:</strong> {{ nation.council|join(', ') }}</p>
+          {% endif %}
+          <p class="card__meta">
+            Compiled from public band profiles, {{ leadership_as_of }}. For the current record, see the
+            <a href="{{ governance_url }}" rel="external noopener">Indigenous Services Canada First Nation Profile</a>.
+          </p>
+        </section>
+
+        <footer class="attribution">
+          <p>Community information is drawn from public records. Listings of individual community members are not published here.</p>
+        </footer>
+      </div>{# .content-well #}
+    </div>
+  {% else %}
+    <div class="flow-lg">
+      <h1>Community not found</h1>
+      <p>We could not find that community.</p>
+      <p><a href="{{ lang_url('/communities') }}">All communities</a></p>
+    </div>
+  {% endif %}
+{% endblock %}
