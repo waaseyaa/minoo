@@ -18,6 +18,7 @@
         "waaseyaa/cli": "^0.1.0-alpha.209",
         "waaseyaa/config": "^0.1.0-alpha.209",
         "waaseyaa/database-legacy": "^0.1.0-alpha.209",
+        "waaseyaa/engagement": "^0.1.0-alpha.209",
         "waaseyaa/entity": "^0.1.0-alpha.209",
         "waaseyaa/entity-storage": "^0.1.0-alpha.209",
         "waaseyaa/field": "^0.1.0-alpha.209",
