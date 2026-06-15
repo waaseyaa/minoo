@@ -72,6 +72,9 @@ final class BootTest extends TestCase
             'game_session', 'daily_challenge', 'crossword_puzzle',
             'featured_item',
             'ingest_log',
+            // Sovereign Social spine: post (#811) + engagement from
+            // waaseyaa/engagement (#812).
+            'post', 'reaction', 'comment', 'follow',
         ];
 
         foreach ($minooTypes as $typeId) {

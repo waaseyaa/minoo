@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1038e770f31ab44c28fc29307d554211",
+    "content-hash": "3d7b6e2d6e4a136020190ceee6772b90",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -4349,6 +4349,56 @@
                 "source": "https://github.com/waaseyaa/database-legacy/tree/v0.1.0-alpha.209"
             },
             "time": "2026-06-13T23:38:54+00:00"
+        },
+        {
+            "name": "waaseyaa/engagement",
+            "version": "v0.1.0-alpha.209",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waaseyaa/engagement.git",
+                "reference": "59931ea40f519a554dcdb7e0cd9aeacfd4dc4688"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waaseyaa/engagement/zipball/59931ea40f519a554dcdb7e0cd9aeacfd4dc4688",
+                "reference": "59931ea40f519a554dcdb7e0cd9aeacfd4dc4688",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.5",
+                "waaseyaa/access": "^0.1.0-alpha.209",
+                "waaseyaa/entity": "^0.1.0-alpha.209",
+                "waaseyaa/foundation": "^0.1.0-alpha.209"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "type": "library",
+            "extra": {
+                "waaseyaa": {
+                    "providers": [
+                        "Waaseyaa\\Engagement\\EngagementServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waaseyaa\\Engagement\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Social engagement entities (reactions, comments, follows) for Waaseyaa",
+            "support": {
+                "issues": "https://github.com/waaseyaa/engagement/issues",
+                "source": "https://github.com/waaseyaa/engagement/tree/v0.1.0-alpha.209"
+            },
+            "time": "2026-06-14T17:54:26+00:00"
         },
         {
             "name": "waaseyaa/entity",
