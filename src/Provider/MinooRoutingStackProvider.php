@@ -11,6 +11,7 @@ use App\Provider\Routing\LessonRouteProvider;
 use App\Provider\Routing\PublicAccountRouteProvider;
 use App\Provider\Routing\PublicContentRouteProvider;
 use App\Provider\Routing\PublicHomeFeedRouteProvider;
+use App\Provider\Routing\SocialApiRouteProvider;
 use App\Provider\Routing\StaticPagesRouteProvider;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
@@ -39,6 +40,7 @@ final class MinooRoutingStackProvider extends ServiceProvider
             new LessonRouteProvider(),
             new StaticPagesRouteProvider(),
             new AdminRouteProvider(),
+            new SocialApiRouteProvider(),
         ] as $child) {
             // mergeChildProvider() forwards both kernel context and the kernel-services
             // resolver introduced in alpha.171 (replaces the older setKernelResolver path).
