@@ -6,6 +6,7 @@ namespace App\Provider\Entity;
 
 use App\Entity\Account\SavedWord;
 use App\Entity\Community\Contributor;
+use App\Entity\Feed\Post;
 use App\Entity\Games\CrosswordPuzzle;
 use App\Entity\Games\DailyChallenge;
 use App\Entity\Games\GameSession;
@@ -112,6 +113,30 @@ final class EntityContentProvider extends AppCoreServiceProvider
                 'clues' => ['type' => 'text_long', 'label' => 'Clues', 'description' => 'JSON map of word index to clue data.', 'weight' => 10],
                 'theme' => ['type' => 'string', 'label' => 'Theme', 'weight' => 15],
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 20, 'default' => 'easy'],
+            ],
+        ));
+
+        // =====================================================================
+        // --- Social spine: posts (#811) ---
+        // Consent by participation: a member posts for themselves. Belongs to a
+        // community (HasCommunityTrait) so it places on the graph by vantage.
+        // =====================================================================
+
+        $this->entityType(new EntityType(
+            id: 'post',
+            label: 'Post',
+            class: Post::class,
+            keys: ['id' => 'pid', 'uuid' => 'uuid', 'label' => 'body'],
+            tenancy: ['scope' => 'community'],
+            group: 'engagement',
+            _fieldDefinitions: [
+                'body' => ['type' => 'text_long', 'label' => 'Body', 'weight' => 0],
+                'user_id' => ['type' => 'integer', 'label' => 'User ID', 'weight' => 1],
+                'community_id' => ['type' => 'integer', 'label' => 'Community ID', 'weight' => 2],
+                'images' => ['type' => 'text_long', 'label' => 'Images', 'weight' => 3],
+                'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 5, 'default' => 1],
+                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 10],
+                'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 11],
             ],
         ));
 
