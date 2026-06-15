@@ -143,3 +143,38 @@ The community/geo/NorthCloud domains were fully cut in slimming, but the Leaflet
 - #801 elder-support: re-surfaced the cut workflow against the dormant elder_support_request table — signed-in submit + coordinator/admin-gated inbox. CARE-GATED: authenticated-only, not in public nav; public self-service intake needs a staffed coordinator program + privacy review first. End-to-end verified (form → POST 302 → inbox); test row removed, counts intact.
 
 Gates: suite 390 green (1099 assertions), phpstan clean, CSS ?v=86, schema:check clean for the new table (the only drift is the pre-existing dialect_region.name, flagged for #783). Architectural note: did NOT re-add waaseyaa/northcloud or the NC community client — community data is curated public record, which is the right source per "build from public authoritative data."
+
+## Growth + brand + infra batch #807/#808/#805/#806/#804/#783 (2026-06-14, continue-to-done run)
+
+- #807 SEO: /sitemap.xml (SitemapController, valid XML, 1020 urls = sections + 7 communities + 1000 dictionary entries, capped for perf); JSON-LD WebSite+SearchAction in the layout, DefinedTerm on dictionary entries; robots.txt Sitemap line + disallow /account,/elder-support. OG/Twitter meta + og-default.png already present.
+- #808 a11y + perf: audited public pages — all imgs alt, decorative SVGs aria-hidden, icon buttons labelled, lang + skip-link present; fixed the one gap (layout search input now has aria-label). Documented docs/performance-budget.md (HTML 12-26KB/page, app CSS ~279KB uncompressed/~60KB gzip, content pages load no page JS, Leaflet only on /communities). Dead JS from cut features catalogued (spawned a cleanup task).
+- #805 parity: verified light/dark (oklch tokens) + EN/OJ switching (/oj/ prefix, all pages 200) with GRACEFUL English fallback for absent/empty OJ keys (no raw keys/blanks). Locked with tests/App/Unit/I18n/TranslationParityTest (used keys exist in en; oj never drifts ahead). OJ copy gaps (~164 keys + hardcoded home/community/elder-support pages) need fluent speakers — tracked in docs/parity-audit.md, never invented. ~119 stale en keys flagged.
+- #806 account benefits: personal word lists (saved_word entity + migration + owner-only policy + SavedWords helper guarding loadMultiple([])); "Save to my words" toggle on entries; /account/words list; fast-value onboarding panel on the account home (get-started + my-words count, tying in streaks). Verified end-to-end (save->list->saved->unsave); counts intact.
+- #804 brand: homepage now holds BOTH truths (added "Rooted in community" + Mamaweswen framing linking the living-map; CTA names word lists). Placeholder already retired (hero is on-brand; "Welcome to Minoo" only in the welcome email); zero em dashes in templates.
+- #783 staging: scripts/verify-http.php (verify-before-prod: 200 + body-size + title, never status alone; 10/10 local PASS) + docs/runbooks/staging.md (staging gate: candidate ref -> staging surface -> verify-http -> bump prod MINOO_REF -> verify prod). Staging compose service + tunnel hostname are waaseyaa-infra (separate repo) + human DNS.
+
+Final gates: suite 400 green (1125 assertions), phpstan clean, CSS ?v=87.
+
+## FINAL HANDOFF — milestone #60 "Minoo Resurrection" (continue-to-done complete, 2026-06-14)
+
+ALL non-blocked issues closed: 26 closed, 6 open (all genuine external/human/community blockers). Everything is on `main`; NONE is on minoo.live yet (promotion = human MINOO_REF bump in waaseyaa-infra, then `php scripts/verify-http.php https://minoo.live`).
+
+Shipped this continue-to-done run (issue-linked commits on main, every gate green):
+- Dictionary #786 ordering, #787 search relevance + did-you-mean, #788 entry detail (examples/audio/related capability) — and FIXED A CONSENT LEAK (loadMultiple([]) = load-all surfaced 27 gated corpus sentences on the public makwa page; guarded app-side + regression-locked + CLAUDE.md gotcha; framework fail-closed hardening flagged upstream).
+- Games #791 verify modes, #792 crossword tiers+themes self-heal, #793 learnable/diverse word selection, #794 homepage illustrated cards, #795 game_type+ownership+stats.
+- Community map #797 nav+index, #798 Leaflet 7 Mamaweswen nations, #799 ISC-sourced leadership, #801 elder-support workflow (gated).
+- Parity #805, Growth #806/#807/#808, Brand #804, Infra #783.
+
+OPEN — PARKED BLOCKERS (cannot close without external/human/community action):
+- #778 remove analytics.minoo.live DNS record — human (Cloudflare).
+- #780 remove dead SendGrid DKIM DNS (s1/s2._domainkey) — human (Cloudflare).
+- #781 email-less auth — app side verified (AuthMailer no-ops unconfigured); remaining is dropping SENDGRID_API_KEY on the Pi — human deploy env.
+- #789 authoritative Nishnaabemwin sources — needs a community partnership; unlocks OJ dictionary corrections + entry audio/examples (#788 data) + OJ copy (#805).
+- #800 consent/opt-in listing model for communities & people — needs a data-sovereignty policy + community consent; gates individual people-listings (contributor stays consent_public=0).
+- #803 community's own word for Mother Earth — needs speakers; do not invent.
+
+NON-BLOCKING FOLLOW-UPS (tracked, safe to do anytime):
+- Framework: harden EntityStorage::loadMultiple([]) to fail closed (Drupal-style ?array null=all, []=none). App guards are in place; this removes the footgun at source. Per the framework-gap rule, do this upstream in waaseyaa-framework + release.
+- Dead JS removal (spawned task) + ~119 stale en.php keys (docs/parity-audit.md).
+- Pre-existing dialect_region.name schema drift (unrelated to any batch).
+- OJ translation of the ~164 placeholder/missing keys + hardcoded pages — speaker-dependent.
