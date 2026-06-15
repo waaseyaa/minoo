@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Provider\Entity;
 
+use App\Entity\Community\Community;
 use App\Entity\Editorial\FeaturedItem;
 use App\Entity\ElderSupport\ElderSupportRequest;
 use App\Entity\Language\DialectRegion;
@@ -53,6 +54,44 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
             class: DialectRegion::class,
             keys: ['id' => 'code', 'label' => 'name'],
             group: 'language',
+        ));
+
+        // =====================================================================
+        // --- Community graph: the 646-row community table (#815) ---
+        // Public institutional data (no consent gate). The authoritative geo
+        // index for "location as vantage point"; the curated MamaweswenNations
+        // (#60) layers on top for the seven nations' detail pages.
+        // =====================================================================
+
+        $this->entityType(new EntityType(
+            id: 'community',
+            label: 'Community',
+            class: Community::class,
+            keys: ['id' => 'cid', 'uuid' => 'uuid', 'label' => 'name'],
+            group: 'communities',
+            _fieldDefinitions: [
+                'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
+                'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 1],
+                'community_type' => ['type' => 'string', 'label' => 'Community Type', 'weight' => 5],
+                'municipality_type' => ['type' => 'string', 'label' => 'Municipality Type', 'weight' => 6],
+                'province' => ['type' => 'string', 'label' => 'Province', 'weight' => 10],
+                'region' => ['type' => 'string', 'label' => 'Region', 'weight' => 11],
+                'latitude' => ['type' => 'float', 'label' => 'Latitude', 'weight' => 15],
+                'longitude' => ['type' => 'float', 'label' => 'Longitude', 'weight' => 16],
+                'population' => ['type' => 'integer', 'label' => 'Population', 'weight' => 20],
+                'population_year' => ['type' => 'integer', 'label' => 'Population Year', 'weight' => 21],
+                'nation' => ['type' => 'string', 'label' => 'Nation/Linguistic Group', 'weight' => 25],
+                'treaty' => ['type' => 'string', 'label' => 'Treaty', 'weight' => 26],
+                'reserve_name' => ['type' => 'string', 'label' => 'Reserve Name', 'weight' => 27],
+                'language_group' => ['type' => 'string', 'label' => 'Language Group', 'weight' => 30],
+                'website' => ['type' => 'string', 'label' => 'Website', 'weight' => 35],
+                'inac_id' => ['type' => 'string', 'label' => 'INAC Band Number', 'weight' => 40],
+                'statcan_csd' => ['type' => 'string', 'label' => 'StatsCan CSD Code', 'weight' => 41],
+                'nc_id' => ['type' => 'string', 'label' => 'NorthCloud ID', 'weight' => 42],
+                'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 50, 'default' => 1],
+                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 60],
+                'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 61],
+            ],
         ));
 
         // =====================================================================

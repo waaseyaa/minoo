@@ -75,6 +75,8 @@ final class BootTest extends TestCase
             // Sovereign Social spine: post (#811) + engagement from
             // waaseyaa/engagement (#812).
             'post', 'reaction', 'comment', 'follow',
+            // Community graph geo index (#815).
+            'community',
         ];
 
         foreach ($minooTypes as $typeId) {
