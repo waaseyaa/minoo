@@ -83,7 +83,7 @@ check($ids !== [], 'corpus sentence sb-001 exists for admin tooling');
 if ($ids !== []) {
     $entity = $storage->load((int) reset($ids));
     $handler = $kernel->getAccessHandler();
-    $anonymous = new class implements Waaseyaa\Access\AccountInterface {
+    $anonymous = new class () implements Waaseyaa\Access\AccountInterface {
         public function id(): int|string
         {
             return 0;
