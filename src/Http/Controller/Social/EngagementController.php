@@ -176,52 +176,9 @@ final class EngagementController
         return $this->json(['comments' => $items]);
     }
 
-    public function follow(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        $data = $this->jsonBody($request);
-
-        if (!isset($data['target_type'], $data['target_id'])) {
-            return $this->json(['error' => 'Missing required fields: target_type, target_id'], 422);
-        }
-
-        if (!$this->isValidTargetType($data['target_type'])) {
-            return $this->json(['error' => 'Invalid target_type'], 422);
-        }
-
-        $storage = $this->entityTypeManager->getStorage('follow');
-
-        try {
-            $entity = $storage->create([
-                'user_id' => $account->id(),
-                'target_type' => $data['target_type'],
-                'target_id' => (int) $data['target_id'],
-            ]);
-            $storage->save($entity);
-        } catch (\InvalidArgumentException) {
-            return $this->json(['error' => 'Invalid entity data'], 422);
-        }
-
-        return $this->json(['id' => $entity->id()], 201);
-    }
-
-    public function deleteFollow(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        $id = (int) ($params['id'] ?? 0);
-        $storage = $this->entityTypeManager->getStorage('follow');
-        $entity = $storage->load($id);
-
-        if ($entity === null) {
-            return $this->json(['error' => 'Not found'], 404);
-        }
-
-        if ((int) $entity->get('user_id') !== (int) $account->id() && !$account->hasPermission('administer content')) {
-            return $this->json(['error' => 'Forbidden'], 403);
-        }
-
-        $storage->delete([$entity]);
-
-        return $this->json(['deleted' => true]);
-    }
+    // Following is DEFERRED — no follow()/deleteFollow() surface. The follow
+    // table + the waaseyaa/engagement package stay; re-add the methods + routes
+    // when following is approved.
 
     public function createPost(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {

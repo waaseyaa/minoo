@@ -47,16 +47,9 @@ final class SocialApiRouteProvider extends AppCoreServiceProvider
             RouteBuilder::create('/api/engagement/comments/{target_type}/{target_id}')
                 ->controller($ctrl . '::getComments')->allowAll()->methods('GET')->requirement('target_id', '\\d+')->build(),
         );
-        $router->addRoute(
-            'engagement.follow',
-            RouteBuilder::create('/api/engagement/follow')
-                ->controller($ctrl . '::follow')->requireAuthentication()->methods('POST')->build(),
-        );
-        $router->addRoute(
-            'engagement.deleteFollow',
-            RouteBuilder::create('/api/engagement/follow/{id}')
-                ->controller($ctrl . '::deleteFollow')->requireAuthentication()->methods('DELETE')->requirement('id', '\\d+')->build(),
-        );
+        // Following is DEFERRED: no follow routes. The follow table + the
+        // waaseyaa/engagement package (which also provides reactions/comments)
+        // stay; only the surface is withheld.
         $router->addRoute(
             'engagement.createPost',
             RouteBuilder::create('/api/engagement/post')
