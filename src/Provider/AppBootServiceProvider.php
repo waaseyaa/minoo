@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
+use App\Domain\Geo\Service\LocationService;
 use App\Http\Twig\AccountDisplayTwigExtension;
 use App\Http\Twig\DateTwigExtension;
 use App\Http\Twig\LanguageTwigExtension;
 use Twig\Environment;
+use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Event\EntityEvent;
 use Waaseyaa\Entity\Event\EntityEvents;
 use Waaseyaa\I18n\LanguageManagerInterface;
@@ -25,6 +27,15 @@ use Waaseyaa\SSR\ThemeServiceProvider;
  */
 class AppBootServiceProvider extends AppCoreServiceProvider
 {
+    public function register(): void
+    {
+        // Location-as-vantage-point (#816): resolves a member's chosen place into
+        // a coarse community centroid for the feed + graph.
+        $this->singleton(LocationService::class, fn (): LocationService => new LocationService(
+            $this->resolve(EntityTypeManager::class),
+        ));
+    }
+
     public function boot(): void
     {
         // =====================================================================
