@@ -15,6 +15,7 @@ use Waaseyaa\Entity\Event\EntityEvents;
 use Waaseyaa\I18n\LanguageManagerInterface;
 use Waaseyaa\I18n\TranslatorInterface;
 use Waaseyaa\I18n\Twig\TranslationTwigExtension;
+use Waaseyaa\Media\UploadHandler;
 use Waaseyaa\Search\SearchProviderInterface;
 use Waaseyaa\Search\Twig\SearchTwigExtension;
 use Waaseyaa\SSR\SsrServiceProvider;
@@ -33,6 +34,11 @@ class AppBootServiceProvider extends AppCoreServiceProvider
         // a coarse community centroid for the feed + graph.
         $this->singleton(LocationService::class, fn (): LocationService => new LocationService(
             $this->resolve(EntityTypeManager::class),
+        ));
+
+        // Image uploads for post creation (#813).
+        $this->singleton(UploadHandler::class, fn (): UploadHandler => new UploadHandler(
+            dirname(__DIR__, 2) . '/storage/uploads',
         ));
     }
 
