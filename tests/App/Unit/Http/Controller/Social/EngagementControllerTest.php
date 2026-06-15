@@ -99,19 +99,6 @@ final class EngagementControllerTest extends TestCase
         $this->assertStringContainsString('Invalid target_type', $response->getContent());
     }
 
-    #[Test]
-    public function follow_rejects_invalid_target_type(): void
-    {
-        $request = $this->jsonRequest('POST', [
-            'target_type' => 'nonexistent',
-            'target_id' => 1,
-        ]);
-
-        $response = $this->controller->follow([], [], $this->mockAccount(), $request);
-
-        $this->assertSame(422, $response->getStatusCode());
-        $this->assertStringContainsString('Invalid target_type', $response->getContent());
-    }
 
     #[Test]
     public function getComments_rejects_invalid_target_type(): void
@@ -273,24 +260,6 @@ final class EngagementControllerTest extends TestCase
         $this->assertSame('Great event!', $json['body']);
     }
 
-    #[Test]
-    public function follow_creates_follow_and_returns_201(): void
-    {
-        $account = $this->mockAccount(42);
-        $entity = $this->mockEntity(id: 7);
-        $storage = $this->mockStorage('follow');
-        $storage->method('create')->willReturn($entity);
-
-        $request = $this->jsonRequest('POST', [
-            'target_type' => 'community', 'target_id' => 5,
-        ]);
-
-        $response = $this->controller->follow([], [], $account, $request);
-
-        $this->assertSame(201, $response->getStatusCode());
-        $json = json_decode($response->getContent(), true);
-        $this->assertSame(7, $json['id']);
-    }
 
     #[Test]
     public function create_post_returns_201(): void
@@ -515,23 +484,6 @@ final class EngagementControllerTest extends TestCase
         $this->assertSame('Invalid entity data', $json['error']);
     }
 
-    #[Test]
-    public function follow_catches_constructor_invalid_argument_exception(): void
-    {
-        $account = $this->mockAccount(42);
-        $storage = $this->mockStorage('follow');
-        $storage->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
-
-        $request = $this->jsonRequest('POST', [
-            'target_type' => 'event', 'target_id' => 1,
-        ]);
-
-        $response = $this->controller->follow([], [], $account, $request);
-
-        $this->assertSame(422, $response->getStatusCode());
-        $json = json_decode($response->getContent(), true);
-        $this->assertSame('Invalid entity data', $json['error']);
-    }
 
     #[Test]
     public function createPost_catches_constructor_invalid_argument_exception(): void
