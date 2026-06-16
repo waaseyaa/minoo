@@ -68,6 +68,20 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         );
 
         // =====================================================================
+        // --- Chat: cite-only language assistant (#822) ---
+        // =====================================================================
+
+        $router->addRoute(
+            'chat.index',
+            RouteBuilder::create('/chat')
+                ->controller('App\\Http\\Controller\\Chat\\ChatController::index')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        // =====================================================================
         // --- Language ---
         // =====================================================================
 
