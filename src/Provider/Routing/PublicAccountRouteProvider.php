@@ -36,6 +36,16 @@ final class PublicAccountRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Member home community (Phase 5): self-selected, consent-first.
+        $router->addRoute(
+            'account.home_community',
+            RouteBuilder::create('/account/home-community')
+                ->controller('App\Http\Controller\Account\AccountHomeController::selectHomeCommunity')
+                ->requireAuthentication()
+                ->methods('POST')
+                ->build(),
+        );
+
         // --- Personal word lists (#806) ---
         $router->addRoute(
             'account.words',

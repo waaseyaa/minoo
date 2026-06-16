@@ -328,11 +328,12 @@ final class FeedAssembler implements FeedAssemblerInterface
         }
 
         try {
+            // The member's self-selected home community (Phase 5). Community-level
+            // only; no coordinates, so proximity stays dormant. NULL when unset.
             $user = $this->loader->getEntityTypeManager()->getStorage('user')->load($ctx->userId);
+            $homeCommunity = $user?->get('home_community_id');
 
-            return $user !== null && $user->get('community_id') !== null
-                ? (int) $user->get('community_id')
-                : null;
+            return $homeCommunity !== null && (int) $homeCommunity > 0 ? (int) $homeCommunity : null;
         } catch (\Throwable) {
             return null;
         }
