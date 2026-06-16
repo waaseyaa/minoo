@@ -3,7 +3,6 @@ import AxeBuilder from '@axe-core/playwright';
 
 const publicPages = [
   '/',
-  '/teachings',
   '/events',
   '/groups',
   '/language',

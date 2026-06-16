@@ -6097,4 +6097,155 @@
       color: oklch(0.75 0.18 25);
     }
   }
+
+  /* =====================================================================
+     Relaunch surfaces (2026-06): feed chrome, cite-only chat, and the
+     event/group detail badge + related list. The cards themselves reuse
+     the existing .card / .feed-card / .detail__* vocabulary; these fill
+     the page-chrome gaps those surfaces introduced.
+     ===================================================================== */
+
+  /* Event status badge tints (badge bg reads --card-accent) */
+  .detail__badge--happening-now { --card-accent: var(--color-language); }
+  .detail__badge--upcoming { --card-accent: var(--color-events); }
+  .detail__badge--past { --card-accent: var(--text-muted); }
+
+  .detail__related-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-2xs);
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+
+      &:hover { text-decoration: underline; }
+    }
+  }
+
+  /* Search/question input addressed by class (chat + dictionary search) */
+  .search-form__input {
+    flex: 1;
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--text-base);
+
+    &::placeholder { color: var(--text-muted); }
+
+    &:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: -1px;
+      border-color: var(--accent);
+    }
+  }
+
+  /* Feed page chrome (the feed-card itself is already styled) */
+  .feed__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-block-end: var(--space-md);
+
+    h1 {
+      margin: 0;
+      font-size: var(--text-2xl);
+    }
+  }
+
+  .feed__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+
+  .feed__filter {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-sm);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+
+    &:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+  }
+
+  .feed__filter--active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+
+    &:hover { color: #fff; }
+  }
+
+  .feed__list {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .feed__empty,
+  .chat__no-results {
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--surface-card);
+    border-radius: var(--radius-md);
+    border-inline-start: 4px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+
+  .feed__more {
+    margin-block-start: var(--space-md);
+    text-align: center;
+  }
+
+  /* Cite-only language assistant */
+  .chat__disclaimer {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    max-inline-size: var(--width-prose);
+  }
+
+  .chat__examples {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .chat__example {
+    display: grid;
+    gap: var(--space-3xs);
+    padding: var(--space-sm);
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .chat__example-oj {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    color: var(--text-primary);
+  }
+
+  .chat__example-en {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+
+  .chat__example-source {
+    margin: 0;
+    font-size: var(--text-sm);
+
+    a { color: var(--link); }
+  }
 }

@@ -1,8 +1,6 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}
-  {%- if nation -%}{{ nation.name }} — Minoo{%- else -%}Community not found — Minoo{%- endif -%}
-{% endblock %}
+{% block title %}{%- if nation -%}Minoo | {{ nation.name }}{%- else -%}Minoo | Community not found{%- endif -%}{% endblock %}
 {% block meta_description %}
   {%- if nation -%}{{ nation.name }}: {{ nation.reserve }}, {{ nation.treaty }}, a member of Mamaweswen, The North Shore Tribal Council.{%- else -%}Community not found.{%- endif -%}
 {% endblock %}

@@ -56,8 +56,6 @@ final class FeedItemFactory
         return match ($type) {
             'event' => $this->buildEvent($entity, $typeSlot, $distance, $createdAt),
             'group' => $this->buildGroup($entity, $typeSlot, $distance, $createdAt),
-            'business' => $this->buildBusiness($entity, $typeSlot, $distance, $createdAt),
-            'person' => $this->buildPerson($entity, $typeSlot, $distance, $createdAt),
             'featured' => $this->buildFeatured($entity, $typeSlot, $distance, $createdAt),
             'post' => $this->buildPost($entity, $typeSlot, $distance, $createdAt, $weight),
             default => throw new \InvalidArgumentException("Unknown feed item type: {$type}"),
@@ -158,54 +156,6 @@ final class FeedItemFactory
             distance: $distance,
             meta: $this->truncate($entity->get('description')),
             communityName: $this->resolveCommunityName($communityId),
-            relativeTime: $this->formatRelativeTime($createdAt),
-            communitySlug: $this->resolveCommunitySlug($communityId),
-            communityInitial: $this->resolveCommunityInitial($communityId),
-        );
-    }
-
-    private function buildBusiness(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
-    {
-        $id = 'business:' . $entity->id();
-        $communityId = $entity->get('community_id');
-
-        return new FeedItem(
-            id: $id,
-            type: 'business',
-            title: (string) ($entity->get('name') ?? ''),
-            url: '/businesses/' . $entity->get('slug'),
-            badge: 'Business',
-            weight: 0,
-            createdAt: $createdAt,
-            sortKey: $this->buildSortKey(0, $distance, $typeSlot, $createdAt, $id),
-            entity: $entity,
-            distance: $distance,
-            meta: $this->truncate($entity->get('description')),
-            communityName: $this->resolveCommunityName($communityId),
-            relativeTime: $this->formatRelativeTime($createdAt),
-            communitySlug: $this->resolveCommunitySlug($communityId),
-            communityInitial: $this->resolveCommunityInitial($communityId),
-        );
-    }
-
-    private function buildPerson(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
-    {
-        $id = 'person:' . $entity->id();
-        $communityId = $entity->get('community_id');
-
-        return new FeedItem(
-            id: $id,
-            type: 'person',
-            title: (string) ($entity->get('name') ?? ''),
-            url: '/people/' . $entity->get('slug'),
-            badge: 'Person',
-            weight: 0,
-            createdAt: $createdAt,
-            sortKey: $this->buildSortKey(0, $distance, $typeSlot, $createdAt, $id),
-            entity: $entity,
-            distance: $distance,
-            communityName: $entity->get('community'),
-            meta: $entity->get('role'),
             relativeTime: $this->formatRelativeTime($createdAt),
             communitySlug: $this->resolveCommunitySlug($communityId),
             communityInitial: $this->resolveCommunityInitial($communityId),

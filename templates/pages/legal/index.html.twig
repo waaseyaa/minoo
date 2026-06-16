@@ -2,17 +2,15 @@
 
 {% set page_path = path|default('/legal') %}
 
-{% block title %}
-  {%- if page_path == '/legal/privacy' -%}
-    {{ trans('legal.privacy_title') }} — Minoo
+{% block title %}{%- if page_path == '/legal/privacy' -%}
+    Minoo | {{ trans('legal.privacy_title') }}
   {%- elseif page_path == '/legal/terms' -%}
-    {{ trans('legal.terms_title') }} — Minoo
+    Minoo | {{ trans('legal.terms_title') }}
   {%- elseif page_path == '/legal/accessibility' -%}
-    {{ trans('legal.accessibility_title') }} — Minoo
+    Minoo | {{ trans('legal.accessibility_title') }}
   {%- else -%}
-    {{ trans('legal.main_title') }} — Minoo
-  {%- endif -%}
-{% endblock %}
+    Minoo | {{ trans('legal.main_title') }}
+  {%- endif -%}{% endblock %}
 
 {% block content %}
   <div class="content-well content-well--full">

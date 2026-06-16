@@ -1,6 +1,6 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}{{ trans('feed.title') }} — Minoo{% endblock %}
+{% block title %}Minoo | {{ trans('feed.title') }}{% endblock %}
 
 {% block content %}
   {# Lean pull-based read feed (#814). Cursor pagination via a server-rendered
@@ -21,7 +21,7 @@
     {% if response.items|length == 0 %}
       <p class="feed__empty">{{ trans('feed.empty') }}</p>
     {% else %}
-      <div class="feed__list flow">
+      <div class="feed__list">
         {% for item in response.items %}
           {% include "components/domain/feed/card.html.twig" with { item: item, account: account } only %}
         {% endfor %}

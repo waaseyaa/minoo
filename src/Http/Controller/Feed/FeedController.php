@@ -91,14 +91,16 @@ final class FeedController
         $type = $query['type'] ?? 'all';
         $q = trim($query['q'] ?? '');
 
+        // People and businesses surfaces are cut; route those discovery intents
+        // to the live community map and groups listing instead of dead /people.
         $targets = [
             'businesses' => '/groups',
-            'people' => '/people',
+            'people' => '/communities',
             'events' => '/events',
-            'all' => '/groups',
+            'all' => '/communities',
         ];
 
-        $target = $targets[$type] ?? '/groups';
+        $target = $targets[$type] ?? '/communities';
 
         if ($q !== '') {
             $target .= '?' . http_build_query(['q' => $q]);

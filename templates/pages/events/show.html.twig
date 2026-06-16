@@ -1,14 +1,12 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}{{ event.title }} — Minoo{% endblock %}
+{% block title %}Minoo | {{ event.title }}{% endblock %}
 
 {% block og_type %}article{% endblock %}
 
 {% block content %}
   <article class="flow-lg detail">
-    <nav class="detail__back">
-      <a href="{{ lang_url('/events') }}">← {{ trans('events.detail_back') }}</a>
-    </nav>
+    <nav><a class="detail__back" href="{{ lang_url('/events') }}">{{ trans('events.detail_back') }}</a></nav>
 
     <header class="detail__header flow">
       {% set status_label = {
@@ -17,24 +15,24 @@
         'past': trans('events.status_past')
       } %}
       <span class="detail__badge detail__badge--{{ event.status|replace({'_': '-'}) }}">{{ status_label[event.status]|default(trans('events.status_upcoming')) }}</span>
-      <h1>{{ event.title }}</h1>
+      <h1 class="detail__title">{{ event.title }}</h1>
     </header>
 
-    <dl class="detail__meta">
+    <dl class="detail__meta-grid">
       {% if event.date %}
-        <div class="detail__meta-row">
+        <div class="detail__meta-item">
           <dt>{{ trans('events.meta_when') }}</dt>
           <dd><time datetime="{{ event.starts_at_iso }}">{{ event.date }}</time></dd>
         </div>
       {% endif %}
       {% if event.location %}
-        <div class="detail__meta-row">
+        <div class="detail__meta-item">
           <dt>{{ trans('events.meta_location') }}</dt>
           <dd>{{ event.location }}</dd>
         </div>
       {% endif %}
       {% if event.community_name %}
-        <div class="detail__meta-row">
+        <div class="detail__meta-item">
           <dt>{{ trans('events.meta_host') }}</dt>
           <dd><a href="{{ lang_url('/communities/' ~ event.community_slug) }}">{{ event.community_name }}</a></dd>
         </div>
@@ -50,10 +48,11 @@
     </div>
 
     {% if event.source_url %}
-      <p class="detail__source">
-        <a href="{{ event.source_url }}" target="_blank" rel="noopener noreferrer">{{ trans('events.view_source') }}</a>
-        {% if event.source_name %}<span class="detail__source-name"> · {{ trans('events.source_name') }} {{ event.source_name }}</span>{% endif %}
-      </p>
+      <div class="detail__source">
+        <p class="detail__source-title">{{ trans('events.source_title') }}</p>
+        <a class="detail__source-link" href="{{ event.source_url }}" target="_blank" rel="noopener noreferrer">{{ trans('events.view_source') }}</a>
+        {% if event.source_name %}<p class="detail__source-meta">{{ trans('events.source_name') }} {{ event.source_name }}</p>{% endif %}
+      </div>
     {% endif %}
   </article>
 {% endblock %}
