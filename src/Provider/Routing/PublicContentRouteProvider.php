@@ -85,6 +85,18 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
         // --- Language ---
         // =====================================================================
 
+        // Corpus audio: served from MINOO_CORPUS_PATH (never committed), gated to
+        // consent_public + published example_sentence rows (Phase 4).
+        $router->addRoute(
+            'corpus.audio',
+            RouteBuilder::create('/media/corpus/audio/{id}')
+                ->controller('App\\Http\\Controller\\Language\\CorpusAudioController::audio')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('id', '[a-z0-9][a-z0-9-]*')
+                ->build(),
+        );
+
         $router->addRoute(
             'language.list',
             RouteBuilder::create('/language')

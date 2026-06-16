@@ -3,21 +3,26 @@
 declare(strict_types=1);
 
 /**
- * Consent-gated corpus import (Phase 4).
+ * Corpus import (Phase 4: consent granted).
  *
- * Reads per-item JSON from a community-controlled corpus directory OUTSIDE
- * this repository and materializes language entities with full provenance.
+ * Reads per-item JSON from a community-controlled corpus directory OUTSIDE this
+ * repository and materializes language entities with full provenance.
+ *
+ * CONSENT STATE: written consent has been granted by the speaker (Steven
+ * Bennett) for public display, publication, search, AI grounding, and AI
+ * training. Rows are therefore imported consent-public, AI-training-consented,
+ * and published. Before this grant the importer wrote every row with consent
+ * OFF + status 0; see git history. To return to the gated state, set the
+ * CONSENT_* / STATUS constants below back to 0.
  *
  * HARD REQUIREMENTS (do not weaken):
- *   - Every imported row gets ALL consent flags OFF and status 0
- *     (unpublished). They are visible to admins only and excluded from
- *     search and any AI grounding until written consent records exist.
- *   - Nothing from the corpus directory is ever copied into the repo.
- *     Audio/video stay in the source directory; only provenance paths are
- *     recorded.
+ *   - Orthography is recorded EXACTLY as the speaker wrote it. Never correct.
+ *   - Nothing from the corpus directory is ever copied into the repo. Audio,
+ *     video, and images stay in the source directory; only provenance paths and
+ *     a served audio URL (gated by the consent query) are recorded.
  *
- * Idempotent: items dedup on example_sentence.source_sentence_id and
- * speakers dedup on speaker.code.
+ * Idempotent: items dedup on example_sentence.source_sentence_id and speakers
+ * dedup on speaker.code.
  *
  * Usage: php scripts/import-corpus.php <corpus-dir> [--dry-run]
  */
@@ -26,6 +31,14 @@ use Waaseyaa\Foundation\Kernel\AbstractKernel;
 use Waaseyaa\Foundation\Kernel\HttpKernel;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
+
+// Phase 4 consent grant. All three ON per the speaker's written consent.
+const CONSENT_PUBLIC = 1;
+const CONSENT_AI_TRAINING = 1;
+const STATUS_PUBLISHED = 1;
+
+// Credit: Steven Bennett's public profile, the source of every corpus reel.
+const STEVEN_PROFILE_URL = 'https://www.facebook.com/profile.php?id=61582894730998';
 
 $projectRoot = dirname(__DIR__);
 
@@ -56,7 +69,7 @@ $speakerStorage = $etm->getStorage('speaker');
 $sentenceStorage = $etm->getStorage('example_sentence');
 
 /**
- * Find or create the speaker for a contributor name, consent flags OFF.
+ * Find or create the speaker for a contributor name, consent granted.
  */
 function resolveSpeaker(object $storage, string $name, bool $dryRun): ?int
 {
@@ -77,7 +90,7 @@ function resolveSpeaker(object $storage, string $name, bool $dryRun): ?int
     }
 
     if ($dryRun) {
-        echo "[dry-run] would create speaker: $name ($code), consent OFF, unpublished\n";
+        echo "[dry-run] would create speaker: $name ($code), consent granted, published\n";
         return $cache[$code] = null;
     }
 
@@ -85,15 +98,16 @@ function resolveSpeaker(object $storage, string $name, bool $dryRun): ?int
         'name' => $name,
         'code' => $code,
         'slug' => strtolower(str_replace(' ', '-', trim($name))),
-        // Consent gate: OFF until a written consent record exists.
-        'consent_public_display' => 0,
-        'consent_ai_training' => 0,
-        'status' => 0,
+        'bio' => sprintf('%s contributed this Anishinaabemowin corpus from public videos. Credit and source: %s', $name, STEVEN_PROFILE_URL),
+        // Consent granted (Phase 4).
+        'consent_public_display' => CONSENT_PUBLIC,
+        'consent_ai_training' => CONSENT_AI_TRAINING,
+        'status' => STATUS_PUBLISHED,
         'created_at' => time(),
         'updated_at' => time(),
     ]);
     $storage->save($speaker);
-    echo "[create] speaker: $name ($code) id=" . $speaker->id() . " consent OFF, unpublished\n";
+    echo "[create] speaker: $name ($code) id=" . $speaker->id() . " consent granted, published\n";
 
     return $cache[$code] = (int) $speaker->id();
 }
@@ -135,24 +149,24 @@ foreach ($files as $file) {
         'ojibwe_text' => (string) $item['ojibwe'],
         'english_text' => (string) ($item['english'] ?? ''),
         'speaker_id' => $speakerId,
-        // Audio stays in the community-controlled corpus directory; no URL
-        // is published. The provenance record carries the source paths.
-        'audio_url' => '',
+        // Audio stays in the community-controlled corpus directory and is served
+        // by CorpusAudioController, which re-checks the consent gate per request.
+        'audio_url' => '/media/corpus/audio/' . $item['id'],
         'source_sentence_id' => $sourceId,
         'source_url' => (string) ($item['source_url'] ?? ''),
         'source_date' => (string) ($item['source_date'] ?? ''),
         'provenance' => json_encode($item, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
         'language_code' => 'oj',
-        // Consent gate: OFF + unpublished until written consent exists.
-        'consent_public' => 0,
-        'consent_ai_training' => 0,
-        'status' => 0,
+        // Consent granted (Phase 4).
+        'consent_public' => CONSENT_PUBLIC,
+        'consent_ai_training' => CONSENT_AI_TRAINING,
+        'status' => STATUS_PUBLISHED,
         'created_at' => time(),
         'updated_at' => time(),
     ]);
     $sentenceStorage->save($sentence);
     $created++;
-    echo "[import] {$item['id']} -> example_sentence " . $sentence->id() . " (consent OFF, unpublished)\n";
+    echo "[import] {$item['id']} -> example_sentence " . $sentence->id() . " (consent granted, published)\n";
 }
 
 echo "\nDone. created=$created skipped=$skipped failed=$failed\n";
