@@ -15,17 +15,13 @@ use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
 
 /**
- * Lesson 1 (Kitchen) course surface over the migrated Elder corpus.
+ * Lesson 1 (Kitchen) course surface over the Elder corpus.
  *
- * CONSENT GATE. The corpus rows this renders are consent-gated (consent flags
- * off, status 0, admin-only). Until written consent records exist for the 27
- * corpus items, every route here is admin-gated via guard(). The
- * Anishinaabemowin is read verbatim from the migrated corpus at runtime and is
- * never committed to the repo or altered. Audio and whiteboard thumbnails are
- * streamed from the community-controlled corpus directory, never copied in.
- *
- * To make this surface public after written consent: publish the rows and relax
- * the guard()/route gate. That is a deliberate, separate step, not a default.
+ * Public since Phase 4: written consent has been granted, so the corpus rows
+ * are published (consent_public + status 1) and these routes are open. The
+ * Anishinaabemowin is read verbatim from the corpus at runtime, never altered
+ * or committed. Audio and whiteboard thumbnails are streamed from the
+ * community-controlled corpus directory (MINOO_CORPUS_PATH), never copied in.
  */
 final class LessonController
 {
@@ -48,10 +44,6 @@ final class LessonController
     /** Landing: the list of available lessons (Lesson 1 for now). */
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        if (($denied = $this->guard($account)) !== null) {
-            return $denied;
-        }
-
         $def = $this->lessonDefinition();
 
         $html = $this->twig->render('pages/lesson/index.html.twig', LayoutTwigContext::withAccount($account, [
@@ -68,10 +60,6 @@ final class LessonController
     /** Lesson 1: Kitchen, 16 cards grouped by section. */
     public function lessonOne(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        if (($denied = $this->guard($account)) !== null) {
-            return $denied;
-        }
-
         $def = $this->lessonDefinition();
         $corpus = $this->corpusRowsBySourceId();
 
@@ -115,10 +103,6 @@ final class LessonController
     /** Stream a whiteboard thumbnail or audio clip from the corpus directory. */
     public function media(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        if (($denied = $this->guard($account)) !== null) {
-            return $denied;
-        }
-
         $kind = (string) ($params['kind'] ?? '');
         $id = (string) ($params['id'] ?? '');
 
@@ -140,29 +124,23 @@ final class LessonController
 
         return new Response((string) file_get_contents($file), 200, [
             'Content-Type' => $contentType,
-            // Private: consent-gated content behind an auth gate. Never let a
-            // shared cache or CDN hold it.
-            'Cache-Control' => 'private, max-age=3600',
+            'Cache-Control' => 'public, max-age=3600',
         ]);
-    }
-
-    /** Admin-only until written corpus consent exists. */
-    private function guard(AccountInterface $account): ?Response
-    {
-        if ($account->hasPermission('administer content')) {
-            return null;
-        }
-
-        return new Response('Forbidden', 403);
     }
 
     /** @return array<string, EntityInterface> keyed by source_sentence_id */
     private function corpusRowsBySourceId(): array
     {
         $storage = $this->entityTypeManager->getStorage('example_sentence');
-        // Admin-gated surface: deliberately read the consent-gated rows for the
-        // curated lesson. The route guard is the access control boundary here.
-        $ids = $storage->getQuery()->accessCheck(false)->execute();
+        // Public surface: only published, consent-public corpus rows. Guard the
+        // empty set so loadMultiple([]) cannot dump the whole table.
+        $ids = $storage->getQuery()->accessCheck(false)
+            ->condition('status', 1)
+            ->condition('consent_public', 1)
+            ->execute();
+        if ($ids === []) {
+            return [];
+        }
 
         $rows = [];
         foreach ($storage->loadMultiple($ids) as $entity) {

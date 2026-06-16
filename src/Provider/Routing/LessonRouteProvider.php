@@ -12,10 +12,9 @@ use Waaseyaa\Routing\WaaseyaaRouter;
 /**
  * Lesson (course) surface routes.
  *
- * Every route is admin-gated (requireAuthentication + an in-controller
- * "administer content" check) because the lesson renders consent-gated Elder
- * corpus content. This stays gated until written consent records exist; see
- * LessonController.
+ * Public since Phase 4: written consent has been granted for the corpus, so the
+ * lesson (and its media) are open. The Anishinaabemowin is read verbatim from
+ * the community-controlled corpus directory at runtime and never committed.
  */
 final class LessonRouteProvider extends AppCoreServiceProvider
 {
@@ -25,7 +24,7 @@ final class LessonRouteProvider extends AppCoreServiceProvider
             'lesson.index',
             RouteBuilder::create('/lesson')
                 ->controller('App\\Http\\Controller\\Lesson\\LessonController::index')
-                ->requireAuthentication()
+                ->allowAll()
                 ->render()
                 ->methods('GET')
                 ->build(),
@@ -35,7 +34,7 @@ final class LessonRouteProvider extends AppCoreServiceProvider
             'lesson.one',
             RouteBuilder::create('/lesson/1')
                 ->controller('App\\Http\\Controller\\Lesson\\LessonController::lessonOne')
-                ->requireAuthentication()
+                ->allowAll()
                 ->render()
                 ->methods('GET')
                 ->build(),
@@ -45,7 +44,7 @@ final class LessonRouteProvider extends AppCoreServiceProvider
             'lesson.media',
             RouteBuilder::create('/lesson/media/{kind}/{id}')
                 ->controller('App\\Http\\Controller\\Lesson\\LessonController::media')
-                ->requireAuthentication()
+                ->allowAll()
                 ->methods('GET')
                 ->requirement('kind', 'thumb|audio')
                 ->requirement('id', 'sb-[0-9]+')

@@ -15,9 +15,10 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 
 /**
- * Security-focused tests for the consent-gated lesson media endpoint:
- * the auth guard and the path allowlist. These run before any filesystem
- * access, so they need no corpus directory or database.
+ * Security-focused tests for the public lesson media endpoint: the kind/id
+ * path allowlist (only thumb|audio for the 16 Lesson 1 ids, no traversal).
+ * These run before any filesystem access, so they need no corpus directory or
+ * database.
  */
 #[CoversClass(LessonController::class)]
 final class LessonControllerTest extends TestCase
@@ -43,12 +44,6 @@ final class LessonControllerTest extends TestCase
         return $this->controller()
             ->media($params, [], $this->account($admin), HttpRequest::create('/'))
             ->getStatusCode();
-    }
-
-    #[Test]
-    public function mediaForbiddenForNonAdmin(): void
-    {
-        self::assertSame(403, $this->get(['kind' => 'thumb', 'id' => 'sb-005'], false));
     }
 
     #[Test]
