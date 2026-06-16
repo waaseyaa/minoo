@@ -51,6 +51,9 @@
                 <li class="chat__example">
                   <p class="chat__example-oj" lang="oj">{{ s.ojibwe_text }}</p>
                   {% if s.english_text %}<p class="chat__example-en">{{ s.english_text }}</p>{% endif %}
+                  {% if s.audio_url %}
+                    <audio class="chat__example-audio" controls preload="none" src="{{ s.audio_url }}">{{ trans('language.audio_unsupported') }}</audio>
+                  {% endif %}
                   {% if s.source_url %}
                     <p class="chat__example-source"><a href="{{ s.source_url }}" target="_blank" rel="noopener noreferrer">{{ trans('chat.source_label') }}</a></p>
                   {% endif %}

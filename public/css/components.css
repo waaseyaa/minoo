@@ -6248,4 +6248,10 @@
 
     a { color: var(--link); }
   }
+
+  .chat__example-audio {
+    inline-size: 100%;
+    max-inline-size: 22rem;
+    block-size: 2.25rem;
+  }
 }
