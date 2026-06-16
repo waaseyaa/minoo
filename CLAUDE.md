@@ -31,7 +31,7 @@ minoo/
 │   ├── Identity/      # App-specific user flags (`App\Identity`, e.g. ElderIdentity)
 │   ├── Infrastructure/ # Cross-cutting adapters (NorthCloud, crisis/OG, rate limits, fixtures, mail, MCP)
 │   ├── Console/       # Native CLI handlers (`App\Console\`)
-│   ├── Domain/        # Bounded contexts: Geo/, Events/, Newsletter/, Feed/, Chat/, Games/
+│   ├── Domain/        # Bounded contexts: Account/, Community/, Feed/, Games/, Geo/
 │   ├── Entity/        # 31 entity class files (content + config types)
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
 │   ├── Provider/      # 5 composer-registered providers + internal stacks (entity, routing)
@@ -108,7 +108,7 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 | Ingestion | `ingest_log` | `IngestAccessPolicy` |
 | Editorial | `featured_item` | `FeaturedItemAccessPolicy` |
 
-Entity types and bindings are registered through `App\Provider\MinooEntityStackProvider`, which composes `EntityFoundationProvider`, `EntityCommunityProvider`, `EntityContentProvider`, `EntityFeedProvider`, `NewsletterEntityDefinitionsProvider`, and `EntityNewsletterProvider`. HTTP routes are composed by `MinooRoutingStackProvider` (public, API, admin, games, newsletter, social).
+Entity types and bindings are registered through `App\Provider\MinooEntityStackProvider`, which composes `EntityFoundationProvider`, `EntityCommunityProvider`, `EntityContentProvider`, and `EntityFeedProvider`. HTTP routes are composed by `MinooRoutingStackProvider` (public, content, account, home/feed, auth API, games, static, admin, social). The newsletter entity providers and routes were de-registered in the 2026-06 slimming (CUT); their tables stay dormant.
 
 **Note:** `post` has its own `PostAccessPolicy` (public-read, auth-create, author+coordinator delete), separate from `EngagementAccessPolicy` which covers `reaction`, `comment`, `follow`.
 
@@ -119,9 +119,7 @@ Entity types and bindings are registered through `App\Provider\MinooEntityStackP
 | `EntityFoundationProvider` | Core platform types (`post`, engagement, taxonomy, menu, user-facing helpers), MCP bindings, shared infrastructure. |
 | `EntityCommunityProvider` | Community, group, cultural group, contributor, volunteer, leader, resource person, elder support. |
 | `EntityContentProvider` | Teachings, events, language/dictionary, games, featured items, oral history. |
-| `EntityFeedProvider` | Feed-oriented bindings. |
-| `NewsletterEntityDefinitionsProvider` | Newsletter entity `EntityType` definitions (editions, items, submissions). |
-| `EntityNewsletterProvider` | Newsletter services, dispatchers, routes-adjacent bindings (not the three `entityType` blocks moved to `NewsletterEntityDefinitionsProvider`). |
+| `EntityFeedProvider` | Feed-oriented bindings (pull-based feed read path, #814). |
 
 Further mechanical splits should move whole type families together with their `singleton`/`bind` pairs so `MinooEntityStackProvider` stays the only composer-facing entity entry point.
 
