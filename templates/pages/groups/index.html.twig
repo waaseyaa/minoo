@@ -1,0 +1,30 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('groups.title') }} — Minoo{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+  {# Lean groups listing (#821): published community groups, businesses excluded. #}
+  <div class="flow-lg">
+    <section class="listing-hero">
+      <h1>{{ trans('groups.title') }}</h1>
+      <p class="listing-hero__subtitle">{{ trans('groups.subtitle') }}</p>
+    </section>
+
+    {% if groups is defined and groups|length > 0 %}
+      <div class="card-grid">
+        {% for group in groups %}
+          {% include "components/domain/groups/card.html.twig" with group only %}
+        {% endfor %}
+      </div>
+    {% else %}
+      {% include "components/shared/feedback/empty-state.html.twig" with {
+        heading: trans('groups.empty_heading'),
+        body: trans('groups.empty_body'),
+        action_url: lang_url('/communities'),
+        action_label: trans('groups.explore_button')
+      } only %}
+    {% endif %}
+  </div>
+{% endblock %}

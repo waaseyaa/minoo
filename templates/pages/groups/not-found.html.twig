@@ -1,0 +1,14 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('groups.not_found') }} — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    {% include "components/shared/feedback/empty-state.html.twig" with {
+      heading: trans('groups.not_found'),
+      body: trans('groups.not_found_message'),
+      action_url: lang_url('/groups'),
+      action_label: trans('groups.browse_all')
+    } only %}
+  </div>
+{% endblock %}

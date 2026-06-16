@@ -1,0 +1,36 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ group.name }} — Minoo{% endblock %}
+
+{% block og_type %}article{% endblock %}
+
+{% block content %}
+  <article class="flow-lg detail">
+    <nav class="detail__back">
+      <a href="{{ lang_url('/groups') }}">← {{ trans('groups.detail_back') }}</a>
+    </nav>
+
+    <header class="detail__header flow">
+      <span class="card__badge card__badge--group">{{ group.type }}</span>
+      <h1>{{ group.name }}</h1>
+      {% if group.community_name %}
+        <p class="detail__community"><a href="{{ lang_url('/communities/' ~ group.community_slug) }}">{{ group.community_name }}</a></p>
+      {% endif %}
+    </header>
+
+    {% if group.description %}
+      <div class="detail__body flow">{{ group.description|raw }}</div>
+    {% endif %}
+
+    {% if related_events is defined and related_events|length > 0 %}
+      <section class="detail__related flow">
+        <h2>{{ trans('groups.related_events') }}</h2>
+        <ul class="detail__related-list">
+          {% for event in related_events %}
+            <li><a href="{{ lang_url('/events/' ~ event.get('slug')) }}">{{ event.get('title') }}</a></li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+  </article>
+{% endblock %}
