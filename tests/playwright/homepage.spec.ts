@@ -7,10 +7,10 @@ test.describe('Homepage (anonymous)', () => {
     await expect(page.locator('.hero h1')).toContainText('Indigenous Knowledge');
   });
 
-  test('hero CTAs link to events and teachings', async ({ page }) => {
+  test('hero CTAs link to the dictionary and games', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('.hero__ctas a[href$="/events"]')).toBeVisible();
-    await expect(page.locator('.hero__ctas a[href$="/teachings"]')).toBeVisible();
+    await expect(page.locator('.hero__ctas a[href$="/language"]')).toBeVisible();
+    await expect(page.locator('.hero__ctas a[href$="/games"]')).toBeVisible();
   });
 
   test('has skip link', async ({ page }) => {

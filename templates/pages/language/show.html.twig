@@ -1,12 +1,10 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}
-  {%- if entry is defined and entry -%}
-    {{ entry.get('word') }} — Minoo
+{% block title %}{%- if entry is defined and entry -%}
+    Minoo | {{ entry.get('word') }}
   {%- else -%}
-    {{ trans('language.not_found') }} — Minoo
-  {%- endif -%}
-{% endblock %}
+    Minoo | {{ trans('language.not_found') }}
+  {%- endif -%}{% endblock %}
 
 {% block content %}
   {% if entry is defined and entry %}

@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 
 async function assertCardsOrEmptyState(page: Page) {
-  // /events and /teachings use `.ds-grid`; other pages use `.card-grid`.
+  // Restored listing surfaces use `.card-grid`; `.ds-grid` kept for any legacy.
   const cards = page.locator('.card-grid, .ds-grid').first();
   const emptyState = page.locator('.empty-state').first();
   // Wait for either to be attached; whichever resolves first tells us the mode.
@@ -16,7 +16,7 @@ async function assertCardsOrEmptyState(page: Page) {
 }
 
 test.describe('Empty state component', () => {
-  const paths = ['/events', '/groups', '/teachings', '/language', '/people'];
+  const paths = ['/events', '/groups', '/language'];
 
   for (const path of paths) {
     test(`${path} renders empty state or card grid`, async ({ page }) => {

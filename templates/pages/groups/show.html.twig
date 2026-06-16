@@ -1,29 +1,33 @@
 {% extends "layouts/base.html.twig" %}
 
-{% block title %}{{ group.name }} — Minoo{% endblock %}
+{% block title %}Minoo | {{ group.name }}{% endblock %}
 
 {% block og_type %}article{% endblock %}
 
 {% block content %}
   <article class="flow-lg detail">
-    <nav class="detail__back">
-      <a href="{{ lang_url('/groups') }}">← {{ trans('groups.detail_back') }}</a>
-    </nav>
+    <nav><a class="detail__back" href="{{ lang_url('/groups') }}">{{ trans('groups.detail_back') }}</a></nav>
 
     <header class="detail__header flow">
-      <span class="card__badge card__badge--group">{{ group.type }}</span>
-      <h1>{{ group.name }}</h1>
-      {% if group.community_name %}
-        <p class="detail__community"><a href="{{ lang_url('/communities/' ~ group.community_slug) }}">{{ group.community_name }}</a></p>
-      {% endif %}
+      <span class="detail__badge">{{ group.type }}</span>
+      <h1 class="detail__title">{{ group.name }}</h1>
     </header>
+
+    {% if group.community_name %}
+      <dl class="detail__meta-grid">
+        <div class="detail__meta-item">
+          <dt>{{ trans('events.host_community') }}</dt>
+          <dd><a href="{{ lang_url('/communities/' ~ group.community_slug) }}">{{ group.community_name }}</a></dd>
+        </div>
+      </dl>
+    {% endif %}
 
     {% if group.description %}
       <div class="detail__body flow">{{ group.description|raw }}</div>
     {% endif %}
 
     {% if related_events is defined and related_events|length > 0 %}
-      <section class="detail__related flow">
+      <section class="detail__section flow">
         <h2>{{ trans('groups.related_events') }}</h2>
         <ul class="detail__related-list">
           {% for event in related_events %}
