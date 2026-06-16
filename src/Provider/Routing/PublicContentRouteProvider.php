@@ -10,13 +10,38 @@ use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
 
 /**
- * Language-platform slimming (2026-06): events, groups, businesses,
- * teachings, and crisis/OG image routes removed.
+ * Public content routes. Events restored for the relaunch (#819); groups,
+ * businesses, teachings, and crisis/OG image routes remain removed.
  */
 final class PublicContentRouteProvider extends AppCoreServiceProvider
 {
     public function routes(WaaseyaaRouter $router, ?EntityTypeManager $entityTypeManager = null): void
     {
+        // =====================================================================
+        // --- Events (#819) ---
+        // =====================================================================
+
+        $router->addRoute(
+            'events.list',
+            RouteBuilder::create('/events')
+                ->controller('App\\Http\\Controller\\Events\\EventController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'events.show',
+            RouteBuilder::create('/events/{slug}')
+                ->controller('App\\Http\\Controller\\Events\\EventController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
         // =====================================================================
         // --- Language ---
         // =====================================================================

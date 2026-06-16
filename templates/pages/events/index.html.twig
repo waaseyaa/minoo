@@ -1,0 +1,31 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('events.title') }} — Minoo{% endblock %}
+
+{% block og_type %}website{% endblock %}
+
+{% block content %}
+  {# Lean events listing (#819): published events, upcoming first. No calendar,
+     no geo ranking, no ICS — the home feed surfaces upcoming events too. #}
+  <div class="flow-lg">
+    <section class="listing-hero">
+      <h1>{{ trans('events.title') }}</h1>
+      <p class="listing-hero__subtitle">{{ trans('events.subtitle') }}</p>
+    </section>
+
+    {% if events is defined and events|length > 0 %}
+      <div class="card-grid">
+        {% for event in events %}
+          {% include "components/domain/events/card.html.twig" with event only %}
+        {% endfor %}
+      </div>
+    {% else %}
+      {% include "components/shared/feedback/empty-state.html.twig" with {
+        heading: trans('events.empty_heading'),
+        body: trans('events.empty_body'),
+        action_url: lang_url('/communities'),
+        action_label: trans('events.explore_button')
+      } only %}
+    {% endif %}
+  </div>
+{% endblock %}
