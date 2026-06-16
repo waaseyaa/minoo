@@ -10,8 +10,8 @@ use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
 
 /**
- * Public content routes. Events restored for the relaunch (#819); groups,
- * businesses, teachings, and crisis/OG image routes remain removed.
+ * Public content routes. Events (#819) and groups (#821) restored for the
+ * relaunch; businesses, teachings, and crisis/OG image routes remain removed.
  */
 final class PublicContentRouteProvider extends AppCoreServiceProvider
 {
@@ -35,6 +35,31 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
             'events.show',
             RouteBuilder::create('/events/{slug}')
                 ->controller('App\\Http\\Controller\\Events\\EventController::show')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->requirement('slug', '[a-z0-9][a-z0-9-]*[a-z0-9]')
+                ->build(),
+        );
+
+        // =====================================================================
+        // --- Groups (#821) ---
+        // =====================================================================
+
+        $router->addRoute(
+            'groups.list',
+            RouteBuilder::create('/groups')
+                ->controller('App\\Http\\Controller\\Groups\\GroupController::list')
+                ->allowAll()
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'groups.show',
+            RouteBuilder::create('/groups/{slug}')
+                ->controller('App\\Http\\Controller\\Groups\\GroupController::show')
                 ->allowAll()
                 ->render()
                 ->methods('GET')
