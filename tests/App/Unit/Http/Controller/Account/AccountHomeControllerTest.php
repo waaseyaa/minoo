@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Http\Controller\Account;
 
+use App\Entity\Community\Community;
 use App\Http\Controller\Account\AccountHomeController;
 use App\Identity\ElderIdentity;
+use App\Identity\HomeCommunityIdentity;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -165,5 +167,81 @@ final class AccountHomeControllerTest extends TestCase
 
         $this->assertSame(302, $response->getStatusCode());
         $this->assertFalse(ElderIdentity::isElder($user));
+    }
+
+    #[Test]
+    public function select_home_community_saves_a_valid_published_community(): void
+    {
+        $userStorage = $this->createMock(EntityStorageInterface::class);
+        $user = new User(['uid' => 1, 'name' => 'Test']);
+        $userStorage->method('load')->with(1)->willReturn($user);
+        $userStorage->expects($this->once())->method('save')->with($user);
+
+        $communityStorage = $this->createMock(EntityStorageInterface::class);
+        $communityStorage->method('load')->with(10)->willReturn(new Community(['cid' => 10, 'name' => 'Sagamok', 'status' => 1]));
+
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('hasDefinition')->willReturn(true);
+        $etm->method('getStorage')->willReturnCallback(
+            fn (string $type): EntityStorageInterface => $type === 'community' ? $communityStorage : $userStorage,
+        );
+
+        $controller = $this->createController(etm: $etm);
+        $request = HttpRequest::create('/account/home-community', 'POST', ['home_community_id' => '10']);
+
+        $_SESSION = [];
+        $response = $controller->selectHomeCommunity([], [], new User(['uid' => 1]), $request);
+
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertSame('/account', $response->headers->get('Location'));
+        $this->assertSame(10, HomeCommunityIdentity::getHomeCommunity($user));
+    }
+
+    #[Test]
+    public function select_home_community_clears_on_empty_value(): void
+    {
+        $userStorage = $this->createMock(EntityStorageInterface::class);
+        $user = new User(['uid' => 1, 'home_community_id' => 10]);
+        $userStorage->method('load')->with(1)->willReturn($user);
+        $userStorage->expects($this->once())->method('save')->with($user);
+
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getStorage')->willReturn($userStorage);
+
+        $controller = $this->createController(etm: $etm);
+        $request = HttpRequest::create('/account/home-community', 'POST', ['home_community_id' => '']);
+
+        $_SESSION = [];
+        $response = $controller->selectHomeCommunity([], [], new User(['uid' => 1]), $request);
+
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertNull(HomeCommunityIdentity::getHomeCommunity($user));
+    }
+
+    #[Test]
+    public function select_home_community_rejects_an_unpublished_community(): void
+    {
+        $userStorage = $this->createMock(EntityStorageInterface::class);
+        $user = new User(['uid' => 1, 'name' => 'Test']);
+        $userStorage->method('load')->with(1)->willReturn($user);
+        $userStorage->expects($this->once())->method('save')->with($user);
+
+        $communityStorage = $this->createMock(EntityStorageInterface::class);
+        // status 0 -> not published -> rejected and cleared.
+        $communityStorage->method('load')->with(10)->willReturn(new Community(['cid' => 10, 'name' => 'Draft', 'status' => 0]));
+
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('hasDefinition')->willReturn(true);
+        $etm->method('getStorage')->willReturnCallback(
+            fn (string $type): EntityStorageInterface => $type === 'community' ? $communityStorage : $userStorage,
+        );
+
+        $controller = $this->createController(etm: $etm);
+        $request = HttpRequest::create('/account/home-community', 'POST', ['home_community_id' => '10']);
+
+        $_SESSION = [];
+        $controller->selectHomeCommunity([], [], new User(['uid' => 1]), $request);
+
+        $this->assertNull(HomeCommunityIdentity::getHomeCommunity($user));
     }
 }

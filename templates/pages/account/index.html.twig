@@ -53,6 +53,22 @@
     {% endif %}
   </div>
 
+  <div class="actions">
+    <h2>{{ trans('account.home_community_title') }}</h2>
+    <p class="text-secondary">{{ trans('account.home_community_help') }}</p>
+    <form method="post" action="/account/home-community" class="home-community-form">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <label class="visually-hidden" for="home-community-select">{{ trans('account.home_community_title') }}</label>
+      <select id="home-community-select" name="home_community_id" class="search-form__input">
+        <option value="">{{ trans('account.home_community_none') }}</option>
+        {% for community in communities|default([]) %}
+          <option value="{{ community.id }}"{% if community.id == home_community_id %} selected{% endif %}>{{ community.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn--primary">{{ trans('account.home_community_save') }}</button>
+    </form>
+  </div>
+
   {% if 'admin' in roles %}
   <div class="actions">
     <h2>{{ trans('admin.users_title') }}</h2>

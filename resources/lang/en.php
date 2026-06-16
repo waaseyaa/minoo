@@ -677,6 +677,12 @@ return [
     'account.elder_set_flash' => 'You have identified as an Elder. Miigwech.',
     'account.elder_removed_flash' => 'Elder status removed.',
 
+    // Home community (Phase 5): self-selected, consent-first, community-level only.
+    'account.home_community_title' => 'Home community',
+    'account.home_community_help' => 'Pick the community you call home to personalize your feed with what is happening there. It is community-level only, never your precise location, and you can change or clear it anytime.',
+    'account.home_community_none' => 'No home community',
+    'account.home_community_save' => 'Save',
+
     // Role Management
     'coordinator.users_title' => 'Community Members',
     'coordinator.users_subtitle' => 'Manage volunteer and Elder roles for community members.',
