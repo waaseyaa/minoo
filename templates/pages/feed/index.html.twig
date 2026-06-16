@@ -1,0 +1,37 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('feed.title') }} — Minoo{% endblock %}
+
+{% block content %}
+  {# Lean pull-based read feed (#814). Cursor pagination via a server-rendered
+     "load more" link — no Mercure, no JS daemon. The in-feed composer + sidebars
+     come with the Phase 5 home-community wiring. #}
+  <div class="flow-lg content-max feed">
+    <header class="feed__head">
+      <h1>{{ trans('feed.title') }}</h1>
+      <nav class="feed__filters" aria-label="{{ trans('feed.filter_label') }}">
+        {% set filters = {'all': trans('feed.filter_all'), 'post': trans('feed.filter_posts'), 'event': trans('feed.filter_events'), 'group': trans('feed.filter_groups')} %}
+        {% for key, label in filters %}
+          <a href="{{ lang_url('/feed') }}?filter={{ key }}"
+             class="feed__filter{% if activeFilter == key %} feed__filter--active{% endif %}">{{ label }}</a>
+        {% endfor %}
+      </nav>
+    </header>
+
+    {% if response.items|length == 0 %}
+      <p class="feed__empty">{{ trans('feed.empty') }}</p>
+    {% else %}
+      <div class="feed__list flow">
+        {% for item in response.items %}
+          {% include "components/domain/feed/card.html.twig" with { item: item, account: account } only %}
+        {% endfor %}
+      </div>
+
+      {% if nextCursor %}
+        <p class="feed__more">
+          <a href="{{ lang_url('/feed') }}?filter={{ filterParam }}&amp;cursor={{ nextCursor|url_encode }}" class="btn btn--secondary">{{ trans('feed.load_more') }}</a>
+        </p>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}

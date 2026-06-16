@@ -30,7 +30,12 @@ final class TranslationParityTest extends TestCase
                 continue;
             }
             $contents = (string) file_get_contents($file->getPathname());
-            if (preg_match_all("/trans\(\s*'([^']+)'/", $contents, $matches) > 0) {
+            // Match only static keys: trans('key') or trans('key', ...). Requiring a
+            // closing ) or , after the literal skips dynamic concatenations such as
+            // trans('feed.posted_' ~ item.type), whose runtime keys (feed.posted_event,
+            // feed.posted_group, ...) are defined directly in en.php and cannot be
+            // verified by a static scan.
+            if (preg_match_all("/trans\(\s*'([^']+)'\s*[),]/", $contents, $matches) > 0) {
                 foreach ($matches[1] as $key) {
                     $used[$key] = true;
                 }
