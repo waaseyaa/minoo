@@ -1,0 +1,14 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('events.not_found') }} — Minoo{% endblock %}
+
+{% block content %}
+  <div class="flow-lg">
+    {% include "components/shared/feedback/empty-state.html.twig" with {
+      heading: trans('events.not_found'),
+      body: trans('events.not_found_message'),
+      action_url: lang_url('/events'),
+      action_label: trans('events.browse_all')
+    } only %}
+  </div>
+{% endblock %}
