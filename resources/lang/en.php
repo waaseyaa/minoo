@@ -119,6 +119,14 @@ return [
     'nav.businesses' => 'Businesses',
 
     // Feed — social feed homepage
+    'feed.title' => 'Your feed',
+    'feed.empty' => 'Nothing here yet. Follow a community or check back soon.',
+    'feed.filter_label' => 'Filter feed',
+    'feed.filter_all' => 'All',
+    'feed.filter_posts' => 'Posts',
+    'feed.filter_events' => 'Events',
+    'feed.filter_groups' => 'Groups',
+    'feed.load_more' => 'Load more',
     'feed.sidebar_nav_label' => 'Feed navigation',
     'feed.your_communities' => 'Your Communities',
     'feed.trending' => 'Trending',

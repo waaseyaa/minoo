@@ -1095,6 +1095,14 @@ return [
     'messages.new_message' => '', // needs translation
 
     // Feed — additional
+    'feed.title' => '', // needs translation
+    'feed.empty' => '', // needs translation
+    'feed.filter_label' => '', // needs translation
+    'feed.filter_all' => '', // needs translation
+    'feed.filter_posts' => '', // needs translation
+    'feed.filter_events' => '', // needs translation
+    'feed.filter_groups' => '', // needs translation
+    'feed.load_more' => '', // needs translation
     'feed.edit_post' => '', // needs translation
     'feed.cancel' => '', // needs translation
     'feed.save' => 'Ganawenjigewin', // dict: ganawendan: "take care of, keep"

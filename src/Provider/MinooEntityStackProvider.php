@@ -6,14 +6,15 @@ namespace App\Provider;
 
 use App\Provider\Entity\EntityCommunityProvider;
 use App\Provider\Entity\EntityContentProvider;
+use App\Provider\Entity\EntityFeedProvider;
 use App\Provider\Entity\EntityFoundationProvider;
 use Waaseyaa\Foundation\ServiceProvider\ServiceProvider;
 
 /**
  * Delegates to focused entity providers (single composer entry).
  *
- * Language-platform slimming (2026-06): feed and newsletter providers
- * de-registered; their tables remain dormant in the database by design.
+ * EntityFeedProvider restored for the pull-based feed read path (#814); the
+ * newsletter provider stays de-registered (its tables remain dormant).
  */
 final class MinooEntityStackProvider extends ServiceProvider
 {
@@ -22,5 +23,6 @@ final class MinooEntityStackProvider extends ServiceProvider
         $this->mergeChildProvider(new EntityFoundationProvider());
         $this->mergeChildProvider(new EntityCommunityProvider());
         $this->mergeChildProvider(new EntityContentProvider());
+        $this->mergeChildProvider(new EntityFeedProvider());
     }
 }
