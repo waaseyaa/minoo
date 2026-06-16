@@ -129,11 +129,16 @@ return [
     'chat.toggle_label' => '',
     'chat.title' => '',
     'chat.close_label' => '',
+    'chat.intro' => '', // needs translation
     'chat.initial_message' => '',
     'chat.input_label' => '',
     'chat.input_placeholder' => '',
     'chat.send_button' => 'Izhinizha\'an', // dict: izhinizha'an: send it
-    'chat.disclaimer' => '',
+    'chat.disclaimer' => '', // needs translation
+    'chat.entries_heading' => '', // needs translation
+    'chat.examples_heading' => '', // needs translation
+    'chat.source_label' => '', // needs translation
+    'chat.no_results' => '', // needs translation
     'chat.thinking' => '',
     'chat.error' => '',
 

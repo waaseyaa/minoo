@@ -1,0 +1,67 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}{{ trans('chat.title') }} — Minoo{% endblock %}
+
+{% block content %}
+  {# Cite-only language assistant (#822). SSR, no JS daemon, no AI provider.
+     Every answer is quoted from the dictionary and links to the source entry;
+     it never generates Anishinaabemowin. #}
+  <div class="flow-lg content-max">
+    <section class="listing-hero">
+      <h1>{{ trans('chat.title') }}</h1>
+      <p class="listing-hero__subtitle">{{ trans('chat.intro') }}</p>
+    </section>
+
+    <form action="{{ lang_url('/chat') }}" method="get" class="search-form" role="search">
+      <input type="text" name="q" value="{{ query }}"
+             placeholder="{{ trans('chat.input_placeholder') }}"
+             aria-label="{{ trans('chat.input_label') }}" class="search-form__input">
+      <button type="submit" class="btn btn--primary">{{ trans('chat.send_button') }}</button>
+    </form>
+
+    <p class="chat__disclaimer">{{ trans('chat.disclaimer') }}</p>
+
+    {% if query %}
+      {% if has_answer %}
+        {% if entries|length > 0 %}
+          <section class="flow">
+            <h2>{{ trans('chat.entries_heading') }}</h2>
+            <div class="card-grid">
+              {% for e in entries %}
+                {% include "components/domain/language/entry-card.html.twig" with {
+                  word: e.word,
+                  part_of_speech: e.part_of_speech,
+                  definition: e.definition,
+                  language_code: e.language_code,
+                  attribution_source: e.attribution_source,
+                  example: '',
+                  tags: [],
+                  url: '/language/' ~ e.slug
+                } only %}
+              {% endfor %}
+            </div>
+          </section>
+        {% endif %}
+
+        {% if examples|length > 0 %}
+          <section class="flow">
+            <h2>{{ trans('chat.examples_heading') }}</h2>
+            <ul class="chat__examples">
+              {% for s in examples %}
+                <li class="chat__example">
+                  <p class="chat__example-oj" lang="oj">{{ s.ojibwe_text }}</p>
+                  {% if s.english_text %}<p class="chat__example-en">{{ s.english_text }}</p>{% endif %}
+                  {% if s.source_url %}
+                    <p class="chat__example-source"><a href="{{ s.source_url }}" target="_blank" rel="noopener noreferrer">{{ trans('chat.source_label') }}</a></p>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endif %}
+      {% else %}
+        <p class="chat__no-results">{{ trans('chat.no_results') }}</p>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}
