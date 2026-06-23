@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Provider;
 
 use App\Provider\Routing\AdminRouteProvider;
+use App\Provider\Routing\AnokiiRouteProvider;
 use App\Provider\Routing\AuthApiRouteProvider;
 use App\Provider\Routing\GamesApiRouteProvider;
 use App\Provider\Routing\LessonRouteProvider;
@@ -39,6 +40,9 @@ final class MinooRoutingStackProvider extends ServiceProvider
             new GamesApiRouteProvider(),
             new LessonRouteProvider(),
             new StaticPagesRouteProvider(),
+            // Anokii shell must register before the admin-surface SPA catch-all
+            // so its priority-100 /admin/anokii routes win over admin_spa.
+            new AnokiiRouteProvider(),
             new AdminRouteProvider(),
             new SocialApiRouteProvider(),
         ] as $child) {
