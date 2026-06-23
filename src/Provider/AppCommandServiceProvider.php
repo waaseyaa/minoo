@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Provider;
 
 use App\Console\MailTestHandler;
-use Waaseyaa\CLI\ArgumentDefinition;
-use Waaseyaa\CLI\ArgumentMode;
-use Waaseyaa\CLI\CommandDefinition;
-use Waaseyaa\Foundation\ServiceProvider\Capability\HasNativeCommandsInterface;
+use Waaseyaa\CLI\Command\HandlerArgument;
+use Waaseyaa\CLI\Command\HandlerArgumentMode;
+use Waaseyaa\CLI\Command\HandlerCommand;
+use Waaseyaa\Foundation\ServiceProvider\Capability\ProvidesConsoleCommandsInterface;
 use Waaseyaa\Mail\MailerInterface;
 
 /**
  * Language-platform slimming (2026-06): messaging digest, genealogy demo
  * seed, and crisis OG asset commands removed with their surfaces.
  */
-class AppCommandServiceProvider extends AppCoreServiceProvider implements HasNativeCommandsInterface
+class AppCommandServiceProvider extends AppCoreServiceProvider implements ProvidesConsoleCommandsInterface
 {
     public function register(): void
     {
@@ -31,19 +31,19 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements HasNat
         });
     }
 
-    public function nativeCommands(): iterable
+    public function consoleCommands(): iterable
     {
-        yield new CommandDefinition(
+        yield new HandlerCommand(
             name: 'mail:test',
             description: 'Send a test email to verify SendGrid configuration',
+            handler: [MailTestHandler::class, 'execute'],
             arguments: [
-                new ArgumentDefinition(
+                new HandlerArgument(
                     name: 'email',
-                    mode: ArgumentMode::Required,
+                    mode: HandlerArgumentMode::Required,
                     description: 'The address to send the test email to',
                 ),
             ],
-            handler: [MailTestHandler::class, 'execute'],
         );
     }
 

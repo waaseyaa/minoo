@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use Waaseyaa\CLI\CliIO;
+use Waaseyaa\CLI\Command\SymfonyCommandIO;
 use Waaseyaa\Mail\Envelope;
 use Waaseyaa\Mail\MailerInterface;
 
@@ -17,7 +17,7 @@ final class MailTestHandler
     ) {
     }
 
-    public function execute(CliIO $io): int
+    public function execute(SymfonyCommandIO $io): int
     {
         $email = (string) $io->argument('email');
 
