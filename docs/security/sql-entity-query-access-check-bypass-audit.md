@@ -38,6 +38,9 @@ These sites never have an end-user `AccountInterface` available, or run after th
 | `src/Console/MessageDigestCommand.php` | 37 | Digest job runs from cron/queue; aggregates participants across all threads to build per-user summaries. Per-user filtering happens at digest-render time, not query time. | 2026-05-19 |
 | `src/Console/MessageDigestCommand.php` | 79 | Same digest aggregation — unread-message count per thread. | 2026-05-19 |
 | `src/Ingestion/IngestMaterializer.php` | 177 | NorthCloud ingest materializer dedupes existing entities across all communities. CLI-driven; no per-user view restriction makes sense. | 2026-05-19 |
+| `src/Http/Controller/Anokii/TranscribeController.php` | 127 | Anokii transcribe tool (#853/#854), gated to staff (admin,elder_coordinator) by the route. Must surface UNREVIEWED ingest drafts (status 0 / consent off) that an access-checked query would hide; the route's requireRole is the access boundary. | 2026-06-23 |
+| `src/Ingestion/Corpus/CorpusIngestor.php` | 60 | `ingest:corpus` (#854) dedup check on `source_sentence_id`. CLI-driven, no request account. | 2026-06-23 |
+| `src/Ingestion/Corpus/CorpusIngestor.php` | 135 | `ingest:corpus` (#854) speaker dedup on `code`. CLI-driven, no request account. | 2026-06-23 |
 | `src/Ingestion/IngestMaterializer.php` | 197 | Same materializer; ingest-log lookup. | 2026-05-19 |
 | `src/Infrastructure/Fixture/FixtureResolver.php` | 30 | Test/seed fixture resolver; resolves entities by name/key for fixture wiring. No user context. | 2026-05-19 |
 | `src/Infrastructure/Fixture/FixtureResolver.php` | 34 | Same. | 2026-05-19 |

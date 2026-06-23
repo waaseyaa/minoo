@@ -63,3 +63,4 @@ storage/exports/
 !/phpstan-dead-code.neon
 !/phpstan-dead-code-baseline.neon
 !/phpunit.xml.dist
+/tests/storage/
