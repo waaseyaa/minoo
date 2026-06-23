@@ -37,8 +37,8 @@ final class AnokiiShellContext
     }
 
     /**
-     * Sidebar nav. Transcribe is live (#853); Ingest (#854) and Curate (#855)
-     * are still placeholders flagged "Soon".
+     * Sidebar nav. Transcribe (#853) and Curate (#855) are live; Ingest (#854)
+     * is a CLI command (bin/waaseyaa ingest:corpus), so it has no tab.
      *
      * @return list<array{id: string, label: string, href: string, group?: string, badge?: string}>
      */
@@ -47,8 +47,7 @@ final class AnokiiShellContext
         return [
             ['id' => 'home', 'label' => 'Overview', 'href' => '/admin/anokii', 'group' => 'Workspace'],
             ['id' => 'transcribe', 'label' => 'Transcribe', 'href' => '/admin/anokii/transcribe', 'group' => 'Language'],
-            ['id' => 'ingest', 'label' => 'Ingest', 'href' => '#', 'badge' => 'Soon'],
-            ['id' => 'curate', 'label' => 'Curate', 'href' => '#', 'badge' => 'Soon'],
+            ['id' => 'curate', 'label' => 'Curate', 'href' => '/admin/anokii/curate'],
         ];
     }
 

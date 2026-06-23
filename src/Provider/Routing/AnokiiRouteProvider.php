@@ -70,6 +70,28 @@ final class AnokiiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Curate tab (#855): promote utterances into dictionary_entry / word_part.
+        $router->addRoute(
+            'anokii.curate',
+            RouteBuilder::create('/admin/anokii/curate')
+                ->controller('App\Http\Controller\Anokii\CurateController::index')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'anokii.curate.promote',
+            RouteBuilder::create('/admin/anokii/curate/promote')
+                ->controller('App\Http\Controller\Anokii\CurateController::promote')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->methods('POST')
+                ->build(),
+        );
+
         // Forward-looking: future workspace tabs live under /admin/anokii/{sub}.
         // All currently resolve to the same landing shell. The requirement keeps
         // this off the admin-surface `_surface` API namespace.
