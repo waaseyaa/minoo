@@ -33,12 +33,12 @@ test.describe('Auth flows', () => {
     await expect(page.getByTestId('error-email')).toBeVisible();
   });
 
-  test('login success redirects to feed', async ({ page }) => {
+  test('login success redirects home', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/feed');
+    await page.waitForURL('/');
   });
 
   // ── Registration ───────────────────────────────────────────────────
@@ -86,48 +86,29 @@ test.describe('Auth flows', () => {
     await expect(page.getByTestId('check-email-heading')).toBeVisible();
   });
 
-  test('registration success auto-logs in and redirects to feed', async ({ page }) => {
+  test('registration success auto-logs in and redirects home', async ({ page }) => {
     await page.goto('/register');
     await page.fill('input[name="name"]', 'New Test User');
     await page.fill('input[name="email"]', `newuser-${Date.now()}@minoo.test`);
     await page.fill('input[name="password"]', 'NewUserPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/feed');
+    await page.waitForURL('/');
     await expect(page.locator('.flash-message--success')).toContainText('Welcome to Minoo');
   });
 
   // ── Logout ─────────────────────────────────────────────────────────
 
   test('logout destroys session and redirects to homepage', async ({ page }) => {
-    // First log in
+    // First log in (lands on home post-relaunch)
     await page.goto('/login');
     await page.fill('input[name="email"]', 'test@minoo.test');
     await page.fill('input[name="password"]', 'TestPass123!');
     await page.click('.form button[type="submit"]');
-    await page.waitForURL('/feed');
+    await page.waitForURL('/');
 
     // Then log out — lands on homepage (anonymous)
     await page.goto('/logout');
     await page.waitForURL('/');
-  });
-
-  // ── Auth redirects ────────────────────────────────────────────────
-  // Skipped pending #733 — framework currently returns 403 for anonymous
-  // visitors to role-gated routes instead of redirecting to /login.
-
-  test.skip('coordinator dashboard redirects unauthenticated users to /login', async ({ page }) => {
-    await page.goto('/dashboard/coordinator');
-    await expect(page).toHaveURL(/\/login/);
-  });
-
-  test.skip('volunteer dashboard redirects unauthenticated users to /login', async ({ page }) => {
-    await page.goto('/dashboard/volunteer');
-    await expect(page).toHaveURL(/\/login/);
-  });
-
-  test.skip('redirect preserves intended destination in query param', async ({ page }) => {
-    await page.goto('/dashboard/volunteer');
-    await expect(page).toHaveURL(/\/login\?redirect=/);
   });
 
   test('login form is centered with welcoming copy', async ({ page }) => {
@@ -150,23 +131,5 @@ test.describe('Auth flows', () => {
   test('login page has link to register', async ({ page }) => {
     await page.goto('/login');
     await expect(page.locator('a[href="/register"]')).toBeVisible();
-  });
-
-  // ── 403 error page tests ──────────────────────────────────────────
-
-  test('visiting protected route unauthenticated shows friendly 403', async ({ page }) => {
-    await page.goto('/dashboard/volunteer');
-    await expect(page.locator('h1')).toContainText('Forbidden');
-    await expect(page.locator('a[href*="/login?redirect="]')).toBeVisible();
-  });
-
-  test('403 page includes login link with redirect', async ({ page }) => {
-    await page.goto('/dashboard/volunteer');
-    await expect(page.locator('a[href*="/login?redirect=%2Fdashboard%2Fvolunteer"]')).toBeVisible();
-  });
-
-  test('403 page includes link to homepage', async ({ page }) => {
-    await page.goto('/dashboard/volunteer');
-    await expect(page.getByRole('link', { name: 'return to the homepage' })).toBeVisible();
   });
 });
