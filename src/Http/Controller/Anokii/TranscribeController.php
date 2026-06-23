@@ -44,7 +44,7 @@ final class TranscribeController
     {
         $showAll = ($request->query->get('filter') === 'all');
 
-        $rows = $this->corpusRows($account);
+        $rows = $this->corpusRows();
         $total = count($rows);
         $done = count(array_filter($rows, static fn (array $r): bool => $r['ojibwe_text'] !== '' && $r['english_text'] !== ''));
 
@@ -112,15 +112,19 @@ final class TranscribeController
      *
      * @return list<array{esid: int, ojibwe_text: string, english_text: string, notes: string, thumb_url: string, audio_url: string, source_url: string, corpus_id: string}>
      */
-    private function corpusRows(AccountInterface $account): array
+    private function corpusRows(): array
     {
         if (!$this->entityTypeManager->hasDefinition('example_sentence')) {
             return [];
         }
 
         $storage = $this->entityTypeManager->getStorage('example_sentence');
+        // accessCheck(false): this is the transcribe tool, gated to staff by the
+        // route. It must surface UNREVIEWED drafts (status 0 / consent off) from
+        // ingest:corpus (#854) — which an access-checked query would hide. The
+        // route's requireRole is the access boundary. See the bypass audit doc.
         $ids = $storage->getQuery()
-            ->setAccount($account)
+            ->accessCheck(false)
             ->condition('source_sentence_id', 'corpus:%', 'LIKE')
             ->sort('source_sentence_id')
             ->execute();
