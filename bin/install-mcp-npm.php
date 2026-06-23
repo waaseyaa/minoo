@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 /**
- * Install Node dependencies for Minoo and Bimaaji MCP servers (Claude Code).
+ * Install Node dependencies for the Minoo MCP server (Claude Code).
  * Skips when npm is not on PATH so composer install succeeds in minimal CI images.
+ * (Bimaaji's MCP surface went framework-native in Waaseyaa alpha.248 — no Node
+ * runtime; its tools are exposed via the framework's /mcp endpoint instead.)
  */
 
 $root = dirname(__DIR__);
@@ -24,7 +26,6 @@ if ($npm === null) {
 
 $targets = [
     $root . '/mcp',
-    $root . '/vendor/waaseyaa/bimaaji/mcp',
 ];
 
 foreach ($targets as $dir) {

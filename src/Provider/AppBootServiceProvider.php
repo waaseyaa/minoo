@@ -8,6 +8,7 @@ use App\Domain\Geo\Service\LocationService;
 use App\Http\Twig\AccountDisplayTwigExtension;
 use App\Http\Twig\DateTwigExtension;
 use App\Http\Twig\LanguageTwigExtension;
+use App\Search\LazySearchProvider;
 use Twig\Environment;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Event\EntityEvent;
@@ -66,8 +67,14 @@ class AppBootServiceProvider extends AppCoreServiceProvider
 
         $twigForSearch = SsrServiceProvider::getTwigEnvironment();
         if ($twigForSearch !== null) {
-            /** @var SearchProviderInterface $searchProvider */
-            $searchProvider = $this->resolve(SearchProviderInterface::class);
+            // alpha.248: the framework search provider is access-checked, so its
+            // factory resolves EntityAccessHandler — which the kernel only composes
+            // in discoverAccessPolicies(), AFTER bootProviders(). Defer the provider
+            // (and that dependency) to first query via LazySearchProvider so the
+            // extension can still be registered here at boot.
+            $searchProvider = new LazySearchProvider(
+                fn (): SearchProviderInterface => $this->resolve(SearchProviderInterface::class),
+            );
             $baseTopics = (array) ($this->config['search']['base_topics'] ?? []);
             $twigForSearch->addExtension(new SearchTwigExtension($searchProvider, $baseTopics));
         }
