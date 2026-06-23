@@ -1,0 +1,44 @@
+{#
+  Anokii admin shell landing (#851).
+
+  Extends the Anokii package shell via the @anokii namespace (registered by
+  App\Provider\AnokiiServiceProvider) — never forked. Theming is applied by
+  overriding the shell's --color-* tokens in the shell_styles block, using the
+  Minoo palette supplied as the `anokii_theme_css` global. Brand identity comes
+  from the `anokii_brand_*` globals. Nav + user-chip context come from
+  AnokiiAdminController.
+
+  Empty by design: the workspace tabs (Transcribe / Ingest / Curate) are
+  advertised as "Soon" until their issues land (#853, #854, #855).
+#}
+{% extends "@anokii/_shell.html.twig" %}
+
+{% block title %}{{ anokii_brand_title|default('Minoo') }} — {{ anokii_brand_tag|default('Language Workspace') }}{% endblock %}
+
+{% block shell_styles %}
+  {{ anokii_theme_css|default('')|raw }}
+  .anokii-lede{ max-width: 56ch; }
+  .anokii-lede h1{ font-size: 1.6rem; line-height: 1.2; margin-bottom: .5rem; }
+  .anokii-lede p{ color: var(--anokii-shell-muted); }
+  .anokii-soon{ margin-top: 1.75rem; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .anokii-soon .card{ background: var(--anokii-shell-card); border: 1px solid var(--anokii-shell-line); border-radius: 12px; padding: 14px 16px; }
+  .anokii-soon .card b{ display: block; }
+  .anokii-soon .card small{ color: var(--anokii-shell-muted); }
+{% endblock %}
+
+{% block brand %}
+  <b>{{ anokii_brand_title|default('Minoo') }}</b>&nbsp;<span style="opacity:.6;font-weight:400">{{ anokii_brand_tag|default('Language Workspace') }}</span>
+{% endblock %}
+
+{% block content %}
+  <div class="anokii-lede">
+    <h1>Anokii — Language Workspace</h1>
+    <p>The home for transcribing, ingesting, and curating Anishinaabemowin from the community corpus. Tools arrive here as they land.</p>
+  </div>
+
+  <div class="anokii-soon">
+    <div class="card"><b>Transcribe</b><small>Whiteboard cards → entries. Coming soon.</small></div>
+    <div class="card"><b>Ingest</b><small>Pull new reels into the corpus. Coming soon.</small></div>
+    <div class="card"><b>Curate</b><small>Promote utterances into lessons. Coming soon.</small></div>
+  </div>
+{% endblock %}
