@@ -4,7 +4,7 @@ test.describe('Homepage (anonymous)', () => {
   test('shows welcome hero', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('.hero')).toBeVisible();
-    await expect(page.locator('.hero h1')).toContainText('Indigenous Knowledge');
+    await expect(page.locator('.hero h1')).toContainText('Anishinaabemowin');
   });
 
   test('hero CTAs link to the dictionary and games', async ({ page }) => {
@@ -23,8 +23,10 @@ test.describe('Homepage (anonymous)', () => {
     expect(response?.url()).toContain('/events');
   });
 
-  test('/feed redirects anonymous visitors to home', async ({ page }) => {
-    await page.goto('/feed');
-    await expect(page).toHaveURL('/');
+  test('/feed requires authentication (401 for anonymous)', async ({ page }) => {
+    // Post-relaunch, /feed is auth-only (requireAuthentication). Anonymous
+    // visitors get a 401 rather than a redirect home.
+    const response = await page.goto('/feed');
+    expect(response?.status()).toBe(401);
   });
 });
