@@ -1,0 +1,99 @@
+{#
+  Curate dashboard (#855) — rendered into the Anokii shell (never forks it).
+
+  Lists corpus utterances and promotes each into a dictionary_entry (+ word_parts
+  for multi-word phrases) via POST /admin/anokii/curate/promote. The Ojibwe is
+  carried verbatim (ADR 0003).
+#}
+{% extends "@anokii/_shell.html.twig" %}
+
+{% block title %}Curate — Minoo Language Workspace{% endblock %}
+
+{% block shell_styles %}
+  {{ anokii_theme_css|default('')|raw }}
+  .cu-head{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .cu-head h1{ font-size:1.5rem; }
+  .cu-counter{ color:var(--anokii-shell-muted); font-variant-numeric:tabular-nums; }
+  .cu-table{ width:100%; border-collapse:collapse; }
+  .cu-table th, .cu-table td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--anokii-shell-line); vertical-align:middle; }
+  .cu-table th{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--anokii-shell-muted); }
+  .cu-oj{ font-weight:600; }
+  .cu-en{ color:var(--anokii-shell-muted); }
+  .cu-badge{ font-size:11px; font-weight:700; border-radius:20px; padding:2px 9px; background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); }
+  .cu-promote{ font:inherit; cursor:pointer; border:1px solid var(--anokii-shell-accent); color:var(--anokii-shell-accent); background:transparent; border-radius:8px; padding:6px 12px; }
+  .cu-promote:hover{ background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); }
+  .cu-status{ font-size:12px; color:var(--anokii-shell-muted); }
+  .cu-status.error{ color:#c0392b; }
+  .cu-empty{ padding:28px; border:1px dashed var(--anokii-shell-line); border-radius:12px; color:var(--anokii-shell-muted); }
+{% endblock %}
+
+{% block content %}
+  <div class="cu-head" data-promote-url="{{ promote_url }}" data-csrf="{{ csrf_token }}" id="cu-dash">
+    <h1>Curate</h1>
+    <span class="cu-counter"><b id="cu-done">{{ promoted }}</b> / {{ total }} promoted to vocabulary</span>
+  </div>
+
+  {% if rows is empty %}
+    <div class="cu-empty">No corpus utterances to curate yet. Run <code>bin/waaseyaa ingest:corpus</code> or import the corpus first.</div>
+  {% else %}
+    <table class="cu-table">
+      <thead><tr><th>Anishinaabemowin</th><th>English</th><th>Vocabulary</th><th></th></tr></thead>
+      <tbody>
+        {% for row in rows %}
+          <tr data-esid="{{ row.esid }}">
+            <td class="cu-oj">{{ row.ojibwe_text }}</td>
+            <td class="cu-en">{{ row.english_text }}</td>
+            <td class="cu-vocab">
+              {% if row.promoted %}
+                <span class="cu-badge">entry #{{ row.dictionary_entry_id }}</span>
+              {% else %}
+                <span class="cu-status">—</span>
+              {% endif %}
+            </td>
+            <td class="cu-action">
+              {% if not row.promoted %}
+                <button type="button" class="cu-promote">Promote{% if row.parts > 1 %} ({{ row.parts }} parts){% endif %}</button>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+(function () {
+  var dash = document.getElementById('cu-dash');
+  if (!dash) return;
+  var url = dash.getAttribute('data-promote-url');
+  var csrf = dash.getAttribute('data-csrf');
+  var doneEl = document.getElementById('cu-done');
+
+  document.querySelectorAll('.cu-promote').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var row = btn.closest('tr');
+      var esid = parseInt(row.getAttribute('data-esid'), 10);
+      btn.disabled = true;
+      btn.textContent = 'Promoting…';
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+        body: JSON.stringify({ esid: esid })
+      }).then(function (r) {
+        return r.ok ? r.json() : Promise.reject(r.status);
+      }).then(function (data) {
+        var cell = row.querySelector('.cu-vocab');
+        cell.innerHTML = '<span class="cu-badge">entry #' + data.dictionary_entry_id + '</span>';
+        row.querySelector('.cu-action').innerHTML = '';
+        if (doneEl) { doneEl.textContent = (parseInt(doneEl.textContent, 10) || 0) + 1; }
+      }).catch(function () {
+        btn.disabled = false;
+        btn.textContent = 'Retry';
+      });
+    });
+  });
+})();
+</script>
+{% endblock %}
