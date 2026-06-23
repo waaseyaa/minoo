@@ -107,6 +107,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
             _fieldDefinitions: [
                 'ojibwe_text' => ['type' => 'string', 'label' => 'Ojibwe Text', 'weight' => 0],
                 'english_text' => ['type' => 'string', 'label' => 'English Translation', 'weight' => 5],
+                'notes' => ['type' => 'text', 'label' => 'Notes', 'description' => 'Transcriber notes (not displayed publicly).', 'weight' => 6],
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 10],
                 'contributor_id' => ['type' => 'entity_reference', 'label' => 'Contributor', 'settings' => ['target_type' => 'contributor'], 'weight' => 15],
                 'speaker_id' => ['type' => 'entity_reference', 'label' => 'Speaker', 'settings' => ['target_type' => 'speaker'], 'weight' => 16],
