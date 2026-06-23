@@ -97,6 +97,28 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Corpus images: whiteboard thumbnail + illustrative context image, same
+        // consent gate and source directory as the audio (#852).
+        $router->addRoute(
+            'corpus.thumb',
+            RouteBuilder::create('/media/corpus/thumb/{id}')
+                ->controller('App\\Http\\Controller\\Language\\CorpusImageController::thumb')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('id', '[a-z0-9][a-z0-9-]*')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'corpus.context',
+            RouteBuilder::create('/media/corpus/context/{id}')
+                ->controller('App\\Http\\Controller\\Language\\CorpusImageController::context')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('id', '[a-z0-9][a-z0-9-]*')
+                ->build(),
+        );
+
         $router->addRoute(
             'language.list',
             RouteBuilder::create('/language')

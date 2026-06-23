@@ -112,11 +112,36 @@ function resolveSpeaker(object $storage, string $name, bool $dryRun): ?int
     return $cache[$code] = (int) $speaker->id();
 }
 
+/**
+ * Media fields derived from a corpus item (#852). A thumbnail exists for every
+ * item; a context image only for items that carry a context_image_source. URLs
+ * point at the consent-gated CorpusImageController routes, never at the external
+ * source — the original URL is kept in context_image_source for credit.
+ *
+ * @param array<string, mixed> $item
+ *
+ * @return array<string, string>
+ */
+function corpusMediaFields(array $item): array
+{
+    $id = (string) ($item['id'] ?? '');
+    $hasContext = trim((string) ($item['context_image_source'] ?? '')) !== '';
+
+    return [
+        'thumbnail_url' => $id !== '' ? '/media/corpus/thumb/' . $id : '',
+        'context_image_url' => $hasContext && $id !== '' ? '/media/corpus/context/' . $id : '',
+        'context_image_credit' => (string) ($item['context_image_credit'] ?? ''),
+        'context_image_source' => (string) ($item['context_image_source'] ?? ''),
+        'context_image_article' => (string) ($item['context_image_article'] ?? ''),
+    ];
+}
+
 $files = glob($itemsDir . DIRECTORY_SEPARATOR . '*.json');
 sort($files);
 
 $created = 0;
 $skipped = 0;
+$backfilled = 0;
 $failed = 0;
 
 foreach ($files as $file) {
@@ -133,7 +158,38 @@ foreach ($files as $file) {
         ->condition('source_sentence_id', $sourceId)
         ->execute();
     if ($existing !== []) {
-        $skipped++;
+        // Already imported: backfill the #852 media fields idempotently. Only
+        // empty fields are written, so re-running never clobbers curated values.
+        $media = corpusMediaFields($item);
+
+        if ($dryRun) {
+            echo "[dry-run] would backfill media fields on {$item['id']}\n";
+            $skipped++;
+            continue;
+        }
+
+        $entity = $sentenceStorage->load(reset($existing));
+        if ($entity === null) {
+            $skipped++;
+            continue;
+        }
+
+        $changed = false;
+        foreach ($media as $field => $value) {
+            if ($value !== '' && (string) ($entity->get($field) ?? '') === '') {
+                $entity->set($field, $value);
+                $changed = true;
+            }
+        }
+
+        if ($changed) {
+            $entity->set('updated_at', time());
+            $sentenceStorage->save($entity);
+            $backfilled++;
+            echo "[backfill] {$item['id']} -> example_sentence " . $entity->id() . " (media fields)\n";
+        } else {
+            $skipped++;
+        }
         continue;
     }
 
@@ -152,6 +208,9 @@ foreach ($files as $file) {
         // Audio stays in the community-controlled corpus directory and is served
         // by CorpusAudioController, which re-checks the consent gate per request.
         'audio_url' => '/media/corpus/audio/' . $item['id'],
+        // Thumbnail + context image, served from the corpus directory by the
+        // consent-gated CorpusImageController (#852).
+        ...corpusMediaFields($item),
         'source_sentence_id' => $sourceId,
         'source_url' => (string) ($item['source_url'] ?? ''),
         'source_date' => (string) ($item['source_date'] ?? ''),
@@ -169,5 +228,5 @@ foreach ($files as $file) {
     echo "[import] {$item['id']} -> example_sentence " . $sentence->id() . " (consent granted, published)\n";
 }
 
-echo "\nDone. created=$created skipped=$skipped failed=$failed\n";
+echo "\nDone. created=$created backfilled=$backfilled skipped=$skipped failed=$failed\n";
 exit($failed > 0 ? 1 : 0);
