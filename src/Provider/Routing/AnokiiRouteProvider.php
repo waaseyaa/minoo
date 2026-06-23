@@ -28,6 +28,9 @@ final class AnokiiRouteProvider extends AppCoreServiceProvider
     /** Beats the priority-0 admin_spa /admin/{path} catch-all. */
     private const int ROUTE_PRIORITY = 100;
 
+    /** Above ROUTE_PRIORITY so literal tab routes win over the /{sub} catch-all. */
+    private const int TAB_PRIORITY = 110;
+
     /** Roles permitted into the Anokii workspace (Minoo staff roles). */
     private const string STAFF_ROLES = 'admin,elder_coordinator';
 
@@ -41,6 +44,29 @@ final class AnokiiRouteProvider extends AppCoreServiceProvider
                 ->priority(self::ROUTE_PRIORITY)
                 ->render()
                 ->methods('GET')
+                ->build(),
+        );
+
+        // Transcribe tab (#853): dashboard + autosave API. Higher priority than
+        // the /{sub} catch-all below so these literal paths win.
+        $router->addRoute(
+            'anokii.transcribe',
+            RouteBuilder::create('/admin/anokii/transcribe')
+                ->controller('App\Http\Controller\Anokii\TranscribeController::index')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'anokii.transcribe.save',
+            RouteBuilder::create('/admin/anokii/transcribe/save')
+                ->controller('App\Http\Controller\Anokii\TranscribeController::save')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->methods('POST')
                 ->build(),
         );
 

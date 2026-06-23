@@ -1,0 +1,125 @@
+{#
+  Transcribe dashboard (#853) — rendered into the Anokii shell (never forks it).
+
+  Lists corpus example_sentence rows with thumbnail + audio + editable Ojibwe /
+  English / notes. Edits autosave to /admin/anokii/transcribe/save via fetch with
+  the CSRF token. The Ojibwe is never normalized (ADR 0003).
+#}
+{% extends "@anokii/_shell.html.twig" %}
+
+{% block title %}Transcribe — Minoo Language Workspace{% endblock %}
+
+{% block shell_styles %}
+  {{ anokii_theme_css|default('')|raw }}
+  .tx-head{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .tx-head h1{ font-size:1.5rem; }
+  .tx-counter{ color:var(--anokii-shell-muted); font-variant-numeric:tabular-nums; }
+  .tx-filter{ margin-left:auto; font-size:13.5px; }
+  .tx-filter a{ color:var(--anokii-shell-accent); }
+  .tx-empty{ padding:28px; border:1px dashed var(--anokii-shell-line); border-radius:12px; color:var(--anokii-shell-muted); }
+  .tx-row{ display:grid; grid-template-columns:140px 1fr; gap:16px; background:var(--anokii-shell-card); border:1px solid var(--anokii-shell-line); border-radius:12px; padding:14px; margin-bottom:14px; }
+  .tx-media img{ width:140px; height:auto; border-radius:8px; display:block; background:#0001; }
+  .tx-media audio{ width:140px; margin-top:8px; }
+  .tx-media a{ font-size:12px; color:var(--anokii-shell-muted); display:inline-block; margin-top:6px; }
+  .tx-fields{ display:grid; gap:8px; min-width:0; }
+  .tx-fields label{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--anokii-shell-muted); }
+  .tx-fields input, .tx-fields textarea{ width:100%; font:inherit; padding:8px 10px; border:1px solid var(--anokii-shell-line); border-radius:8px; background:var(--anokii-shell-bg); color:var(--anokii-shell-ink); }
+  .tx-fields textarea{ min-height:48px; resize:vertical; }
+  .tx-status{ font-size:12px; min-height:16px; }
+  .tx-status.saved{ color:var(--anokii-shell-accent); }
+  .tx-status.error{ color:#c0392b; }
+  @media(max-width:620px){ .tx-row{ grid-template-columns:1fr; } .tx-media img,.tx-media audio{ width:100%; } }
+{% endblock %}
+
+{% block content %}
+  <div class="tx-head" data-save-url="{{ save_url }}" data-csrf="{{ csrf_token }}" id="tx-dash">
+    <h1>Transcribe</h1>
+    <span class="tx-counter"><b id="tx-done">{{ done }}</b> / {{ total }} transcribed</span>
+    <span class="tx-filter">
+      {% if show_all %}
+        <a href="/admin/anokii/transcribe">Show untranscribed only</a>
+      {% else %}
+        <a href="/admin/anokii/transcribe?filter=all">Show all</a>
+      {% endif %}
+    </span>
+  </div>
+
+  {% if rows is empty %}
+    <div class="tx-empty">
+      {% if show_all %}No corpus rows found.{% else %}Nothing left to transcribe — every corpus row has Ojibwe and English. <a href="/admin/anokii/transcribe?filter=all">Show all</a>.{% endif %}
+    </div>
+  {% else %}
+    {% for row in rows %}
+      <div class="tx-row" data-esid="{{ row.esid }}">
+        <div class="tx-media">
+          {% if row.thumb_url %}<img src="{{ row.thumb_url }}" alt="Whiteboard for {{ row.corpus_id }}" loading="lazy">{% endif %}
+          {% if row.audio_url %}<audio controls preload="none" src="{{ row.audio_url }}"></audio>{% endif %}
+          {% if row.source_url %}<a href="{{ row.source_url }}" target="_blank" rel="noopener">Source ↗</a>{% endif %}
+        </div>
+        <div class="tx-fields">
+          <div>
+            <label for="oj-{{ row.esid }}">Anishinaabemowin</label>
+            <input id="oj-{{ row.esid }}" type="text" data-field="ojibwe_text" value="{{ row.ojibwe_text }}" spellcheck="false" autocomplete="off">
+          </div>
+          <div>
+            <label for="en-{{ row.esid }}">English</label>
+            <input id="en-{{ row.esid }}" type="text" data-field="english_text" value="{{ row.english_text }}" autocomplete="off">
+          </div>
+          <div>
+            <label for="nt-{{ row.esid }}">Notes</label>
+            <textarea id="nt-{{ row.esid }}" data-field="notes">{{ row.notes }}</textarea>
+          </div>
+          <div class="tx-status" id="st-{{ row.esid }}"></div>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+(function () {
+  var dash = document.getElementById('tx-dash');
+  if (!dash) return;
+  var saveUrl = dash.getAttribute('data-save-url');
+  var csrf = dash.getAttribute('data-csrf');
+  var doneEl = document.getElementById('tx-done');
+
+  function rowPayload(rowEl) {
+    var payload = { esid: parseInt(rowEl.getAttribute('data-esid'), 10) };
+    rowEl.querySelectorAll('[data-field]').forEach(function (el) {
+      payload[el.getAttribute('data-field')] = el.value;
+    });
+    return payload;
+  }
+
+  function save(rowEl) {
+    var statusEl = rowEl.querySelector('.tx-status');
+    statusEl.textContent = 'Saving…';
+    statusEl.className = 'tx-status';
+    fetch(saveUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+      body: JSON.stringify(rowPayload(rowEl))
+    }).then(function (r) {
+      return r.ok ? r.json() : Promise.reject(r.status);
+    }).then(function (data) {
+      statusEl.textContent = 'Saved';
+      statusEl.className = 'tx-status saved';
+      if (doneEl && typeof data.done === 'number') { doneEl.textContent = data.done; }
+    }).catch(function () {
+      statusEl.textContent = 'Save failed';
+      statusEl.className = 'tx-status error';
+    });
+  }
+
+  // Autosave on blur, and recompute the done counter client-side as a hint.
+  document.querySelectorAll('.tx-row [data-field]').forEach(function (el) {
+    el.addEventListener('blur', function () { save(el.closest('.tx-row')); });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); save(el.closest('.tx-row')); }
+    });
+  });
+})();
+</script>
+{% endblock %}
