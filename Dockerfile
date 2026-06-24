@@ -7,6 +7,7 @@ RUN apk add --no-cache \
     libpng \
     libjpeg-turbo \
     ttf-dejavu \
+    ffmpeg \
     freetype-dev \
     libpng-dev \
     libjpeg-turbo-dev \

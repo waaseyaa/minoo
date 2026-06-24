@@ -1,0 +1,216 @@
+{#
+  Ingest tab (#877) — drag-and-drop multi-reel ingestion, rendered into the
+  Anokii shell (never forks it).
+
+  Drop (or pick) multiple videos; each uploads to the MINOO_CORPUS_PATH staging
+  area and gets a draft example_sentence (ingested). The async worker
+  (anokii:process-reels) fills the vision draft and advances to drafted; this
+  page polls /ingest/status per row and links a finished reel into Transcribe.
+  The Facebook-URL ingest path is kept below the drop zone. ADR 0003: Ojibwe is
+  never normalized; Steven's corpus is fully consented.
+#}
+{% extends "@anokii/_shell.html.twig" %}
+
+{% block title %}Ingest — Minoo Language Workspace{% endblock %}
+
+{% block shell_styles %}
+  {{ anokii_theme_css|default('')|raw }}
+  .ig-head{ margin-bottom:16px; }
+  .ig-head h1{ font-size:1.5rem; }
+  .ig-head p{ color:var(--anokii-shell-muted); max-width:60ch; }
+  .ig-drop{ border:2px dashed var(--anokii-shell-line); border-radius:14px; background:var(--anokii-shell-card); padding:30px; text-align:center; transition:border-color .15s, background .15s; }
+  .ig-drop.drag{ border-color:var(--anokii-shell-accent); background:color-mix(in oklab, var(--anokii-shell-accent) 8%, var(--anokii-shell-card)); }
+  .ig-drop p{ color:var(--anokii-shell-muted); margin-bottom:12px; }
+  .ig-pick{ font:inherit; font-weight:600; cursor:pointer; background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); border:0; border-radius:9px; padding:10px 18px; }
+  .ig-pick:focus-visible{ outline:3px solid var(--anokii-shell-accent); outline-offset:2px; }
+  .ig-url{ display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
+  .ig-url input{ flex:1; min-width:220px; font:inherit; padding:9px 11px; border:1px solid var(--anokii-shell-line); border-radius:8px; background:var(--anokii-shell-bg); color:var(--anokii-shell-ink); }
+  .ig-url button{ font:inherit; cursor:pointer; border:1px solid var(--anokii-shell-accent); color:var(--anokii-shell-accent); background:transparent; border-radius:8px; padding:9px 14px; }
+  .ig-list{ margin-top:22px; display:grid; gap:10px; }
+  .ig-row{ display:grid; grid-template-columns:1fr auto; gap:10px 16px; align-items:center; background:var(--anokii-shell-card); border:1px solid var(--anokii-shell-line); border-radius:10px; padding:12px 14px; }
+  .ig-name{ font-weight:600; word-break:break-all; }
+  .ig-meta{ font-size:12.5px; color:var(--anokii-shell-muted); }
+  .ig-bar{ grid-column:1 / -1; height:6px; border-radius:4px; background:var(--anokii-shell-bg); overflow:hidden; }
+  .ig-bar > i{ display:block; height:100%; width:0; background:var(--anokii-shell-accent); transition:width .2s; }
+  .ig-state{ font-size:12.5px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .ig-state.done{ color:var(--anokii-shell-accent); font-weight:600; }
+  .ig-state.err{ color:#c0392b; }
+  .ig-go{ color:var(--anokii-shell-accent); font-weight:600; font-size:13px; }
+  .ig-empty{ color:var(--anokii-shell-muted); font-size:13.5px; }
+{% endblock %}
+
+{% block topbar %}{% include "components/anokii/pipeline-bar.html.twig" %}{% endblock %}
+
+{% block content %}
+  <div class="ig-head">
+    <h1>Ingest</h1>
+    <p>Drop Steven's reels here to bring them into the corpus. Each file uploads, then processes in the background (keyframe, audio, and a first-draft transcription) and appears in <a href="{{ transcribe_url }}" style="color:var(--anokii-shell-accent)">Transcribe</a> when ready.</p>
+  </div>
+
+  <div id="ig-drop" class="ig-drop"
+       data-upload="{{ upload_url }}" data-status="{{ status_url }}" data-url="{{ url_url }}"
+       data-transcribe="{{ transcribe_url }}" data-csrf="{{ csrf_token }}"
+       data-accept="{{ accept }}" data-max-mb="{{ max_mb }}">
+    <p>Drag &amp; drop videos (mp4, mov, webm — up to {{ max_mb }} MB each), or</p>
+    <button type="button" class="ig-pick" id="ig-pick" aria-describedby="ig-hint">Choose files…</button>
+    <input type="file" id="ig-file" accept="{{ accept }}" multiple hidden>
+    <p id="ig-hint" class="ig-meta" style="margin-top:12px;">You can select several at once. Uploads run in parallel.</p>
+
+    <form class="ig-url" id="ig-urlform" autocomplete="off">
+      <input type="url" id="ig-urlinput" placeholder="…or paste a Facebook reel URL" aria-label="Facebook reel URL">
+      <button type="submit">Add URL</button>
+    </form>
+  </div>
+
+  <div class="ig-list" id="ig-list" aria-live="polite">
+    {% for row in rows %}
+      <div class="ig-row" data-esid="{{ row.esid }}">
+        <span class="ig-name">{{ row.filename }}</span>
+        <span class="ig-state {{ row.pipeline_status == 'drafted' ? 'done' : '' }} {{ row.error ? 'err' : '' }}">
+          {%- if row.error %}{{ row.error }}{% elseif row.pipeline_status == 'drafted' %}Ready{% else %}Processing…{% endif -%}
+        </span>
+        <span class="ig-meta">{{ row.corpus_id }}</span>
+        <span>{% if row.pipeline_status == 'drafted' %}<a class="ig-go" href="{{ transcribe_url }}">Transcribe →</a>{% endif %}</span>
+      </div>
+    {% else %}
+      <p class="ig-empty" id="ig-empty">No reels in flight. Drop some videos to begin.</p>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+(function () {
+  var zone = document.getElementById('ig-drop');
+  if (!zone) return;
+  var uploadUrl = zone.getAttribute('data-upload');
+  var statusUrl = zone.getAttribute('data-status');
+  var urlUrl = zone.getAttribute('data-url');
+  var transcribeUrl = zone.getAttribute('data-transcribe');
+  var csrf = zone.getAttribute('data-csrf');
+  var maxMb = parseInt(zone.getAttribute('data-max-mb'), 10) || 100;
+  var list = document.getElementById('ig-list');
+  var fileInput = document.getElementById('ig-file');
+  var pick = document.getElementById('ig-pick');
+  var polling = {};
+
+  function clearEmpty() {
+    var e = document.getElementById('ig-empty');
+    if (e) e.remove();
+  }
+
+  function makeRow(name) {
+    clearEmpty();
+    var row = document.createElement('div');
+    row.className = 'ig-row';
+    row.innerHTML = '<span class="ig-name"></span>' +
+      '<span class="ig-state">Uploading…</span>' +
+      '<div class="ig-bar"><i></i></div>' +
+      '<span class="ig-go-slot"></span>';
+    row.querySelector('.ig-name').textContent = name;
+    list.insertBefore(row, list.firstChild);
+    return row;
+  }
+
+  function setState(row, text, cls) {
+    var s = row.querySelector('.ig-state');
+    s.textContent = text;
+    s.className = 'ig-state' + (cls ? ' ' + cls : '');
+  }
+
+  function upload(file) {
+    if (file.size > maxMb * 1024 * 1024) {
+      var r = makeRow(file.name);
+      setState(r, 'Too large (max ' + maxMb + ' MB)', 'err');
+      return;
+    }
+    var row = makeRow(file.name);
+    var bar = row.querySelector('.ig-bar > i');
+    var fd = new FormData();
+    fd.append('file', file);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', uploadUrl);
+    xhr.setRequestHeader('X-CSRF-Token', csrf);
+    xhr.upload.onprogress = function (e) {
+      if (e.lengthComputable) bar.style.width = Math.round((e.loaded / e.total) * 100) + '%';
+    };
+    xhr.onload = function () {
+      var res = {};
+      try { res = JSON.parse(xhr.responseText); } catch (e) {}
+      var f = res.files && res.files[0];
+      if (xhr.status >= 200 && xhr.status < 300 && f && f.esid) {
+        bar.style.width = '100%';
+        row.setAttribute('data-esid', f.esid);
+        setState(row, 'Processing…');
+        poll(f.esid, row);
+      } else {
+        setState(row, (f && f.error) || 'Upload failed', 'err');
+      }
+    };
+    xhr.onerror = function () { setState(row, 'Upload failed', 'err'); };
+    xhr.send(fd);
+  }
+
+  function poll(esid, row) {
+    if (polling[esid]) return;
+    polling[esid] = setInterval(function () {
+      fetch(statusUrl + '?esids=' + esid, { headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var rows = (data && data.rows) || [];
+          var info = rows[0];
+          if (!info) return;
+          if (info.error) {
+            setState(row, info.error, 'err');
+            clearInterval(polling[esid]); delete polling[esid];
+          } else if (info.pipeline_status === 'drafted') {
+            setState(row, 'Ready', 'done');
+            row.querySelector('.ig-go-slot').innerHTML = '<a class="ig-go" href="' + transcribeUrl + '">Transcribe →</a>';
+            clearInterval(polling[esid]); delete polling[esid];
+          }
+        }).catch(function () {});
+    }, 3000);
+  }
+
+  function handleFiles(files) {
+    Array.prototype.forEach.call(files, function (f) { upload(f); });
+  }
+
+  pick.addEventListener('click', function () { fileInput.click(); });
+  fileInput.addEventListener('change', function () { handleFiles(fileInput.files); fileInput.value = ''; });
+
+  ['dragenter', 'dragover'].forEach(function (ev) {
+    zone.addEventListener(ev, function (e) { e.preventDefault(); zone.classList.add('drag'); });
+  });
+  ['dragleave', 'drop'].forEach(function (ev) {
+    zone.addEventListener(ev, function (e) { e.preventDefault(); if (ev === 'drop' || e.target === zone) zone.classList.remove('drag'); });
+  });
+  zone.addEventListener('drop', function (e) {
+    if (e.dataTransfer && e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+  });
+
+  document.getElementById('ig-urlform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = document.getElementById('ig-urlinput');
+    var url = input.value.trim();
+    if (!url) return;
+    var row = makeRow(url);
+    setState(row, 'Registering…');
+    fetch(urlUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+      body: JSON.stringify({ url: url })
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      if (res.ok && res.esid) { setState(row, 'Queued (stage source video, then run the worker)'); input.value = ''; }
+      else { setState(row, res.error || 'Failed', 'err'); }
+    }).catch(function () { setState(row, 'Failed', 'err'); });
+  });
+
+  // Resume polling for any server-rendered rows still processing.
+  Array.prototype.forEach.call(list.querySelectorAll('.ig-row[data-esid]'), function (row) {
+    var s = row.querySelector('.ig-state');
+    if (s && s.textContent.indexOf('Processing') !== -1) poll(row.getAttribute('data-esid'), row);
+  });
+})();
+</script>
+{% endblock %}
