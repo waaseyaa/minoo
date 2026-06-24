@@ -2,6 +2,15 @@
 
 {% block title %}{{ lesson_title }} · Anishinaabemowin{% endblock %}
 
+{% block meta_description %}{{ lesson_title }} — learn {{ total }} everyday Anishinaabemowin words with audio, taught by Steven Bennett. A free language lesson on Minoo.{% endblock %}
+{% block og_description %}{{ lesson_title }} — {{ total }} Anishinaabemowin words with audio, taught by Steven Bennett. Free to learn on Minoo.{% endblock %}
+
+{% block structured_data %}
+  {{ parent() }}
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":["Course","LearningResource"],"name":{{ lesson_title|json_encode|raw }},"description":{{ (lesson_title ~ ': ' ~ total ~ ' everyday Anishinaabemowin words with audio, taught by Steven Bennett.')|json_encode|raw }},"url":"{{ site_base_url }}{{ lang_url('/lessons/' ~ (lesson_slug|default(''))) }}","inLanguage":["oj","en"],"isAccessibleForFree":true,"educationalLevel":"beginner","learningResourceType":"lesson","teaches":"Anishinaabemowin vocabulary","provider":{"@type":"Organization","name":"Minoo","url":"{{ site_base_url }}"}}</script>
+  {% include "components/seo/breadcrumb.html.twig" with { crumbs: [{ name: 'Lessons', url: '/lessons' }, { name: lesson_title, url: '/lessons/' ~ (lesson_slug|default('')) }] } %}
+{% endblock %}
+
 {% block content %}
 <div class="lesson-page" id="lesson">
   <header class="lesson-hero">

@@ -5,6 +5,13 @@
   {%- if nation -%}{{ nation.name }}: {{ nation.reserve }}, {{ nation.treaty }}, a member of Mamaweswen, The North Shore Tribal Council.{%- else -%}Community not found.{%- endif -%}
 {% endblock %}
 
+{% block structured_data %}
+  {{ parent() }}
+  {% if nation %}
+    {% include "components/seo/breadcrumb.html.twig" with { crumbs: [{ name: 'Communities', url: '/communities' }, { name: nation.name, url: '/communities/' ~ nation.slug }] } %}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
   {% if nation %}
     <div class="flow-lg detail">

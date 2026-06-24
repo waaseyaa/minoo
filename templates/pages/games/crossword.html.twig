@@ -2,6 +2,13 @@
 
 {% block title %}Minoo | {{ trans('games.crossword_title') }}{% endblock %}
 
+{% block meta_description %}{{ trans('games.crossword_title') }} — a free Anishinaabemowin word game on Minoo. Practice the language with daily challenges.{% endblock %}
+
+{% block structured_data %}
+  {{ parent() }}
+  {% include "components/seo/breadcrumb.html.twig" with { crumbs: [{ name: trans('games.title'), url: '/games' }, { name: trans('games.crossword_title'), url: '/games/crossword' }] } %}
+{% endblock %}
+
 {% block content %}
 <div class="crossword" data-game="crossword">
     {# Compact header: breadcrumb + title + tabs on one row #}

@@ -2,6 +2,9 @@
 
 {% block title %}Minoo | {{ trans('language.search_results_title') }}{% endblock %}
 
+{# Search results are not canonical content. #}
+{% block robots %}noindex, follow{% endblock %}
+
 {% block content %}
   <div class="flow-lg">
     <h1>{{ trans('language.search_results_title') }}</h1>

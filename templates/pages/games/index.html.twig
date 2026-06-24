@@ -2,6 +2,14 @@
 
 {% block title %}Minoo | {{ trans('games.title') }}{% endblock %}
 
+{% block meta_description %}Free Anishinaabemowin word games on Minoo — Shkoda, Crossword, Matcher, Agim, and Journey. Practice the language with daily challenges.{% endblock %}
+{% block og_description %}Free Anishinaabemowin word games on Minoo — Shkoda, Crossword, Matcher, Agim, and Journey. Practice the language with daily challenges.{% endblock %}
+
+{% block structured_data %}
+  {{ parent() }}
+  {% include "components/seo/breadcrumb.html.twig" with { crumbs: [{ name: trans('games.title'), url: '/games' }] } %}
+{% endblock %}
+
 {% block content %}
 <div class="games-hub content-max">
     <header class="games-hub__header">

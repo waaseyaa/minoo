@@ -1,0 +1,10 @@
+{#
+  Reusable BreadcrumbList JSON-LD (#865).
+  Usage: {% include "components/seo/breadcrumb.html.twig" with { crumbs: [
+            { name: 'Lessons', url: '/lessons' },
+            { name: 'The Kitchen', url: '/lessons/the-kitchen' },
+          ] } %}
+  A leading Home crumb is prepended automatically. URLs are absolute-ised with
+  site_base_url + lang_url so they match the page's locale.
+#}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"{{ site_base_url }}{{ lang_url('/') }}"}{% for c in crumbs %},{"@type":"ListItem","position":{{ loop.index + 1 }},"name":{{ c.name|json_encode|raw }},"item":"{{ site_base_url }}{{ lang_url(c.url) }}"}{% endfor %}]}</script>

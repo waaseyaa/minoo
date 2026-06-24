@@ -33,8 +33,10 @@ final class SitemapController
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function xml(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
+        // /language/search is intentionally excluded (it is noindex). Lessons
+        // are indexable learning surfaces (#865).
         $paths = [
-            '/', '/language', '/language/search', '/communities', '/games',
+            '/', '/lessons', '/lessons/the-kitchen', '/language', '/communities', '/games',
             '/games/shkoda', '/games/matcher', '/games/crossword', '/games/agim', '/games/journey',
             '/about', '/data-sovereignty', '/legal/privacy',
         ];
