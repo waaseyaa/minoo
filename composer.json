@@ -73,6 +73,7 @@
                 "App\\Provider\\MinooRoutingStackProvider",
                 "App\\Provider\\AppBootServiceProvider",
                 "App\\Provider\\AnokiiServiceProvider",
+                "App\\Provider\\LanguageModuleServiceProvider",
                 "App\\Provider\\AppCommandServiceProvider",
                 "App\\Provider\\BimaajiBridgeProvider"
             ]
