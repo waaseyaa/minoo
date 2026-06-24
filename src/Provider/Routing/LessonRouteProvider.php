@@ -75,5 +75,17 @@ final class LessonRouteProvider extends AppCoreServiceProvider
                 ->requirement('id', 'sb-[0-9]+')
                 ->build(),
         );
+
+        // Lesson reel: Range-streamed web mp4, consent-gated (#873). Same handler
+        // as /media/corpus/video/{id}.
+        $router->addRoute(
+            'lessons.media.video',
+            RouteBuilder::create('/lessons/media/video/{id}')
+                ->controller('App\\Http\\Controller\\Language\\CorpusVideoController::video')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('id', 'sb-[0-9]+')
+                ->build(),
+        );
     }
 }

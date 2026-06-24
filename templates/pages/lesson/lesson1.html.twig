@@ -19,8 +19,8 @@
     <h1>The kitchen, in <em>Anishinaabemowin</em></h1>
     <p class="lesson-hero__lede">
       Sixteen everyday objects, taught by Steven Bennett on his Facebook reels.
-      Click any card to play his voice. Turn on Practice to hide the English and
-      test yourself, then tap a card to reveal it.
+      Press play on any card to watch him teach it. Turn on Practice to hide the
+      English and test yourself, then tap a card to reveal it.
     </p>
     <p class="lesson-hero__credit">
       Taught by <a href="{{ steven_url }}" target="_blank" rel="noopener">Steven Bennett</a>.
@@ -38,13 +38,21 @@
     <h2 class="lesson-group__label">{{ group.label }}</h2>
     <div class="lesson-grid">
       {% for item in group.items %}
-        <article class="lesson-card" data-id="{{ item.id }}">
-          <img class="lesson-card__thumb" loading="lazy" src="{{ item.thumb }}" alt="">
+        <article class="lesson-card{% if item.video %} lesson-card--video{% endif %}" data-id="{{ item.id }}">
+          {% if item.video %}
+            <video class="lesson-card__video" controls playsinline preload="none" loading="lazy"
+                   poster="{{ item.thumb }}" src="{{ item.video }}"
+                   aria-label="Steven Bennett teaching {{ item.english }}"></video>
+          {% else %}
+            <img class="lesson-card__thumb" loading="lazy" src="{{ item.thumb }}" alt="">
+          {% endif %}
           <div class="lesson-card__body">
             <div class="lesson-card__oji">{{ item.ojibwe }}</div>
             <div class="lesson-card__english">{{ item.english }}</div>
             <div class="lesson-card__actions">
-              <button class="lesson-card__play" type="button" aria-label="Play Steven's audio">Listen</button>
+              {% if not item.video %}
+                <button class="lesson-card__play" type="button" aria-label="Play Steven's audio">Listen</button>
+              {% endif %}
               <button class="lesson-card__known" type="button" aria-label="Mark known" title="Mark known">&check;</button>
             </div>
             {% if item.source_url %}
@@ -63,5 +71,5 @@
   </footer>
 </div>
 
-<script src="/js/lesson.js?v=1" defer></script>
+<script src="/js/lesson.js?v=2" defer></script>
 {% endblock %}

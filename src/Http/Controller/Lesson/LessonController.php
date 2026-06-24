@@ -90,6 +90,9 @@ final class LessonController
                     // Corpus row not present: skip rather than invent a card.
                     continue;
                 }
+                // Steven's teaching reel, when a web-optimized video exists for
+                // this row (#873). Cards without one fall back to thumb + audio.
+                $hasVideo = (string) ($row->get('video_url') ?? '') !== '';
                 $items[] = [
                     'id' => $item['id'],
                     // Anishinaabemowin, verbatim from the migrated corpus. Never altered.
@@ -97,6 +100,7 @@ final class LessonController
                     'english' => $item['english'],
                     'thumb' => '/lesson/media/thumb/' . $item['id'],
                     'audio' => '/lesson/media/audio/' . $item['id'],
+                    'video' => $hasVideo ? '/lessons/media/video/' . $item['id'] : null,
                     'source_url' => (string) $row->get('source_url'),
                 ];
                 ++$total;

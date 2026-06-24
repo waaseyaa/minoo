@@ -76,12 +76,16 @@
       card.classList.add('is-known');
     }
 
+    // Cards with a teaching reel carry their own audio via the <video>; the
+    // separate audio playback only applies to thumbnail-only fallback cards.
+    var hasVideo = !!card.querySelector('.lesson-card__video');
+
     card.addEventListener('click', function (e) {
-      if (e.target.closest('.lesson-card__known') || e.target.closest('.lesson-card__source')) {
+      if (e.target.closest('.lesson-card__known') || e.target.closest('.lesson-card__source') || e.target.closest('video')) {
         return;
       }
       reveal(card);
-      if (!autoplayCb || autoplayCb.checked) {
+      if (!hasVideo && (!autoplayCb || autoplayCb.checked)) {
         play(card);
       }
     });
