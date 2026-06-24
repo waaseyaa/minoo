@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Generic per-page OG card for minoo.live. Auto-rendered by
+       scripts/generate-og.js for each static page in its manifest. Placeholders
+       are substituted by the generator. Brand: warm cream paper, Fraunces
+       headings, DM Sans body, a teal language accent, the Minoo wordmark. */
+    :root {
+      --paper: #f5f0eb;
+      --ink: #1a1a1a;
+      --muted: #5c5650;
+      --teal: #2a9d8f;
+      --serif: "Fraunces", Charter, "Bitstream Charter", Cambria, Georgia, serif;
+      --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      background: var(--paper);
+      font-family: var(--sans);
+      color: var(--ink);
+      position: relative;
+    }
+
+    /* Teal accent rule across the top. */
+    .rule { position: absolute; top: 0; left: 0; right: 0; height: 10px; background: var(--teal); z-index: 3; }
+
+    /* Soft teal glow, lower right, behind the text. */
+    .glow {
+      position: absolute;
+      bottom: -200px;
+      right: -160px;
+      width: 580px;
+      height: 580px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, rgba(42, 157, 143, 0.20) 0%, rgba(42, 157, 143, 0.08) 55%, transparent 72%);
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      padding: 70px 84px 60px 84px;
+    }
+
+    .top { display: flex; align-items: center; justify-content: space-between; }
+
+    .wordmark {
+      font-family: var(--serif);
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--teal);
+      border: 1px solid rgba(42, 157, 143, 0.4);
+      padding: 7px 15px;
+      border-radius: 999px;
+    }
+
+    .headline { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 30px 0 24px; }
+
+    /* Fits ~4 lines at 60px within 630h; clamps gracefully past that. */
+    .headline h1 {
+      font-family: var(--serif);
+      font-size: 60px;
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 22px;
+      max-width: 1000px;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .subline {
+      font-size: 23px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: -0.005em;
+      max-width: 900px;
+      line-height: 1.44;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .foot { display: flex; align-items: center; justify-content: space-between; }
+    .tagline { font-size: 16px; font-weight: 500; color: var(--muted); }
+    .url { font-size: 16px; font-weight: 600; letter-spacing: 0.01em; color: var(--teal); }
+  </style>
+</head>
+<body>
+  <div class="rule"></div>
+  <div class="glow"></div>
+
+  <div class="content">
+    <div class="top">
+      <div class="wordmark">Minoo</div>
+      <div class="eyebrow">Anishinaabemowin</div>
+    </div>
+
+    <div class="headline">
+      <h1>{{TITLE}}</h1>
+      <p class="subline">{{DESCRIPTION}}</p>
+    </div>
+
+    <div class="foot">
+      <div class="tagline">Learn the language. Find your community.</div>
+      <div class="url">{{URL}}</div>
+    </div>
+  </div>
+</body>
+</html>

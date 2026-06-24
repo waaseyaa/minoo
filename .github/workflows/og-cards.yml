@@ -1,0 +1,61 @@
+name: OG cards
+
+# Keeps every static page's Open Graph social card in the repo automatically.
+#
+# scripts/generate-og.js renders a 1200x630 branded card for each static page in
+# its manifest to public/img/og/<slug>.png. At runtime og_image_path() (see
+# src/Provider/AppBootServiceProvider.php) serves the per-page card if it exists
+# for the page's logical route, else falls back to og-default.png. This workflow
+# renders ONLY missing cards (no churn to existing ones) on a hosted Linux runner
+# and commits them back, so the deploy artifact ships them.
+#
+# Note: --only-missing never refreshes an existing card after a manifest edit.
+# To refresh one, delete its PNG (the next run regenerates it) or run
+# `node scripts/generate-og.js` locally.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/generate-og.js'
+      - 'scripts/og-template-auto.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: og-cards-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cards:
+    name: Generate missing OG cards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm install @playwright/test@^1.58.2 --no-save
+          npx playwright install --with-deps chromium
+
+      - name: Generate any missing cards
+        run: node scripts/generate-og.js --only-missing
+
+      - name: Commit new cards
+        run: |
+          if [ -n "$(git status --porcelain public/img/og)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add public/img/og
+            git commit -m "Auto-generate missing OG cards [skip ci]"
+            git push
+            echo "Committed new OG cards."
+          else
+            echo "All static pages already have an OG card; nothing to do."
+          fi

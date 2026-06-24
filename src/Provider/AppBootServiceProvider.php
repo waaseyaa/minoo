@@ -10,6 +10,7 @@ use App\Http\Twig\DateTwigExtension;
 use App\Http\Twig\LanguageTwigExtension;
 use App\Search\LazySearchProvider;
 use Twig\Environment;
+use Twig\TwigFunction;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Entity\Event\EntityEvent;
 use Waaseyaa\Entity\Event\EntityEvents;
@@ -120,6 +121,30 @@ class AppBootServiceProvider extends AppCoreServiceProvider
         }
         foreach ($twigTargets as $env) {
             $env->addGlobal('site_base_url', $siteBase);
+        }
+
+        // Per-page OG card by convention: og_image_path('/games') returns
+        // /img/og/games.png?v=<hash> when that card exists (rendered by
+        // scripts/generate-og.js), else /img/og-default.png. The slug rule
+        // mirrors the generator ('/' => 'home', '/' => '-'). The ?v content hash
+        // busts the CDN edge cache when a card is regenerated. base.html.twig
+        // calls this for og:image, so a static page gets its own card without
+        // per-template wiring.
+        $ogPublicDir = dirname(__DIR__, 2) . '/public';
+        $ogImagePath = new TwigFunction('og_image_path', static function (string $seoPath) use ($ogPublicDir): string {
+            $slug = trim(strtolower((string) preg_replace('#[^a-zA-Z0-9/_-]+#', '', $seoPath)), '/');
+            $slug = $slug === '' ? 'home' : str_replace('/', '-', $slug);
+            $card = $ogPublicDir . '/img/og/' . $slug . '.png';
+            if (is_file($card)) {
+                $version = substr((string) hash_file('crc32b', $card), 0, 8);
+
+                return '/img/og/' . $slug . '.png?v=' . $version;
+            }
+
+            return '/img/og-default.png';
+        });
+        foreach ($twigTargets as $env) {
+            $env->addFunction($ogImagePath);
         }
     }
 }

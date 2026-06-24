@@ -17,7 +17,7 @@
   <link rel="alternate" hreflang="x-default" href="{{ site_base_url }}{{ seo_path }}">
   <meta property="og:title" content="{% block og_title %}{{ block('title') }}{% endblock %}">
   <meta property="og:description" content="{% block og_description %}{{ trans('og.default_description') }}{% endblock %}">
-  <meta property="og:image" content="{% block og_image %}{{ site_base_url }}/img/og-default.png{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ site_base_url }}{{ og_image_path(seo_path) }}{% endblock %}">
   <meta property="og:url" content="{{ site_base_url }}{{ lang_url(seo_path) }}">
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
   <meta property="og:site_name" content="Minoo">
