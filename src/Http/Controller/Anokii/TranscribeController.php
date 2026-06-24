@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controller\Anokii;
 
+use App\Anokii\Pipeline\PipelineCounts;
 use App\Http\View\AnokiiShellContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,6 +61,8 @@ final class TranscribeController
             'show_all' => $showAll,
             'save_url' => '/admin/anokii/transcribe/save',
             'csrf_token' => CsrfMiddleware::token(),
+            'pipeline' => (new PipelineCounts($this->entityTypeManager))->compute(),
+            'pipeline_active' => 'drafted',
         ]));
 
         return new Response($html);

@@ -31,6 +31,8 @@
   @media(max-width:620px){ .tx-row{ grid-template-columns:1fr; } .tx-media img,.tx-media audio{ width:100%; } }
 {% endblock %}
 
+{% block topbar %}{% include "components/anokii/pipeline-bar.html.twig" %}{% endblock %}
+
 {% block content %}
   <div class="tx-head" data-save-url="{{ save_url }}" data-csrf="{{ csrf_token }}" id="tx-dash">
     <h1>Transcribe</h1>

@@ -81,8 +81,10 @@ final class AnokiiShellTest extends HttpKernelTestCase
         self::assertStringContainsString('anokii-nav', $body);
         self::assertStringNotContainsString('/_nuxt/', $body, '/admin/anokii must not fall through to the Vue admin SPA.');
 
-        // Minoo landing content + placeholder tabs.
-        self::assertStringContainsString('Anokii — Language Workspace', $body);
+        // Overview pipeline dashboard (#876) + flow-order nav tabs.
+        self::assertStringContainsString('Overview', $body);
+        self::assertStringContainsString('ov-funnel', $body);
+        self::assertStringContainsString('Ingest', $body);
         self::assertStringContainsString('Transcribe', $body);
         self::assertStringContainsString('Curate', $body);
     }

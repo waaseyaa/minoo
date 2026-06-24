@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ingestion\Corpus;
 
+use App\Anokii\Pipeline\PipelineStage;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 
@@ -102,6 +103,9 @@ final class CorpusIngestor
                         'vision_notes' => $draft['notes'],
                     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
                     'language_code' => 'oj',
+                    // Pipeline stage (#876): a vision draft lands as `drafted`;
+                    // --skip-vision leaves it `ingested` for manual transcription.
+                    'pipeline_status' => $skipVision ? PipelineStage::INGESTED : PipelineStage::DRAFTED,
                     // Unreviewed draft: off all public surfaces until published.
                     'consent_public' => 0,
                     'consent_ai_training' => 0,

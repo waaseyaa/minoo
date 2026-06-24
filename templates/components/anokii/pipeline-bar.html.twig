@@ -1,0 +1,33 @@
+{#
+  Anokii cross-tab pipeline breadcrumb (#876).
+
+  A thin, persistent progress bar shown on every workspace tab so the pages read
+  as one flow: ingested → drafted → transcribed → curated → published, each chip
+  carrying its live count and linking to where those items are worked. The
+  current stage is highlighted. Renders nothing when `pipeline_bar` is absent.
+
+  Styles are scoped here so any tab can `{% include %}` it inside the shell's
+  `topbar` block without duplicating CSS. The Anokii shell is fully inline-styled
+  (no external stylesheet), so there is no ?v= cache-bust to maintain here.
+#}
+{% if pipeline_bar is defined and pipeline_bar %}
+<style>
+  .anokii-pipeline{ display:flex; align-items:stretch; gap:0; flex-wrap:wrap; padding:10px 30px; border-bottom:1px solid var(--anokii-shell-line); background:var(--anokii-shell-card); }
+  .anokii-pipeline .pl-step{ display:flex; align-items:center; gap:8px; padding:4px 14px 4px 10px; color:var(--anokii-shell-muted); font-size:13px; position:relative; }
+  .anokii-pipeline .pl-step:not(:last-child)::after{ content:'→'; margin-left:14px; opacity:.4; }
+  .anokii-pipeline .pl-step.on{ color:var(--anokii-shell-ink); font-weight:600; }
+  .anokii-pipeline .pl-count{ display:inline-grid; place-items:center; min-width:22px; height:22px; padding:0 6px; border-radius:11px; background:var(--anokii-shell-bg); border:1px solid var(--anokii-shell-line); font-variant-numeric:tabular-nums; font-size:12.5px; }
+  .anokii-pipeline .pl-step.on .pl-count{ background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); border-color:transparent; }
+  .anokii-pipeline a.pl-step:hover{ color:var(--anokii-shell-ink); }
+  .anokii-pipeline a.pl-step:hover .pl-count{ border-color:var(--anokii-shell-accent); }
+  @media(max-width:620px){ .anokii-pipeline{ padding:8px 16px; font-size:12px; } .anokii-pipeline .pl-step:not(:last-child)::after{ margin-left:8px; } }
+</style>
+<nav class="anokii-pipeline" aria-label="Corpus pipeline progress">
+  {% for step in pipeline_bar %}
+    <a class="pl-step{{ step.active ? ' on' : '' }}" href="{{ step.href }}"{{ step.active ? ' aria-current="step"' : '' }}>
+      <span class="pl-label">{{ step.label }}</span>
+      <span class="pl-count">{{ step.count }}</span>
+    </a>
+  {% endfor %}
+</nav>
+{% endif %}

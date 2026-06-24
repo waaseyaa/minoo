@@ -1,44 +1,78 @@
 {#
-  Anokii admin shell landing (#851).
+  Anokii Overview — the live pipeline dashboard (#876).
 
-  Extends the Anokii package shell via the @anokii namespace (registered by
-  App\Provider\AnokiiServiceProvider) — never forked. Theming is applied by
-  overriding the shell's --color-* tokens in the shell_styles block, using the
-  Minoo palette supplied as the `anokii_theme_css` global. Brand identity comes
-  from the `anokii_brand_*` globals. Nav + user-chip context come from
-  AnokiiAdminController.
-
-  Empty by design: the workspace tabs (Transcribe / Ingest / Curate) are
-  advertised as "Soon" until their issues land (#853, #854, #855).
+  Replaces the old static landing. Shows the corpus funnel (a count per stage,
+  each a button that jumps to where those items are worked) and one primary
+  "do next" CTA = the actionable stage with the most pending work. Extends the
+  Anokii package shell via @anokii (never forked); the cross-tab pipeline
+  breadcrumb is shared via components/anokii/pipeline-bar.html.twig.
 #}
 {% extends "@anokii/_shell.html.twig" %}
 
-{% block title %}{{ anokii_brand_title|default('Minoo') }} — {{ anokii_brand_tag|default('Language Workspace') }}{% endblock %}
+{% block title %}Overview — {{ anokii_brand_title|default('Minoo') }} {{ anokii_brand_tag|default('Language Workspace') }}{% endblock %}
 
 {% block shell_styles %}
   {{ anokii_theme_css|default('')|raw }}
-  .anokii-lede{ max-width: 56ch; }
-  .anokii-lede h1{ font-size: 1.6rem; line-height: 1.2; margin-bottom: .5rem; }
-  .anokii-lede p{ color: var(--anokii-shell-muted); }
-  .anokii-soon{ margin-top: 1.75rem; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-  .anokii-soon .card{ background: var(--anokii-shell-card); border: 1px solid var(--anokii-shell-line); border-radius: 12px; padding: 14px 16px; }
-  .anokii-soon .card b{ display: block; }
-  .anokii-soon .card small{ color: var(--anokii-shell-muted); }
+  .ov-head{ max-width:64ch; margin-bottom:22px; }
+  .ov-head h1{ font-size:1.6rem; line-height:1.2; margin-bottom:.4rem; }
+  .ov-head p{ color:var(--anokii-shell-muted); }
+  .ov-cta{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:var(--anokii-shell-card); border:1px solid var(--anokii-shell-line); border-left:4px solid var(--anokii-shell-accent); border-radius:12px; padding:16px 18px; margin-bottom:24px; }
+  .ov-cta .ov-cta-text{ flex:1; min-width:200px; }
+  .ov-cta .ov-cta-text b{ display:block; font-size:1.05rem; }
+  .ov-cta .ov-cta-text small{ color:var(--anokii-shell-muted); }
+  .ov-btn{ display:inline-block; background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); border-radius:9px; padding:10px 18px; font-weight:600; font-size:14.5px; }
+  .ov-btn:hover{ filter:brightness(1.07); }
+  .ov-funnel{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); }
+  .ov-stage{ display:block; background:var(--anokii-shell-card); border:1px solid var(--anokii-shell-line); border-radius:12px; padding:16px 18px; transition:border-color .12s, transform .12s; }
+  .ov-stage:hover{ border-color:var(--anokii-shell-accent); transform:translateY(-1px); }
+  .ov-stage .ov-n{ font-size:2rem; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
+  .ov-stage .ov-label{ display:block; margin-top:6px; color:var(--anokii-shell-muted); font-size:13.5px; }
+  .ov-stage .ov-go{ display:block; margin-top:10px; color:var(--anokii-shell-accent); font-size:13px; font-weight:600; }
+  .ov-empty{ padding:28px; border:1px dashed var(--anokii-shell-line); border-radius:12px; color:var(--anokii-shell-muted); }
 {% endblock %}
 
 {% block brand %}
   <b>{{ anokii_brand_title|default('Minoo') }}</b>&nbsp;<span style="opacity:.6;font-weight:400">{{ anokii_brand_tag|default('Language Workspace') }}</span>
 {% endblock %}
 
+{% block topbar %}{% include "components/anokii/pipeline-bar.html.twig" %}{% endblock %}
+
 {% block content %}
-  <div class="anokii-lede">
-    <h1>Anokii — Language Workspace</h1>
-    <p>The home for transcribing, ingesting, and curating Anishinaabemowin from the community corpus. Tools arrive here as they land.</p>
+  <div class="ov-head">
+    <h1>Overview</h1>
+    <p>Every reel from the community corpus moves through one flow: ingest it, transcribe the Anishinaabemowin and English, curate it into the dictionary and lessons, then publish. {{ total }} item{{ total == 1 ? '' : 's' }} in the pipeline.</p>
   </div>
 
-  <div class="anokii-soon">
-    <div class="card"><b><a href="/admin/anokii/transcribe" style="color:var(--anokii-shell-accent)">Transcribe →</a></b><small>Whiteboard cards → entries.</small></div>
-    <div class="card"><b><a href="/admin/anokii/curate" style="color:var(--anokii-shell-accent)">Curate →</a></b><small>Promote utterances into vocabulary.</small></div>
-    <div class="card"><b>Ingest</b><small>CLI: <code>bin/waaseyaa ingest:corpus</code>.</small></div>
+  {% if do_next %}
+    <div class="ov-cta">
+      <div class="ov-cta-text">
+        <b>
+          {%- if do_next.stage == 'drafted' -%}{{ do_next.count }} draft{{ do_next.count == 1 ? '' : 's' }} awaiting transcription
+          {%- elseif do_next.stage == 'transcribed' -%}{{ do_next.count }} item{{ do_next.count == 1 ? '' : 's' }} ready to curate
+          {%- elseif do_next.stage == 'ingested' -%}{{ do_next.count }} new upload{{ do_next.count == 1 ? '' : 's' }} to process
+          {%- else -%}{{ do_next.count }} item{{ do_next.count == 1 ? '' : 's' }} need attention
+          {%- endif -%}
+        </b>
+        <small>The stage with the most pending work. Start here.</small>
+      </div>
+      <a class="ov-btn" href="{{ do_next.href }}">
+        {%- if do_next.stage == 'drafted' -%}Transcribe →
+        {%- elseif do_next.stage == 'transcribed' -%}Curate →
+        {%- elseif do_next.stage == 'ingested' -%}Process →
+        {%- else -%}Open →{%- endif -%}
+      </a>
+    </div>
+  {% elseif total == 0 %}
+    <div class="ov-empty">No corpus items yet. Head to <a href="/admin/anokii/ingest" style="color:var(--anokii-shell-accent)">Ingest</a> to drop in reels.</div>
+  {% endif %}
+
+  <div class="ov-funnel">
+    {% for step in pipeline_bar %}
+      <a class="ov-stage" href="{{ step.href }}">
+        <span class="ov-n">{{ step.count }}</span>
+        <span class="ov-label">{{ step.label }}</span>
+        <span class="ov-go">View →</span>
+      </a>
+    {% endfor %}
   </div>
 {% endblock %}
