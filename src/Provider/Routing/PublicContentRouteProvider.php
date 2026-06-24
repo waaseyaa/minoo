@@ -119,6 +119,18 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Corpus video: web-optimized teaching reel, Range-streamed, same consent
+        // gate and source directory as the audio (#873).
+        $router->addRoute(
+            'corpus.video',
+            RouteBuilder::create('/media/corpus/video/{id}')
+                ->controller('App\\Http\\Controller\\Language\\CorpusVideoController::video')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('id', '[a-z0-9][a-z0-9-]*')
+                ->build(),
+        );
+
         $router->addRoute(
             'language.list',
             RouteBuilder::create('/language')

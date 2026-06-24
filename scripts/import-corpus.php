@@ -118,16 +118,22 @@ function resolveSpeaker(object $storage, string $name, bool $dryRun): ?int
  * point at the consent-gated CorpusImageController routes, never at the external
  * source — the original URL is kept in context_image_source for credit.
  *
+ * A web-optimized teaching reel (#873) is set only when the transcoded file
+ * exists at <corpus>/video/<id>.mp4, so items without a video fall back to the
+ * thumbnail + audio.
+ *
  * @param array<string, mixed> $item
  *
  * @return array<string, string>
  */
-function corpusMediaFields(array $item): array
+function corpusMediaFields(array $item, string $corpusDir): array
 {
     $id = (string) ($item['id'] ?? '');
     $hasContext = trim((string) ($item['context_image_source'] ?? '')) !== '';
+    $hasVideo = $id !== '' && is_file(rtrim($corpusDir, '/\\') . '/video/' . $id . '.mp4');
 
     return [
+        'video_url' => $hasVideo ? '/media/corpus/video/' . $id : '',
         'thumbnail_url' => $id !== '' ? '/media/corpus/thumb/' . $id : '',
         'context_image_url' => $hasContext && $id !== '' ? '/media/corpus/context/' . $id : '',
         'context_image_credit' => (string) ($item['context_image_credit'] ?? ''),
@@ -158,9 +164,9 @@ foreach ($files as $file) {
         ->condition('source_sentence_id', $sourceId)
         ->execute();
     if ($existing !== []) {
-        // Already imported: backfill the #852 media fields idempotently. Only
-        // empty fields are written, so re-running never clobbers curated values.
-        $media = corpusMediaFields($item);
+        // Already imported: backfill the #852 / #873 media fields idempotently.
+        // Only empty fields are written, so re-running never clobbers values.
+        $media = corpusMediaFields($item, $corpusDir);
 
         if ($dryRun) {
             echo "[dry-run] would backfill media fields on {$item['id']}\n";
@@ -208,9 +214,9 @@ foreach ($files as $file) {
         // Audio stays in the community-controlled corpus directory and is served
         // by CorpusAudioController, which re-checks the consent gate per request.
         'audio_url' => '/media/corpus/audio/' . $item['id'],
-        // Thumbnail + context image, served from the corpus directory by the
-        // consent-gated CorpusImageController (#852).
-        ...corpusMediaFields($item),
+        // Video (#873) + thumbnail + context image, served from the corpus
+        // directory by the consent-gated media controllers.
+        ...corpusMediaFields($item, $corpusDir),
         'source_sentence_id' => $sourceId,
         'source_url' => (string) ($item['source_url'] ?? ''),
         'source_date' => (string) ($item['source_date'] ?? ''),

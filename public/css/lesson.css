@@ -120,12 +120,19 @@
     border-color: var(--success);
   }
 
-  .lesson-card__thumb {
+  .lesson-card__thumb,
+  .lesson-card__video {
     inline-size: 100%;
     aspect-ratio: 9 / 12;
     object-fit: cover;
     background: var(--surface-raised);
     display: block;
+  }
+
+  /* The reel carries its own controls; keep it black-boxed like the poster. */
+  .lesson-card__video {
+    object-fit: contain;
+    background: #000;
   }
 
   .lesson-card__body {
