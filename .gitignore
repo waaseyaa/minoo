@@ -64,3 +64,6 @@ storage/exports/
 !/phpstan-dead-code-baseline.neon
 !/phpunit.xml.dist
 /tests/storage/
+/audit-screens/
+scripts/audit-screens.mjs
+scripts/shot.mjs
