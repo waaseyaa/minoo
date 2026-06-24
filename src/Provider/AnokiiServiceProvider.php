@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
+use Anokii\Config\DistributionConfig;
 use Twig\Environment;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
@@ -13,35 +14,59 @@ use Waaseyaa\SSR\ThemeServiceProvider;
 /**
  * Anokii distribution wiring (Tier 3-lite, #851).
  *
- * Minoo embeds only the Anokii *shell* — the themeable admin chrome — and
+ * Minoo embeds only the Anokii *shell* (the themeable admin chrome) and
  * deliberately does NOT register Anokii\Provider\CoIntelligenceServiceProvider.
  * That keeps Anokii's graph entity types (incl. a `community` type that would
  * collide with Minoo's own), its keyword-RAG chat routes, and its single-admin
  * auth out of the build. Minoo owns auth (role-gated routes) and the entities.
  *
- * This provider has exactly two jobs:
- *   1. Make the package's Twig templates resolvable under the `@anokii`
+ * This provider has three jobs:
+ *   1. Register the Anokii distribution switch ({@see DistributionConfig}) as a
+ *      singleton so module providers added in later milestone issues can resolve
+ *      it. Minoo does not register Anokii\Provider\CoIntelligenceServiceProvider,
+ *      so it owns this binding itself, matching the contract that provider
+ *      expects.
+ *   2. Make the package's Twig templates resolvable under the `@anokii`
  *      namespace, so Minoo pages can `{% extends "@anokii/_shell.html.twig" %}`
  *      without forking the shell.
- *   2. Apply Minoo theming by exposing the brand identity and a block of
+ *   3. Apply Minoo theming by exposing the brand identity and a block of
  *      `--anokii-*` / `--color-*` token overrides (the Minoo palette) as Twig
  *      globals, which the extending template injects into the shell's
  *      `shell_styles` block. The shell is token-driven, so rebranding is purely
- *      an override of these custom properties — the template is never forked.
+ *      an override of these custom properties; the template is never forked.
  *
- * No routes, entity types, commands, or middleware are registered here; the
- * `/admin/anokii` surface is mounted by {@see Routing\AnokiiRouteProvider}.
+ * No routes, entity types, modules, commands, or middleware are mounted here; the
+ * `/admin/anokii` surface is mounted by {@see Routing\AnokiiRouteProvider}, and
+ * config gating (job 1) does not turn anything on by itself.
  */
 final class AnokiiServiceProvider extends AppCoreServiceProvider
 {
     /** Twig namespace the Anokii package templates are exposed under. */
     private const string TEMPLATE_NAMESPACE = 'anokii';
 
+    /**
+     * Register the Anokii distribution switch as a singleton.
+     *
+     * A missing config/anokii.yaml resolves to the sovereign safe default, so
+     * this binding is correct whether or not the file is present. It does not
+     * mount or enable anything: `DistributionConfig::moduleEnabled('language')`
+     * stays false until a later issue flips the flag.
+     */
+    public function register(): void
+    {
+        $this->singleton(
+            DistributionConfig::class,
+            static fn (): DistributionConfig => DistributionConfig::fromFile(
+                dirname(__DIR__, 2) . '/config/anokii.yaml',
+            ),
+        );
+    }
+
     public function boot(): void
     {
         $templateDir = dirname(__DIR__, 2) . '/vendor/waaseyaa/anokii/templates/anokii';
         if (!is_dir($templateDir)) {
-            // Package not installed (or layout changed) — fail soft so the rest
+            // Package not installed (or layout changed), fail soft so the rest
             // of the app still boots; the route provider's render will surface
             // the missing template clearly if the surface is hit.
             return;
