@@ -29,18 +29,19 @@ final class StaticPagesRouteProvider extends AppCoreServiceProvider
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
+        // Short game links 301 to the canonical /games/{slug} (#862).
         $router->addRoute(
             'games.agim.short',
             RouteBuilder::create('/agim')
-                ->controller('App\Http\Controller\Games\AgimController::page')
-                ->allowAll()->render()->methods('GET')->build(),
+                ->controller(static fn (): Response => new RedirectResponse('/games/agim', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()->methods('GET')->build(),
         );
 
         $router->addRoute(
             'games.crossword.short',
             RouteBuilder::create('/crossword')
-                ->controller('App\Http\Controller\Games\CrosswordController::page')
-                ->allowAll()->render()->methods('GET')->build(),
+                ->controller(static fn (): Response => new RedirectResponse('/games/crossword', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()->methods('GET')->build(),
         );
 
         $router->addRoute(
@@ -90,8 +91,8 @@ final class StaticPagesRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'static.matcher',
             RouteBuilder::create('/matcher')
-                ->controller('App\Http\Controller\Site\StaticPageController::matcher')
-                ->allowAll()->render()->methods('GET')->build(),
+                ->controller(static fn (): Response => new RedirectResponse('/games/matcher', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()->methods('GET')->build(),
         );
 
         $router->addRoute(
@@ -104,8 +105,8 @@ final class StaticPagesRouteProvider extends AppCoreServiceProvider
         $router->addRoute(
             'games.shkoda.short',
             RouteBuilder::create('/shkoda')
-                ->controller('App\Http\Controller\Games\ShkodaController::page')
-                ->allowAll()->render()->methods('GET')->build(),
+                ->controller(static fn (): Response => new RedirectResponse('/games/shkoda', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()->methods('GET')->build(),
         );
 
         $router->addRoute(
