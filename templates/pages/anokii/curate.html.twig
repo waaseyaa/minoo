@@ -1,9 +1,10 @@
 {#
-  Curate dashboard (#855) — rendered into the Anokii shell (never forks it).
+  Curate dashboard (#855, #878) — rendered into the Anokii shell (never forks it).
 
-  Lists corpus utterances and promotes each into a dictionary_entry (+ word_parts
-  for multi-word phrases) via POST /admin/anokii/curate/promote. The Ojibwe is
-  carried verbatim (ADR 0003).
+  The last workspace stage: transcribed utterances become structured vocabulary
+  (dictionary_entry + word_parts), get added to a lesson, and are published.
+  Promote → curated; Publish → public + published; Add to lesson records the
+  lesson association. Ojibwe is carried verbatim (ADR 0003).
 #}
 {% extends "@anokii/_shell.html.twig" %}
 
@@ -11,51 +12,73 @@
 
 {% block shell_styles %}
   {{ anokii_theme_css|default('')|raw }}
-  .cu-head{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .cu-head{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:8px; }
   .cu-head h1{ font-size:1.5rem; }
   .cu-counter{ color:var(--anokii-shell-muted); font-variant-numeric:tabular-nums; }
+  .cu-nav{ display:flex; gap:16px; font-size:13px; margin-bottom:18px; }
+  .cu-nav a{ color:var(--anokii-shell-accent); font-weight:600; }
   .cu-table{ width:100%; border-collapse:collapse; }
   .cu-table th, .cu-table td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--anokii-shell-line); vertical-align:middle; }
   .cu-table th{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--anokii-shell-muted); }
   .cu-oj{ font-weight:600; }
   .cu-en{ color:var(--anokii-shell-muted); }
+  .cu-stage{ font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--anokii-shell-muted); }
   .cu-badge{ font-size:11px; font-weight:700; border-radius:20px; padding:2px 9px; background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); }
-  .cu-promote{ font:inherit; cursor:pointer; border:1px solid var(--anokii-shell-accent); color:var(--anokii-shell-accent); background:transparent; border-radius:8px; padding:6px 12px; }
-  .cu-promote:hover{ background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); }
+  .cu-actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .cu-btn{ font:inherit; font-size:13px; cursor:pointer; border:1px solid var(--anokii-shell-accent); color:var(--anokii-shell-accent); background:transparent; border-radius:8px; padding:6px 12px; }
+  .cu-btn:hover{ background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); }
+  .cu-btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .cu-btn.primary{ background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); }
+  .cu-lesson select{ font:inherit; font-size:13px; padding:6px 8px; border:1px solid var(--anokii-shell-line); border-radius:8px; background:var(--anokii-shell-bg); color:var(--anokii-shell-ink); }
   .cu-status{ font-size:12px; color:var(--anokii-shell-muted); }
   .cu-status.error{ color:#c0392b; }
+  .cu-status.ok{ color:var(--anokii-shell-accent); }
   .cu-empty{ padding:28px; border:1px dashed var(--anokii-shell-line); border-radius:12px; color:var(--anokii-shell-muted); }
 {% endblock %}
 
 {% block topbar %}{% include "components/anokii/pipeline-bar.html.twig" %}{% endblock %}
 
 {% block content %}
-  <div class="cu-head" data-promote-url="{{ promote_url }}" data-csrf="{{ csrf_token }}" id="cu-dash">
+  <div class="cu-head" id="cu-dash"
+       data-promote-url="{{ promote_url }}" data-publish-url="{{ publish_url }}"
+       data-lesson-url="{{ lesson_url }}" data-csrf="{{ csrf_token }}">
     <h1>Curate</h1>
-    <span class="cu-counter"><b id="cu-done">{{ promoted }}</b> / {{ total }} promoted to vocabulary</span>
+    <span class="cu-counter">{{ shown }} {{ stage == 'transcribed' ? 'ready to curate' : stage }} · <b id="cu-done">{{ promoted }}</b> / {{ total }} promoted</span>
   </div>
+  <nav class="cu-nav">
+    <a href="{{ overview_url }}">← Overview</a>
+    <a href="{{ transcribe_url }}">← Transcribe</a>
+    <a href="{{ lessons_url }}">Lessons →</a>
+  </nav>
 
   {% if rows is empty %}
-    <div class="cu-empty">No corpus utterances to curate yet. Run <code>bin/waaseyaa ingest:corpus</code> or import the corpus first.</div>
+    <div class="cu-empty">Nothing at this stage yet. Confirm Anishinaabemowin + English in <a href="{{ transcribe_url }}" style="color:var(--anokii-shell-accent)">Transcribe</a> and mark items transcribed to bring them here.</div>
   {% else %}
     <table class="cu-table">
-      <thead><tr><th>Anishinaabemowin</th><th>English</th><th>Vocabulary</th><th></th></tr></thead>
+      <thead><tr><th>Anishinaabemowin</th><th>English</th><th>Stage</th><th>Vocabulary</th><th>Lesson</th><th>Actions</th></tr></thead>
       <tbody>
         {% for row in rows %}
           <tr data-esid="{{ row.esid }}">
             <td class="cu-oj">{{ row.ojibwe_text }}</td>
             <td class="cu-en">{{ row.english_text }}</td>
+            <td><span class="cu-stage" data-stage>{{ row.pipeline_status }}</span></td>
             <td class="cu-vocab">
-              {% if row.promoted %}
-                <span class="cu-badge">entry #{{ row.dictionary_entry_id }}</span>
-              {% else %}
-                <span class="cu-status">—</span>
-              {% endif %}
+              {% if row.promoted %}<span class="cu-badge">entry #{{ row.dictionary_entry_id }}</span>{% else %}<span class="cu-status">—</span>{% endif %}
             </td>
-            <td class="cu-action">
-              {% if not row.promoted %}
-                <button type="button" class="cu-promote">Promote{% if row.parts > 1 %} ({{ row.parts }} parts){% endif %}</button>
-              {% endif %}
+            <td class="cu-lesson">
+              <select data-lesson aria-label="Add to lesson">
+                <option value="">— add to lesson —</option>
+                {% for lesson in lessons %}
+                  <option value="{{ lesson.slug }}" {{ row.lesson_slug == lesson.slug ? 'selected' : '' }}>{{ lesson.title }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <div class="cu-actions">
+                {% if not row.promoted %}<button type="button" class="cu-btn" data-promote>Promote{% if row.parts > 1 %} ({{ row.parts }} parts){% endif %}</button>{% endif %}
+                <button type="button" class="cu-btn primary" data-publish {{ row.published ? 'disabled' : '' }}>{{ row.published ? 'Published' : 'Publish' }}</button>
+                <span class="cu-status" data-status></span>
+              </div>
             </td>
           </tr>
         {% endfor %}
@@ -69,31 +92,56 @@
 (function () {
   var dash = document.getElementById('cu-dash');
   if (!dash) return;
-  var url = dash.getAttribute('data-promote-url');
+  var promoteUrl = dash.getAttribute('data-promote-url');
+  var publishUrl = dash.getAttribute('data-publish-url');
+  var lessonUrl = dash.getAttribute('data-lesson-url');
   var csrf = dash.getAttribute('data-csrf');
   var doneEl = document.getElementById('cu-done');
 
-  document.querySelectorAll('.cu-promote').forEach(function (btn) {
+  function post(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.ok ? r.json() : r.json().then(function (j) { return Promise.reject(j.error || r.status); });
+    });
+  }
+
+  function esidOf(el) { return parseInt(el.closest('tr').getAttribute('data-esid'), 10); }
+  function statusOf(el) { return el.closest('tr').querySelector('[data-status]'); }
+  function setStatus(el, text, cls) { var s = statusOf(el); s.textContent = text; s.className = 'cu-status ' + (cls || ''); }
+
+  document.querySelectorAll('[data-promote]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var row = btn.closest('tr');
-      var esid = parseInt(row.getAttribute('data-esid'), 10);
-      btn.disabled = true;
-      btn.textContent = 'Promoting…';
-      fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-        body: JSON.stringify({ esid: esid })
-      }).then(function (r) {
-        return r.ok ? r.json() : Promise.reject(r.status);
-      }).then(function (data) {
-        var cell = row.querySelector('.cu-vocab');
+      btn.disabled = true; setStatus(btn, 'Promoting…');
+      post(promoteUrl, { esid: esidOf(btn) }).then(function (data) {
+        var cell = btn.closest('tr').querySelector('.cu-vocab');
         cell.innerHTML = '<span class="cu-badge">entry #' + data.dictionary_entry_id + '</span>';
-        row.querySelector('.cu-action').innerHTML = '';
+        btn.closest('tr').querySelector('[data-stage]').textContent = data.pipeline_status;
+        setStatus(btn, 'Promoted ✓', 'ok'); btn.remove();
         if (doneEl) { doneEl.textContent = (parseInt(doneEl.textContent, 10) || 0) + 1; }
-      }).catch(function () {
-        btn.disabled = false;
-        btn.textContent = 'Retry';
-      });
+      }).catch(function (e) { btn.disabled = false; setStatus(btn, typeof e === 'string' ? e : 'Failed', 'error'); });
+    });
+  });
+
+  document.querySelectorAll('[data-publish]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      btn.disabled = true; setStatus(btn, 'Publishing…');
+      post(publishUrl, { esid: esidOf(btn) }).then(function (data) {
+        btn.closest('tr').querySelector('[data-stage]').textContent = data.pipeline_status;
+        btn.textContent = 'Published'; setStatus(btn, 'Live ✓', 'ok');
+      }).catch(function (e) { btn.disabled = false; setStatus(btn, typeof e === 'string' ? e : 'Failed', 'error'); });
+    });
+  });
+
+  document.querySelectorAll('[data-lesson]').forEach(function (sel) {
+    sel.addEventListener('change', function () {
+      if (!sel.value) return;
+      setStatus(sel, 'Adding…');
+      post(lessonUrl, { esid: esidOf(sel), lesson_slug: sel.value }).then(function () {
+        setStatus(sel, 'Added to lesson ✓', 'ok');
+      }).catch(function (e) { setStatus(sel, typeof e === 'string' ? e : 'Failed', 'error'); });
     });
   });
 })();

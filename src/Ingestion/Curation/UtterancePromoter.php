@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ingestion\Curation;
 
+use App\Anokii\Pipeline\PipelineStage;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 
@@ -88,8 +89,10 @@ final class UtterancePromoter
             }
         }
 
-        // Link the source sentence back to the new entry.
+        // Link the source sentence back to the new entry and advance its pipeline
+        // stage to curated (#878). Stays a draft (status unchanged) until published.
         $sentence->set('dictionary_entry_id', $deid);
+        $sentence->set('pipeline_status', PipelineStage::CURATED);
         $sentence->set('updated_at', $now);
         $sentences->save($sentence);
 

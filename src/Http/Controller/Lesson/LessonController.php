@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controller\Lesson;
 
 use App\Http\View\LayoutTwigContext;
+use App\Lesson\LessonCatalog;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -173,16 +174,14 @@ final class LessonController
     }
 
     /**
-     * The lesson registry. Each entry maps a stable slug + number to its
-     * curation config under config/. Add lessons here.
+     * The lesson registry, from the shared catalogue ({@see LessonCatalog}) so
+     * the Anokii Curate "add to a lesson" action reads the same slugs.
      *
      * @return list<array{number: int, slug: string, config: string}>
      */
     private function lessons(): array
     {
-        return [
-            ['number' => 1, 'slug' => 'the-kitchen', 'config' => 'lesson1.php'],
-        ];
+        return LessonCatalog::all();
     }
 
     /** @return array{number: int, slug: string, config: string}|null */

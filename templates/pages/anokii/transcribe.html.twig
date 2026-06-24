@@ -1,9 +1,10 @@
 {#
-  Transcribe dashboard (#853) — rendered into the Anokii shell (never forks it).
-
-  Lists corpus example_sentence rows with thumbnail + audio + editable Ojibwe /
-  English / notes. Edits autosave to /admin/anokii/transcribe/save via fetch with
-  the CSRF token. The Ojibwe is never normalized (ADR 0003).
+  Transcribe dashboard (#853, #878) — rendered into the Anokii shell (never forks
+  it). The middle stage of the pipeline: drafted/ingested reels with a video
+  player, whiteboard thumbnail, audio, and editable Ojibwe / English / notes.
+  Edits autosave to /admin/anokii/transcribe/save; "Mark transcribed" advances
+  the row to the transcribed stage and hands it to Curate. The Ojibwe is never
+  normalized (ADR 0003).
 #}
 {% extends "@anokii/_shell.html.twig" %}
 
@@ -11,24 +12,33 @@
 
 {% block shell_styles %}
   {{ anokii_theme_css|default('')|raw }}
-  .tx-head{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+  .tx-head{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:8px; }
   .tx-head h1{ font-size:1.5rem; }
   .tx-counter{ color:var(--anokii-shell-muted); font-variant-numeric:tabular-nums; }
   .tx-filter{ margin-left:auto; font-size:13.5px; }
   .tx-filter a{ color:var(--anokii-shell-accent); }
+  .tx-nav{ display:flex; gap:16px; font-size:13px; margin-bottom:18px; }
+  .tx-nav a{ color:var(--anokii-shell-accent); font-weight:600; }
   .tx-empty{ padding:28px; border:1px dashed var(--anokii-shell-line); border-radius:12px; color:var(--anokii-shell-muted); }
-  .tx-row{ display:grid; grid-template-columns:140px 1fr; gap:16px; background:var(--anokii-shell-card); border:1px solid var(--anokii-shell-line); border-radius:12px; padding:14px; margin-bottom:14px; }
-  .tx-media img{ width:140px; height:auto; border-radius:8px; display:block; background:#0001; }
-  .tx-media audio{ width:140px; margin-top:8px; }
+  .tx-row{ display:grid; grid-template-columns:200px 1fr; gap:16px; background:var(--anokii-shell-card); border:1px solid var(--anokii-shell-line); border-radius:12px; padding:14px; margin-bottom:14px; }
+  .tx-row.done{ opacity:.55; }
+  .tx-media video{ width:200px; height:auto; border-radius:8px; display:block; background:#000; }
+  .tx-media img{ width:200px; height:auto; border-radius:8px; display:block; background:#0001; }
+  .tx-media audio{ width:200px; margin-top:8px; }
   .tx-media a{ font-size:12px; color:var(--anokii-shell-muted); display:inline-block; margin-top:6px; }
   .tx-fields{ display:grid; gap:8px; min-width:0; }
   .tx-fields label{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--anokii-shell-muted); }
   .tx-fields input, .tx-fields textarea{ width:100%; font:inherit; padding:8px 10px; border:1px solid var(--anokii-shell-line); border-radius:8px; background:var(--anokii-shell-bg); color:var(--anokii-shell-ink); }
   .tx-fields textarea{ min-height:48px; resize:vertical; }
+  .tx-foot{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .tx-mark{ font:inherit; font-weight:600; cursor:pointer; background:var(--anokii-shell-accent); color:var(--anokii-shell-accent-ink); border:0; border-radius:8px; padding:7px 14px; }
+  .tx-mark:disabled{ opacity:.45; cursor:not-allowed; }
+  .tx-mark:focus-visible{ outline:3px solid var(--anokii-shell-accent); outline-offset:2px; }
+  .tx-stage{ font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--anokii-shell-muted); }
   .tx-status{ font-size:12px; min-height:16px; }
   .tx-status.saved{ color:var(--anokii-shell-accent); }
   .tx-status.error{ color:#c0392b; }
-  @media(max-width:620px){ .tx-row{ grid-template-columns:1fr; } .tx-media img,.tx-media audio{ width:100%; } }
+  @media(max-width:620px){ .tx-row{ grid-template-columns:1fr; } .tx-media video,.tx-media img,.tx-media audio{ width:100%; } }
 {% endblock %}
 
 {% block topbar %}{% include "components/anokii/pipeline-bar.html.twig" %}{% endblock %}
@@ -36,25 +46,33 @@
 {% block content %}
   <div class="tx-head" data-save-url="{{ save_url }}" data-csrf="{{ csrf_token }}" id="tx-dash">
     <h1>Transcribe</h1>
-    <span class="tx-counter"><b id="tx-done">{{ done }}</b> / {{ total }} transcribed</span>
+    <span class="tx-counter"><b id="tx-pending">{{ pending }}</b> {{ show_all ? 'shown' : 'awaiting transcription' }} of {{ total }}</span>
     <span class="tx-filter">
-      {% if show_all %}
-        <a href="/admin/anokii/transcribe">Show untranscribed only</a>
+      {% if show_all or stage %}
+        <a href="/admin/anokii/transcribe">Show items needing transcription</a>
       {% else %}
         <a href="/admin/anokii/transcribe?filter=all">Show all</a>
       {% endif %}
     </span>
   </div>
+  <nav class="tx-nav">
+    <a href="{{ overview_url }}">← Overview</a>
+    <a href="{{ curate_url }}">Curate →</a>
+  </nav>
 
   {% if rows is empty %}
     <div class="tx-empty">
-      {% if show_all %}No corpus rows found.{% else %}Nothing left to transcribe — every corpus row has Ojibwe and English. <a href="/admin/anokii/transcribe?filter=all">Show all</a>.{% endif %}
+      {% if show_all %}No corpus rows found.{% else %}Nothing waiting to transcribe — drop reels in <a href="/admin/anokii/ingest" style="color:var(--anokii-shell-accent)">Ingest</a>, or <a href="/admin/anokii/transcribe?filter=all">show all</a>.{% endif %}
     </div>
   {% else %}
     {% for row in rows %}
-      <div class="tx-row" data-esid="{{ row.esid }}">
+      <div class="tx-row {{ row.pipeline_status == 'transcribed' or row.pipeline_status == 'curated' or row.pipeline_status == 'published' ? 'done' : '' }}" data-esid="{{ row.esid }}">
         <div class="tx-media">
-          {% if row.thumb_url %}<img src="{{ row.thumb_url }}" alt="Whiteboard for {{ row.corpus_id }}" loading="lazy">{% endif %}
+          {% if row.video_url %}
+            <video controls preload="metadata" playsinline src="{{ row.video_url }}"{% if row.thumb_url %} poster="{{ row.thumb_url }}"{% endif %}></video>
+          {% elseif row.thumb_url %}
+            <img src="{{ row.thumb_url }}" alt="Whiteboard for {{ row.corpus_id }}" loading="lazy">
+          {% endif %}
           {% if row.audio_url %}<audio controls preload="none" src="{{ row.audio_url }}"></audio>{% endif %}
           {% if row.source_url %}<a href="{{ row.source_url }}" target="_blank" rel="noopener">Source ↗</a>{% endif %}
         </div>
@@ -71,7 +89,11 @@
             <label for="nt-{{ row.esid }}">Notes</label>
             <textarea id="nt-{{ row.esid }}" data-field="notes">{{ row.notes }}</textarea>
           </div>
-          <div class="tx-status" id="st-{{ row.esid }}"></div>
+          <div class="tx-foot">
+            <button type="button" class="tx-mark" data-mark>Mark transcribed →</button>
+            <span class="tx-stage">{{ row.pipeline_status }}</span>
+            <span class="tx-status" id="st-{{ row.esid }}"></span>
+          </div>
         </div>
       </div>
     {% endfor %}
@@ -85,42 +107,66 @@
   if (!dash) return;
   var saveUrl = dash.getAttribute('data-save-url');
   var csrf = dash.getAttribute('data-csrf');
-  var doneEl = document.getElementById('tx-done');
+  var pendingEl = document.getElementById('tx-pending');
 
-  function rowPayload(rowEl) {
+  function rowPayload(rowEl, extra) {
     var payload = { esid: parseInt(rowEl.getAttribute('data-esid'), 10) };
     rowEl.querySelectorAll('[data-field]').forEach(function (el) {
       payload[el.getAttribute('data-field')] = el.value;
     });
+    if (extra) Object.keys(extra).forEach(function (k) { payload[k] = extra[k]; });
     return payload;
+  }
+
+  function post(rowEl, extra) {
+    var statusEl = rowEl.querySelector('.tx-status');
+    statusEl.textContent = 'Saving…';
+    statusEl.className = 'tx-status';
+    return fetch(saveUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+      body: JSON.stringify(rowPayload(rowEl, extra))
+    }).then(function (r) {
+      return r.ok ? r.json() : r.json().then(function (j) { return Promise.reject(j.error || r.status); });
+    });
   }
 
   function save(rowEl) {
     var statusEl = rowEl.querySelector('.tx-status');
-    statusEl.textContent = 'Saving…';
-    statusEl.className = 'tx-status';
-    fetch(saveUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-      body: JSON.stringify(rowPayload(rowEl))
-    }).then(function (r) {
-      return r.ok ? r.json() : Promise.reject(r.status);
-    }).then(function (data) {
+    post(rowEl).then(function () {
       statusEl.textContent = 'Saved';
       statusEl.className = 'tx-status saved';
-      if (doneEl && typeof data.done === 'number') { doneEl.textContent = data.done; }
     }).catch(function () {
       statusEl.textContent = 'Save failed';
       statusEl.className = 'tx-status error';
     });
   }
 
-  // Autosave on blur, and recompute the done counter client-side as a hint.
+  function markTranscribed(rowEl, btn) {
+    var statusEl = rowEl.querySelector('.tx-status');
+    btn.disabled = true;
+    post(rowEl, { mark: 'transcribed' }).then(function (data) {
+      rowEl.classList.add('done');
+      rowEl.querySelector('.tx-stage').textContent = data.pipeline_status;
+      statusEl.textContent = 'Transcribed ✓ ready to curate';
+      statusEl.className = 'tx-status saved';
+      if (pendingEl) { pendingEl.textContent = Math.max(0, (parseInt(pendingEl.textContent, 10) || 1) - 1); }
+    }).catch(function (err) {
+      btn.disabled = false;
+      statusEl.textContent = (typeof err === 'string' ? err : 'Could not mark transcribed');
+      statusEl.className = 'tx-status error';
+    });
+  }
+
   document.querySelectorAll('.tx-row [data-field]').forEach(function (el) {
     el.addEventListener('blur', function () { save(el.closest('.tx-row')); });
     el.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); save(el.closest('.tx-row')); }
     });
+  });
+
+  document.querySelectorAll('.tx-row [data-mark]').forEach(function (btn) {
+    btn.addEventListener('click', function () { markTranscribed(btn.closest('.tx-row'), btn); });
   });
 })();
 </script>
