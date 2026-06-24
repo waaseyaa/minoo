@@ -18,11 +18,13 @@ tenancy_mode: sovereign
 # reading in DistributionConfig::moduleEnabled()). To turn a module on for
 # production in a later issue, move its id from "preview" to "enabled".
 #
-# language: the Anishinaabemowin language module (translation memory, /api/lang,
-# gap log, gated ASR). Present but OFF for now. It sits under "preview" so
-# DistributionConfig::moduleEnabled('language') returns false. A later milestone
-# issue graduates it to "enabled" once the module provider exists.
+# language: the Anishinaabemowin language module. Enabled (#888): its admin tile
+# is minoo's working corpus pipeline (ingest, transcribe, curate, publish),
+# re-homed at /admin/anokii/language. moduleEnabled('language') is therefore true,
+# so the catalog renders it as a live tool. Its data and API layers (translation
+# memory, /api/lang, gap log, gated ASR) land in later milestone issues behind
+# this same flag.
 modules:
-  enabled: []
-  preview:
+  enabled:
     - language
+  preview: []

@@ -66,7 +66,11 @@ final class AnokiiShellContext
      */
     public static function catalog(AccountInterface $account, DistributionConfig $distribution, array $extra = []): array
     {
-        $modules = AdminModules::resolve(self::catalogLiveIds($distribution));
+        $modules = AdminModules::resolve(
+            self::catalogLiveIds($distribution),
+            self::catalogOverrides(),
+            self::catalogExtraModules($distribution),
+        );
         [$nav, $live, $preview] = self::splitCatalog($modules);
 
         return $extra + self::catalogChrome($account, 'dashboard', $nav) + [
@@ -90,7 +94,11 @@ final class AnokiiShellContext
             return null;
         }
 
-        $modules = AdminModules::resolve(self::catalogLiveIds($distribution));
+        $modules = AdminModules::resolve(
+            self::catalogLiveIds($distribution),
+            self::catalogOverrides(),
+            self::catalogExtraModules($distribution),
+        );
         [$nav] = self::splitCatalog($modules);
 
         return $extra + self::catalogChrome($account, $moduleId, $nav) + ['module' => $module];
@@ -141,6 +149,45 @@ final class AnokiiShellContext
     }
 
     /**
+     * Install-specific catalog additions appended via AdminModules::resolve()'s
+     * $extra. The `language` module is minoo's corpus pipeline, gated on
+     * DistributionConfig like every other module: when enabled its card links to
+     * the real admin tile at /admin/anokii/language, otherwise it shows as a
+     * product-preview card. (#888)
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function catalogExtraModules(DistributionConfig $distribution): array
+    {
+        $enabled = $distribution->moduleEnabled('language');
+
+        return [[
+            'id' => 'language',
+            'label' => 'Language',
+            'group' => 'Workspace',
+            'order' => 1,
+            'live' => $enabled,
+            'href' => $enabled ? '/admin/anokii/language' : '/admin/anokii/m/language',
+            'desc' => 'Build the dictionary and lessons from the community corpus: ingest, transcribe, curate, publish.',
+            'icon' => '<path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4V5Z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/><path d="M20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6V5Z" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"/>',
+            'badge' => $enabled ? '' : 'Preview',
+            'tile' => true,
+        ]];
+    }
+
+    /**
+     * Per-install presentation overrides for canonical catalog modules. Pins the
+     * workspace home first so the appended language module (order 1) slots in
+     * right after it, keeping a single "Workspace" nav group header.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private static function catalogOverrides(): array
+    {
+        return ['dashboard' => ['order' => 0]];
+    }
+
+    /**
      * Split a resolved AdminModules set into [nav, live_cards, preview_cards],
      * mirroring Anokii\Admin\AdminShell so the package templates render as
      * designed while minoo keeps its own account context.
@@ -185,14 +232,15 @@ final class AnokiiShellContext
 
     /**
      * Sidebar nav in pipeline flow order (#876): Ingest -> Transcribe -> Curate
-     * -> Lessons. The Overview funnel is the workspace home.
+     * -> Lessons. Overview is the language module landing at /admin/anokii/language
+     * (#888); the catalog dashboard is the workspace home reached via the brand.
      *
      * @return list<array{id: string, label: string, href: string, group?: string, badge?: string}>
      */
     private static function nav(): array
     {
         return [
-            ['id' => 'home', 'label' => 'Overview', 'href' => '/admin/anokii', 'group' => 'Workspace'],
+            ['id' => 'home', 'label' => 'Overview', 'href' => '/admin/anokii/language', 'group' => 'Workspace'],
             ['id' => 'ingest', 'label' => 'Ingest', 'href' => '/admin/anokii/ingest', 'group' => 'Pipeline'],
             ['id' => 'transcribe', 'label' => 'Transcribe', 'href' => '/admin/anokii/transcribe'],
             ['id' => 'curate', 'label' => 'Curate', 'href' => '/admin/anokii/curate'],

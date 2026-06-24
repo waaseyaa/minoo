@@ -25,11 +25,13 @@ final class AnokiiDistributionConfigTest extends TestCase
     }
 
     #[Test]
-    public function language_module_is_off_by_default(): void
+    public function language_module_is_enabled_in_config(): void
     {
+        // Graduated from preview to enabled in #888 (the corpus pipeline is the
+        // language module's live admin tile at /admin/anokii/language).
         $config = DistributionConfig::fromFile(__DIR__ . '/../../../../config/anokii.yaml');
 
-        $this->assertFalse($config->moduleEnabled('language'));
+        $this->assertTrue($config->moduleEnabled('language'));
     }
 
     #[Test]
