@@ -28,7 +28,7 @@
   {% if csrf_token is defined %}
     <meta name="csrf-token" content="{{ csrf_token }}">
   {% endif %}
-  <link rel="stylesheet" href="/css/minoo.css?v=89">
+  <link rel="stylesheet" href="/css/minoo.css?v=90">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   {% block head %}{% endblock %}
   {# Analytics seam (#777): Waaseyaa/Anokii analytics mounts here later.
@@ -89,19 +89,33 @@
     </footer>
   </div>
   <script>
-    // Sidebar toggle (mobile)
-    document.getElementById('sidebar-toggle')?.addEventListener('click', function() {
+    // Sidebar toggle (mobile) — accessible drawer: Escape closes, focus moves
+    // into the drawer on open and returns to the toggle on close (#866).
+    (function() {
+      const toggle = document.getElementById('sidebar-toggle');
       const sidebar = document.getElementById('app-sidebar');
       const overlay = document.getElementById('sidebar-overlay');
-      const isOpen = sidebar?.classList.toggle('app-sidebar--open');
-      overlay?.classList.toggle('app-sidebar__overlay--visible', isOpen);
-      this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    });
-    document.getElementById('sidebar-overlay')?.addEventListener('click', function() {
-      document.getElementById('app-sidebar')?.classList.remove('app-sidebar--open');
-      this.classList.remove('app-sidebar__overlay--visible');
-      document.getElementById('sidebar-toggle')?.setAttribute('aria-expanded', 'false');
-    });
+      if (!toggle || !sidebar) return;
+      function setOpen(open) {
+        sidebar.classList.toggle('app-sidebar--open', open);
+        overlay?.classList.toggle('app-sidebar__overlay--visible', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+          (sidebar.querySelector('a, button') || sidebar).focus();
+        } else {
+          toggle.focus();
+        }
+      }
+      toggle.addEventListener('click', function() {
+        setOpen(!sidebar.classList.contains('app-sidebar--open'));
+      });
+      overlay?.addEventListener('click', function() { setOpen(false); });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebar.classList.contains('app-sidebar--open')) {
+          setOpen(false);
+        }
+      });
+    })();
     // User menu dropdown
     (function() {
       const trigger = document.querySelector('.user-menu__trigger');

@@ -65,5 +65,4 @@ storage/exports/
 !/phpunit.xml.dist
 /tests/storage/
 /audit-screens/
-scripts/audit-screens.mjs
-scripts/shot.mjs
+scripts/*.mjs
