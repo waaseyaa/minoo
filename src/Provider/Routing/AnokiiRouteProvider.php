@@ -92,6 +92,26 @@ final class AnokiiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        $router->addRoute(
+            'anokii.curate.publish',
+            RouteBuilder::create('/admin/anokii/curate/publish')
+                ->controller('App\Http\Controller\Anokii\CurateController::publish')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'anokii.curate.lesson',
+            RouteBuilder::create('/admin/anokii/curate/lesson')
+                ->controller('App\Http\Controller\Anokii\CurateController::lesson')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->methods('POST')
+                ->build(),
+        );
+
         // Ingest tab (#877): drag-and-drop multi-reel upload + async processing.
         $router->addRoute(
             'anokii.ingest',

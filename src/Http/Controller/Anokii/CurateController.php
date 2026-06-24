@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Controller\Anokii;
 
 use App\Anokii\Pipeline\PipelineCounts;
+use App\Anokii\Pipeline\PipelineStage;
+use App\Anokii\Pipeline\PipelineStageResolver;
 use App\Http\View\AnokiiShellContext;
 use App\Ingestion\Curation\UtterancePromoter;
+use App\Lesson\LessonCatalog;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
+use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
@@ -36,15 +40,33 @@ final class CurateController
 
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $rows = $this->rows();
-        $promoted = count(array_filter($rows, static fn (array $r): bool => $r['promoted']));
+        $stage = (string) $request->query->get('stage', '');
+        $all = $this->rows();
+
+        // Default view: items ready to curate (transcribed). ?stage filters to a
+        // single stage (the Overview funnel + breadcrumb link here).
+        if (PipelineStage::isValid($stage)) {
+            $rows = array_values(array_filter($all, static fn (array $r): bool => $r['pipeline_status'] === $stage));
+        } else {
+            $rows = array_values(array_filter($all, static fn (array $r): bool => $r['pipeline_status'] === PipelineStage::TRANSCRIBED));
+        }
+
+        $promoted = count(array_filter($all, static fn (array $r): bool => $r['promoted']));
 
         $html = $this->twig->render('pages/anokii/curate.html.twig', AnokiiShellContext::build($account, 'curate', [
             'path' => $request->getPathInfo(),
             'rows' => $rows,
-            'total' => count($rows),
+            'shown' => count($rows),
+            'total' => count($all),
             'promoted' => $promoted,
+            'stage' => PipelineStage::isValid($stage) ? $stage : PipelineStage::TRANSCRIBED,
+            'lessons' => LessonCatalog::options(),
             'promote_url' => '/admin/anokii/curate/promote',
+            'publish_url' => '/admin/anokii/curate/publish',
+            'lesson_url' => '/admin/anokii/curate/lesson',
+            'transcribe_url' => '/admin/anokii/transcribe',
+            'lessons_url' => '/lessons',
+            'overview_url' => '/admin/anokii',
             'csrf_token' => CsrfMiddleware::token(),
             'pipeline' => (new PipelineCounts($this->entityTypeManager))->compute(),
             'pipeline_active' => 'transcribed',
@@ -72,11 +94,88 @@ final class CurateController
             'dictionary_entry_id' => $result->dictionaryEntryId,
             'word_parts' => $result->wordPartIds,
             'created' => $result->created,
+            'pipeline_status' => PipelineStage::CURATED,
         ]);
     }
 
     /**
-     * @return list<array{esid: int, ojibwe_text: string, english_text: string, promoted: bool, dictionary_entry_id: int, parts: int}>
+     * Publish a curated utterance: flip it (and its dictionary_entry, if any) to
+     * public + published. Steven's corpus is fully consented, so publishing sets
+     * consent_public and consent_ai_training on.
+     */
+    public function publish(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $data = $this->readBody($request);
+        $esid = (int) ($data['esid'] ?? 0);
+        if ($esid <= 0) {
+            return $this->json(['ok' => false, 'error' => 'Missing esid.'], 422);
+        }
+
+        $sentences = $this->entityTypeManager->getStorage('example_sentence');
+        $sentence = $sentences->load($esid);
+        if (!$sentence instanceof EntityInterface) {
+            return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
+        }
+
+        $now = time();
+        $this->publishEntity($sentence);
+        $sentence->set('pipeline_status', PipelineStage::PUBLISHED);
+        $sentence->set('updated_at', $now);
+        $sentences->save($sentence);
+
+        // Publish the linked dictionary_entry too, so the word goes live.
+        $deid = (int) ($sentence->get('dictionary_entry_id') ?? 0);
+        if ($deid > 0) {
+            $entries = $this->entityTypeManager->getStorage('dictionary_entry');
+            $entry = $entries->load($deid);
+            if ($entry instanceof EntityInterface) {
+                $this->publishEntity($entry);
+                $entry->set('updated_at', $now);
+                $entries->save($entry);
+            }
+        }
+
+        return $this->json(['ok' => true, 'esid' => $esid, 'pipeline_status' => PipelineStage::PUBLISHED]);
+    }
+
+    /**
+     * Associate a curated utterance with a lesson (#878). Lessons are static
+     * config keyed by slug; this records the chosen slug on the row.
+     */
+    public function lesson(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
+    {
+        $data = $this->readBody($request);
+        $esid = (int) ($data['esid'] ?? 0);
+        $slug = trim((string) ($data['lesson_slug'] ?? ''));
+        if ($esid <= 0) {
+            return $this->json(['ok' => false, 'error' => 'Missing esid.'], 422);
+        }
+        if (!in_array($slug, LessonCatalog::slugs(), true)) {
+            return $this->json(['ok' => false, 'error' => 'Unknown lesson.'], 422);
+        }
+
+        $sentences = $this->entityTypeManager->getStorage('example_sentence');
+        $sentence = $sentences->load($esid);
+        if (!$sentence instanceof EntityInterface) {
+            return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
+        }
+
+        $sentence->set('lesson_slug', $slug);
+        $sentence->set('updated_at', time());
+        $sentences->save($sentence);
+
+        return $this->json(['ok' => true, 'esid' => $esid, 'lesson_slug' => $slug]);
+    }
+
+    private function publishEntity(EntityInterface $entity): void
+    {
+        $entity->set('status', 1);
+        $entity->set('consent_public', 1);
+        $entity->set('consent_ai_training', 1);
+    }
+
+    /**
+     * @return list<array{esid: int, ojibwe_text: string, english_text: string, promoted: bool, dictionary_entry_id: int, parts: int, pipeline_status: string, lesson_slug: string, published: bool}>
      */
     private function rows(): array
     {
@@ -97,6 +196,7 @@ final class CurateController
             return [];
         }
 
+        $resolver = new PipelineStageResolver();
         $rows = [];
         foreach ($storage->loadMultiple($ids) as $entity) {
             $word = (string) $entity->get('ojibwe_text');
@@ -108,6 +208,9 @@ final class CurateController
                 'promoted' => $deid > 0,
                 'dictionary_entry_id' => $deid,
                 'parts' => count(preg_split('/\s+/', trim($word), -1, PREG_SPLIT_NO_EMPTY) ?: []),
+                'pipeline_status' => $resolver->resolve($entity),
+                'lesson_slug' => (string) ($entity->get('lesson_slug') ?? ''),
+                'published' => (int) ($entity->get('status') ?? 0) === 1,
             ];
         }
 

@@ -131,6 +131,10 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 // in the _data JSON blob (no migration); legacy rows are resolved
                 // on the fly by App\Anokii\Pipeline\PipelineStageResolver.
                 'pipeline_status' => ['type' => 'string', 'label' => 'Pipeline Stage', 'description' => 'Anokii workspace stage: ingested|drafted|transcribed|curated|published.', 'weight' => 31],
+                // Anokii curation: the lesson this utterance was added to (#878).
+                // Lessons are static config keyed by slug; this records the
+                // association set in the Curate tab. Lives in the _data blob.
+                'lesson_slug' => ['type' => 'string', 'label' => 'Lesson', 'description' => 'Slug of the lesson this utterance was curated into (e.g. the-kitchen).', 'weight' => 32],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],

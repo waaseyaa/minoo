@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controller\Anokii;
 
 use App\Anokii\Pipeline\PipelineCounts;
+use App\Anokii\Pipeline\PipelineStage;
+use App\Anokii\Pipeline\PipelineStageResolver;
 use App\Http\View\AnokiiShellContext;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,22 +46,35 @@ final class TranscribeController
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $showAll = ($request->query->get('filter') === 'all');
+        $stage = (string) $request->query->get('stage', '');
 
         $rows = $this->corpusRows();
         $total = count($rows);
-        $done = count(array_filter($rows, static fn (array $r): bool => $r['ojibwe_text'] !== '' && $r['english_text'] !== ''));
 
-        $visible = $showAll
-            ? $rows
-            : array_values(array_filter($rows, static fn (array $r): bool => $r['ojibwe_text'] === '' || $r['english_text'] === ''));
+        // Default view: items that still need transcribing (ingested + drafted).
+        // ?stage=<stage> filters to one stage (the Overview funnel links here);
+        // ?filter=all shows every corpus row.
+        if ($showAll) {
+            $visible = $rows;
+        } elseif (PipelineStage::isValid($stage)) {
+            $visible = array_values(array_filter($rows, static fn (array $r): bool => $r['pipeline_status'] === $stage));
+        } else {
+            $visible = array_values(array_filter(
+                $rows,
+                static fn (array $r): bool => in_array($r['pipeline_status'], [PipelineStage::INGESTED, PipelineStage::DRAFTED], true),
+            ));
+        }
 
         $html = $this->twig->render('pages/anokii/transcribe.html.twig', AnokiiShellContext::build($account, 'transcribe', [
             'path' => $request->getPathInfo(),
             'rows' => $visible,
             'total' => $total,
-            'done' => $done,
+            'pending' => count($visible),
             'show_all' => $showAll,
+            'stage' => PipelineStage::isValid($stage) ? $stage : '',
             'save_url' => '/admin/anokii/transcribe/save',
+            'curate_url' => '/admin/anokii/curate',
+            'overview_url' => '/admin/anokii',
             'csrf_token' => CsrfMiddleware::token(),
             'pipeline' => (new PipelineCounts($this->entityTypeManager))->compute(),
             'pipeline_active' => 'drafted',
@@ -98,13 +113,29 @@ final class TranscribeController
         if (array_key_exists('notes', $data)) {
             $entity->set('notes', (string) $data['notes']);
         }
+
+        $ojibwe = (string) $entity->get('ojibwe_text');
+        $english = (string) $entity->get('english_text');
+        $complete = trim($ojibwe) !== '' && trim($english) !== '';
+
+        // "Mark transcribed" advances the pipeline stage once both languages are
+        // present (the human has confirmed them). Plain autosave leaves the stage
+        // alone so an in-progress draft stays drafted.
+        if (($data['mark'] ?? '') === PipelineStage::TRANSCRIBED) {
+            if (!$complete) {
+                return $this->json(['ok' => false, 'error' => 'Both Anishinaabemowin and English are required before marking transcribed.'], 422);
+            }
+            $entity->set('pipeline_status', PipelineStage::TRANSCRIBED);
+        }
+
         $entity->set('updated_at', time());
         $storage->save($entity);
 
         return $this->json([
             'ok' => true,
             'esid' => $esid,
-            'transcribed' => (string) $entity->get('ojibwe_text') !== '' && (string) $entity->get('english_text') !== '',
+            'complete' => $complete,
+            'pipeline_status' => (string) $entity->get('pipeline_status'),
         ]);
     }
 
@@ -113,7 +144,7 @@ final class TranscribeController
      * account is bound for the access check; all imported corpus rows are
      * consent-public, so they all surface.
      *
-     * @return list<array{esid: int, ojibwe_text: string, english_text: string, notes: string, thumb_url: string, audio_url: string, source_url: string, corpus_id: string}>
+     * @return list<array{esid: int, ojibwe_text: string, english_text: string, notes: string, thumb_url: string, audio_url: string, video_url: string, source_url: string, corpus_id: string, pipeline_status: string}>
      */
     private function corpusRows(): array
     {
@@ -136,6 +167,7 @@ final class TranscribeController
             return [];
         }
 
+        $resolver = new PipelineStageResolver();
         $rows = [];
         foreach ($storage->loadMultiple($ids) as $entity) {
             $corpusId = str_replace('corpus:', '', (string) $entity->get('source_sentence_id'));
@@ -146,8 +178,10 @@ final class TranscribeController
                 'notes' => (string) ($entity->get('notes') ?? ''),
                 'thumb_url' => (string) ($entity->get('thumbnail_url') ?: ($corpusId !== '' ? '/media/corpus/thumb/' . $corpusId : '')),
                 'audio_url' => (string) ($entity->get('audio_url') ?: ($corpusId !== '' ? '/media/corpus/audio/' . $corpusId : '')),
+                'video_url' => (string) ($entity->get('video_url') ?? ''),
                 'source_url' => (string) $entity->get('source_url'),
                 'corpus_id' => $corpusId,
+                'pipeline_status' => $resolver->resolve($entity),
             ];
         }
 
