@@ -1,0 +1,13 @@
+{#
+  Anokii catalog dashboard (#886).
+
+  Renders the canonical Anokii module catalog (AdminModules) through the package
+  admin home template, so /admin/anokii reads as the same product everywhere.
+  Live vs preview comes from DistributionConfig; with the current config every
+  module is a product-preview card. Minoo's palette is injected into the package
+  shell via the admin_styles block (the shell is token-driven, never forked).
+  Context is built by App\Http\View\AnokiiShellContext::catalog().
+#}
+{% extends "@anokii/admin/home.html.twig" %}
+
+{% block admin_styles %}{{ anokii_theme_css|default('')|raw }}{% endblock %}

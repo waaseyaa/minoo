@@ -11,10 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Entity\EntityInterface;
 
 /**
- * The Anokii shell at /admin/anokii (#851):
+ * The Anokii shell at /admin/anokii (#851, catalog shell #886):
  *   - role-gated to admin / elder_coordinator (denied for anonymous),
  *   - renders the Anokii package shell, NOT the admin-surface Vue SPA
- *     (i.e. its priority-100 routes win over the admin_spa /admin/{path} catch-all).
+ *     (i.e. its priority-100 routes win over the admin_spa /admin/{path} catch-all),
+ *   - the home is the AdminModules catalog dashboard (the module grid), not the
+ *     old bespoke pipeline funnel.
  */
 #[CoversNothing]
 final class AnokiiShellTest extends HttpKernelTestCase
@@ -81,12 +83,12 @@ final class AnokiiShellTest extends HttpKernelTestCase
         self::assertStringContainsString('anokii-nav', $body);
         self::assertStringNotContainsString('/_nuxt/', $body, '/admin/anokii must not fall through to the Vue admin SPA.');
 
-        // Overview pipeline dashboard (#876) + flow-order nav tabs.
-        self::assertStringContainsString('Overview', $body);
-        self::assertStringContainsString('ov-funnel', $body);
-        self::assertStringContainsString('Ingest', $body);
-        self::assertStringContainsString('Transcribe', $body);
-        self::assertStringContainsString('Curate', $body);
+        // Catalog dashboard (#886): the AdminModules module grid and product
+        // preview, with Minoo branding. NOT the old bespoke pipeline funnel.
+        self::assertStringContainsString('anokii-grid', $body);
+        self::assertStringContainsString('Product preview', $body);
+        self::assertStringContainsString('Minoo', $body);
+        self::assertStringNotContainsString('ov-funnel', $body);
     }
 
     #[Test]
