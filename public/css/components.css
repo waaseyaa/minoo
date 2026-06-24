@@ -5294,8 +5294,12 @@
 
   @media (max-width: 1024px) {
     .hdr__menu {
+      /* >= 44px tap target (WCAG 2.5.5). */
       display: inline-flex;
       align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
     }
   }
 
