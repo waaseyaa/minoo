@@ -7,9 +7,12 @@ namespace App\Provider;
 use App\Console\AnokiiBackfillStatusHandler;
 use App\Console\IngestCorpusHandler;
 use App\Console\MailTestHandler;
+use App\Console\ProcessReelsHandler;
 use App\Ingestion\Corpus\CorpusIngestor;
 use App\Ingestion\Corpus\FfmpegReelFetcher;
 use App\Ingestion\Corpus\LlmWhiteboardReader;
+use App\Ingestion\Corpus\LocalFileReelFetcher;
+use App\Ingestion\Corpus\ReelProcessor;
 use Waaseyaa\AI\Agent\Provider\ProviderInterface;
 use Waaseyaa\CLI\Command\HandlerArgument;
 use Waaseyaa\CLI\Command\HandlerArgumentMode;
@@ -53,6 +56,18 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements Provid
                 ),
             );
         });
+
+        $this->singleton(ProcessReelsHandler::class, function (): ProcessReelsHandler {
+            $corpusPath = $this->corpusPath();
+            return new ProcessReelsHandler(
+                $this->resolve(EntityTypeManager::class),
+                new ReelProcessor(
+                    $this->resolve(EntityTypeManager::class),
+                    new LocalFileReelFetcher($corpusPath),
+                    new LlmWhiteboardReader($this->resolve(ProviderInterface::class)),
+                ),
+            );
+        });
     }
 
     public function consoleCommands(): iterable
@@ -66,6 +81,34 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements Provid
                     name: 'dry-run',
                     mode: HandlerOptionMode::None,
                     description: 'Report what would be set without writing entities',
+                ),
+            ],
+        );
+
+        yield new HandlerCommand(
+            name: 'anokii:process-reels',
+            description: 'Process staged ingest reels: ffmpeg keyframe + opus, vision draft, advance to drafted (#877)',
+            handler: [ProcessReelsHandler::class, 'execute'],
+            options: [
+                new HandlerOption(
+                    name: 'limit',
+                    mode: HandlerOptionMode::Required,
+                    description: 'Process at most N reels per pass',
+                ),
+                new HandlerOption(
+                    name: 'loop',
+                    mode: HandlerOptionMode::None,
+                    description: 'Run continuously as a worker (for systemd on the Pi)',
+                ),
+                new HandlerOption(
+                    name: 'sleep',
+                    mode: HandlerOptionMode::Required,
+                    description: 'Seconds to sleep between empty passes in --loop (default 5)',
+                ),
+                new HandlerOption(
+                    name: 'skip-vision',
+                    mode: HandlerOptionMode::None,
+                    description: 'Skip the vision LLM draft; advance with blank Ojibwe/English',
                 ),
             ],
         );

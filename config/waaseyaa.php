@@ -90,6 +90,18 @@ return [
         'application/octet-stream',
     ],
 
+    // Anokii reel ingestion (#877): staff drop-zone video uploads are far larger
+    // than the generic media cap. The PHP (upload_max_filesize / post_max_size)
+    // and Caddy (request_body max_size) limits MUST be raised to match in the
+    // deployment image (see waaseyaa-infra) or large uploads are truncated at the
+    // web tier before reaching this validation.
+    'corpus_upload_max_bytes' => 120 * 1024 * 1024, // 120 MiB (~100 MB videos + headroom)
+    'corpus_upload_allowed_mime_types' => [
+        'video/mp4',
+        'video/quicktime', // .mov
+        'video/webm',
+    ],
+
     // Allowed CORS origins for the admin SPA.
     'cors_origins' => ['http://localhost:3000', 'http://127.0.0.1:3000'],
 

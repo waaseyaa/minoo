@@ -92,6 +92,63 @@ final class AnokiiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Ingest tab (#877): drag-and-drop multi-reel upload + async processing.
+        $router->addRoute(
+            'anokii.ingest',
+            RouteBuilder::create('/admin/anokii/ingest')
+                ->controller('App\Http\Controller\Anokii\IngestController::index')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'anokii.ingest.upload',
+            RouteBuilder::create('/admin/anokii/ingest/upload')
+                ->controller('App\Http\Controller\Anokii\IngestController::upload')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->methods('POST')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'anokii.ingest.status',
+            RouteBuilder::create('/admin/anokii/ingest/status')
+                ->controller('App\Http\Controller\Anokii\IngestController::status')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->methods('GET')
+                ->build(),
+        );
+
+        $router->addRoute(
+            'anokii.ingest.url',
+            RouteBuilder::create('/admin/anokii/ingest/url')
+                ->controller('App\Http\Controller\Anokii\IngestController::url')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->methods('POST')
+                ->build(),
+        );
+
+        // Staff-gated corpus media: serves unreviewed draft reels (status 0) that
+        // the consent-gated public routes correctly hide. requireRole is the gate.
+        $router->addRoute(
+            'anokii.media',
+            RouteBuilder::create('/admin/anokii/media/{kind}/{id}')
+                ->controller('App\Http\Controller\Anokii\AnokiiMediaController::media')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->render()
+                ->methods('GET')
+                ->requirement('kind', 'video|thumb|audio')
+                ->requirement('id', '[a-z0-9-]+')
+                ->build(),
+        );
+
         // Forward-looking: future workspace tabs live under /admin/anokii/{sub}.
         // All currently resolve to the same landing shell. The requirement keeps
         // this off the admin-surface `_surface` API namespace.
