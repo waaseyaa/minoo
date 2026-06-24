@@ -126,6 +126,11 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'consent_public' => ['type' => 'boolean', 'label' => 'Public Consent', 'description' => 'Whether this sentence may be shown on public pages.', 'weight' => 28, 'default' => 1],
                 'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this sentence may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],
+                // Anokii workspace pipeline stage (#876). Drives the workspace UI:
+                // ingested -> drafted -> transcribed -> curated -> published. Stored
+                // in the _data JSON blob (no migration); legacy rows are resolved
+                // on the fly by App\Anokii\Pipeline\PipelineStageResolver.
+                'pipeline_status' => ['type' => 'string', 'label' => 'Pipeline Stage', 'description' => 'Anokii workspace stage: ingested|drafted|transcribed|curated|published.', 'weight' => 31],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],

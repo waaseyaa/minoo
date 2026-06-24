@@ -27,6 +27,8 @@
   .cu-empty{ padding:28px; border:1px dashed var(--anokii-shell-line); border-radius:12px; color:var(--anokii-shell-muted); }
 {% endblock %}
 
+{% block topbar %}{% include "components/anokii/pipeline-bar.html.twig" %}{% endblock %}
+
 {% block content %}
   <div class="cu-head" data-promote-url="{{ promote_url }}" data-csrf="{{ csrf_token }}" id="cu-dash">
     <h1>Curate</h1>

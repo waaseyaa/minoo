@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controller\Anokii;
 
+use App\Anokii\Pipeline\PipelineCounts;
 use App\Http\View\AnokiiShellContext;
 use App\Ingestion\Curation\UtterancePromoter;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
@@ -45,6 +46,8 @@ final class CurateController
             'promoted' => $promoted,
             'promote_url' => '/admin/anokii/curate/promote',
             'csrf_token' => CsrfMiddleware::token(),
+            'pipeline' => (new PipelineCounts($this->entityTypeManager))->compute(),
+            'pipeline_active' => 'transcribed',
         ]));
 
         return new Response($html);

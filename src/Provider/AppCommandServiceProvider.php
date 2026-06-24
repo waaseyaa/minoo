@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
+use App\Console\AnokiiBackfillStatusHandler;
 use App\Console\IngestCorpusHandler;
 use App\Console\MailTestHandler;
 use App\Ingestion\Corpus\CorpusIngestor;
@@ -38,6 +39,10 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements Provid
             );
         });
 
+        $this->singleton(AnokiiBackfillStatusHandler::class, function (): AnokiiBackfillStatusHandler {
+            return new AnokiiBackfillStatusHandler($this->resolve(EntityTypeManager::class));
+        });
+
         $this->singleton(IngestCorpusHandler::class, function (): IngestCorpusHandler {
             $corpusPath = $this->corpusPath();
             return new IngestCorpusHandler(
@@ -52,6 +57,19 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements Provid
 
     public function consoleCommands(): iterable
     {
+        yield new HandlerCommand(
+            name: 'anokii:backfill-status',
+            description: 'Persist pipeline_status on legacy corpus example_sentence rows (#876)',
+            handler: [AnokiiBackfillStatusHandler::class, 'execute'],
+            options: [
+                new HandlerOption(
+                    name: 'dry-run',
+                    mode: HandlerOptionMode::None,
+                    description: 'Report what would be set without writing entities',
+                ),
+            ],
+        );
+
         yield new HandlerCommand(
             name: 'mail:test',
             description: 'Send a test email to verify SendGrid configuration',

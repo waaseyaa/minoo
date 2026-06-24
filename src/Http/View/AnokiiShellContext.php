@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\View;
 
+use App\Anokii\Pipeline\PipelineStage;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\User\User;
 
@@ -25,6 +26,16 @@ final class AnokiiShellContext
     {
         $label = self::accountLabel($account);
 
+        // When a controller passes a `pipeline` snapshot (App\Anokii\Pipeline\
+        // PipelineCounts::compute()), expand it into a thin breadcrumb/progress
+        // bar shown across every tab so the workspace reads as one flow (#876).
+        if (isset($extra['pipeline']) && is_array($extra['pipeline'])) {
+            $extra['pipeline_bar'] = self::pipelineBar(
+                $extra['pipeline']['counts'] ?? [],
+                (string) ($extra['pipeline_active'] ?? ''),
+            );
+        }
+
         return $extra + [
             'nav' => self::nav(),
             'nav_active' => $active,
@@ -37,8 +48,8 @@ final class AnokiiShellContext
     }
 
     /**
-     * Sidebar nav. Transcribe (#853) and Curate (#855) are live; Ingest (#854)
-     * is a CLI command (bin/waaseyaa ingest:corpus), so it has no tab.
+     * Sidebar nav in pipeline flow order (#876): Ingest -> Transcribe -> Curate
+     * -> Lessons. The Overview funnel is the workspace home.
      *
      * @return list<array{id: string, label: string, href: string, group?: string, badge?: string}>
      */
@@ -46,9 +57,35 @@ final class AnokiiShellContext
     {
         return [
             ['id' => 'home', 'label' => 'Overview', 'href' => '/admin/anokii', 'group' => 'Workspace'],
-            ['id' => 'transcribe', 'label' => 'Transcribe', 'href' => '/admin/anokii/transcribe', 'group' => 'Language'],
+            ['id' => 'ingest', 'label' => 'Ingest', 'href' => '/admin/anokii/ingest', 'group' => 'Pipeline'],
+            ['id' => 'transcribe', 'label' => 'Transcribe', 'href' => '/admin/anokii/transcribe'],
             ['id' => 'curate', 'label' => 'Curate', 'href' => '/admin/anokii/curate'],
+            ['id' => 'lessons', 'label' => 'Lessons', 'href' => '/lessons', 'group' => 'Publish'],
         ];
+    }
+
+    /**
+     * The cross-tab pipeline breadcrumb: one chip per stage with its live count,
+     * the current stage highlighted.
+     *
+     * @param array<string, int> $counts
+     *
+     * @return list<array{id: string, label: string, count: int, href: string, active: bool}>
+     */
+    private static function pipelineBar(array $counts, string $active): array
+    {
+        $bar = [];
+        foreach (PipelineStage::ORDER as $stage) {
+            $bar[] = [
+                'id' => $stage,
+                'label' => PipelineStage::label($stage),
+                'count' => (int) ($counts[$stage] ?? 0),
+                'href' => PipelineStage::href($stage),
+                'active' => $stage === $active,
+            ];
+        }
+
+        return $bar;
     }
 
     private static function accountLabel(AccountInterface $account): string
