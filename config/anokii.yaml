@@ -1,0 +1,28 @@
+# Anokii distribution switch, read by Anokii\Config\DistributionConfig
+# (vendor/waaseyaa/anokii/src/Config/DistributionConfig.php).
+#
+# Minoo is a single Nation-owned install, so the tenancy mode is sovereign:
+# one tenant, nation-owned data, no cross-tenant reads. An absent file already
+# resolves to this exact posture (sovereign is the safe default, matching how
+# fnpi-waaseyaa runs with no file at all); this file makes the posture explicit
+# and hosts the per-module flags below for later milestone issues.
+#
+# data_residency is intentionally omitted: DistributionConfig derives the
+# sovereign-safe posture (nation ownership, nation-restricted classification,
+# no cross-tenant reads) when it is absent. Add it only if a future tier needs
+# to override that.
+tenancy_mode: sovereign
+
+# Per-module production flags. A module counts as live only when its id is listed
+# under "enabled" AND not under "preview" (preview wins, the conservative
+# reading in DistributionConfig::moduleEnabled()). To turn a module on for
+# production in a later issue, move its id from "preview" to "enabled".
+#
+# language: the Anishinaabemowin language module (translation memory, /api/lang,
+# gap log, gated ASR). Present but OFF for now. It sits under "preview" so
+# DistributionConfig::moduleEnabled('language') returns false. A later milestone
+# issue graduates it to "enabled" once the module provider exists.
+modules:
+  enabled: []
+  preview:
+    - language
