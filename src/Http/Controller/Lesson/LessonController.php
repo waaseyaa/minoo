@@ -41,26 +41,43 @@ final class LessonController
     ) {
     }
 
-    /** Landing: the list of available lessons (Lesson 1 for now). */
+    /** Landing: the list of available lessons. */
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $def = $this->lessonDefinition();
+        $lessons = [];
+        foreach ($this->lessons() as $lesson) {
+            $def = $this->lessonDefinition($lesson['config']);
+            $lessons[] = [
+                'number' => $lesson['number'],
+                'title' => $def['title'],
+                'slug' => $lesson['slug'],
+                'url' => '/lessons/' . $lesson['slug'],
+                'count' => $this->lessonItemCount($def),
+            ];
+        }
 
         $html = $this->twig->render('pages/lesson/index.html.twig', LayoutTwigContext::withAccount($account, [
-            'path' => '/lesson',
-            'lessons' => [
-                ['number' => 1, 'title' => $def['title'], 'url' => '/lesson/1', 'count' => count($this->allowedIds())],
-            ],
+            'path' => '/lessons',
+            'lessons' => $lessons,
             'steven_url' => self::STEVEN_PROFILE_URL,
         ]));
 
         return new Response($html);
     }
 
-    /** Lesson 1: Kitchen, 16 cards grouped by section. */
-    public function lessonOne(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
+    /** A single lesson by slug: cards grouped by section. */
+    public function show(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $def = $this->lessonDefinition();
+        $slug = (string) ($params['slug'] ?? '');
+        $lesson = $this->lessonBySlug($slug);
+        if ($lesson === null) {
+            return new Response(
+                $this->twig->render('404.html.twig', LayoutTwigContext::withAccount($account, ['path' => $request->getPathInfo()])),
+                404,
+            );
+        }
+
+        $def = $this->lessonDefinition($lesson['config']);
         $corpus = $this->corpusRowsBySourceId();
 
         $groups = [];
@@ -90,8 +107,9 @@ final class LessonController
         }
 
         $html = $this->twig->render('pages/lesson/lesson1.html.twig', LayoutTwigContext::withAccount($account, [
-            'path' => '/lesson/1',
+            'path' => '/lessons/' . $lesson['slug'],
             'lesson_title' => $def['title'],
+            'lesson_slug' => $lesson['slug'],
             'groups' => $groups,
             'total' => $total,
             'steven_url' => self::STEVEN_PROFILE_URL,
@@ -151,23 +169,63 @@ final class LessonController
     }
 
     /**
+     * The lesson registry. Each entry maps a stable slug + number to its
+     * curation config under config/. Add lessons here.
+     *
+     * @return list<array{number: int, slug: string, config: string}>
+     */
+    private function lessons(): array
+    {
+        return [
+            ['number' => 1, 'slug' => 'the-kitchen', 'config' => 'lesson1.php'],
+        ];
+    }
+
+    /** @return array{number: int, slug: string, config: string}|null */
+    private function lessonBySlug(string $slug): ?array
+    {
+        foreach ($this->lessons() as $lesson) {
+            if ($lesson['slug'] === $slug) {
+                return $lesson;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array{title: string, groups: list<array{label: string, items: list<array{id: string, english: string}>}>} $def
+     */
+    private function lessonItemCount(array $def): int
+    {
+        $count = 0;
+        foreach ($def['groups'] as $group) {
+            $count += count($group['items']);
+        }
+
+        return $count;
+    }
+
+    /**
      * @return array{title: string, groups: list<array{label: string, items: list<array{id: string, english: string}>}>}
      */
-    private function lessonDefinition(): array
+    private function lessonDefinition(string $configFile): array
     {
         /** @var array{title: string, groups: list<array{label: string, items: list<array{id: string, english: string}>}>} $def */
-        $def = require dirname(__DIR__, 4) . '/config/lesson1.php';
+        $def = require dirname(__DIR__, 4) . '/config/' . $configFile;
 
         return $def;
     }
 
-    /** @return list<string> */
+    /** Every lesson item id across all lessons (the media route's allowlist). @return list<string> */
     private function allowedIds(): array
     {
         $ids = [];
-        foreach ($this->lessonDefinition()['groups'] as $group) {
-            foreach ($group['items'] as $item) {
-                $ids[] = $item['id'];
+        foreach ($this->lessons() as $lesson) {
+            foreach ($this->lessonDefinition($lesson['config'])['groups'] as $group) {
+                foreach ($group['items'] as $item) {
+                    $ids[] = $item['id'];
+                }
             }
         }
 

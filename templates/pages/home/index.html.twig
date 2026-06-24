@@ -15,8 +15,24 @@
         practice with daily games, and grow with the language.
       </p>
       <div class="hero__ctas">
-        <a href="{{ lang_url('/language') }}" class="btn btn--primary btn--lg">Explore the Dictionary</a>
+        <a href="{{ lang_url('/lessons') }}" class="btn btn--primary btn--lg">Start learning</a>
+        <a href="{{ lang_url('/language') }}" class="btn btn--secondary btn--lg">Explore the Dictionary</a>
         <a href="{{ lang_url('/games') }}" class="btn btn--secondary btn--lg">Play Word Games</a>
+      </div>
+    </section>
+
+    {# === Lessons (learn first) === #}
+    <section class="sec">
+      <div class="sec__head">
+        <h2>Lessons</h2>
+        <a href="{{ lang_url('/lessons') }}">View all &rarr;</a>
+      </div>
+      <div class="ds-grid">
+        <a href="{{ lang_url('/lessons/the-kitchen') }}" class="card">
+          <span class="card__eyebrow">Lesson 1</span>
+          <h3 class="card__title">The Kitchen</h3>
+          <p class="card__meta">Everyday objects in <em>Anishinaabemowin</em>, taught by Steven Bennett in his own voice.</p>
+        </a>
       </div>
     </section>
 
@@ -65,8 +81,11 @@
     {% if account is not defined or not account.isAuthenticated() %}
       <section class="sec" style="text-align: center; padding: var(--space-xl) 0;">
         <h2>Track Your Learning</h2>
-        <p style="color: var(--text-secondary); max-width: 50ch; margin: var(--space-sm) auto var(--space-md);">Create an account to keep your game streaks, save words to your own list, and pick up where you left off.</p>
-        <a href="{{ lang_url('/register') }}" class="btn btn--primary btn--lg">Create an Account</a>
+        <p style="color: var(--text-secondary); max-width: 50ch; margin: var(--space-sm) auto var(--space-md);">Start with a lesson, then create an account to keep your game streaks, save words to your own list, and pick up where you left off.</p>
+        <div class="hero__ctas" style="justify-content: center;">
+          <a href="{{ lang_url('/lessons') }}" class="btn btn--primary btn--lg">Start a lesson</a>
+          <a href="{{ lang_url('/register') }}" class="btn btn--secondary btn--lg">Create an Account</a>
+        </div>
       </section>
     {% endif %}
 

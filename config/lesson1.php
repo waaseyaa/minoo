@@ -19,6 +19,7 @@ declare(strict_types=1);
  */
 return [
     'title' => 'Lesson 1: Kitchen',
+    'slug' => 'the-kitchen',
     'groups' => [
         [
             'label' => 'Dishes and containers',
