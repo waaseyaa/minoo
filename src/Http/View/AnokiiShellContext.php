@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\View;
 
+use Anokii\Admin\AdminModules;
+use Anokii\Config\DistributionConfig;
 use App\Anokii\Pipeline\PipelineStage;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\User\User;
@@ -45,6 +47,140 @@ final class AnokiiShellContext
             'user_role' => self::accountRole($account),
             'user_initials' => self::initials($label),
         ];
+    }
+
+    /**
+     * Build the catalog dashboard context: the canonical Anokii module catalog
+     * ({@see AdminModules}) split into the sidebar nav, the live tool cards, and
+     * the product-preview cards. Live vs preview comes from DistributionConfig:
+     * a module is live only when moduleEnabled() is true. The workspace home
+     * ('dashboard') is always live so its nav entry points at /admin/anokii.
+     *
+     * Minoo keeps its own account model (AccountInterface), so this does not
+     * route through the package Anokii\Admin\AdminShell (which needs a concrete
+     * Waaseyaa\User\User); it replicates that class's trivial nav/tile split.
+     *
+     * @param array<string, mixed> $extra
+     *
+     * @return array<string, mixed>
+     */
+    public static function catalog(AccountInterface $account, DistributionConfig $distribution, array $extra = []): array
+    {
+        $modules = AdminModules::resolve(self::catalogLiveIds($distribution));
+        [$nav, $live, $preview] = self::splitCatalog($modules);
+
+        return $extra + self::catalogChrome($account, 'dashboard', $nav) + [
+            'live_cards' => $live,
+            'preview_cards' => $preview,
+        ];
+    }
+
+    /**
+     * Build the product-preview ("coming soon") context for one catalog module,
+     * or null when the id is not a catalog module.
+     *
+     * @param array<string, mixed> $extra
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function catalogComingSoon(AccountInterface $account, DistributionConfig $distribution, string $moduleId, array $extra = []): ?array
+    {
+        $module = AdminModules::find($moduleId);
+        if ($module === null) {
+            return null;
+        }
+
+        $modules = AdminModules::resolve(self::catalogLiveIds($distribution));
+        [$nav] = self::splitCatalog($modules);
+
+        return $extra + self::catalogChrome($account, $moduleId, $nav) + ['module' => $module];
+    }
+
+    /**
+     * Shared chrome (nav, user chip, brand, paths) for catalog pages.
+     *
+     * @param list<array<string, mixed>> $nav
+     *
+     * @return array<string, mixed>
+     */
+    private static function catalogChrome(AccountInterface $account, string $active, array $nav): array
+    {
+        $label = self::accountLabel($account);
+
+        return [
+            'nav' => $nav,
+            'nav_active' => $active,
+            'home_path' => '/admin/anokii',
+            'logout_path' => '/logout',
+            'brand_title' => 'Minoo',
+            'brand_tag' => 'Language Workspace',
+            'user_label' => $label,
+            'user_role' => self::accountRole($account),
+            'user_initials' => self::initials($label),
+        ];
+    }
+
+    /**
+     * The catalog ids that render as live: the workspace home always, plus any
+     * module flagged on in DistributionConfig. Everything else renders as a
+     * product-preview card.
+     *
+     * @return list<string>
+     */
+    private static function catalogLiveIds(DistributionConfig $distribution): array
+    {
+        $live = ['dashboard'];
+        foreach (AdminModules::resolve([]) as $module) {
+            $id = (string) $module['id'];
+            if ($id !== 'dashboard' && $distribution->moduleEnabled($id)) {
+                $live[] = $id;
+            }
+        }
+
+        return $live;
+    }
+
+    /**
+     * Split a resolved AdminModules set into [nav, live_cards, preview_cards],
+     * mirroring Anokii\Admin\AdminShell so the package templates render as
+     * designed while minoo keeps its own account context.
+     *
+     * @param list<array<string, mixed>> $modules
+     *
+     * @return array{0: list<array<string, mixed>>, 1: list<array<string, mixed>>, 2: list<array<string, mixed>>}
+     */
+    private static function splitCatalog(array $modules): array
+    {
+        $nav = [];
+        $live = [];
+        $preview = [];
+        foreach ($modules as $m) {
+            $nav[] = [
+                'id' => $m['id'],
+                'label' => $m['label'],
+                'href' => $m['href'],
+                'group' => $m['group'],
+                'icon' => $m['icon'],
+                'badge' => $m['badge'],
+            ];
+            if (($m['tile'] ?? false) !== true) {
+                continue;
+            }
+            $card = [
+                'label' => $m['label'],
+                'href' => $m['href'],
+                'desc' => $m['desc'],
+                'icon' => $m['icon'],
+                'badge' => $m['badge'],
+            ];
+            if (($m['live'] ?? false) === true) {
+                $live[] = $card;
+            } else {
+                $preview[] = $card;
+            }
+        }
+
+        return [$nav, $live, $preview];
     }
 
     /**

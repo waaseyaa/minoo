@@ -76,6 +76,7 @@ final class AnokiiServiceProvider extends AppCoreServiceProvider
 
         foreach ($this->twigEnvironments() as $twig) {
             $this->registerTemplateNamespace($twig, $templateDir);
+            $this->registerPackageRoot($twig, dirname($templateDir));
             // Brand identity + theme tokens consumed by templates/pages/anokii/*.
             $twig->addGlobal('anokii_brand_title', 'Minoo');
             $twig->addGlobal('anokii_brand_tag', 'Language Workspace');
@@ -126,6 +127,33 @@ final class AnokiiServiceProvider extends AppCoreServiceProvider
             $namespaced = new FilesystemLoader();
             $namespaced->addPath($dir, self::TEMPLATE_NAMESPACE);
             $loader->addLoader($namespaced);
+        }
+    }
+
+    /**
+     * Add the package templates root to the main loader so the package admin
+     * templates' own non-namespaced references resolve (the catalog dashboard
+     * does `{% extends "anokii/admin/_base.html.twig" %}` and
+     * `{% include "anokii/_dashboard_grid.html.twig" %}`). Mirrors how
+     * fnpi-waaseyaa exposes the package templates as a fallback. Minoo's own
+     * templates load first in the chain, so nothing of minoo's is shadowed.
+     */
+    private function registerPackageRoot(Environment $twig, string $dir): void
+    {
+        $loader = $twig->getLoader();
+
+        if ($loader instanceof FilesystemLoader) {
+            if (!in_array($dir, $loader->getPaths(), true)) {
+                $loader->addPath($dir);
+            }
+
+            return;
+        }
+
+        if ($loader instanceof ChainLoader) {
+            $root = new FilesystemLoader();
+            $root->addPath($dir);
+            $loader->addLoader($root);
         }
     }
 

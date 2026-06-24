@@ -14,14 +14,15 @@ use Waaseyaa\Routing\WaaseyaaRouter;
  *
  * Mounts the role-gated Anokii workspace at /admin/anokii. These routes carry
  * an explicit priority (>= 100) so they win over the priority-0 `admin_spa`
- * `/admin/{path}` catch-all (registered by {@see AdminRouteProvider}) — without
+ * `/admin/{path}` catch-all (registered by {@see AdminRouteProvider}); without
  * it, GET /admin/anokii would fall through to the Vue admin SPA. This provider
  * is therefore merged BEFORE AdminRouteProvider in {@see \App\Provider\MinooRoutingStackProvider}.
  *
  * Gating uses Minoo's own roles (`admin`, `elder_coordinator`), mirroring the
- * /staff/* idiom — NOT Anokii's single-admin DashboardGate. The `{sub}` route
- * is a forward-looking catch-all for future tabs (Transcribe / Ingest / Curate);
- * for now every path renders the same landing shell.
+ * /staff/* idiom, NOT Anokii's single-admin DashboardGate. The home renders the
+ * AdminModules catalog dashboard; product-preview cards link to
+ * /admin/anokii/m/{module} (the coming-soon page). The `{sub}` route is a
+ * forward-looking single-segment catch-all that also lands on the catalog.
  */
 final class AnokiiRouteProvider extends AppCoreServiceProvider
 {
@@ -169,8 +170,24 @@ final class AnokiiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Product-preview ("coming soon") pages for catalog modules not yet live.
+        // AdminModules points preview cards and nav entries here as
+        // /admin/anokii/m/{id}. Above the /{sub} catch-all so this two-segment
+        // path wins. The package coming-soon template renders the module blurb.
+        $router->addRoute(
+            'anokii.module',
+            RouteBuilder::create('/admin/anokii/m/{module}')
+                ->controller('App\Http\Controller\Anokii\AnokiiAdminController::comingSoon')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->render()
+                ->methods('GET')
+                ->requirement('module', '[a-z][a-z0-9-]*')
+                ->build(),
+        );
+
         // Forward-looking: future workspace tabs live under /admin/anokii/{sub}.
-        // All currently resolve to the same landing shell. The requirement keeps
+        // All currently resolve to the catalog landing. The requirement keeps
         // this off the admin-surface `_surface` API namespace.
         $router->addRoute(
             'anokii.section',

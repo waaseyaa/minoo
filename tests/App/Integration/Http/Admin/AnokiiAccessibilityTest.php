@@ -54,7 +54,10 @@ final class AnokiiAccessibilityTest extends HttpKernelTestCase
     #[Test]
     public function every_tab_ships_visible_focus_and_the_sr_only_helper(): void
     {
-        foreach (['/admin/anokii', '/admin/anokii/ingest', '/admin/anokii/transcribe', '/admin/anokii/curate'] as $path) {
+        // The corpus pipeline tabs. The /admin/anokii home is now the package
+        // catalog shell (#886), a different a11y surface covered by the axe
+        // Playwright spec, so it is not asserted for minoo's pipeline helpers here.
+        foreach (['/admin/anokii/ingest', '/admin/anokii/transcribe', '/admin/anokii/curate'] as $path) {
             $body = (string) $this->sendAs($path)->getContent();
             self::assertStringContainsString(':focus-visible', $body, "Focus ring CSS on {$path}");
             self::assertStringContainsString('.sr-only', $body, "sr-only helper on {$path}");

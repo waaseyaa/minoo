@@ -1,0 +1,9 @@
+{#
+  Product-preview ("coming soon") placeholder for a catalog module that is not
+  live on Minoo yet (#886). Extends the package coming_soon template and injects
+  Minoo's palette via the admin_styles block. Context from
+  App\Http\View\AnokiiShellContext::catalogComingSoon().
+#}
+{% extends "@anokii/admin/coming_soon.html.twig" %}
+
+{% block admin_styles %}{{ anokii_theme_css|default('')|raw }}{% endblock %}
