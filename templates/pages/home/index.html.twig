@@ -21,11 +21,11 @@
       </div>
     </section>
 
-    {# === Lessons (learn first) === #}
+    {# === Learn (lessons + dictionary) === #}
     <section class="sec">
       <div class="sec__head">
-        <h2>Lessons</h2>
-        <a href="{{ lang_url('/lessons') }}">View all &rarr;</a>
+        <h2>Learn</h2>
+        <a href="{{ lang_url('/lessons') }}">All lessons &rarr;</a>
       </div>
       <div class="ds-grid">
         <a href="{{ lang_url('/lessons/the-kitchen') }}" class="card">
@@ -33,33 +33,22 @@
           <h3 class="card__title">The Kitchen</h3>
           <p class="card__meta">Everyday objects in <em>Anishinaabemowin</em>, taught by Steven Bennett in his own voice.</p>
         </a>
+        <a href="{{ lang_url('/language') }}" class="card">
+          <span class="card__eyebrow">Dictionary</span>
+          <h3 class="card__title">Look up a word</h3>
+          <p class="card__meta">{% if entry_count is defined and entry_count > 0 %}{{ entry_count|number_format }} words{% else %}A growing community dictionary{% endif %} of Anishinaabemowin, with audio and examples.</p>
+        </a>
       </div>
     </section>
 
-    {# === Featured Items === #}
-    {% if featured is defined and featured|length > 0 %}
-      <section class="sec">
-        <div class="sec__head">
-          <h2>Featured</h2>
-        </div>
-        <div class="ds-grid">
-          {% for item in featured %}
-            <a href="{{ item.url }}" class="card card--{{ item.entity_type }}">
-              <span class="card__eyebrow">{{ item.entity_type|replace({'_': ' '})|capitalize }}</span>
-              <h3 class="card__title">{{ item.headline }}</h3>
-              {% if item.subheadline is defined and item.subheadline %}
-                <p class="card__meta">{{ item.subheadline }}</p>
-              {% endif %}
-            </a>
-          {% endfor %}
-        </div>
-      </section>
-    {% endif %}
+    {# Featured-item pipeline (featured_item) stays available but is no longer
+       surfaced as a generic homepage card; the homepage leads with the real
+       learn → practice → belong pillars (#863). #}
 
-    {# === Games === #}
+    {# === Practice (games) === #}
     <section class="sec">
       <div class="sec__head">
-        <h2>Games</h2>
+        <h2>Practice</h2>
         <a href="{{ lang_url('/games') }}">View all &rarr;</a>
       </div>
       <div class="games-hub__featured">
@@ -67,7 +56,7 @@
       </div>
     </section>
 
-    {# === Community (the second truth: language lives in the land and people) === #}
+    {# === Belong (community) === #}
     <section class="sec">
       <div class="sec__head">
         <h2>Rooted in community</h2>
