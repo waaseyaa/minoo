@@ -2,6 +2,13 @@
 
 {% block title %}Minoo | {{ trans('games.matcher_title') }}{% endblock %}
 
+{% block meta_description %}{{ trans('games.matcher_title') }} — a free Anishinaabemowin matching game on Minoo. Match words to their meanings.{% endblock %}
+
+{% block structured_data %}
+  {{ parent() }}
+  {% include "components/seo/breadcrumb.html.twig" with { crumbs: [{ name: trans('games.title'), url: '/games' }, { name: trans('games.matcher_title'), url: '/games/matcher' }] } %}
+{% endblock %}
+
 {% block content %}
 <div class="matcher" data-game="matcher"
      data-label-ojibwe="{{ trans('games.ojibwe') }}"

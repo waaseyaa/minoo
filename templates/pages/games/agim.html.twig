@@ -2,6 +2,13 @@
 
 {% block title %}Minoo | {{ trans('games.agim_title') }}{% endblock %}
 
+{% block meta_description %}{{ trans('games.agim_title') }} — a free Anishinaabemowin number game on Minoo. Practice counting in the language.{% endblock %}
+
+{% block structured_data %}
+  {{ parent() }}
+  {% include "components/seo/breadcrumb.html.twig" with { crumbs: [{ name: trans('games.title'), url: '/games' }, { name: trans('games.agim_title'), url: '/games/agim' }] } %}
+{% endblock %}
+
 {% block content %}
 <div class="agim" id="agim-game" data-api-base="/api/games/agim">
     <div class="game-header">

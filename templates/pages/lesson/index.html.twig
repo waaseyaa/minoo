@@ -2,6 +2,14 @@
 
 {% block title %}Lessons · Anishinaabemowin{% endblock %}
 
+{% block meta_description %}Free Anishinaabemowin lessons built from the words Knowledge Keepers share — start with the kitchen, taught by Steven Bennett with audio.{% endblock %}
+{% block og_description %}Free Anishinaabemowin lessons built from the words Knowledge Keepers share — start with the kitchen, taught by Steven Bennett with audio.{% endblock %}
+
+{% block structured_data %}
+  {{ parent() }}
+  {% include "components/seo/breadcrumb.html.twig" with { crumbs: [{ name: 'Lessons', url: '/lessons' }] } %}
+{% endblock %}
+
 {% block content %}
 <div class="lesson-page">
   <header class="lesson-hero">

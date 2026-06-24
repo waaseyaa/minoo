@@ -54,8 +54,12 @@ final class SitemapControllerTest extends TestCase
 
         $body = $response->getContent();
         $this->assertStringContainsString('https://minoo.live/', $body);
+        $this->assertStringContainsString('https://minoo.live/lessons', $body);
+        $this->assertStringContainsString('https://minoo.live/lessons/the-kitchen', $body);
         $this->assertStringContainsString('https://minoo.live/communities/sagamok-anishnawbek', $body);
         $this->assertStringContainsString('https://minoo.live/language/makwa', $body);
+        // Search results are noindex, so they must not be in the sitemap.
+        $this->assertStringNotContainsString('/language/search', $body);
 
         // Well-formed XML.
         $doc = new \DOMDocument();
