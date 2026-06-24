@@ -170,6 +170,21 @@ final class AnokiiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Language module landing (#888): the corpus pipeline Overview funnel,
+        // re-homed here off the workspace home when /admin/anokii became the
+        // catalog. The Language catalog card links here. Above the /{sub}
+        // catch-all so the literal path wins.
+        $router->addRoute(
+            'anokii.language',
+            RouteBuilder::create('/admin/anokii/language')
+                ->controller('App\Http\Controller\Anokii\LanguageWorkspaceController::index')
+                ->requireRole(self::STAFF_ROLES)
+                ->priority(self::TAB_PRIORITY)
+                ->render()
+                ->methods('GET')
+                ->build(),
+        );
+
         // Product-preview ("coming soon") pages for catalog modules not yet live.
         // AdminModules points preview cards and nav entries here as
         // /admin/anokii/m/{id}. Above the /{sub} catch-all so this two-segment

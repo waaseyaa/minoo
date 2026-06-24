@@ -66,6 +66,31 @@ final class AnokiiCatalogContextTest extends TestCase
         self::assertSame('documents', $module['id']);
     }
 
+    #[Test]
+    public function the_language_module_is_a_live_tile_when_enabled(): void
+    {
+        $ctx = AnokiiShellContext::catalog($this->account(), DistributionConfig::fromArray([
+            'modules' => ['enabled' => ['language']],
+        ]));
+
+        $language = self::navEntry(self::toArray($ctx['nav']), 'language');
+        self::assertSame('/admin/anokii/language', $language['href'], 'Enabled language links to its admin tile.');
+        self::assertSame('', $language['badge']);
+
+        $liveHrefs = array_map(static fn (array $card): mixed => $card['href'] ?? null, self::toArray($ctx['live_cards']));
+        self::assertContains('/admin/anokii/language', $liveHrefs, 'Language appears as a live tool card.');
+    }
+
+    #[Test]
+    public function the_language_module_is_a_preview_card_when_disabled(): void
+    {
+        $ctx = AnokiiShellContext::catalog($this->account(), DistributionConfig::fromArray([]));
+
+        $language = self::navEntry(self::toArray($ctx['nav']), 'language');
+        self::assertSame('/admin/anokii/m/language', $language['href'], 'Disabled language links to its coming-soon page.');
+        self::assertSame('Preview', $language['badge']);
+    }
+
     private function account(): AccountInterface
     {
         $account = $this->createMock(AccountInterface::class);
