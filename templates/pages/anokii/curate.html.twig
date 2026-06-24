@@ -17,7 +17,8 @@
   .cu-counter{ color:var(--anokii-shell-muted); font-variant-numeric:tabular-nums; }
   .cu-nav{ display:flex; gap:16px; font-size:13px; margin-bottom:18px; }
   .cu-nav a{ color:var(--anokii-shell-accent); font-weight:600; }
-  .cu-table{ width:100%; border-collapse:collapse; }
+  .cu-tablewrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .cu-table{ width:100%; min-width:680px; border-collapse:collapse; }
   .cu-table th, .cu-table td{ text-align:left; padding:10px 12px; border-bottom:1px solid var(--anokii-shell-line); vertical-align:middle; }
   .cu-table th{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--anokii-shell-muted); }
   .cu-oj{ font-weight:600; }
@@ -54,8 +55,10 @@
   {% if rows is empty %}
     <div class="cu-empty">Nothing at this stage yet. Confirm Anishinaabemowin + English in <a href="{{ transcribe_url }}" style="color:var(--anokii-shell-accent)">Transcribe</a> and mark items transcribed to bring them here.</div>
   {% else %}
+    <div class="cu-tablewrap">
     <table class="cu-table">
-      <thead><tr><th>Anishinaabemowin</th><th>English</th><th>Stage</th><th>Vocabulary</th><th>Lesson</th><th>Actions</th></tr></thead>
+      <caption class="sr-only">Transcribed utterances to promote, add to a lesson, and publish.</caption>
+      <thead><tr><th scope="col">Anishinaabemowin</th><th scope="col">English</th><th scope="col">Stage</th><th scope="col">Vocabulary</th><th scope="col">Lesson</th><th scope="col">Actions</th></tr></thead>
       <tbody>
         {% for row in rows %}
           <tr data-esid="{{ row.esid }}">
@@ -77,13 +80,14 @@
               <div class="cu-actions">
                 {% if not row.promoted %}<button type="button" class="cu-btn" data-promote>Promote{% if row.parts > 1 %} ({{ row.parts }} parts){% endif %}</button>{% endif %}
                 <button type="button" class="cu-btn primary" data-publish {{ row.published ? 'disabled' : '' }}>{{ row.published ? 'Published' : 'Publish' }}</button>
-                <span class="cu-status" data-status></span>
+                <span class="cu-status" data-status role="status" aria-live="polite"></span>
               </div>
             </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+    </div>
   {% endif %}
 {% endblock %}
 

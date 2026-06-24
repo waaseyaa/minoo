@@ -75,6 +75,25 @@ if ($existing !== []) {
     fprintf(STDOUT, "Test user created: test@minoo.test / TestPass123!\n");
 }
 
+// Seed elder-coordinator test user (Anokii Language Workspace access, #879).
+$existingCoordinator = $storage->getQuery()->accessCheck(false)->condition('mail', 'coordinator@minoo.test')->execute();
+
+if ($existingCoordinator !== []) {
+    fprintf(STDOUT, "Coordinator user already exists.\n");
+} else {
+    $coordinator = $storage->create([
+        'name' => 'Coordinator User',
+        'mail' => 'coordinator@minoo.test',
+        'status' => true,
+        'created' => time(),
+        'roles' => ['elder_coordinator'],
+        'permissions' => [],
+    ]);
+    $coordinator->setRawPassword('CoordPass123!');
+    $storage->save($coordinator);
+    fprintf(STDOUT, "Coordinator user created: coordinator@minoo.test / CoordPass123!\n");
+}
+
 // Seed non-volunteer test user.
 $existingMember = $storage->getQuery()->accessCheck(false)->condition('mail', 'member@minoo.test')->execute();
 
