@@ -21,6 +21,18 @@
   .anokii-pipeline a.pl-step:hover{ color:var(--anokii-shell-ink); }
   .anokii-pipeline a.pl-step:hover .pl-count{ border-color:var(--anokii-shell-accent); }
   @media(max-width:620px){ .anokii-pipeline{ padding:8px 16px; font-size:12px; } .anokii-pipeline .pl-step:not(:last-child)::after{ margin-left:8px; } }
+  /* Shared workspace a11y baseline (#879): visible keyboard focus on every
+     interactive control across every tab, and comfortable mobile tap targets. */
+  .anokii-content a:focus-visible, .anokii-content button:focus-visible,
+  .anokii-content input:focus-visible, .anokii-content select:focus-visible,
+  .anokii-content textarea:focus-visible, .anokii-pipeline a:focus-visible{
+    outline:3px solid var(--anokii-shell-accent); outline-offset:2px; border-radius:4px;
+  }
+  @media(max-width:620px){
+    .anokii-content button, .anokii-content .ig-pick, .anokii-content .tx-mark, .anokii-content .cu-btn{ min-height:44px; }
+  }
+  /* Screen-reader-only helper (the Anokii shell ships no external stylesheet). */
+  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
 </style>
 <nav class="anokii-pipeline" aria-label="Corpus pipeline progress">
   {% for step in pipeline_bar %}

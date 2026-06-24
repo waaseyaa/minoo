@@ -47,7 +47,8 @@
     <p>Drop Steven's reels here to bring them into the corpus. Each file uploads, then processes in the background (keyframe, audio, and a first-draft transcription) and appears in <a href="{{ transcribe_url }}" style="color:var(--anokii-shell-accent)">Transcribe</a> when ready.</p>
   </div>
 
-  <div id="ig-drop" class="ig-drop"
+  <div id="ig-drop" class="ig-drop" role="group"
+       aria-label="Upload reels: drag and drop video files here, or use the Choose files button"
        data-upload="{{ upload_url }}" data-status="{{ status_url }}" data-url="{{ url_url }}"
        data-transcribe="{{ transcribe_url }}" data-csrf="{{ csrf_token }}"
        data-accept="{{ accept }}" data-max-mb="{{ max_mb }}">

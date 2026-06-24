@@ -92,7 +92,7 @@
           <div class="tx-foot">
             <button type="button" class="tx-mark" data-mark>Mark transcribed →</button>
             <span class="tx-stage">{{ row.pipeline_status }}</span>
-            <span class="tx-status" id="st-{{ row.esid }}"></span>
+            <span class="tx-status" id="st-{{ row.esid }}" role="status" aria-live="polite"></span>
           </div>
         </div>
       </div>
