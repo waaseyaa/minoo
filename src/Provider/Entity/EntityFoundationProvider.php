@@ -123,6 +123,11 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'source_date' => ['type' => 'string', 'label' => 'Source Date', 'description' => 'Publication date of the original source (YYYY-MM-DD).', 'weight' => 24],
                 'provenance' => ['type' => 'text', 'label' => 'Provenance', 'description' => 'Full provenance record JSON (source, media paths, credits).', 'weight' => 26],
                 'language_code' => ['type' => 'string', 'label' => 'Language Code', 'weight' => 25, 'default' => 'oj'],
+                // BCP 47 provenance tag for the utterance, e.g. oj-x-sagamok for
+                // Steven's Sagamok corpus (#898). Empty until a tagged ingest sets
+                // it; the dialect grouping is derived from it, never stored. No
+                // corpus data is loaded here (Phase 0 consent gate holds).
+                'language_tag' => ['type' => 'string', 'label' => 'Language Tag', 'description' => 'BCP 47 community provenance tag (oj-x-<community>); empty when unset.', 'weight' => 27],
                 'consent_public' => ['type' => 'boolean', 'label' => 'Public Consent', 'description' => 'Whether this sentence may be shown on public pages.', 'weight' => 28, 'default' => 1],
                 'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this sentence may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],

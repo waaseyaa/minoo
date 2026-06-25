@@ -32,15 +32,22 @@ final class LanguageApiController
     }
 
     /**
-     * GET /api/lang/dialects: the dialect codes the API accepts.
+     * GET /api/lang/dialects: the language and dialect groupings the API exposes,
+     * as BCP 47 tags. Community tags (oj-x-<community>) are open provenance and
+     * are not enumerated here.
      */
     public function dialects(): JsonResponse
     {
-        return $this->json(['dialects' => $this->dialects->all()]);
+        return $this->json([
+            'language' => ['tag' => 'oj', 'label' => $this->dialects->label('oj')],
+            'dialects' => $this->dialects->all(),
+        ]);
     }
 
     /**
-     * GET /api/lang/translate?q=&dialect=: look up one English string.
+     * GET /api/lang/translate?q=&tag=: look up one English string. `tag` is a BCP
+     * 47 tag (oj, an oj-<dialect> tag, or oj-x-<community>); `dialect` is accepted
+     * as a back-compat alias. A malformed tag is a 422.
      *
      * @param array<string, mixed> $query
      */
@@ -51,15 +58,17 @@ final class LanguageApiController
             return $this->json(['error' => 'Missing required query parameter: q'], 422);
         }
 
-        $dialect = is_string($query['dialect'] ?? null) && $query['dialect'] !== '' ? $query['dialect'] : null;
-        if ($dialect !== null && !$this->dialects->isValid($dialect)) {
+        $raw = $query['tag'] ?? $query['dialect'] ?? null;
+        $tag = is_string($raw) && $raw !== '' ? $raw : null;
+        if ($tag !== null && !$this->dialects->isValid($tag)) {
             return $this->json([
-                'error' => 'Unknown dialect code',
-                'dialect' => $dialect,
-                'valid' => $this->dialects->codes(),
+                'error' => 'Malformed language tag',
+                'tag' => $tag,
+                'hint' => 'Expected a BCP 47 tag: oj, an oj-<dialect> tag, or oj-x-<community> (for example oj-x-sagamok).',
+                'recognized_dialects' => $this->dialects->codes(),
             ], 422);
         }
 
-        return $this->json($this->translationMemory->lookup($q, $dialect, $account));
+        return $this->json($this->translationMemory->lookup($q, $tag, $account));
     }
 }
