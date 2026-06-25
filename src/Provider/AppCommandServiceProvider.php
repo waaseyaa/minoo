@@ -14,6 +14,7 @@ use App\Ingestion\Corpus\FfmpegReelFetcher;
 use App\Ingestion\Corpus\LlmWhiteboardReader;
 use App\Ingestion\Corpus\LocalFileReelFetcher;
 use App\Ingestion\Corpus\ReelProcessor;
+use App\Language\Vision\LlmProviderFactory;
 use App\Seed\TranslationBacklogSeeder;
 use Waaseyaa\AI\Agent\Provider\ProviderInterface;
 use Waaseyaa\CLI\Command\HandlerArgument;
@@ -34,6 +35,17 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements Provid
     public function register(): void
     {
         parent::register();
+
+        // Bind the corpus vision LLM provider (#908). The framework defaults
+        // ProviderInterface to NullLlmProvider; since Minoo does not register
+        // Anokii's CoIntelligenceServiceProvider, nothing else rebinds it. This
+        // gives the whiteboard reader a real Anthropic provider when a server-side
+        // ANTHROPIC_API_KEY is set, and leaves the framework default otherwise
+        // (so CI / keyless local dev is unchanged).
+        $this->singleton(
+            ProviderInterface::class,
+            static fn (): ProviderInterface => LlmProviderFactory::make(getenv('ANTHROPIC_API_KEY') ?: null),
+        );
 
         $this->singleton(MailTestHandler::class, function (): MailTestHandler {
             [$configured, $fromAddress] = $this->mailConfigSnapshot();
