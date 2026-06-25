@@ -311,11 +311,11 @@ Minoo is the **application layer**. It owns entity types, map-driven UX, dialect
 
 **Import rules:**
 - Minoo imports from Waaseyaa (framework) — never the reverse
-- Minoo consumes the shared taxonomy contract (`jonesrussell/indigenous-taxonomy`) for category/region/dialect constants
+- Minoo resolves dialect codes through the `App\Language\DialectCodeProvider` seam, backed by `App\Seed\ConfigSeeder::dialectRegions()` (which also seeds the `dialect_region` config entity). The `jonesrussell/indigenous-taxonomy` package referenced in earlier notes is NOT installed; it is a deferred future backing for this seam, not a current dependency (see `docs/anishinaabemowin-language-api-tracker.md` A.3).
 - Minoo may call North Cloud APIs (via the app-facing NC client interface + adapter on top of `waaseyaa/northcloud`) but must not import NC Go packages
 - North Cloud must not contain Minoo-specific entity types or templates
 
 **Shared contracts:**
-- `jonesrussell/indigenous-taxonomy` — categories, regions, dialect codes (PHP package)
+- Dialect codes: `App\Language\DialectCodeProvider` over `ConfigSeeder::dialectRegions()` (the de facto contract; a `jonesrussell/indigenous-taxonomy` package is a deferred option, not installed)
 - Waaseyaa ingestion envelope schema — used by Python harvesters to feed Minoo directly
 - NC source-manager API — used by harvesters to register sources
