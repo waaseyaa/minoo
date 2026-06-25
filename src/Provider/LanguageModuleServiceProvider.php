@@ -7,7 +7,9 @@ namespace App\Provider;
 use App\Entity\Language\TmGapLog;
 use App\Entity\Language\TranslationMemory;
 use App\Language\DialectCodeProvider;
+use App\Language\TranslationMemoryService;
 use Waaseyaa\Entity\EntityType;
+use Waaseyaa\Entity\EntityTypeManager;
 
 /**
  * The Anokii language module's wiring (issue #890), following the config-gated
@@ -35,6 +37,13 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
         // contract; the backing can move to a taxonomy package later without
         // touching callers.
         $this->singleton(DialectCodeProvider::class, static fn (): DialectCodeProvider => new DialectCodeProvider());
+
+        // The translation-memory lookup (exact -> fuzzy -> gap-log), resolved by
+        // the /api/lang controller. Reads are consent-gated at the entity layer.
+        $this->singleton(
+            TranslationMemoryService::class,
+            fn (): TranslationMemoryService => new TranslationMemoryService($this->resolve(EntityTypeManager::class)),
+        );
 
         $this->entityType(new EntityType(
             id: 'translation_memory',
