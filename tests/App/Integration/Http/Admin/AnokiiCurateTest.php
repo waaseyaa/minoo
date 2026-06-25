@@ -81,7 +81,10 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         $entry = $etm->getStorage('dictionary_entry')->load($result->dictionaryEntryId);
         self::assertNotNull($entry);
         self::assertSame('Shoogan Mookman', (string) $entry->get('word'), 'Ojibwe stored verbatim.');
-        self::assertSame('butter knife', (string) $entry->get('definition'));
+        // JSON-wrapped like every other dictionary_entry, so the public Dictionary
+        // browse (definition LIKE '%"%') includes it and the detail view decodes it (#910).
+        self::assertSame('["butter knife"]', (string) $entry->get('definition'));
+        self::assertStringContainsString('"', (string) $entry->get('definition'), 'Passes the Dictionary browse filter.');
         // Consent + publication copied from the source sentence.
         self::assertSame(1, (int) $entry->get('consent_public'));
         self::assertSame(1, (int) $entry->get('status'));
@@ -155,6 +158,78 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         self::assertTrue($payload['ok'] ?? false);
         self::assertGreaterThan(0, (int) ($payload['dictionary_entry_id'] ?? 0));
         self::assertSame((int) $payload['dictionary_entry_id'], (int) $sentences->load($esid)->get('dictionary_entry_id'));
+    }
+
+    #[Test]
+    public function publish_auto_promotes_and_makes_a_public_dictionary_entry(): void
+    {
+        $etm = self::$kernel->getEntityTypeManager();
+        $sentences = $etm->getStorage('example_sentence');
+        // Transcribed but NOT promoted (deid 0), not yet public.
+        $row = $sentences->create([
+            'ojibwe_text' => 'Emkwaan',
+            'english_text' => 'spoon',
+            'source_sentence_id' => 'corpus:sb-c4',
+            'consent_public' => 0,
+            'status' => 0,
+            'pipeline_status' => 'transcribed',
+            'created_at' => time(),
+            'updated_at' => time(),
+        ]);
+        $sentences->save($row);
+        $esid = (int) $row->id();
+
+        $ok = $this->sendPost(self::$adminUid, '/admin/anokii/curate/publish', ['esid' => (string) $esid]);
+        self::assertSame(Response::HTTP_OK, $ok->getStatusCode());
+        $payload = json_decode((string) $ok->getContent(), true);
+        self::assertTrue($payload['ok'] ?? false);
+        $deid = (int) ($payload['dictionary_entry_id'] ?? 0);
+        self::assertGreaterThan(0, $deid, 'Publish auto-promotes so a dictionary_entry exists.');
+
+        // The sentence is published and linked.
+        $sentence = $sentences->load($esid);
+        self::assertSame('published', (string) $sentence->get('pipeline_status'));
+        self::assertSame($deid, (int) $sentence->get('dictionary_entry_id'));
+
+        // The dictionary_entry is exactly what the public Dictionary browse selects:
+        // status 1, consent_public 1, JSON-wrapped definition (contains a quote).
+        $entries = $etm->getStorage('dictionary_entry');
+        $entry = $entries->load($deid);
+        self::assertSame(1, (int) $entry->get('status'));
+        self::assertSame(1, (int) $entry->get('consent_public'));
+        self::assertSame('["spoon"]', (string) $entry->get('definition'));
+
+        $browse = $entries->getQuery()->accessCheck(false)
+            ->condition('status', 1)->condition('consent_public', 1)
+            ->condition('definition', '%"%', 'LIKE')
+            ->condition('slug', (string) $entry->get('slug'))
+            ->execute();
+        self::assertContains($deid, array_map('intval', $browse), 'Published word appears in the public Dictionary browse.');
+    }
+
+    #[Test]
+    public function publish_refuses_a_word_with_no_anishinaabemowin(): void
+    {
+        $sentences = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $row = $sentences->create([
+            'ojibwe_text' => '',
+            'english_text' => 'open',
+            'source_sentence_id' => 'corpus:sb-c5',
+            'status' => 0,
+            'pipeline_status' => 'drafted',
+            'created_at' => time(),
+            'updated_at' => time(),
+        ]);
+        $sentences->save($row);
+        $esid = (int) $row->id();
+
+        $res = $this->sendPost(self::$adminUid, '/admin/anokii/curate/publish', ['esid' => (string) $esid]);
+        self::assertSame(422, $res->getStatusCode(), 'Cannot publish a word with no Anishinaabemowin into the void.');
+        self::assertStringContainsString('Anishinaabemowin', (string) $res->getContent());
+        // Unchanged: not published, no entry.
+        $after = $sentences->load($esid);
+        self::assertNotSame('published', (string) $after->get('pipeline_status'));
+        self::assertSame(0, (int) $after->get('dictionary_entry_id'));
     }
 
     private function sendAs(int $uid, string $method, string $uri): Response

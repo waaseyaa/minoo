@@ -54,7 +54,13 @@ final class UtterancePromoter
             // Verbatim — never normalized (ADR 0003).
             'word' => $word,
             'slug' => $this->slugify($word),
-            'definition' => $definition,
+            // JSON-wrapped to match every other dictionary_entry (e.g. ["spoon"]):
+            // the public Dictionary browse filters `definition LIKE '%"%'` and the
+            // detail view json_decodes it (#910). A raw string would be invisible
+            // in the browse and mis-render on the word page.
+            'definition' => $definition !== ''
+                ? (string) json_encode([$definition], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                : '[]',
             'language_code' => 'oj',
             'source_url' => $sourceUrl,
             'attribution_source' => 'corpus',

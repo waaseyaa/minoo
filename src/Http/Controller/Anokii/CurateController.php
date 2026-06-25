@@ -117,25 +117,43 @@ final class CurateController
             return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
         }
 
+        // A published word must have a public dictionary_entry or it surfaces
+        // nowhere (#910). Auto-promote when it was not curated first; a row with
+        // no Anishinaabemowin word cannot become a dictionary entry, so refuse
+        // rather than publish into the void.
+        $deid = (int) ($sentence->get('dictionary_entry_id') ?? 0);
+        if ($deid === 0) {
+            if (trim((string) $sentence->get('ojibwe_text')) === '') {
+                return $this->json(['ok' => false, 'error' => 'Add the Anishinaabemowin word before publishing.'], 422);
+            }
+            $promotion = (new UtterancePromoter($this->entityTypeManager))->promote($esid);
+            if ($promotion === null) {
+                return $this->json(['ok' => false, 'error' => 'Could not promote this utterance to a dictionary entry.'], 422);
+            }
+            $deid = $promotion->dictionaryEntryId;
+            // promote() mutated and saved the row; reload before publishing.
+            $sentence = $sentences->load($esid);
+            if (!$sentence instanceof EntityInterface) {
+                return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
+            }
+        }
+
         $now = time();
         $this->publishEntity($sentence);
         $sentence->set('pipeline_status', PipelineStage::PUBLISHED);
         $sentence->set('updated_at', $now);
         $sentences->save($sentence);
 
-        // Publish the linked dictionary_entry too, so the word goes live.
-        $deid = (int) ($sentence->get('dictionary_entry_id') ?? 0);
-        if ($deid > 0) {
-            $entries = $this->entityTypeManager->getStorage('dictionary_entry');
-            $entry = $entries->load($deid);
-            if ($entry instanceof EntityInterface) {
-                $this->publishEntity($entry);
-                $entry->set('updated_at', $now);
-                $entries->save($entry);
-            }
+        // Publish the dictionary_entry too, so the word goes live in the Dictionary.
+        $entries = $this->entityTypeManager->getStorage('dictionary_entry');
+        $entry = $entries->load($deid);
+        if ($entry instanceof EntityInterface) {
+            $this->publishEntity($entry);
+            $entry->set('updated_at', $now);
+            $entries->save($entry);
         }
 
-        return $this->json(['ok' => true, 'esid' => $esid, 'pipeline_status' => PipelineStage::PUBLISHED]);
+        return $this->json(['ok' => true, 'esid' => $esid, 'dictionary_entry_id' => $deid, 'pipeline_status' => PipelineStage::PUBLISHED]);
     }
 
     /**
