@@ -29,6 +29,21 @@
   .ov-stage .ov-label{ display:block; margin-top:6px; color:var(--anokii-shell-muted); font-size:13.5px; }
   .ov-stage .ov-go{ display:block; margin-top:10px; color:var(--anokii-shell-accent); font-size:13px; font-weight:600; }
   .ov-empty{ padding:28px; border:1px dashed var(--anokii-shell-line); border-radius:12px; color:var(--anokii-shell-muted); }
+  .bk-head{ margin:34px 0 12px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .bk-head h2{ font-size:1.2rem; }
+  .bk-head .bk-sub{ color:var(--anokii-shell-muted); font-size:13.5px; }
+  .bk-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .bk-tag{ font-size:12.5px; border:1px solid var(--anokii-shell-line); border-radius:999px; padding:3px 10px; color:var(--anokii-shell-muted); }
+  .bk-table{ width:100%; border-collapse:collapse; font-size:14px; }
+  .bk-table th, .bk-table td{ text-align:left; padding:8px 10px; border-bottom:1px solid var(--anokii-shell-line); }
+  .bk-table th{ color:var(--anokii-shell-muted); font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; }
+  .bk-table td.bk-n{ text-align:right; font-variant-numeric:tabular-nums; width:1%; white-space:nowrap; }
+  .bk-concept{ font-weight:600; }
+  .bk-form{ color:var(--anokii-shell-muted); }
+  .bk-cat{ font-size:11.5px; border-radius:6px; padding:1px 7px; border:1px solid var(--anokii-shell-line); }
+  .bk-cat.governance-nav{ color:var(--anokii-shell-accent); border-color:color-mix(in oklab, var(--anokii-shell-accent) 50%, var(--anokii-shell-line)); }
+  .bk-cat.global-ui{ color:var(--anokii-shell-muted); }
+  .bk-cat.other{ color:var(--anokii-shell-muted); opacity:.8; }
 {% endblock %}
 
 {% block brand %}
@@ -75,4 +90,35 @@
       </a>
     {% endfor %}
   </div>
+
+  {% set bk = backlog|default({'total': 0, 'concepts': [], 'by_category': {}}) %}
+  {% if bk.total > 0 %}
+    <div class="bk-head">
+      <h2>Translation backlog</h2>
+      <span class="bk-sub">{{ bk.total }} English string{{ bk.total == 1 ? '' : 's' }} awaiting translation, ranked by cross-site demand. Each graduates into the translation memory once a speaker translates it.</span>
+    </div>
+    <div class="bk-tags">
+      {% for cat, n in bk.by_category %}<span class="bk-tag">{{ cat }}: {{ n }}</span>{% endfor %}
+    </div>
+    <table class="bk-table">
+      <thead>
+        <tr><th>Concept / surface forms</th><th>Category</th><th class="bk-n">Sites</th><th class="bk-n">Total</th></tr>
+      </thead>
+      <tbody>
+        {% for c in bk.concepts %}
+          {% for f in c.forms %}
+            <tr>
+              <td>
+                {%- if loop.first %}<span class="bk-concept">{{ f.english_text }}</span>
+                {%- else %}<span class="bk-form">↳ {{ f.english_text }}</span>{% endif -%}
+              </td>
+              <td><span class="bk-cat {{ f.category }}">{{ f.category }}</span></td>
+              <td class="bk-n">{{ f.demand_sites }}</td>
+              <td class="bk-n">{{ f.demand_total }}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 {% endblock %}

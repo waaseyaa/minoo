@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Access\Language;
 
 use App\Access\Language\LanguageAccessPolicy;
 use App\Entity\Language\DictionaryEntry;
+use App\Entity\Language\TmBacklog;
 use App\Entity\Language\TmGapLog;
 use App\Entity\Language\TranslationMemory;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,7 +29,20 @@ final class LanguageAccessPolicyTest extends TestCase
         $this->assertTrue($policy->appliesTo('speaker'));
         $this->assertTrue($policy->appliesTo('translation_memory'));
         $this->assertTrue($policy->appliesTo('tm_gap_log'));
+        $this->assertTrue($policy->appliesTo('tm_backlog'));
         $this->assertFalse($policy->appliesTo('node'));
+    }
+
+    #[Test]
+    public function backlog_is_admin_only_never_public(): void
+    {
+        $policy = new LanguageAccessPolicy();
+        // The awaiting_translation lifecycle status never satisfies the integer
+        // status-1 view gate, so the English demand backlog stays admin-only.
+        $backlog = new TmBacklog(['english_text' => 'Contact', 'status' => 'awaiting_translation']);
+
+        $this->assertFalse($policy->access($backlog, 'view', $this->anonymous())->isAllowed());
+        $this->assertTrue($policy->access($backlog, 'view', $this->admin())->isAllowed());
     }
 
     #[Test]

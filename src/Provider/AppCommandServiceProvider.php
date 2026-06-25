@@ -8,11 +8,13 @@ use App\Console\AnokiiBackfillStatusHandler;
 use App\Console\IngestCorpusHandler;
 use App\Console\MailTestHandler;
 use App\Console\ProcessReelsHandler;
+use App\Console\SeedTranslationBacklogHandler;
 use App\Ingestion\Corpus\CorpusIngestor;
 use App\Ingestion\Corpus\FfmpegReelFetcher;
 use App\Ingestion\Corpus\LlmWhiteboardReader;
 use App\Ingestion\Corpus\LocalFileReelFetcher;
 use App\Ingestion\Corpus\ReelProcessor;
+use App\Seed\TranslationBacklogSeeder;
 use Waaseyaa\AI\Agent\Provider\ProviderInterface;
 use Waaseyaa\CLI\Command\HandlerArgument;
 use Waaseyaa\CLI\Command\HandlerArgumentMode;
@@ -54,6 +56,13 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements Provid
                     new FfmpegReelFetcher($corpusPath),
                     new LlmWhiteboardReader($this->resolve(ProviderInterface::class)),
                 ),
+            );
+        });
+
+        $this->singleton(SeedTranslationBacklogHandler::class, function (): SeedTranslationBacklogHandler {
+            return new SeedTranslationBacklogHandler(
+                $this->resolve(TranslationBacklogSeeder::class),
+                dirname(__DIR__, 2),
             );
         });
 
@@ -111,6 +120,12 @@ class AppCommandServiceProvider extends AppCoreServiceProvider implements Provid
                     description: 'Skip the vision LLM draft; advance with blank Ojibwe/English',
                 ),
             ],
+        );
+
+        yield new HandlerCommand(
+            name: 'lang:seed-backlog',
+            description: 'Idempotently seed the demand-ranked English translation backlog into tm_backlog (#906)',
+            handler: [SeedTranslationBacklogHandler::class, 'execute'],
         );
 
         yield new HandlerCommand(

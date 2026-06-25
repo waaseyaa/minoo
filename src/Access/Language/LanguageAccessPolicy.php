@@ -10,14 +10,15 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'dialect_region', 'speaker', 'translation_memory', 'tm_gap_log'])]
+#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'dialect_region', 'speaker', 'translation_memory', 'tm_gap_log', 'tm_backlog'])]
 final class LanguageAccessPolicy implements AccessPolicyInterface
 {
     // translation_memory is published + consent-gated like the other content
-    // (public when status is 1 and consent_public is on). tm_gap_log carries a
-    // lifecycle string status (open|queued_for_speaker|resolved), so the integer
-    // status-1 view gate below never opens it: gap data stays admin-only.
-    private const ENTITY_TYPES = ['dictionary_entry', 'example_sentence', 'word_part', 'dialect_region', 'speaker', 'translation_memory', 'tm_gap_log'];
+    // (public when status is 1 and consent_public is on). tm_gap_log and
+    // tm_backlog carry a lifecycle string status (open|...; awaiting_translation),
+    // so the integer status-1 view gate below never opens them: gap data and the
+    // English demand backlog stay admin-only.
+    private const ENTITY_TYPES = ['dictionary_entry', 'example_sentence', 'word_part', 'dialect_region', 'speaker', 'translation_memory', 'tm_gap_log', 'tm_backlog'];
 
     public function appliesTo(string $entityTypeId): bool
     {

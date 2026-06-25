@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Provider;
 
+use App\Entity\Language\TmBacklog;
 use App\Entity\Language\TmGapLog;
 use App\Entity\Language\TranslationMemory;
 use App\Language\Asr\AsrClient;
 use App\Language\Asr\UnavailableAsrClient;
 use App\Language\DialectCodeProvider;
 use App\Language\TranslationMemoryService;
+use App\Seed\TranslationBacklogSeeder;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\Entity\EntityTypeManager;
 
@@ -54,6 +56,14 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
         // no transcription until the Phase 0 consent agreement exists and a real
         // worker-backed client replaces this binding. No public ASR surface (D8).
         $this->singleton(AsrClient::class, static fn (): AsrClient => new UnavailableAsrClient());
+
+        // The idempotent backlog seeder (#906): upserts the committed
+        // demand-ranked English seed into tm_backlog. Used by the dev console
+        // command and the prod reflection script.
+        $this->singleton(
+            TranslationBacklogSeeder::class,
+            fn (): TranslationBacklogSeeder => new TranslationBacklogSeeder($this->resolve(EntityTypeManager::class)),
+        );
 
         $this->entityType(new EntityType(
             id: 'translation_memory',
@@ -100,6 +110,32 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
                 'last_requested_at' => ['type' => 'timestamp', 'label' => 'Last Requested', 'weight' => 6],
                 'status' => ['type' => 'string', 'label' => 'Status', 'description' => 'open | queued_for_speaker | resolved.', 'weight' => 7, 'default' => 'open'],
                 'resolved_tm_id' => ['type' => 'integer', 'label' => 'Resolved Translation', 'description' => 'The translation_memory row that closed the gap, nullable.', 'weight' => 8],
+                'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
+                'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
+            ],
+        ));
+
+        // The demand-ranked English backlog (#906): the ungated worklist seeded
+        // from the public website recon. Registered unconditionally so the schema
+        // is consistent; admin-only via LanguageAccessPolicy (string status never
+        // satisfies the integer status-1 view gate). A row graduates into
+        // translation_memory once a speaker translates it.
+        $this->entityType(new EntityType(
+            id: 'tm_backlog',
+            label: 'Translation Backlog',
+            class: TmBacklog::class,
+            keys: ['id' => 'tbid', 'uuid' => 'uuid', 'label' => 'english_text'],
+            group: 'language',
+            _fieldDefinitions: [
+                'english_text' => ['type' => 'string', 'label' => 'English Text', 'description' => 'The English surface form awaiting translation.', 'weight' => 0],
+                'concept_key' => ['type' => 'string', 'label' => 'Concept Key', 'description' => 'Clustered key grouping surface variants (Contact / Contact Us).', 'weight' => 1],
+                'dedupe_key' => ['type' => 'string', 'label' => 'Dedupe Key', 'description' => 'sha256 of (english_text, target_tag); the upsert uniqueness key.', 'weight' => 2],
+                'demand_sites' => ['type' => 'integer', 'label' => 'Demand (distinct sites)', 'description' => 'Number of distinct sites the string appeared on (primary rank).', 'weight' => 3, 'default' => 0],
+                'demand_total' => ['type' => 'integer', 'label' => 'Demand (total)', 'description' => 'Total occurrences across all sites (secondary rank).', 'weight' => 4, 'default' => 0],
+                'category' => ['type' => 'string', 'label' => 'Category', 'description' => 'governance-nav | global-ui | other.', 'weight' => 5],
+                'target_tag' => ['type' => 'string', 'label' => 'Target Tag', 'description' => 'First translation target (default oj-x-sagamok, Sagamok is the core).', 'weight' => 6, 'default' => 'oj-x-sagamok'],
+                'status' => ['type' => 'string', 'label' => 'Status', 'description' => 'awaiting_translation | translated. String status keeps the backlog admin-only.', 'weight' => 7, 'default' => 'awaiting_translation'],
+                'provenance' => ['type' => 'string', 'label' => 'Provenance', 'description' => 'Where the demand came from, e.g. seed-crawl-2026-06-25.', 'weight' => 8],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
