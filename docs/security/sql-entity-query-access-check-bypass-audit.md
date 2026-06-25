@@ -90,6 +90,7 @@ These sites never have an end-user `AccountInterface` available, or run after th
 | `src/Http/Controller/Ingestion/IngestionDashboardController.php` | 101 | `loadLastSync` — admin-only last-sync timestamp. | 2026-05-19 |
 | `src/Http/Controller/People/VolunteerController.php` | 151 | `phoneExists` private uniqueness check — phone numbers cannot be duplicated across volunteers regardless of caller's view scope. Mirrors the framework's `RelationshipValidator` pattern (integrity check spans access boundaries). | 2026-05-19 |
 | `src/Http/Controller/Lesson/LessonController.php` | 165 | Admin-gated Lesson 1 course surface. guard() enforces `administer content` and every lesson route uses requireAuthentication() before any read; deliberately loads the consent-gated corpus rows for the curated lesson, with the route gate as the access boundary. | 2026-06-14 |
+| `src/Language/TranslationMemoryService.php` | 197 | `logGap` dedup of the admin-only `tm_gap_log` (issue #894). System-context operational write from the public `/api/lang` miss path: no end-user account is meaningful for finding the existing miss row to increment, and gap data is never user-visible (its lifecycle-string status keeps it admin-only). The translation lookup reads above this use `setAccount($account)`. | 2026-06-24 |
 
 ### Conditional fallback — set account when available, bypass otherwise
 

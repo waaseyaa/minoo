@@ -8,6 +8,7 @@ use App\Provider\Routing\AdminRouteProvider;
 use App\Provider\Routing\AnokiiRouteProvider;
 use App\Provider\Routing\AuthApiRouteProvider;
 use App\Provider\Routing\GamesApiRouteProvider;
+use App\Provider\Routing\LanguageApiRouteProvider;
 use App\Provider\Routing\LessonRouteProvider;
 use App\Provider\Routing\PublicAccountRouteProvider;
 use App\Provider\Routing\PublicContentRouteProvider;
@@ -39,6 +40,8 @@ final class MinooRoutingStackProvider extends ServiceProvider
             new AuthApiRouteProvider(),
             new GamesApiRouteProvider(),
             new LessonRouteProvider(),
+            // Public /api/lang surface, gated on the language module flag.
+            new LanguageApiRouteProvider(),
             new StaticPagesRouteProvider(),
             // Anokii shell must register before the admin-surface SPA catch-all
             // so its priority-100 /admin/anokii routes win over admin_spa.
