@@ -40,7 +40,7 @@ final class LanguageApiTest extends HttpKernelTestCase
         $seed(['source_en' => 'good morning', 'translation' => 'mino-gigizheb', 'language_tag' => 'oj-x-sagamok', 'confidence' => 60, 'needs_speaker_review' => 1]);
         // Tag-agnostic row (bare oj) for the fallback-to-oj case.
         $seed(['source_en' => 'water', 'translation' => 'nibi', 'language_tag' => 'oj']);
-        // Same dialect grouping (serpent-river is also oji-east) for the
+        // Same dialect grouping (serpent-river is also nishnaabemwin) for the
         // dialect-derived fallback: no Sagamok "fox" row exists.
         $seed(['source_en' => 'fox', 'translation' => 'waagosh', 'language_tag' => 'oj-x-serpent-river']);
         // Consent-gated Sagamok row: must never surface to anonymous callers.
@@ -66,8 +66,9 @@ final class LanguageApiTest extends HttpKernelTestCase
         foreach ($body['dialects'] as $row) {
             $byCode[$row['code']] = $row;
         }
-        self::assertSame('oj-ojg', $byCode['oji-east']['tag']);
-        self::assertArrayHasKey('oji-ottawa', $byCode);
+        self::assertSame('oj-ojg', $byCode['nishnaabemwin']['tag']);
+        self::assertArrayNotHasKey('oji-east', $byCode);
+        self::assertArrayNotHasKey('oji-ottawa', $byCode);
     }
 
     #[Test]
@@ -98,7 +99,7 @@ final class LanguageApiTest extends HttpKernelTestCase
     public function it_falls_back_to_the_same_dialect_grouping(): void
     {
         // "fox" exists only as serpent-river; both serpent-river and sagamok are
-        // oji-east, so a Sagamok query resolves it via the derived grouping.
+        // nishnaabemwin, so a Sagamok query resolves it via the derived grouping.
         $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'fox', 'tag' => 'oj-x-sagamok']));
 
         self::assertSame('exact', $body['match_type']);

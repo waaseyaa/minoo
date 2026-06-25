@@ -55,7 +55,11 @@ final class ConfigSeeder
     {
         return [
             [
-                'code' => 'oji-east',
+                // Nishnaabemwin is the Eastern Ojibwe / Odawa continuum spanning
+                // ISO otw + ojg. The 21 RHT nations derive this grouping from their
+                // community tag; it is never stored in the tag's place. (No
+                // oji-east / oji-ottawa codes; those were replaced by this.)
+                'code' => 'nishnaabemwin',
                 'name' => 'Nishnaabemwin',
                 'display_name' => 'Eastern Ojibwe',
                 'language_family' => 'algonquian',
@@ -79,15 +83,6 @@ final class ConfigSeeder
                 'language_family' => 'algonquian',
                 'iso_639_3' => 'ojs',
                 'regions' => ['canada:manitoba:southern', 'canada:saskatchewan'],
-                'boundary_geojson' => null,
-            ],
-            [
-                'code' => 'oji-ottawa',
-                'name' => 'Odaawaa',
-                'display_name' => 'Ottawa / Odawa',
-                'language_family' => 'algonquian',
-                'iso_639_3' => 'otw',
-                'regions' => ['canada:ontario:southern'],
                 'boundary_geojson' => null,
             ],
             [
@@ -148,34 +143,43 @@ final class ConfigSeeder
     }
 
     /**
-     * Community-to-dialect membership: maps a BCP 47 private-use community subtag
-     * (the `<community>` in `oj-x-<community>`) to its dialect grouping code in
-     * {@see dialectRegions()}. Used to DERIVE the dialect grouping on read (the
-     * stored language tag is the full community tag; the grouping is never stored
-     * in its place).
+     * Community-to-dialect membership: maps a BCP 47 private-use community code
+     * (the `<code>` in `oj-x-<code>`) to its dialect grouping in
+     * {@see dialectRegions()}. Used to DERIVE the dialect grouping on read; the
+     * stored tag is the full community tag, the grouping is never stored.
      *
-     * North shore of Lake Huron nations are Nishnaabemwin / Eastern Ojibwe
-     * (`oji-east`; consistent with the `canada:ontario:north-shore-huron` region
-     * on that dialect).
-     *
-     * Only communities whose slug is a valid BCP 47 private-use sequence (each
-     * hyphen-separated subtag at most 8 characters) appear here, since the tag is
-     * `oj-x-<community>`. Long-slug nations (e.g. mississauga, thessalon,
-     * batchewana, atikameksheng, wahnapitae) need an assigned short community code
-     * before they can be tagged; that is an ecosystem data decision, deferred, so
-     * they are left out rather than mapped to an unusable tag. Manitoulin and
-     * Georgian Bay communities also need per-community dialect confirmation. An
-     * unmapped community is still a well-formed tag; it just derives no grouping
-     * yet, rather than asserting a dialect the data does not support.
+     * These are the canonical codes for the 21 RHT nations (the registry recorded
+     * in the language-api tracker, "Community code registry"). Multi-subtag where
+     * a single token would exceed the BCP 47 private-use 8-char limit. Every code
+     * is provisional: a working default subject to each nation's own confirmation
+     * (OCAP). All 21 are Nishnaabemwin (the Eastern Ojibwe / Odawa continuum).
      *
      * @return array<string, string>
      */
     public static function communityDialects(): array
     {
         return [
-            'sagamok' => 'oji-east',
-            'serpent-river' => 'oji-east',
-            'garden-river' => 'oji-east',
+            'batche-wana' => 'nishnaabemwin',
+            'garden-river' => 'nishnaabemwin',
+            'thessa-lon' => 'nishnaabemwin',
+            'missi-saugi' => 'nishnaabemwin',
+            'serpent-river' => 'nishnaabemwin',
+            'sagamok' => 'nishnaabemwin',
+            'atika-meksheng' => 'nishnaabemwin',
+            'wahna-pitae' => 'nishnaabemwin',
+            'nbisiing' => 'nishnaabemwin',
+            'dokis' => 'nishnaabemwin',
+            'henvey-inlet' => 'nishnaabemwin',
+            'magneta-wan' => 'nishnaabemwin',
+            'shawa-naga' => 'nishnaabemwin',
+            'wasauk-sing' => 'nishnaabemwin',
+            'aundeck-omni-kaning' => 'nishnaabemwin',
+            'white-fish-river' => 'nishnaabemwin',
+            'mchi-geeng' => 'nishnaabemwin',
+            'shegui-andah' => 'nishnaabemwin',
+            'shesheg-waning' => 'nishnaabemwin',
+            'wiikwem-koong' => 'nishnaabemwin',
+            'zhiibaa-haasing' => 'nishnaabemwin',
         ];
     }
 }

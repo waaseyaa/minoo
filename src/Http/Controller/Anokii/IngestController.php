@@ -203,6 +203,9 @@ final class IngestController
             'source_url' => $sourceUrl,
             'video_url' => '/admin/anokii/media/video/' . $id,
             'language_code' => 'oj',
+            // Steven's corpus is from Sagamok; provenance tag per the community
+            // code registry. Dialect grouping (Nishnaabemwin) is derived from this.
+            'language_tag' => 'oj-x-sagamok',
             'pipeline_status' => PipelineStage::INGESTED,
             'provenance' => (string) json_encode(['id' => $id, 'source_url' => $sourceUrl, 'original_filename' => $filename], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             'consent_public' => 0,

@@ -46,10 +46,12 @@ final class DialectCodeProviderTest extends TestCase
             $byCode[$row['code']] = $row;
         }
 
-        self::assertArrayHasKey('oji-east', $byCode);
-        self::assertSame('oj-ojg', $byCode['oji-east']['tag']);
-        self::assertSame('Eastern Ojibwe', $byCode['oji-east']['display_name']);
-        self::assertSame('ojg', $byCode['oji-east']['iso_639_3']);
+        self::assertArrayHasKey('nishnaabemwin', $byCode);
+        self::assertSame('oj-ojg', $byCode['nishnaabemwin']['tag']);
+        self::assertSame('Eastern Ojibwe', $byCode['nishnaabemwin']['display_name']);
+        self::assertSame('ojg', $byCode['nishnaabemwin']['iso_639_3']);
+        self::assertArrayNotHasKey('oji-east', $byCode, 'No oji-east grouping.');
+        self::assertArrayNotHasKey('oji-ottawa', $byCode, 'No oji-ottawa grouping.');
     }
 
     #[Test]
@@ -57,8 +59,9 @@ final class DialectCodeProviderTest extends TestCase
     {
         $p = new DialectCodeProvider();
 
-        self::assertSame('oji-east', $p->dialectCodeForTag('oj-x-sagamok'));
-        self::assertSame('oji-east', $p->dialectCodeForTag('oj-ojg'));
+        self::assertSame('nishnaabemwin', $p->dialectCodeForTag('oj-x-sagamok'));
+        self::assertSame('nishnaabemwin', $p->dialectCodeForTag('oj-ojg'));
+        self::assertSame('nishnaabemwin', $p->dialectCodeForTag('oj-otw'), 'Nishnaabemwin spans otw too.');
         self::assertNull($p->dialectCodeForTag('oj'), 'The bare language derives no grouping.');
         self::assertNull($p->dialectCodeForTag('oj-x-sagamok2'), 'An unmapped community derives no grouping.');
 
