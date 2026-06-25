@@ -6,6 +6,8 @@ namespace App\Provider;
 
 use App\Entity\Language\TmGapLog;
 use App\Entity\Language\TranslationMemory;
+use App\Language\Asr\AsrClient;
+use App\Language\Asr\UnavailableAsrClient;
 use App\Language\DialectCodeProvider;
 use App\Language\TranslationMemoryService;
 use Waaseyaa\Entity\EntityType;
@@ -44,6 +46,11 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
             TranslationMemoryService::class,
             fn (): TranslationMemoryService => new TranslationMemoryService($this->resolve(EntityTypeManager::class)),
         );
+
+        // The ASR seam to the separate Python/GPU worker. Fail-closed by default:
+        // no transcription until the Phase 0 consent agreement exists and a real
+        // worker-backed client replaces this binding. No public ASR surface (D8).
+        $this->singleton(AsrClient::class, static fn (): AsrClient => new UnavailableAsrClient());
 
         $this->entityType(new EntityType(
             id: 'translation_memory',
