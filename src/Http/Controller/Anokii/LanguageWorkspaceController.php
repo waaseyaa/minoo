@@ -6,6 +6,7 @@ namespace App\Http\Controller\Anokii;
 
 use App\Anokii\Pipeline\PipelineCounts;
 use App\Http\View\AnokiiShellContext;
+use App\Language\Backlog\BacklogBoard;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
@@ -36,6 +37,7 @@ final class LanguageWorkspaceController
     public function index(AccountInterface $account, HttpRequest $request): Response
     {
         $snapshot = (new PipelineCounts($this->entityTypeManager))->compute();
+        $backlog = (new BacklogBoard($this->entityTypeManager))->summarize();
 
         $html = $this->twig->render('pages/anokii/index.html.twig', AnokiiShellContext::build($account, 'home', [
             'path' => $request->getPathInfo(),
@@ -43,6 +45,7 @@ final class LanguageWorkspaceController
             'counts' => $snapshot['counts'],
             'total' => $snapshot['total'],
             'do_next' => $snapshot['do_next'],
+            'backlog' => $backlog,
         ]));
 
         return new Response($html);

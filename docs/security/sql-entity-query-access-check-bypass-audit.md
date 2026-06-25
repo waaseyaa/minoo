@@ -94,6 +94,8 @@ These sites never have an end-user `AccountInterface` available, or run after th
 | `src/Http/Controller/Auth/AuthController.php` | 84 | `submitLogin` user lookup by mail (issue #900). Pre-session authentication: the visitor is anonymous and lacks `access user profiles`, so an access-checked query returns no user (framework `UserAccessPolicy` denies anonymous view since alpha.249). The credential check immediately below is the real gate. Matches `bin/seed-test-user`. | 2026-06-25 |
 | `src/Http/Controller/Auth/AuthController.php` | 169 | `submitRegister` duplicate-email check. Same pre-session anonymous context; must detect an existing account regardless of the anonymous viewer to avoid creating a duplicate and to drive the no-enumeration check-email flow. | 2026-06-25 |
 | `src/Http/Controller/Auth/AuthController.php` | 249 | `submitForgotPassword` user lookup. Same pre-session anonymous context; the reset path must find the account to mail a token, and never reveals existence to the caller. | 2026-06-25 |
+| `src/Seed/TranslationBacklogSeeder.php` | 56 | `tm_backlog` upsert dedup (issue #906). Trusted CLI/script seed of the admin-only English demand backlog; no request account exists. The backlog carries a lifecycle-string status (`awaiting_translation`) that keeps it admin-only, never exposed publicly. | 2026-06-25 |
+| `src/Language/Backlog/BacklogBoard.php` | 39 | `tm_backlog` read for the staff-only /admin/anokii/language board (issue #906). The route's `requireRole(admin,elder_coordinator)` is the access boundary; the backlog is never exposed on /api/lang or any public route. Mirrors `PipelineCounts`. | 2026-06-25 |
 
 ### Conditional fallback — set account when available, bypass otherwise
 
