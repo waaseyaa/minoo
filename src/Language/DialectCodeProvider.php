@@ -24,6 +24,16 @@ final class DialectCodeProvider
     private const string AUTONYM = 'Anishinaabemowin';
 
     /**
+     * Dialect middle subtags that derive a grouping spanning more than one ISO
+     * code, beyond the per-region iso_639_3. Nishnaabemwin is the Eastern Ojibwe /
+     * Odawa continuum (otw + ojg): ojg is the grouping's region iso, otw is added
+     * here so a tag like `oj-otw` derives the same grouping.
+     *
+     * @var array<string, string>
+     */
+    private const array SPANNING_SUBTAGS = ['otw' => 'nishnaabemwin'];
+
+    /**
      * Whether a tag is a well-formed Minoo BCP 47 tag.
      */
     public function isValid(string $tag): bool
@@ -55,7 +65,10 @@ final class DialectCodeProvider
      */
     public function dialectSubtags(): array
     {
-        return array_column(ConfigSeeder::dialectRegions(), 'iso_639_3');
+        return [
+            ...array_column(ConfigSeeder::dialectRegions(), 'iso_639_3'),
+            ...array_keys(self::SPANNING_SUBTAGS),
+        ];
     }
 
     /**
@@ -79,8 +92,8 @@ final class DialectCodeProvider
     }
 
     /**
-     * The dialect grouping code (e.g. `oji-east`) derived from a tag, or null for
-     * the bare language, a malformed tag, or a community with no confirmed
+     * The dialect grouping code (e.g. `nishnaabemwin`) derived from a tag, or null
+     * for the bare language, a malformed tag, or a community with no confirmed
      * membership. Derivation only; nothing is stored.
      */
     public function dialectCodeForTag(string $tag): ?string
@@ -91,6 +104,9 @@ final class DialectCodeProvider
         }
 
         if ($parsed->dialectSubtag !== null) {
+            if (isset(self::SPANNING_SUBTAGS[$parsed->dialectSubtag])) {
+                return self::SPANNING_SUBTAGS[$parsed->dialectSubtag];
+            }
             foreach (ConfigSeeder::dialectRegions() as $row) {
                 if ($row['iso_639_3'] === $parsed->dialectSubtag) {
                     return $row['code'];

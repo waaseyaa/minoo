@@ -206,10 +206,9 @@ config entity). All fields live in the `_data` JSON blob (see A.5).
 
   | code | display_name | iso_639_3 |
   |---|---|---|
-  | `oji-east` | Eastern Ojibwe (Nishnaabemwin) | ojg |
+  | `nishnaabemwin` | Eastern Ojibwe / Odawa, Nishnaabemwin (spans otw + ojg) | ojg |
   | `oji-northwest` | Northwestern Ojibwe | ojb |
   | `oji-plains` | Saulteaux / Plains Ojibwe | ojs |
-  | `oji-ottawa` | Ottawa / Odawa | otw |
   | `cree-plains` | Plains Cree | crk |
   | `cree-swampy` | Swampy Cree | csw |
   | `innu` | Innu | moe |
@@ -217,9 +216,44 @@ config entity). All fields live in the `_data` JSON blob (see A.5).
   | `inuvialuktun` | Inuvialuktun | ikt |
   | `mohawk` | Mohawk | moh |
 
-  For the RHT nations the relevant codes are `oji-east` (north shore of Lake Huron, the bulk of the
-  21) and `oji-ottawa` (Manitoulin / Odawa communities). Each row also carries `language_family`,
-  `iso_639_3`, and a `regions` list.
+  Superseded (#902): the `oji-east` and `oji-ottawa` codes are gone; all 21 RHT nations are the one
+  `nishnaabemwin` grouping (the Eastern Ojibwe / Odawa continuum, otw + ojg), DERIVED from each
+  nation's community tag, never stored. The community codes are the registry below.
+
+### Community code registry (the 21 RHT nations)
+
+Canonical `oj-x-<code>` per nation, the single ecosystem registry shared by Minoo and rhtcircle.
+BCP 47 private-use, multi-subtag where a single token would exceed 8 characters. Dialect grouping
+(Nishnaabemwin) is derived from these, never stored; no `oji-east`/`oji-ottawa`. **Provisional: every
+code is a working default subject to each nation's own confirmation (OCAP).** Seeded in
+`ConfigSeeder::communityDialects()`.
+
+| Nation | slug | tag |
+|---|---|---|
+| Batchewana First Nation of Ojibways | batchewana | `oj-x-batche-wana` |
+| Garden River First Nation | garden-river | `oj-x-garden-river` |
+| Thessalon First Nation | thessalon | `oj-x-thessa-lon` |
+| Mississauga First Nation | mississauga | `oj-x-missi-saugi` |
+| Serpent River First Nation | serpent-river | `oj-x-serpent-river` |
+| Sagamok Anishnawbek | sagamok | `oj-x-sagamok` |
+| Atikameksheng Anishnawbek | atikameksheng | `oj-x-atika-meksheng` |
+| Wahnapitae First Nation | wahnapitae | `oj-x-wahna-pitae` |
+| Nipissing First Nation | nipissing | `oj-x-nbisiing` |
+| Dokis First Nation | dokis | `oj-x-dokis` |
+| Henvey Inlet First Nation | henvey-inlet | `oj-x-henvey-inlet` |
+| Magnetawan First Nation | magnetawan | `oj-x-magneta-wan` |
+| Shawanaga First Nation | shawanaga | `oj-x-shawa-naga` |
+| Wasauksing First Nation | wasauksing | `oj-x-wasauk-sing` |
+| Aundeck Omni Kaning First Nation | aundeck-omni-kaning | `oj-x-aundeck-omni-kaning` |
+| Whitefish River First Nation | whitefish-river | `oj-x-white-fish-river` |
+| M'Chigeeng First Nation | mchigeeng | `oj-x-mchi-geeng` |
+| Sheguiandah First Nation | sheguiandah | `oj-x-shegui-andah` |
+| Sheshegwaning First Nation | sheshegwaning | `oj-x-shesheg-waning` |
+| Wiikwemkoong Unceded Territory | wiikwemkoong | `oj-x-wiikwem-koong` |
+| Zhiibaahaasing First Nation | zhiibaahaasing | `oj-x-zhiibaa-haasing` |
+
+Steven Bennett's corpus is Sagamok, tagged `oj-x-sagamok` (set on ingested drafts by
+`IngestController::createDraft`).
 - **Decision (2026-06-24):** make `dialect_region.code` / `ConfigSeeder::dialectRegions()` the
   canonical source of truth now, and correct the stale CLAUDE.md claim. Isolate dialect-code access
   behind a single seam (a `DialectCodeProvider` or equivalent, one place that returns the valid codes
@@ -501,8 +535,9 @@ Recon only, no code written. Findings:
   read path.
 - **Dialect codes (correction + decision):** `jonesrussell/indigenous-taxonomy` is NOT installed; the
   installed `waaseyaa/taxonomy` is a generic Term/Vocabulary framework with no dialect codes. The real
-  dialect contract is `ConfigSeeder::dialectRegions()` (10 codes; `oji-east` and `oji-ottawa` cover the
-  RHT nations). The CLAUDE.md "shared contract" claim is stale. Decided this pass: make
+  dialect contract is `ConfigSeeder::dialectRegions()` (the RHT nations were later consolidated under
+  one `nishnaabemwin` grouping, derived from the community code registry, in #902). The CLAUDE.md
+  "shared contract" claim is stale. Decided this pass: make
   `dialect_region.code` canonical now behind a single `DialectCodeProvider` seam (so the package can
   back it later without rewriting callers), correct the CLAUDE.md claim, defer publishing the package.
   NorthCloud cross-checked and defines no dialect codes (free-text `Language` only), so there is no

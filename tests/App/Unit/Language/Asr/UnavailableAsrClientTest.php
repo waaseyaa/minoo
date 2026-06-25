@@ -27,7 +27,7 @@ final class UnavailableAsrClientTest extends TestCase
     #[Test]
     public function transcribe_fails_closed_with_a_consent_gate_message(): void
     {
-        $result = (new UnavailableAsrClient())->transcribe('corpus:reel-1', 'oji-east');
+        $result = (new UnavailableAsrClient())->transcribe('corpus:reel-1', 'oj-x-sagamok');
 
         self::assertFalse($result->ok);
         self::assertSame('', $result->transcript);

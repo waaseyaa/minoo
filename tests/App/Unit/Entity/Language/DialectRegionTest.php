@@ -16,11 +16,11 @@ final class DialectRegionTest extends TestCase
     public function it_creates_with_code_and_name(): void
     {
         $region = new DialectRegion([
-            'code' => 'oji-east',
+            'code' => 'nishnaabemwin',
             'name' => 'Nishnaabemwin',
         ]);
 
-        $this->assertSame('oji-east', $region->id());
+        $this->assertSame('nishnaabemwin', $region->id());
         $this->assertSame('Nishnaabemwin', $region->label());
         $this->assertSame('dialect_region', $region->getEntityTypeId());
     }
@@ -29,7 +29,7 @@ final class DialectRegionTest extends TestCase
     public function it_defaults_optional_fields(): void
     {
         $region = new DialectRegion([
-            'code' => 'oji-east',
+            'code' => 'nishnaabemwin',
             'name' => 'Nishnaabemwin',
         ]);
 
@@ -46,7 +46,7 @@ final class DialectRegionTest extends TestCase
     {
         $geojson = '{"type":"Polygon","coordinates":[[[-81.0,46.0],[-80.0,46.0],[-80.0,47.0],[-81.0,47.0],[-81.0,46.0]]]}';
         $region = new DialectRegion([
-            'code' => 'oji-east',
+            'code' => 'nishnaabemwin',
             'name' => 'Nishnaabemwin',
             'display_name' => 'Eastern Ojibwe',
             'language_family' => 'algonquian',

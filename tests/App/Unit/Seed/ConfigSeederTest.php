@@ -89,8 +89,8 @@ final class ConfigSeederTest extends TestCase
 
         $this->assertNotEmpty($regions);
 
-        // First entry should be Eastern Ojibwe (home dialect)
-        $this->assertSame('oji-east', $regions[0]['code']);
+        // First entry should be Nishnaabemwin (the home grouping, Eastern Ojibwe)
+        $this->assertSame('nishnaabemwin', $regions[0]['code']);
         $this->assertSame('Nishnaabemwin', $regions[0]['name']);
         $this->assertSame('Eastern Ojibwe', $regions[0]['display_name']);
         $this->assertSame('algonquian', $regions[0]['language_family']);
