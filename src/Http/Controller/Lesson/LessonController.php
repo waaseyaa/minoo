@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controller\Lesson;
 
 use App\Http\View\LayoutTwigContext;
+use App\Lesson\LessonAssembler;
 use App\Lesson\LessonCatalog;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
-use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
@@ -45,6 +45,7 @@ final class LessonController
     /** Landing: the list of available lessons. */
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
+        $assembler = new LessonAssembler($this->entityTypeManager);
         $lessons = [];
         foreach ($this->lessons() as $lesson) {
             $def = $this->lessonDefinition($lesson['config']);
@@ -53,7 +54,7 @@ final class LessonController
                 'title' => $def['title'],
                 'slug' => $lesson['slug'],
                 'url' => '/lessons/' . $lesson['slug'],
-                'count' => $this->lessonItemCount($def),
+                'count' => $assembler->assemble($lesson['slug'])['total'],
             ];
         }
 
@@ -79,44 +80,17 @@ final class LessonController
         }
 
         $def = $this->lessonDefinition($lesson['config']);
-        $corpus = $this->corpusRowsBySourceId();
-
-        $groups = [];
-        $total = 0;
-        foreach ($def['groups'] as $group) {
-            $items = [];
-            foreach ($group['items'] as $item) {
-                $row = $corpus['corpus:' . $item['id']] ?? null;
-                if (!$row instanceof EntityInterface) {
-                    // Corpus row not present: skip rather than invent a card.
-                    continue;
-                }
-                // Steven's teaching reel, when a web-optimized video exists for
-                // this row (#873). Cards without one fall back to thumb + audio.
-                $hasVideo = (string) ($row->get('video_url') ?? '') !== '';
-                $items[] = [
-                    'id' => $item['id'],
-                    // Anishinaabemowin, verbatim from the migrated corpus. Never altered.
-                    'ojibwe' => (string) $row->get('ojibwe_text'),
-                    'english' => $item['english'],
-                    'thumb' => '/lesson/media/thumb/' . $item['id'],
-                    'audio' => '/lesson/media/audio/' . $item['id'],
-                    'video' => $hasVideo ? '/lessons/media/video/' . $item['id'] : null,
-                    'source_url' => (string) $row->get('source_url'),
-                ];
-                ++$total;
-            }
-            if ($items !== []) {
-                $groups[] = ['label' => $group['label'], 'items' => $items];
-            }
-        }
+        // Cards come from the corpus rows ASSIGNED to this lesson (published,
+        // public, curated), grouped + ordered dynamically (#912). "Add to lesson"
+        // now actually surfaces a word here.
+        $assembled = (new LessonAssembler($this->entityTypeManager))->assemble($lesson['slug']);
 
         $html = $this->twig->render('pages/lesson/lesson1.html.twig', LayoutTwigContext::withAccount($account, [
             'path' => '/lessons/' . $lesson['slug'],
             'lesson_title' => $def['title'],
             'lesson_slug' => $lesson['slug'],
-            'groups' => $groups,
-            'total' => $total,
+            'groups' => $assembled['groups'],
+            'total' => $assembled['total'],
             'steven_url' => self::STEVEN_PROFILE_URL,
         ]));
 
@@ -151,28 +125,6 @@ final class LessonController
         ]);
     }
 
-    /** @return array<string, EntityInterface> keyed by source_sentence_id */
-    private function corpusRowsBySourceId(): array
-    {
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
-        // Public surface: only published, consent-public corpus rows. Guard the
-        // empty set so loadMultiple([]) cannot dump the whole table.
-        $ids = $storage->getQuery()->accessCheck(false)
-            ->condition('status', 1)
-            ->condition('consent_public', 1)
-            ->execute();
-        if ($ids === []) {
-            return [];
-        }
-
-        $rows = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
-            $rows[(string) $entity->get('source_sentence_id')] = $entity;
-        }
-
-        return $rows;
-    }
-
     /**
      * The lesson registry, from the shared catalogue ({@see LessonCatalog}) so
      * the Anokii Curate "add to a lesson" action reads the same slugs.
@@ -197,42 +149,27 @@ final class LessonController
     }
 
     /**
-     * @param array{title: string, groups: list<array{label: string, items: list<array{id: string, english: string}>}>} $def
-     */
-    private function lessonItemCount(array $def): int
-    {
-        $count = 0;
-        foreach ($def['groups'] as $group) {
-            $count += count($group['items']);
-        }
-
-        return $count;
-    }
-
-    /**
-     * @return array{title: string, groups: list<array{label: string, items: list<array{id: string, english: string}>}>}
+     * Lesson metadata only (title + slug); items are dynamic now (#912).
+     *
+     * @return array{title: string, slug: string}
      */
     private function lessonDefinition(string $configFile): array
     {
-        /** @var array{title: string, groups: list<array{label: string, items: list<array{id: string, english: string}>}>} $def */
+        /** @var array{title: string, slug: string} $def */
         $def = require dirname(__DIR__, 4) . '/config/' . $configFile;
 
         return $def;
     }
 
-    /** Every lesson item id across all lessons (the media route's allowlist). @return list<string> */
+    /**
+     * Corpus ids servable through the lesson media endpoint: every published,
+     * public, curated row assigned to a known lesson (#912).
+     *
+     * @return list<string>
+     */
     private function allowedIds(): array
     {
-        $ids = [];
-        foreach ($this->lessons() as $lesson) {
-            foreach ($this->lessonDefinition($lesson['config'])['groups'] as $group) {
-                foreach ($group['items'] as $item) {
-                    $ids[] = $item['id'];
-                }
-            }
-        }
-
-        return $ids;
+        return (new LessonAssembler($this->entityTypeManager))->allowedMediaIds(LessonCatalog::slugs());
     }
 
     private function corpusPath(): string

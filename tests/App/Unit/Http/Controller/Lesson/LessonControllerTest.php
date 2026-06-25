@@ -13,22 +13,32 @@ use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Storage\EntityQueryInterface;
+use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 /**
  * Security-focused tests for the public lesson media endpoint: the kind/id
- * path allowlist (only thumb|audio for the 16 Lesson 1 ids, no traversal).
- * These run before any filesystem access, so they need no corpus directory or
- * database.
+ * path allowlist (only thumb|audio for corpus ids actually assigned to a lesson,
+ * no traversal). The allowlist is now dynamic (#912), so the ETM is mocked to
+ * return an empty assigned set: every probed id is therefore rejected.
  */
 #[CoversClass(LessonController::class)]
 final class LessonControllerTest extends TestCase
 {
     private function controller(): LessonController
     {
-        return new LessonController(
-            $this->createMock(EntityTypeManager::class),
-            new Environment(new ArrayLoader([])),
-        );
+        // Dynamic allowlist queries example_sentence; mock the chain to return no
+        // assigned rows so the allowlist is empty (every id below is rejected).
+        $query = $this->createMock(EntityQueryInterface::class);
+        $query->method('accessCheck')->willReturnSelf();
+        $query->method('condition')->willReturnSelf();
+        $query->method('execute')->willReturn([]);
+        $storage = $this->createMock(EntityStorageInterface::class);
+        $storage->method('getQuery')->willReturn($query);
+        $etm = $this->createMock(EntityTypeManager::class);
+        $etm->method('getStorage')->willReturn($storage);
+
+        return new LessonController($etm, new Environment(new ArrayLoader([])));
     }
 
     private function account(bool $admin): AccountInterface
