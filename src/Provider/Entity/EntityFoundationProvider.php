@@ -140,6 +140,11 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 // Lessons are static config keyed by slug; this records the
                 // association set in the Curate tab. Lives in the _data blob.
                 'lesson_slug' => ['type' => 'string', 'label' => 'Lesson', 'description' => 'Slug of the lesson this utterance was curated into (e.g. the-kitchen).', 'weight' => 32],
+                // Dynamic lesson presentation (#912): a lesson renders its assigned,
+                // published+curated rows grouped by lesson_group and ordered by
+                // lesson_weight. Both live in the _data blob.
+                'lesson_group' => ['type' => 'string', 'label' => 'Lesson Section', 'description' => 'Section heading within the lesson (e.g. Utensils). Empty groups under a default heading.', 'weight' => 33],
+                'lesson_weight' => ['type' => 'integer', 'label' => 'Lesson Order', 'description' => 'Sort order within the lesson; lower first.', 'weight' => 34, 'default' => 0],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],

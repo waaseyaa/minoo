@@ -34,7 +34,16 @@ final class LessonVideoTest extends HttpKernelTestCase
         self::$previousCorpusPath = $prev === false ? null : $prev;
         putenv('MINOO_CORPUS_PATH=' . self::$corpusDir);
 
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $etm = self::$kernel->getEntityTypeManager();
+        $storage = $etm->getStorage('example_sentence');
+        $entries = $etm->getStorage('dictionary_entry');
+
+        // Lessons are dynamic (#912): a card shows only when its row is published,
+        // public, curated (has a dictionary_entry) and assigned to the lesson.
+        $deBowl = $entries->create(['word' => 'bowl-oji', 'slug' => 'bowl-oji', 'definition' => '["bowl"]', 'status' => 1, 'consent_public' => 1, 'created_at' => time(), 'updated_at' => time()]);
+        $entries->save($deBowl);
+        $deSoup = $entries->create(['word' => 'soup-bowl-oji', 'slug' => 'soup-bowl-oji', 'definition' => '["soup bowl"]', 'status' => 1, 'consent_public' => 1, 'created_at' => time(), 'updated_at' => time()]);
+        $entries->save($deSoup);
 
         // Has a reel (Lesson 1 card).
         $withVideo = $storage->create([
@@ -44,6 +53,10 @@ final class LessonVideoTest extends HttpKernelTestCase
             'thumbnail_url' => '/media/corpus/thumb/sb-005',
             'audio_url' => '/media/corpus/audio/sb-005',
             'video_url' => '/media/corpus/video/sb-005',
+            'dictionary_entry_id' => (int) $deBowl->id(),
+            'lesson_slug' => 'the-kitchen',
+            'lesson_group' => 'Dishes and containers',
+            'lesson_weight' => 0,
             'consent_public' => 1,
             'status' => 1,
             'created_at' => time(),
@@ -59,6 +72,10 @@ final class LessonVideoTest extends HttpKernelTestCase
             'thumbnail_url' => '/media/corpus/thumb/sb-017',
             'audio_url' => '/media/corpus/audio/sb-017',
             'video_url' => '',
+            'dictionary_entry_id' => (int) $deSoup->id(),
+            'lesson_slug' => 'the-kitchen',
+            'lesson_group' => 'Dishes and containers',
+            'lesson_weight' => 1,
             'consent_public' => 1,
             'status' => 1,
             'created_at' => time(),
