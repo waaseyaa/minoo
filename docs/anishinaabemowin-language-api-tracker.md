@@ -43,6 +43,41 @@ These were handed down with the recon brief and are not up for re-litigation her
    serves inference only. Training needs a GPU host that is not the Pi.
 5. Dialect and consent are tagged on every record.
 
+## Language tags (single ecosystem contract)
+
+This is the canonical language-tag contract for the whole ecosystem: Minoo, Anokii,
+rhtcircle, and the CMS all consume it. It is BCP 47, canonical everywhere.
+
+- **Three layers, with fallback.** The language is `oj`, whose autonym is
+  "Anishinaabemowin" (never an ISO exonym). A tag may carry an optional dialect
+  middle code (an ISO 639-3 subtag, e.g. `oj-ojg`), and an optional community
+  provenance as a BCP 47 private-use subtag `-x-<community>` (e.g. `oj-x-sagamok`).
+  Fallback runs `oj-x-sagamok -> oj -> en`.
+- **The TM retains community granularity.** Translation-memory rows key on the
+  full tag (`oj-x-sagamok`), never on a dialect-only code. The lookup fallback is
+  exact tag, then any row in the same DERIVED dialect grouping, then the
+  tag-agnostic row (`oj` or empty). A dialect grouping is never stored or keyed
+  on.
+- **Dialect groupings are derived, not stored.** A grouping such as Nishnaabemwin
+  (which straddles otw and ojg) is computed from the tag at read time, never
+  written in its place. Sagamok derives Nishnaabemwin / Eastern Ojibwe, with the
+  human label "Nishnaabemwin (Sagamok)".
+- **Sagamok corpus is tagged `oj-x-sagamok`** wherever provenance is set
+  (example_sentence, translation memory).
+- **Implementation seam (app-side, Minoo).** `App\Language\LanguageTag` parses and
+  validates a tag; `App\Language\DialectCodeProvider` validates, derives the
+  grouping (`dialectFor`/`dialectCodeForTag`), and produces labels, backed by
+  `App\Seed\ConfigSeeder::dialectRegions()` (groupings) and
+  `communityDialects()` (community membership). `/api/lang` accepts and returns
+  tags. No framework change is required: the entity `langcode` stays `oj` (the
+  framework already falls back `oj -> en`), and the community layer lives in
+  Minoo's own `language_tag` field resolved by Minoo's own lookup. See
+  `docs/anokii-parity-and-language-module.md` for the module seam.
+- **Private-use length note.** BCP 47 private-use subtags are at most 8 characters
+  each, so long community slugs (e.g. mississauga, thessalon) need an assigned
+  short community code before they can be tagged; that is an ecosystem data
+  decision, deferred. `sagamok` fits as-is.
+
 ## Governance gate (Phase 0)
 
 Nothing derived from Steven Bennett's paired audio corpus may be published, and no model

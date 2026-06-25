@@ -9,13 +9,19 @@ use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
 
 /**
- * The translation-memory lookup contract (issue #894, tracker Section C):
- * exact match first, then fuzzy, then write or increment a gap-log row on a miss.
+ * The translation-memory lookup contract (issues #894, #898): exact match first,
+ * then fuzzy, then write or increment a gap-log row on a miss.
  *
- * Reads are consent-gated through the access-checked query (the request account
- * is bound, so LanguageAccessPolicy filters to published, public-consent rows).
- * The gap-log write is a system-context path (operational miss log, admin-only),
- * so it binds no account and opts out of per-row access checks; see
+ * Keyed on the full BCP 47 language tag (`language_tag`, e.g. `oj-x-sagamok`), so
+ * community granularity is never lost. The exact fallback order is: the requested
+ * tag, then any row in the same DERIVED dialect grouping, then the tag-agnostic
+ * language row. A dialect grouping is never stored or keyed on; it is derived from
+ * the tag by {@see DialectCodeProvider}.
+ *
+ * Reads are consent-gated through the access-checked query (the request account is
+ * bound, so LanguageAccessPolicy filters to published, public-consent rows). The
+ * gap-log write is a system-context path (operational miss log, admin-only), so it
+ * binds no account and opts out of per-row access checks; see
  * docs/security/sql-entity-query-access-check-bypass-audit.md.
  */
 final class TranslationMemoryService
@@ -24,46 +30,53 @@ final class TranslationMemoryService
     public const int FUZZY_THRESHOLD = 70;
 
     /**
-     * Cap on candidate rows scanned for fuzzy matching. A perf guard, not a
-     * silent truncation of correctness: exact lookup is hash-indexed and never
-     * capped; only the fuzzy fallback bounds its in-PHP similarity scan. A real
-     * deployment would back this with a trigram index.
+     * Cap on candidate rows scanned for fuzzy matching. A perf guard, not a silent
+     * truncation of correctness: exact lookup is hash-indexed and never capped;
+     * only the fuzzy fallback bounds its in-PHP similarity scan. A real deployment
+     * would back this with a trigram index.
      */
     private const int FUZZY_SCAN_LIMIT = 200;
 
-    public function __construct(private readonly EntityTypeManager $entityTypeManager)
-    {
+    /** Language tags treated as tag-agnostic (no community or dialect). */
+    private const array AGNOSTIC_TAGS = ['', 'oj'];
+
+    public function __construct(
+        private readonly EntityTypeManager $entityTypeManager,
+        private readonly DialectCodeProvider $dialects,
+    ) {
     }
 
     /**
-     * Look up an English string for the given dialect (or dialect-agnostic when
+     * Look up an English string for the given BCP 47 tag (or tag-agnostic when
      * null): exact, then fuzzy, then log the gap.
      *
      * @return array<string, mixed>
      */
-    public function lookup(string $english, ?string $dialect, AccountInterface $account): array
+    public function lookup(string $english, ?string $tag, AccountInterface $account): array
     {
         $normalized = self::normalize($english);
         if ($normalized === '') {
             return ['match_type' => 'invalid', 'query' => $english];
         }
 
-        $exact = $this->findExact($normalized, $dialect, $account);
+        $tag = $tag !== null && $tag !== '' ? $tag : null;
+
+        $exact = $this->findExact($normalized, $tag, $account);
         if ($exact !== null) {
             return $this->hit('exact', $exact, null);
         }
 
-        $fuzzy = $this->findFuzzy($normalized, $dialect, $account);
+        $fuzzy = $this->findFuzzy($normalized, $tag, $account);
         if ($fuzzy !== null) {
             return $this->hit('fuzzy', $fuzzy['entity'], $fuzzy['score']);
         }
 
-        $this->logGap($normalized, $english, $dialect);
+        $this->logGap($normalized, $english, $tag);
 
         return [
             'match_type' => 'miss',
             'query' => $english,
-            'dialect' => $dialect,
+            'tag' => $tag,
             'logged' => true,
         ];
     }
@@ -87,7 +100,7 @@ final class TranslationMemoryService
         return hash('sha256', $normalized);
     }
 
-    private function findExact(string $normalized, ?string $dialect, AccountInterface $account): ?EntityInterface
+    private function findExact(string $normalized, ?string $tag, AccountInterface $account): ?EntityInterface
     {
         $storage = $this->entityTypeManager->getStorage('translation_memory');
         $ids = $storage->getQuery()->setAccount($account)
@@ -99,20 +112,21 @@ final class TranslationMemoryService
             return null;
         }
 
-        return $this->pickByDialect(array_values($storage->loadMultiple($ids)), $dialect);
+        return $this->pickByTag(array_values($storage->loadMultiple($ids)), $tag);
     }
 
     /**
      * @return array{entity: EntityInterface, score: int}|null
      */
-    private function findFuzzy(string $normalized, ?string $dialect, AccountInterface $account): ?array
+    private function findFuzzy(string $normalized, ?string $tag, AccountInterface $account): ?array
     {
         $storage = $this->entityTypeManager->getStorage('translation_memory');
         $query = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1);
-        if ($dialect !== null && $dialect !== '') {
-            $query->condition('dialect_code', $dialect);
+        if ($tag !== null) {
+            // Community-scoped fuzzy: a near-spelling within the same tag.
+            $query->condition('language_tag', $tag);
         }
         $ids = $query->execute();
         if ($ids === []) {
@@ -139,31 +153,49 @@ final class TranslationMemoryService
     }
 
     /**
+     * Exact tag, then same derived dialect grouping, then the tag-agnostic row.
+     *
      * @param list<EntityInterface> $rows
      */
-    private function pickByDialect(array $rows, ?string $dialect): ?EntityInterface
+    private function pickByTag(array $rows, ?string $tag): ?EntityInterface
     {
         if ($rows === []) {
             return null;
         }
-        $dialect = $dialect !== null && $dialect !== '' ? $dialect : null;
 
-        if ($dialect !== null) {
+        if ($tag !== null) {
+            // 1. Exact tag.
             foreach ($rows as $row) {
-                if ((string) $row->get('dialect_code') === $dialect) {
+                if ((string) $row->get('language_tag') === $tag) {
                     return $row;
+                }
+            }
+
+            // 2. Same derived dialect grouping (another community, never a
+            // dialect-only stored code).
+            $grouping = $this->dialects->dialectCodeForTag($tag);
+            if ($grouping !== null) {
+                foreach ($rows as $row) {
+                    $rowTag = (string) $row->get('language_tag');
+                    if (in_array($rowTag, self::AGNOSTIC_TAGS, true)) {
+                        continue;
+                    }
+                    if ($this->dialects->dialectCodeForTag($rowTag) === $grouping) {
+                        return $row;
+                    }
                 }
             }
         }
 
+        // 3. Tag-agnostic.
         foreach ($rows as $row) {
-            if ((string) $row->get('dialect_code') === '') {
+            if (in_array((string) $row->get('language_tag'), self::AGNOSTIC_TAGS, true)) {
                 return $row;
             }
         }
 
-        // A dialect was requested but only other-dialect rows exist: no match.
-        return $dialect === null ? $rows[0] : null;
+        // A tag was requested but only other-grouping rows exist: no match.
+        return $tag === null ? $rows[0] : null;
     }
 
     /**
@@ -171,12 +203,15 @@ final class TranslationMemoryService
      */
     private function hit(string $type, EntityInterface $entity, ?int $matchScore): array
     {
-        $dialect = (string) $entity->get('dialect_code');
+        $rowTag = (string) $entity->get('language_tag');
+        $grouping = $rowTag !== '' ? $this->dialects->dialectFor($rowTag) : null;
 
         return array_filter([
             'match_type' => $type,
             'translation' => (string) $entity->get('translation'),
-            'dialect' => $dialect !== '' ? $dialect : null,
+            'tag' => $rowTag !== '' ? $rowTag : null,
+            'dialect' => $grouping !== null ? $grouping['display_name'] : null,
+            'label' => $rowTag !== '' ? $this->dialects->label($rowTag) : null,
             'confidence' => (int) $entity->get('confidence'),
             'needs_speaker_review' => (int) $entity->get('needs_speaker_review') === 1,
             'source' => (string) $entity->get('source_en'),
@@ -184,11 +219,11 @@ final class TranslationMemoryService
         ], static fn (mixed $value): bool => $value !== null);
     }
 
-    private function logGap(string $normalized, string $original, ?string $dialect): void
+    private function logGap(string $normalized, string $original, ?string $tag): void
     {
         $storage = $this->entityTypeManager->getStorage('tm_gap_log');
         $hash = self::hash($normalized);
-        $dialectCode = $dialect !== null && $dialect !== '' ? $dialect : '';
+        $tagValue = $tag ?? '';
         $now = time();
 
         // System-context write: the gap log is admin-only and dedup needs no
@@ -196,7 +231,7 @@ final class TranslationMemoryService
         // See docs/security/sql-entity-query-access-check-bypass-audit.md.
         $ids = $storage->getQuery()->accessCheck(false)
             ->condition('source_hash', $hash)
-            ->condition('dialect_code', $dialectCode)
+            ->condition('language_tag', $tagValue)
             ->execute();
 
         if ($ids !== []) {
@@ -214,7 +249,7 @@ final class TranslationMemoryService
         $gap = $storage->create([
             'source_en' => $original,
             'source_hash' => $hash,
-            'dialect_code' => $dialectCode,
+            'language_tag' => $tagValue,
             'lookup_type' => 'exact_miss',
             'request_count' => 1,
             'last_requested_at' => $now,

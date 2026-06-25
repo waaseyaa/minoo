@@ -25,7 +25,7 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
         $tm = $storage->create([
             'source_en' => 'bear',
             'source_hash' => hash('sha256', 'bear'),
-            'dialect_code' => 'oji-east',
+            'language_tag' => 'oj-x-sagamok',
             'translation' => 'makwa',
             'confidence' => 80,
             'created_at' => time(),
@@ -37,7 +37,7 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
         self::assertNotNull($loaded);
         self::assertSame('bear', $loaded->get('source_en'));
         self::assertSame('makwa', $loaded->get('translation'));
-        self::assertSame('oji-east', $loaded->get('dialect_code'));
+        self::assertSame('oj-x-sagamok', $loaded->get('language_tag'));
         self::assertSame(1, $loaded->get('needs_speaker_review'), 'Default review flag persists.');
     }
 
@@ -49,7 +49,7 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
         $gap = $storage->create([
             'source_en' => 'snowmobile',
             'source_hash' => hash('sha256', 'snowmobile'),
-            'dialect_code' => 'oji-east',
+            'language_tag' => 'oj-x-sagamok',
             'lookup_type' => 'exact_miss',
             'request_count' => 3,
             'last_requested_at' => time(),

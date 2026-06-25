@@ -146,4 +146,36 @@ final class ConfigSeeder
             ],
         ];
     }
+
+    /**
+     * Community-to-dialect membership: maps a BCP 47 private-use community subtag
+     * (the `<community>` in `oj-x-<community>`) to its dialect grouping code in
+     * {@see dialectRegions()}. Used to DERIVE the dialect grouping on read (the
+     * stored language tag is the full community tag; the grouping is never stored
+     * in its place).
+     *
+     * North shore of Lake Huron nations are Nishnaabemwin / Eastern Ojibwe
+     * (`oji-east`; consistent with the `canada:ontario:north-shore-huron` region
+     * on that dialect).
+     *
+     * Only communities whose slug is a valid BCP 47 private-use sequence (each
+     * hyphen-separated subtag at most 8 characters) appear here, since the tag is
+     * `oj-x-<community>`. Long-slug nations (e.g. mississauga, thessalon,
+     * batchewana, atikameksheng, wahnapitae) need an assigned short community code
+     * before they can be tagged; that is an ecosystem data decision, deferred, so
+     * they are left out rather than mapped to an unusable tag. Manitoulin and
+     * Georgian Bay communities also need per-community dialect confirmation. An
+     * unmapped community is still a well-formed tag; it just derives no grouping
+     * yet, rather than asserting a dialect the data does not support.
+     *
+     * @return array<string, string>
+     */
+    public static function communityDialects(): array
+    {
+        return [
+            'sagamok' => 'oji-east',
+            'serpent-river' => 'oji-east',
+            'garden-river' => 'oji-east',
+        ];
+    }
 }

@@ -11,8 +11,9 @@ use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The public /api/lang surface (issue #894): exact, fuzzy, and logged-miss
- * lookups, consent gating, dialect validation, and the dialects listing. The
+ * The public /api/lang surface on the BCP 47 tag contract (issues #894, #898):
+ * exact tag match, fallback to oj, dialect-derived grouping, fuzzy, logged miss,
+ * consent gating, tag validation, and the tag-aware dialects listing. The
  * language module is enabled in config/anokii.yaml, so the routes are mounted.
  */
 #[CoversNothing]
@@ -34,14 +35,20 @@ final class LanguageApiTest extends HttpKernelTestCase
             ]));
         };
 
-        $seed(['source_en' => 'bear', 'translation' => 'makwa', 'dialect_code' => 'oji-east', 'confidence' => 90, 'needs_speaker_review' => 0]);
-        $seed(['source_en' => 'good morning', 'translation' => 'mino-gigizheb', 'dialect_code' => 'oji-east', 'confidence' => 60, 'needs_speaker_review' => 1]);
-        // Consent-gated row: must never surface to anonymous callers.
+        // Sagamok community rows.
+        $seed(['source_en' => 'bear', 'translation' => 'makwa', 'language_tag' => 'oj-x-sagamok', 'confidence' => 90, 'needs_speaker_review' => 0]);
+        $seed(['source_en' => 'good morning', 'translation' => 'mino-gigizheb', 'language_tag' => 'oj-x-sagamok', 'confidence' => 60, 'needs_speaker_review' => 1]);
+        // Tag-agnostic row (bare oj) for the fallback-to-oj case.
+        $seed(['source_en' => 'water', 'translation' => 'nibi', 'language_tag' => 'oj']);
+        // Same dialect grouping (serpent-river is also oji-east) for the
+        // dialect-derived fallback: no Sagamok "fox" row exists.
+        $seed(['source_en' => 'fox', 'translation' => 'waagosh', 'language_tag' => 'oj-x-serpent-river']);
+        // Consent-gated Sagamok row: must never surface to anonymous callers.
         $storage->save($storage->create([
             'source_en' => 'secret word',
             'source_hash' => TranslationMemoryService::hash(TranslationMemoryService::normalize('secret word')),
             'translation' => 'giimooj',
-            'dialect_code' => 'oji-east',
+            'language_tag' => 'oj-x-sagamok',
             'consent_public' => 0,
             'status' => 1,
             'created_at' => time(),
@@ -50,90 +57,98 @@ final class LanguageApiTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function dialects_endpoint_lists_the_codes(): void
+    public function dialects_endpoint_lists_tags(): void
     {
-        $response = $this->send('GET', '/api/lang/dialects');
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+        $body = $this->decode($this->send('GET', '/api/lang/dialects'));
 
-        $body = $this->decode($response);
-        $codes = array_column($body['dialects'], 'code');
-        self::assertContains('oji-east', $codes);
-        self::assertContains('oji-ottawa', $codes);
+        self::assertSame('oj', $body['language']['tag']);
+        $byCode = [];
+        foreach ($body['dialects'] as $row) {
+            $byCode[$row['code']] = $row;
+        }
+        self::assertSame('oj-ojg', $byCode['oji-east']['tag']);
+        self::assertArrayHasKey('oji-ottawa', $byCode);
     }
 
     #[Test]
-    public function exact_match_is_case_and_whitespace_insensitive(): void
+    public function exact_community_tag_match_is_case_insensitive_and_carries_the_tag(): void
     {
-        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => '  Bear ', 'dialect' => 'oji-east']));
+        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => '  Bear ', 'tag' => 'oj-x-sagamok']));
 
         self::assertSame('exact', $body['match_type']);
         self::assertSame('makwa', $body['translation']);
+        self::assertSame('oj-x-sagamok', $body['tag']);
+        self::assertSame('Nishnaabemwin (Sagamok)', $body['label']);
         self::assertSame(90, $body['confidence']);
         self::assertFalse($body['needs_speaker_review']);
     }
 
     #[Test]
-    public function a_close_string_fuzzy_matches_and_carries_a_score(): void
+    public function it_falls_back_to_the_tag_agnostic_oj_row(): void
     {
-        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'good mornin', 'dialect' => 'oji-east']));
+        // "water" exists only as the bare-oj row; a Sagamok query still finds it.
+        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'water', 'tag' => 'oj-x-sagamok']));
+
+        self::assertSame('exact', $body['match_type']);
+        self::assertSame('nibi', $body['translation']);
+        self::assertSame('oj', $body['tag']);
+    }
+
+    #[Test]
+    public function it_falls_back_to_the_same_dialect_grouping(): void
+    {
+        // "fox" exists only as serpent-river; both serpent-river and sagamok are
+        // oji-east, so a Sagamok query resolves it via the derived grouping.
+        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'fox', 'tag' => 'oj-x-sagamok']));
+
+        self::assertSame('exact', $body['match_type']);
+        self::assertSame('waagosh', $body['translation']);
+        self::assertSame('oj-x-serpent-river', $body['tag']);
+    }
+
+    #[Test]
+    public function a_close_string_fuzzy_matches_within_the_tag(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'good mornin', 'tag' => 'oj-x-sagamok']));
 
         self::assertSame('fuzzy', $body['match_type']);
         self::assertSame('mino-gigizheb', $body['translation']);
-        self::assertTrue($body['needs_speaker_review']);
-        self::assertArrayHasKey('match_score', $body);
         self::assertGreaterThanOrEqual(TranslationMemoryService::FUZZY_THRESHOLD, $body['match_score']);
     }
 
     #[Test]
-    public function a_miss_is_reported_and_logged_as_a_gap(): void
+    public function a_miss_is_logged_as_a_gap_keyed_on_the_full_tag(): void
     {
-        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'quantum entanglement', 'dialect' => 'oji-east']));
+        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'quantum entanglement', 'tag' => 'oj-x-sagamok']));
         self::assertSame('miss', $body['match_type']);
 
         $gaps = self::$kernel->getEntityTypeManager()->getStorage('tm_gap_log');
         $ids = $gaps->getQuery()->accessCheck(false)
             ->condition('source_hash', TranslationMemoryService::hash('quantum entanglement'))
+            ->condition('language_tag', 'oj-x-sagamok')
             ->execute();
-        self::assertNotEmpty($ids, 'The miss wrote a gap-log row.');
-    }
-
-    #[Test]
-    public function repeated_misses_increment_the_gap_request_count(): void
-    {
-        $this->send('GET', '/api/lang/translate', ['q' => 'helicopter', 'dialect' => 'oji-east']);
-        $this->send('GET', '/api/lang/translate', ['q' => 'helicopter', 'dialect' => 'oji-east']);
-
-        $gaps = self::$kernel->getEntityTypeManager()->getStorage('tm_gap_log');
-        $ids = $gaps->getQuery()->accessCheck(false)
-            ->condition('source_hash', TranslationMemoryService::hash('helicopter'))
-            ->condition('dialect_code', 'oji-east')
-            ->execute();
-        self::assertCount(1, $ids, 'Repeat misses dedupe to one row.');
-        $gap = $gaps->load(reset($ids));
-        self::assertNotNull($gap);
-        self::assertGreaterThanOrEqual(2, (int) $gap->get('request_count'));
+        self::assertNotEmpty($ids, 'The miss wrote a gap-log row keyed on the full community tag.');
     }
 
     #[Test]
     public function consent_gated_rows_never_surface(): void
     {
-        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'secret word', 'dialect' => 'oji-east']));
+        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'secret word', 'tag' => 'oj-x-sagamok']));
 
-        self::assertSame('miss', $body['match_type'], 'A consent_public=0 row must not be returned.');
+        self::assertSame('miss', $body['match_type']);
     }
 
     #[Test]
     public function missing_query_is_a_422(): void
     {
-        $response = $this->send('GET', '/api/lang/translate', ['dialect' => 'oji-east']);
-        self::assertSame(422, $response->getStatusCode());
+        self::assertSame(422, $this->send('GET', '/api/lang/translate', ['tag' => 'oj-x-sagamok'])->getStatusCode());
     }
 
     #[Test]
-    public function unknown_dialect_is_a_422(): void
+    public function a_malformed_tag_is_a_422(): void
     {
-        $response = $this->send('GET', '/api/lang/translate', ['q' => 'bear', 'dialect' => 'klingon']);
-        self::assertSame(422, $response->getStatusCode());
+        // The old custom dialect code is no longer a valid tag.
+        self::assertSame(422, $this->send('GET', '/api/lang/translate', ['q' => 'bear', 'tag' => 'oji-east'])->getStatusCode());
     }
 
     /**

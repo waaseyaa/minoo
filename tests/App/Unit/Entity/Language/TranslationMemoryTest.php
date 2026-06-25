@@ -13,17 +13,17 @@ use PHPUnit\Framework\TestCase;
 final class TranslationMemoryTest extends TestCase
 {
     #[Test]
-    public function it_creates_with_source_translation_and_dialect(): void
+    public function it_creates_with_source_translation_and_tag(): void
     {
         $tm = new TranslationMemory([
             'source_en' => 'bear',
             'translation' => 'makwa',
-            'dialect_code' => 'oji-east',
+            'language_tag' => 'oj-x-sagamok',
         ]);
 
         $this->assertSame('bear', $tm->get('source_en'));
         $this->assertSame('makwa', $tm->get('translation'));
-        $this->assertSame('oji-east', $tm->get('dialect_code'));
+        $this->assertSame('oj-x-sagamok', $tm->get('language_tag'));
         $this->assertSame('translation_memory', $tm->getEntityTypeId());
     }
 

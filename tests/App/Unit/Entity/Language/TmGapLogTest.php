@@ -17,12 +17,12 @@ final class TmGapLogTest extends TestCase
     {
         $gap = new TmGapLog([
             'source_en' => 'snowmobile',
-            'dialect_code' => 'oji-east',
+            'language_tag' => 'oj-x-sagamok',
             'lookup_type' => 'exact_miss',
         ]);
 
         $this->assertSame('snowmobile', $gap->get('source_en'));
-        $this->assertSame('oji-east', $gap->get('dialect_code'));
+        $this->assertSame('oj-x-sagamok', $gap->get('language_tag'));
         $this->assertSame('exact_miss', $gap->get('lookup_type'));
         $this->assertSame('tm_gap_log', $gap->getEntityTypeId());
     }

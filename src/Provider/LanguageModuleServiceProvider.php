@@ -44,7 +44,10 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
         // the /api/lang controller. Reads are consent-gated at the entity layer.
         $this->singleton(
             TranslationMemoryService::class,
-            fn (): TranslationMemoryService => new TranslationMemoryService($this->resolve(EntityTypeManager::class)),
+            fn (): TranslationMemoryService => new TranslationMemoryService(
+                $this->resolve(EntityTypeManager::class),
+                $this->resolve(DialectCodeProvider::class),
+            ),
         );
 
         // The ASR seam to the separate Python/GPU worker. Fail-closed by default:
@@ -61,7 +64,7 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
             _fieldDefinitions: [
                 'source_en' => ['type' => 'string', 'label' => 'English Source', 'description' => 'The normalized English source string.', 'weight' => 0],
                 'source_hash' => ['type' => 'string', 'label' => 'Source Hash', 'description' => 'Hash of the normalized source for exact lookup.', 'weight' => 1],
-                'dialect_code' => ['type' => 'string', 'label' => 'Dialect Code', 'description' => 'References dialect_region.code; null means dialect-agnostic.', 'weight' => 2],
+                'language_tag' => ['type' => 'string', 'label' => 'Language Tag', 'description' => 'Full BCP 47 tag, e.g. oj-x-sagamok. Community granularity is retained here; the dialect grouping is derived, never stored. Empty or oj means tag-agnostic.', 'weight' => 2],
                 'translation' => ['type' => 'string', 'label' => 'Translation', 'description' => 'Anishinaabemowin translation, stored plain (not JSON-wrapped).', 'weight' => 5],
                 'confidence' => ['type' => 'integer', 'label' => 'Confidence', 'description' => 'Confidence score 0 to 100.', 'weight' => 6, 'default' => 0],
                 'needs_speaker_review' => ['type' => 'boolean', 'label' => 'Needs Speaker Review', 'weight' => 7, 'default' => 1],
@@ -90,7 +93,7 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
             _fieldDefinitions: [
                 'source_en' => ['type' => 'string', 'label' => 'English Source', 'description' => 'The requested English string, normalized.', 'weight' => 0],
                 'source_hash' => ['type' => 'string', 'label' => 'Source Hash', 'description' => 'Dedupe key.', 'weight' => 1],
-                'dialect_code' => ['type' => 'string', 'label' => 'Dialect Code', 'description' => 'Requested dialect (references dialect_region.code), nullable.', 'weight' => 2],
+                'language_tag' => ['type' => 'string', 'label' => 'Language Tag', 'description' => 'Requested BCP 47 tag (e.g. oj-x-sagamok), empty when tag-agnostic.', 'weight' => 2],
                 'lookup_type' => ['type' => 'string', 'label' => 'Lookup Type', 'description' => 'exact_miss or fuzzy_below_threshold.', 'weight' => 3],
                 'best_fuzzy_score' => ['type' => 'integer', 'label' => 'Best Fuzzy Score', 'description' => 'Best similarity seen 0 to 100, nullable.', 'weight' => 4],
                 'request_count' => ['type' => 'integer', 'label' => 'Request Count', 'description' => 'Incremented on repeat misses (the gap frequency).', 'weight' => 5, 'default' => 1],
