@@ -6,6 +6,7 @@ namespace App\Provider;
 
 use App\Entity\Language\TmGapLog;
 use App\Entity\Language\TranslationMemory;
+use App\Language\DialectCodeProvider;
 use Waaseyaa\Entity\EntityType;
 
 /**
@@ -29,6 +30,12 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
 {
     public function register(): void
     {
+        // The single seam for valid dialect codes. Bound here so the module's
+        // services and (issue 6) the /api/lang dialect parameter resolve one
+        // contract; the backing can move to a taxonomy package later without
+        // touching callers.
+        $this->singleton(DialectCodeProvider::class, static fn (): DialectCodeProvider => new DialectCodeProvider());
+
         $this->entityType(new EntityType(
             id: 'translation_memory',
             label: 'Translation Memory',
