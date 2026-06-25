@@ -75,8 +75,13 @@ final class AuthController
             return new Response($html);
         }
 
+        // Pre-session authentication lookup: the visitor is anonymous and lacks
+        // 'access user profiles', so an access-checked query finds no user
+        // (UserAccessPolicy denies anonymous view since framework alpha.249).
+        // Authenticate against the record in system context. See
+        // docs/security/sql-entity-query-access-check-bypass-audit.md.
         $storage = $this->entityTypeManager->getStorage('user');
-        $ids = $storage->getQuery()->setAccount($account)
+        $ids = $storage->getQuery()->accessCheck(false)
             ->condition('mail', $email)
             ->execute();
 
@@ -157,8 +162,11 @@ final class AuthController
             return new Response($html);
         }
 
+        // Pre-session duplicate-email check: the visitor is anonymous, so look up
+        // in system context (UserAccessPolicy denies anonymous user view since
+        // alpha.249). See docs/security/sql-entity-query-access-check-bypass-audit.md.
         $storage = $this->entityTypeManager->getStorage('user');
-        $existing = $storage->getQuery()->setAccount($account)
+        $existing = $storage->getQuery()->accessCheck(false)
             ->condition('mail', $email)
             ->execute();
 
@@ -234,8 +242,11 @@ final class AuthController
         $email = trim((string) $request->request->get('email', ''));
 
         if ($email !== '') {
+            // Pre-session reset lookup: anonymous visitor, so system context
+            // (UserAccessPolicy denies anonymous user view since alpha.249). See
+            // docs/security/sql-entity-query-access-check-bypass-audit.md.
             $storage = $this->entityTypeManager->getStorage('user');
-            $ids = $storage->getQuery()->setAccount($account)
+            $ids = $storage->getQuery()->accessCheck(false)
                 ->condition('mail', $email)
                 ->execute();
 

@@ -91,10 +91,13 @@ These sites never have an end-user `AccountInterface` available, or run after th
 | `src/Http/Controller/People/VolunteerController.php` | 151 | `phoneExists` private uniqueness check — phone numbers cannot be duplicated across volunteers regardless of caller's view scope. Mirrors the framework's `RelationshipValidator` pattern (integrity check spans access boundaries). | 2026-05-19 |
 | `src/Http/Controller/Lesson/LessonController.php` | 165 | Admin-gated Lesson 1 course surface. guard() enforces `administer content` and every lesson route uses requireAuthentication() before any read; deliberately loads the consent-gated corpus rows for the curated lesson, with the route gate as the access boundary. | 2026-06-14 |
 | `src/Language/TranslationMemoryService.php` | 197 | `logGap` dedup of the admin-only `tm_gap_log` (issue #894). System-context operational write from the public `/api/lang` miss path: no end-user account is meaningful for finding the existing miss row to increment, and gap data is never user-visible (its lifecycle-string status keeps it admin-only). The translation lookup reads above this use `setAccount($account)`. | 2026-06-24 |
+| `src/Http/Controller/Auth/AuthController.php` | 84 | `submitLogin` user lookup by mail (issue #900). Pre-session authentication: the visitor is anonymous and lacks `access user profiles`, so an access-checked query returns no user (framework `UserAccessPolicy` denies anonymous view since alpha.249). The credential check immediately below is the real gate. Matches `bin/seed-test-user`. | 2026-06-25 |
+| `src/Http/Controller/Auth/AuthController.php` | 169 | `submitRegister` duplicate-email check. Same pre-session anonymous context; must detect an existing account regardless of the anonymous viewer to avoid creating a duplicate and to drive the no-enumeration check-email flow. | 2026-06-25 |
+| `src/Http/Controller/Auth/AuthController.php` | 249 | `submitForgotPassword` user lookup. Same pre-session anonymous context; the reset path must find the account to mail a token, and never reveals existence to the caller. | 2026-06-25 |
 
 ### Conditional fallback — set account when available, bypass otherwise
 
-Currently empty in Minoo. The Auth controller's pre-session lookups use the conditional fallback pattern in `AuthController::submitLogin` — if a future audit identifies that specific bypass branch line, it belongs here.
+Currently empty in Minoo. The Auth controller's pre-session lookups are unconditional `accessCheck(false)` (the visitor is always anonymous before login), listed above, not conditional.
 
 ## How to audit
 
