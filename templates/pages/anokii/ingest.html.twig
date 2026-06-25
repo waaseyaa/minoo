@@ -58,8 +58,8 @@
     <p id="ig-hint" class="ig-meta" style="margin-top:12px;">You can select several at once. Uploads run in parallel.</p>
 
     <form class="ig-url" id="ig-urlform" autocomplete="off">
-      <input type="url" id="ig-urlinput" placeholder="…or paste a Facebook reel URL" aria-label="Facebook reel URL">
-      <button type="submit">Add URL</button>
+      <input type="url" id="ig-urlinput" placeholder="…or paste a Facebook, Instagram, or YouTube reel URL" aria-label="Reel URL">
+      <button type="submit">Import</button>
     </form>
   </div>
 
@@ -196,13 +196,13 @@
     var url = input.value.trim();
     if (!url) return;
     var row = makeRow(url);
-    setState(row, 'Registering…');
+    setState(row, 'Importing…');
     fetch(urlUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
       body: JSON.stringify({ url: url })
     }).then(function (r) { return r.json(); }).then(function (res) {
-      if (res.ok && res.esid) { setState(row, 'Queued (stage source video, then run the worker)'); input.value = ''; }
+      if (res.ok && res.esid) { setState(row, 'Imported, awaiting transcription'); input.value = ''; }
       else { setState(row, res.error || 'Failed', 'err'); }
     }).catch(function () { setState(row, 'Failed', 'err'); });
   });

@@ -57,6 +57,7 @@ final class AnokiiIngestTest extends HttpKernelTestCase
         return new IngestController(
             self::$kernel->getEntityTypeManager(),
             SsrServiceProvider::getTwigEnvironment(),
+            new \App\Tests\Support\StubMediaFetcher(),
         );
     }
 
@@ -168,7 +169,7 @@ final class AnokiiIngestTest extends HttpKernelTestCase
         $payload = json_decode((string) $this->controller()->url([], [], $this->account(), $request)->getContent(), true);
 
         self::assertTrue($payload['ok']);
-        self::assertStringStartsWith('fb-', $payload['corpus_id']);
+        self::assertStringStartsWith('fetch-', $payload['corpus_id']);
         self::assertSame(PipelineStage::INGESTED, $payload['pipeline_status']);
     }
 

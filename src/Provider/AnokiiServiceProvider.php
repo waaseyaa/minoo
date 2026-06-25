@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Provider;
 
 use Anokii\Config\DistributionConfig;
+use App\Anokii\Ingest\MediaFetcher;
+use App\Anokii\Ingest\YtDlpMediaFetcher;
 use Twig\Environment;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
@@ -60,6 +62,10 @@ final class AnokiiServiceProvider extends AppCoreServiceProvider
                 dirname(__DIR__, 2) . '/config/anokii.yaml',
             ),
         );
+
+        // The reel-import media fetcher (#904), resolved by the Ingest controller.
+        // yt-dlp-backed and fail-closed; swap the binding to change the extractor.
+        $this->singleton(MediaFetcher::class, static fn (): MediaFetcher => new YtDlpMediaFetcher());
     }
 
     public function boot(): void

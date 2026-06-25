@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controller\Anokii;
 
+use App\Anokii\Ingest\MediaFetcher;
 use App\Anokii\Pipeline\PipelineCounts;
 use App\Anokii\Pipeline\PipelineStage;
 use App\Anokii\Pipeline\PipelineStageResolver;
@@ -56,9 +57,18 @@ final class IngestController
      */
     private const array ALLOWED_EXT = ['mp4', 'mov', 'm4v', 'webm'];
 
+    /**
+     * Hosts the URL import accepts. A reel link must be on one of these (or a
+     * subdomain); anything else is rejected before the fetcher is called.
+     *
+     * @var list<string>
+     */
+    private const array ALLOWED_HOSTS = ['facebook.com', 'fb.watch', 'fb.com', 'instagram.com', 'youtube.com', 'youtu.be'];
+
     public function __construct(
         private readonly EntityTypeManager $entityTypeManager,
         private readonly Environment $twig,
+        private readonly MediaFetcher $mediaFetcher,
     ) {
     }
 
@@ -133,9 +143,11 @@ final class IngestController
     }
 
     /**
-     * Keep the Facebook-URL ingest path: register a draft row for a reel URL. The
-     * media is produced when its source video is staged and the worker (or
-     * `ingest:corpus`) runs — the same operator prerequisite as the CLI path.
+     * URL import (#904): fetch a reel from a Facebook / Instagram / YouTube link
+     * via {@see MediaFetcher} (yt-dlp) into the same staging area an upload uses,
+     * then create the same ingested draft. Fails closed with an inline message,
+     * never a 500: a bad URL, an unsupported host, an unavailable extractor, or an
+     * unfetchable (private / login-walled) reel all return a handled error.
      */
     public function url(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
@@ -144,11 +156,45 @@ final class IngestController
         if ($url === '' || !preg_match('#^https?://#i', $url)) {
             return $this->json(['ok' => false, 'error' => 'A valid http(s) URL is required.'], 422);
         }
+        if (!$this->isAllowedHost($url)) {
+            return $this->json(['ok' => false, 'error' => 'Unsupported host. Paste a Facebook, Instagram, or YouTube link.'], 422);
+        }
+        if (!$this->mediaFetcher->isAvailable()) {
+            return $this->json(['ok' => false, 'error' => 'Media import is unavailable on this server (yt-dlp not installed). Drop the file instead.'], 503);
+        }
 
-        $id = 'fb-' . bin2hex(random_bytes(4));
+        $id = 'fetch-' . bin2hex(random_bytes(5));
+        $dir = $this->corpusPath() . '/source-videos';
+        if (!is_dir($dir) && !mkdir($dir, 0o755, true) && !is_dir($dir)) {
+            return $this->json(['ok' => false, 'error' => 'Could not prepare the staging area.'], 503);
+        }
+
+        $result = $this->mediaFetcher->fetch($url, $dir . '/' . $id . '.mp4');
+        if (!$result->ok) {
+            return $this->json(['ok' => false, 'error' => $result->error], 422);
+        }
+
         $esid = $this->createDraft($id, $url, '');
 
         return $this->json(['ok' => true, 'esid' => $esid, 'corpus_id' => $id, 'pipeline_status' => PipelineStage::INGESTED]);
+    }
+
+    /**
+     * Whether the URL's host is one of the allowed reel sources (or a subdomain).
+     */
+    private function isAllowedHost(string $url): bool
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        if ($host === '') {
+            return false;
+        }
+        foreach (self::ALLOWED_HOSTS as $allowed) {
+            if ($host === $allowed || str_ends_with($host, '.' . $allowed)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
