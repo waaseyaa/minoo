@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controller\Language;
 
 use App\Http\Controller\Concerns\JsonResponseTrait;
+use App\Language\CorpusLexiconService;
 use App\Language\DialectCodeProvider;
 use App\Language\TranslationMemoryService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,9 +44,33 @@ final class LanguageApiController
         'license_url' => 'https://creativecommons.org/licenses/by-nc-sa/3.0/',
     ];
 
+    /**
+     * Redistribution terms for the community corpus served by /api/lang/lookup.
+     * Unlike the OPD (a licensed external reference), the Sagamok corpus is
+     * community-governed under OCAP: there is no invented redistribution licence
+     * here; formal terms are the community's to set. The OPD is acknowledged as a
+     * separate reference only and is never served through this API.
+     *
+     * @var array<string, mixed>
+     */
+    private const CORPUS_USAGE_NOTICE = [
+        'governance' => 'OCAP',
+        'community_governed' => true,
+        'noncommercial' => true,
+        'attribution' => 'Sagamok community Knowledge Keepers',
+        'license' => null,
+        'terms' => 'Community-governed; redistribution terms are to be set by the community.',
+        'notice' => 'Community-governed Anishinaabemowin (Nishnaabemwin) from the Sagamok community, shared under the community\'s own governance (OCAP: Ownership, Control, Access, Possession). This is NOT Ojibwe People\'s Dictionary content. Treat as non-commercial and consult the community before reuse; formal redistribution terms are to be set by the community.',
+        'reference' => [
+            'note' => 'The Ojibwe People\'s Dictionary (Southwestern Ojibwe, CC BY-NC-SA 3.0) is a separate reference and is never served through this API.',
+            'url' => 'https://ojibwe.lib.umn.edu',
+        ],
+    ];
+
     public function __construct(
         private readonly DialectCodeProvider $dialects,
         private readonly TranslationMemoryService $translationMemory,
+        private readonly CorpusLexiconService $corpus,
     ) {
     }
 
@@ -92,6 +117,57 @@ final class LanguageApiController
         if (!isset($result['usage'])) {
             $result['usage'] = self::USAGE_NOTICE;
         }
+
+        return $this->json($result);
+    }
+
+    /**
+     * GET /api/lang/lookup?q=&tag=&dir=: look up one term in Minoo's OWN community
+     * corpus (the Sagamok Nishnaabemwin lexicon). Reads only dictionary_entry rows
+     * with attribution_source = 'corpus', which is also the OPD exclusion: no
+     * Ojibwe People's Dictionary content is ever returned here.
+     *
+     * `dir` is 'en' (English term, match definitions), 'oj' (Anishinaabemowin
+     * term, match the word), or omitted (match both). `tag` is a BCP 47 tag,
+     * validated the same way as /api/lang/translate (a malformed tag is a 422).
+     *
+     * This is the lexicon endpoint; /api/lang/translate is the translation memory.
+     * The endpoint is public but intended for server-to-server use (e.g.
+     * rhtcircle's PHP backend); it sets no CORS header, so it is not callable from
+     * a browser cross-origin.
+     *
+     * @param array<string, mixed> $query
+     */
+    public function lookup(#[MapQuery] array $query, AccountInterface $account): JsonResponse
+    {
+        $q = is_string($query['q'] ?? null) ? trim($query['q']) : '';
+        if ($q === '') {
+            return $this->json(['error' => 'Missing required query parameter: q'], 422);
+        }
+
+        $rawTag = $query['tag'] ?? null;
+        $tag = is_string($rawTag) && $rawTag !== '' ? $rawTag : null;
+        if ($tag !== null && !$this->dialects->isValid($tag)) {
+            return $this->json([
+                'error' => 'Malformed language tag',
+                'tag' => $tag,
+                'hint' => 'Expected a BCP 47 tag: oj, an oj-<dialect> tag, or oj-x-<community> (for example oj-x-sagamok).',
+                'recognized_dialects' => $this->dialects->codes(),
+            ], 422);
+        }
+
+        $rawDir = $query['dir'] ?? null;
+        $dir = is_string($rawDir) && $rawDir !== '' ? strtolower($rawDir) : null;
+        if ($dir !== null && !in_array($dir, ['en', 'oj'], true)) {
+            return $this->json([
+                'error' => 'Invalid dir parameter',
+                'dir' => $rawDir,
+                'hint' => "Expected 'en' (English term) or 'oj' (Anishinaabemowin term); omit to match both directions.",
+            ], 422);
+        }
+
+        $result = $this->corpus->lookup($q, $tag, $dir, $account);
+        $result['usage'] = self::CORPUS_USAGE_NOTICE;
 
         return $this->json($result);
     }

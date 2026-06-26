@@ -54,6 +54,24 @@ final class LanguageApiTest extends HttpKernelTestCase
             'created_at' => time(),
             'updated_at' => time(),
         ]));
+
+        // dictionary_entry rows for the /api/lang/lookup lexicon endpoint. Own
+        // corpus (attribution_source 'corpus') vs OPD (must NEVER be served).
+        $entries = self::$kernel->getEntityTypeManager()->getStorage('dictionary_entry');
+        $entry = static function (array $values) use ($entries): void {
+            $entries->save($entries->create($values + [
+                'language_code' => 'oj',
+                'status' => 1,
+                'consent_public' => 1,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ]));
+        };
+        // Own community corpus.
+        $entry(['word' => 'Emkwaan', 'slug' => 'emkwaan', 'definition' => '["spoon"]', 'attribution_source' => 'corpus', 'attribution_url' => 'https://www.facebook.com/reel/901425976280455']);
+        $entry(['word' => 'naagnens', 'slug' => 'naagnens', 'definition' => '["cup, glass"]', 'attribution_source' => 'corpus', 'attribution_url' => 'https://www.facebook.com/reel/1454763089179769']);
+        // OPD row: licensed external reference, must never appear in /api/lang.
+        $entry(['word' => 'aw', 'slug' => 'aw', 'definition' => '["that (animate)"]', 'language_code' => 'oj-sw', 'license' => 'CC BY-NC-SA 3.0', 'attribution_source' => "Ojibwe People's Dictionary, University of Minnesota", 'attribution_url' => 'https://ojibwe.lib.umn.edu/main-entry/aw-pron']);
     }
 
     #[Test]
@@ -169,6 +187,123 @@ final class LanguageApiTest extends HttpKernelTestCase
     {
         // The old custom dialect code is no longer a valid tag.
         self::assertSame(422, $this->send('GET', '/api/lang/translate', ['q' => 'bear', 'tag' => 'oji-east'])->getStatusCode());
+    }
+
+    #[Test]
+    public function lookup_returns_a_corpus_word_for_an_english_term(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'spoon']));
+
+        self::assertSame('exact', $body['match_type']);
+        self::assertSame(1, $body['count']);
+        $match = $body['matches'][0];
+        self::assertSame('Emkwaan', $match['word']);
+        self::assertSame(['spoon'], $match['definition']);
+        self::assertSame('oj-x-sagamok', $match['tag']);
+        self::assertSame('Nishnaabemwin', $match['dialect']);
+        self::assertSame('en', $match['matched_on']);
+        self::assertSame('corpus', $match['provenance']['attribution_source']);
+    }
+
+    #[Test]
+    public function lookup_matches_an_anishinaabemowin_term_in_the_oj_direction(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'Emkwaan', 'dir' => 'oj']));
+
+        self::assertSame('exact', $body['match_type']);
+        self::assertSame('Emkwaan', $body['matches'][0]['word']);
+        self::assertSame('oj', $body['matches'][0]['matched_on']);
+    }
+
+    #[Test]
+    public function lookup_splits_comma_senses_so_cup_matches(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'cup']));
+
+        self::assertSame('exact', $body['match_type']);
+        self::assertSame('naagnens', $body['matches'][0]['word']);
+    }
+
+    #[Test]
+    public function lookup_fuzzy_matches_a_near_spelling(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'spoonn']));
+
+        self::assertSame('fuzzy', $body['match_type']);
+        self::assertSame('Emkwaan', $body['matches'][0]['word']);
+        self::assertGreaterThanOrEqual(70, $body['matches'][0]['match_score']);
+    }
+
+    #[Test]
+    public function lookup_never_returns_opd_content(): void
+    {
+        // 'aw' is a seeded OPD row. It must not surface in either direction, and
+        // no match in any lookup may carry an umn.edu (OPD) source.
+        $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'aw']));
+        self::assertSame('miss', $body['match_type']);
+        self::assertSame([], $body['matches']);
+
+        $byOj = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'aw', 'dir' => 'oj']));
+        self::assertSame('miss', $byOj['match_type']);
+
+        // Sweep every corpus match across a broad query; none may be OPD.
+        $all = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'a']));
+        foreach ($all['matches'] as $match) {
+            self::assertStringNotContainsStringIgnoringCase('ojibwe.lib.umn.edu', (string) ($match['provenance']['source_url'] ?? ''));
+            self::assertSame('corpus', $match['provenance']['attribution_source']);
+        }
+    }
+
+    #[Test]
+    public function lookup_with_a_valid_but_other_dialect_tag_returns_no_matches(): void
+    {
+        // oj-ojb (Northwestern Ojibwe) is well-formed but selects no community we
+        // hold, so it is a 200 miss, not a 422.
+        $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'spoon', 'tag' => 'oj-ojb']));
+
+        self::assertSame('miss', $body['match_type']);
+        self::assertSame([], $body['matches']);
+    }
+
+    #[Test]
+    public function lookup_accepts_the_community_and_agnostic_tags(): void
+    {
+        foreach (['oj-x-sagamok', 'oj'] as $tag) {
+            $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'spoon', 'tag' => $tag]));
+            self::assertSame('exact', $body['match_type'], "tag {$tag} should resolve corpus content");
+            self::assertSame('Emkwaan', $body['matches'][0]['word']);
+        }
+    }
+
+    #[Test]
+    public function lookup_malformed_tag_is_a_422(): void
+    {
+        self::assertSame(422, $this->send('GET', '/api/lang/lookup', ['q' => 'spoon', 'tag' => 'oji-east'])->getStatusCode());
+    }
+
+    #[Test]
+    public function lookup_invalid_dir_is_a_422(): void
+    {
+        self::assertSame(422, $this->send('GET', '/api/lang/lookup', ['q' => 'spoon', 'dir' => 'sideways'])->getStatusCode());
+    }
+
+    #[Test]
+    public function lookup_missing_q_is_a_422(): void
+    {
+        self::assertSame(422, $this->send('GET', '/api/lang/lookup', [])->getStatusCode());
+    }
+
+    #[Test]
+    public function lookup_usage_notice_is_community_governed_not_opd(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/lookup', ['q' => 'spoon']));
+
+        self::assertSame('OCAP', $body['usage']['governance']);
+        self::assertTrue($body['usage']['community_governed']);
+        // No invented licence for the corpus: it is the community's to set.
+        self::assertNull($body['usage']['license']);
+        // OPD is acknowledged as a reference only, never served.
+        self::assertSame('https://ojibwe.lib.umn.edu', $body['usage']['reference']['url']);
     }
 
     /**

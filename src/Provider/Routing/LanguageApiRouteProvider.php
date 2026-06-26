@@ -47,5 +47,17 @@ final class LanguageApiRouteProvider extends AppCoreServiceProvider
                 ->methods('GET')
                 ->build(),
         );
+
+        // The own-corpus lexicon endpoint (#916). Public read but server-to-server
+        // by intent (no CORS header is set); reads only the community corpus, never
+        // OPD.
+        $router->addRoute(
+            'api.lang.lookup',
+            RouteBuilder::create('/api/lang/lookup')
+                ->controller('App\Http\Controller\Language\LanguageApiController::lookup')
+                ->allowAll()
+                ->methods('GET')
+                ->build(),
+        );
     }
 }

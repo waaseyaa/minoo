@@ -78,6 +78,116 @@ rhtcircle, and the CMS all consume it. It is BCP 47, canonical everywhere.
   short community code before they can be tagged; that is an ecosystem data
   decision, deferred. `sagamok` fits as-is.
 
+## `/api/lang` surface (ecosystem contract)
+
+This is the canonical contract for the `/api/lang` JSON endpoints. rhtcircle and
+the RHT nations build against this section. All endpoints are `GET`, public read,
+no auth (for now), and **set no CORS header** — they are intended for
+**server-to-server** use (e.g. rhtcircle's PHP backend calling minoo.live), not
+browser cross-origin calls. JSON via `JsonResponseTrait::json()`. Routes are
+registered by `LanguageApiRouteProvider`, gated on the `language` module flag.
+
+Two lookups, kept distinct on purpose:
+
+- **`/api/lang/translate`** is the translation MEMORY (`translation_memory`):
+  English -> a community translation, ordered exact -> fuzzy -> gap-log-on-miss,
+  keyed on the full BCP 47 tag. It returns one best translation and logs misses.
+- **`/api/lang/lookup`** is the dictionary LEXICON (`dictionary_entry`, own corpus
+  only): a term in either direction -> community entries. It returns ALL matches
+  and never writes a gap-log row.
+
+OPD is **never served** through any `/api/lang` endpoint. The Ojibwe People's
+Dictionary (21,721 rows, Southwestern Ojibwe, CC BY-NC-SA 3.0) is a licensed
+external reference; an envelope may *link* to ojibwe.lib.umn.edu, but no OPD entry
+ever appears in a payload.
+
+### `GET /api/lang/dialects`
+
+Returns the language + the derived dialect groupings as BCP 47 tags, plus a
+`usage` notice. Unchanged by #916.
+
+### `GET /api/lang/translate?q=&tag=`
+
+Unchanged (issues #894/#898). `q` required (422 if missing). `tag` optional BCP 47
+(422 if malformed; `dialect` is a back-compat alias). Returns `match_type`
+(`exact`|`fuzzy`|`miss`), `translation`, `tag`, `dialect`, `label`, `confidence`,
+`needs_speaker_review`, `source`, `match_score` (fuzzy only), and a `usage` notice.
+
+### `GET /api/lang/lookup?q=&tag=&dir=` (#916)
+
+The own-corpus lexicon. Reads `dictionary_entry` **only** where
+`attribution_source = 'corpus'` (Minoo's own Sagamok Nishnaabemwin lexicon). That
+equality filter is also the OPD exclusion: every OPD row carries a different
+`attribution_source`, so no OPD content can surface. Consent-gated at the entity
+layer (anonymous callers see only `status = 1`, `consent_public = 1`).
+
+Parameters:
+- `q` (required) — the term. Missing/empty -> **422**.
+- `tag` (optional) — a BCP 47 tag. Malformed -> **422** (same validator as
+  `translate`). A well-formed tag that selects no community we hold (e.g. a
+  different dialect grouping like `oj-ojb`) is a **200 miss**, not a 422. The
+  corpus is `oj-x-sagamok`; a tag matches it when it is tag-agnostic (`oj`), the
+  corpus tag itself, or in the same derived dialect grouping (Nishnaabemwin).
+- `dir` (optional) — `en` (the term is English, match definitions) or `oj` (the
+  term is Anishinaabemowin, match the word). Omit to match both. Any other value
+  -> **422**.
+
+Response envelope:
+```jsonc
+{
+  "match_type": "exact",          // "exact" | "fuzzy" | "miss" | "invalid"
+  "query": "spoon",
+  "tag": null,                    // echoes the requested tag (or null)
+  "dir": null,                    // echoes the requested direction (or null)
+  "count": 1,
+  "matches": [
+    {
+      "word": "Emkwaan",          // Anishinaabemowin
+      "definition": ["spoon"],     // English sense(s), decoded
+      "tag": "oj-x-sagamok",       // community tag (always the corpus tag)
+      "dialect": "Nishnaabemwin",  // derived dialect grouping name
+      "label": "Nishnaabemwin (Sagamok)",
+      "slug": "emkwaan",
+      "match_type": "exact",       // per-match tier
+      "match_score": 100,          // 100 for exact; similar_text % for fuzzy
+      "matched_on": "en",          // which side matched: "en" | "oj"
+      "provenance": {
+        "attribution_source": "corpus",
+        "attribution": "Sagamok community Knowledge Keepers",
+        "source_url": "https://www.facebook.com/reel/901425976280455"
+      }
+    }
+  ],
+  "usage": {
+    "governance": "OCAP",
+    "community_governed": true,
+    "noncommercial": true,
+    "attribution": "Sagamok community Knowledge Keepers",
+    "license": null,               // community-governed; NOT an invented licence
+    "terms": "Community-governed; redistribution terms are to be set by the community.",
+    "notice": "Community-governed Anishinaabemowin (Nishnaabemwin) ... NOT Ojibwe People's Dictionary content ...",
+    "reference": {                 // OPD acknowledged as a separate reference only
+      "note": "The Ojibwe People's Dictionary ... is never served through this API.",
+      "url": "https://ojibwe.lib.umn.edu"
+    }
+  }
+}
+```
+
+Matching: exact first (term equals the word, or any English sense after splitting
+comma-separated senses, so `cup` matches `["cup, glass"]`), then fuzzy
+(`similar_text` percent >= 70). Matches are ordered by score desc then word.
+Corpus terms carry the community's own governance (OCAP); the API does not assert a
+redistribution licence on them — that is the community's to set.
+
+### Consumer note (rhtcircle and the RHT nations)
+
+Call server-to-server (no browser CORS). Honour the `usage` envelope: corpus
+content is community-governed (OCAP), non-commercial by default, attributed to the
+community, with formal redistribution terms to be set by the community. Do not
+treat corpus content as OPD or apply the OPD (CC BY-NC-SA 3.0) terms to it, and do
+not relay OPD content through this API.
+
 ## Governance gate (Phase 0)
 
 Nothing derived from Steven Bennett's paired audio corpus may be published, and no model
