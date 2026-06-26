@@ -25,6 +25,24 @@ final class LanguageApiController
 {
     use JsonResponseTrait;
 
+    /**
+     * Redistribution terms carried in every /api/lang envelope. Southwestern
+     * Ojibwe dictionary content originates from the Ojibwe People's Dictionary
+     * and is licensed CC BY-NC-SA 3.0: downstream consumers must keep it
+     * non-commercial, attribute the source, and share derivatives alike. The
+     * Sagamok community corpus is not OPD content and carries its own terms.
+     *
+     * @var array<string, mixed>
+     */
+    private const USAGE_NOTICE = [
+        'noncommercial' => true,
+        'notice' => 'Southwestern Ojibwe dictionary content is copyrighted by The Ojibwe People\'s Dictionary and used under CC BY-NC-SA 3.0. Redistribution must remain non-commercial, credit the source, and carry this licence. Sagamok community corpus content is not OPD content and carries its own terms.',
+        'attribution' => 'The Ojibwe People\'s Dictionary',
+        'source_url' => 'https://ojibwe.lib.umn.edu',
+        'license' => 'CC BY-NC-SA 3.0',
+        'license_url' => 'https://creativecommons.org/licenses/by-nc-sa/3.0/',
+    ];
+
     public function __construct(
         private readonly DialectCodeProvider $dialects,
         private readonly TranslationMemoryService $translationMemory,
@@ -41,6 +59,7 @@ final class LanguageApiController
         return $this->json([
             'language' => ['tag' => 'oj', 'label' => $this->dialects->label('oj')],
             'dialects' => $this->dialects->all(),
+            'usage' => self::USAGE_NOTICE,
         ]);
     }
 
@@ -69,6 +88,11 @@ final class LanguageApiController
             ], 422);
         }
 
-        return $this->json($this->translationMemory->lookup($q, $tag, $account));
+        $result = $this->translationMemory->lookup($q, $tag, $account);
+        if (!isset($result['usage'])) {
+            $result['usage'] = self::USAGE_NOTICE;
+        }
+
+        return $this->json($result);
     }
 }

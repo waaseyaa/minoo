@@ -90,6 +90,7 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'source_url' => ['type' => 'uri', 'label' => 'Source URL', 'weight' => 15],
                 'attribution_source' => ['type' => 'string', 'label' => 'Attribution Source', 'description' => 'Source identifier (e.g., ojibwe-peoples-dictionary).', 'weight' => 16],
                 'attribution_url' => ['type' => 'uri', 'label' => 'Attribution URL', 'description' => 'URL of the authoritative source.', 'weight' => 17],
+                'license' => ['type' => 'string', 'label' => 'License', 'description' => 'License the content is used under (e.g. "CC BY-NC-SA 3.0" for Ojibwe People\'s Dictionary rows). Empty for Sagamok community corpus, which carries no ShareAlike obligation.', 'weight' => 18],
                 'consent_public' => ['type' => 'boolean', 'label' => 'Public Consent', 'description' => 'Whether this content may be shown on public pages.', 'weight' => 28, 'default' => 1],
                 'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this content may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 30, 'default' => 1],

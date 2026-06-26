@@ -315,7 +315,8 @@ return [
     'language.empty_heading' => 'No dictionary entries yet',
     'language.empty_body' => 'Anishinaabemowin words, meanings, and example sentences will appear here as speakers and language learners contribute. Language carries a worldview that translation alone cannot.',
     'language.explore_teachings' => 'Explore Teachings',
-    'language.copyright' => 'Dictionary content is copyrighted by The Ojibwe People\'s Dictionary and used under CC BY-NC-SA 4.0.',
+    // OPD (Ojibwe People's Dictionary) is licensed CC BY-NC-SA 3.0. Render with |raw (it carries links). Shown on every surface that displays OPD dictionary content.
+    'language.copyright' => 'Southwestern Ojibwe dictionary content is copyrighted by <a href="https://ojibwe.lib.umn.edu" rel="external noopener">The Ojibwe People\'s Dictionary</a> and used under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external noopener license">CC BY-NC-SA 3.0</a>. Its use here does not imply endorsement by The Ojibwe People\'s Dictionary or the University of Minnesota.',
     'language.detail_back' => 'Language',
     'language.not_found' => 'Entry Not Found',
     'language.not_found_message' => 'We couldn\'t find this dictionary entry. It may have been removed or the link may be outdated.',

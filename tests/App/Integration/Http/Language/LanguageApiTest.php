@@ -72,6 +72,25 @@ final class LanguageApiTest extends HttpKernelTestCase
     }
 
     #[Test]
+    public function dialects_endpoint_carries_the_opd_usage_notice(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/dialects'));
+
+        self::assertTrue($body['usage']['noncommercial']);
+        self::assertSame('CC BY-NC-SA 3.0', $body['usage']['license']);
+        self::assertSame('https://ojibwe.lib.umn.edu', $body['usage']['source_url']);
+    }
+
+    #[Test]
+    public function translate_response_carries_the_opd_usage_notice(): void
+    {
+        $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'water', 'tag' => 'oj']));
+
+        self::assertSame('CC BY-NC-SA 3.0', $body['usage']['license']);
+        self::assertTrue($body['usage']['noncommercial']);
+    }
+
+    #[Test]
     public function exact_community_tag_match_is_case_insensitive_and_carries_the_tag(): void
     {
         $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => '  Bear ', 'tag' => 'oj-x-sagamok']));
