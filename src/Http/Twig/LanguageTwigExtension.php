@@ -15,10 +15,12 @@ use Twig\TwigFilter;
  *   renders it as readable text in every view, expanding the Ojibwe People's
  *   Dictionary abbreviations. Mirrors GameControllerTrait::cleanDefinition so
  *   the dictionary and the games show identical text.
- * - dialect_label: a truthful dialect name for an entry. Every current entry is
- *   from the Ojibwe People's Dictionary, which is Southwestern Ojibwe; future
- *   Nishnaabemwin (Eastern Ojibwe / Odawa) entries carry their own code. We
- *   never silently mix dialects, so the label is always shown.
+ * - dialect_label: a truthful dialect name for an entry. Ojibwe People's
+ *   Dictionary entries are Southwestern (Minnesota) Ojibwe; Steven's Sagamok
+ *   community corpus is Nishnaabemwin (the Eastern Ojibwe / Odawa continuum of
+ *   the north shore of Lake Huron). We never silently mix the two dialects, so
+ *   the label is always shown and the corpus is never folded into the OPD's
+ *   Southwestern label.
  */
 final class LanguageTwigExtension extends AbstractExtension
 {
@@ -66,11 +68,15 @@ final class LanguageTwigExtension extends AbstractExtension
         if (str_contains($source, 'ojibwe people') || $source === 'opd') {
             return 'Southwestern Ojibwe';
         }
+        if ($source === 'corpus' || str_contains($source, 'sagamok')) {
+            return 'Nishnaabemwin';
+        }
 
         return match (strtolower((string) $languageCode)) {
             'ojg', 'oj-e', 'oj-east' => 'Eastern Ojibwe',
             'otw', 'oj-odawa' => 'Odawa',
             'oj-sw', 'ciw' => 'Southwestern Ojibwe',
+            'oj-x', 'nis' => 'Nishnaabemwin',
             default => 'Anishinaabemowin',
         };
     }

@@ -43,5 +43,7 @@
     {% endif %}
 
     <p><a href="{{ lang_url('/language') }}">{{ trans('language.browse_all') }}</a></p>
+
+    {% include "components/domain/language/opd-attribution.html.twig" %}
   </div>
 {% endblock %}

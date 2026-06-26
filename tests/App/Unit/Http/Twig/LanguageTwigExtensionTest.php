@@ -72,6 +72,20 @@ final class LanguageTwigExtensionTest extends TestCase
     }
 
     #[Test]
+    public function dialectLabelMapsOjSwCodeToSouthwesternOjibwe(): void
+    {
+        self::assertSame('Southwestern Ojibwe', $this->ext->dialectLabel('oj-sw'));
+    }
+
+    #[Test]
+    public function dialectLabelMapsCorpusSourceToNishnaabemwin(): void
+    {
+        // Steven's Sagamok community corpus is Nishnaabemwin, never folded into
+        // the OPD's Southwestern Ojibwe label.
+        self::assertSame('Nishnaabemwin', $this->ext->dialectLabel('oj', 'corpus'));
+    }
+
+    #[Test]
     public function dialectLabelFallsBackToAnishinaabemowin(): void
     {
         self::assertSame('Anishinaabemowin', $this->ext->dialectLabel('oj'));
