@@ -9,6 +9,7 @@ use App\Entity\Language\TmGapLog;
 use App\Entity\Language\TranslationMemory;
 use App\Language\Asr\AsrClient;
 use App\Language\Asr\UnavailableAsrClient;
+use App\Language\CorpusLexiconService;
 use App\Language\DialectCodeProvider;
 use App\Language\TranslationMemoryService;
 use App\Seed\TranslationBacklogSeeder;
@@ -47,6 +48,17 @@ final class LanguageModuleServiceProvider extends AppCoreServiceProvider
         $this->singleton(
             TranslationMemoryService::class,
             fn (): TranslationMemoryService => new TranslationMemoryService(
+                $this->resolve(EntityTypeManager::class),
+                $this->resolve(DialectCodeProvider::class),
+            ),
+        );
+
+        // The own-corpus lexicon lookup behind /api/lang/lookup (#916): reads
+        // dictionary_entry but only the community corpus (attribution_source =
+        // 'corpus'), which is also the OPD exclusion. Reads are consent-gated.
+        $this->singleton(
+            CorpusLexiconService::class,
+            fn (): CorpusLexiconService => new CorpusLexiconService(
                 $this->resolve(EntityTypeManager::class),
                 $this->resolve(DialectCodeProvider::class),
             ),
