@@ -54,6 +54,11 @@ return [
     // Dev-only fallback account for local built-in server workflows.
     // Must remain false outside local development.
     'auth' => [
+        // HMAC key for reset/verify auth tokens. Required in production since
+        // framework alpha.250 (AuthServiceProvider rejects empty/'change-me');
+        // dev/test environments synthesize an ephemeral secret when unset.
+        'token_secret' => getenv('WAASEYAA_AUTH_TOKEN_SECRET')
+            ?: (getenv('WAASEYAA_JWT_SECRET') ?: null),
         'dev_fallback_account' => filter_var(
             getenv('WAASEYAA_DEV_FALLBACK_ACCOUNT') ?: false,
             FILTER_VALIDATE_BOOLEAN,

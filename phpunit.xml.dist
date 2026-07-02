@@ -12,6 +12,12 @@
             <directory>tests/App/Integration</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <!-- Explicit test environment: without it the framework treats the
+             runtime as 'production' on CI (no .env) and alpha.250+ auth boot
+             throws on the missing token secret. -->
+        <env name="APP_ENV" value="testing"/>
+    </php>
     <source>
         <include>
             <directory>src</directory>
