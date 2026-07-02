@@ -79,7 +79,7 @@ return [
         'trust' => 'review',
         'scope' => ['news'],
         'auto_candidate' => true,
-        'notes' => 'WordPress default feed. Confirmed working; newest item ~5.5 months old at recon time (2026-01-16). An ICS is declared (The Events Calendar plugin, /events/?ical=1) but returned HTTP 200 with Content-Length: 0 to the recon UA — excluded from this registry until re-verified with a different UA/retry strategy.',
+        'notes' => 'WordPress default feed. Confirmed working; newest item ~5.5 months old at recon time (2026-01-16). An ICS is declared (The Events Calendar plugin, /events/?ical=1) but returned HTTP 200 with Content-Length: 0 to the recon UA — blocked_pending_outreach: per the bot-wall policy we never evade bot mitigation on partner sites; OIATC will ask the nation to allowlist RHTFeedsBot.',
     ],
     [
         'community' => 'serpent-river',
@@ -106,7 +106,7 @@ return [
         'trust' => 'review',
         'scope' => ['news'],
         'auto_candidate' => true,
-        'notes' => 'WordPress default feed. Confirmed working but very sparse (~1 item in the feed body at recon time). robots.txt declares Crawl-delay: 3. An ICS is declared (/events/?ical=1) but returned the same empty-200 pattern as Serpent River — excluded.',
+        'notes' => 'WordPress default feed. Confirmed working but very sparse (~1 item in the feed body at recon time). robots.txt declares Crawl-delay: 3. An ICS is declared (/events/?ical=1) but returned the same empty-200 pattern as Serpent River — blocked_pending_outreach (bot-wall policy: no UA evasion; OIATC outreach to allowlist RHTFeedsBot).',
     ],
     [
         'community' => 'atikameksheng',

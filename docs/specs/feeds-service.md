@@ -59,7 +59,22 @@ Per new item, one Haiku call: suggest `kind` (event/news), `tags` (culture, lang
 | W-5 | rht + oiatc importers; oiatc news cleanup/migration; council-post syndication | rht, oiatc repos |
 | W-6 | `trust=auto` for nation-owned feeds · member-submission sync-up · groups diff suggestions · HTML extractors where justified | waaseyaa-feeds + minoo |
 
+## Recon amendments (post PR-0, minoo #919 — 2026-07-02)
+
+Findings from the 21-nation probe change the following (decisions: Russell):
+
+1. **Politeness:** honor per-site `Crawl-delay` (observed up to 60s at Sheshegwaning), not a flat 1 req/s floor.
+2. **Bot walls — no evasion, outreach instead.** Serpent River + Atikameksheng ICS return empty-200 to bots. Policy: never rotate/spoof UAs to get past mitigation. OIATC's council relationships are the fix — ask those nations to allowlist `RHTFeedsBot` (or share the feed directly). Registry marks them `blocked_pending_outreach`; HTML/review-tier in the interim. Add outreach to the W-2 runbook, not the fetch code.
+3. **Anishinabek Nation umbrella org: included, review-tier.** Richest source found (current RSS + ICS); carries regional event coverage while nation ICS stays scarce (only Sheguiandah own-domain-confirmed). Not nation-owned ⇒ never auto; classifier tags items per-nation.
+4. **Auto-tier rule refined:** Thessalon's ICS is nation-curated but Google-hosted — auto candidacy requires nation-owned *and* own-domain *and* confirmed. Google/Wix/Webflow-hosted feeds cap at review.
+5. **oiatc is a source, not a cleanup project.** Its news is healthy (8 items, newest 17 days, working RSS at `/news/rss.xml` mirroring HTML 1:1). W-5 shrinks to a light migration; its topic tags (council, sovereign-ai, anishinaabemowin…) seed the classifier taxonomy.
+6. **Canonical domains:** sagamok.ca is a 301 alias → `sagamokanishnawbek.com` (registry uses canonical; note the alias in `MamaweswenNations.php` eventually).
+7. **W-6 extractor scope confirmed:** ~5–6 HTML extractors for full coverage (Wahnapitae, Henvey Inlet, Sheshegwaning, Sagamok/Webflow, Whitefish River news — its RSS is dead-since-2016 and excluded); nation RSS is nearly all *news*, machine-readable *events* remain scarce ⇒ Anishinabek Nation + extractors carry events early on.
+8. **Gaps:** Zhiibaahaasing has no site (coverage only via umbrella org); Mississauga (Wix) needs a manual browse before any registry entry.
+9. rhtcircle.ca confirmed consumer-only today (no news/events surface — W-5 builds it).
+
 ## Open items
-- Confirm worker repo name + whether it serves any public surface (recommendation: none — internal only).
+- ~~Worker repo name~~ → **`waaseyaa-feeds`** (rename before W-1 if desired); no public surface — internal only.
 - Review-queue staffing: one queue implies one set of coordinator accounts on the worker app — who?
-- oiatc news cleanup scope needs its own quick audit (what's there, what's stale) before W-5.
+- ~~oiatc news cleanup scope~~ → resolved by recon (amendment 5).
+- Outreach owner for Serpent River + Atikameksheng allowlisting (amendment 2).
