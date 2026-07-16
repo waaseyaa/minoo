@@ -116,6 +116,23 @@ final class EngagementControllerTest extends TestCase
         $this->assertStringContainsString('Invalid target_type', $response->getContent());
     }
 
+    // --- community_group rename regression lock (#923 spec §7 item 6) ---
+
+    #[Test]
+    public function react_rejects_legacy_group_target_type(): void
+    {
+        $request = $this->jsonRequest('POST', [
+            'reaction_type' => 'like',
+            'target_type' => 'group',
+            'target_id' => 1,
+        ]);
+
+        $response = $this->controller->react([], [], $this->mockAccount(), $request);
+
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertStringContainsString('Invalid target_type', $response->getContent());
+    }
+
     // --- Reaction type validation ---
 
     #[Test]
@@ -212,6 +229,25 @@ final class EngagementControllerTest extends TestCase
 
         $request = $this->jsonRequest('POST', [
             'reaction_type' => 'interested', 'target_type' => 'event', 'target_id' => 10,
+        ]);
+
+        $response = $this->controller->react([], [], $account, $request);
+
+        $this->assertSame(201, $response->getStatusCode());
+        $json = json_decode($response->getContent(), true);
+        $this->assertSame(1, $json['id']);
+    }
+
+    #[Test]
+    public function react_accepts_community_group_target_type(): void
+    {
+        $account = $this->mockAccount(42);
+        $entity = $this->mockEntity(['reaction_type' => 'like'], 1);
+        $storage = $this->mockStorage('reaction');
+        $storage->method('create')->willReturn($entity);
+
+        $request = $this->jsonRequest('POST', [
+            'reaction_type' => 'like', 'target_type' => 'community_group', 'target_id' => 10,
         ]);
 
         $response = $this->controller->react([], [], $account, $request);

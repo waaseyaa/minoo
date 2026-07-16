@@ -154,4 +154,24 @@ final class BootTest extends TestCase
 
         $this->assertNotNull($handler, 'EntityAccessHandler should be initialized.');
     }
+
+    /**
+     * Regression lock for the community_group rename (#923 spec §7 item 5):
+     * the entity type manager must recognize the new type id and must no
+     * longer recognize the pre-rename 'group' id after a real kernel boot.
+     */
+    #[Test]
+    public function community_group_entity_type_replaces_legacy_group_id(): void
+    {
+        $manager = self::$kernel->getEntityTypeManager();
+
+        $this->assertTrue(
+            $manager->hasDefinition('community_group'),
+            "Entity type 'community_group' should be registered after the #923 rename.",
+        );
+        $this->assertFalse(
+            $manager->hasDefinition('group'),
+            "Entity type 'group' should no longer be registered after the #923 rename.",
+        );
+    }
 }
