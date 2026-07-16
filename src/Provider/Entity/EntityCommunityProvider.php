@@ -52,8 +52,8 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
         // =====================================================================
 
         $this->entityType(new EntityType(
-            id: 'group',
-            label: 'Group',
+            id: 'community_group',
+            label: 'Community Group',
             class: Group::class,
             keys: ['id' => 'gid', 'uuid' => 'uuid', 'label' => 'name', 'bundle' => 'type'],
             tenancy: ['scope' => 'community'],

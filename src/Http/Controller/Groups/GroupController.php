@@ -79,11 +79,11 @@ final class GroupController
      */
     private function loadPublishedGroups(AccountInterface $account): array
     {
-        if (!$this->entityTypeManager->hasDefinition('group')) {
+        if (!$this->entityTypeManager->hasDefinition('community_group')) {
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('group');
+        $storage = $this->entityTypeManager->getStorage('community_group');
         $ids = $storage->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('type', 'business', '!=')
@@ -106,11 +106,11 @@ final class GroupController
 
     private function loadGroupBySlug(string $slug, AccountInterface $account): ?ContentEntityBase
     {
-        if (!$this->entityTypeManager->hasDefinition('group')) {
+        if (!$this->entityTypeManager->hasDefinition('community_group')) {
             return null;
         }
 
-        $storage = $this->entityTypeManager->getStorage('group');
+        $storage = $this->entityTypeManager->getStorage('community_group');
         $ids = $storage->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)

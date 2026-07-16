@@ -14,7 +14,7 @@ Minoo aggregates Indigenous cultural content — language resources, teachings, 
 | Translation memory | `translation_memory`, `tm_gap_log`, `tm_backlog` |
 | Ingestion | `ingest_log` |
 | Community | `community`, `contributor`, `elder_support_request` |
-| Groups / Events | `group`, `event` |
+| Groups / Events | `community_group`, `event` |
 | Feed / social | `post` |
 | Games | `game_session`, `daily_challenge`, `crossword_puzzle` |
 | Account / Editorial | `saved_word`, `featured_item` |

@@ -43,7 +43,7 @@
 | `src/Provider/Entity/EntityNewsletterProvider.php` | Newsletter services + dispatch |
 | `src/Provider/MinooEntityStackProvider.php` | Composer-facing merge of all entity providers above |
 | `src/Access/Events/EventAccessPolicy.php` | Access for `event`, `event_type` |
-| `src/Access/Groups/GroupAccessPolicy.php` | Access for `group`, `group_type` |
+| `src/Access/Groups/GroupAccessPolicy.php` | Access for `community_group`, `group_type` |
 | `src/Access/Groups/CulturalGroupAccessPolicy.php` | Access for `cultural_group` |
 | `src/Access/Teachings/TeachingAccessPolicy.php` | Access for `teaching`, `teaching_type` |
 | `src/Access/Teachings/CulturalCollectionAccessPolicy.php` | Access for `cultural_collection` |
@@ -106,7 +106,7 @@ No field definitions (config entity uses entity keys only).
 
 ### Groups Domain
 
-**group** (`ContentEntityBase`) — Primary key: `gid`
+**community_group** (`ContentEntityBase`) — Primary key: `gid`
 Entity keys: `['id' => 'gid', 'uuid' => 'uuid', 'label' => 'name', 'bundle' => 'type']`
 
 | Field | Widget/Type | Notes |
@@ -313,7 +313,7 @@ All 6 policies use identical logic:
 
 Policy-to-type mapping:
 - `EventAccessPolicy` → `event`
-- `GroupAccessPolicy` → `group`
+- `GroupAccessPolicy` → `community_group`
 - `CulturalGroupAccessPolicy` → `cultural_group`
 - `TeachingAccessPolicy` → `teaching`
 - `CulturalCollectionAccessPolicy` → `cultural_collection`
@@ -331,7 +331,7 @@ Two consent fields — `consent_public` and `consent_ai_training` — exist on e
 | `teaching` | Yes (default: 1) | Yes (default: 0) | Individually contributed cultural knowledge requires explicit consent |
 | `dictionary_entry` | Yes (default: 1) | Yes (default: 0) | Language data contributed by individual speakers and scholars |
 | `event` | No | No | Community-level public information (gatherings, powwows, ceremonies) |
-| `group` | No | No | Community-level public information (organizations, advocacy groups) |
+| `community_group` | No | No | Community-level public information (organizations, advocacy groups) |
 | `community` | No | No | Public First Nations registry data from CIRNAC |
 | `cultural_group` | No | No | Hierarchical cultural classification, not individually contributed |
 | `cultural_collection` | No | No | Curated gallery collections, not individually contributed |
@@ -365,7 +365,7 @@ Same structure as gallery.
 
 ```
 event ──type──→ event_type
-group ──type──→ group_type
+community_group ──type──→ group_type
 cultural_group ──parent_id──→ cultural_group (self-referential tree)
 teaching ──type──→ teaching_type
 teaching ──cultural_group_id──→ cultural_group
@@ -373,7 +373,7 @@ teaching ──tags──→ taxonomy_term (teaching_tags vocabulary)
 cultural_collection ──gallery──→ taxonomy_term (gallery vocabulary)
 example_sentence ──dictionary_entry_id──→ dictionary_entry
 example_sentence ──speaker_id──→ speaker
-event, group, cultural_group, teaching, cultural_collection, speaker ──media_id──→ media
+event, community_group, cultural_group, teaching, cultural_collection, speaker ──media_id──→ media
 ```
 
 ## Service Provider Registration

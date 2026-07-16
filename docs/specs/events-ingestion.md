@@ -22,7 +22,7 @@ source registry (config) → scheduled fetch (waaseyaa/scheduler → minoo-worke
 community submissions (logged-in form) ————————————————————↗ (same queue)
 ```
 
-Reuses what exists: `waaseyaa/scheduler` (core dep), the `event`/`group` entities and taxonomy, `EventController::displayable()`'s provenance gate (kept, repointed), the Anokii review-queue pattern (`ingested → curated → published` maps directly), and the admin ingestion dashboard as UI home.
+Reuses what exists: `waaseyaa/scheduler` (core dep), the `event`/`community_group` entities and taxonomy, `EventController::displayable()`'s provenance gate (kept, repointed), the Anokii review-queue pattern (`ingested → curated → published` maps directly), and the admin ingestion dashboard as UI home.
 
 ## 2. Source registry
 
@@ -33,7 +33,7 @@ Config-first (like `config/crisis/*` was) — an entity later only if coordinato
 return [
   ['community' => 'sagamok',       'kind' => 'ics',  'url' => '...', 'trust' => 'auto',   'scope' => ['event']],
   ['community' => 'serpent-river', 'kind' => 'rss',  'url' => '...', 'trust' => 'review', 'scope' => ['event']],
-  ['community' => 'mississauga',   'kind' => 'html', 'url' => '...', 'trust' => 'review', 'scope' => ['event','group'], 'extractor' => 'mississaugi_events'],
+  ['community' => 'mississauga',   'kind' => 'html', 'url' => '...', 'trust' => 'review', 'scope' => ['event','community_group'], 'extractor' => 'mississaugi_events'],
   // ...
 ];
 ```
@@ -67,8 +67,8 @@ Canonical shape: `title, starts_at, ends_at, timezone, location, community_id, d
 
 ## 6. Groups
 
-Same registry (`scope: ['group']`), different behavior — groups are slow-moving directory data, not a feed:
-- Fetcher **diffs** discovered org/program listings against existing `group` rows and files *change suggestions* into the review queue (new group found / group page gone / contact changed). **Never auto-edits** — the 15 existing rows are curated.
+Same registry (`scope: ['community_group']`), different behavior — groups are slow-moving directory data, not a feed:
+- Fetcher **diffs** discovered org/program listings against existing `community_group` rows and files *change suggestions* into the review queue (new group found / group page gone / contact changed). **Never auto-edits** — the 15 existing rows are curated.
 - Member submissions can also propose groups (same form family).
 
 ## 7. Build order (each shippable)

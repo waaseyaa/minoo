@@ -2053,7 +2053,7 @@
   }
 
   .feed-card--event { --card-accent: var(--color-events); }
-  .feed-card--group { --card-accent: var(--color-communities); }
+  .feed-card--community_group { --card-accent: var(--color-communities); }
   .feed-card--contributor { --card-accent: var(--color-people); }
   .feed-card--featured { --card-accent: var(--color-teachings); }
   .feed-card--post {

@@ -33,7 +33,7 @@ final class TranslationParityTest extends TestCase
             // Match only static keys: trans('key') or trans('key', ...). Requiring a
             // closing ) or , after the literal skips dynamic concatenations such as
             // trans('feed.posted_' ~ item.type), whose runtime keys (feed.posted_event,
-            // feed.posted_group, ...) are defined directly in en.php and cannot be
+            // feed.posted_community_group, ...) are defined directly in en.php and cannot be
             // verified by a static scan.
             if (preg_match_all("/trans\(\s*'([^']+)'\s*[),]/", $contents, $matches) > 0) {
                 foreach ($matches[1] as $key) {

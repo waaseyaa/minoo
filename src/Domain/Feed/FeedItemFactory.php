@@ -55,7 +55,7 @@ final class FeedItemFactory
 
         return match ($type) {
             'event' => $this->buildEvent($entity, $typeSlot, $distance, $createdAt),
-            'group' => $this->buildGroup($entity, $typeSlot, $distance, $createdAt),
+            'community_group' => $this->buildGroup($entity, $typeSlot, $distance, $createdAt),
             'featured' => $this->buildFeatured($entity, $typeSlot, $distance, $createdAt),
             'post' => $this->buildPost($entity, $typeSlot, $distance, $createdAt, $weight),
             default => throw new \InvalidArgumentException("Unknown feed item type: {$type}"),
@@ -140,12 +140,12 @@ final class FeedItemFactory
 
     private function buildGroup(ContentEntityBase $entity, int $typeSlot, ?float $distance, \DateTimeImmutable $createdAt): FeedItem
     {
-        $id = 'group:' . $entity->id();
+        $id = 'community_group:' . $entity->id();
         $communityId = $entity->get('community_id');
 
         return new FeedItem(
             id: $id,
-            type: 'group',
+            type: 'community_group',
             title: (string) ($entity->get('name') ?? ''),
             url: '/groups/' . $entity->get('slug'),
             badge: 'Group',

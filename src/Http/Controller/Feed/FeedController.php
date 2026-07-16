@@ -403,7 +403,7 @@ final class FeedController
         'all' => 'all',
         'post' => 'post',
         'event' => 'event',
-        'group' => 'group',
+        'group' => 'community_group',
         // 'business' + 'people' filters dropped — those surfaces are CUT.
     ];
 

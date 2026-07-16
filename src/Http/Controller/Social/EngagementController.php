@@ -20,7 +20,7 @@ final class EngagementController
 
     /** @var list<string> Entity types that can be reaction/comment/follow targets */
     private const ALLOWED_TARGET_TYPES = [
-        'event', 'group', 'community', 'post', 'dictionary_entry',
+        'event', 'community_group', 'community', 'post', 'dictionary_entry',
     ];
 
     /** @var list<string> The Minoo reaction vocabulary (#812). */

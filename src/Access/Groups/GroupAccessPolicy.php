@@ -10,12 +10,12 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: ['group'])]
+#[PolicyAttribute(entityType: ['community_group'])]
 final class GroupAccessPolicy implements AccessPolicyInterface
 {
     public function appliesTo(string $entityTypeId): bool
     {
-        return $entityTypeId === 'group';
+        return $entityTypeId === 'community_group';
     }
 
     public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult
