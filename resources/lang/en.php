@@ -24,6 +24,8 @@ return [
     'nav.logout' => 'Logout',
     'nav.login' => 'Login',
     'nav.messages' => 'Messages',
+    'nav.groups' => 'Groups',
+    'nav.chat' => 'Chat',
 
     // Share toolbar (reusable on pages, posts, etc.)
     'share.toolbar_aria' => 'Share this page',
