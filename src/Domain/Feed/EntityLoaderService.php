@@ -55,16 +55,17 @@ class EntityLoaderService
     }
 
     /**
-     * Groups (non-business). Guarded like events — returns [] until the 'group'
-     * type is registered. Businesses are CUT and never loaded here.
+     * Groups (non-business). Guarded like events — returns [] until the
+     * 'community_group' type is registered. Businesses are CUT and never
+     * loaded here.
      */
     public function loadGroups(int $limit): array
     {
-        if (!$this->entityTypeManager->hasDefinition('group')) {
+        if (!$this->entityTypeManager->hasDefinition('community_group')) {
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('group');
+        $storage = $this->entityTypeManager->getStorage('community_group');
         $ids = $storage->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('type', 'business', '!=')

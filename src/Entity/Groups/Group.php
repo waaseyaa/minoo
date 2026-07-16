@@ -11,7 +11,7 @@ final class Group extends ContentEntityBase
 {
     use HasCommunityTrait;
 
-    protected string $entityTypeId = 'group';
+    protected string $entityTypeId = 'community_group';
 
     protected array $entityKeys = [
         'id' => 'gid',

@@ -17,9 +17,9 @@ final class ConsentFieldsTest extends TestCase
     /**
      * Provider-registered entity types whose consent fields are core (not bundle-scoped).
      *
-     * `group` is excluded: it was extracted to `waaseyaa/groups`, which registers
-     * only universal core fields. Group's consent fields are bundle-scoped on
-     * `group:business` and tested separately below via `bundleFieldsFor()`.
+     * Note: `community_group` (formerly `group`, renamed in #923) is registered
+     * locally in `EntityCommunityProvider` (#821) with entity-level consent
+     * fields; the `waaseyaa/groups` package is not installed.
      *
      * @return array<string, array{ServiceProvider, string}>
      */

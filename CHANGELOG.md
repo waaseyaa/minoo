@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 301 redirects preserving old URLs: `/media/corpus/video/{id}` → `/lessons/media/video/{id}` (stored in pre-2026-07 corpus rows), `/home` → `/`, `/studio` → `/` (#920).
 
 ### Changed
+- Renamed the `group` entity type to `community_group` across the app — registration, entity class, access policy, controllers, feed domain, engagement target types, templates, dynamic i18n keys, and the runtime-generated `feed-card--` CSS selector — with a shape-aware migration that renames the SQL table, folds legacy columns/subtable rows into `_data`, and drops `group__business`/`group_type` (#923). The `/groups` URL surface, `groups.*` route names and i18n keys, `?filter=group` param, and search badge token are unchanged.
 - Retired Spec Kitty as the execution layer; Minoo now follows the design-first + anchor-issue workflow (`docs/specs/workflow.md`). `.kittify/` removed; `kitty-specs/` kept as read-only history (#920).
 - De-registered four vestigial config entity types (`group_type`, `event_type`, `dialect_region`, `cultural_group`) — bundle validity lives in `ConfigSeeder` static arrays; no data migration needed (#920).
 - New corpus imports write lesson-route video URLs (`/lessons/media/video/{id}`) (#920).

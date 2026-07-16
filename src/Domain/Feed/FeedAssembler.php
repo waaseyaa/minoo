@@ -67,7 +67,7 @@ final class FeedAssembler implements FeedAssemblerInterface
 
         $sources = [
             ['type' => 'event', 'entities' => $events, 'communityField' => 'community_id'],
-            ['type' => 'group', 'entities' => $groups, 'communityField' => 'community_id'],
+            ['type' => 'community_group', 'entities' => $groups, 'communityField' => 'community_id'],
         ];
 
         foreach ($sources as $sourceIdx => $source) {

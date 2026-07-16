@@ -105,7 +105,7 @@ The authoritative list is the `entityType()` registrations in `src/Provider/Enti
 | Translation memory | `translation_memory`, `tm_gap_log`, `tm_backlog` | `LanguageAccessPolicy` |
 | Ingestion | `ingest_log` | `IngestAccessPolicy` |
 | Community | `community`, `contributor`, `elder_support_request` | `CommunityAccessPolicy`, `ContributorAccessPolicy`, `ElderSupportAccessPolicy` |
-| Groups | `group` | `GroupAccessPolicy` |
+| Groups | `community_group` | `GroupAccessPolicy` |
 | Events | `event` | `EventAccessPolicy` |
 | Feed / social | `post` | `PostAccessPolicy` |
 | Games | `game_session`, `daily_challenge`, `crossword_puzzle` | `GameAccessPolicy` |
@@ -123,7 +123,7 @@ Entity types and bindings are registered through `App\Provider\MinooEntityStackP
 | Provider | Role |
 |----------|------|
 | `EntityFoundationProvider` | I18n/foundation services, the language entity domain (`dictionary_entry`, `example_sentence`, `word_part`, `speaker`), `ingest_log`, MCP bindings. |
-| `EntityCommunityProvider` | `featured_item`, `group`, `community`, `elder_support_request`. |
+| `EntityCommunityProvider` | `featured_item`, `community_group`, `community`, `elder_support_request`. |
 | `EntityContentProvider` | `contributor`, `event`, games (`game_session`, `daily_challenge`, `crossword_puzzle`), `post`, `saved_word`. |
 | `EntityFeedProvider` | Feed-oriented bindings (pull-based feed read path, #814) — no entity type registrations. |
 
