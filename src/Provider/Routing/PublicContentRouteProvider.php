@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Provider\Routing;
 
 use App\Provider\AppCoreServiceProvider;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -103,6 +105,24 @@ final class PublicContentRouteProvider extends AppCoreServiceProvider
             'corpus.thumb',
             RouteBuilder::create('/media/corpus/thumb/{id}')
                 ->controller('App\\Http\\Controller\\Language\\CorpusImageController::thumb')
+                ->allowAll()
+                ->methods('GET')
+                ->requirement('id', '[a-z0-9][a-z0-9-]*')
+                ->build(),
+        );
+
+        // Stored-data BC shim: imports before 2026-07 persisted
+        // '/media/corpus/video/{id}' into example_sentence.video_url, and the
+        // Anokii transcribe workspace renders that stored value verbatim. The
+        // route itself was retired in the phase-i cuts (#920); 301 to the
+        // canonical lesson reel route so pre-existing rows keep playing.
+        $router->addRoute(
+            'corpus.video.legacy_redirect',
+            RouteBuilder::create('/media/corpus/video/{id}')
+                ->controller(static fn ($request, string $id = ''): Response => new RedirectResponse(
+                    '/lessons/media/video/' . $id,
+                    Response::HTTP_MOVED_PERMANENTLY,
+                ))
                 ->allowAll()
                 ->methods('GET')
                 ->requirement('id', '[a-z0-9][a-z0-9-]*')
