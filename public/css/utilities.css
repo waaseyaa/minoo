@@ -369,10 +369,6 @@
     background: var(--color-communities);
   }
 
-  .atlas-filter--businesses.is-active {
-    background: var(--color-businesses);
-  }
-
   /* Community map container (replaces atlas-map) */
   .community-map {
     block-size: 40vh;
@@ -1751,9 +1747,7 @@
 
   .sidebar-nav__item--events:hover { color: var(--color-events); }
   .sidebar-nav__item--communities:hover { color: var(--color-communities); }
-  .sidebar-nav__item--teachings:hover { color: var(--color-teachings); }
   .sidebar-nav__item--people:hover { color: var(--color-people); }
-  .sidebar-nav__item--businesses:hover { color: var(--color-businesses); }
   .sidebar-nav__item--language:hover { color: var(--color-language); }
 
   .sidebar-nav__icon {
@@ -2059,8 +2053,6 @@
   }
 
   .feed-card--event { --card-accent: var(--color-events); }
-  .feed-card--teaching { --card-accent: var(--color-teachings); }
-  .feed-card--business { --card-accent: var(--color-businesses); }
   .feed-card--group { --card-accent: var(--color-communities); }
   .feed-card--contributor { --card-accent: var(--color-people); }
   .feed-card--featured { --card-accent: var(--color-teachings); }
@@ -2541,10 +2533,8 @@
 
   .feed-badge--event { background-color: rgba(230, 57, 70, 0.2); color: var(--color-events); }
   .feed-badge--featured { background-color: rgba(244, 162, 97, 0.2); color: var(--color-teachings); }
-  .feed-badge--teaching { background-color: rgba(244, 162, 97, 0.2); color: var(--color-teachings); }
   .feed-badge--communities { background-color: rgba(106, 156, 175, 0.2); color: var(--color-communities); }
   .feed-badge--group { background-color: rgba(106, 156, 175, 0.2); color: var(--color-communities); }
-  .feed-badge--business { background-color: rgba(200, 100, 50, 0.2); color: var(--color-businesses); }
   .feed-badge--contributor { background-color: rgba(131, 56, 236, 0.2); color: var(--color-people); }
   .feed-badge--language { background-color: rgba(42, 157, 143, 0.2); color: var(--color-language); }
   .feed-badge--post { background-color: rgba(106, 156, 175, 0.2); color: var(--color-communities); }
