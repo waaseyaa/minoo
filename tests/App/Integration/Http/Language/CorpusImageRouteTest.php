@@ -10,10 +10,10 @@ use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Corpus image routes (#852): thumbnail + context image are streamed from
- * MINOO_CORPUS_PATH for a consent_public + published example_sentence, and are
- * denied (404) otherwise — even when the file exists on disk. Also confirms the
- * new media fields round-trip on the entity (so the importer can write them).
+ * Corpus image route (#852): the thumbnail is streamed from MINOO_CORPUS_PATH
+ * for a consent_public + published example_sentence, and is denied (404)
+ * otherwise — even when the file exists on disk. Also confirms the media
+ * fields round-trip on the entity (so the importer can write them).
  */
 #[CoversNothing]
 final class CorpusImageRouteTest extends HttpKernelTestCase
@@ -21,7 +21,6 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
     private static string $corpusDir = '';
     private static ?string $previousCorpusPath = null;
     private const string THUMB_BYTES = 'FAKE-JPEG-THUMB';
-    private const string CONTEXT_BYTES = 'FAKE-JPEG-CONTEXT';
 
     public static function setUpBeforeClass(): void
     {
@@ -30,9 +29,7 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
         // Temp corpus dir so the test never depends on the real media directory.
         self::$corpusDir = sys_get_temp_dir() . '/minoo_corpus_test_' . getmypid();
         @mkdir(self::$corpusDir . '/thumbs', 0o777, true);
-        @mkdir(self::$corpusDir . '/context-images', 0o777, true);
         file_put_contents(self::$corpusDir . '/thumbs/sb-consent.jpg', self::THUMB_BYTES);
-        file_put_contents(self::$corpusDir . '/context-images/sb-consent.jpg', self::CONTEXT_BYTES);
         // A private item whose file exists on disk but must stay gated.
         file_put_contents(self::$corpusDir . '/thumbs/sb-private.jpg', 'SHOULD-NOT-BE-SERVED');
 
@@ -49,7 +46,6 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
             'source_sentence_id' => 'corpus:sb-consent',
             'audio_url' => '/media/corpus/audio/sb-consent',
             'thumbnail_url' => '/media/corpus/thumb/sb-consent',
-            'context_image_url' => '/media/corpus/context/sb-consent',
             'context_image_credit' => 'Wikipedia / Wikimedia Commons — Butter knife',
             'context_image_source' => 'https://upload.wikimedia.org/sb-consent.jpg',
             'context_image_article' => 'https://en.wikipedia.org/wiki/Butter_knife',
@@ -84,11 +80,10 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
             putenv('MINOO_CORPUS_PATH=' . self::$previousCorpusPath);
         }
 
-        foreach (['thumbs/sb-consent.jpg', 'context-images/sb-consent.jpg', 'thumbs/sb-private.jpg'] as $rel) {
+        foreach (['thumbs/sb-consent.jpg', 'thumbs/sb-private.jpg'] as $rel) {
             @unlink(self::$corpusDir . '/' . $rel);
         }
         @rmdir(self::$corpusDir . '/thumbs');
-        @rmdir(self::$corpusDir . '/context-images');
         @rmdir(self::$corpusDir);
 
         parent::tearDownAfterClass();
@@ -105,16 +100,6 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function consented_context_image_is_served_as_jpeg(): void
-    {
-        $response = $this->send('GET', '/media/corpus/context/sb-consent');
-
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame('image/jpeg', $response->headers->get('Content-Type'));
-        self::assertSame(self::CONTEXT_BYTES, (string) $response->getContent());
-    }
-
-    #[Test]
     public function non_consented_thumbnail_is_denied_even_though_the_file_exists(): void
     {
         $response = $this->send('GET', '/media/corpus/thumb/sb-private');
@@ -127,7 +112,6 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
     public function unknown_id_is_404(): void
     {
         self::assertSame(Response::HTTP_NOT_FOUND, $this->send('GET', '/media/corpus/thumb/sb-nope')->getStatusCode());
-        self::assertSame(Response::HTTP_NOT_FOUND, $this->send('GET', '/media/corpus/context/sb-nope')->getStatusCode());
     }
 
     #[Test]
@@ -142,8 +126,5 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
         $entity = $storage->load(reset($ids));
         self::assertNotNull($entity);
         self::assertSame('/media/corpus/thumb/sb-consent', (string) $entity->get('thumbnail_url'));
-        self::assertSame('/media/corpus/context/sb-consent', (string) $entity->get('context_image_url'));
-        self::assertStringContainsString('Wikimedia', (string) $entity->get('context_image_credit'));
-        self::assertStringContainsString('wikipedia.org', (string) $entity->get('context_image_article'));
     }
 }

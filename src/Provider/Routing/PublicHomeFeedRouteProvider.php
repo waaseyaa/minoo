@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Provider\Routing;
 
 use App\Provider\AppCoreServiceProvider;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Waaseyaa\Entity\EntityTypeManager;
 use Waaseyaa\Routing\RouteBuilder;
 use Waaseyaa\Routing\WaaseyaaRouter;
@@ -28,12 +30,12 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
+        // Legacy alias, retired in the #920 cuts; 301 for old links/bookmarks.
         $router->addRoute(
-            'home.alias',
+            'home.alias_redirect',
             RouteBuilder::create('/home')
-                ->controller('App\\Http\\Controller\\Home\\HomeController::index')
+                ->controller(static fn (): Response => new RedirectResponse('/', Response::HTTP_MOVED_PERMANENTLY))
                 ->allowAll()
-                ->render()
                 ->methods('GET')
                 ->build(),
         );

@@ -26,7 +26,6 @@ use Waaseyaa\SSR\Attribute\MapRoute;
  *         POST /api/games/journey/tap
  *         POST /api/games/journey/hint
  *         POST /api/games/journey/complete
- *         GET  /api/games/journey/stats
  */
 class JourneyController
 {
@@ -277,14 +276,6 @@ class JourneyController
             'homestead_item' => $homestead,
             'stats'          => $stats,
         ]);
-    }
-
-    // ── Stats ─────────────────────────────────────────────────────────────
-
-    /** GET /api/games/journey/stats */
-    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'journey', ['abandoned'], ['completed']));
     }
 
     // ── Private helpers ───────────────────────────────────────────────────

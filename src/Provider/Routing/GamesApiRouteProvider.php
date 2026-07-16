@@ -78,16 +78,6 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
-        // API: player stats (auth required)
-        $router->addRoute(
-            'api.games.shkoda.stats',
-            RouteBuilder::create('/api/games/shkoda/stats')
-                ->controller('App\\Http\\Controller\\Games\\ShkodaController::stats')
-                ->requireAuthentication()
-                ->methods('GET')
-                ->build(),
-        );
-
         // --- Crossword routes ---
 
         $router->addRoute(
@@ -163,24 +153,6 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
-        $router->addRoute(
-            'api.games.crossword.abandon',
-            RouteBuilder::create('/api/games/crossword/abandon')
-                ->controller('App\\Http\\Controller\\Games\\CrosswordController::abandon')
-                ->allowAll()
-                ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'api.games.crossword.stats',
-            RouteBuilder::create('/api/games/crossword/stats')
-                ->controller('App\\Http\\Controller\\Games\\CrosswordController::stats')
-                ->requireAuthentication()
-                ->methods('GET')
-                ->build(),
-        );
-
         // --- Matcher routes ---
 
         $router->addRoute(
@@ -229,15 +201,6 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
-        $router->addRoute(
-            'api.games.matcher.stats',
-            RouteBuilder::create('/api/games/matcher/stats')
-                ->controller('App\\Http\\Controller\\Games\\MatcherController::stats')
-                ->requireAuthentication()
-                ->methods('GET')
-                ->build(),
-        );
-
         // --- Agim routes ---
 
         $router->addRoute(
@@ -283,15 +246,6 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
                 ->controller('App\\Http\\Controller\\Games\\AgimController::complete')
                 ->allowAll()
                 ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'api.games.agim.stats',
-            RouteBuilder::create('/api/games/agim/stats')
-                ->controller('App\\Http\\Controller\\Games\\AgimController::stats')
-                ->requireAuthentication()
-                ->methods('GET')
                 ->build(),
         );
 
@@ -349,15 +303,6 @@ final class GamesApiRouteProvider extends AppCoreServiceProvider
                 ->controller('App\\Http\\Controller\\Games\\JourneyController::complete')
                 ->allowAll()
                 ->methods('POST')
-                ->build(),
-        );
-
-        $router->addRoute(
-            'api.games.journey.stats',
-            RouteBuilder::create('/api/games/journey/stats')
-                ->controller('App\\Http\\Controller\\Games\\JourneyController::stats')
-                ->requireAuthentication()
-                ->methods('GET')
                 ->build(),
         );
     }

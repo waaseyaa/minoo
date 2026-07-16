@@ -194,9 +194,9 @@ Sagamok exists.
 
 ## Build sequence (proposed milestone and ordered issues, titles only)
 
-These are proposed issue titles, not created issues, and not code. minoo is Spec Kitty first (GitHub is
-PR / CI and optional issues), so each item can be a GitHub issue or a Spec Kitty mission; either way it
-sits under one milestone. Ordered by dependency.
+These are proposed issue titles, not created issues, and not code. minoo follows the design-first +
+anchor-issue flow (Spec Kitty retired 2026-07-16, see CLAUDE.md Workflow), so each item becomes a
+GitHub issue under one milestone. Ordered by dependency.
 
 **Proposed milestone:** `Anokii parity and the language module`
 

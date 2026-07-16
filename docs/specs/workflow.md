@@ -1,10 +1,32 @@
-# Workflow governance
+# Workflow governance (anchor-issue + design-first)
 
-## Execution model (Spec Kitty)
+<!-- Spec reviewed 2026-07-16 — Spec Kitty retirement: governance rewritten around GitHub anchor issues and the design-first flow, converging on waaseyaa's 2026-07-06 model. Historical mission artifacts remain read-only under kitty-specs/. -->
 
-Substantive product work and refactors are **planned, sequenced, and reviewed in Spec Kitty** — missions, work packages, step contracts, and the implement / review / `next` loop. Agents should use the repo’s Spec Kitty skills (`.claude/skills/spec-kitty-*`) as the default operating procedure.
+## Execution model (design-first)
 
-Roadmap and prioritization live in **Spec Kitty** (and human judgment); this repo does not maintain GitHub milestones as a planning surface.
+**Planning and execution** for substantive work follow the **design-first flow**: brainstorm → design/spec in `docs/specs/` → written plan → TDD implementation → code review → verification. Multi-PR efforts are anchored by a **GitHub anchor issue** that records scope, work-package breakdown, and descope decisions; every PR in the effort references it. **`docs/specs/`** remains the contract layer agents read (directly or via the `minoo_*` MCP tools).
+
+**GitHub** is the execution and visibility surface: issues, pull requests, Actions CI. Roadmap and prioritization live in anchor issues and human judgment; this repo does not maintain GitHub milestones as a planning surface.
+
+> **Spec Kitty is retired** (2026-07, matching waaseyaa's 2026-07-06 retirement). Do not run `spec-kitty` commands or consult `.kittify/` state (the directory is removed). Historical mission artifacts are preserved read-only under `kitty-specs/`.
+
+## The working rules
+
+### 1. Substantive work begins with a design
+
+Do not drive multi-step implementation from a blank prompt. Spec in `docs/specs/` first, then a written plan, then TDD implementation. Multi-PR efforts open a **GitHub anchor issue** recording intent, work-package breakdown, and decisions (descopes and deferrals land as issue comments). Small, single-file fixes may follow a direct user brief.
+
+### 2. GitHub issues are lightweight
+
+Not every change needs an issue — a single self-contained PR may stand alone if its body explains itself. When filed, issues are pure tracking with no enforced milestone or taxonomy. Anchor issues are the execution map for multi-PR efforts.
+
+### 3. PRs must be traceable
+
+Every PR in an anchored effort links what it delivers: `Closes #N` for a complete deliverable, `Part of #N` for one PR in the effort, with `#N` in the title (e.g. `feat(#919): …`). Each substantive PR also adds an entry under `[Unreleased]` in `CHANGELOG.md`.
+
+### 4. Read context before generating work
+
+At session start under an ongoing effort, read the anchor issue (including its comment trail — descopes and deferrals live there), `CLAUDE.md`, and the relevant `docs/specs/` contracts before generating work.
 
 ## Versioning model
 
@@ -13,45 +35,11 @@ Minoo and the Waaseyaa Framework version independently.
 - **Framework versions** represent platform contract stability (ingestion envelope, schema registry, ACL substrate, operator diagnostics, CI gates).
 - **Minoo versions** represent product feature maturity (entity domains, content authoring, knowledge features, UX stability).
 - Minoo is a consumer of the framework. Minoo must always target a compatible framework version, but neither repo's version number constrains the other's.
-- Both repos are pre-v1. Pre-v1 minor versions may increment indefinitely. v1.0 is cut only when contracts (framework) or product UX + content model (Minoo) are formally stable.
-
-## Framework milestones (Waaseyaa)
-
-High-level **framework** release targets (not Minoo GitHub milestones):
-
-| Milestone | Description | Status |
-|-----------|-------------|--------|
-| v0.7 | SSR path templates stabilized; Admin SPA critical bugs resolved; app developer experience unblocked | Active |
-| v0.8 | Default content type (core.note), boot enforcement, ACL baseline, CI versioning gates — platform contracts begin | Future |
-| v0.9 | Ingestion envelope, schema registry, namespace rules, RBAC, telemetry, operator diagnostics, onboarding guardrails | Future |
-| v0.10 | Feature flags, tenant migration plan — contract evolution and rollout safety finalized before v1.0 lock | Future |
-| v1.0 | Platform contracts locked. Ingestion, schema registry, ACL, versioning, and CI — stable and semver-committed | Future |
-
-## The five working rules
-
-### 1. Spec Kitty tracks intent
-
-Non-trivial work should be represented as a Spec Kitty mission or work package (or an explicit in-chat brief for small, single-file fixes).
-
-### 2. Use the Spec Kitty control loop
-
-Advance missions with runtime `next`, implement-review cycles, and mission review skills as configured. Merge discipline follows your team’s Spec Kitty procedures.
-
-### 3. Codified context defines boundaries
-
-`CLAUDE.md`, specialist skills, and MCP specs (`minoo_get_spec`, `waaseyaa_get_spec`) ground architecture and naming. See **Architectural Boundaries** in `CLAUDE.md`.
-
-### 4. PRs describe outcomes
-
-PR titles and bodies should summarize what merged and why. Optional links to Spec Kitty mission/WP or GitHub for traceability are fine when useful.
-
-### 5. Read drift output when you run it
-
-Session hooks may run `bin/check-milestones`. It prints **repository boundary** checks only (see below). Treat output as advisory.
+- Minoo is pre-v1 in product terms; its `1.0.x` changelog line predates the 2026-06 relaunch. Framework release targets and milestones are documented on the framework side (`waaseyaa/docs/specs/workflow.md`) — this repo does not mirror them.
 
 ## Drift detection (`bin/check-milestones`)
 
-The script exits `0` always — warning surface, not a CI gate. It reports:
+The script exits `0` always — warning surface, not a CI gate (script name is historical; GitHub milestone checks were removed). It reports:
 
 - No North Cloud classifier logic leaking into Minoo `src/`
 - No Minoo-specific entity references in sibling `waaseyaa/packages/` (when that tree exists)

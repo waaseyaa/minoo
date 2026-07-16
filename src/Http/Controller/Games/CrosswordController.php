@@ -438,12 +438,6 @@ final class CrosswordController
         ]);
     }
 
-    /** GET /api/games/crossword/stats — player stats (auth required). */
-    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'crossword', ['abandoned'], ['completed']));
-    }
-
     /** POST /api/games/crossword/hint — reveal a letter (tracked server-side). */
     public function hint(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
@@ -498,35 +492,6 @@ final class CrosswordController
             'word_index' => $wordIndex,
             'hints_remaining' => $maxHints === -1 ? -1 : $maxHints - $hintsUsed - 1,
         ]);
-    }
-
-    /** POST /api/games/crossword/abandon — give up on current puzzle. */
-    public function abandon(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        $data = $this->jsonBody($request);
-        $token = $data['session_token'] ?? '';
-
-        if ($token === '') {
-            return $this->json(['error' => 'Missing session_token'], 422);
-        }
-
-        $session = $this->loadSessionByToken($token);
-        if ($session === null) {
-            return $this->json(['error' => 'Invalid session'], 404);
-        }
-
-        if ($this->gate->denies('update', $session, $account)) {
-            return $this->json(['error' => 'Forbidden'], 403);
-        }
-
-        if ($session->get('status') !== 'in_progress') {
-            return $this->json(['error' => 'Game already finished'], 400);
-        }
-
-        $session->set('status', 'abandoned');
-        $this->entityTypeManager->getStorage('game_session')->save($session);
-
-        return $this->json(['abandoned' => true]);
     }
 
     // --- Private helpers ---

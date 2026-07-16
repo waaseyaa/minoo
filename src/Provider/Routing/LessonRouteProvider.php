@@ -76,15 +76,17 @@ final class LessonRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
-        // Lesson reel: Range-streamed web mp4, consent-gated (#873). Same handler
-        // as /media/corpus/video/{id}.
+        // Lesson reel: Range-streamed web mp4, consent-gated (#873). The id
+        // requirement matches the importer's corpus-id space (import-corpus
+        // writes arbitrary lowercase ids, not only sb-N), same shape the
+        // retired public corpus.video route accepted (#920 review).
         $router->addRoute(
             'lessons.media.video',
             RouteBuilder::create('/lessons/media/video/{id}')
                 ->controller('App\\Http\\Controller\\Language\\CorpusVideoController::video')
                 ->allowAll()
                 ->methods('GET')
-                ->requirement('id', 'sb-[0-9]+')
+                ->requirement('id', '[a-z0-9][a-z0-9-]*')
                 ->build(),
         );
     }

@@ -270,14 +270,6 @@ final class AgimController
         ]);
     }
 
-    /** GET /api/games/agim/stats — auth required (enforced at route level). */
-    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->json(
-            GameStatsCalculator::build($this->entityTypeManager, $account, 'agim', ['abandoned'], ['completed']),
-        );
-    }
-
     /**
      * Lowercase + strip diacritics for comparison.
      * Handles both ASCII and Unicode long-vowel markers.

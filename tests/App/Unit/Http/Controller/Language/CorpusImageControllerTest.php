@@ -16,9 +16,9 @@ use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 /**
  * Locks the corpus-image consent boundary (#852), mirroring the audio gate. A
- * thumbnail or context image is served ONLY for a consent_public + published
- * example_sentence; a traversal-shaped id never reaches the filesystem, and a
- * non-consented id 404s without serving anything.
+ * thumbnail is served ONLY for a consent_public + published example_sentence;
+ * a traversal-shaped id never reaches the filesystem, and a non-consented id
+ * 404s without serving anything.
  */
 #[CoversClass(CorpusImageController::class)]
 final class CorpusImageControllerTest extends TestCase
@@ -39,19 +39,6 @@ final class CorpusImageControllerTest extends TestCase
 
         $controller = new CorpusImageController($etm);
         $response = $controller->thumb(['id' => '../../etc/passwd'], $this->account, HttpRequest::create('/media/corpus/thumb/x'));
-
-        $this->assertSame(404, $response->getStatusCode());
-    }
-
-    #[Test]
-    public function context_rejects_a_traversal_shaped_id_before_touching_storage(): void
-    {
-        $etm = $this->createMock(EntityTypeManager::class);
-        $etm->expects($this->never())->method('getStorage');
-        $etm->expects($this->never())->method('hasDefinition');
-
-        $controller = new CorpusImageController($etm);
-        $response = $controller->context(['id' => '..%2f..'], $this->account, HttpRequest::create('/media/corpus/context/x'));
 
         $this->assertSame(404, $response->getStatusCode());
     }

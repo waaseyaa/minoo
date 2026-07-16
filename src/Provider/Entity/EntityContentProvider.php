@@ -7,7 +7,6 @@ namespace App\Provider\Entity;
 use App\Entity\Account\SavedWord;
 use App\Entity\Community\Contributor;
 use App\Entity\Events\Event;
-use App\Entity\Events\EventType;
 use App\Entity\Feed\Post;
 use App\Entity\Games\CrosswordPuzzle;
 use App\Entity\Games\DailyChallenge;
@@ -18,9 +17,10 @@ use Waaseyaa\Entity\EntityType;
 /**
  * Games + contributor attribution.
  *
- * Language-platform slimming (2026-06): oral history, post (feed), and
- * leader entity types de-registered; tables stay dormant. Contributor is
- * kept because example_sentence rows reference it for attribution.
+ * Language-platform slimming (2026-06): oral history and leader entity
+ * types de-registered; tables stay dormant. Post (feed) is registered
+ * below (social spine, #811). Contributor is kept because
+ * example_sentence rows reference it for attribution.
  */
 final class EntityContentProvider extends AppCoreServiceProvider
 {
@@ -94,14 +94,6 @@ final class EntityContentProvider extends AppCoreServiceProvider
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
-        ));
-
-        $this->entityType(new EntityType(
-            id: 'event_type',
-            label: 'Event Type',
-            class: EventType::class,
-            keys: ['id' => 'type', 'label' => 'name'],
-            group: 'events',
         ));
 
         // =====================================================================

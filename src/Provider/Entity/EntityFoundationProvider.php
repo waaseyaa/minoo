@@ -27,11 +27,13 @@ use Waaseyaa\Routing\Language\UrlPrefixNegotiator;
 /**
  * Foundation services + the language entity domain.
  *
- * Language-platform slimming (2026-06): events, teachings, cultural
- * groups/collections, NorthCloud sync, crisis/OG image services, and the
- * NorthCloud search override are gone. Search falls through to the
- * framework's local FTS5 provider; the dictionary search at
- * /language/search queries entity storage directly.
+ * Language-platform slimming (2026-06): teachings, cultural collections,
+ * NorthCloud sync, crisis/OG image services, and the NorthCloud search
+ * override are gone (events were later re-registered in
+ * EntityContentProvider (#819); the vestigial cultural_group config type
+ * was de-registered again in the 2026-07 scope cuts). Search falls
+ * through to the framework's local FTS5 provider; the dictionary search
+ * at /language/search queries entity storage directly.
  */
 final class EntityFoundationProvider extends AppCoreServiceProvider
 {
@@ -115,7 +117,6 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'audio_url' => ['type' => 'uri', 'label' => 'Audio URL', 'weight' => 20],
                 'video_url' => ['type' => 'uri', 'label' => 'Video URL', 'description' => 'Web-optimized teaching reel (H.264/AAC), served from MINOO_CORPUS_PATH via the consent gate with HTTP Range support.', 'weight' => 21],
                 'thumbnail_url' => ['type' => 'uri', 'label' => 'Thumbnail URL', 'description' => 'Whiteboard keyframe, served from MINOO_CORPUS_PATH via the consent gate.', 'weight' => 22],
-                'context_image_url' => ['type' => 'uri', 'label' => 'Context Image URL', 'description' => 'Illustrative image (cached locally), served via the consent gate.', 'weight' => 33],
                 'context_image_credit' => ['type' => 'string', 'label' => 'Context Image Credit', 'description' => 'Attribution string for the context image.', 'weight' => 34],
                 'context_image_source' => ['type' => 'uri', 'label' => 'Context Image Source', 'description' => 'Original URL the context image was sourced from.', 'weight' => 35],
                 'context_image_article' => ['type' => 'uri', 'label' => 'Context Image Article', 'description' => 'Source article the context image illustrates.', 'weight' => 36],
@@ -180,7 +181,9 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'code' => ['type' => 'string', 'label' => 'Code', 'weight' => 1],
                 'bio' => ['type' => 'text', 'label' => 'Biography', 'weight' => 5],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 6],
-                'dialect_region_id' => ['type' => 'entity_reference', 'label' => 'Dialect Region', 'settings' => ['target_type' => 'dialect_region'], 'weight' => 10],
+                // Plain code string (values from ConfigSeeder::dialectRegions()); the
+                // former dialect_region config entity was de-registered in #920.
+                'dialect_region_id' => ['type' => 'string', 'label' => 'Dialect Region', 'weight' => 10],
                 'community' => ['type' => 'string', 'label' => 'Community', 'description' => 'Home community, free text as the speaker states it.', 'weight' => 11],
                 'consent_public_display' => ['type' => 'boolean', 'label' => 'Public Display Consent', 'description' => 'Whether this speaker may be shown on public pages.', 'weight' => 28, 'default' => 1],
                 'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this speaker data may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],

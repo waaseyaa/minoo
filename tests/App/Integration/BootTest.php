@@ -68,7 +68,6 @@ final class BootTest extends TestCase
         // (language-platform set after the 2026-06 slimming).
         $minooTypes = [
             'dictionary_entry', 'example_sentence', 'word_part', 'speaker', 'contributor',
-            'dialect_region',
             'game_session', 'daily_challenge', 'crossword_puzzle',
             'featured_item',
             'ingest_log',

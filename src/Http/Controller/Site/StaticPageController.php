@@ -58,21 +58,9 @@ final class StaticPageController
     }
 
     /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function matcher(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/static/matcher.html.twig', '/matcher', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
     public function search(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->render('pages/search/index.html.twig', '/search', $account);
-    }
-
-    /** @param array<string, mixed> $params @param array<string, mixed> $query */
-    public function studio(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->render('pages/static/studio.html.twig', '/studio', $account);
     }
 
     private function render(string $template, string $path, AccountInterface $account): Response

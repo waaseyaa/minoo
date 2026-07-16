@@ -1,5 +1,5 @@
 # Events & Groups Ingestion — Lightweight Custom Pipeline (replaces NorthCloud)
-> **⚠️ SUPERSEDED (same day) by [FEEDS-SERVICE-SPEC.md](FEEDS-SERVICE-SPEC.md)** — the fetcher moves out of minoo into a standalone shared worker serving minoo + rhtcircle.ca + oiatc.ca (events **and news**). The pipeline design below (§2–§6) carries forward; the placement (§1 minoo-internal, `config/event_sources.php`, minoo-side fetch command) does not.
+> **⚠️ SUPERSEDED (same day) by [feeds-service.md](feeds-service.md)** — the fetcher moves out of minoo into a standalone shared worker serving minoo + rhtcircle.ca + oiatc.ca (events **and news**). The pipeline design below (§2–§6) carries forward; the placement (§1 minoo-internal, `config/event_sources.php`, minoo-side fetch command) does not.
 
 **Date:** 2026-07-02 · **Resolves:** CLEANUP-PRS.md I-2 · **Context:** NorthCloud is down permanently; decision #3 direction was "automate."
 

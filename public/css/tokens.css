@@ -130,13 +130,10 @@
     /* Domain accents */
     --domain-events:      var(--color-events);
     --domain-groups:      var(--color-communities);
-    --domain-teachings:   var(--color-teachings);
     --domain-language:    var(--color-language);
     --domain-people:      var(--color-people);
     --domain-elders:      var(--color-programs);
-    --domain-businesses:  var(--color-businesses);
     --domain-communities: var(--color-communities);
-    --domain-newsletter:  var(--color-teachings);
     --domain-feed:        var(--color-language);
     --domain-search:      var(--color-search);
 

@@ -102,18 +102,19 @@ final class StaticPagesRouteProvider extends AppCoreServiceProvider
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
+        // /studio page retired in the #920 cuts; 301 home (it had an OG share card).
+        $router->addRoute(
+            'static.studio_redirect',
+            RouteBuilder::create('/studio')
+                ->controller(static fn (): Response => new RedirectResponse('/', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()->methods('GET')->build(),
+        );
+
         $router->addRoute(
             'games.shkoda.short',
             RouteBuilder::create('/shkoda')
                 ->controller(static fn (): Response => new RedirectResponse('/games/shkoda', Response::HTTP_MOVED_PERMANENTLY))
                 ->allowAll()->methods('GET')->build(),
-        );
-
-        $router->addRoute(
-            'static.studio',
-            RouteBuilder::create('/studio')
-                ->controller('App\Http\Controller\Site\StaticPageController::studio')
-                ->allowAll()->render()->methods('GET')->build(),
         );
 
         // SEO: XML sitemap (#807). Served by the app (no static file).

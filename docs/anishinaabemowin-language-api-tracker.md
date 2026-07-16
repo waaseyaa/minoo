@@ -600,8 +600,9 @@ until Phase 0 consent exists. GPU is required for training; the Pi is inference 
 
 # E. Issue / milestone plan (proposed, no code)
 
-Per the repo's working agreements, Spec Kitty is the canonical execution layer; missions and work
-packages carry the work, not GitHub issue numbers as a hard gate. Proposed shape:
+Per the repo's working agreements (design-first + anchor-issue flow; Spec Kitty was retired
+2026-07-16, see CLAUDE.md Workflow), substantive work starts with a design and an anchor
+issue; PRs are #N-traceable. Proposed shape:
 
 **Milestone:** Anishinaabemowin Language API, Phase 1 (TM + `/api/lang`, public-web English only).
 

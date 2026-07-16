@@ -11,7 +11,9 @@ return [
     ),
 
     // Sovereignty profile for this deployment: 'local', 'self_hosted', or 'northops'.
-    // Override per environment with WAASEYAA_SOVEREIGNTY_PROFILE.
+    // Consumed by the framework (Waaseyaa\Foundation\Sovereignty\SovereigntyConfig
+    // defaults to 'local' when absent — removing this key silently flips the
+    // deployment profile). Override per environment with WAASEYAA_SOVEREIGNTY_PROFILE.
     'sovereignty_profile' => getenv('WAASEYAA_SOVEREIGNTY_PROFILE') ?: 'northops',
 
     // SQLite database path. WAASEYAA_DB env var takes precedence.
@@ -27,9 +29,6 @@ return [
         }
         return dirname(__DIR__) . '/' . ltrim($env, './');
     })(),
-
-    // Config sync directory. Override with WAASEYAA_CONFIG_DIR env var.
-    'config_dir' => getenv('WAASEYAA_CONFIG_DIR') ?: __DIR__ . '/sync',
 
     // File storage root for LocalFileRepository (media package).
     'files_dir' => getenv('WAASEYAA_FILES_DIR') ?: __DIR__ . '/../files',

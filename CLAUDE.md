@@ -9,7 +9,7 @@ Last framework sync: Waaseyaa **alpha.248** (2026-06-23, from alpha.215, issue #
 - **alpha.179** — release infrastructure fixes (`bin/sync-internal-versions` output now committed, `waaseyaa/migration` added to split matrix).
 - **alpha.180** — M-004 two-axis (revisionable × translatable) entity storage. Reference consumer: Minoo `teaching` (not yet opted-in). New `Waaseyaa\EntityStorage\Schema\TranslationSchemaHandler`, `RevisionTableBuilder::buildTwoAxis()`, `RevisionableStorageDriver`, `SaveContext::withTranslations(array $langcodes)`. Existing single-axis types unchanged.
 - **alpha.181** — **`SqlEntityQuery::accessCheck(true)` is now the default and fail-closed (#1495).** Every `getQuery()` call must either `->setAccount($account)` (bind the request's account so per-row `EntityAccessHandler::check('view', $account)` runs) or explicitly `->accessCheck(false)` (opt out with a row in `docs/security/sql-entity-query-access-check-bypass-audit.md`); otherwise the query throws `Waaseyaa\EntityStorage\Exception\MissingQueryAccountException`. New methods on `EntityQueryInterface`: `setAccount(?AccountInterface): static`. Minoo adopted via mission `adopt-waaseyaa-alpha-182-access-checking-01KS0WZ7`; see the security audit doc for the 53 documented bypass sites. Also shipped (not yet adopted in Minoo, separate trackers): AI agent executor end-to-end (#1496), 2FA endpoints (#1499), dead-code Phase 4 fail-on-new gate (#1500).
-- **alpha.182** — follow-up fixes for two framework-internal bypass sites missed by alpha.181 (`packages/path/src/PathAliasResolver.php`, Groups `TwoBundleCoexistenceTest`). No Minoo action required beyond pinning the constraint. **Known framework gap pending fix:** `vendor/waaseyaa/northcloud/src/Sync/NcSyncService.php:140` still has an unbound `getQuery()`; 4 Minoo `NcContentSyncTest` cases are marked skipped until the framework lands the bypass.
+- **alpha.182** — follow-up fixes for two framework-internal bypass sites missed by alpha.181 (`packages/path/src/PathAliasResolver.php`, Groups `TwoBundleCoexistenceTest`). No Minoo action required beyond pinning the constraint.
 
 Earlier sync notes (alpha.175): native-CLI-kernel mission — symfony/console hard-cut, `HasCommandsInterface` → `HasNativeCommandsInterface`, command classes split into Handler + `CommandDefinition` pairs; `Waaseyaa\NorthCloud\Command\NcSyncCommand` removed in favor of framework's native `NcSyncHandler`. Minoo's own CLI handlers live under `src/Console/` (`App\Console\`). Tracking: #750.
 
@@ -32,29 +32,29 @@ minoo/
 │   ├── Infrastructure/ # Cross-cutting adapters (NorthCloud, crisis/OG, rate limits, fixtures, mail, MCP)
 │   ├── Console/       # Native CLI handlers (`App\Console\`)
 │   ├── Domain/        # Bounded contexts: Account/, Community/, Feed/, Games/, Geo/
-│   ├── Entity/        # 31 entity class files (content + config types)
+│   ├── Entity/        # Entity class files (content + config types) — one per registered type family
 │   ├── Ingestion/     # Inbound data pipelines (mappers, materializer)
-│   ├── Provider/      # 5 composer-registered providers + internal stacks (entity, routing)
+│   ├── Provider/      # 7 composer-registered providers + internal stacks (entity, routing)
 │   ├── Search/        # Search providers, autocomplete
 │   └── Seed/          # TaxonomySeeder, ConfigSeeder, etc.
 ├── tests/App/
 │   ├── Unit/          # Entity, access, seed tests
 │   └── Integration/   # Full kernel boot smoke test
 ├── templates/
-│   ├── base.html.twig           # Page shell (header, nav, footer)
-│   ├── home.html.twig           # Public homepage for anonymous visitors (extends base)
-│   ├── feed.html.twig           # Authenticated feed (extends base)
-│   ├── page.html.twig           # Default page (extends base)
-│   ├── 404.html.twig            # Not found page (extends base)
-│   ├── events.html.twig         # Events listing + detail (extends base)
-│   ├── groups.html.twig         # Groups listing + detail (extends base)
-│   ├── teachings.html.twig      # Teachings listing + detail (extends base)
-│   ├── language.html.twig       # Language demo page (extends base)
-│   └── components/              # Reusable Twig partials
-│       ├── dictionary-entry-card.html.twig
-│       ├── event-card.html.twig
-│       ├── group-card.html.twig
-│       └── teaching-card.html.twig
+│   ├── layouts/
+│   │   ├── base.html.twig       # Page shell (header, nav, footer) — pages extend this
+│   │   └── email.html.twig      # Email shell
+│   ├── pages/                   # One directory per surface (index/show per page)
+│   │   ├── home/  feed/  events/  groups/  community/  language/  games/
+│   │   ├── anokii/  auth/  account/  admin/  chat/  elder-support/
+│   │   └── legal/  lesson/  search/  static/
+│   ├── components/              # Reusable Twig partials
+│   │   ├── domain/              # events/, feed/, games/, groups/, language/, search/ cards
+│   │   ├── shared/              # ui/, layout/, feedback/ (flash messages, empty states)
+│   │   └── anokii/  seo/
+│   ├── email/                   # verification / password-reset / welcome (html + txt)
+│   ├── 403.html.twig  404.html.twig
+│   └── sitemap.xml.twig
 ├── public/
 │   ├── index.php                # Web entry point
 │   └── css/minoo.css            # Design system (tokens, layout, components)
@@ -74,16 +74,15 @@ minoo/
 | `src/Search/*` | `minoo:search` | `docs/specs/search.md` |
 | `src/Http/Controller/*/` (domain subdirs), `src/Http/Middleware/*`, `src/Http/Twig/*`, `src/Http/View/*`, `src/Http/Controller/Concerns/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/architecture/http-layer.md`, `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
-| `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`), `src/Infrastructure/NorthCloud/CommunityLookup.php` | — | `docs/specs/geo-domain.md` |
-| `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClientInterface.php`, `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
+| `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`) | — | `docs/specs/geo-domain.md` |
 | `src/Domain/Feed/*`, `src/Domain/Feed/Scoring/*` | `minoo:entities` | `docs/specs/entity-model.md`; feed ranking tunables in `config/feed_scoring.php` |
-| `src/Domain/Chat/*` | `minoo:controllers` | — |
+| `src/Http/Controller/Chat/*` | `minoo:controllers` | — |
 | `src/Domain/Games/*` | — | In-browser game engines + `GameStatsCalculator` (`App\Domain\Games\*`); further slices (NC, crisis) live under `src/Infrastructure/` |
 | `src/Infrastructure/*`, `src/Identity/*` | — | Cross-cutting adapters (NC client/cache, crisis/OG, rate limits, fixtures, mail, ICS, MCP); `ElderIdentity` in `src/Identity/`; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
 | `src/Entity/**`, `src/Provider/*`, `src/Access/*` | `waaseyaa-app-development` | `docs/specs/entity-model.md`, `docs/architecture/entity-layer.md` |
 | `src/Http/Controller/*/` (domain subdirs), `src/Routing/*` | `waaseyaa-app-development` | — |
-| Spec Kitty missions, roadmap, release planning | — | `docs/specs/workflow.md` |
+| Workflow, roadmap, release planning | — | `docs/specs/workflow.md` |
 
 For Minoo-level specs, use the Minoo MCP tools (Claude Code: **`.claude/settings.json`** registers **`minoo`** → `mcp/server.js`). After `composer install`, run **`composer bimaaji-mcp-install`** (or rely on `post-create-project-cmd`) so the Minoo MCP server has Node deps. As of Waaseyaa alpha.248 **bimaaji is framework-native** (no standalone Node MCP server): its tools are exposed over the framework `/mcp` endpoint, and client skills/config are installed via `bin/waaseyaa bimaaji:install --client=claude`. **`.cursor/mcp.json`** is gitignored—do not use it for team MCP config):
 - `minoo_list_specs` — list all available specs
@@ -96,19 +95,26 @@ For framework-level work (kernel boot, entity storage, access handler internals)
 - `waaseyaa_get_spec infrastructure` — kernel boot, manifest compiler, providers
 - `waaseyaa_search_specs <query>` — keyword search across all framework specs
 
-## Entity Domains (6 domains, 15 types)
+## Entity Domains (19 registered types)
+
+The authoritative list is the `entityType()` registrations in `src/Provider/Entity/*Provider.php` and `src/Provider/LanguageModuleServiceProvider.php` (`BootTest` asserts registration) — verify against the code, not this table, when they disagree.
 
 | Domain | Entities | Policy |
 |--------|----------|--------|
-| Events | `event`, `event_type` | `EventAccessPolicy` |
-| Groups | `group`, `group_type`, `cultural_group` | `GroupAccessPolicy`, `CulturalGroupAccessPolicy` |
-| Teachings | `teaching`, `teaching_type`, `cultural_collection` | `TeachingAccessPolicy`, `CulturalCollectionAccessPolicy` |
-| Language | `dictionary_entry`, `example_sentence`, `word_part`, `speaker`, `dialect_region` | `LanguageAccessPolicy` |
-| Games | `game_session`, `crossword_puzzle` | — |
+| Language / corpus | `dictionary_entry`, `example_sentence`, `word_part`, `speaker` | `LanguageAccessPolicy` (shared, array attribute) |
+| Translation memory | `translation_memory`, `tm_gap_log`, `tm_backlog` | `LanguageAccessPolicy` |
 | Ingestion | `ingest_log` | `IngestAccessPolicy` |
+| Community | `community`, `contributor`, `elder_support_request` | `CommunityAccessPolicy`, `ContributorAccessPolicy`, `ElderSupportAccessPolicy` |
+| Groups | `group` | `GroupAccessPolicy` |
+| Events | `event` | `EventAccessPolicy` |
+| Feed / social | `post` | `PostAccessPolicy` |
+| Games | `game_session`, `daily_challenge`, `crossword_puzzle` | `GameAccessPolicy` |
+| Account | `saved_word` | `SavedWordAccessPolicy` |
 | Editorial | `featured_item` | `FeaturedItemAccessPolicy` |
 
-Entity types and bindings are registered through `App\Provider\MinooEntityStackProvider`, which composes `EntityFoundationProvider`, `EntityCommunityProvider`, `EntityContentProvider`, and `EntityFeedProvider`. HTTP routes are composed by `MinooRoutingStackProvider` (public, content, account, home/feed, auth API, games, static, admin, social). The newsletter entity providers and routes were de-registered in the 2026-06 slimming (CUT); their tables stay dormant.
+The vestigial config entity types (`group_type`, `event_type`, `dialect_region`, `cultural_group`) were de-registered in the 2026-07 phase-i scope cuts — bundle validity lives in `ConfigSeeder` static arrays, which is the live mechanism. There are no `teaching`/`teaching_type`/`cultural_collection` types and no `TeachingAccessPolicy`/`CulturalCollectionAccessPolicy` classes — the teachings era was cut in the 2026-06 slimming; its tables stay dormant.
+
+Entity types and bindings are registered through `App\Provider\MinooEntityStackProvider`, which composes `EntityFoundationProvider`, `EntityCommunityProvider`, `EntityContentProvider`, and `EntityFeedProvider`; the translation-memory types are registered by `LanguageModuleServiceProvider` directly. HTTP routes are composed by `MinooRoutingStackProvider` (public, content, account, home/feed, auth API, games, static, admin, social). The newsletter entity providers and routes were de-registered in the 2026-06 slimming (CUT); their tables stay dormant.
 
 **Note:** `post` has its own `PostAccessPolicy` (public-read, auth-create, author+coordinator delete), separate from `EngagementAccessPolicy` which covers `reaction`, `comment`, `follow`.
 
@@ -116,10 +122,10 @@ Entity types and bindings are registered through `App\Provider\MinooEntityStackP
 
 | Provider | Role |
 |----------|------|
-| `EntityFoundationProvider` | Core platform types (`post`, engagement, taxonomy, menu, user-facing helpers), MCP bindings, shared infrastructure. |
-| `EntityCommunityProvider` | Community, group, cultural group, contributor, volunteer, leader, resource person, elder support. |
-| `EntityContentProvider` | Teachings, events, language/dictionary, games, featured items, oral history. |
-| `EntityFeedProvider` | Feed-oriented bindings (pull-based feed read path, #814). |
+| `EntityFoundationProvider` | I18n/foundation services, the language entity domain (`dictionary_entry`, `example_sentence`, `word_part`, `speaker`), `ingest_log`, MCP bindings. |
+| `EntityCommunityProvider` | `featured_item`, `group`, `community`, `elder_support_request`. |
+| `EntityContentProvider` | `contributor`, `event`, games (`game_session`, `daily_challenge`, `crossword_puzzle`), `post`, `saved_word`. |
+| `EntityFeedProvider` | Feed-oriented bindings (pull-based feed read path, #814) — no entity type registrations. |
 
 Further mechanical splits should move whole type families together with their `singleton`/`bind` pairs so `MinooEntityStackProvider` stays the only composer-facing entity entry point.
 
@@ -128,8 +134,8 @@ Further mechanical splits should move whole type families together with their `s
 - **CSS:** Single vanilla file `public/css/minoo.css` — no build step, no preprocessor
 - **CSS architecture:** `@layer reset, tokens, base, layout, components, utilities` — oklch colors, fluid `clamp()` type/spacing, native nesting, container queries, logical properties
 - **Templates:** Twig 3 with inheritance — `base.html.twig` defines shell, pages extend it
-- **Homepage/Feed split:** `/` serves `HomeController::index` — anonymous users see `home.html.twig` (public homepage), authenticated users get 302 to `/feed`. `/feed` serves `FeedController::index` (authenticated only, anonymous redirects to `/`). `/home` is an alias for `/`.
-- **Path routing:** Framework `RenderController::tryRenderPathTemplate()` maps `/language` → `language.html.twig` (framework#189). Paths without a matching template or path alias get 404. Note: `feed.html.twig` and `home.html.twig` have explicit controller routes that take priority over path-based rendering.
+- **Homepage/Feed split:** `/` serves `HomeController::index` for everyone (`pages/home/index.html.twig`) — there is no authenticated redirect. `/feed` serves `FeedController::index` (authenticated only, anonymous redirects to `/`).
+- **Path routing:** Framework `RenderController::tryRenderPathTemplate()` maps `/language` → `language.html.twig` (framework#189). Paths without a matching template or path alias get 404. Note: the feed and home pages have explicit controller routes that take priority over path-based rendering.
 - **Design doc:** `docs/plans/2026-03-06-visual-identity-layout-design.md` — color palette, type scale, spacing scale, component patterns
 
 **Adding a public page:**
@@ -171,7 +177,7 @@ composer cs-fixer:fix                         # Apply PHP CS Fixer to the tree
 composer phpstan                              # PHPStan level 5 on `src/` (same gate as CI; `phpstan.neon`)
 composer phpstan:dead-code                    # ShipMonk dead-code detector + Minoo usage providers (`phpstan-dead-code.neon`); shrinks `phpstan-dead-code-baseline.neon` as you fix findings
 php -S 0.0.0.0:8080 -t public public/index.php  # Dev server (router script required — public/admin/ dir exists). Use `0.0.0.0` not `localhost` on WSL2 so Windows browsers can open http://localhost:8080/… via port forwarding.
-./vendor/bin/phpunit                          # All tests (914 tests, 2568 assertions)
+./vendor/bin/phpunit                          # All tests — the run's own output is the authoritative count; don't bake totals into docs
 ./vendor/bin/phpunit --testsuite MinooUnit     # Unit tests only
 ./vendor/bin/phpunit --testsuite MinooIntegration  # Integration tests (in-memory SQLite)
 bin/waaseyaa                                  # CLI
@@ -180,7 +186,7 @@ bin/waaseyaa migrate:status                   # Show migration status
 bin/waaseyaa migrate:rollback                 # Rollback last batch
 bin/waaseyaa make:migration <name>            # Generate a new migration file
 bin/waaseyaa schema:check                     # Detect schema drift (missing columns)
-bin/waaseyaa ingest:nc-sync --limit=10        # Pull NC indigenous content as teachings/events
+bin/waaseyaa ingest:nc-sync --limit=10        # Pull NC indigenous content (framework command; minoo's teaching type is retired)
 bin/waaseyaa ingest:nc-sync --dry-run         # Preview what would sync without persisting
 php scripts/populate_engagement.php           # Seed feed with users, posts, reactions, comments
 ```
@@ -210,7 +216,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Stale manifest cache**: `storage/framework/packages.php` can prevent new providers/policies from being discovered — delete it when adding new providers
 - **`PackageManifestCompiler`** reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
 - **`LanguageAccessPolicy`** covers all 4 language types via array attribute: `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`
-- **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection, `ilid` for ingest_log)
+- **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `gsid` for game_session, `ilid` for ingest_log)
 - **Schema drift**: Adding a field to `fieldDefinitions` does not ALTER existing SQLite tables. Run `bin/waaseyaa schema:check` to detect drift, then create a migration with `bin/waaseyaa make:migration add_<column>_to_<table>` and run `bin/waaseyaa migrate`. Migration files live in `migrations/` as PHP files returning `Migration` instances (see existing migrations for pattern)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
 - **Database path**: Minoo config resolves to `{projectRoot}/storage/waaseyaa.sqlite`. Override with `WAASEYAA_DB` env var. When copying production DB locally, place it in `storage/`.
@@ -228,7 +234,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **PHPStan baseline drift**: After adding new files that call `EntityInterface::get()`, regenerate the baseline with `./vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon`. The baseline won't auto-update when new files are added.
 - **Dead-code pass (ShipMonk)**: `composer phpstan:dead-code` uses `phpstan-dead-code.neon` (not CI by default). Custom providers mark route-string controllers, native CLI `execute`, and `App\Seed` static builders. Remaining findings are in `phpstan-dead-code-baseline.neon` — regenerate with `composer phpstan:dead-code -- --generate-baseline phpstan-dead-code-baseline.neon` after substantive fixes; trim entries you resolve.
 - **Controller DI**: `SsrPageHandler::resolveControllerInstance()` auto-injects constructor params. It checks a hardcoded `$serviceMap` (EntityTypeManager, Twig, HttpRequest, AccountInterface), then falls back to `serviceResolver` for any type registered as a singleton in a service provider. Register new services in providers and they'll be injected automatically.
-- **Production deploy path**: `/home/deployer/minoo/current` (symlink to `releases/N`). DB at `storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.
+- **Production deploy path**: minoo.live deploys from the `waaseyaa-infra` repo (`MINOO_REF` pin in `compose/docker-compose.yml` → Raspberry Pi containers; runbook `06-minoo-deploy.md`), NOT from this repo. Production DB is the `minoo_storage` volume at `/app/storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.
 - **EntityStorage::create() calls constructors**: `SqlEntityStorage::instantiateEntity()` uses `new $class(values: $values)` — constructor validation IS invoked. EngagementController wraps create()+save() in try/catch for `InvalidArgumentException` as a safety net returning 422.
 - **Mock `ContentEntityBase`, not `EntityInterface`**: `get()`/`set()` are on `FieldableInterface`/`ContentEntityBase`, not `EntityInterface`. PHPUnit cannot configure methods that don't exist on the mocked type. Use `$this->createMock(ContentEntityBase::class)` for entities that need `get()`/`set()` in tests.
 - **Mock `set()` must return self**: `ContentEntityBase::set()` returns `static` (fluent). Mock callbacks using `willReturnCallback` must `return $mock;` — a void callback causes `TypeError` at runtime.
@@ -238,11 +244,11 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **`loadMultiple([])` LOADS ALL ROWS (consent/security footgun)**: `SqlEntityStorage::loadMultiple(array $ids = [])` treats an empty array as the "load all" sentinel (`if (!empty($ids))` only adds the `IN` filter when non-empty) — it diverges from the Drupal contract it mirrors (`null` = all, `[]` = none). So a filtered-then-load pattern (`$ids = getQuery()->condition(...)->execute(); loadMultiple($ids)`) will surface the ENTIRE table when the filter matches nothing. This caused a real consent leak: an entry-detail examples query correctly returned `[]`, then `loadMultiple([])` dumped all 27 consent-gated corpus sentences (#788). ALWAYS guard: `if ($ids === []) { return []; }` before `loadMultiple($ids)`, or use `load(reset($ids))` only after a `$ids !== []` check. Regression-locked in `LanguageControllerTest` via `expects($this->never())->method('loadMultiple')`. Upstream hardening (make `loadMultiple([])` fail-closed) is tracked separately.
 - **NorthCloud client timeout**: Use `search.timeout` / `northcloud.timeout` config (15s for search, 5s for community data) when constructing `Waaseyaa\NorthCloud\Client\NorthCloudClient` for search + community operations.
 - **NC Search API param**: Uses `size` for pagination, not `page_size` (that's the communities endpoint only).
-- **ConsoleKernel broken on production** (#493): Missing `SqliteEmbeddingStorage` class crashes all CLI commands. Workaround: boot `HttpKernel` via reflection in one-liner scripts (same pattern as `scripts/populate_featured.php`).
-- **`trans()` is a Twig function, not PHP**: Controllers cannot call `trans()`. Use hardcoded English strings for `Flash::success()`/`Flash::error()` — this matches all existing controllers (AuthController, ElderSupportWorkflowController, etc.).
+- **ConsoleKernel broken on production** (#493): Missing `SqliteEmbeddingStorage` class crashes all CLI commands. Workaround: boot `HttpKernel` via reflection in one-liner scripts (same pattern as `scripts/populate_featured.php`). **Likely stale since alpha.249/250 — retest on the production layout before relying on it.**
+- **`trans()` is a Twig function, not PHP**: Controllers cannot call `trans()`. Use hardcoded English strings for `Flash::success()`/`Flash::error()` — this matches all existing controllers (AuthController etc.).
 - **App-specific identity fields belong in Minoo, not framework**: Use `ElderIdentity::isElder($user)` / `ElderIdentity::setElder($user, bool)` from `src/Identity/ElderIdentity.php`. Never add Minoo domain concepts to the framework `User` class.
 - **Validate Referer before redirecting**: `$request->headers->get('Referer')` can be an external URL. Use `RoleManagementController::safeReferrer()` pattern — reject anything that doesn't start with `/` or starts with `//`.
-- **Vendor packages are versioned from Packagist**: Core `waaseyaa/*` packages resolve to tagged releases (e.g. `^0.1.0-alpha.155`). Framework changes require: tag new release on the monorepo → wait for split/Packagist → `composer update 'waaseyaa/*'` in Minoo. Optional **path** `repositories` in `composer.json` exist only for sibling-repo work on `entity`, `field`, and `genealogy` (`@dev`); do not add path overrides for `foundation`/`routing` in normal flows. Editing `vendor/` directly is lost on next update.
+- **Vendor packages are versioned from Packagist**: Core `waaseyaa/*` packages resolve to tagged releases (e.g. `^0.1.0-alpha.155`). Framework changes require: tag new release on the monorepo → wait for split/Packagist → `composer update 'waaseyaa/*'` in Minoo. There are **no path `repositories`** in `composer.json` (the only sibling-path reference is `extra.waaseyaa.admin_path` → `../waaseyaa/packages/admin`); do not add path overrides in normal flows. Editing `vendor/` directly is lost on next update.
 - **`ServiceProvider::boot()` takes no parameters**: Cannot inject via `boot()` signature. Use `$this->resolve(EventDispatcherInterface::class)` inside `boot()` body.
 - **Feed scoring config**: All ranking constants (decay half-life, affinity signals, engagement weights, diversity thresholds) are in `config/feed_scoring.php`. Tunable without code changes.
 - **Conditional grid columns**: Use `:has()` when grid layouts have optional children (e.g. `.search-layout:has(.search-filters)`). Without it, empty grid columns waste space.
@@ -250,7 +256,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **"Did you mean" suggestion slot**: Template and CSS exist in `search.html.twig` but `SearchResult` has no `suggestion` field yet. See #519 for backend wiring.
 - **Migration tables must use `_data` CLOB schema**: Content entities use `{id} INTEGER PRIMARY KEY AUTOINCREMENT, uuid CLOB, bundle CLOB, {label} CLOB, langcode CLOB, _data CLOB`. Config entities use `{id} TEXT PRIMARY KEY, bundle CLOB, langcode CLOB, _data CLOB`. All field values are stored in the `_data` JSON blob — do NOT create individual columns for fields. `SqlEntityStorage` will error with "no column named _data" if the schema is wrong.
 - **Dictionary `definition` field is JSON-wrapped**: Values like `["bear"]` need `json_decode()` before display. Use `cleanDefinition()` pattern in controllers.
-- **Composer providers**: `extra.waaseyaa.providers` lists five classes (`MinooEntityStackProvider`, `MinooRoutingStackProvider`, `AppBootServiceProvider`, `AppCommandServiceProvider`, `BimaajiBridgeProvider`). CI asserts this list matches the trailing segment of the compiled package manifest (`ComposerProviderParityTest`).
+- **Composer providers**: `extra.waaseyaa.providers` lists seven classes (`MinooEntityStackProvider`, `MinooRoutingStackProvider`, `AppBootServiceProvider`, `AnokiiServiceProvider`, `LanguageModuleServiceProvider`, `AppCommandServiceProvider`, `BimaajiBridgeProvider`). CI asserts this list matches the trailing segment of the compiled package manifest (`ComposerProviderParityTest`).
 - **`HasCommandsInterface` is opt-in (alpha.173+)**: Providers that contribute Symfony console commands MUST `implements Waaseyaa\Foundation\ServiceProvider\Capability\HasCommandsInterface`. The framework removed the no-op default `commands()` from `ServiceProvider`, so without the marker `ConsoleKernel::handle()` skips your commands silently — they appear "not defined" at the CLI even though the provider returns them. Also: the interface signature uses `Waaseyaa\Foundation\Event\EventDispatcherInterface` for the `$dispatcher` param, not Symfony's `EventDispatcherInterface`. Mismatched type → fatal LSP-incompatible signature on boot.
 - **Default `log_level` is `notice` (set in `config/waaseyaa.php`)**: Framework default is `warning`, which silently drops the post-#1390 dispatcher-shim notices (`channel: dispatcher.deprecation`, `event: implicit_array_shim`) that inventory the implicit-array migration backlog. Override via `WAASEYAA_LOG_LEVEL` env var (`debug|info|notice|warning|error|...`). Notices are dedup'd inside `AppControllerMethodInvoker::$specCache` (private static), so under FPM you see one per `(controller_class::method::parameter_name)` triple per worker lifetime; under `php -S` the cache lives for the server process. To extract Minoo's controller-attribute migration backlog from the logs: `grep -F 'dispatcher.deprecation' <log> | sed -E 's/.*Controller ([^ ]+) parameter \$([^ ]+) .*add #\[([^]]+)\].*/\1 $\2 -> #[\3]/' | sort -u` (log lines use the concrete controller FQCN, e.g. `App\Http\Controller\...`).
 - **Worktree vendor corruption**: Worktrees don't share the main repo's `vendor/`. After worktree cleanup, run `composer install` in the main repo to restore dependencies.
@@ -268,19 +274,17 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **`public/index.php` must always call `$response->send()`**: Never gate the emit on `PHP_SAPI === 'cli-server'`. Symfony `Response::send()` is SAPI-aware and works correctly under fpm-fcgi, cli, and cli-server. Gating it (as was briefly done in 6c4e755) produces a WSOD under Caddy + PHP-FPM: kernel handles the request, returns the Response object, and nothing emits the body — every route returns 200 with zero content-length. Discovered via a production outage during the alpha.75 → alpha.107 jump. The old SsrResponse-era kernel echoed content during `handle()`, which is why the gate ever seemed to work.
 - **Verify production with body size, not HTTP status**: A `curl -I` or `curl -w "%{http_code}"` returning 200 does NOT prove the app is alive. A crashing kernel can still emit headers. Always `curl -sS -o file -w "%{http_code}/%{size_download}"` and spot-check a `<title>` tag after deploys. Zero-byte 200s are the classic "PHP fatal after headers sent" failure mode.
 
-## Workflow (Spec Kitty)
+## Workflow (anchor-issue + design-first)
 
-**Spec Kitty is the canonical execution layer** for Minoo: missions, work packages, step contracts, and the implement / review / `next` loop. Use the Spec Kitty skills under `.claude/skills/spec-kitty-*` (and the copies under `/.claude/skills/` if installed globally) to advance work, not GitHub issue numbers as a hard gate.
-
-See `docs/specs/workflow.md` (via `minoo_get_spec workflow`) for versioning, Spec Kitty governance, and drift tooling.
+Substantive work follows the **design-first flow** — brainstorm → spec in `docs/specs/` → written plan → TDD implementation → code review → verification — anchored by a **GitHub anchor issue** for multi-PR efforts. **GitHub** is the PR/CI surface. Full rules: `docs/specs/workflow.md` (versioning model, PR traceability). **Spec Kitty is retired** (2026-07, matching waaseyaa's 2026-07-06 retirement) — do not run `spec-kitty` commands or consult `.kittify/` state; historical mission artifacts live read-only under `kitty-specs/`.
 
 **Working agreements:**
 
-1. **Track non-trivial work in Spec Kitty** — Features and multi-file refactors should have mission or work-package coverage before implementation; tiny fixes may follow a direct user brief.
-2. **Use the Spec Kitty control loop** — Runtime `next`, implement-review, and mission review skills define sequencing and acceptance.
-3. **Codified context before code** — This file, specialist skills, and `minoo_*` / `waaseyaa_*` specs for the subsystem you touch.
-4. **PRs describe what landed** — Titles and bodies should match the Spec Kitty mission or WP being merged; `.github/pull_request_template.md` is optional guidance, not an issue-number mandate.
-5. **Drift is advisory** — `bin/check-milestones` (often run from SessionStart) prints **repository boundary** checks only (see script and `docs/specs/workflow.md`). Read warnings when present; they do not override Spec Kitty–driven work.
+1. **Substantive work begins with a design** — spec in `docs/specs/` first, then a written plan, then TDD implementation; multi-PR efforts open a GitHub anchor issue recording scope, work-package breakdown, and decisions. Tiny fixes may follow a direct user brief.
+2. **PRs must be traceable** — `Closes #N` / `Part of #N` plus `#N` in the title for anchored efforts; a single self-contained PR may stand alone if its body explains itself.
+3. **CHANGELOG discipline** — every substantive PR adds an entry under `[Unreleased]` in `CHANGELOG.md`.
+4. **Codified context before code** — This file, specialist skills, and `minoo_*` / `waaseyaa_*` specs for the subsystem you touch; under an ongoing effort, read the anchor issue (including its comment trail) first.
+5. **Drift is advisory** — `bin/check-milestones` (often run from SessionStart) prints **repository boundary** checks only (see script and `docs/specs/workflow.md`). Read warnings when present.
 
 ## Codified Context
 
@@ -292,7 +296,7 @@ See `docs/specs/workflow.md` (via `minoo_get_spec workflow`) for versioning, Spe
   - `skills/minoo-controllers/SKILL.md` — HTTP controllers, routing, request handling
   - `skills/minoo-frontend-ssr/SKILL.md` — templates, CSS design system, SSR rendering
 - **Tier 3 (Specs):** Retrieved via `minoo_*` MCP tools:
-  - `docs/specs/workflow.md` — Spec Kitty governance, versioning model, framework milestone reference, boundary drift script
+  - `docs/specs/workflow.md` — design-first workflow governance, versioning model, boundary drift script
   - `docs/specs/entity-model.md` — entity types, access, seeds (318 lines)
   - `docs/specs/ingestion-pipeline.md` — NorthCloud ingest, mappers, materialization
   - `docs/specs/search.md` — search provider, config, template
@@ -311,7 +315,7 @@ Minoo is the **application layer**. It owns entity types, map-driven UX, dialect
 
 **Import rules:**
 - Minoo imports from Waaseyaa (framework) — never the reverse
-- Minoo resolves dialect codes through the `App\Language\DialectCodeProvider` seam, backed by `App\Seed\ConfigSeeder::dialectRegions()` (which also seeds the `dialect_region` config entity). The `jonesrussell/indigenous-taxonomy` package referenced in earlier notes is NOT installed; it is a deferred future backing for this seam, not a current dependency (see `docs/anishinaabemowin-language-api-tracker.md` A.3).
+- Minoo resolves dialect codes through the `App\Language\DialectCodeProvider` seam, backed by `App\Seed\ConfigSeeder::dialectRegions()` (a static array — the former `dialect_region` config entity was de-registered in the 2026-07 scope cuts). The `jonesrussell/indigenous-taxonomy` package referenced in earlier notes is NOT installed; it is a deferred future backing for this seam, not a current dependency (see `docs/anishinaabemowin-language-api-tracker.md` A.3).
 - Minoo may call North Cloud APIs (via the app-facing NC client interface + adapter on top of `waaseyaa/northcloud`) but must not import NC Go packages
 - North Cloud must not contain Minoo-specific entity types or templates
 

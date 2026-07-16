@@ -99,9 +99,9 @@ final class LessonVideoTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function video_route_serves_full_mp4_with_accept_ranges(): void
+    public function lesson_video_route_serves_full_mp4_with_accept_ranges(): void
     {
-        $response = $this->send('GET', '/media/corpus/video/sb-005');
+        $response = $this->send('GET', '/lessons/media/video/sb-005');
 
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
         self::assertSame('video/mp4', $response->headers->get('Content-Type'));
@@ -111,9 +111,9 @@ final class LessonVideoTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function video_route_honors_a_range_request_with_206(): void
+    public function lesson_video_route_honors_a_range_request_with_206(): void
     {
-        $response = $this->send('GET', '/media/corpus/video/sb-005', [], ['HTTP_RANGE' => 'bytes=0-3']);
+        $response = $this->send('GET', '/lessons/media/video/sb-005', [], ['HTTP_RANGE' => 'bytes=0-3']);
 
         self::assertSame(Response::HTTP_PARTIAL_CONTENT, $response->getStatusCode());
         self::assertSame('bytes', $response->headers->get('Accept-Ranges'));
@@ -123,22 +123,22 @@ final class LessonVideoTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function lesson_route_alias_also_serves_the_reel(): void
-    {
-        // The lessons.media.video alias maps to the same controller; a full (200)
-        // or partial (206, if a prior request left a Range on $_SERVER in the
-        // shared harness) response both prove it serves the reel.
-        $response = $this->send('GET', '/lessons/media/video/sb-005');
-        self::assertContains($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_PARTIAL_CONTENT]);
-        self::assertSame('video/mp4', $response->headers->get('Content-Type'));
-        self::assertSame('bytes', $response->headers->get('Accept-Ranges'));
-    }
-
-    #[Test]
     public function missing_reel_is_404(): void
     {
         // Consented row exists (sb-017) but no video file → 404.
-        self::assertSame(Response::HTTP_NOT_FOUND, $this->send('GET', '/media/corpus/video/sb-017')->getStatusCode());
+        self::assertSame(Response::HTTP_NOT_FOUND, $this->send('GET', '/lessons/media/video/sb-017')->getStatusCode());
+    }
+
+    #[Test]
+    public function legacy_corpus_video_path_redirects_301_to_the_lesson_route(): void
+    {
+        // Pre-2026-07 imports persisted '/media/corpus/video/{id}' into
+        // example_sentence.video_url; the Anokii transcribe workspace renders
+        // that stored value verbatim, so the retired route 301s (#920 review).
+        $response = $this->send('GET', '/media/corpus/video/sb-005');
+
+        self::assertSame(Response::HTTP_MOVED_PERMANENTLY, $response->getStatusCode());
+        self::assertSame('/lessons/media/video/sb-005', $response->headers->get('Location'));
     }
 
     #[Test]

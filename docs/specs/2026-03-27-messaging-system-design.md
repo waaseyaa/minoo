@@ -1,3 +1,5 @@
+> **STATUS: CUT (2026-06-12, `af269814` "slim Minoo to language platform") — never shipped.** The messaging feature was removed before launch; its tables (`message_thread`, `thread_participant`, `thread_message`) stay dormant and no provider registers the types. Kept as design history only.
+
 # Messaging System Design
 
 Facebook Messenger-style real-time messaging for Minoo. Group-capable from day one, with read receipts, typing indicators, message editing/deletion, email digests, and user blocking.

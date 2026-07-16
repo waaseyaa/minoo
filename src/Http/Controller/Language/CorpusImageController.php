@@ -15,9 +15,7 @@ use Waaseyaa\SSR\Attribute\MapRoute;
  *
  * Streams a single example-sentence image from the community-controlled corpus
  * directory (MINOO_CORPUS_PATH), which is NEVER committed to the repo:
- *   - thumb:   the whiteboard keyframe (thumbs/<id>.jpg), one per item.
- *   - context: an illustrative image cached locally (context-images/<id>.jpg),
- *              present only for items that have one.
+ *   - thumb: the whiteboard keyframe (thumbs/<id>.jpg), one per item.
  *
  * Consent boundary: an image is served ONLY when its example_sentence row is
  * consent_public = 1 AND status = 1 — the same gate that governs the text and
@@ -38,12 +36,6 @@ final class CorpusImageController
     public function thumb(#[MapRoute] array $params, AccountInterface $account, HttpRequest $request): Response
     {
         return $this->serve((string) ($params['id'] ?? ''), 'thumbs', $account);
-    }
-
-    /** Illustrative context image (only present for some items). @param array<string, mixed> $params */
-    public function context(#[MapRoute] array $params, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->serve((string) ($params['id'] ?? ''), 'context-images', $account);
     }
 
     private function serve(string $id, string $subdir, AccountInterface $account): Response

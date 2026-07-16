@@ -1,3 +1,5 @@
+> **STATUS: CUT (2026-06-12, `af269814` "slim Minoo to language platform") — never shipped.** The messaging feature was removed before launch. Do not execute this plan; kept as design history only.
+
 # Messaging System Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

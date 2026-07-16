@@ -174,8 +174,8 @@ final class AdminRouteProvider extends AppCoreServiceProvider
             AdminSurfaceServiceProvider::registerRoutes($router, $host);
         }
 
-        // Re-add admin_spa catch-all AFTER newsletter routes so specific
-        // /admin/api/newsletter/* and /admin/newsletter/* routes match first.
+        // Re-add admin_spa catch-all after app-specific admin routes so they
+        // match first (the newsletter admin routes it once deferred to are gone).
         // The framework's AdminSurfaceServiceProvider registers admin_spa in its
         // own routes() which runs earlier; remove then add so WaaseyaaRouter rejects
         // duplicate route names.
