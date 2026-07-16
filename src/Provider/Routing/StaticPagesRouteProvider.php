@@ -102,6 +102,14 @@ final class StaticPagesRouteProvider extends AppCoreServiceProvider
                 ->allowAll()->render()->methods('GET')->build(),
         );
 
+        // /studio page retired in the #920 cuts; 301 home (it had an OG share card).
+        $router->addRoute(
+            'static.studio_redirect',
+            RouteBuilder::create('/studio')
+                ->controller(static fn (): Response => new RedirectResponse('/', Response::HTTP_MOVED_PERMANENTLY))
+                ->allowAll()->methods('GET')->build(),
+        );
+
         $router->addRoute(
             'games.shkoda.short',
             RouteBuilder::create('/shkoda')

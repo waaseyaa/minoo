@@ -75,9 +75,8 @@ minoo/
 | `src/Http/Controller/*/` (domain subdirs), `src/Http/Middleware/*`, `src/Http/Twig/*`, `src/Http/View/*`, `src/Http/Controller/Concerns/*`, routes in `src/Provider/Routing/*.php` | `minoo:controllers` | `docs/architecture/http-layer.md`, `docs/specs/entity-model.md`, `docs/specs/frontend-ssr.md` |
 | `templates/*`, `public/css/*` | `minoo:frontend-ssr` | `docs/specs/frontend-ssr.md` |
 | `src/Domain/Geo/*` (incl. `Service/LocationResolver.php`) | — | `docs/specs/geo-domain.md` |
-| `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClientInterface.php`, `src/Infrastructure/NorthCloud/NorthCloudCommunityDictionaryClient.php` | — | `docs/specs/geo-domain.md` (NC client section) |
 | `src/Domain/Feed/*`, `src/Domain/Feed/Scoring/*` | `minoo:entities` | `docs/specs/entity-model.md`; feed ranking tunables in `config/feed_scoring.php` |
-| `src/Domain/Chat/*` | `minoo:controllers` | — |
+| `src/Http/Controller/Chat/*` | `minoo:controllers` | — |
 | `src/Domain/Games/*` | — | In-browser game engines + `GameStatsCalculator` (`App\Domain\Games\*`); further slices (NC, crisis) live under `src/Infrastructure/` |
 | `src/Infrastructure/*`, `src/Identity/*` | — | Cross-cutting adapters (NC client/cache, crisis/OG, rate limits, fixtures, mail, ICS, MCP); `ElderIdentity` in `src/Identity/`; auth mail is framework `AuthMailer` |
 | `config/*`, `composer.json` | — | See `../waaseyaa/CLAUDE.md` for framework conventions |
@@ -187,7 +186,7 @@ bin/waaseyaa migrate:status                   # Show migration status
 bin/waaseyaa migrate:rollback                 # Rollback last batch
 bin/waaseyaa make:migration <name>            # Generate a new migration file
 bin/waaseyaa schema:check                     # Detect schema drift (missing columns)
-bin/waaseyaa ingest:nc-sync --limit=10        # Pull NC indigenous content as teachings/events
+bin/waaseyaa ingest:nc-sync --limit=10        # Pull NC indigenous content (framework command; minoo's teaching type is retired)
 bin/waaseyaa ingest:nc-sync --dry-run         # Preview what would sync without persisting
 php scripts/populate_engagement.php           # Seed feed with users, posts, reactions, comments
 ```
@@ -217,7 +216,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **Stale manifest cache**: `storage/framework/packages.php` can prevent new providers/policies from being discovered — delete it when adding new providers
 - **`PackageManifestCompiler`** reads root `composer.json` for app providers and scans app PSR-4 namespaces for policies — this was a framework fix required for Minoo
 - **`LanguageAccessPolicy`** covers all 4 language types via array attribute: `#[PolicyAttribute(entityType: ['dictionary_entry', 'example_sentence', 'word_part', 'speaker'])]`
-- **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `ccid` for cultural_collection, `ilid` for ingest_log)
+- **Entity keys** are unique per type (e.g. `eid` for event, `deid` for dictionary_entry, `gsid` for game_session, `ilid` for ingest_log)
 - **Schema drift**: Adding a field to `fieldDefinitions` does not ALTER existing SQLite tables. Run `bin/waaseyaa schema:check` to detect drift, then create a migration with `bin/waaseyaa make:migration add_<column>_to_<table>` and run `bin/waaseyaa migrate`. Migration files live in `migrations/` as PHP files returning `Migration` instances (see existing migrations for pattern)
 - **Integration tests** boot `HttpKernel` with reflection (`boot()` is protected), use `putenv('WAASEYAA_DB=:memory:')` for in-memory SQLite
 - **Database path**: Minoo config resolves to `{projectRoot}/storage/waaseyaa.sqlite`. Override with `WAASEYAA_DB` env var. When copying production DB locally, place it in `storage/`.
@@ -235,7 +234,7 @@ All user-facing copy follows `docs/content-tone-guide.md`:
 - **PHPStan baseline drift**: After adding new files that call `EntityInterface::get()`, regenerate the baseline with `./vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon`. The baseline won't auto-update when new files are added.
 - **Dead-code pass (ShipMonk)**: `composer phpstan:dead-code` uses `phpstan-dead-code.neon` (not CI by default). Custom providers mark route-string controllers, native CLI `execute`, and `App\Seed` static builders. Remaining findings are in `phpstan-dead-code-baseline.neon` — regenerate with `composer phpstan:dead-code -- --generate-baseline phpstan-dead-code-baseline.neon` after substantive fixes; trim entries you resolve.
 - **Controller DI**: `SsrPageHandler::resolveControllerInstance()` auto-injects constructor params. It checks a hardcoded `$serviceMap` (EntityTypeManager, Twig, HttpRequest, AccountInterface), then falls back to `serviceResolver` for any type registered as a singleton in a service provider. Register new services in providers and they'll be injected automatically.
-- **Production deploy path**: `/home/deployer/minoo/current` (symlink to `releases/N`). DB at `storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.
+- **Production deploy path**: minoo.live deploys from the `waaseyaa-infra` repo (`MINOO_REF` pin in `compose/docker-compose.yml` → Raspberry Pi containers; runbook `06-minoo-deploy.md`), NOT from this repo. Production DB is the `minoo_storage` volume at `/app/storage/waaseyaa.sqlite`. User table is `user` (not `users`), fields stored in `_data` JSON blob. Query by field: `WHERE _data LIKE '%field_value%'`.
 - **EntityStorage::create() calls constructors**: `SqlEntityStorage::instantiateEntity()` uses `new $class(values: $values)` — constructor validation IS invoked. EngagementController wraps create()+save() in try/catch for `InvalidArgumentException` as a safety net returning 422.
 - **Mock `ContentEntityBase`, not `EntityInterface`**: `get()`/`set()` are on `FieldableInterface`/`ContentEntityBase`, not `EntityInterface`. PHPUnit cannot configure methods that don't exist on the mocked type. Use `$this->createMock(ContentEntityBase::class)` for entities that need `get()`/`set()` in tests.
 - **Mock `set()` must return self**: `ContentEntityBase::set()` returns `static` (fluent). Mock callbacks using `willReturnCallback` must `return $mock;` — a void callback causes `TypeError` at runtime.
@@ -316,7 +315,7 @@ Minoo is the **application layer**. It owns entity types, map-driven UX, dialect
 
 **Import rules:**
 - Minoo imports from Waaseyaa (framework) — never the reverse
-- Minoo resolves dialect codes through the `App\Language\DialectCodeProvider` seam, backed by `App\Seed\ConfigSeeder::dialectRegions()` (which also seeds the `dialect_region` config entity). The `jonesrussell/indigenous-taxonomy` package referenced in earlier notes is NOT installed; it is a deferred future backing for this seam, not a current dependency (see `docs/anishinaabemowin-language-api-tracker.md` A.3).
+- Minoo resolves dialect codes through the `App\Language\DialectCodeProvider` seam, backed by `App\Seed\ConfigSeeder::dialectRegions()` (a static array — the former `dialect_region` config entity was de-registered in the 2026-07 scope cuts). The `jonesrussell/indigenous-taxonomy` package referenced in earlier notes is NOT installed; it is a deferred future backing for this seam, not a current dependency (see `docs/anishinaabemowin-language-api-tracker.md` A.3).
 - Minoo may call North Cloud APIs (via the app-facing NC client interface + adapter on top of `waaseyaa/northcloud`) but must not import NC Go packages
 - North Cloud must not contain Minoo-specific entity types or templates
 

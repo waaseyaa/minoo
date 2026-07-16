@@ -181,7 +181,9 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
                 'code' => ['type' => 'string', 'label' => 'Code', 'weight' => 1],
                 'bio' => ['type' => 'text', 'label' => 'Biography', 'weight' => 5],
                 'slug' => ['type' => 'string', 'label' => 'URL Slug', 'weight' => 6],
-                'dialect_region_id' => ['type' => 'entity_reference', 'label' => 'Dialect Region', 'settings' => ['target_type' => 'dialect_region'], 'weight' => 10],
+                // Plain code string (values from ConfigSeeder::dialectRegions()); the
+                // former dialect_region config entity was de-registered in #920.
+                'dialect_region_id' => ['type' => 'string', 'label' => 'Dialect Region', 'weight' => 10],
                 'community' => ['type' => 'string', 'label' => 'Community', 'description' => 'Home community, free text as the speaker states it.', 'weight' => 11],
                 'consent_public_display' => ['type' => 'boolean', 'label' => 'Public Display Consent', 'description' => 'Whether this speaker may be shown on public pages.', 'weight' => 28, 'default' => 1],
                 'consent_ai_training' => ['type' => 'boolean', 'label' => 'AI Training Consent', 'description' => 'Whether this speaker data may be used for AI training. Default: no.', 'weight' => 29, 'default' => 0],

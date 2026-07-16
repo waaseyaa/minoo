@@ -173,9 +173,9 @@ OKLCH earth / forest / water / sun / berry palette with shadcn-style Tier-2 sema
 
 After substantial changes, hit the key SSR routes:
 
-- Public / feed: `/`, `/feed`, `/home`
-- Listings and detail: `/events`, `/events/{slug}`, `/groups`, `/teachings`, `/teachings/{slug}`, `/people`, `/businesses`, `/communities`, `/communities/{slug}`, `/contributors`
-- Language / oral histories: `/language`, `/oral-histories`
+- Public / feed: `/`, `/feed` (`/home` 301s to `/` since #920)
+- Listings and detail: `/events`, `/events/{slug}`, `/groups`, `/groups/{slug}`, `/communities`, `/communities/{slug}` (teachings/people/businesses/contributors routes were retired in the 2026-06 slimming)
+- Language: `/language`, `/language/search`, `/language/{slug}`
 - Games: `/games`, `/shkoda`, `/games/shkoda`, `/agim`, `/games/agim`, `/crossword`, `/games/crossword`, `/matcher`, `/games/matcher`, `/journey`, `/games/journey`
 - Elders: `/elders`, `/elders/request`, `/elders/volunteer`
 - Static: `/about`, `/how-it-works`, `/data-sovereignty`, `/safety`, `/get-involved`, `/journey`, `/matcher`, `/messages`, `/studio`, `/volunteer`

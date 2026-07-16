@@ -26,7 +26,6 @@ use Waaseyaa\SSR\Attribute\MapRoute;
  *         POST /api/games/journey/tap
  *         POST /api/games/journey/hint
  *         POST /api/games/journey/complete
- *         GET  /api/games/journey/stats
  */
 class JourneyController
 {

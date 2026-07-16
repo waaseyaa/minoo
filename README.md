@@ -38,21 +38,21 @@ php -S localhost:8081 -t public     # Dev server
 
 ## Architecture
 
-Minoo is a **thin application** — custom entity types, access policies, service providers, and seeders live in `src/`. All framework code lives in [`waaseyaa/framework`](https://github.com/waaseyaa/framework) (sibling directory, symlinked via Composer path repositories).
+Minoo is a **thin application** — custom entity types, access policies, service providers, and seeders live in `src/`. Framework code comes from versioned [`waaseyaa/*`](https://github.com/waaseyaa/framework) packages installed from Packagist (no path repositories; the sibling checkout is used only for admin-SPA dev builds via `extra.waaseyaa.admin_path`).
 
 ```
 minoo/
 ├── src/
-│   ├── Entity/        # 12 custom entity classes
-│   ├── Provider/      # 6 service providers
-│   ├── Access/        # 6 access policy classes
+│   ├── Entity/        # 19 custom entity classes
+│   ├── Provider/      # 7 composer-registered providers (+ internal stacks)
+│   ├── Access/        # 11 access policy classes
 │   └── Seed/          # Taxonomy + config seeders
-├── tests/Minoo/
-│   ├── Unit/          # Entity, access, seed tests
-│   └── Integration/   # Full kernel boot smoke test
+├── tests/App/
+│   ├── Unit/          # Entity, access, seed, domain tests
+│   └── Integration/   # Full kernel boot + HTTP tests (in-memory SQLite)
 ├── config/            # App configuration
 ├── public/index.php   # Web entry point
-└── vendor/            # Symlinks to ../waaseyaa/packages/*
+└── vendor/            # waaseyaa/* packages from Packagist (dist installs)
 ```
 
 ## Deployment

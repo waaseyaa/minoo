@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Build Waaseyaa Nuxt admin SPA and copy into Minoo public/admin for PHP to serve.
-# Built files are gitignored (see .gitignore); production builds also run in deploy.yml.
+# Built files are gitignored (see .gitignore); production builds run in the waaseyaa-infra deploy.
 # Usage (from Minoo repo root): ./scripts/build-admin-spa.sh
 #
 # Path resolution (first match wins):
