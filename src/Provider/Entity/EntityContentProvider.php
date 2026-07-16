@@ -17,9 +17,10 @@ use Waaseyaa\Entity\EntityType;
 /**
  * Games + contributor attribution.
  *
- * Language-platform slimming (2026-06): oral history, post (feed), and
- * leader entity types de-registered; tables stay dormant. Contributor is
- * kept because example_sentence rows reference it for attribution.
+ * Language-platform slimming (2026-06): oral history and leader entity
+ * types de-registered; tables stay dormant. Post (feed) is registered
+ * below (social spine, #811). Contributor is kept because
+ * example_sentence rows reference it for attribution.
  */
 final class EntityContentProvider extends AppCoreServiceProvider
 {

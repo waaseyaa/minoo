@@ -5,6 +5,11 @@ All notable changes to the Minoo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- Retired Spec Kitty as the execution layer; Minoo now follows the design-first + anchor-issue workflow (`docs/specs/workflow.md`). `.kittify/` removed; `kitty-specs/` kept as read-only history.
+
 ## [1.0.3] — 2026-03-14
 
 ### Changed

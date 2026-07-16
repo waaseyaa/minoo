@@ -27,11 +27,13 @@ use Waaseyaa\Routing\Language\UrlPrefixNegotiator;
 /**
  * Foundation services + the language entity domain.
  *
- * Language-platform slimming (2026-06): events, teachings, cultural
- * groups/collections, NorthCloud sync, crisis/OG image services, and the
- * NorthCloud search override are gone. Search falls through to the
- * framework's local FTS5 provider; the dictionary search at
- * /language/search queries entity storage directly.
+ * Language-platform slimming (2026-06): teachings, cultural collections,
+ * NorthCloud sync, crisis/OG image services, and the NorthCloud search
+ * override are gone (events were later re-registered in
+ * EntityContentProvider (#819); the vestigial cultural_group config type
+ * was de-registered again in the 2026-07 scope cuts). Search falls
+ * through to the framework's local FTS5 provider; the dictionary search
+ * at /language/search queries entity storage directly.
  */
 final class EntityFoundationProvider extends AppCoreServiceProvider
 {
