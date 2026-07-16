@@ -7,7 +7,6 @@ namespace App\Provider\Entity;
 use App\Entity\Account\SavedWord;
 use App\Entity\Community\Contributor;
 use App\Entity\Events\Event;
-use App\Entity\Events\EventType;
 use App\Entity\Feed\Post;
 use App\Entity\Games\CrosswordPuzzle;
 use App\Entity\Games\DailyChallenge;
@@ -94,14 +93,6 @@ final class EntityContentProvider extends AppCoreServiceProvider
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
-        ));
-
-        $this->entityType(new EntityType(
-            id: 'event_type',
-            label: 'Event Type',
-            class: EventType::class,
-            keys: ['id' => 'type', 'label' => 'name'],
-            group: 'events',
         ));
 
         // =====================================================================

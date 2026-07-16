@@ -10,12 +10,12 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\PolicyAttribute;
 use Waaseyaa\Entity\EntityInterface;
 
-#[PolicyAttribute(entityType: ['event', 'event_type'])]
+#[PolicyAttribute(entityType: ['event'])]
 final class EventAccessPolicy implements AccessPolicyInterface
 {
     public function appliesTo(string $entityTypeId): bool
     {
-        return $entityTypeId === 'event' || $entityTypeId === 'event_type';
+        return $entityTypeId === 'event';
     }
 
     public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult
