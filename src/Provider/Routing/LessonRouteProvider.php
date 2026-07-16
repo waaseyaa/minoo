@@ -76,8 +76,7 @@ final class LessonRouteProvider extends AppCoreServiceProvider
                 ->build(),
         );
 
-        // Lesson reel: Range-streamed web mp4, consent-gated (#873). Same handler
-        // as /media/corpus/video/{id}.
+        // Lesson reel: Range-streamed web mp4, consent-gated (#873).
         $router->addRoute(
             'lessons.media.video',
             RouteBuilder::create('/lessons/media/video/{id}')

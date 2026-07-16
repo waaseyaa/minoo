@@ -58,7 +58,7 @@ $etm = $kernel->getEntityTypeManager();
 
 foreach ([
     'dictionary_entry', 'example_sentence', 'word_part', 'speaker', 'contributor',
-    'dialect_region', 'game_session', 'daily_challenge', 'crossword_puzzle',
+    'game_session', 'daily_challenge', 'crossword_puzzle',
     'featured_item', 'ingest_log', 'user', 'taxonomy_term',
 ] as $typeId) {
     if ($etm->getDefinition($typeId) !== null) {
