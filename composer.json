@@ -102,7 +102,6 @@
             "Composer\\Config::disableProcessTimeout",
             "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve -p ${APP_PORT:-8081} & SERVE_PID=$!; trap 'kill $SERVE_PID 2>/dev/null || true' EXIT INT TERM; NUXT_BACKEND_URL=http://127.0.0.1:${APP_PORT:-8081} bin/waaseyaa admin:dev"
         ],
-        "audit-site": "./bin/waaseyaa-audit-site",
         "dev:wsl": [
             "Composer\\Config::disableProcessTimeout",
             "PHP_CLI_SERVER_WORKERS=4 bin/waaseyaa serve & npm --prefix ../waaseyaa/packages/admin run dev -- --host && kill $!"
@@ -114,7 +113,7 @@
             "@php bin/install-mcp-npm.php"
         ],
         "post-create-project-cmd": [
-            "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync bin/waaseyaa-audit-site scripts/lefthook-prepare.sh",
+            "chmod +x bin/waaseyaa bin/waaseyaa-version bin/verify-deploy-rsync scripts/lefthook-prepare.sh",
             "php bin/post-create-setup.php"
         ],
         "cs-fixer": "php-cs-fixer fix --dry-run --diff",
