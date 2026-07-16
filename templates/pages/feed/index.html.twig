@@ -12,8 +12,10 @@
       <nav class="feed__filters" aria-label="{{ trans('feed.filter_label') }}">
         {% set filters = {'all': trans('feed.filter_all'), 'post': trans('feed.filter_posts'), 'event': trans('feed.filter_events'), 'group': trans('feed.filter_groups')} %}
         {% for key, label in filters %}
+          {# Compare the URL-facing filter key, not activeFilter — that is the
+             internal type id ('community_group' since #923), never 'group'. #}
           <a href="{{ lang_url('/feed') }}?filter={{ key }}"
-             class="feed__filter{% if activeFilter == key %} feed__filter--active{% endif %}">{{ label }}</a>
+             class="feed__filter{% if filterParam == key %} feed__filter--active{% endif %}">{{ label }}</a>
         {% endfor %}
       </nav>
     </header>
