@@ -325,12 +325,6 @@ final class ShkodaController
         ]);
     }
 
-    /** GET /api/games/shkoda/stats — player stats (auth required). */
-    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'shkoda'));
-    }
-
     // --- Private helpers ---
 
     private function selectRandomWord(string $tier, string $seed = ''): ?int

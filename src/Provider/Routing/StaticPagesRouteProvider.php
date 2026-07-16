@@ -109,13 +109,6 @@ final class StaticPagesRouteProvider extends AppCoreServiceProvider
                 ->allowAll()->methods('GET')->build(),
         );
 
-        $router->addRoute(
-            'static.studio',
-            RouteBuilder::create('/studio')
-                ->controller('App\Http\Controller\Site\StaticPageController::studio')
-                ->allowAll()->render()->methods('GET')->build(),
-        );
-
         // SEO: XML sitemap (#807). Served by the app (no static file).
         $router->addRoute(
             'seo.sitemap',

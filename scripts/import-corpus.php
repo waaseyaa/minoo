@@ -114,9 +114,9 @@ function resolveSpeaker(object $storage, string $name, bool $dryRun): ?int
 
 /**
  * Media fields derived from a corpus item (#852). A thumbnail exists for every
- * item; a context image only for items that carry a context_image_source. URLs
- * point at the consent-gated CorpusImageController routes, never at the external
- * source — the original URL is kept in context_image_source for credit.
+ * item; its URL points at the consent-gated CorpusImageController route, never
+ * at the external source. Context-image credit/source/article metadata is kept
+ * for attribution.
  *
  * A web-optimized teaching reel (#873) is set only when the transcoded file
  * exists at <corpus>/video/<id>.mp4, so items without a video fall back to the
@@ -129,13 +129,11 @@ function resolveSpeaker(object $storage, string $name, bool $dryRun): ?int
 function corpusMediaFields(array $item, string $corpusDir): array
 {
     $id = (string) ($item['id'] ?? '');
-    $hasContext = trim((string) ($item['context_image_source'] ?? '')) !== '';
     $hasVideo = $id !== '' && is_file(rtrim($corpusDir, '/\\') . '/video/' . $id . '.mp4');
 
     return [
-        'video_url' => $hasVideo ? '/media/corpus/video/' . $id : '',
+        'video_url' => $hasVideo ? '/lessons/media/video/' . $id : '',
         'thumbnail_url' => $id !== '' ? '/media/corpus/thumb/' . $id : '',
-        'context_image_url' => $hasContext && $id !== '' ? '/media/corpus/context/' . $id : '',
         'context_image_credit' => (string) ($item['context_image_credit'] ?? ''),
         'context_image_source' => (string) ($item['context_image_source'] ?? ''),
         'context_image_article' => (string) ($item['context_image_article'] ?? ''),

@@ -279,14 +279,6 @@ class JourneyController
         ]);
     }
 
-    // ── Stats ─────────────────────────────────────────────────────────────
-
-    /** GET /api/games/journey/stats */
-    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->json(GameStatsCalculator::build($this->entityTypeManager, $account, 'journey', ['abandoned'], ['completed']));
-    }
-
     // ── Private helpers ───────────────────────────────────────────────────
 
     private function createSession(string $slug, AccountInterface $account): object

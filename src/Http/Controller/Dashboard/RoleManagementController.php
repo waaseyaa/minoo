@@ -104,19 +104,6 @@ final class RoleManagementController
         return new RedirectResponse($referrer);
     }
 
-    public function coordinatorList(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        $users = $this->loadUserRows($account);
-
-        $html = $this->twig->render('pages/dashboard/coordinator-users.html.twig', LayoutTwigContext::withAccount($account, [
-            'users' => $users,
-            'can_manage_coordinator' => false,
-            'path' => '/dashboard/coordinator/users',
-        ]));
-
-        return new Response($html);
-    }
-
     public function adminList(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $users = $this->loadUserRows($account);

@@ -46,7 +46,6 @@ const PAGES = [
   { route: '/games/matcher', title: 'Matcher', description: 'Matcher — a free Anishinaabemowin matching game on Minoo. Match words to their meanings.' },
   { route: '/about', title: 'About Minoo', description: 'What Minoo is, who it is for, and how it is built with and for the community. ' + DEFAULT_DESC },
   { route: '/data-sovereignty', title: 'Data Sovereignty', description: 'How Minoo holds community language data: consent-based, community-owned, OCAP-aligned.' },
-  { route: '/studio', title: 'The Studio', description: 'Watch Minoo being built, live, from inside Minoo. Russell streams the work from Sagamok Anishnawbek.' },
 ];
 
 function routeSlug(route) {

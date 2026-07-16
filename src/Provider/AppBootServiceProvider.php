@@ -90,12 +90,6 @@ class AppBootServiceProvider extends AppCoreServiceProvider
             $twigForFlash->addExtension(new AccountDisplayTwigExtension());
         }
 
-        // Chat surface is cut; templates still read the global.
-        $twigForChat = ThemeServiceProvider::getTwigEnvironment();
-        if ($twigForChat !== null) {
-            $twigForChat->addGlobal('chat_enabled', false);
-        }
-
         // =====================================================================
         // --- Games: game_session updated_at on PRE_SAVE ---
         // =====================================================================

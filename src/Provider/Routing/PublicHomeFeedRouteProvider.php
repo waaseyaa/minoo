@@ -29,16 +29,6 @@ final class PublicHomeFeedRouteProvider extends AppCoreServiceProvider
         );
 
         $router->addRoute(
-            'home.alias',
-            RouteBuilder::create('/home')
-                ->controller('App\\Http\\Controller\\Home\\HomeController::index')
-                ->allowAll()
-                ->render()
-                ->methods('GET')
-                ->build(),
-        );
-
-        $router->addRoute(
             'feed.index',
             RouteBuilder::create('/feed')
                 ->controller('App\\Http\\Controller\\Feed\\FeedController::index')

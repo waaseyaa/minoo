@@ -204,18 +204,6 @@ final class MatcherController
         ]);
     }
 
-    /** GET /api/games/matcher/stats — player stats. */
-    public function stats(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
-    {
-        return $this->json(GameStatsCalculator::build(
-            $this->entityTypeManager,
-            $account,
-            'matcher',
-            streakBreakers: [],
-            winStatuses: ['completed'],
-        ));
-    }
-
     // --- Private helpers ---
 
     /**

@@ -99,46 +99,15 @@ final class LessonVideoTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function video_route_serves_full_mp4_with_accept_ranges(): void
-    {
-        $response = $this->send('GET', '/media/corpus/video/sb-005');
-
-        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame('video/mp4', $response->headers->get('Content-Type'));
-        self::assertSame('bytes', $response->headers->get('Accept-Ranges'));
-        self::assertSame((string) strlen(self::MP4_BYTES), $response->headers->get('Content-Length'));
-        self::assertSame(self::MP4_BYTES, (string) $response->getContent());
-    }
-
-    #[Test]
-    public function video_route_honors_a_range_request_with_206(): void
-    {
-        $response = $this->send('GET', '/media/corpus/video/sb-005', [], ['HTTP_RANGE' => 'bytes=0-3']);
-
-        self::assertSame(Response::HTTP_PARTIAL_CONTENT, $response->getStatusCode());
-        self::assertSame('bytes', $response->headers->get('Accept-Ranges'));
-        self::assertSame('bytes 0-3/' . strlen(self::MP4_BYTES), $response->headers->get('Content-Range'));
-        self::assertSame('4', $response->headers->get('Content-Length'));
-        self::assertSame(substr(self::MP4_BYTES, 0, 4), (string) $response->getContent());
-    }
-
-    #[Test]
     public function lesson_route_alias_also_serves_the_reel(): void
     {
-        // The lessons.media.video alias maps to the same controller; a full (200)
-        // or partial (206, if a prior request left a Range on $_SERVER in the
+        // lessons.media.video is the only public video route; a full (200) or
+        // partial (206, if a prior request left a Range on $_SERVER in the
         // shared harness) response both prove it serves the reel.
         $response = $this->send('GET', '/lessons/media/video/sb-005');
         self::assertContains($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_PARTIAL_CONTENT]);
         self::assertSame('video/mp4', $response->headers->get('Content-Type'));
         self::assertSame('bytes', $response->headers->get('Accept-Ranges'));
-    }
-
-    #[Test]
-    public function missing_reel_is_404(): void
-    {
-        // Consented row exists (sb-017) but no video file → 404.
-        self::assertSame(Response::HTTP_NOT_FOUND, $this->send('GET', '/media/corpus/video/sb-017')->getStatusCode());
     }
 
     #[Test]
