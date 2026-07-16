@@ -10,6 +10,12 @@ return [
         FILTER_VALIDATE_BOOLEAN,
     ),
 
+    // Sovereignty profile for this deployment: 'local', 'self_hosted', or 'northops'.
+    // Consumed by the framework (Waaseyaa\Foundation\Sovereignty\SovereigntyConfig
+    // defaults to 'local' when absent — removing this key silently flips the
+    // deployment profile). Override per environment with WAASEYAA_SOVEREIGNTY_PROFILE.
+    'sovereignty_profile' => getenv('WAASEYAA_SOVEREIGNTY_PROFILE') ?: 'northops',
+
     // SQLite database path. WAASEYAA_DB env var takes precedence.
     // Relative paths resolve against project root (not CWD) so `php -S` (docroot=public) works.
     'database' => (static function (): string {
