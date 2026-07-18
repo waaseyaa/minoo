@@ -23,8 +23,8 @@ final class ReelProcessorTest extends HttpKernelTestCase
 {
     private function seedIngested(string $corpusId): int
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
-        $row = $storage->create([
+        $repository = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
+        $row = $repository->create([
             'ojibwe_text' => '',
             'english_text' => '',
             'source_sentence_id' => 'corpus:' . $corpusId,
@@ -34,7 +34,7 @@ final class ReelProcessorTest extends HttpKernelTestCase
             'created_at' => time(),
             'updated_at' => time(),
         ]);
-        $storage->save($row);
+        $repository->save($row);
 
         return (int) $row->id();
     }
@@ -71,7 +71,7 @@ final class ReelProcessorTest extends HttpKernelTestCase
         self::assertSame(PipelineStage::DRAFTED, $result['status']);
         self::assertNull($result['error']);
 
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load($esid);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $esid);
         self::assertSame(PipelineStage::DRAFTED, (string) $row->get('pipeline_status'));
         self::assertSame('  Zhooniyaans  ', (string) $row->get('ojibwe_text'), 'Ojibwe must be verbatim.');
         self::assertSame('butter knife', (string) $row->get('english_text'));
@@ -122,7 +122,7 @@ final class ReelProcessorTest extends HttpKernelTestCase
         self::assertSame(PipelineStage::INGESTED, $result['status']);
         self::assertSame('ffmpeg exploded', $result['error']);
 
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load($esid);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $esid);
         self::assertSame(PipelineStage::INGESTED, (string) $row->get('pipeline_status'));
         $prov = json_decode((string) $row->get('provenance'), true);
         self::assertSame('ffmpeg exploded', $prov['processing_error'] ?? null);

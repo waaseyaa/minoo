@@ -30,8 +30,8 @@ $boot = new ReflectionMethod(AbstractKernel::class, 'boot');
 $boot->invoke($kernel);
 
 $entityTypeManager = $kernel->getEntityTypeManager();
-$puzzleStorage = $entityTypeManager->getStorage('crossword_puzzle');
-$dictStorage = $entityTypeManager->getStorage('dictionary_entry');
+$puzzleStorage = $entityTypeManager->getRepository('crossword_puzzle');
+$dictStorage = $entityTypeManager->getRepository('dictionary_entry');
 
 // --- Load candidate words ---
 
@@ -44,7 +44,7 @@ $ids = $dictStorage->getQuery()->accessCheck(false)
 
 $candidateWords = [];
 $wordMeta = [];
-$entries = $dictStorage->loadMultiple($ids);
+$entries = $dictStorage->findMany($ids);
 
 foreach ($entries as $entry) {
     $word = mb_strtolower((string) $entry->get('word'));

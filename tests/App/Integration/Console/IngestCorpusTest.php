@@ -45,7 +45,7 @@ final class IngestCorpusTest extends HttpKernelTestCase
     /** @return list<int> example_sentence ids matching the given corpus ids */
     private function sentenceIds(string $likeId): array
     {
-        return $this->etm()->getStorage('example_sentence')->getQuery()->accessCheck(false)
+        return $this->etm()->getRepository('example_sentence')->getQuery()->accessCheck(false)
             ->condition('source_sentence_id', $likeId, 'LIKE')
             ->execute();
     }
@@ -70,7 +70,7 @@ final class IngestCorpusTest extends HttpKernelTestCase
         $ids = $this->sentenceIds('corpus:sb-90%');
         self::assertCount(2, $ids);
 
-        $entity = $this->etm()->getStorage('example_sentence')->load(reset($ids));
+        $entity = $this->etm()->getRepository('example_sentence')->find((string) reset($ids));
         self::assertSame('Zhooniyaans', (string) $entity->get('ojibwe_text'));
         self::assertSame('coin', (string) $entity->get('english_text'));
         self::assertSame('/media/corpus/audio/sb-901', (string) $entity->get('audio_url'));
@@ -81,7 +81,7 @@ final class IngestCorpusTest extends HttpKernelTestCase
         self::assertSame(0, (int) $entity->get('consent_public'));
 
         // Exactly one speaker (Steven Bennett, deduped) across both rows.
-        $speakers = $this->etm()->getStorage('speaker')->getQuery()->accessCheck(false)->condition('code', 'sb')->execute();
+        $speakers = $this->etm()->getRepository('speaker')->getQuery()->accessCheck(false)->condition('code', 'sb')->execute();
         self::assertCount(1, $speakers);
     }
 
@@ -114,7 +114,7 @@ final class IngestCorpusTest extends HttpKernelTestCase
 
         self::assertSame(1, $result->created);
         $ids = $this->sentenceIds('corpus:sb-921');
-        $entity = $this->etm()->getStorage('example_sentence')->load(reset($ids));
+        $entity = $this->etm()->getRepository('example_sentence')->find((string) reset($ids));
         self::assertSame('', (string) $entity->get('ojibwe_text'));
         self::assertSame('', (string) $entity->get('english_text'));
         self::assertSame('skip_vision', (string) $entity->get('notes'));

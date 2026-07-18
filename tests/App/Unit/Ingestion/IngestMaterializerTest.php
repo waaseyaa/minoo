@@ -19,7 +19,7 @@ final class IngestMaterializerTest extends TestCase
     public function dry_run_returns_preview_without_persisting(): void
     {
         $manager = $this->createMock(EntityTypeManagerInterface::class);
-        $manager->expects($this->never())->method('getStorage');
+        $manager->expects($this->never())->method('getRepository');
 
         $materializer = new IngestMaterializer($manager);
         $log = $this->createDictionaryLog();

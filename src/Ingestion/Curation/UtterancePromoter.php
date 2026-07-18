@@ -28,8 +28,8 @@ final class UtterancePromoter
 
     public function promote(int $esid): ?PromotionResult
     {
-        $sentences = $this->entityTypeManager->getStorage('example_sentence');
-        $sentence = $sentences->load($esid);
+        $sentences = $this->entityTypeManager->getRepository('example_sentence');
+        $sentence = $sentences->find((string) $esid);
         if (!$sentence instanceof EntityInterface) {
             return null;
         }
@@ -49,7 +49,7 @@ final class UtterancePromoter
         $status = (int) ($sentence->get('status') ?? 0);
         $now = time();
 
-        $entries = $this->entityTypeManager->getStorage('dictionary_entry');
+        $entries = $this->entityTypeManager->getRepository('dictionary_entry');
         $entry = $entries->create([
             // Verbatim — never normalized (ADR 0003).
             'word' => $word,
@@ -78,7 +78,7 @@ final class UtterancePromoter
         $wordPartIds = [];
         $tokens = preg_split('/\s+/', trim($word), -1, PREG_SPLIT_NO_EMPTY) ?: [];
         if (count($tokens) > 1) {
-            $parts = $this->entityTypeManager->getStorage('word_part');
+            $parts = $this->entityTypeManager->getRepository('word_part');
             foreach ($tokens as $token) {
                 $part = $parts->create([
                     'form' => $token,

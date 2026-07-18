@@ -120,22 +120,23 @@ final class CorpusLexiconService
      */
     private function loadCorpusRows(AccountInterface $account): array
     {
-        $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('dictionary_entry');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->condition('attribution_source', self::CORPUS_SOURCE)
             ->execute();
         if ($ids === []) {
-            // Guard the loadMultiple([]) "load all" footgun (see CLAUDE.md): an
-            // empty id set must never widen to the whole table (which would leak
-            // OPD rows into the corpus-only endpoint).
+            // Consent-lock intent (#788): an empty id set must never widen to the
+            // whole table (which would leak OPD rows into the corpus-only
+            // endpoint). findMany([]) is fail-closed upstream now, so this guard
+            // is redundant — kept as defense in depth documenting the invariant.
             return [];
         }
 
         $ids = array_slice($ids, 0, self::SCAN_LIMIT);
 
-        return array_values($storage->loadMultiple($ids));
+        return $repository->findMany($ids);
     }
 
     /**

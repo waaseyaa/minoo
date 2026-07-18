@@ -20,9 +20,9 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
     #[Test]
     public function translation_memory_round_trips_through_storage(): void
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('translation_memory');
+        $repository = self::$kernel->getEntityTypeManager()->getRepository('translation_memory');
 
-        $tm = $storage->create([
+        $tm = $repository->create([
             'source_en' => 'bear',
             'source_hash' => hash('sha256', 'bear'),
             'language_tag' => 'oj-x-sagamok',
@@ -31,9 +31,9 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
             'created_at' => time(),
             'updated_at' => time(),
         ]);
-        $storage->save($tm);
+        $repository->save($tm);
 
-        $loaded = $storage->load($tm->id());
+        $loaded = $repository->find((string) $tm->id());
         self::assertNotNull($loaded);
         self::assertSame('bear', $loaded->get('source_en'));
         self::assertSame('makwa', $loaded->get('translation'));
@@ -44,9 +44,9 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
     #[Test]
     public function tm_gap_log_round_trips_through_storage(): void
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('tm_gap_log');
+        $repository = self::$kernel->getEntityTypeManager()->getRepository('tm_gap_log');
 
-        $gap = $storage->create([
+        $gap = $repository->create([
             'source_en' => 'snowmobile',
             'source_hash' => hash('sha256', 'snowmobile'),
             'language_tag' => 'oj-x-sagamok',
@@ -56,9 +56,9 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
             'created_at' => time(),
             'updated_at' => time(),
         ]);
-        $storage->save($gap);
+        $repository->save($gap);
 
-        $loaded = $storage->load($gap->id());
+        $loaded = $repository->find((string) $gap->id());
         self::assertNotNull($loaded);
         self::assertSame('snowmobile', $loaded->get('source_en'));
         self::assertSame('exact_miss', $loaded->get('lookup_type'));
@@ -69,9 +69,9 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
     #[Test]
     public function tm_backlog_round_trips_with_its_defaults(): void
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('tm_backlog');
+        $repository = self::$kernel->getEntityTypeManager()->getRepository('tm_backlog');
 
-        $backlog = $storage->create([
+        $backlog = $repository->create([
             'english_text' => 'Economic Development',
             'concept_key' => 'economic development',
             'demand_sites' => 10,
@@ -81,9 +81,9 @@ final class LanguageModuleEntitiesTest extends HttpKernelTestCase
             'created_at' => time(),
             'updated_at' => time(),
         ]);
-        $storage->save($backlog);
+        $repository->save($backlog);
 
-        $loaded = $storage->load($backlog->id());
+        $loaded = $repository->find((string) $backlog->id());
         self::assertNotNull($loaded);
         self::assertSame('Economic Development', $loaded->get('english_text'));
         self::assertSame('governance-nav', $loaded->get('category'));

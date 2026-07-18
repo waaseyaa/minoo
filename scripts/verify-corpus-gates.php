@@ -74,14 +74,14 @@ $boot->invoke($kernel);
 $etm = $kernel->getEntityTypeManager();
 
 // Anonymous view of a corpus sentence must be denied by the gate.
-$storage = $etm->getStorage('example_sentence');
-$ids = $storage->getQuery()->accessCheck(false)
+$repository = $etm->getRepository('example_sentence');
+$ids = $repository->getQuery()->accessCheck(false)
     ->condition('source_sentence_id', 'corpus:sb-001')
     ->execute();
 check($ids !== [], 'corpus sentence sb-001 exists for admin tooling');
 
 if ($ids !== []) {
-    $entity = $storage->load((int) reset($ids));
+    $entity = $repository->find((string) reset($ids));
     $handler = $kernel->getAccessHandler();
     $anonymous = new class () implements Waaseyaa\Access\AccountInterface {
         public function id(): int|string
@@ -107,14 +107,14 @@ if ($ids !== []) {
     $result = $handler->check($entity, 'view', $anonymous);
     check(!$result->isAllowed(), 'anonymous view of corpus sentence is denied');
 
-    $speakerIds = $etm->getStorage('speaker')->getQuery()->accessCheck(false)->execute();
-    $speaker = $etm->getStorage('speaker')->load((int) reset($speakerIds));
+    $speakerIds = $etm->getRepository('speaker')->getQuery()->accessCheck(false)->execute();
+    $speaker = $etm->getRepository('speaker')->find((string) reset($speakerIds));
     $sResult = $handler->check($speaker, 'view', $anonymous);
     check(!$sResult->isAllowed(), 'anonymous view of speaker is denied');
 }
 
 // Public dictionary search must not surface corpus content.
-$entries = $etm->getStorage('dictionary_entry')->getQuery()->accessCheck(false)
+$entries = $etm->getRepository('dictionary_entry')->getQuery()->accessCheck(false)
     ->condition('word', '%Shoogan%', 'LIKE')
     ->execute();
 check($entries === [], 'corpus text never entered dictionary_entry');

@@ -18,10 +18,10 @@ $boot = new ReflectionMethod(AbstractKernel::class, 'boot');
 $boot->invoke($kernel);
 
 $entityTypeManager = $kernel->getEntityTypeManager();
-$featuredStorage = $entityTypeManager->getStorage('featured_item');
+$featuredStorage = $entityTypeManager->getRepository('featured_item');
 
 // 1. Find LNHL event
-$eventStorage = $entityTypeManager->getStorage('event');
+$eventStorage = $entityTypeManager->getRepository('event');
 $eventIds = $eventStorage->getQuery()->accessCheck(false)->condition('slug', 'little-nhl-2026')->execute();
 
 if ($eventIds !== []) {
@@ -54,7 +54,7 @@ if ($eventIds !== []) {
 }
 
 // 2. Find Crystal Shawanda
-$personStorage = $entityTypeManager->getStorage('resource_person');
+$personStorage = $entityTypeManager->getRepository('resource_person');
 $personIds = $personStorage->getQuery()->accessCheck(false)->condition('slug', 'crystal-shawanda')->execute();
 
 if ($personIds !== []) {

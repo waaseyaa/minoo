@@ -44,11 +44,11 @@ final class LessonAssembler
             return ['groups' => [], 'total' => 0];
         }
 
-        $entries = $this->entityTypeManager->getStorage('dictionary_entry');
+        $entries = $this->entityTypeManager->getRepository('dictionary_entry');
         $cards = [];
         foreach ($rows as $row) {
             $deid = (int) ($row->get('dictionary_entry_id') ?? 0);
-            $entry = $deid > 0 ? $entries->load($deid) : null;
+            $entry = $deid > 0 ? $entries->find((string) $deid) : null;
             if (!$entry instanceof EntityInterface) {
                 continue; // curated gate already required deid>0; defensive.
             }
@@ -115,11 +115,11 @@ final class LessonAssembler
         if ($slug === '') {
             return [];
         }
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         // Public surface: only published, consent-public, curated rows assigned to
         // this lesson. accessCheck(false) - the gate is status+consent, mirroring
         // LessonController::corpusRowsBySourceId (see the bypass audit doc).
-        $ids = $storage->getQuery()->accessCheck(false)
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('lesson_slug', $slug)
             ->condition('status', 1)
             ->condition('consent_public', 1)
@@ -129,7 +129,7 @@ final class LessonAssembler
             return [];
         }
 
-        return array_values($storage->loadMultiple($ids));
+        return $repository->findMany($ids);
     }
 
     /** Decode a JSON-wrapped dictionary definition (e.g. ["cup, glass"]) to display text. */

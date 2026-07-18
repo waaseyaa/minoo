@@ -34,9 +34,9 @@ final class AnokiiBackfillStatusHandler
         }
 
         $dryRun = (bool) $io->option('dry-run');
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
 
-        $ids = $storage->getQuery()
+        $ids = $repository->getQuery()
             ->accessCheck(false)
             ->condition('source_sentence_id', 'corpus:%', 'LIKE')
             ->execute();
@@ -48,7 +48,7 @@ final class AnokiiBackfillStatusHandler
 
         $updated = 0;
         $skipped = 0;
-        foreach ($storage->loadMultiple($ids) as $sentence) {
+        foreach ($repository->findMany($ids) as $sentence) {
             $existing = trim((string) ($sentence->get('pipeline_status') ?? ''));
             if ($existing !== '') {
                 ++$skipped;
@@ -61,7 +61,7 @@ final class AnokiiBackfillStatusHandler
             if (!$dryRun) {
                 $sentence->set('pipeline_status', $stage);
                 $sentence->set('updated_at', time());
-                $storage->save($sentence);
+                $repository->save($sentence);
             }
             ++$updated;
         }

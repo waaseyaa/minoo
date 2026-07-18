@@ -49,12 +49,12 @@ final class PipelineCounts
             return ['counts' => $counts, 'total' => 0, 'do_next' => null];
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         // accessCheck(false): staff-gated overview, must count UNREVIEWED drafts
         // (status 0 / consent off) the same way the Transcribe/Curate tools show
         // them. The route's requireRole is the access boundary. See the bypass
         // audit doc.
-        $ids = $storage->getQuery()
+        $ids = $repository->getQuery()
             ->accessCheck(false)
             ->condition('source_sentence_id', 'corpus:%', 'LIKE')
             ->execute();
@@ -64,7 +64,7 @@ final class PipelineCounts
         }
 
         $total = 0;
-        foreach ($storage->loadMultiple($ids) as $sentence) {
+        foreach ($repository->findMany($ids) as $sentence) {
             $stage = $this->resolver->resolve($sentence);
             $counts[$stage] = ($counts[$stage] ?? 0) + 1;
             ++$total;

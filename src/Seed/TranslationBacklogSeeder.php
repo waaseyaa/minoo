@@ -37,7 +37,7 @@ final class TranslationBacklogSeeder
      */
     public function seed(array $rows, string $targetTag = self::DEFAULT_TARGET_TAG): array
     {
-        $storage = $this->entityTypeManager->getStorage('tm_backlog');
+        $repository = $this->entityTypeManager->getRepository('tm_backlog');
         $now = time();
         $created = 0;
         $updated = 0;
@@ -52,7 +52,7 @@ final class TranslationBacklogSeeder
             $byCategory[$category] = ($byCategory[$category] ?? 0) + 1;
             $dedupeKey = self::dedupeKey($text, $targetTag);
 
-            $existingIds = $storage->getQuery()
+            $existingIds = $repository->getQuery()
                 ->accessCheck(false)
                 ->condition('dedupe_key', $dedupeKey)
                 ->execute();
@@ -70,12 +70,12 @@ final class TranslationBacklogSeeder
             ];
 
             if ($existingIds !== []) {
-                $entity = $storage->load((int) reset($existingIds));
+                $entity = $repository->find((string) reset($existingIds));
                 if ($entity !== null) {
                     foreach ($fields as $key => $value) {
                         $entity->set($key, $value);
                     }
-                    $storage->save($entity);
+                    $repository->save($entity);
                     ++$updated;
                     continue;
                 }
@@ -83,7 +83,7 @@ final class TranslationBacklogSeeder
 
             $fields['status'] = 'awaiting_translation';
             $fields['created_at'] = $now;
-            $storage->save($storage->create($fields));
+            $repository->save($repository->create($fields));
             ++$created;
         }
 
