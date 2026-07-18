@@ -4,6 +4,9 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          cacheDirectory=".phpunit.cache">
+    <extensions>
+        <bootstrap class="App\Tests\Support\ResetFrameworkStaticsExtension"/>
+    </extensions>
     <testsuites>
         <testsuite name="MinooUnit">
             <directory>tests/App/Unit</directory>
