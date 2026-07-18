@@ -75,11 +75,13 @@ final class SidebarNavActiveStateTest extends HttpKernelTestCase
     }
 
     #[Test]
-    public function home_is_active_on_feed_for_an_authenticated_member(): void
+    public function feed_entry_is_the_sole_active_item_on_feed(): void
     {
+        // The Home-activates-on-/feed rule from #922 was retired when #817
+        // added a dedicated authenticated Feed entry — Feed alone is active.
         $response = $this->sendAuthenticated('/feed');
         self::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        self::assertSame(['/'], $this->activeSidebarHrefs((string) $response->getContent()));
+        self::assertSame(['/feed'], $this->activeSidebarHrefs((string) $response->getContent()));
     }
 
     #[Test]
