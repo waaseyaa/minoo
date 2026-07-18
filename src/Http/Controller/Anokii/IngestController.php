@@ -123,10 +123,10 @@ final class IngestController
             return $this->json(['ok' => true, 'rows' => []]);
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         $rows = [];
         foreach ($esids as $esid) {
-            $row = $storage->load($esid);
+            $row = $repository->find((string) $esid);
             if (!$row instanceof EntityInterface) {
                 continue;
             }
@@ -239,9 +239,9 @@ final class IngestController
      */
     private function createDraft(string $id, string $sourceUrl, string $filename): int
     {
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         $now = time();
-        $entity = $storage->create([
+        $entity = $repository->create([
             'ojibwe_text' => '',
             'english_text' => '',
             'notes' => '',
@@ -260,7 +260,7 @@ final class IngestController
             'created_at' => $now,
             'updated_at' => $now,
         ]);
-        $storage->save($entity);
+        $repository->save($entity);
 
         return (int) $entity->id();
     }
@@ -276,10 +276,10 @@ final class IngestController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         // accessCheck(false): staff-gated tool; must show unreviewed drafts. The
         // route's requireRole is the access boundary. See the bypass audit doc.
-        $ids = $storage->getQuery()
+        $ids = $repository->getQuery()
             ->accessCheck(false)
             ->condition('source_sentence_id', 'corpus:%', 'LIKE')
             ->sort('created_at', 'DESC')
@@ -291,7 +291,7 @@ final class IngestController
 
         $resolver = new PipelineStageResolver();
         $rows = [];
-        foreach ($storage->loadMultiple($ids) as $row) {
+        foreach ($repository->findMany($ids) as $row) {
             $stage = $resolver->resolve($row);
             if ($stage !== PipelineStage::INGESTED && $stage !== PipelineStage::DRAFTED) {
                 continue;

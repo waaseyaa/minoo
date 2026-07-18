@@ -37,7 +37,7 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
         self::$previousCorpusPath = $prev === false ? null : $prev;
         putenv('MINOO_CORPUS_PATH=' . self::$corpusDir);
 
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $storage = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
 
         // Consented + published: images are public.
         $consented = $storage->create([
@@ -117,13 +117,13 @@ final class CorpusImageRouteTest extends HttpKernelTestCase
     #[Test]
     public function media_fields_round_trip_on_the_entity(): void
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $storage = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $ids = $storage->getQuery()->accessCheck(false)
             ->condition('source_sentence_id', 'corpus:sb-consent')
             ->execute();
         self::assertNotSame([], $ids);
 
-        $entity = $storage->load(reset($ids));
+        $entity = $storage->find((string) reset($ids));
         self::assertNotNull($entity);
         self::assertSame('/media/corpus/thumb/sb-consent', (string) $entity->get('thumbnail_url'));
     }

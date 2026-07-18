@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 /**
  * Locks the corpus-image consent boundary (#852), mirroring the audio gate. A
@@ -34,7 +34,7 @@ final class CorpusImageControllerTest extends TestCase
     public function thumb_rejects_a_traversal_shaped_id_before_touching_storage(): void
     {
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->expects($this->never())->method('getStorage');
+        $etm->expects($this->never())->method('getRepository');
         $etm->expects($this->never())->method('hasDefinition');
 
         $controller = new CorpusImageController($etm);
@@ -53,12 +53,12 @@ final class CorpusImageControllerTest extends TestCase
         // No published, consent-public row carries this id.
         $query->method('execute')->willReturn([]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturn($query);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturn($query);
 
         $etm = $this->createMock(EntityTypeManager::class);
         $etm->method('hasDefinition')->willReturn(true);
-        $etm->method('getStorage')->willReturn($storage);
+        $etm->method('getRepository')->willReturn($repository);
 
         $controller = new CorpusImageController($etm);
         $response = $controller->thumb(['id' => 'sb-999'], $this->account, HttpRequest::create('/media/corpus/thumb/sb-999'));

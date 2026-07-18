@@ -13,6 +13,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
 
@@ -36,13 +37,13 @@ final class LanguageController
         $page = max(1, (int) ($query['page'] ?? 1));
         $offset = ($page - 1) * self::PAGE_SIZE;
 
-        $storage = $this->entityTypeManager->getStorage('dictionary_entry');
+        $repository = $this->entityTypeManager->getRepository('dictionary_entry');
 
         // #786 ordering: lead with real, defined words; de-rank entries whose
         // definition is empty ("[]") to the end so the browse opens on useful
         // content. A non-empty JSON definition always contains a quote char;
         // "[]" never does, which lets us split cheaply at the query layer.
-        $base = static fn () => $storage->getQuery()->setAccount($account)
+        $base = static fn () => $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1);
 
@@ -54,7 +55,8 @@ final class LanguageController
 
         $total = count($allIds);
         $pageIds = array_slice($allIds, $offset, self::PAGE_SIZE);
-        $entries = $pageIds !== [] ? array_values($storage->loadMultiple($pageIds)) : [];
+        // findMany([]) is fail-closed (returns []), so an empty page needs no guard.
+        $entries = $repository->findMany($pageIds);
         $totalPages = (int) ceil($total / self::PAGE_SIZE);
 
         $html = $this->twig->render('pages/language/index.html.twig', LayoutTwigContext::withAccount($account, [
@@ -73,13 +75,13 @@ final class LanguageController
     public function show(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $slug = $params['slug'] ?? '';
-        $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('dictionary_entry');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->execute();
-        $entry = $ids !== [] ? $storage->load(reset($ids)) : null;
+        $entry = $ids !== [] ? $repository->find((string) reset($ids)) : null;
         if (!$entry instanceof DictionaryEntry) {
             $entry = null;
         }
@@ -94,7 +96,7 @@ final class LanguageController
             // linked examples, audio, or stems, so these are empty until the
             // Nishnaabemwin source work (#789) lands.
             'examples' => $entry !== null ? $this->examplesFor($account, (int) $entry->id()) : [],
-            'related' => $entry !== null ? $this->relatedByStem($storage, $account, $entry) : [],
+            'related' => $entry !== null ? $this->relatedByStem($repository, $account, $entry) : [],
             // #806 personal word lists: show a save/unsave control to members.
             'entry_id' => $entry !== null ? (int) $entry->id() : 0,
             'is_saved' => $entry !== null && SavedWords::isSaved($this->entityTypeManager, $account, (int) $entry->id()),
@@ -114,11 +116,11 @@ final class LanguageController
         $suggestion = '';
 
         if ($q !== '') {
-            $storage = $this->entityTypeManager->getStorage('dictionary_entry');
+            $repository = $this->entityTypeManager->getRepository('dictionary_entry');
             $qLower = mb_strtolower($q);
             $like = '%' . addcslashes($q, '%_\\') . '%';
 
-            $base = static fn () => $storage->getQuery()->setAccount($account)
+            $base = static fn () => $repository->getQuery()->setAccount($account)
                 ->condition('status', 1)
                 ->condition('consent_public', 1);
 
@@ -128,11 +130,10 @@ final class LanguageController
             $searchTotal = count($ids);
 
             // #787 relevance: exact word > prefix > substring(word) > definition-only.
-            // Guard the empty set: loadMultiple([]) is the framework's "load all"
-            // sentinel and would rank the entire dictionary for a no-match query.
+            // findMany([]) is fail-closed (returns []) — a no-match query ranks nothing.
             $ranked = [];
             $candidateIds = array_slice($ids, 0, self::SEARCH_CANDIDATES);
-            foreach ($candidateIds === [] ? [] : $storage->loadMultiple($candidateIds) as $entry) {
+            foreach ($repository->findMany($candidateIds) as $entry) {
                 $word = (string) $entry->get('word');
                 $wLower = mb_strtolower($word);
                 if ($wLower === $qLower) {
@@ -163,7 +164,7 @@ final class LanguageController
             // #787 did-you-mean: when nothing matched, suggest the closest
             // headword by edit distance over a cheap same-prefix candidate set.
             if ($searchTotal === 0) {
-                $suggestion = $this->didYouMean($storage, $account, $q);
+                $suggestion = $this->didYouMean($repository, $account, $q);
             }
         }
 
@@ -182,13 +183,13 @@ final class LanguageController
      * Closest headword to a misspelled query, by Levenshtein distance over a
      * bounded same-prefix candidate set (keeps it cheap on 21k entries).
      */
-    private function didYouMean(object $storage, AccountInterface $account, string $q): string
+    private function didYouMean(EntityRepositoryInterface $repository, AccountInterface $account, string $q): string
     {
         if ($q === '') {
             return '';
         }
 
-        $candidates = static fn (string $p, int $limit): array => $storage->getQuery()->setAccount($account)
+        $candidates = static fn (string $p, int $limit): array => $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->condition('word', addcslashes($p, '%_\\') . '%', 'LIKE')
@@ -209,7 +210,7 @@ final class LanguageController
             if ($ids === []) {
                 continue;
             }
-            foreach ($storage->loadMultiple($ids) as $entry) {
+            foreach ($repository->findMany($ids) as $entry) {
                 $word = (string) $entry->get('word');
                 $distance = levenshtein($needle, mb_strtolower($word));
                 if ($distance < $bestDistance) {
@@ -235,8 +236,8 @@ final class LanguageController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->condition('dictionary_entry_id', (string) $entryId)
@@ -244,14 +245,15 @@ final class LanguageController
             ->execute();
 
         // Empty id set means no consent-public examples link to this entry.
-        // Guard before loadMultiple(): an empty array is the framework's
-        // "load all" sentinel and would surface the gated corpus (#788 leak).
+        // findMany([]) is fail-closed upstream now, but this early return stays
+        // as defense in depth: an empty id set must NEVER widen into the gated
+        // corpus (#788 leak) — regression-locked in LanguageControllerTest.
         if ($ids === []) {
             return [];
         }
 
         $out = [];
-        foreach ($storage->loadMultiple($ids) as $sentence) {
+        foreach ($repository->findMany($ids) as $sentence) {
             $out[] = [
                 'ojibwe' => (string) $sentence->get('ojibwe_text'),
                 'english' => (string) $sentence->get('english_text'),
@@ -267,29 +269,29 @@ final class LanguageController
      *
      * @return list<array{word: string, slug: string}>
      */
-    private function relatedByStem(object $storage, AccountInterface $account, EntityInterface $entry): array
+    private function relatedByStem(EntityRepositoryInterface $repository, AccountInterface $account, EntityInterface $entry): array
     {
         $stem = trim((string) $entry->get('stem'));
         if ($stem === '') {
             return [];
         }
 
-        $ids = $storage->getQuery()->setAccount($account)
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->condition('stem', $stem)
             ->range(0, 9)
             ->execute();
 
-        // Guard the framework's "load all" sentinel (empty array) before
-        // loadMultiple() so a stem with no matches never returns the whole table.
+        // findMany([]) is fail-closed upstream now; keep the early return as
+        // defense in depth so a stem with no matches never widens results (#788).
         if ($ids === []) {
             return [];
         }
 
         $self = (int) $entry->id();
         $out = [];
-        foreach ($storage->loadMultiple($ids) as $other) {
+        foreach ($repository->findMany($ids) as $other) {
             if ((int) $other->id() === $self) {
                 continue;
             }

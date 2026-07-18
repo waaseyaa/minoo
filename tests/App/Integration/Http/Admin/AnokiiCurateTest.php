@@ -28,11 +28,11 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         parent::setUpBeforeClass();
         $etm = self::$kernel->getEntityTypeManager();
 
-        $admin = $etm->getStorage('user')->create(['name' => 'Curate Admin', 'mail' => 'curate-admin@example.test', 'status' => true, 'created' => time(), 'roles' => ['admin'], 'permissions' => []]);
-        $etm->getStorage('user')->save($admin);
+        $admin = $etm->getRepository('user')->create(['name' => 'Curate Admin', 'mail' => 'curate-admin@example.test', 'status' => true, 'created' => time(), 'roles' => ['admin'], 'permissions' => []]);
+        $etm->getRepository('user')->save($admin);
         self::$adminUid = (int) $admin->id();
 
-        $sentences = $etm->getStorage('example_sentence');
+        $sentences = $etm->getRepository('example_sentence');
 
         // Multi-word phrase, published + consented.
         $phrase = $sentences->create([
@@ -78,7 +78,7 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         self::assertCount(2, $result->wordPartIds, 'Two-word phrase yields two word_parts.');
 
         $etm = self::$kernel->getEntityTypeManager();
-        $entry = $etm->getStorage('dictionary_entry')->load($result->dictionaryEntryId);
+        $entry = $etm->getRepository('dictionary_entry')->find((string) $result->dictionaryEntryId);
         self::assertNotNull($entry);
         self::assertSame('Shoogan Mookman', (string) $entry->get('word'), 'Ojibwe stored verbatim.');
         // JSON-wrapped like every other dictionary_entry, so the public Dictionary
@@ -92,13 +92,13 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         // word_part forms are the two tokens.
         $forms = [];
         foreach ($result->wordPartIds as $wpid) {
-            $forms[] = (string) $etm->getStorage('word_part')->load($wpid)->get('form');
+            $forms[] = (string) $etm->getRepository('word_part')->find((string) $wpid)->get('form');
         }
         sort($forms);
         self::assertSame(['Mookman', 'Shoogan'], $forms);
 
         // Source sentence linked back.
-        $sentence = $etm->getStorage('example_sentence')->load(self::$phraseEsid);
+        $sentence = $etm->getRepository('example_sentence')->find((string) self::$phraseEsid);
         self::assertSame($result->dictionaryEntryId, (int) $sentence->get('dictionary_entry_id'));
     }
 
@@ -133,7 +133,7 @@ final class AnokiiCurateTest extends HttpKernelTestCase
     public function promote_route_creates_entry_and_rejects_unauthorized(): void
     {
         // Fresh utterance so this test owns the promotion.
-        $sentences = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $sentences = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $row = $sentences->create([
             'ojibwe_text' => 'Nibi',
             'english_text' => 'water',
@@ -149,7 +149,7 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         // Unauthorized first: must not create anything.
         $denied = $this->sendPost(0, '/admin/anokii/curate/promote', ['esid' => (string) $esid]);
         self::assertContains($denied->getStatusCode(), [Response::HTTP_FORBIDDEN, Response::HTTP_UNAUTHORIZED]);
-        self::assertSame(0, (int) $sentences->load($esid)->get('dictionary_entry_id'), 'Denied promote must not mutate.');
+        self::assertSame(0, (int) $sentences->find((string) $esid)->get('dictionary_entry_id'), 'Denied promote must not mutate.');
 
         // Authorized: creates + links.
         $ok = $this->sendPost(self::$adminUid, '/admin/anokii/curate/promote', ['esid' => (string) $esid]);
@@ -157,14 +157,14 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         $payload = json_decode((string) $ok->getContent(), true);
         self::assertTrue($payload['ok'] ?? false);
         self::assertGreaterThan(0, (int) ($payload['dictionary_entry_id'] ?? 0));
-        self::assertSame((int) $payload['dictionary_entry_id'], (int) $sentences->load($esid)->get('dictionary_entry_id'));
+        self::assertSame((int) $payload['dictionary_entry_id'], (int) $sentences->find((string) $esid)->get('dictionary_entry_id'));
     }
 
     #[Test]
     public function publish_auto_promotes_and_makes_a_public_dictionary_entry(): void
     {
         $etm = self::$kernel->getEntityTypeManager();
-        $sentences = $etm->getStorage('example_sentence');
+        $sentences = $etm->getRepository('example_sentence');
         // Transcribed but NOT promoted (deid 0), not yet public.
         $row = $sentences->create([
             'ojibwe_text' => 'Emkwaan',
@@ -187,14 +187,14 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         self::assertGreaterThan(0, $deid, 'Publish auto-promotes so a dictionary_entry exists.');
 
         // The sentence is published and linked.
-        $sentence = $sentences->load($esid);
+        $sentence = $sentences->find((string) $esid);
         self::assertSame('published', (string) $sentence->get('pipeline_status'));
         self::assertSame($deid, (int) $sentence->get('dictionary_entry_id'));
 
         // The dictionary_entry is exactly what the public Dictionary browse selects:
         // status 1, consent_public 1, JSON-wrapped definition (contains a quote).
-        $entries = $etm->getStorage('dictionary_entry');
-        $entry = $entries->load($deid);
+        $entries = $etm->getRepository('dictionary_entry');
+        $entry = $entries->find((string) $deid);
         self::assertSame(1, (int) $entry->get('status'));
         self::assertSame(1, (int) $entry->get('consent_public'));
         self::assertSame('["spoon"]', (string) $entry->get('definition'));
@@ -210,7 +210,7 @@ final class AnokiiCurateTest extends HttpKernelTestCase
     #[Test]
     public function publish_refuses_a_word_with_no_anishinaabemowin(): void
     {
-        $sentences = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $sentences = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $row = $sentences->create([
             'ojibwe_text' => '',
             'english_text' => 'open',
@@ -227,7 +227,7 @@ final class AnokiiCurateTest extends HttpKernelTestCase
         self::assertSame(422, $res->getStatusCode(), 'Cannot publish a word with no Anishinaabemowin into the void.');
         self::assertStringContainsString('Anishinaabemowin', (string) $res->getContent());
         // Unchanged: not published, no entry.
-        $after = $sentences->load($esid);
+        $after = $sentences->find((string) $esid);
         self::assertNotSame('published', (string) $after->get('pipeline_status'));
         self::assertSame(0, (int) $after->get('dictionary_entry_id'));
     }

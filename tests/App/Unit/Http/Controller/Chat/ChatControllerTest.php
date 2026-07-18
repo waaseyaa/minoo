@@ -14,15 +14,15 @@ use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 /**
  * Locks the cite-only chat consent gate (#822): the example_sentence query
  * MUST filter consent_public = 1 AND status = 1, and MUST NOT call
- * loadMultiple() on an empty result set. The corpus rows are consent_public = 0
- * until Phase 4; if either guard regressed, those gated sentences would surface
- * on every chat answer (the #788 leak class).
+ * findMany() on an empty result set. findMany([]) is fail-closed upstream
+ * now, but the controller keeps its early return as defense in depth — an
+ * empty id set must never widen into the gated corpus (the #788 leak class).
  */
 #[CoversClass(ChatController::class)]
 final class ChatControllerTest extends TestCase
@@ -44,19 +44,19 @@ final class ChatControllerTest extends TestCase
     }
 
     /** A dictionary query that yields nothing, so tests isolate the example path. */
-    private function emptyDictionaryStorage(): EntityStorageInterface
+    private function emptyDictionaryRepository(): EntityRepositoryInterface
     {
         $query = $this->createMock(EntityQueryInterface::class);
         $query->method('setAccount')->willReturnSelf();
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn([]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturn($query);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturn($query);
         // No candidate ids -> retrieveEntries() must never load the 21k dictionary.
-        $storage->expects($this->never())->method('loadMultiple');
+        $repository->expects($this->never())->method('findMany');
 
-        return $storage;
+        return $repository;
     }
 
     #[Test]
@@ -72,20 +72,21 @@ final class ChatControllerTest extends TestCase
                 return $exampleQuery;
             },
         );
-        // No matching sentences. loadMultiple([]) is the framework "load all"
-        // sentinel; calling it here would dump every consent-gated corpus row.
+        // No matching sentences. Empty input must short-circuit BEFORE any
+        // findMany() call — the consent-lock intent of #788: an empty id set
+        // never widens into the gated corpus.
         $exampleQuery->method('execute')->willReturn([]);
 
-        $exampleStorage = $this->createMock(EntityStorageInterface::class);
-        $exampleStorage->method('getQuery')->willReturn($exampleQuery);
-        $exampleStorage->expects($this->never())->method('loadMultiple');
+        $exampleRepository = $this->createMock(EntityRepositoryInterface::class);
+        $exampleRepository->method('getQuery')->willReturn($exampleQuery);
+        $exampleRepository->expects($this->never())->method('findMany');
 
-        $dictionaryStorage = $this->emptyDictionaryStorage();
+        $dictionaryRepository = $this->emptyDictionaryRepository();
 
         $etm = $this->createMock(EntityTypeManager::class);
         $etm->method('hasDefinition')->willReturn(true);
-        $etm->method('getStorage')->willReturnCallback(
-            fn (string $type): EntityStorageInterface => $type === 'example_sentence' ? $exampleStorage : $dictionaryStorage,
+        $etm->method('getRepository')->willReturnCallback(
+            fn (string $type): EntityRepositoryInterface => $type === 'example_sentence' ? $exampleRepository : $dictionaryRepository,
         );
 
         $controller = new ChatController($etm, $this->twig);
@@ -113,16 +114,17 @@ final class ChatControllerTest extends TestCase
         $exampleQuery->method('range')->willReturnSelf();
         $exampleQuery->method('execute')->willReturn([5]);
 
-        $exampleStorage = $this->createMock(EntityStorageInterface::class);
-        $exampleStorage->method('getQuery')->willReturn($exampleQuery);
-        $exampleStorage->method('loadMultiple')->with([5])->willReturn([5 => $sentence]);
+        $exampleRepository = $this->createMock(EntityRepositoryInterface::class);
+        $exampleRepository->method('getQuery')->willReturn($exampleQuery);
+        // findMany() returns a list, not the old id-keyed map.
+        $exampleRepository->method('findMany')->with([5])->willReturn([$sentence]);
 
-        $dictionaryStorage = $this->emptyDictionaryStorage();
+        $dictionaryRepository = $this->emptyDictionaryRepository();
 
         $etm = $this->createMock(EntityTypeManager::class);
         $etm->method('hasDefinition')->willReturn(true);
-        $etm->method('getStorage')->willReturnCallback(
-            fn (string $type): EntityStorageInterface => $type === 'example_sentence' ? $exampleStorage : $dictionaryStorage,
+        $etm->method('getRepository')->willReturnCallback(
+            fn (string $type): EntityRepositoryInterface => $type === 'example_sentence' ? $exampleRepository : $dictionaryRepository,
         );
 
         $controller = new ChatController($etm, $this->twig);
@@ -136,7 +138,7 @@ final class ChatControllerTest extends TestCase
     public function empty_query_does_not_touch_storage(): void
     {
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->expects($this->never())->method('getStorage');
+        $etm->expects($this->never())->method('getRepository');
 
         $controller = new ChatController($etm, $this->twig);
         $response = $controller->index([], ['q' => '  '], $this->account, HttpRequest::create('/chat'));

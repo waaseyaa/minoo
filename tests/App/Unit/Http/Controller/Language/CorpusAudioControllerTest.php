@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 /**
  * Locks the corpus-audio consent boundary (Phase 4). Audio is served ONLY for a
@@ -33,8 +33,8 @@ final class CorpusAudioControllerTest extends TestCase
     public function rejects_a_traversal_shaped_id_before_touching_storage(): void
     {
         $etm = $this->createMock(EntityTypeManager::class);
-        // A non-allowlisted id must be refused before any storage/filesystem access.
-        $etm->expects($this->never())->method('getStorage');
+        // A non-allowlisted id must be refused before any repository/filesystem access.
+        $etm->expects($this->never())->method('getRepository');
         $etm->expects($this->never())->method('hasDefinition');
 
         $controller = new CorpusAudioController($etm);
@@ -53,12 +53,12 @@ final class CorpusAudioControllerTest extends TestCase
         // No published, consent-public row carries this id.
         $query->method('execute')->willReturn([]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturn($query);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturn($query);
 
         $etm = $this->createMock(EntityTypeManager::class);
         $etm->method('hasDefinition')->willReturn(true);
-        $etm->method('getStorage')->willReturn($storage);
+        $etm->method('getRepository')->willReturn($repository);
 
         $controller = new CorpusAudioController($etm);
         $response = $controller->audio(['id' => 'sb-999'], $this->account, HttpRequest::create('/media/corpus/audio/sb-999'));

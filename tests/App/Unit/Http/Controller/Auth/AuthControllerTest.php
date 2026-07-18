@@ -15,8 +15,8 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Auth\Config\AuthConfig;
 use Waaseyaa\Auth\Token\AuthTokenRepositoryInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 use Waaseyaa\User\AuthMailer;
 use Waaseyaa\User\User;
 
@@ -28,7 +28,7 @@ final class AuthControllerTest extends TestCase
     private AuthMailer $authMailer;
     private AuthTokenRepositoryInterface $tokenRepo;
     private AuthConfig $authConfig;
-    private EntityStorageInterface $userStorage;
+    private EntityRepositoryInterface $userRepository;
     private EntityQueryInterface $query;
     private AccountInterface $account;
     private HttpRequest $request;
@@ -45,13 +45,13 @@ final class AuthControllerTest extends TestCase
         $this->query->method('sort')->willReturnSelf();
         $this->query->method('range')->willReturnSelf();
 
-        $this->userStorage = $this->createMock(EntityStorageInterface::class);
-        $this->userStorage->method('getQuery')->willReturn($this->query);
+        $this->userRepository = $this->createMock(EntityRepositoryInterface::class);
+        $this->userRepository->method('getQuery')->willReturn($this->query);
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
-        $this->entityTypeManager->method('getStorage')
+        $this->entityTypeManager->method('getRepository')
             ->with('user')
-            ->willReturn($this->userStorage);
+            ->willReturn($this->userRepository);
 
         $this->twig = new Environment(new ArrayLoader([
             'pages/auth/login.html.twig' => '{{ errors.email|default("") }}',
@@ -165,10 +165,10 @@ final class AuthControllerTest extends TestCase
     {
         $this->query->method('execute')->willReturn([]);
 
-        $this->userStorage->method('create')->willReturnCallback(function (array $values) {
+        $this->userRepository->method('create')->willReturnCallback(function (array $values) {
             return new User($values + ['uid' => 42]);
         });
-        $this->userStorage->method('save')->willReturn(42);
+        $this->userRepository->method('save')->willReturn(42);
 
         $this->tokenRepo->expects(self::once())
             ->method('createToken')
@@ -200,7 +200,7 @@ final class AuthControllerTest extends TestCase
         $user = new User(['uid' => 1, 'name' => 'Mary', 'mail' => 'mary@example.com', 'status' => 1]);
 
         $this->query->method('execute')->willReturn([1]);
-        $this->userStorage->method('load')->willReturn($user);
+        $this->userRepository->method('find')->willReturn($user);
 
         $this->tokenRepo->expects(self::once())
             ->method('createToken')
@@ -263,8 +263,8 @@ final class AuthControllerTest extends TestCase
             ->method('consumeToken')
             ->with(1);
 
-        $this->userStorage->method('load')->with('99')->willReturn($user);
-        $this->userStorage->expects(self::once())->method('save');
+        $this->userRepository->method('find')->with('99')->willReturn($user);
+        $this->userRepository->expects(self::once())->method('save');
 
         $this->authMailer->expects(self::once())
             ->method('sendWelcome')
@@ -290,7 +290,7 @@ final class AuthControllerTest extends TestCase
         ]);
 
         $this->query->method('execute')->willReturn([50]);
-        $this->userStorage->method('load')->with(50)->willReturn($existingUser);
+        $this->userRepository->method('find')->with('50')->willReturn($existingUser);
 
         $this->tokenRepo->expects(self::once())
             ->method('createToken')
@@ -323,7 +323,7 @@ final class AuthControllerTest extends TestCase
         ]);
 
         $this->query->method('execute')->willReturn([51]);
-        $this->userStorage->method('load')->with(51)->willReturn($activeUser);
+        $this->userRepository->method('find')->with('51')->willReturn($activeUser);
 
         $this->authMailer->expects(self::never())
             ->method('sendEmailVerification');
@@ -352,7 +352,7 @@ final class AuthControllerTest extends TestCase
         $user->setRawPassword('password123');
 
         $this->query->method('execute')->willReturn([1]);
-        $this->userStorage->method('load')->with(1)->willReturn($user);
+        $this->userRepository->method('find')->with('1')->willReturn($user);
 
         return $user;
     }

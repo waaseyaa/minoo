@@ -40,7 +40,7 @@ final class AnokiiIngestTest extends HttpKernelTestCase
         mkdir(self::$corpusDir, 0o755, true);
         putenv('MINOO_CORPUS_PATH=' . self::$corpusDir);
 
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $admin = $users->create(['name' => 'Ig Admin', 'mail' => 'ig-admin@example.test', 'status' => true, 'created' => time(), 'roles' => ['admin'], 'permissions' => []]);
         $users->save($admin);
         self::$adminUid = (int) $admin->id();
@@ -63,7 +63,7 @@ final class AnokiiIngestTest extends HttpKernelTestCase
 
     private function account(): AccountInterface
     {
-        $account = self::$kernel->getEntityTypeManager()->getStorage('user')->load(self::$adminUid);
+        $account = self::$kernel->getEntityTypeManager()->getRepository('user')->find((string) self::$adminUid);
         self::assertInstanceOf(AccountInterface::class, $account);
 
         return $account;
@@ -116,7 +116,7 @@ final class AnokiiIngestTest extends HttpKernelTestCase
         self::assertFileExists(self::$corpusDir . '/source-videos/' . $file['corpus_id'] . '.mp4');
 
         // The entity is an ingested draft, off public surfaces.
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load($file['esid']);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $file['esid']);
         self::assertInstanceOf(EntityInterface::class, $row);
         self::assertSame(PipelineStage::INGESTED, (string) $row->get('pipeline_status'));
         self::assertSame('corpus:' . $file['corpus_id'], (string) $row->get('source_sentence_id'));
@@ -142,7 +142,7 @@ final class AnokiiIngestTest extends HttpKernelTestCase
     #[Test]
     public function status_reports_pipeline_stage_for_rows(): void
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $storage = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $row = $storage->create([
             'ojibwe_text' => '', 'english_text' => '',
             'source_sentence_id' => 'corpus:st-1',

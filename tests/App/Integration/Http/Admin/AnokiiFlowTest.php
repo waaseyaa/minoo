@@ -28,7 +28,7 @@ final class AnokiiFlowTest extends HttpKernelTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $admin = $users->create(['name' => 'Flow Admin', 'mail' => 'flow-admin@example.test', 'status' => true, 'created' => time(), 'roles' => ['admin'], 'permissions' => []]);
         $users->save($admin);
         self::$adminUid = (int) $admin->id();
@@ -36,7 +36,7 @@ final class AnokiiFlowTest extends HttpKernelTestCase
 
     private function account(): AccountInterface
     {
-        return self::$kernel->getEntityTypeManager()->getStorage('user')->load(self::$adminUid);
+        return self::$kernel->getEntityTypeManager()->getRepository('user')->find((string) self::$adminUid);
     }
 
     private function transcribe(): TranscribeController
@@ -59,7 +59,7 @@ final class AnokiiFlowTest extends HttpKernelTestCase
 
     private function seed(array $values): int
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $storage = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $row = $storage->create($values + ['consent_public' => 0, 'status' => 0, 'created_at' => time(), 'updated_at' => time()]);
         $storage->save($row);
 
@@ -76,7 +76,7 @@ final class AnokiiFlowTest extends HttpKernelTestCase
         self::assertTrue($payload['ok']);
         self::assertSame(PipelineStage::TRANSCRIBED, $payload['pipeline_status']);
 
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load($esid);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $esid);
         self::assertSame(PipelineStage::TRANSCRIBED, (string) $row->get('pipeline_status'));
         self::assertSame('  Makwa  ', (string) $row->get('ojibwe_text'), 'Ojibwe stays verbatim.');
     }
@@ -89,7 +89,7 @@ final class AnokiiFlowTest extends HttpKernelTestCase
         $response = $this->transcribe()->save([], [], $this->account(), $this->jsonRequest(['esid' => $esid, 'mark' => 'transcribed']));
         self::assertSame(422, $response->getStatusCode());
 
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load($esid);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $esid);
         self::assertSame(PipelineStage::DRAFTED, (string) $row->get('pipeline_status'), 'Incomplete row must not advance.');
     }
 
@@ -102,7 +102,7 @@ final class AnokiiFlowTest extends HttpKernelTestCase
         self::assertTrue($payload['ok']);
         self::assertSame(PipelineStage::PUBLISHED, $payload['pipeline_status']);
 
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load($esid);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $esid);
         self::assertSame(1, (int) $row->get('status'));
         self::assertSame(1, (int) $row->get('consent_public'));
         self::assertSame(PipelineStage::PUBLISHED, (string) $row->get('pipeline_status'));
@@ -116,7 +116,7 @@ final class AnokiiFlowTest extends HttpKernelTestCase
         $ok = json_decode((string) $this->curate()->lesson([], [], $this->account(), $this->jsonRequest(['esid' => $esid, 'lesson_slug' => 'the-kitchen']))->getContent(), true);
         self::assertTrue($ok['ok']);
 
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load($esid);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $esid);
         self::assertSame('the-kitchen', (string) $row->get('lesson_slug'));
 
         $bad = $this->curate()->lesson([], [], $this->account(), $this->jsonRequest(['esid' => $esid, 'lesson_slug' => 'nope']));

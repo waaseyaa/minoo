@@ -111,8 +111,8 @@ final class CurateController
             return $this->json(['ok' => false, 'error' => 'Missing esid.'], 422);
         }
 
-        $sentences = $this->entityTypeManager->getStorage('example_sentence');
-        $sentence = $sentences->load($esid);
+        $sentences = $this->entityTypeManager->getRepository('example_sentence');
+        $sentence = $sentences->find((string) $esid);
         if (!$sentence instanceof EntityInterface) {
             return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
         }
@@ -132,7 +132,7 @@ final class CurateController
             }
             $deid = $promotion->dictionaryEntryId;
             // promote() mutated and saved the row; reload before publishing.
-            $sentence = $sentences->load($esid);
+            $sentence = $sentences->find((string) $esid);
             if (!$sentence instanceof EntityInterface) {
                 return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
             }
@@ -145,8 +145,8 @@ final class CurateController
         $sentences->save($sentence);
 
         // Publish the dictionary_entry too, so the word goes live in the Dictionary.
-        $entries = $this->entityTypeManager->getStorage('dictionary_entry');
-        $entry = $entries->load($deid);
+        $entries = $this->entityTypeManager->getRepository('dictionary_entry');
+        $entry = $entries->find((string) $deid);
         if ($entry instanceof EntityInterface) {
             $this->publishEntity($entry);
             $entry->set('updated_at', $now);
@@ -172,8 +172,8 @@ final class CurateController
             return $this->json(['ok' => false, 'error' => 'Unknown lesson.'], 422);
         }
 
-        $sentences = $this->entityTypeManager->getStorage('example_sentence');
-        $sentence = $sentences->load($esid);
+        $sentences = $this->entityTypeManager->getRepository('example_sentence');
+        $sentence = $sentences->find((string) $esid);
         if (!$sentence instanceof EntityInterface) {
             return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
         }
@@ -201,10 +201,10 @@ final class CurateController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         // accessCheck(false): staff-gated curation tool; must show drafts too.
         // The route's requireRole is the access boundary. See the bypass audit doc.
-        $ids = $storage->getQuery()
+        $ids = $repository->getQuery()
             ->accessCheck(false)
             ->condition('source_sentence_id', 'corpus:%', 'LIKE')
             ->sort('source_sentence_id')
@@ -216,7 +216,7 @@ final class CurateController
 
         $resolver = new PipelineStageResolver();
         $rows = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
+        foreach ($repository->findMany($ids) as $entity) {
             $word = (string) $entity->get('ojibwe_text');
             $deid = (int) ($entity->get('dictionary_entry_id') ?? 0);
             $rows[] = [

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\User\User;
 
 #[CoversClass(AccountHomeController::class)]
@@ -126,14 +126,14 @@ final class AccountHomeControllerTest extends TestCase
     public function toggle_elder_sets_elder_and_redirects(): void
     {
         $etm = $this->createMock(EntityTypeManager::class);
-        $storage = $this->createMock(EntityStorageInterface::class);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
 
         $user = new User(['uid' => 1, 'name' => 'Test']);
         $this->assertFalse(ElderIdentity::isElder($user));
 
-        $etm->method('getStorage')->with('user')->willReturn($storage);
-        $storage->method('load')->with(1)->willReturn($user);
-        $storage->expects($this->once())->method('save')->with($user);
+        $etm->method('getRepository')->with('user')->willReturn($repository);
+        $repository->method('find')->with('1')->willReturn($user);
+        $repository->expects($this->once())->method('save')->with($user);
 
         $controller = $this->createController(etm: $etm);
         $account = new User(['uid' => 1, 'name' => 'Test']);
@@ -150,14 +150,14 @@ final class AccountHomeControllerTest extends TestCase
     public function toggle_elder_unsets_elder_when_already_elder(): void
     {
         $etm = $this->createMock(EntityTypeManager::class);
-        $storage = $this->createMock(EntityStorageInterface::class);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
 
         $user = new User(['uid' => 1, 'name' => 'Test', 'is_elder' => 1]);
         $this->assertTrue(ElderIdentity::isElder($user));
 
-        $etm->method('getStorage')->with('user')->willReturn($storage);
-        $storage->method('load')->with(1)->willReturn($user);
-        $storage->expects($this->once())->method('save')->with($user);
+        $etm->method('getRepository')->with('user')->willReturn($repository);
+        $repository->method('find')->with('1')->willReturn($user);
+        $repository->expects($this->once())->method('save')->with($user);
 
         $controller = $this->createController(etm: $etm);
         $account = new User(['uid' => 1, 'name' => 'Test', 'is_elder' => 1]);
@@ -172,18 +172,18 @@ final class AccountHomeControllerTest extends TestCase
     #[Test]
     public function select_home_community_saves_a_valid_published_community(): void
     {
-        $userStorage = $this->createMock(EntityStorageInterface::class);
+        $userRepository = $this->createMock(EntityRepositoryInterface::class);
         $user = new User(['uid' => 1, 'name' => 'Test']);
-        $userStorage->method('load')->with(1)->willReturn($user);
-        $userStorage->expects($this->once())->method('save')->with($user);
+        $userRepository->method('find')->with('1')->willReturn($user);
+        $userRepository->expects($this->once())->method('save')->with($user);
 
-        $communityStorage = $this->createMock(EntityStorageInterface::class);
-        $communityStorage->method('load')->with(10)->willReturn(new Community(['cid' => 10, 'name' => 'Sagamok', 'status' => 1]));
+        $communityRepository = $this->createMock(EntityRepositoryInterface::class);
+        $communityRepository->method('find')->with('10')->willReturn(new Community(['cid' => 10, 'name' => 'Sagamok', 'status' => 1]));
 
         $etm = $this->createMock(EntityTypeManager::class);
         $etm->method('hasDefinition')->willReturn(true);
-        $etm->method('getStorage')->willReturnCallback(
-            fn (string $type): EntityStorageInterface => $type === 'community' ? $communityStorage : $userStorage,
+        $etm->method('getRepository')->willReturnCallback(
+            fn (string $type): EntityRepositoryInterface => $type === 'community' ? $communityRepository : $userRepository,
         );
 
         $controller = $this->createController(etm: $etm);
@@ -200,13 +200,13 @@ final class AccountHomeControllerTest extends TestCase
     #[Test]
     public function select_home_community_clears_on_empty_value(): void
     {
-        $userStorage = $this->createMock(EntityStorageInterface::class);
+        $userRepository = $this->createMock(EntityRepositoryInterface::class);
         $user = new User(['uid' => 1, 'home_community_id' => 10]);
-        $userStorage->method('load')->with(1)->willReturn($user);
-        $userStorage->expects($this->once())->method('save')->with($user);
+        $userRepository->method('find')->with('1')->willReturn($user);
+        $userRepository->expects($this->once())->method('save')->with($user);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($userStorage);
+        $etm->method('getRepository')->willReturn($userRepository);
 
         $controller = $this->createController(etm: $etm);
         $request = HttpRequest::create('/account/home-community', 'POST', ['home_community_id' => '']);
@@ -221,19 +221,19 @@ final class AccountHomeControllerTest extends TestCase
     #[Test]
     public function select_home_community_rejects_an_unpublished_community(): void
     {
-        $userStorage = $this->createMock(EntityStorageInterface::class);
+        $userRepository = $this->createMock(EntityRepositoryInterface::class);
         $user = new User(['uid' => 1, 'name' => 'Test']);
-        $userStorage->method('load')->with(1)->willReturn($user);
-        $userStorage->expects($this->once())->method('save')->with($user);
+        $userRepository->method('find')->with('1')->willReturn($user);
+        $userRepository->expects($this->once())->method('save')->with($user);
 
-        $communityStorage = $this->createMock(EntityStorageInterface::class);
+        $communityRepository = $this->createMock(EntityRepositoryInterface::class);
         // status 0 -> not published -> rejected and cleared.
-        $communityStorage->method('load')->with(10)->willReturn(new Community(['cid' => 10, 'name' => 'Draft', 'status' => 0]));
+        $communityRepository->method('find')->with('10')->willReturn(new Community(['cid' => 10, 'name' => 'Draft', 'status' => 0]));
 
         $etm = $this->createMock(EntityTypeManager::class);
         $etm->method('hasDefinition')->willReturn(true);
-        $etm->method('getStorage')->willReturnCallback(
-            fn (string $type): EntityStorageInterface => $type === 'community' ? $communityStorage : $userStorage,
+        $etm->method('getRepository')->willReturnCallback(
+            fn (string $type): EntityRepositoryInterface => $type === 'community' ? $communityRepository : $userRepository,
         );
 
         $controller = $this->createController(etm: $etm);

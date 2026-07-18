@@ -15,8 +15,8 @@ use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(SavedWordController::class)]
 final class SavedWordControllerTest extends TestCase
@@ -52,22 +52,22 @@ final class SavedWordControllerTest extends TestCase
     #[Test]
     public function toggle_saves_when_not_already_saved(): void
     {
-        $savedStorage = $this->createMock(EntityStorageInterface::class);
-        $savedStorage->method('getQuery')->willReturn($this->savedWordQuery([]));
-        $savedStorage->expects($this->once())->method('create')->willReturn($this->createMock(ContentEntityBase::class));
-        $savedStorage->expects($this->once())->method('save');
-        $savedStorage->expects($this->never())->method('delete');
+        $savedRepository = $this->createMock(EntityRepositoryInterface::class);
+        $savedRepository->method('getQuery')->willReturn($this->savedWordQuery([]));
+        $savedRepository->expects($this->once())->method('create')->willReturn($this->createMock(ContentEntityBase::class));
+        $savedRepository->expects($this->once())->method('save');
+        $savedRepository->expects($this->never())->method('delete');
 
         $entry = $this->createMock(ContentEntityBase::class);
         $entry->method('get')->willReturnCallback(static fn (string $f) => match ($f) {
             'word' => 'makwa', 'definition' => '["a bear"]', 'slug' => 'makwa', default => null,
         });
-        $dictStorage = $this->createMock(EntityStorageInterface::class);
-        $dictStorage->method('load')->willReturn($entry);
+        $dictRepository = $this->createMock(EntityRepositoryInterface::class);
+        $dictRepository->method('find')->willReturn($entry);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturnCallback(
-            fn (string $type): EntityStorageInterface => $type === 'dictionary_entry' ? $dictStorage : $savedStorage,
+        $etm->method('getRepository')->willReturnCallback(
+            fn (string $type): EntityRepositoryInterface => $type === 'dictionary_entry' ? $dictRepository : $savedRepository,
         );
 
         $controller = new SavedWordController($this->twig, $etm);
@@ -82,14 +82,16 @@ final class SavedWordControllerTest extends TestCase
     public function toggle_unsaves_when_already_saved(): void
     {
         $existing = $this->createMock(ContentEntityBase::class);
-        $savedStorage = $this->createMock(EntityStorageInterface::class);
-        $savedStorage->method('getQuery')->willReturn($this->savedWordQuery([42]));
-        $savedStorage->method('load')->with(42)->willReturn($existing);
-        $savedStorage->expects($this->once())->method('delete')->with([$existing]);
-        $savedStorage->expects($this->never())->method('create');
+        $savedRepository = $this->createMock(EntityRepositoryInterface::class);
+        $savedRepository->method('getQuery')->willReturn($this->savedWordQuery([42]));
+        // find() is string-typed on the repository contract; the controller casts.
+        $savedRepository->method('find')->with('42')->willReturn($existing);
+        // delete() takes the single entity now — no array wrapper (C-22 shape lock).
+        $savedRepository->expects($this->once())->method('delete')->with($existing);
+        $savedRepository->expects($this->never())->method('create');
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($savedStorage);
+        $etm->method('getRepository')->willReturn($savedRepository);
 
         $controller = new SavedWordController($this->twig, $etm);
         $request = HttpRequest::create('/account/words/toggle', 'POST', ['dictionary_entry_id' => 12737, 'slug' => 'makwa']);
@@ -102,11 +104,11 @@ final class SavedWordControllerTest extends TestCase
     #[Test]
     public function list_renders_the_members_words(): void
     {
-        $savedStorage = $this->createMock(EntityStorageInterface::class);
-        $savedStorage->method('getQuery')->willReturn($this->savedWordQuery([]));
+        $savedRepository = $this->createMock(EntityRepositoryInterface::class);
+        $savedRepository->method('getQuery')->willReturn($this->savedWordQuery([]));
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($savedStorage);
+        $etm->method('getRepository')->willReturn($savedRepository);
 
         $controller = new SavedWordController($this->twig, $etm);
         $response = $controller->list([], [], $this->account(), HttpRequest::create('/account/words'));

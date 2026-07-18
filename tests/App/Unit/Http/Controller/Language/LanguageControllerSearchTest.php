@@ -37,8 +37,8 @@ final class LanguageControllerSearchTest extends TestCase
     #[Test]
     public function search_with_empty_query_returns_200_with_empty_results(): void
     {
-        // No storage lookup happens for an empty query.
-        $this->entityTypeManager->expects($this->never())->method('getStorage');
+        // No repository lookup happens for an empty query.
+        $this->entityTypeManager->expects($this->never())->method('getRepository');
 
         $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->search([], [], $this->account, $this->request);

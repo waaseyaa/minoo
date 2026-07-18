@@ -28,7 +28,7 @@ final class AnokiiShellTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $storage = self::$kernel->getEntityTypeManager()->getRepository('user');
 
         $admin = $storage->create([
             'name' => 'Anokii Admin',
@@ -105,7 +105,7 @@ final class AnokiiShellTest extends HttpKernelTestCase
     {
         // Guards the auth-helper assumption: if seeding/roles silently broke,
         // the 200s above would be false negatives.
-        $user = self::$kernel->getEntityTypeManager()->getStorage('user')->load(self::$adminUid);
+        $user = self::$kernel->getEntityTypeManager()->getRepository('user')->find((string) self::$adminUid);
         self::assertInstanceOf(EntityInterface::class, $user);
         self::assertContains('admin', $user->getRoles());
     }

@@ -23,13 +23,13 @@ final class AnokiiAccessibilityTest extends HttpKernelTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $coord = $users->create(['name' => 'A11y Coordinator', 'mail' => 'a11y-coord@example.test', 'status' => true, 'created' => time(), 'roles' => ['elder_coordinator'], 'permissions' => []]);
         $users->save($coord);
         self::$coordUid = (int) $coord->id();
 
         // One row at each tab's default stage so per-row status regions render.
-        $sentences = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $sentences = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $sentences->save($sentences->create([
             'ojibwe_text' => 'gaa', 'english_text' => '', 'source_sentence_id' => 'corpus:a11y-1',
             'pipeline_status' => 'drafted', 'status' => 0, 'consent_public' => 0, 'created_at' => time(), 'updated_at' => time(),

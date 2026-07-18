@@ -55,8 +55,8 @@ final class AccountHomeController
 
     public function toggleElder(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $storage = $this->entityTypeManager->getStorage('user');
-        $user = $storage->load($account->id());
+        $repository = $this->entityTypeManager->getRepository('user');
+        $user = $repository->find((string) $account->id());
 
         if (!$user instanceof User) {
             return new RedirectResponse('/account');
@@ -64,7 +64,7 @@ final class AccountHomeController
 
         $isElder = ElderIdentity::isElder($user);
         ElderIdentity::setElder($user, !$isElder);
-        $storage->save($user);
+        $repository->save($user);
 
         Flash::success($isElder ? 'Elder status removed.' : 'You have identified as an Elder. Miigwech.');
 
@@ -78,8 +78,8 @@ final class AccountHomeController
      */
     public function selectHomeCommunity(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $storage = $this->entityTypeManager->getStorage('user');
-        $user = $storage->load($account->id());
+        $repository = $this->entityTypeManager->getRepository('user');
+        $user = $repository->find((string) $account->id());
 
         if (!$user instanceof User) {
             return new RedirectResponse('/account');
@@ -93,7 +93,7 @@ final class AccountHomeController
         }
 
         HomeCommunityIdentity::setHomeCommunity($user, $communityId);
-        $storage->save($user);
+        $repository->save($user);
 
         Flash::success($communityId === null ? 'Home community cleared.' : 'Home community saved. Miigwech.');
 
@@ -111,8 +111,8 @@ final class AccountHomeController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $repository = $this->entityTypeManager->getRepository('community');
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->execute();
 
@@ -121,7 +121,7 @@ final class AccountHomeController
         }
 
         $communities = [];
-        foreach ($storage->loadMultiple($ids) as $community) {
+        foreach ($repository->findMany($ids) as $community) {
             $communities[] = [
                 'id' => (int) $community->id(),
                 'name' => (string) ($community->get('name') ?? $community->label()),
@@ -139,7 +139,7 @@ final class AccountHomeController
             return false;
         }
 
-        $community = $this->entityTypeManager->getStorage('community')->load($communityId);
+        $community = $this->entityTypeManager->getRepository('community')->find((string) $communityId);
 
         return $community !== null && (int) $community->get('status') === 1;
     }
