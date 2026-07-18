@@ -35,7 +35,6 @@ final class EntityContentProvider extends AppCoreServiceProvider
             label: 'Contributor',
             class: Contributor::class,
             keys: ['id' => 'coid', 'uuid' => 'uuid', 'label' => 'name'],
-            tenancy: ['scope' => 'community'],
             group: 'contributor',
             _fieldDefinitions: [
                 'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
@@ -72,7 +71,6 @@ final class EntityContentProvider extends AppCoreServiceProvider
             label: 'Event',
             class: Event::class,
             keys: ['id' => 'eid', 'uuid' => 'uuid', 'label' => 'title', 'bundle' => 'type'],
-            tenancy: ['scope' => 'community'],
             group: 'events',
             _fieldDefinitions: [
                 'title' => ['type' => 'string', 'label' => 'Title', 'weight' => 0],
@@ -170,7 +168,6 @@ final class EntityContentProvider extends AppCoreServiceProvider
             label: 'Post',
             class: Post::class,
             keys: ['id' => 'pid', 'uuid' => 'uuid', 'label' => 'body'],
-            tenancy: ['scope' => 'community'],
             group: 'engagement',
             _fieldDefinitions: [
                 'body' => ['type' => 'text_long', 'label' => 'Body', 'weight' => 0],

@@ -28,7 +28,7 @@ $kernel = new Waaseyaa\Foundation\Kernel\ConsoleKernel(dirname(__DIR__));
 (new ReflectionMethod($kernel, 'boot'))->invoke($kernel);
 
 $entityTypeManager = $kernel->getEntityTypeManager();
-$storage = $entityTypeManager->getStorage('user');
+$storage = $entityTypeManager->getRepository('user');
 
 // Clear rate limits so Playwright login attempts don't get throttled.
 $dbPath = getenv('WAASEYAA_DB') ?: dirname(__DIR__) . '/storage/waaseyaa.sqlite';

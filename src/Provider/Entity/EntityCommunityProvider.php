@@ -56,7 +56,6 @@ final class EntityCommunityProvider extends AppCoreServiceProvider
             label: 'Community Group',
             class: Group::class,
             keys: ['id' => 'gid', 'uuid' => 'uuid', 'label' => 'name', 'bundle' => 'type'],
-            tenancy: ['scope' => 'community'],
             group: 'groups',
             _fieldDefinitions: [
                 'name' => ['type' => 'string', 'label' => 'Name', 'weight' => 0],
