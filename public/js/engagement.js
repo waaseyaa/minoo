@@ -216,8 +216,17 @@
 
   // ── Comments (view + add) ────────────────────────────────────────────────
 
+  /** created_at arrives as a Unix timestamp (entity _data); render Y-m-d. */
+  function commentTime(value) {
+    if (value == null || value === '') return '';
+    var d = /^\d+$/.test(String(value))
+      ? new Date(Number(value) * 1000)
+      : new Date(String(value).replace(' ', 'T'));
+    return isNaN(d.getTime()) ? String(value).slice(0, 10) : d.toISOString().slice(0, 10);
+  }
+
   function commentHtml(comment) {
-    var when = String(comment.created_at || '').slice(0, 10);
+    var when = commentTime(comment.created_at);
     return '<div class="feed-comment" data-comment-id="' + escapeHtml(comment.id) + '">' +
       '<div class="feed-comment__content">' +
       '<div class="feed-comment__header"><span class="feed-comment__time">' + escapeHtml(when) + '</span></div>' +
