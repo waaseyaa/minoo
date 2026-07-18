@@ -29,9 +29,9 @@ class EntityLoaderService
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('event');
+        $repository = $this->entityTypeManager->getRepository('event');
         $now = date('Y-m-d\TH:i:s');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('starts_at', $now, '>=')
             ->sort('starts_at', 'ASC')
@@ -42,7 +42,7 @@ class EntityLoaderService
             return [];
         }
 
-        $events = array_values($storage->loadMultiple($ids));
+        $events = $repository->findMany($ids);
 
         return array_values(array_filter($events, function ($entity) {
             $mediaId = $entity->get('media_id');
@@ -65,21 +65,22 @@ class EntityLoaderService
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('community_group');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $repository = $this->entityTypeManager->getRepository('community_group');
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('type', 'business', '!=')
             ->range(0, $limit)
             ->execute();
 
-        return $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+        // findMany([]) is fail-closed (returns []) — no empty-ids guard needed.
+        return $repository->findMany($ids);
     }
 
     /** @return list<array{featured: mixed, entity: mixed}> */
     public function loadFeaturedItems(): array
     {
         try {
-            $storage = $this->entityTypeManager->getStorage('featured_item');
+            $repository = $this->entityTypeManager->getRepository('featured_item');
         } catch (\PDOException $e) {
             error_log(sprintf('[EntityLoaderService::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
             return [];
@@ -89,7 +90,7 @@ class EntityLoaderService
         }
 
         $now = date('Y-m-d H:i:s');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('starts_at', $now, '<=')
             ->condition('ends_at', $now, '>=')
@@ -101,7 +102,7 @@ class EntityLoaderService
         }
 
         $items = [];
-        foreach ($storage->loadMultiple($ids) as $featured) {
+        foreach ($repository->findMany($ids) as $featured) {
             $entityType = $featured->get('entity_type');
             $entityId = $featured->get('entity_id');
 
@@ -110,8 +111,8 @@ class EntityLoaderService
             }
 
             try {
-                $refStorage = $this->entityTypeManager->getStorage($entityType);
-                $entity = $refStorage->load((int) $entityId);
+                $refRepository = $this->entityTypeManager->getRepository($entityType);
+                $entity = $refRepository->find((string) $entityId);
             } catch (\PDOException $e) {
                 error_log(sprintf('[EntityLoaderService::%s] Database error loading %s:%s: %s', __FUNCTION__, $entityType, $entityId, $e->getMessage()));
                 continue;
@@ -133,7 +134,7 @@ class EntityLoaderService
     public function loadPosts(int $limit): array
     {
         try {
-            $storage = $this->entityTypeManager->getStorage('post');
+            $repository = $this->entityTypeManager->getRepository('post');
         } catch (\PDOException $e) {
             error_log(sprintf('[EntityLoaderService::%s] Database error: %s', __FUNCTION__, $e->getMessage()));
             return [];
@@ -143,21 +144,24 @@ class EntityLoaderService
             return [];
         }
 
-        $ids = $storage->getQuery()->accessCheck(false)
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->sort('created_at', 'DESC')
             ->range(0, $limit)
             ->execute();
 
-        return $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+        // findMany([]) is fail-closed (returns []) — no empty-ids guard needed.
+        return $repository->findMany($ids);
     }
 
     public function loadAllCommunities(): array
     {
-        $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $repository = $this->entityTypeManager->getRepository('community');
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->execute();
-        return $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+
+        // findMany([]) is fail-closed (returns []) — no empty-ids guard needed.
+        return $repository->findMany($ids);
     }
 }

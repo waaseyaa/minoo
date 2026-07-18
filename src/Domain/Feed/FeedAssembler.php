@@ -237,8 +237,8 @@ final class FeedAssembler implements FeedAssemblerInterface
         }
 
         try {
-            $storage = $this->loader->getEntityTypeManager()->getStorage('user');
-            $users = $storage->loadMultiple($userIds);
+            $repository = $this->loader->getEntityTypeManager()->getRepository('user');
+            $users = $repository->findMany(array_values($userIds));
             $map = [];
             foreach ($users as $user) {
                 $name = $user->get('name') ?? $user->get('display_name') ?? '';
@@ -330,7 +330,7 @@ final class FeedAssembler implements FeedAssemblerInterface
         try {
             // The member's self-selected home community (Phase 5). Community-level
             // only; no coordinates, so proximity stays dormant. NULL when unset.
-            $user = $this->loader->getEntityTypeManager()->getStorage('user')->load($ctx->userId);
+            $user = $this->loader->getEntityTypeManager()->getRepository('user')->find((string) $ctx->userId);
             $homeCommunity = $user?->get('home_community_id');
 
             return $homeCommunity !== null && (int) $homeCommunity > 0 ? (int) $homeCommunity : null;

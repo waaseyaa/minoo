@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(LocationService::class)]
 final class LocationServiceTest extends TestCase
@@ -34,13 +34,13 @@ final class LocationServiceTest extends TestCase
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn(array_map(static fn ($c) => $c->id(), $rows));
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturn($query);
-        $storage->method('loadMultiple')->willReturn($rows);
-        $storage->method('load')->willReturn($loadById);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturn($query);
+        $repository->method('findMany')->willReturn($rows);
+        $repository->method('find')->willReturn($loadById);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($storage);
+        $etm->method('getRepository')->willReturn($repository);
         return $etm;
     }
 

@@ -52,7 +52,7 @@ final class EngagementCalculator
     private function countForTarget(string $entityType, string $targetType, int $targetId, bool $statusFilter = false): int
     {
         try {
-            $query = $this->entityTypeManager->getStorage($entityType)->getQuery()->accessCheck(false)
+            $query = $this->entityTypeManager->getRepository($entityType)->getQuery()->accessCheck(false)
                 ->condition('target_type', $targetType)
                 ->condition('target_id', $targetId)
                 ->count();

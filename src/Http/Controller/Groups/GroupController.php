@@ -83,8 +83,8 @@ final class GroupController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('community_group');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('community_group');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('type', 'business', '!=')
             ->sort('name', 'ASC')
@@ -95,7 +95,7 @@ final class GroupController
         }
 
         $groups = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
+        foreach ($repository->findMany($ids) as $entity) {
             if ($entity instanceof ContentEntityBase && $this->mediaIsShowable($entity)) {
                 $groups[] = $entity;
             }
@@ -110,8 +110,8 @@ final class GroupController
             return null;
         }
 
-        $storage = $this->entityTypeManager->getStorage('community_group');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('community_group');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->condition('type', 'business', '!=')
@@ -122,7 +122,7 @@ final class GroupController
             return null;
         }
 
-        $group = $storage->load((int) reset($ids));
+        $group = $repository->find((string) reset($ids));
 
         return $group instanceof ContentEntityBase && $this->mediaIsShowable($group) ? $group : null;
     }
@@ -140,8 +140,8 @@ final class GroupController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('event');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('community_id', $communityId)
             ->condition('status', 1)
             ->range(0, 4)
@@ -152,7 +152,7 @@ final class GroupController
         }
 
         $events = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
+        foreach ($repository->findMany($ids) as $entity) {
             if ($entity instanceof ContentEntityBase) {
                 $events[] = $entity;
             }
@@ -193,9 +193,9 @@ final class GroupController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('community');
+        $repository = $this->entityTypeManager->getRepository('community');
         $map = [];
-        foreach ($storage->loadMultiple(array_keys($communityIds)) as $community) {
+        foreach ($repository->findMany(array_keys($communityIds)) as $community) {
             $map[(int) $community->id()] = [
                 'name' => (string) ($community->get('name') ?? $community->label()),
                 'slug' => (string) ($community->get('slug') ?? ''),

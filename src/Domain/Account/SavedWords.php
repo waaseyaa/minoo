@@ -10,8 +10,9 @@ use Waaseyaa\Entity\EntityTypeManager;
 /**
  * Helpers for a member's personal word list (#806). Centralises the
  * saved_word queries so the toggle endpoint, the "My words" page, and the
- * dictionary entry page stay consistent (and all guard the loadMultiple([])
- * "load all" footgun).
+ * dictionary entry page stay consistent. (The old loadMultiple([]) "load
+ * all" footgun is gone: EntityRepositoryInterface::findMany([]) is
+ * fail-closed and returns [].)
  */
 final class SavedWords
 {
@@ -22,7 +23,7 @@ final class SavedWords
             return null;
         }
 
-        $ids = $etm->getStorage('saved_word')->getQuery()->setAccount($account)
+        $ids = $etm->getRepository('saved_word')->getQuery()->setAccount($account)
             ->condition('user_id', (int) $account->id())
             ->condition('dictionary_entry_id', $entryId)
             ->range(0, 1)
@@ -44,7 +45,7 @@ final class SavedWords
         }
 
         // count()->execute() returns a single-element [N] array (framework gotcha).
-        $result = $etm->getStorage('saved_word')->getQuery()->setAccount($account)
+        $result = $etm->getRepository('saved_word')->getQuery()->setAccount($account)
             ->condition('user_id', (int) $account->id())
             ->count()
             ->execute();
@@ -63,8 +64,8 @@ final class SavedWords
             return [];
         }
 
-        $storage = $etm->getStorage('saved_word');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $etm->getRepository('saved_word');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('user_id', (int) $account->id())
             ->sort('created_at', 'DESC')
             ->range(0, 500)
@@ -75,7 +76,7 @@ final class SavedWords
         }
 
         $out = [];
-        foreach ($storage->loadMultiple($ids) as $row) {
+        foreach ($repository->findMany($ids) as $row) {
             $out[] = [
                 'word' => (string) $row->get('word'),
                 'slug' => (string) $row->get('slug'),
