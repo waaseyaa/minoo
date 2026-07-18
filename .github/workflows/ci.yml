@@ -121,10 +121,14 @@ jobs:
 
       - name: Run unit tests
         working-directory: minoo
+        env:
+          APP_ENV: testing
         run: ./vendor/bin/phpunit --testsuite MinooUnit
 
       - name: Run integration tests
         working-directory: minoo
+        env:
+          APP_ENV: testing
         run: ./vendor/bin/phpunit --testsuite MinooIntegration
 
   playwright:
