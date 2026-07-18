@@ -111,16 +111,19 @@ final class EntityContentProvider extends AppCoreServiceProvider
                 'direction' => ['type' => 'string', 'label' => 'Direction', 'weight' => 1],
                 'dictionary_entry_id' => ['type' => 'entity_reference', 'label' => 'Dictionary Entry', 'settings' => ['target_type' => 'dictionary_entry'], 'weight' => 5],
                 'user_id' => ['type' => 'integer', 'label' => 'User', 'weight' => 6],
-                'guesses' => ['type' => 'text_long', 'label' => 'Guesses', 'description' => 'JSON array of letters guessed.', 'weight' => 10],
+                // Machine-JSON payloads use 'text' (plain), NOT 'text_long': alpha.255+
+                // sanitizes text_long as HTML at every read boundary (RichTextSanitizer
+                // HTML_FIELD_TYPES) and would mangle JSON served over generic surfaces.
+                'guesses' => ['type' => 'text', 'label' => 'Guesses', 'description' => 'JSON array of letters guessed.', 'weight' => 10],
                 'wrong_count' => ['type' => 'integer', 'label' => 'Wrong Count', 'weight' => 11, 'default' => 0],
                 'status' => ['type' => 'string', 'label' => 'Status', 'weight' => 15, 'default' => 'in_progress'],
                 'daily_date' => ['type' => 'string', 'label' => 'Daily Date', 'weight' => 16],
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 17, 'default' => 'easy'],
                 'game_type' => ['type' => 'string', 'label' => 'Game Type', 'weight' => 18, 'default' => 'shkoda'],
                 'puzzle_id' => ['type' => 'string', 'label' => 'Puzzle ID', 'weight' => 19],
-                'grid_state' => ['type' => 'text_long', 'label' => 'Grid State', 'description' => 'JSON crossword grid fill state.', 'weight' => 20],
+                'grid_state' => ['type' => 'text', 'label' => 'Grid State', 'description' => 'JSON crossword grid fill state.', 'weight' => 20],
                 'hints_used' => ['type' => 'integer', 'label' => 'Hints Used', 'weight' => 21, 'default' => 0],
-                'found_objects' => ['type' => 'text_long', 'label' => 'Found Objects', 'description' => 'JSON array of found object IDs (Journey game).', 'weight' => 22, 'default' => '[]'],
+                'found_objects' => ['type' => 'text', 'label' => 'Found Objects', 'description' => 'JSON array of found object IDs (Journey game).', 'weight' => 22, 'default' => '[]'],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 40],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 41],
             ],
@@ -148,8 +151,9 @@ final class EntityContentProvider extends AppCoreServiceProvider
             group: 'games',
             _fieldDefinitions: [
                 'grid_size' => ['type' => 'integer', 'label' => 'Grid Size', 'weight' => 0],
-                'words' => ['type' => 'text_long', 'label' => 'Words', 'description' => 'JSON array of word placements.', 'weight' => 5],
-                'clues' => ['type' => 'text_long', 'label' => 'Clues', 'description' => 'JSON map of word index to clue data.', 'weight' => 10],
+                // Machine-JSON: 'text' not 'text_long' (see game_session note).
+                'words' => ['type' => 'text', 'label' => 'Words', 'description' => 'JSON array of word placements.', 'weight' => 5],
+                'clues' => ['type' => 'text', 'label' => 'Clues', 'description' => 'JSON map of word index to clue data.', 'weight' => 10],
                 'theme' => ['type' => 'string', 'label' => 'Theme', 'weight' => 15],
                 'difficulty_tier' => ['type' => 'string', 'label' => 'Difficulty', 'weight' => 20, 'default' => 'easy'],
             ],
@@ -172,7 +176,8 @@ final class EntityContentProvider extends AppCoreServiceProvider
                 'body' => ['type' => 'text_long', 'label' => 'Body', 'weight' => 0],
                 'user_id' => ['type' => 'integer', 'label' => 'User ID', 'weight' => 1],
                 'community_id' => ['type' => 'integer', 'label' => 'Community ID', 'weight' => 2],
-                'images' => ['type' => 'text_long', 'label' => 'Images', 'weight' => 3],
+                // Machine-JSON: 'text' not 'text_long' (see game_session note).
+                'images' => ['type' => 'text', 'label' => 'Images', 'weight' => 3],
                 'status' => ['type' => 'boolean', 'label' => 'Published', 'weight' => 5, 'default' => 1],
                 'created_at' => ['type' => 'timestamp', 'label' => 'Created', 'weight' => 10],
                 'updated_at' => ['type' => 'timestamp', 'label' => 'Updated', 'weight' => 11],
