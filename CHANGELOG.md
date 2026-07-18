@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dead code: unrouted controller methods, unregistered `SecurityHeadersMiddleware`, stale engagement target types (#920).
 
 ### Fixed
+- Sidebar nav active-state now fires: a render-time `current_path()` Twig function (language prefix stripped) feeds the template's `current_path` comparisons, which no layer previously provided; `/feed` highlights Home (#922).
 - `composer phpstan:dead-code` gate runs again — 45 stale baseline entries removed, route-string concat controllers now recognized (#920).
 
 ## [1.0.3] — 2026-03-14

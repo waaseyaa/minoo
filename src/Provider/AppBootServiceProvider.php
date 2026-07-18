@@ -140,5 +140,32 @@ class AppBootServiceProvider extends AppCoreServiceProvider
         foreach ($twigTargets as $env) {
             $env->addFunction($ogImagePath);
         }
+
+        // =====================================================================
+        // --- Twig: current_path() for sidebar nav active-state (#922) ---
+        // =====================================================================
+
+        // Registered as a render-time function — NOT a boot-time global —
+        // because boot() runs once per kernel while one booted kernel can
+        // serve many requests (the integration harness does exactly that), so
+        // the value must be derived per render. Same lazy per-request pattern
+        // as lang_url(). A language prefix is stripped (/oj/communities →
+        // /communities) so template comparisons match in every language.
+        $currentPath = new TwigFunction('current_path', static function () use ($manager): string {
+            $path = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH);
+            if (!is_string($path) || $path === '') {
+                return '/';
+            }
+            $firstSegment = explode('/', ltrim($path, '/'))[0];
+            if ($firstSegment !== '' && array_key_exists($firstSegment, $manager->getLanguages())) {
+                $stripped = substr($path, strlen('/' . $firstSegment));
+                $path = $stripped === '' ? '/' : $stripped;
+            }
+
+            return $path;
+        });
+        foreach ($twigTargets as $env) {
+            $env->addFunction($currentPath);
+        }
     }
 }
