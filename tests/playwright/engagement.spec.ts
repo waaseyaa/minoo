@@ -37,8 +37,15 @@ test.describe('Feed engagement', () => {
     await login(page);
     await page.goto('/feed');
 
-    const react = page.locator('.feed-card__action--react').first();
-    test.skip(await react.count() === 0, 'no feed cards in the local database');
+    // Only these card types are valid reaction targets server-side
+    // (EngagementController::ALLOWED_TARGET_TYPES) — the synthetic/featured
+    // cards render a react button but the API rejects them with 422.
+    const react = page.locator(
+      ['post', 'event', 'community_group']
+        .map((t) => `.feed-card__action--react[data-type="${t}"]`)
+        .join(', '),
+    ).first();
+    test.skip(await react.count() === 0, 'no reactable feed cards in the local database');
 
     const [response] = await Promise.all([
       page.waitForResponse(
