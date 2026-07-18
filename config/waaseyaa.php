@@ -53,6 +53,11 @@ return [
     // Dev-only fallback account for local built-in server workflows.
     // Must remain false outside local development.
     'auth' => [
+        // Token-signing secret. Waaseyaa alpha.250 (W3-1) makes the kernel
+        // throw at boot when auth.token_secret is missing/empty instead of
+        // silently falling back to app_secret / 'change-me' — map it from the
+        // environment ahead of the upgrade.
+        'token_secret' => getenv('AUTH_TOKEN_SECRET') ?: '',
         'dev_fallback_account' => filter_var(
             getenv('WAASEYAA_DEV_FALLBACK_ACCOUNT') ?: false,
             FILTER_VALIDATE_BOOLEAN,
