@@ -985,6 +985,7 @@ return [
     'sidebar.programs' => 'Programs',
     'sidebar.your_communities' => 'Your Communities',
     'sidebar.home' => 'Home',
+    'sidebar.feed' => 'Feed',
 
     // Feed - Image Upload
     'feed.photo' => 'Photo',
