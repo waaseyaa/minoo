@@ -39,27 +39,27 @@ final class SavedWordController
             return new RedirectResponse($back);
         }
 
-        $storage = $this->entityTypeManager->getStorage('saved_word');
+        $repository = $this->entityTypeManager->getRepository('saved_word');
         $existingId = SavedWords::savedId($this->entityTypeManager, $account, $entryId);
 
         if ($existingId !== null) {
-            $existing = $storage->load($existingId);
+            $existing = $repository->find((string) $existingId);
             if ($existing !== null) {
-                $storage->delete([$existing]);
+                $repository->delete($existing);
             }
             Flash::success('Removed from your words.');
             return new RedirectResponse($back);
         }
 
         // Denormalise a snapshot from the (public) dictionary entry.
-        $entry = $this->entityTypeManager->getStorage('dictionary_entry')->load($entryId);
+        $entry = $this->entityTypeManager->getRepository('dictionary_entry')->find((string) $entryId);
         $word = $entry !== null ? (string) $entry->get('word') : '';
         $definition = $entry !== null ? (string) $entry->get('definition') : '';
         if ($slug === '' && $entry !== null) {
             $slug = (string) $entry->get('slug');
         }
 
-        $saved = $storage->create([
+        $saved = $repository->create([
             'word' => $word,
             'user_id' => (int) $account->id(),
             'dictionary_entry_id' => $entryId,
@@ -67,7 +67,7 @@ final class SavedWordController
             'definition' => $definition,
             'created_at' => time(),
         ]);
-        $storage->save($saved);
+        $repository->save($saved);
 
         Flash::success('Saved to your words.');
         return new RedirectResponse($slug !== '' ? '/language/' . $slug : '/account/words');

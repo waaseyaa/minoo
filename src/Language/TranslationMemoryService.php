@@ -102,8 +102,8 @@ final class TranslationMemoryService
 
     private function findExact(string $normalized, ?string $tag, AccountInterface $account): ?EntityInterface
     {
-        $storage = $this->entityTypeManager->getStorage('translation_memory');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('translation_memory');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->condition('source_hash', self::hash($normalized))
@@ -112,7 +112,7 @@ final class TranslationMemoryService
             return null;
         }
 
-        return $this->pickByTag(array_values($storage->loadMultiple($ids)), $tag);
+        return $this->pickByTag($repository->findMany($ids), $tag);
     }
 
     /**
@@ -120,8 +120,8 @@ final class TranslationMemoryService
      */
     private function findFuzzy(string $normalized, ?string $tag, AccountInterface $account): ?array
     {
-        $storage = $this->entityTypeManager->getStorage('translation_memory');
-        $query = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('translation_memory');
+        $query = $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1);
         if ($tag !== null) {
@@ -136,7 +136,7 @@ final class TranslationMemoryService
 
         $best = null;
         $bestScore = 0;
-        foreach (array_values($storage->loadMultiple($ids)) as $row) {
+        foreach ($repository->findMany($ids) as $row) {
             $source = self::normalize((string) $row->get('source_en'));
             $percent = 0.0;
             similar_text($normalized, $source, $percent);
@@ -221,7 +221,7 @@ final class TranslationMemoryService
 
     private function logGap(string $normalized, string $original, ?string $tag): void
     {
-        $storage = $this->entityTypeManager->getStorage('tm_gap_log');
+        $repository = $this->entityTypeManager->getRepository('tm_gap_log');
         $hash = self::hash($normalized);
         $tagValue = $tag ?? '';
         $now = time();
@@ -229,24 +229,24 @@ final class TranslationMemoryService
         // System-context write: the gap log is admin-only and dedup needs no
         // end-user account, so bind none and opt out of per-row access checks.
         // See docs/security/sql-entity-query-access-check-bypass-audit.md.
-        $ids = $storage->getQuery()->accessCheck(false)
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('source_hash', $hash)
             ->condition('language_tag', $tagValue)
             ->execute();
 
         if ($ids !== []) {
-            $gap = $storage->load(reset($ids));
+            $gap = $repository->find((string) reset($ids));
             if ($gap !== null) {
                 $gap->set('request_count', (int) $gap->get('request_count') + 1);
                 $gap->set('last_requested_at', $now);
                 $gap->set('updated_at', $now);
-                $storage->save($gap);
+                $repository->save($gap);
 
                 return;
             }
         }
 
-        $gap = $storage->create([
+        $gap = $repository->create([
             'source_en' => $original,
             'source_hash' => $hash,
             'language_tag' => $tagValue,
@@ -257,6 +257,6 @@ final class TranslationMemoryService
             'created_at' => $now,
             'updated_at' => $now,
         ]);
-        $storage->save($gap);
+        $repository->save($gap);
     }
 }

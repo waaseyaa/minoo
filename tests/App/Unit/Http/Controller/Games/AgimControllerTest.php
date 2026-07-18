@@ -15,7 +15,8 @@ use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
+use Waaseyaa\Entity\Storage\EntityQueryInterface;
 
 #[CoversClass(AgimController::class)]
 final class AgimControllerTest extends TestCase
@@ -23,19 +24,26 @@ final class AgimControllerTest extends TestCase
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
     private GateInterface $gate;
-    private EntityStorageInterface $sessionStorage;
+    private EntityRepositoryInterface $sessionRepository;
+    private EntityQueryInterface $sessionQuery;
     private AccountInterface $account;
     private HttpRequest $request;
 
     protected function setUp(): void
     {
-        $this->sessionStorage = $this->createMock(EntityStorageInterface::class);
+        $this->sessionQuery = $this->createMock(EntityQueryInterface::class);
+        $this->sessionQuery->method('accessCheck')->willReturnSelf();
+        $this->sessionQuery->method('condition')->willReturnSelf();
+        $this->sessionQuery->method('range')->willReturnSelf();
+
+        $this->sessionRepository = $this->createMock(EntityRepositoryInterface::class);
+        $this->sessionRepository->method('getQuery')->willReturn($this->sessionQuery);
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
-        $this->entityTypeManager->method('getStorage')
+        $this->entityTypeManager->method('getRepository')
             ->willReturnCallback(fn (string $type) => match ($type) {
-                'game_session' => $this->sessionStorage,
-                default => $this->createMock(EntityStorageInterface::class),
+                'game_session' => $this->sessionRepository,
+                default => $this->createMock(EntityRepositoryInterface::class),
             });
 
         $this->twig = new Environment(new ArrayLoader([
@@ -45,6 +53,17 @@ final class AgimControllerTest extends TestCase
         $this->gate = $this->createMock(GateInterface::class);
         $this->account = $this->createMock(AccountInterface::class);
         $this->request = HttpRequest::create('/');
+    }
+
+    /** Arrange the uuid-query + find() pair behind loadSessionByToken(). */
+    private function tokenResolvesTo(?ContentEntityBase $session): void
+    {
+        if ($session === null) {
+            $this->sessionQuery->method('execute')->willReturn([]);
+            return;
+        }
+        $this->sessionQuery->method('execute')->willReturn(['1']);
+        $this->sessionRepository->method('find')->willReturn($session);
     }
 
     /** Build a mock ContentEntityBase with pre-set field values. */
@@ -64,7 +83,7 @@ final class AgimControllerTest extends TestCase
     public function start_creates_session_for_level_1(): void
     {
         $session = $this->makeSession(['uuid' => 'abc-123']);
-        $this->sessionStorage->method('create')->willReturn($session);
+        $this->sessionRepository->method('create')->willReturn($session);
         $this->account->method('isAuthenticated')->willReturn(false);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
@@ -82,7 +101,7 @@ final class AgimControllerTest extends TestCase
     public function start_clamps_invalid_level_to_1(): void
     {
         $session = $this->makeSession(['uuid' => 'abc-456']);
-        $this->sessionStorage->method('create')->willReturn($session);
+        $this->sessionRepository->method('create')->willReturn($session);
         $this->account->method('isAuthenticated')->willReturn(false);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
@@ -98,7 +117,7 @@ final class AgimControllerTest extends TestCase
     {
         $createdValues = [];
         $session = $this->makeSession(['uuid' => 'abc-mode']);
-        $this->sessionStorage->method('create')->willReturnCallback(
+        $this->sessionRepository->method('create')->willReturnCallback(
             function (array $vals) use ($session, &$createdValues) {
                 $createdValues = $vals;
                 return $session;
@@ -117,7 +136,7 @@ final class AgimControllerTest extends TestCase
     {
         $createdValues = [];
         $session = $this->makeSession(['uuid' => 'abc-789']);
-        $this->sessionStorage->method('create')->willReturnCallback(
+        $this->sessionRepository->method('create')->willReturnCallback(
             function (array $vals) use ($session, &$createdValues) {
                 $createdValues = $vals;
                 return $session;
@@ -140,7 +159,7 @@ final class AgimControllerTest extends TestCase
     {
         $guesses = json_encode(['queue' => [3, 1, 4], 'completed' => [2, 5]]);
         $session = $this->makeSession(['guesses' => $guesses, 'status' => 'in_progress']);
-        $this->sessionStorage->method('loadByKey')->willReturn($session);
+        $this->tokenResolvesTo($session);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->prompt([], ['session_token' => 'tok-1'], $this->account, $this->request);
@@ -154,7 +173,7 @@ final class AgimControllerTest extends TestCase
     #[Test]
     public function prompt_returns_404_for_unknown_token(): void
     {
-        $this->sessionStorage->method('loadByKey')->willReturn(null);
+        $this->tokenResolvesTo(null);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
         $response = $controller->prompt([], ['session_token' => 'bad-token'], $this->account, $this->request);
@@ -167,7 +186,7 @@ final class AgimControllerTest extends TestCase
     {
         $guesses = json_encode(['queue' => [1, 2, 3], 'completed' => []]);
         $session = $this->makeSession(['guesses' => $guesses, 'status' => 'in_progress']);
-        $this->sessionStorage->method('loadByKey')->willReturn($session);
+        $this->tokenResolvesTo($session);
         $this->gate->method('denies')->willReturn(false);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
@@ -186,7 +205,7 @@ final class AgimControllerTest extends TestCase
     {
         $guesses = json_encode(['queue' => [1, 2, 3], 'completed' => []]);
         $session = $this->makeSession(['guesses' => $guesses, 'status' => 'in_progress']);
-        $this->sessionStorage->method('loadByKey')->willReturn($session);
+        $this->tokenResolvesTo($session);
         $this->gate->method('denies')->willReturn(false);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
@@ -204,7 +223,7 @@ final class AgimControllerTest extends TestCase
     {
         $guesses = json_encode(['queue' => [2], 'completed' => []]);
         $session = $this->makeSession(['guesses' => $guesses, 'status' => 'in_progress']);
-        $this->sessionStorage->method('loadByKey')->willReturn($session);
+        $this->tokenResolvesTo($session);
         $this->gate->method('denies')->willReturn(false);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);
@@ -230,7 +249,7 @@ final class AgimControllerTest extends TestCase
             $setValues[$f] = $v;
             return $session;
         });
-        $this->sessionStorage->method('loadByKey')->willReturn($session);
+        $this->tokenResolvesTo($session);
         $this->gate->method('denies')->willReturn(false);
 
         $controller = new AgimController($this->entityTypeManager, $this->twig, $this->gate);

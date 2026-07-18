@@ -23,7 +23,7 @@ final class LanguageApiTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('translation_memory');
+        $storage = self::$kernel->getEntityTypeManager()->getRepository('translation_memory');
         $seed = static function (array $values) use ($storage): void {
             $source = (string) $values['source_en'];
             $storage->save($storage->create($values + [
@@ -57,7 +57,7 @@ final class LanguageApiTest extends HttpKernelTestCase
 
         // dictionary_entry rows for the /api/lang/lookup lexicon endpoint. Own
         // corpus (attribution_source 'corpus') vs OPD (must NEVER be served).
-        $entries = self::$kernel->getEntityTypeManager()->getStorage('dictionary_entry');
+        $entries = self::$kernel->getEntityTypeManager()->getRepository('dictionary_entry');
         $entry = static function (array $values) use ($entries): void {
             $entries->save($entries->create($values + [
                 'language_code' => 'oj',
@@ -160,7 +160,7 @@ final class LanguageApiTest extends HttpKernelTestCase
         $body = $this->decode($this->send('GET', '/api/lang/translate', ['q' => 'quantum entanglement', 'tag' => 'oj-x-sagamok']));
         self::assertSame('miss', $body['match_type']);
 
-        $gaps = self::$kernel->getEntityTypeManager()->getStorage('tm_gap_log');
+        $gaps = self::$kernel->getEntityTypeManager()->getRepository('tm_gap_log');
         $ids = $gaps->getQuery()->accessCheck(false)
             ->condition('source_hash', TranslationMemoryService::hash('quantum entanglement'))
             ->condition('language_tag', 'oj-x-sagamok')

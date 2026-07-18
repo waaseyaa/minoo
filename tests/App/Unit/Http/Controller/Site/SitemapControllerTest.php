@@ -14,8 +14,8 @@ use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(SitemapController::class)]
 final class SitemapControllerTest extends TestCase
@@ -39,12 +39,13 @@ final class SitemapControllerTest extends TestCase
         $query->method('range')->willReturnSelf();
         $query->method('execute')->willReturn([1]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturn($query);
-        $storage->method('loadMultiple')->willReturn([1 => $entry]);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturn($query);
+        // findMany() returns a list, not the old id-keyed map.
+        $repository->method('findMany')->willReturn([$entry]);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($storage);
+        $etm->method('getRepository')->willReturn($repository);
 
         $controller = new SitemapController($twig, $etm);
         $response = $controller->xml([], [], $this->createMock(AccountInterface::class), HttpRequest::create('/sitemap.xml'));

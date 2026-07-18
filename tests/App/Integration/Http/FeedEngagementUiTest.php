@@ -23,7 +23,7 @@ final class FeedEngagementUiTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $user = $users->create(['name' => 'Engagement UI Tester', 'mail' => 'engagement-ui@example.test', 'status' => true, 'created' => time(), 'roles' => [], 'permissions' => []]);
         $users->save($user);
         self::$uid = (int) $user->id();

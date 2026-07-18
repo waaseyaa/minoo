@@ -41,8 +41,8 @@ final class ReelProcessor
      */
     public function process(int $esid, bool $skipVision = false): array
     {
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
-        $row = $storage->load($esid);
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
+        $row = $repository->find((string) $esid);
         if (!$row instanceof EntityInterface) {
             return ['esid' => $esid, 'status' => 'missing', 'error' => 'Row not found.'];
         }
@@ -71,7 +71,7 @@ final class ReelProcessor
             $row->set('provenance', $this->provenance($row, $reelId, $media, $draft['notes'], null));
             $row->set('pipeline_status', PipelineStage::DRAFTED);
             $row->set('updated_at', time());
-            $storage->save($row);
+            $repository->save($row);
 
             return ['esid' => $esid, 'status' => PipelineStage::DRAFTED, 'error' => null];
         } catch (\Throwable $e) {
@@ -80,7 +80,7 @@ final class ReelProcessor
             // ingest UI can surface it.
             $row->set('provenance', $this->provenance($row, $reelId, null, '', $e->getMessage()));
             $row->set('updated_at', time());
-            $storage->save($row);
+            $repository->save($row);
 
             return ['esid' => $esid, 'status' => PipelineStage::INGESTED, 'error' => $e->getMessage()];
         }

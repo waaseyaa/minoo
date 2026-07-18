@@ -14,15 +14,15 @@ use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(LanguageController::class)]
 final class LanguageControllerTest extends TestCase
 {
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
-    private EntityStorageInterface $storage;
+    private EntityRepositoryInterface $repository;
     private EntityQueryInterface $query;
     private AccountInterface $account;
     private HttpRequest $request;
@@ -36,26 +36,27 @@ final class LanguageControllerTest extends TestCase
         $this->query->method('sort')->willReturnSelf();
         $this->query->method('range')->willReturnSelf();
 
-        $this->storage = $this->createMock(EntityStorageInterface::class);
-        $this->storage->method('getQuery')->willReturn($this->query);
+        $this->repository = $this->createMock(EntityRepositoryInterface::class);
+        $this->repository->method('getQuery')->willReturn($this->query);
 
-        // example_sentence storage backs entry-detail examples (#788); empty by
-        // default so the detail tests exercise the dictionary path only.
+        // example_sentence repository backs entry-detail examples (#788); empty
+        // by default so the detail tests exercise the dictionary path only.
         // When the consent-gated query yields no ids, examplesFor() must return
-        // early WITHOUT calling loadMultiple() — the framework treats an empty
-        // array as "load all", which would surface the gated corpus (#788 leak).
+        // early WITHOUT calling findMany() — findMany([]) is fail-closed
+        // upstream now, but the consent-lock INTENT stands: an empty id set
+        // must never widen into the gated corpus (#788 leak class).
         $exampleQuery = $this->createMock(EntityQueryInterface::class);
         $exampleQuery->method('setAccount')->willReturnSelf();
         $exampleQuery->method('condition')->willReturnSelf();
         $exampleQuery->method('range')->willReturnSelf();
         $exampleQuery->method('execute')->willReturn([]);
-        $exampleStorage = $this->createMock(EntityStorageInterface::class);
-        $exampleStorage->method('getQuery')->willReturn($exampleQuery);
-        $exampleStorage->expects($this->never())->method('loadMultiple');
+        $exampleRepository = $this->createMock(EntityRepositoryInterface::class);
+        $exampleRepository->method('getQuery')->willReturn($exampleQuery);
+        $exampleRepository->expects($this->never())->method('findMany');
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
-        $this->entityTypeManager->method('getStorage')->willReturnCallback(
-            fn (string $type): EntityStorageInterface => $type === 'example_sentence' ? $exampleStorage : $this->storage,
+        $this->entityTypeManager->method('getRepository')->willReturnCallback(
+            fn (string $type): EntityRepositoryInterface => $type === 'example_sentence' ? $exampleRepository : $this->repository,
         );
 
         $this->twig = new Environment(new ArrayLoader([
@@ -74,9 +75,10 @@ final class LanguageControllerTest extends TestCase
         $miigwech = new DictionaryEntry(['deid' => 2, 'word' => 'miigwech', 'slug' => 'miigwech', 'consent_public' => 1]);
 
         $this->query->method('execute')->willReturn([1, 2]);
-        $this->storage->method('loadMultiple')
+        // findMany() returns a list, not the old id-keyed map.
+        $this->repository->method('findMany')
             ->with([1, 2])
-            ->willReturn([1 => $makwa, 2 => $miigwech]);
+            ->willReturn([$makwa, $miigwech]);
 
         $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
@@ -90,6 +92,8 @@ final class LanguageControllerTest extends TestCase
     public function list_returns_200_when_empty(): void
     {
         $this->query->method('execute')->willReturn([]);
+        // findMany([]) is fail-closed: an empty page yields no entries.
+        $this->repository->method('findMany')->with([])->willReturn([]);
 
         $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
@@ -107,9 +111,9 @@ final class LanguageControllerTest extends TestCase
         $entry = new DictionaryEntry(['deid' => 1, 'word' => 'aniin', 'slug' => 'aniin', 'consent_public' => 1]);
 
         $this->query->method('execute')->willReturn([1]);
-        $this->storage->method('loadMultiple')
+        $this->repository->method('findMany')
             ->with([1])
-            ->willReturn([1 => $entry]);
+            ->willReturn([$entry]);
 
         $controller = new LanguageController($this->entityTypeManager, $this->twig);
         $response = $controller->list([], [], $this->account, $this->request);
@@ -133,8 +137,9 @@ final class LanguageControllerTest extends TestCase
         ]);
 
         $this->query->method('execute')->willReturn([1]);
-        $this->storage->method('load')
-            ->with(1)
+        // find() is string-typed on the repository contract; the controller casts.
+        $this->repository->method('find')
+            ->with('1')
             ->willReturn($entry);
 
         $controller = new LanguageController($this->entityTypeManager, $this->twig);
@@ -169,8 +174,8 @@ final class LanguageControllerTest extends TestCase
         ]);
 
         $this->query->method('execute')->willReturn([1]);
-        $this->storage->method('load')
-            ->with(1)
+        $this->repository->method('find')
+            ->with('1')
             ->willReturn($entry);
 
         $controller = new LanguageController($this->entityTypeManager, $this->twig);

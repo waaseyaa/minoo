@@ -80,8 +80,8 @@ final class AuthController
         // (UserAccessPolicy denies anonymous view since framework alpha.249).
         // Authenticate against the record in system context. See
         // docs/security/sql-entity-query-access-check-bypass-audit.md.
-        $storage = $this->entityTypeManager->getStorage('user');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $repository = $this->entityTypeManager->getRepository('user');
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('mail', $email)
             ->execute();
 
@@ -94,7 +94,7 @@ final class AuthController
         }
 
         /** @var User|null $user */
-        $user = $storage->load(reset($ids));
+        $user = $repository->find((string) reset($ids));
 
         if ($user === null || !$user->checkPassword($password)) {
             $html = $this->twig->render('pages/auth/login.html.twig', LayoutTwigContext::withAccount($account, [
@@ -165,14 +165,14 @@ final class AuthController
         // Pre-session duplicate-email check: the visitor is anonymous, so look up
         // in system context (UserAccessPolicy denies anonymous user view since
         // alpha.249). See docs/security/sql-entity-query-access-check-bypass-audit.md.
-        $storage = $this->entityTypeManager->getStorage('user');
-        $existing = $storage->getQuery()->accessCheck(false)
+        $repository = $this->entityTypeManager->getRepository('user');
+        $existing = $repository->getQuery()->accessCheck(false)
             ->condition('mail', $email)
             ->execute();
 
         if ($existing !== []) {
             /** @var User|null $existingUser */
-            $existingUser = $storage->load(reset($existing));
+            $existingUser = $repository->find((string) reset($existing));
 
             // If inactive (unverified), re-send verification email instead of revealing existence
             if ($existingUser !== null && !$existingUser->isActive()) {
@@ -188,7 +188,7 @@ final class AuthController
         }
 
         /** @var User $user */
-        $user = $storage->create([
+        $user = $repository->create([
             'name' => $name,
             'mail' => $email,
             'status' => true,
@@ -202,7 +202,7 @@ final class AuthController
             $user->set('phone', $phone);
         }
 
-        $storage->save($user);
+        $repository->save($user);
 
         // Send welcome email (non-blocking — account is already active)
         $token = $this->tokenRepo->createToken($user->id(), 'email_verification', $this->authConfig->tokenTtl('email_verification'));
@@ -245,14 +245,14 @@ final class AuthController
             // Pre-session reset lookup: anonymous visitor, so system context
             // (UserAccessPolicy denies anonymous user view since alpha.249). See
             // docs/security/sql-entity-query-access-check-bypass-audit.md.
-            $storage = $this->entityTypeManager->getStorage('user');
-            $ids = $storage->getQuery()->accessCheck(false)
+            $repository = $this->entityTypeManager->getRepository('user');
+            $ids = $repository->getQuery()->accessCheck(false)
                 ->condition('mail', $email)
                 ->execute();
 
             if ($ids !== []) {
                 /** @var User|null $user */
-                $user = $storage->load(reset($ids));
+                $user = $repository->find((string) reset($ids));
                 if ($user !== null) {
                     $token = $this->tokenRepo->createToken($user->id(), 'password_reset', $this->authConfig->tokenTtl('password_reset'));
                     $this->authMailer->sendPasswordReset($user, $token);
@@ -330,9 +330,9 @@ final class AuthController
             return new Response($html);
         }
 
-        $storage = $this->entityTypeManager->getStorage('user');
+        $repository = $this->entityTypeManager->getRepository('user');
         /** @var User|null $user */
-        $user = $storage->load($userId);
+        $user = $repository->find((string) $userId);
 
         if ($user === null) {
             $html = $this->twig->render('pages/auth/reset-password.html.twig', LayoutTwigContext::withAccount($account, [
@@ -344,7 +344,7 @@ final class AuthController
         }
 
         $user->setRawPassword($password);
-        $storage->save($user);
+        $repository->save($user);
         $this->tokenRepo->consumeToken($result['id']);
 
         Flash::success('Your password has been reset. Please sign in.');
@@ -375,9 +375,9 @@ final class AuthController
         }
 
         $userId = $result['user_id'];
-        $storage = $this->entityTypeManager->getStorage('user');
+        $repository = $this->entityTypeManager->getRepository('user');
         /** @var User|null $user */
-        $user = $storage->load($userId);
+        $user = $repository->find((string) $userId);
 
         if ($user === null) {
             $html = $this->twig->render('pages/auth/verify-email.html.twig', LayoutTwigContext::withAccount($account, [
@@ -388,7 +388,7 @@ final class AuthController
         }
 
         $user->set('status', true);
-        $storage->save($user);
+        $repository->save($user);
         $this->tokenRepo->consumeToken($result['id']);
 
         $this->authMailer->sendWelcome($user);

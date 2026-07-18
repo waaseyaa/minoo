@@ -33,8 +33,8 @@ final class EngagementCounter
             $result[$key] = ['reactions' => 0, 'comments' => 0];
         }
 
-        $reactionStorage = $this->entityTypeManager->getStorage('reaction');
-        $commentStorage = $this->entityTypeManager->getStorage('comment');
+        $reactionRepository = $this->entityTypeManager->getRepository('reaction');
+        $commentRepository = $this->entityTypeManager->getRepository('comment');
 
         // Group targets by type for structured iteration (prepares for future IN-clause batching)
         $byType = [];
@@ -46,14 +46,14 @@ final class EngagementCounter
             foreach ($ids as $id) {
                 $key = $type . ':' . $id;
 
-                $reactionCount = $reactionStorage->getQuery()->accessCheck(false)
+                $reactionCount = $reactionRepository->getQuery()->accessCheck(false)
                     ->condition('target_type', $type)
                     ->condition('target_id', $id)
                     ->count()
                     ->execute();
                 $result[$key]['reactions'] = $reactionCount[0] ?? 0;
 
-                $commentCount = $commentStorage->getQuery()->accessCheck(false)
+                $commentCount = $commentRepository->getQuery()->accessCheck(false)
                     ->condition('target_type', $type)
                     ->condition('target_id', $id)
                     ->condition('status', 1)

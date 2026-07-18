@@ -45,8 +45,8 @@ final class SitemapController
             $paths[] = '/communities/' . $nation['slug'];
         }
 
-        $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $repository = $this->entityTypeManager->getRepository('dictionary_entry');
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->sort('word', 'ASC')
@@ -54,7 +54,7 @@ final class SitemapController
             ->execute();
 
         if ($ids !== []) {
-            foreach ($storage->loadMultiple($ids) as $entry) {
+            foreach ($repository->findMany($ids) as $entry) {
                 $slug = (string) $entry->get('slug');
                 if ($slug !== '') {
                     $paths[] = '/language/' . $slug;

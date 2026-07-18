@@ -36,8 +36,8 @@ final class BacklogBoard
             return $empty;
         }
 
-        $storage = $this->entityTypeManager->getStorage('tm_backlog');
-        $ids = $storage->getQuery()
+        $repository = $this->entityTypeManager->getRepository('tm_backlog');
+        $ids = $repository->getQuery()
             ->accessCheck(false)
             ->condition('status', 'awaiting_translation')
             ->execute();
@@ -48,7 +48,7 @@ final class BacklogBoard
         $byCategory = [];
         $groups = [];
         $total = 0;
-        foreach ($storage->loadMultiple($ids) as $row) {
+        foreach ($repository->findMany($ids) as $row) {
             $text = (string) $row->get('english_text');
             if ($text === '') {
                 continue;

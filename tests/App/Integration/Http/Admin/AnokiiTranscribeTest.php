@@ -26,7 +26,7 @@ final class AnokiiTranscribeTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
 
         $admin = $users->create(['name' => 'Tx Admin', 'mail' => 'tx-admin@example.test', 'status' => true, 'created' => time(), 'roles' => ['admin'], 'permissions' => []]);
         $users->save($admin);
@@ -37,7 +37,7 @@ final class AnokiiTranscribeTest extends HttpKernelTestCase
         self::$coordinatorUid = (int) $coord->id();
 
         // One untranscribed corpus row (English missing).
-        $sentences = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $sentences = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $row = $sentences->create([
             'ojibwe_text' => 'Shoogan Mookman',
             'english_text' => '',
@@ -99,7 +99,7 @@ final class AnokiiTranscribeTest extends HttpKernelTestCase
         $payload = json_decode((string) $response->getContent(), true);
         self::assertTrue($payload['ok'] ?? false);
 
-        $entity = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load(self::$esid);
+        $entity = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) self::$esid);
         self::assertNotNull($entity);
         self::assertSame($ojibwe, (string) $entity->get('ojibwe_text'), 'Ojibwe orthography must be stored verbatim.');
         self::assertSame('butter knife', (string) $entity->get('english_text'));
@@ -109,8 +109,8 @@ final class AnokiiTranscribeTest extends HttpKernelTestCase
     #[Test]
     public function unauthorized_write_is_rejected_and_does_not_mutate(): void
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
-        $before = (string) $storage->load(self::$esid)->get('english_text');
+        $storage = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
+        $before = (string) $storage->find((string) self::$esid)->get('english_text');
 
         // Anonymous (no role) but with a valid CSRF token: the role gate must reject.
         $response = $this->sendPost(0, '/admin/anokii/transcribe/save', [
@@ -119,7 +119,7 @@ final class AnokiiTranscribeTest extends HttpKernelTestCase
         ]);
 
         self::assertContains($response->getStatusCode(), [Response::HTTP_FORBIDDEN, Response::HTTP_UNAUTHORIZED]);
-        $after = (string) $storage->load(self::$esid)->get('english_text');
+        $after = (string) $storage->find((string) self::$esid)->get('english_text');
         self::assertSame($before, $after, 'Denied write must not mutate the entity.');
     }
 

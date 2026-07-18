@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 
 #[CoversClass(IngestionApiController::class)]
 final class IngestionApiControllerTest extends TestCase
@@ -54,12 +54,12 @@ final class IngestionApiControllerTest extends TestCase
             'updated_at' => 1700000000,
         ]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('load')->with(10)->willReturn($log);
-        $storage->expects($this->once())->method('save')->with($log);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('find')->with('10')->willReturn($log);
+        $repository->expects($this->once())->method('save')->with($log);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->with('ingest_log')->willReturn($storage);
+        $etm->method('getRepository')->with('ingest_log')->willReturn($repository);
 
         $account = $this->createMock(AccountInterface::class);
         $account->method('id')->willReturn(99);

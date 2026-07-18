@@ -24,7 +24,7 @@ final class FeedFilterTabTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $user = $users->create(['name' => 'Feed Tab Tester', 'mail' => 'feed-tab@example.test', 'status' => true, 'created' => time(), 'roles' => [], 'permissions' => []]);
         $users->save($user);
         self::$uid = (int) $user->id();

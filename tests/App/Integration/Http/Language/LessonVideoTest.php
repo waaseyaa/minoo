@@ -35,8 +35,8 @@ final class LessonVideoTest extends HttpKernelTestCase
         putenv('MINOO_CORPUS_PATH=' . self::$corpusDir);
 
         $etm = self::$kernel->getEntityTypeManager();
-        $storage = $etm->getStorage('example_sentence');
-        $entries = $etm->getStorage('dictionary_entry');
+        $storage = $etm->getRepository('example_sentence');
+        $entries = $etm->getRepository('dictionary_entry');
 
         // Lessons are dynamic (#912): a card shows only when its row is published,
         // public, curated (has a dictionary_entry) and assigned to the lesson.

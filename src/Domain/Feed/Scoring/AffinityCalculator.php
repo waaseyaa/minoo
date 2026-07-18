@@ -122,8 +122,8 @@ final class AffinityCalculator
     private function queryFollows(int $userId): array
     {
         try {
-            $storage = $this->entityTypeManager->getStorage('follow');
-            $ids = $storage->getQuery()->accessCheck(false)
+            $repository = $this->entityTypeManager->getRepository('follow');
+            $ids = $repository->getQuery()->accessCheck(false)
                 ->condition('user_id', $userId)
                 ->execute();
 
@@ -132,7 +132,7 @@ final class AffinityCalculator
             }
 
             $follows = [];
-            foreach ($storage->loadMultiple($ids) as $follow) {
+            foreach ($repository->findMany($ids) as $follow) {
                 $type = $follow->get('target_type');
                 $id = $follow->get('target_id');
                 if ($type !== null && $id !== null) {
@@ -152,10 +152,10 @@ final class AffinityCalculator
     private function queryInteractionCounts(string $entityType, int $userId): array
     {
         try {
-            $storage = $this->entityTypeManager->getStorage($entityType);
+            $repository = $this->entityTypeManager->getRepository($entityType);
             $cutoff = time() - ($this->lookbackDays * 86400);
 
-            $ids = $storage->getQuery()->accessCheck(false)
+            $ids = $repository->getQuery()->accessCheck(false)
                 ->condition('user_id', $userId)
                 ->condition('created_at', $cutoff, '>=')
                 ->execute();
@@ -165,7 +165,7 @@ final class AffinityCalculator
             }
 
             $counts = [];
-            foreach ($storage->loadMultiple($ids) as $entity) {
+            foreach ($repository->findMany($ids) as $entity) {
                 $type = $entity->get('target_type');
                 $id = $entity->get('target_id');
                 if ($type !== null && $id !== null) {

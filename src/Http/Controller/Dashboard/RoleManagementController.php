@@ -64,8 +64,8 @@ final class RoleManagementController
             return new RedirectResponse($referrer);
         }
 
-        $storage = $this->entityTypeManager->getStorage('user');
-        $user = $storage->load($targetUid);
+        $repository = $this->entityTypeManager->getRepository('user');
+        $user = $repository->find((string) $targetUid);
 
         if (!$user instanceof User) {
             Flash::error('User not found.');
@@ -89,7 +89,7 @@ final class RoleManagementController
                     $user->removeRole($role);
                 }
             }
-            $storage->save($user);
+            $repository->save($user);
         } catch (\Throwable $e) {
             error_log(sprintf('[RoleManagementController::changeRole] Error: %s', $e->getMessage()));
             Flash::error('Unable to update role. Please try again.');
@@ -123,8 +123,8 @@ final class RoleManagementController
     private function loadUserRows(AccountInterface $account): array
     {
         try {
-            $storage = $this->entityTypeManager->getStorage('user');
-            $ids = $storage->getQuery()->setAccount($account)
+            $repository = $this->entityTypeManager->getRepository('user');
+            $ids = $repository->getQuery()->setAccount($account)
                 ->condition('status', 1)
                 ->sort('name', 'ASC')
                 ->execute();
@@ -138,7 +138,7 @@ final class RoleManagementController
             return [];
         }
 
-        $users = array_values($storage->loadMultiple($ids));
+        $users = $repository->findMany($ids);
         $rows = [];
 
         foreach ($users as $user) {

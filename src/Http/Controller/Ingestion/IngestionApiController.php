@@ -46,8 +46,8 @@ final class IngestionApiController
         $log->set('created_at', time());
         $log->set('updated_at', time());
 
-        $storage = $this->entityTypeManager->getStorage('ingest_log');
-        $storage->save($log);
+        $repository = $this->entityTypeManager->getRepository('ingest_log');
+        $repository->save($log);
 
         return $this->json([
             'id' => $log->id(),
@@ -73,8 +73,8 @@ final class IngestionApiController
             return $this->json(['error' => 'Invalid id.'], 422);
         }
 
-        $storage = $this->entityTypeManager->getStorage('ingest_log');
-        $log = $storage->load($id);
+        $repository = $this->entityTypeManager->getRepository('ingest_log');
+        $log = $repository->find((string) $id);
         if ($log === null) {
             return $this->json(['error' => 'Not found.'], 404);
         }
@@ -96,7 +96,7 @@ final class IngestionApiController
             $log->set('entity_id', $primaryEntityId);
         }
         $log->set('updated_at', time());
-        $storage->save($log);
+        $repository->save($log);
 
         return $this->json([
             'materialized' => true,
@@ -113,8 +113,8 @@ final class IngestionApiController
             return $this->json(['error' => 'Invalid id.'], 422);
         }
 
-        $storage = $this->entityTypeManager->getStorage('ingest_log');
-        $log = $storage->load($id);
+        $repository = $this->entityTypeManager->getRepository('ingest_log');
+        $log = $repository->find((string) $id);
         if ($log === null) {
             return $this->json(['error' => 'Not found.'], 404);
         }
@@ -128,7 +128,7 @@ final class IngestionApiController
         $log->set('reviewed_by', $reviewedBy);
         $log->set('reviewed_at', time());
         $log->set('updated_at', time());
-        $storage->save($log);
+        $repository->save($log);
 
         return $this->json([
             'id' => $log->id(),

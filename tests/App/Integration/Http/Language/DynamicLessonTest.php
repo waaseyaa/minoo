@@ -22,8 +22,8 @@ final class DynamicLessonTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
         $etm = self::$kernel->getEntityTypeManager();
-        $es = $etm->getStorage('example_sentence');
-        $de = $etm->getStorage('dictionary_entry');
+        $es = $etm->getRepository('example_sentence');
+        $de = $etm->getRepository('dictionary_entry');
 
         // Curated definition deliberately DIFFERS from the raw english_text, to
         // prove the lesson English comes from the curated dictionary_entry.

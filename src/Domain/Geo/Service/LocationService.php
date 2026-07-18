@@ -52,7 +52,7 @@ final class LocationService
             return LocationContext::none();
         }
 
-        $community = $this->entityTypeManager->getStorage('community')->load($communityId);
+        $community = $this->entityTypeManager->getRepository('community')->find((string) $communityId);
         if (!$community instanceof ContentEntityBase) {
             return LocationContext::none();
         }
@@ -93,8 +93,8 @@ final class LocationService
      */
     private function geocodedCommunities(): array
     {
-        $storage = $this->entityTypeManager->getStorage('community');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $repository = $this->entityTypeManager->getRepository('community');
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->execute();
 
@@ -103,7 +103,7 @@ final class LocationService
         }
 
         $out = [];
-        foreach ($storage->loadMultiple($ids) as $community) {
+        foreach ($repository->findMany($ids) as $community) {
             if ($community instanceof ContentEntityBase && $community->get('latitude') !== null) {
                 $out[] = $community;
             }

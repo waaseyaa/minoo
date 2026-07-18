@@ -50,16 +50,16 @@ final class EngagementController
             return $this->json(['error' => 'Invalid reaction_type. Allowed: ' . implode(', ', self::ALLOWED_REACTION_TYPES)], 422);
         }
 
-        $storage = $this->entityTypeManager->getStorage('reaction');
+        $repository = $this->entityTypeManager->getRepository('reaction');
 
         try {
-            $entity = $storage->create([
+            $entity = $repository->create([
                 'reaction_type' => $reactionType,
-                'user_id' => $account->id(),
+                'user_id' => (int) $account->id(),
                 'target_type' => $data['target_type'],
                 'target_id' => (int) $data['target_id'],
             ]);
-            $storage->save($entity);
+            $repository->save($entity);
         } catch (\InvalidArgumentException) {
             return $this->json(['error' => 'Invalid entity data'], 422);
         }
@@ -70,8 +70,8 @@ final class EngagementController
     public function deleteReaction(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
-        $storage = $this->entityTypeManager->getStorage('reaction');
-        $entity = $storage->load($id);
+        $repository = $this->entityTypeManager->getRepository('reaction');
+        $entity = $repository->find((string) $id);
 
         if ($entity === null) {
             return $this->json(['error' => 'Not found'], 404);
@@ -81,7 +81,7 @@ final class EngagementController
             return $this->json(['error' => 'Forbidden'], 403);
         }
 
-        $storage->delete([$entity]);
+        $repository->delete($entity);
 
         return $this->json(['deleted' => true]);
     }
@@ -103,16 +103,16 @@ final class EngagementController
             return $this->json(['error' => 'Body must be 1-2000 characters'], 422);
         }
 
-        $storage = $this->entityTypeManager->getStorage('comment');
+        $repository = $this->entityTypeManager->getRepository('comment');
 
         try {
-            $entity = $storage->create([
+            $entity = $repository->create([
                 'body' => $body,
-                'user_id' => $account->id(),
+                'user_id' => (int) $account->id(),
                 'target_type' => $data['target_type'],
                 'target_id' => (int) $data['target_id'],
             ]);
-            $storage->save($entity);
+            $repository->save($entity);
         } catch (\InvalidArgumentException) {
             return $this->json(['error' => 'Invalid entity data'], 422);
         }
@@ -127,8 +127,8 @@ final class EngagementController
     public function deleteComment(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
-        $storage = $this->entityTypeManager->getStorage('comment');
-        $entity = $storage->load($id);
+        $repository = $this->entityTypeManager->getRepository('comment');
+        $entity = $repository->find((string) $id);
 
         if ($entity === null) {
             return $this->json(['error' => 'Not found'], 404);
@@ -138,7 +138,7 @@ final class EngagementController
             return $this->json(['error' => 'Forbidden'], 403);
         }
 
-        $storage->delete([$entity]);
+        $repository->delete($entity);
 
         return $this->json(['deleted' => true]);
     }
@@ -154,8 +154,8 @@ final class EngagementController
         $limit = min((int) ($query['limit'] ?? 20), 50);
         $offset = max((int) ($query['offset'] ?? 0), 0);
 
-        $storage = $this->entityTypeManager->getStorage('comment');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('comment');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('target_type', $targetType)
             ->condition('target_id', $targetId)
             ->condition('status', 1)
@@ -163,7 +163,8 @@ final class EngagementController
             ->range($offset, $limit)
             ->execute();
 
-        $comments = $ids !== [] ? array_values($storage->loadMultiple($ids)) : [];
+        // findMany([]) is fail-closed (returns []) — no empty-ids guard needed.
+        $comments = $repository->findMany($ids);
 
         $items = array_map(fn ($c) => [
             'id' => $c->id(),
@@ -200,7 +201,7 @@ final class EngagementController
             return $this->json(['error' => 'Body must be 1-5000 characters'], 422);
         }
 
-        $storage = $this->entityTypeManager->getStorage('post');
+        $repository = $this->entityTypeManager->getRepository('post');
 
         // Resolve author display name for feed attribution
         $authorName = '';
@@ -209,13 +210,13 @@ final class EngagementController
         }
 
         try {
-            $entity = $storage->create([
+            $entity = $repository->create([
                 'body' => $body,
-                'user_id' => $account->id(),
+                'user_id' => (int) $account->id(),
                 'community_id' => $communityId,
                 'author_name' => $authorName,
             ]);
-            $storage->save($entity);
+            $repository->save($entity);
         } catch (\InvalidArgumentException) {
             return $this->json(['error' => 'Invalid entity data'], 422);
         }
@@ -240,7 +241,7 @@ final class EngagementController
             }
             if ($imagePaths !== []) {
                 $entity->set('images', json_encode($imagePaths));
-                $storage->save($entity);
+                $repository->save($entity);
             }
         }
 
@@ -296,8 +297,8 @@ final class EngagementController
     public function deletePost(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
         $id = (int) ($params['id'] ?? 0);
-        $storage = $this->entityTypeManager->getStorage('post');
-        $entity = $storage->load($id);
+        $repository = $this->entityTypeManager->getRepository('post');
+        $entity = $repository->find((string) $id);
 
         if ($entity === null) {
             return $this->json(['error' => 'Not found'], 404);
@@ -307,7 +308,7 @@ final class EngagementController
             return $this->json(['error' => 'Forbidden'], 403);
         }
 
-        $storage->delete([$entity]);
+        $repository->delete($entity);
         $this->uploadHandler->deleteDirectory('posts/' . $id);
 
         return $this->json(['deleted' => true]);

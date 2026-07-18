@@ -58,8 +58,8 @@ final class ProcessReelsHandler
 
     private function drain(?int $limit, bool $skipVision, SymfonyCommandIO $io): int
     {
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
-        $ids = $storage->getQuery()
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
+        $ids = $repository->getQuery()
             ->accessCheck(false)
             ->condition('pipeline_status', PipelineStage::INGESTED)
             ->condition('source_sentence_id', 'corpus:%', 'LIKE')

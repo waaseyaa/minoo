@@ -97,8 +97,8 @@ final class TranscribeController
             return $this->json(['ok' => false, 'error' => 'Missing esid.'], 422);
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
-        $entity = $storage->load($esid);
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
+        $entity = $repository->find((string) $esid);
         if (!$entity instanceof EntityInterface) {
             return $this->json(['ok' => false, 'error' => 'Not found.'], 404);
         }
@@ -129,7 +129,7 @@ final class TranscribeController
         }
 
         $entity->set('updated_at', time());
-        $storage->save($entity);
+        $repository->save($entity);
 
         return $this->json([
             'ok' => true,
@@ -152,12 +152,12 @@ final class TranscribeController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         // accessCheck(false): this is the transcribe tool, gated to staff by the
         // route. It must surface UNREVIEWED drafts (status 0 / consent off) from
         // ingest:corpus (#854) — which an access-checked query would hide. The
         // route's requireRole is the access boundary. See the bypass audit doc.
-        $ids = $storage->getQuery()
+        $ids = $repository->getQuery()
             ->accessCheck(false)
             ->condition('source_sentence_id', 'corpus:%', 'LIKE')
             ->sort('source_sentence_id')
@@ -169,7 +169,7 @@ final class TranscribeController
 
         $resolver = new PipelineStageResolver();
         $rows = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
+        foreach ($repository->findMany($ids) as $entity) {
             $corpusId = str_replace('corpus:', '', (string) $entity->get('source_sentence_id'));
             $rows[] = [
                 'esid' => (int) $entity->id(),

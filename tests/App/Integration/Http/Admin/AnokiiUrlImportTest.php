@@ -49,7 +49,7 @@ final class AnokiiUrlImportTest extends HttpKernelTestCase
         self::assertTrue($body['ok']);
         self::assertSame('ingested', $body['pipeline_status']);
 
-        $row = self::$kernel->getEntityTypeManager()->getStorage('example_sentence')->load((int) $body['esid']);
+        $row = self::$kernel->getEntityTypeManager()->getRepository('example_sentence')->find((string) $body['esid']);
         self::assertNotNull($row);
         self::assertSame('oj-x-sagamok', (string) $row->get('language_tag'), 'Tagged at Sagamok community granularity.');
         self::assertSame('https://www.facebook.com/reel/123', (string) $row->get('source_url'), 'Source URL recorded for provenance.');

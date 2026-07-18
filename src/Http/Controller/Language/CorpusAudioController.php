@@ -69,7 +69,7 @@ final class CorpusAudioController
             return false;
         }
 
-        $ids = $this->entityTypeManager->getStorage('example_sentence')->getQuery()
+        $ids = $this->entityTypeManager->getRepository('example_sentence')->getQuery()
             ->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1)

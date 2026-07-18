@@ -42,8 +42,8 @@ final class CorpusIngestor
      */
     public function ingest(array $reels, bool $dryRun, bool $skipVision, ?int $limit, callable $log): IngestResult
     {
-        $sentences = $this->entityTypeManager->getStorage('example_sentence');
-        $speakers = $this->entityTypeManager->getStorage('speaker');
+        $sentences = $this->entityTypeManager->getRepository('example_sentence');
+        $speakers = $this->entityTypeManager->getRepository('speaker');
 
         $created = 0;
         $skipped = 0;

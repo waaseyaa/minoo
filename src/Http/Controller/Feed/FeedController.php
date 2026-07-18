@@ -122,14 +122,14 @@ final class FeedController
 
         if ($this->entityTypeManager->hasDefinition('reaction')) {
             try {
-                $storage = $this->entityTypeManager->getStorage('reaction');
+                $repository = $this->entityTypeManager->getRepository('reaction');
                 $sevenDaysAgo = (new \DateTimeImmutable('-7 days'))->format('Y-m-d H:i:s');
-                $ids = $storage->getQuery()->accessCheck(false)
+                $ids = $repository->getQuery()->accessCheck(false)
                     ->condition('created_at', $sevenDaysAgo, '>=')
                     ->execute();
 
                 if ($ids !== []) {
-                    $reactions = array_values($storage->loadMultiple($ids));
+                    $reactions = $repository->findMany($ids);
                     $counts = [];
                     foreach ($reactions as $reaction) {
                         $key = $reaction->get('target_type') . ':' . $reaction->get('target_id');
@@ -144,7 +144,7 @@ final class FeedController
                             continue;
                         }
                         try {
-                            $entity = $this->entityTypeManager->getStorage($type)->load($id);
+                            $entity = $this->entityTypeManager->getRepository($type)->find($id);
                             if ($entity !== null && $entity->label() !== '') {
                                 $trending[] = [
                                     'type' => $type,
@@ -199,9 +199,9 @@ final class FeedController
         }
 
         try {
-            $storage = $this->entityTypeManager->getStorage('event');
+            $repository = $this->entityTypeManager->getRepository('event');
             $now = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
-            $ids = $storage->getQuery()->accessCheck(false)
+            $ids = $repository->getQuery()->accessCheck(false)
                 ->condition('status', 1)
                 ->condition('starts_at', $now, '>')
                 ->sort('starts_at', 'ASC')
@@ -212,7 +212,7 @@ final class FeedController
                 return [];
             }
 
-            $events = array_values($storage->loadMultiple($ids));
+            $events = $repository->findMany($ids);
             $result = [];
 
             foreach ($events as $event) {
@@ -265,8 +265,8 @@ final class FeedController
         }
 
         try {
-            $storage = $this->entityTypeManager->getStorage('community');
-            $ids = $storage->getQuery()->accessCheck(false)
+            $repository = $this->entityTypeManager->getRepository('community');
+            $ids = $repository->getQuery()->accessCheck(false)
                 ->condition('status', 1)
                 ->execute();
 
@@ -274,7 +274,7 @@ final class FeedController
                 return [];
             }
 
-            $communities = array_values($storage->loadMultiple($ids));
+            $communities = $repository->findMany($ids);
             $withDistance = [];
 
             foreach ($communities as $community) {
@@ -322,8 +322,8 @@ final class FeedController
         }
 
         try {
-            $followStorage = $this->entityTypeManager->getStorage('follow');
-            $ids = $followStorage->getQuery()->setAccount($account)
+            $followRepository = $this->entityTypeManager->getRepository('follow');
+            $ids = $followRepository->getQuery()->setAccount($account)
                 ->condition('user_id', (int) $account->id())
                 ->condition('target_type', 'community')
                 ->execute();
@@ -332,16 +332,16 @@ final class FeedController
                 return [];
             }
 
-            $follows = array_values($followStorage->loadMultiple($ids));
+            $follows = $followRepository->findMany($ids);
             $communityIds = array_map(fn ($f) => $f->get('target_id'), $follows);
-            $communityIds = array_filter($communityIds);
+            $communityIds = array_values(array_filter($communityIds));
 
             if ($communityIds === []) {
                 return [];
             }
 
-            $communityStorage = $this->entityTypeManager->getStorage('community');
-            $communities = $communityStorage->loadMultiple($communityIds);
+            $communityRepository = $this->entityTypeManager->getRepository('community');
+            $communities = $communityRepository->findMany($communityIds);
             $result = [];
 
             foreach ($communities as $community) {

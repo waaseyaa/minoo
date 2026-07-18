@@ -27,7 +27,7 @@ final class AnokiiCatalogShellTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $admin = $users->create(['name' => 'Cat Admin', 'mail' => 'cat-admin@example.test', 'status' => true, 'created' => time(), 'roles' => ['admin'], 'permissions' => []]);
         $users->save($admin);
         self::$adminUid = (int) $admin->id();

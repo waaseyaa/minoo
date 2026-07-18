@@ -15,8 +15,8 @@ use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(ElderSupportController::class)]
 final class ElderSupportControllerTest extends TestCase
@@ -55,10 +55,10 @@ final class ElderSupportControllerTest extends TestCase
     #[Test]
     public function submit_rejects_empty_fields_without_creating(): void
     {
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->expects($this->never())->method('create');
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->expects($this->never())->method('create');
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($storage);
+        $etm->method('getRepository')->willReturn($repository);
 
         $controller = new ElderSupportController($this->twig, $etm);
         $request = HttpRequest::create('/elder-support', 'POST', ['name' => '', 'message' => '']);
@@ -72,11 +72,11 @@ final class ElderSupportControllerTest extends TestCase
     public function submit_creates_and_saves_a_valid_request(): void
     {
         $entity = $this->createMock(ContentEntityBase::class);
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->expects($this->once())->method('create')->willReturn($entity);
-        $storage->expects($this->once())->method('save');
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->expects($this->once())->method('create')->willReturn($entity);
+        $repository->expects($this->once())->method('save');
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($storage);
+        $etm->method('getRepository')->willReturn($repository);
 
         $controller = new ElderSupportController($this->twig, $etm);
         $request = HttpRequest::create('/elder-support', 'POST', [
@@ -106,10 +106,10 @@ final class ElderSupportControllerTest extends TestCase
         $query->method('sort')->willReturnSelf();
         $query->method('range')->willReturnSelf();
         $query->method('execute')->willReturn([]);
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturn($query);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturn($query);
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->willReturn($storage);
+        $etm->method('getRepository')->willReturn($repository);
 
         $controller = new ElderSupportController($this->twig, $etm);
         $response = $controller->inbox([], [], $this->account(false, ['authenticated', 'elder_coordinator']), HttpRequest::create('/elder-support/requests'));

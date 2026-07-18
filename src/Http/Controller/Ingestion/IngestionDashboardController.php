@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
 
@@ -27,17 +27,17 @@ final class IngestionDashboardController
     /** @param array<string, string> $params */
     public function index(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $storage = $this->entityTypeManager->getStorage('ingest_log');
+        $repository = $this->entityTypeManager->getRepository('ingest_log');
 
         $statusFilter = $this->resolveStatusFilter($query);
-        $logs = $this->loadRecentLogs($storage, $statusFilter);
-        $statusCounts = $this->buildStatusCounts($storage);
+        $logs = $this->loadRecentLogs($repository, $statusFilter);
+        $statusCounts = $this->buildStatusCounts($repository);
 
         $html = $this->twig->render('pages/admin/ingestion.html.twig', LayoutTwigContext::withAccount($account, [
             'logs' => $logs,
-            'total_count' => $this->countLogs($storage),
+            'total_count' => $this->countLogs($repository),
             'status_counts' => $statusCounts,
-            'last_envelope_log' => $this->loadLastSync($storage),
+            'last_envelope_log' => $this->loadLastSync($repository),
             'nc_sync' => $this->loadNcSyncStatus(),
             'status_filter' => $statusFilter,
             'hide_sidebar' => true,
@@ -57,9 +57,9 @@ final class IngestionDashboardController
         return in_array($raw, self::VALID_STATUSES, true) ? $raw : null;
     }
 
-    private function loadRecentLogs(EntityStorageInterface $storage, ?string $statusFilter): array
+    private function loadRecentLogs(EntityRepositoryInterface $repository, ?string $statusFilter): array
     {
-        $query = $storage->getQuery()->accessCheck(false)
+        $query = $repository->getQuery()->accessCheck(false)
             ->sort('created_at', 'DESC');
 
         if ($statusFilter !== null) {
@@ -71,23 +71,23 @@ final class IngestionDashboardController
             return [];
         }
 
-        return array_values($storage->loadMultiple($ids));
+        return $repository->findMany($ids);
     }
 
     /** @return array<string, int> */
-    private function buildStatusCounts(EntityStorageInterface $storage): array
+    private function buildStatusCounts(EntityRepositoryInterface $repository): array
     {
         return [
-            'pending_review' => $this->countLogs($storage, 'pending_review'),
-            'approved' => $this->countLogs($storage, 'approved'),
-            'rejected' => $this->countLogs($storage, 'rejected'),
-            'failed' => $this->countLogs($storage, 'failed'),
+            'pending_review' => $this->countLogs($repository, 'pending_review'),
+            'approved' => $this->countLogs($repository, 'approved'),
+            'rejected' => $this->countLogs($repository, 'rejected'),
+            'failed' => $this->countLogs($repository, 'failed'),
         ];
     }
 
-    private function countLogs(EntityStorageInterface $storage, ?string $status = null): int
+    private function countLogs(EntityRepositoryInterface $repository, ?string $status = null): int
     {
-        $query = $storage->getQuery()->accessCheck(false)->count();
+        $query = $repository->getQuery()->accessCheck(false)->count();
         if ($status !== null) {
             $query->condition('status', $status);
         }
@@ -96,14 +96,14 @@ final class IngestionDashboardController
         return isset($result[0]) ? (int) $result[0] : 0;
     }
 
-    private function loadLastSync(EntityStorageInterface $storage): ?int
+    private function loadLastSync(EntityRepositoryInterface $repository): ?int
     {
-        $ids = $storage->getQuery()->accessCheck(false)->sort('created_at', 'DESC')->range(0, 1)->execute();
+        $ids = $repository->getQuery()->accessCheck(false)->sort('created_at', 'DESC')->range(0, 1)->execute();
         if ($ids === []) {
             return null;
         }
 
-        $latest = $storage->load(reset($ids));
+        $latest = $repository->find((string) reset($ids));
         if ($latest === null) {
             return null;
         }

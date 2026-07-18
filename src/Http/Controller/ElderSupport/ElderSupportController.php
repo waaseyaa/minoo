@@ -53,9 +53,9 @@ final class ElderSupportController
             return new RedirectResponse('/elder-support');
         }
 
-        $storage = $this->entityTypeManager->getStorage('elder_support_request');
+        $repository = $this->entityTypeManager->getRepository('elder_support_request');
         $now = time();
-        $entity = $storage->create([
+        $entity = $repository->create([
             'name' => $name,
             'community' => trim((string) $request->request->get('community', '')),
             'support_type' => trim((string) $request->request->get('support_type', '')),
@@ -66,7 +66,7 @@ final class ElderSupportController
             'created_at' => $now,
             'updated_at' => $now,
         ]);
-        $storage->save($entity);
+        $repository->save($entity);
 
         Flash::success('Miigwech. Your request has been sent to the community coordinators.');
 
@@ -80,15 +80,15 @@ final class ElderSupportController
             return new Response('Forbidden', 403);
         }
 
-        $storage = $this->entityTypeManager->getStorage('elder_support_request');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('elder_support_request');
+        $ids = $repository->getQuery()->setAccount($account)
             ->sort('created_at', 'DESC')
             ->range(0, 200)
             ->execute();
 
         $requests = [];
         if ($ids !== []) {
-            foreach ($storage->loadMultiple($ids) as $req) {
+            foreach ($repository->findMany($ids) as $req) {
                 $requests[] = [
                     'name' => (string) $req->get('name'),
                     'community' => (string) $req->get('community'),

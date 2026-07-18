@@ -84,6 +84,8 @@ These sites never have an end-user `AccountInterface` available, or run after th
 | `src/Http/Controller/Games/CrosswordController.php` | 588 | `generateFallbackDaily` — server-side fallback puzzle generator; runs without per-request account. | 2026-05-19 |
 | `src/Http/Controller/Games/MatcherController.php` | 228 | `loadDictionaryEntries` — bootstrap content for the matcher game; dictionary entries are intentionally public. | 2026-05-19 |
 | `src/Http/Controller/Games/ShkodaController.php` | 338 | `selectRandomWord` — random-word selection from the dictionary for game start; public content. | 2026-05-19 |
+| `src/Http/Controller/Games/GameControllerTrait.php` | 51 | `loadSessionByToken` — session UUID is the bearer capability; mutating callers gate-check ownership afterwards (replaces the un-checked `loadByKey()`, C-22 #920). | 2026-07-18 |
+| `src/Http/Controller/Games/AgimController.php` | 83 | `loadSessionByToken` override — same token-as-capability lookup as the trait (C-22 #920). | 2026-07-18 |
 | `src/Http/Controller/Dashboard/CoordinatorDashboardController.php` | 167 | `loadVolunteerByUuid` — coordinator-only dashboard; admin role already enforced at routing. | 2026-05-19 |
 | `src/Http/Controller/Ingestion/IngestionDashboardController.php` | 62 | `loadRecentLogs` — admin-only ingest log view; admin role enforced at routing. | 2026-05-19 |
 | `src/Http/Controller/Ingestion/IngestionDashboardController.php` | 90 | `countLogs` — admin-only aggregate. | 2026-05-19 |

@@ -24,7 +24,7 @@ final class SidebarNavActiveStateTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $user = $users->create(['name' => 'Sidebar Nav Tester', 'mail' => 'sidebar-nav@example.test', 'status' => true, 'created' => time(), 'roles' => [], 'permissions' => []]);
         $users->save($user);
         self::$uid = (int) $user->id();

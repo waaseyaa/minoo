@@ -74,7 +74,19 @@ final class AgimController
     /** Override trait to accept ContentEntityBase (GameSession is final, unmockable in tests). */
     private function loadSessionByToken(string $uuid): ?ContentEntityBase
     {
-        $entity = $this->entityTypeManager->getStorage('game_session')->loadByKey('uuid', $uuid);
+        // Token-as-capability lookup: the session UUID is the bearer secret and
+        // mutating callers enforce ownership via the gate afterwards, so bypass
+        // per-row view checks (same semantics as the old loadByKey()).
+        // See docs/security/sql-entity-query-access-check-bypass-audit.md.
+        $repository = $this->entityTypeManager->getRepository('game_session');
+        $ids = $repository->getQuery()->accessCheck(false)
+            ->condition('uuid', $uuid)
+            ->range(0, 1)
+            ->execute();
+        if ($ids === []) {
+            return null;
+        }
+        $entity = $repository->find((string) reset($ids));
         return $entity instanceof ContentEntityBase ? $entity : null;
     }
 
@@ -100,8 +112,8 @@ final class AgimController
         $numerals = range($first, $last);
         shuffle($numerals);
 
-        $storage = $this->entityTypeManager->getStorage('game_session');
-        $session = $storage->create([
+        $repository = $this->entityTypeManager->getRepository('game_session');
+        $session = $repository->create([
             'game_type' => 'agim',
             'mode' => 'practice',
             'difficulty_tier' => $tier,
@@ -109,7 +121,7 @@ final class AgimController
             'user_id' => $account->isAuthenticated() ? $account->id() : null,
             'guesses' => json_encode(['queue' => $numerals, 'completed' => []]),
         ]);
-        $storage->save($session);
+        $repository->save($session);
 
         return $this->json([
             'session_token' => $session->get('uuid'),
@@ -199,7 +211,7 @@ final class AgimController
             $session->set('status', 'completed');
         }
 
-        $this->entityTypeManager->getStorage('game_session')->save($session);
+        $this->entityTypeManager->getRepository('game_session')->save($session);
 
         return $this->json([
             'correct' => $correct,
@@ -242,9 +254,12 @@ final class AgimController
         [$first, $last] = self::LEVEL_RANGES[$level];
         $numerals = range($first, $last);
 
-        // Batch-load dictionary entries
+        // Batch-load dictionary entries (findMany returns a list — re-key by id)
         $deids = array_map(fn (int $n) => self::NUMBERS[$n]['deid'], $numerals);
-        $entries = $this->entityTypeManager->getStorage('dictionary_entry')->loadMultiple($deids);
+        $entries = [];
+        foreach ($this->entityTypeManager->getRepository('dictionary_entry')->findMany($deids) as $entry) {
+            $entries[(int) $entry->id()] = $entry;
+        }
 
         $teachings = [];
         foreach ($numerals as $n) {

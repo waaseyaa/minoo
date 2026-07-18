@@ -3,6 +3,10 @@
 
 declare(strict_types=1);
 
+// The in-process route loop exceeds the default 128M under the alpha.267
+// repository engine; this is a dev/deploy helper, not FPM.
+ini_set('memory_limit', '512M');
+
 /**
  * Language-platform smoke test (2026-06 resurrection shape).
  * Boots the HTTP kernel against the configured database and validates the
@@ -71,7 +75,7 @@ foreach ([
 // --- 3. Data sanity ---------------------------------------------------------
 
 try {
-    $storage = $etm->getStorage('dictionary_entry');
+    $storage = $etm->getRepository('dictionary_entry');
     $count = (int) ($storage->getQuery()->accessCheck(false)->count()->execute()[0] ?? 0);
     if ($count > 0) {
         pass(sprintf('dictionary_entry rows present (%d)', $count));
@@ -90,7 +94,8 @@ $routes = [
     '/language/search?q=makwa' => 200,
     '/games' => 200,
     '/games/shkoda' => 200,
-    '/matcher' => 200,
+    // Short-link shim 301s to /games/matcher (see StaticPagesRouteProvider).
+    '/matcher' => 301,
     '/games/agim' => 200,
     '/games/crossword' => 200,
     '/games/journey' => 200,

@@ -13,8 +13,8 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(IngestionDashboardController::class)]
 final class IngestionDashboardControllerTest extends TestCase
@@ -30,8 +30,8 @@ final class IngestionDashboardControllerTest extends TestCase
         $totalCountQuery = $this->queryMockReturning([0], count: true);
         $lastSyncQuery = $this->queryMockReturning([]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturnOnConsecutiveCalls(
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturnOnConsecutiveCalls(
             $recentQuery,
             $pendingCountQuery,
             $approvedCountQuery,
@@ -40,11 +40,11 @@ final class IngestionDashboardControllerTest extends TestCase
             $totalCountQuery,
             $lastSyncQuery,
         );
-        $storage->method('loadMultiple')->willReturn([]);
-        $storage->method('load')->willReturn(null);
+        $repository->method('findMany')->willReturn([]);
+        $repository->method('find')->willReturn(null);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->with('ingest_log')->willReturn($storage);
+        $etm->method('getRepository')->with('ingest_log')->willReturn($repository);
 
         $root = dirname(__DIR__, 6);
         $statusPath = $root . '/storage/nc-sync-status.json';
@@ -98,8 +98,8 @@ final class IngestionDashboardControllerTest extends TestCase
         $totalCountQuery = $this->queryMockReturning([0], count: true);
         $lastSyncQuery = $this->queryMockReturning([]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturnOnConsecutiveCalls(
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturnOnConsecutiveCalls(
             $recentQuery,
             $pendingCountQuery,
             $approvedCountQuery,
@@ -108,11 +108,11 @@ final class IngestionDashboardControllerTest extends TestCase
             $totalCountQuery,
             $lastSyncQuery,
         );
-        $storage->method('loadMultiple')->willReturn([]);
-        $storage->method('load')->willReturn(null);
+        $repository->method('findMany')->willReturn([]);
+        $repository->method('find')->willReturn(null);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->with('ingest_log')->willReturn($storage);
+        $etm->method('getRepository')->with('ingest_log')->willReturn($repository);
 
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
@@ -164,8 +164,8 @@ final class IngestionDashboardControllerTest extends TestCase
             'created_at' => 1711468800,
         ]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturnOnConsecutiveCalls(
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturnOnConsecutiveCalls(
             $recentQuery,
             $pendingCountQuery,
             $approvedCountQuery,
@@ -174,11 +174,11 @@ final class IngestionDashboardControllerTest extends TestCase
             $totalCountQuery,
             $lastSyncQuery,
         );
-        $storage->method('loadMultiple')->with([7])->willReturn([7 => $log]);
-        $storage->method('load')->with(7)->willReturn($log);
+        $repository->method('findMany')->with([7])->willReturn([$log]);
+        $repository->method('find')->with('7')->willReturn($log);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->with('ingest_log')->willReturn($storage);
+        $etm->method('getRepository')->with('ingest_log')->willReturn($repository);
 
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
@@ -209,8 +209,8 @@ final class IngestionDashboardControllerTest extends TestCase
         $totalCountQuery = $this->queryMockReturning([0], count: true);
         $lastSyncQuery = $this->queryMockReturning([]);
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturnOnConsecutiveCalls(
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturnOnConsecutiveCalls(
             $recentQuery,
             $pendingCountQuery,
             $approvedCountQuery,
@@ -219,11 +219,11 @@ final class IngestionDashboardControllerTest extends TestCase
             $totalCountQuery,
             $lastSyncQuery,
         );
-        $storage->method('loadMultiple')->willReturn([]);
-        $storage->method('load')->willReturn(null);
+        $repository->method('findMany')->willReturn([]);
+        $repository->method('find')->willReturn(null);
 
         $etm = $this->createMock(EntityTypeManager::class);
-        $etm->method('getStorage')->with('ingest_log')->willReturn($storage);
+        $etm->method('getRepository')->with('ingest_log')->willReturn($repository);
 
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())

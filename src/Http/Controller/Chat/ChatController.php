@@ -68,11 +68,11 @@ final class ChatController
      */
     private function retrieveEntries(string $q, AccountInterface $account): array
     {
-        $storage = $this->entityTypeManager->getStorage('dictionary_entry');
+        $repository = $this->entityTypeManager->getRepository('dictionary_entry');
         $qLower = mb_strtolower($q);
         $like = '%' . addcslashes($q, '%_\\') . '%';
 
-        $base = static fn () => $storage->getQuery()->setAccount($account)
+        $base = static fn () => $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1);
 
@@ -80,15 +80,15 @@ final class ChatController
         $defIds = $base()->condition('definition', $like, 'LIKE')->execute();
         $ids = array_values(array_unique(array_merge($wordIds, $defIds)));
 
-        // Guard the empty set: loadMultiple([]) is the framework "load all"
-        // sentinel and would rank the entire 21k dictionary for a no-match query.
+        // findMany([]) is fail-closed upstream now; keep the early return as
+        // defense in depth so a no-match query never ranks the whole dictionary.
         $candidateIds = array_slice($ids, 0, self::SEARCH_CANDIDATES);
         if ($candidateIds === []) {
             return [];
         }
 
         $ranked = [];
-        foreach ($storage->loadMultiple($candidateIds) as $entry) {
+        foreach ($repository->findMany($candidateIds) as $entry) {
             $word = (string) $entry->get('word');
             $wLower = mb_strtolower($word);
             if ($wLower === $qLower) {
@@ -132,10 +132,10 @@ final class ChatController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('example_sentence');
+        $repository = $this->entityTypeManager->getRepository('example_sentence');
         $like = '%' . addcslashes($q, '%_\\') . '%';
 
-        $base = static fn () => $storage->getQuery()->setAccount($account)
+        $base = static fn () => $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->condition('consent_public', 1);
 
@@ -148,7 +148,7 @@ final class ChatController
         }
 
         $results = [];
-        foreach ($storage->loadMultiple($ids) as $sentence) {
+        foreach ($repository->findMany($ids) as $sentence) {
             $results[] = [
                 'ojibwe_text' => (string) $sentence->get('ojibwe_text'),
                 'english_text' => (string) $sentence->get('english_text'),

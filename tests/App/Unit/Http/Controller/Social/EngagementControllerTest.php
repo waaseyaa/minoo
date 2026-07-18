@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityInterface;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Media\UploadHandler;
 
 #[CoversClass(EngagementController::class)]
@@ -54,12 +54,12 @@ final class EngagementControllerTest extends TestCase
         return $entity;
     }
 
-    private function mockStorage(string $type): EntityStorageInterface
+    private function mockRepository(string $type): EntityRepositoryInterface
     {
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $this->etm->method('getStorage')->with($type)->willReturn($storage);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $this->etm->method('getRepository')->with($type)->willReturn($repository);
 
-        return $storage;
+        return $repository;
     }
 
     private function jsonRequest(string $method, array $body): HttpRequest
@@ -138,8 +138,8 @@ final class EngagementControllerTest extends TestCase
     #[Test]
     public function react_rejects_invalid_reaction_type(): void
     {
-        $storage = $this->mockStorage('reaction');
-        $storage->method('create')->willThrowException(
+        $repository = $this->mockRepository('reaction');
+        $repository->method('create')->willThrowException(
             new \InvalidArgumentException("Invalid reaction_type 'invalid_type'."),
         );
 
@@ -224,8 +224,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(42);
         $entity = $this->mockEntity(['reaction_type' => 'interested'], 1);
-        $storage = $this->mockStorage('reaction');
-        $storage->method('create')->willReturn($entity);
+        $repository = $this->mockRepository('reaction');
+        $repository->method('create')->willReturn($entity);
 
         $request = $this->jsonRequest('POST', [
             'reaction_type' => 'interested', 'target_type' => 'event', 'target_id' => 10,
@@ -243,8 +243,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(42);
         $entity = $this->mockEntity(['reaction_type' => 'like'], 1);
-        $storage = $this->mockStorage('reaction');
-        $storage->method('create')->willReturn($entity);
+        $repository = $this->mockRepository('reaction');
+        $repository->method('create')->willReturn($entity);
 
         $request = $this->jsonRequest('POST', [
             'reaction_type' => 'like', 'target_type' => 'community_group', 'target_id' => 10,
@@ -262,8 +262,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(42);
         $entity = $this->mockEntity(['body' => 'Great event!', 'user_id' => 42, 'created_at' => 1700000000], 5);
-        $storage = $this->mockStorage('comment');
-        $storage->method('create')->willReturn($entity);
+        $repository = $this->mockRepository('comment');
+        $repository->method('create')->willReturn($entity);
 
         $request = $this->jsonRequest('POST', [
             'body' => 'Great event!', 'target_type' => 'event', 'target_id' => 10,
@@ -283,8 +283,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(42);
         $entity = $this->mockEntity(['body' => 'Hello community!', 'created_at' => 1700000000], 3);
-        $storage = $this->mockStorage('post');
-        $storage->method('create')->willReturn($entity);
+        $repository = $this->mockRepository('post');
+        $repository->method('create')->willReturn($entity);
 
         $request = $this->jsonRequest('POST', ['body' => 'Hello community!', 'community_id' => 1]);
 
@@ -303,8 +303,8 @@ final class EngagementControllerTest extends TestCase
         }
         $account = $this->mockAccount(42);
         $entity = $this->mockEntity(['body' => 'Hello community!', 'created_at' => 1700000000], 3);
-        $storage = $this->mockStorage('post');
-        $storage->method('create')->willReturn($entity);
+        $repository = $this->mockRepository('post');
+        $repository->method('create')->willReturn($entity);
 
         $tmpImage = tempnam(sys_get_temp_dir(), 'img');
         file_put_contents($tmpImage, 'test-image');
@@ -345,9 +345,9 @@ final class EngagementControllerTest extends TestCase
         ]);
         $entity->expects($this->never())->method('set');
 
-        $storage = $this->mockStorage('post');
-        $storage->method('create')->willReturn($entity);
-        $storage->expects($this->once())->method('save')->with($entity);
+        $repository = $this->mockRepository('post');
+        $repository->method('create')->willReturn($entity);
+        $repository->expects($this->once())->method('save')->with($entity);
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'php');
         file_put_contents($tmpFile, '<?php echo "not an image";');
@@ -380,8 +380,10 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(42);
         $entity = $this->mockEntity(['user_id' => 42]);
-        $storage = $this->mockStorage('reaction');
-        $storage->method('load')->with(1)->willReturn($entity);
+        $repository = $this->mockRepository('reaction');
+        $repository->method('find')->with('1')->willReturn($entity);
+        // Repository delete() takes the single entity, not the legacy array shape.
+        $repository->expects($this->once())->method('delete')->with($entity);
 
         $request = HttpRequest::create('/api/engagement/react/1', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '1'], [], $account, $request);
@@ -396,8 +398,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(99);
         $entity = $this->mockEntity(['user_id' => 42]);
-        $storage = $this->mockStorage('reaction');
-        $storage->method('load')->with(1)->willReturn($entity);
+        $repository = $this->mockRepository('reaction');
+        $repository->method('find')->with('1')->willReturn($entity);
 
         $request = HttpRequest::create('/api/engagement/react/1', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '1'], [], $account, $request);
@@ -411,8 +413,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(99, isAdmin: true);
         $entity = $this->mockEntity(['user_id' => 42]);
-        $storage = $this->mockStorage('reaction');
-        $storage->method('load')->with(1)->willReturn($entity);
+        $repository = $this->mockRepository('reaction');
+        $repository->method('find')->with('1')->willReturn($entity);
 
         $request = HttpRequest::create('/api/engagement/react/1', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '1'], [], $account, $request);
@@ -426,8 +428,8 @@ final class EngagementControllerTest extends TestCase
     public function delete_reaction_returns_404_when_not_found(): void
     {
         $account = $this->mockAccount();
-        $storage = $this->mockStorage('reaction');
-        $storage->method('load')->willReturn(null);
+        $repository = $this->mockRepository('reaction');
+        $repository->method('find')->willReturn(null);
 
         $request = HttpRequest::create('/api/engagement/react/999', 'DELETE');
         $response = $this->controller->deleteReaction(['id' => '999'], [], $account, $request);
@@ -440,8 +442,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(99);
         $entity = $this->mockEntity(['user_id' => 42]);
-        $storage = $this->mockStorage('comment');
-        $storage->method('load')->with(1)->willReturn($entity);
+        $repository = $this->mockRepository('comment');
+        $repository->method('find')->with('1')->willReturn($entity);
 
         $request = HttpRequest::create('/api/engagement/comment/1', 'DELETE');
         $response = $this->controller->deleteComment(['id' => '1'], [], $account, $request);
@@ -454,8 +456,8 @@ final class EngagementControllerTest extends TestCase
     {
         $account = $this->mockAccount(99);
         $entity = $this->mockEntity(['user_id' => 42]);
-        $storage = $this->mockStorage('post');
-        $storage->method('load')->with(1)->willReturn($entity);
+        $repository = $this->mockRepository('post');
+        $repository->method('find')->with('1')->willReturn($entity);
 
         $request = HttpRequest::create('/api/engagement/post/1', 'DELETE');
         $response = $this->controller->deletePost(['id' => '1'], [], $account, $request);
@@ -469,8 +471,8 @@ final class EngagementControllerTest extends TestCase
     public function react_catches_constructor_invalid_argument_exception(): void
     {
         $account = $this->mockAccount(42);
-        $storage = $this->mockStorage('reaction');
-        $storage->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
+        $repository = $this->mockRepository('reaction');
+        $repository->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
 
         $request = $this->jsonRequest('POST', [
             'reaction_type' => 'like', 'target_type' => 'event', 'target_id' => 1,
@@ -487,8 +489,8 @@ final class EngagementControllerTest extends TestCase
     public function comment_catches_constructor_invalid_argument_exception(): void
     {
         $account = $this->mockAccount(42);
-        $storage = $this->mockStorage('comment');
-        $storage->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
+        $repository = $this->mockRepository('comment');
+        $repository->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
 
         $request = $this->jsonRequest('POST', [
             'body' => 'A valid comment', 'target_type' => 'event', 'target_id' => 1,
@@ -506,8 +508,8 @@ final class EngagementControllerTest extends TestCase
     public function createPost_catches_constructor_invalid_argument_exception(): void
     {
         $account = $this->mockAccount(42);
-        $storage = $this->mockStorage('post');
-        $storage->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
+        $repository = $this->mockRepository('post');
+        $repository->method('create')->willThrowException(new \InvalidArgumentException('Bad data'));
 
         $request = $this->jsonRequest('POST', [
             'body' => 'A valid post body', 'community_id' => 1,

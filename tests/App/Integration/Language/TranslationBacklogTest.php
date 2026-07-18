@@ -42,10 +42,10 @@ final class TranslationBacklogTest extends HttpKernelTestCase
         self::assertSame(0, $result['updated']);
         self::assertSame(['governance-nav' => 2, 'global-ui' => 1], $result['by_category']);
 
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('tm_backlog');
-        $ids = $storage->getQuery()->accessCheck(false)->condition('english_text', 'Contact')->execute();
+        $repository = self::$kernel->getEntityTypeManager()->getRepository('tm_backlog');
+        $ids = $repository->getQuery()->accessCheck(false)->condition('english_text', 'Contact')->execute();
         self::assertNotEmpty($ids);
-        $row = $storage->load((int) reset($ids));
+        $row = $repository->find((string) reset($ids));
         self::assertNotNull($row);
         self::assertSame('oj-x-sagamok', $row->get('target_tag'), 'Sagamok is the default first target.');
         self::assertSame('awaiting_translation', $row->get('status'));
@@ -68,12 +68,12 @@ final class TranslationBacklogTest extends HttpKernelTestCase
         self::assertSame(0, $second['created'], 'No new rows on re-seed.');
         self::assertSame(3, $second['updated']);
 
-        $storage = $etm->getStorage('tm_backlog');
-        $all = $storage->getQuery()->accessCheck(false)->execute();
+        $repository = $etm->getRepository('tm_backlog');
+        $all = $repository->getQuery()->accessCheck(false)->execute();
         self::assertCount(3, $all, 'Idempotent: still exactly three rows.');
 
-        $ids = $storage->getQuery()->accessCheck(false)->condition('english_text', 'Contact')->execute();
-        self::assertSame(18, (int) $storage->load((int) reset($ids))->get('demand_sites'), 'Demand refreshed in place.');
+        $ids = $repository->getQuery()->accessCheck(false)->condition('english_text', 'Contact')->execute();
+        self::assertSame(18, (int) $repository->find((string) reset($ids))->get('demand_sites'), 'Demand refreshed in place.');
     }
 
     #[Test]

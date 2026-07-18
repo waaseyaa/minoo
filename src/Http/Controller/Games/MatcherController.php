@@ -147,10 +147,10 @@ final class MatcherController
             $wrongCount++;
         }
 
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
+        $sessionRepository = $this->entityTypeManager->getRepository('game_session');
         $session->set('grid_state', json_encode($matches));
         $session->set('wrong_count', $wrongCount);
-        $sessionStorage->save($session);
+        $sessionRepository->save($session);
 
         return $this->json($result);
     }
@@ -174,9 +174,9 @@ final class MatcherController
             return $this->json(['error' => 'Forbidden'], 403);
         }
 
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
+        $sessionRepository = $this->entityTypeManager->getRepository('game_session');
         $session->set('status', 'completed');
-        $sessionStorage->save($session);
+        $sessionRepository->save($session);
 
         $matches = json_decode((string) ($session->get('grid_state') ?? '[]'), true) ?: [];
         $totalAttempts = count($matches);
@@ -213,12 +213,12 @@ final class MatcherController
      */
     private function loadDictionaryEntries(int $limit, ?int $seed = null): array
     {
-        $storage = $this->entityTypeManager->getStorage('dictionary_entry');
+        $repository = $this->entityTypeManager->getRepository('dictionary_entry');
 
         // Draw from the WHOLE dictionary (#793) rather than the first N rows,
         // which are alphabetical ("aa…"). Daily passes a seed so the candidate
         // pool — and therefore the puzzle — is stable for the whole day.
-        $allIds = $storage->getQuery()->accessCheck(false)
+        $allIds = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->condition('definition', '%"%', 'LIKE')
@@ -237,7 +237,7 @@ final class MatcherController
         }
 
         $entries = [];
-        foreach ($storage->loadMultiple($sample) as $entity) {
+        foreach ($repository->findMany($sample) as $entity) {
             $word = (string) $entity->get('word');
             $rawDefinition = (string) $entity->get('definition');
             if (!LearnableWord::isLearnable($word, MatcherEngine::cleanDefinition($rawDefinition))) {
@@ -266,8 +266,8 @@ final class MatcherController
         ?string $dailyDate,
         array $pairs,
     ): \App\Entity\Games\GameSession {
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
-        $session = $sessionStorage->create([
+        $sessionRepository = $this->entityTypeManager->getRepository('game_session');
+        $session = $sessionRepository->create([
             'game_type' => 'matcher',
             'mode' => $mode,
             'direction' => $direction,
@@ -277,7 +277,7 @@ final class MatcherController
             'guesses' => json_encode($pairs),
             'grid_state' => '[]',
         ]);
-        $sessionStorage->save($session);
+        $sessionRepository->save($session);
 
         assert($session instanceof \App\Entity\Games\GameSession);
 

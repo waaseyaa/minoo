@@ -9,8 +9,6 @@ use App\Entity\Language\DictionaryEntry;
 use App\Entity\Language\ExampleSentence;
 use App\Entity\Language\Speaker;
 use App\Entity\Language\WordPart;
-use App\Infrastructure\Mcp\MinooNoopToolRegistry;
-use App\Infrastructure\Mcp\MinooUnknownToolExecutor;
 use App\Provider\AppCoreServiceProvider;
 use Waaseyaa\Entity\EntityType;
 use Waaseyaa\I18n\Language;
@@ -20,8 +18,6 @@ use Waaseyaa\I18n\Translator;
 use Waaseyaa\I18n\TranslatorInterface;
 use Waaseyaa\Mcp\Auth\BearerTokenAuth;
 use Waaseyaa\Mcp\Auth\McpAuthInterface;
-use Waaseyaa\Mcp\Bridge\ToolExecutorInterface;
-use Waaseyaa\Mcp\Bridge\ToolRegistryInterface;
 use Waaseyaa\Routing\Language\UrlPrefixNegotiator;
 
 /**
@@ -200,9 +196,6 @@ final class EntityFoundationProvider extends AppCoreServiceProvider
             $tokens = (array) ($this->config['mcp']['tokens'] ?? []);
             return new BearerTokenAuth($tokens);
         });
-
-        $this->singleton(ToolRegistryInterface::class, static fn (): ToolRegistryInterface => new MinooNoopToolRegistry());
-        $this->singleton(ToolExecutorInterface::class, static fn (): ToolExecutorInterface => new MinooUnknownToolExecutor());
 
         // =====================================================================
         // --- Ingestion ---

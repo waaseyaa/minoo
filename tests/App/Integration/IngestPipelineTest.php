@@ -70,7 +70,7 @@ final class IngestPipelineTest extends TestCase
         $this->assertNotNull($result->getPrimaryEntityId());
 
         // Verify dictionary entry was created.
-        $entry = self::$manager->getStorage('dictionary_entry')->load($result->getPrimaryEntityId());
+        $entry = self::$manager->getRepository('dictionary_entry')->find((string) $result->getPrimaryEntityId());
         $this->assertNotNull($entry);
         $this->assertSame('makwa', $entry->get('word'));
         $this->assertSame('bear', $entry->get('definition'));

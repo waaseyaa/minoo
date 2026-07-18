@@ -65,8 +65,8 @@ $boot = new ReflectionMethod(AbstractKernel::class, 'boot');
 $boot->invoke($kernel);
 $etm = $kernel->getEntityTypeManager();
 
-$speakerStorage = $etm->getStorage('speaker');
-$sentenceStorage = $etm->getStorage('example_sentence');
+$speakerStorage = $etm->getRepository('speaker');
+$sentenceStorage = $etm->getRepository('example_sentence');
 
 /**
  * Find or create the speaker for a contributor name, consent granted.
@@ -172,7 +172,7 @@ foreach ($files as $file) {
             continue;
         }
 
-        $entity = $sentenceStorage->load(reset($existing));
+        $entity = $sentenceStorage->find((string) reset($existing));
         if ($entity === null) {
             $skipped++;
             continue;

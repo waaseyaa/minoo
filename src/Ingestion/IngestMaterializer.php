@@ -107,9 +107,9 @@ final class IngestMaterializer
         if ($dryRun) {
             $result->addCreated('dictionary_entry', $parsedFields);
         } else {
-            $storage = $this->entityTypeManager->getStorage('dictionary_entry');
-            $entity = $storage->create($parsedFields);
-            $storage->save($entity);
+            $repository = $this->entityTypeManager->getRepository('dictionary_entry');
+            $entity = $repository->create($parsedFields);
+            $repository->save($entity);
             $entryId = (int) $entity->id();
             $result->addCreated('dictionary_entry', $parsedFields, $entryId);
             $result->setPrimaryEntityId($entryId);
@@ -127,9 +127,9 @@ final class IngestMaterializer
             if ($dryRun) {
                 $result->addCreated('example_sentence', $sFields);
             } else {
-                $storage = $this->entityTypeManager->getStorage('example_sentence');
-                $entity = $storage->create($sFields);
-                $storage->save($entity);
+                $repository = $this->entityTypeManager->getRepository('example_sentence');
+                $entity = $repository->create($sFields);
+                $repository->save($entity);
                 $result->addCreated('example_sentence', $sFields, (int) $entity->id());
             }
         }
@@ -155,10 +155,10 @@ final class IngestMaterializer
 
     private function getOrCreateSpeaker(string $code, array $fields): int
     {
-        $storage = $this->entityTypeManager->getStorage('contributor');
+        $repository = $this->entityTypeManager->getRepository('contributor');
 
         try {
-            $ids = $storage->getQuery()->accessCheck(false)->condition('code', $code)->execute();
+            $ids = $repository->getQuery()->accessCheck(false)->condition('code', $code)->execute();
             if ($ids !== []) {
                 return (int) reset($ids);
             }
@@ -168,17 +168,17 @@ final class IngestMaterializer
             }
         }
 
-        $entity = $storage->create($fields);
-        $storage->save($entity);
+        $entity = $repository->create($fields);
+        $repository->save($entity);
         return (int) $entity->id();
     }
 
     private function getOrCreateWordPart(string $form, string $type, array $fields): int
     {
-        $storage = $this->entityTypeManager->getStorage('word_part');
+        $repository = $this->entityTypeManager->getRepository('word_part');
 
         try {
-            $ids = $storage->getQuery()->accessCheck(false)
+            $ids = $repository->getQuery()->accessCheck(false)
                 ->condition('form', $form)
                 ->condition('type', $type)
                 ->execute();
@@ -191,8 +191,8 @@ final class IngestMaterializer
             }
         }
 
-        $entity = $storage->create($fields);
-        $storage->save($entity);
+        $entity = $repository->create($fields);
+        $repository->save($entity);
         return (int) $entity->id();
     }
 }

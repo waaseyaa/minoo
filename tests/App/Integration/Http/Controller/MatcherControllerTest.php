@@ -38,8 +38,8 @@ final class MatcherControllerTest extends TestCase
         $this->assertNotNull($etm->getDefinition('game_session'));
 
         // Verify matcher game_type is accepted
-        $storage = $etm->getStorage('game_session');
-        $session = $storage->create([
+        $repository = $etm->getRepository('game_session');
+        $session = $repository->create([
             'game_type' => 'matcher',
             'mode' => 'practice',
             'direction' => 'ojibwe_to_english',
@@ -53,9 +53,9 @@ final class MatcherControllerTest extends TestCase
     public function matcher_session_saves_and_loads(): void
     {
         $etm = self::$kernel->getEntityTypeManager();
-        $storage = $etm->getStorage('game_session');
+        $repository = $etm->getRepository('game_session');
 
-        $session = $storage->create([
+        $session = $repository->create([
             'game_type' => 'matcher',
             'mode' => 'daily',
             'direction' => 'ojibwe_to_english',
@@ -63,9 +63,15 @@ final class MatcherControllerTest extends TestCase
             'guesses' => json_encode([['id' => 1, 'ojibwe' => 'makwa', 'english' => 'bear']]),
             'grid_state' => json_encode([['left_id' => '1', 'right_id' => '1', 'correct' => true]]),
         ]);
-        $storage->save($session);
+        $repository->save($session);
 
-        $loaded = $storage->loadByKey('uuid', $session->get('uuid'));
+        // loadByKey() is gone: uuid lookup goes through the query surface now.
+        $ids = $repository->getQuery()->accessCheck(false)
+            ->condition('uuid', $session->get('uuid'))
+            ->range(0, 1)
+            ->execute();
+        $this->assertNotSame([], $ids);
+        $loaded = $repository->find((string) reset($ids));
         $this->assertNotNull($loaded);
         $this->assertSame('matcher', $loaded->get('game_type'));
 
@@ -78,20 +84,20 @@ final class MatcherControllerTest extends TestCase
     public function matcher_session_completes(): void
     {
         $etm = self::$kernel->getEntityTypeManager();
-        $storage = $etm->getStorage('game_session');
+        $repository = $etm->getRepository('game_session');
 
-        $session = $storage->create([
+        $session = $repository->create([
             'game_type' => 'matcher',
             'mode' => 'practice',
             'direction' => 'ojibwe_to_english',
             'difficulty_tier' => 'easy',
         ]);
-        $storage->save($session);
+        $repository->save($session);
 
         $session->set('status', 'completed');
-        $storage->save($session);
+        $repository->save($session);
 
-        $loaded = $storage->load($session->id());
+        $loaded = $repository->find((string) $session->id());
         $this->assertSame('completed', $loaded->get('status'));
     }
 }

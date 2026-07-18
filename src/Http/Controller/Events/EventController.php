@@ -84,8 +84,8 @@ final class EventController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('event');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('status', 1)
             ->execute();
 
@@ -94,7 +94,7 @@ final class EventController
         }
 
         $events = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
+        foreach ($repository->findMany($ids) as $entity) {
             if ($entity instanceof ContentEntityBase && $this->mediaIsShowable($entity)) {
                 $events[] = $entity;
             }
@@ -124,8 +124,8 @@ final class EventController
             return null;
         }
 
-        $storage = $this->entityTypeManager->getStorage('event');
-        $ids = $storage->getQuery()->setAccount($account)
+        $repository = $this->entityTypeManager->getRepository('event');
+        $ids = $repository->getQuery()->setAccount($account)
             ->condition('slug', $slug)
             ->condition('status', 1)
             ->range(0, 1)
@@ -135,7 +135,7 @@ final class EventController
             return null;
         }
 
-        $event = $storage->load((int) reset($ids));
+        $event = $repository->find((string) reset($ids));
 
         return $event instanceof ContentEntityBase && $this->mediaIsShowable($event) ? $event : null;
     }
@@ -176,8 +176,8 @@ final class EventController
             return [];
         }
 
-        $storage = $this->entityTypeManager->getStorage('community');
-        $communities = $storage->loadMultiple(array_keys($communityIds));
+        $repository = $this->entityTypeManager->getRepository('community');
+        $communities = $repository->findMany(array_keys($communityIds));
 
         $map = [];
         foreach ($communities as $community) {

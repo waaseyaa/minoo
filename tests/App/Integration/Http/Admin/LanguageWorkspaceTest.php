@@ -30,12 +30,12 @@ final class LanguageWorkspaceTest extends HttpKernelTestCase
     {
         parent::setUpBeforeClass();
 
-        $users = self::$kernel->getEntityTypeManager()->getStorage('user');
+        $users = self::$kernel->getEntityTypeManager()->getRepository('user');
         $admin = $users->create(['name' => 'Lang Admin', 'mail' => 'lang-admin@example.test', 'status' => true, 'created' => time(), 'roles' => ['admin'], 'permissions' => []]);
         $users->save($admin);
         self::$adminUid = (int) $admin->id();
 
-        $sentences = self::$kernel->getEntityTypeManager()->getStorage('example_sentence');
+        $sentences = self::$kernel->getEntityTypeManager()->getRepository('example_sentence');
         $i = 0;
         $seed = static function (array $values) use ($sentences, &$i): void {
             ++$i;
