@@ -8,11 +8,11 @@ use App\Domain\Geo\Service\LocationService;
 use App\Http\Twig\AccountDisplayTwigExtension;
 use App\Http\Twig\DateTwigExtension;
 use App\Http\Twig\LanguageTwigExtension;
+use App\Infrastructure\Entity\TimestampPreSaveListener;
 use App\Search\LazySearchProvider;
 use Twig\Environment;
 use Twig\TwigFunction;
 use Waaseyaa\Entity\EntityTypeManager;
-use Waaseyaa\Entity\Event\EntityEvent;
 use Waaseyaa\Entity\Event\EntityEvents;
 use Waaseyaa\I18n\LanguageManagerInterface;
 use Waaseyaa\I18n\TranslatorInterface;
@@ -91,15 +91,21 @@ class AppBootServiceProvider extends AppCoreServiceProvider
         }
 
         // =====================================================================
-        // --- Games: game_session updated_at on PRE_SAVE ---
+        // --- Entities: created_at/updated_at population on PRE_SAVE ---
         // =====================================================================
 
+        // Generalized from the former game_session-only updated_at listener:
+        // any type declaring created_at/updated_at timestamp fields gets
+        // created_at set when raw-unset and updated_at refreshed on every
+        // save (unix ints via time()). Pre-empts the alpha.266
+        // EntityRepository divergence (no engine auto-population on that save
+        // path); see TimestampPreSaveListener for the alpha.249 engine
+        // compatibility analysis.
         $dispatcher = $this->resolve(\Symfony\Contracts\EventDispatcher\EventDispatcherInterface::class);
-        $dispatcher->addListener(EntityEvents::PRE_SAVE->value, static function (EntityEvent $event): void {
-            if ($event->entity->getEntityTypeId() === 'game_session') {
-                $event->entity->set('updated_at', time());
-            }
-        });
+        $dispatcher->addListener(
+            EntityEvents::PRE_SAVE->value,
+            new TimestampPreSaveListener($this->resolve(EntityTypeManager::class)),
+        );
 
         // =====================================================================
         // --- Twig: site_base_url for og:image / og:url absolute URLs ---

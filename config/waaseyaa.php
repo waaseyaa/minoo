@@ -53,6 +53,11 @@ return [
     // Dev-only fallback account for local built-in server workflows.
     // Must remain false outside local development.
     'auth' => [
+        // Token-signing secret. Waaseyaa alpha.250 (W3-1) makes the kernel
+        // throw at boot when auth.token_secret is missing/empty instead of
+        // silently falling back to app_secret / 'change-me' — map it from the
+        // environment ahead of the upgrade.
+        'token_secret' => getenv('AUTH_TOKEN_SECRET') ?: '',
         'dev_fallback_account' => filter_var(
             getenv('WAASEYAA_DEV_FALLBACK_ACCOUNT') ?: false,
             FILTER_VALIDATE_BOOLEAN,
@@ -78,15 +83,19 @@ return [
 
     // Upload validation (POST /api/media/upload).
     'upload_max_bytes' => 10 * 1024 * 1024, // 10 MiB
+    // Waaseyaa alpha.251 moves upload MIME validation to sniff-only semantics
+    // (the server-side detected type is matched, not the client-declared one).
+    // Under sniffing, application/octet-stream is the detector's fallback for
+    // any unrecognized binary — allowlisting it would admit arbitrary files —
+    // and image/svg+xml is scriptable XML (stored-XSS vector when served
+    // inline), so both are dropped from the allowlist.
     'upload_allowed_mime_types' => [
         'image/jpeg',
         'image/png',
         'image/gif',
         'image/webp',
-        'image/svg+xml',
         'application/pdf',
         'text/plain',
-        'application/octet-stream',
     ],
 
     // Anokii reel ingestion (#877): staff drop-zone video uploads are far larger
