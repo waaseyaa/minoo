@@ -110,7 +110,7 @@ return new JsonResponse(['error' => 'Not found'], 404);
 ## Entity Loading Pattern
 
 ```php
-$storage = $this->entityTypeManager->getStorage('entity_type');
+$storage = $this->entityTypeManager->getRepository('entity_type');
 
 // Query by field
 $ids = $storage->getQuery()
@@ -145,7 +145,7 @@ public function submitForm(array $params, array $query, AccountInterface $accoun
             'errors' => $errors, 'values' => $body, 'path' => '/form', 'account' => $account,
         ]), statusCode: 422);
     }
-    $storage = $this->entityTypeManager->getStorage('entity_type');
+    $storage = $this->entityTypeManager->getRepository('entity_type');
     $entity = $storage->create([...]);
     $entity->enforceIsNew();
     $storage->save($entity);
@@ -176,9 +176,9 @@ Status flow: `open` → `assigned` → `in_progress` → `completed` → `confir
 
 Mock dependencies — EntityTypeManager, Twig Environment:
 ```php
-$storage = $this->createMock(EntityStorageInterface::class);
+$repository = $this->createMock(EntityRepositoryInterface::class);
 $etm = $this->createMock(EntityTypeManager::class);
-$etm->method('getStorage')->willReturn($storage);
+$etm->method('getRepository')->willReturn($repository);
 
 $twig = new Environment(new ArrayLoader(['template.html.twig' => 'ok']));
 $controller = new MyController($etm, $twig);
