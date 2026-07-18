@@ -42,13 +42,13 @@ final class HomeController
     private function loadFeaturedItems(): array
     {
         try {
-            $storage = $this->entityTypeManager->getStorage('featured_item');
+            $repository = $this->entityTypeManager->getRepository('featured_item');
         } catch (\RuntimeException|\PDOException) {
             return [];
         }
 
         $now = date('Y-m-d H:i:s');
-        $ids = $storage->getQuery()->accessCheck(false)
+        $ids = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('starts_at', $now, '<=')
             ->condition('ends_at', $now, '>=')
@@ -61,7 +61,7 @@ final class HomeController
         }
 
         $items = [];
-        foreach ($storage->loadMultiple($ids) as $entity) {
+        foreach ($repository->findMany($ids) as $entity) {
             $headline = trim((string) ($entity->get('headline') ?? ''));
             if ($headline === '') {
                 // Skip placeholder featured items with no headline so the
@@ -84,12 +84,12 @@ final class HomeController
     private function countDictionaryEntries(): int
     {
         try {
-            $storage = $this->entityTypeManager->getStorage('dictionary_entry');
+            $repository = $this->entityTypeManager->getRepository('dictionary_entry');
         } catch (\RuntimeException|\PDOException) {
             return 0;
         }
 
-        $result = $storage->getQuery()->accessCheck(false)
+        $result = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->count()
             ->execute();

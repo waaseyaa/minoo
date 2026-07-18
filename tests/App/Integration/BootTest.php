@@ -89,23 +89,23 @@ final class BootTest extends TestCase
     #[Test]
     public function dictionary_entry_crud_round_trip(): void
     {
-        $storage = self::$kernel->getEntityTypeManager()->getStorage('dictionary_entry');
+        $repository = self::$kernel->getEntityTypeManager()->getRepository('dictionary_entry');
 
         // Create and save.
-        $entity = $storage->create([
+        $entity = $repository->create([
             'word' => 'makwa',
             'definition' => 'bear',
             'part_of_speech' => 'na',
             'language_code' => 'oj',
             'status' => 1,
         ]);
-        $storage->save($entity);
+        $repository->save($entity);
         $id = $entity->id();
 
         $this->assertNotNull($id, 'Entity should have an ID after save.');
 
         // Load and verify.
-        $loaded = $storage->load($id);
+        $loaded = $repository->find((string) $id);
         $this->assertNotNull($loaded);
         $this->assertSame('makwa', $loaded->get('word'));
         $this->assertSame('bear', $loaded->get('definition'));
@@ -118,28 +118,28 @@ final class BootTest extends TestCase
         $manager = self::$kernel->getEntityTypeManager();
 
         // Create a dictionary entry.
-        $entryStorage = $manager->getStorage('dictionary_entry');
-        $entry = $entryStorage->create([
+        $entryRepository = $manager->getRepository('dictionary_entry');
+        $entry = $entryRepository->create([
             'word' => 'jiimaan',
             'definition' => 'canoe',
             'part_of_speech' => 'ni',
             'status' => 1,
         ]);
-        $entryStorage->save($entry);
+        $entryRepository->save($entry);
         $entryId = $entry->id();
 
         // Create an example sentence referencing the entry.
-        $sentenceStorage = $manager->getStorage('example_sentence');
-        $sentence = $sentenceStorage->create([
+        $sentenceRepository = $manager->getRepository('example_sentence');
+        $sentence = $sentenceRepository->create([
             'ojibwe_text' => 'Jiimaan agamiing dago.',
             'english_text' => 'The canoe is by the lake.',
             'dictionary_entry_id' => $entryId,
             'status' => 1,
         ]);
-        $sentenceStorage->save($sentence);
+        $sentenceRepository->save($sentence);
 
         // Load and verify the reference.
-        $loaded = $sentenceStorage->load($sentence->id());
+        $loaded = $sentenceRepository->find((string) $sentence->id());
         $this->assertNotNull($loaded);
         $this->assertSame($entryId, $loaded->get('dictionary_entry_id'));
         $this->assertSame('The canoe is by the lake.', $loaded->get('english_text'));
@@ -157,21 +157,34 @@ final class BootTest extends TestCase
 
     /**
      * Regression lock for the community_group rename (#923 spec §7 item 5):
-     * the entity type manager must recognize the new type id and must no
-     * longer recognize the pre-rename 'group' id after a real kernel boot.
+     * the entity type manager must recognize the new type id, and Minoo's
+     * pre-rename 'group' registration must stay gone after a real kernel
+     * boot. Since alpha.267 the framework's waaseyaa/groups package ships
+     * its OWN 'group' entity type (Waaseyaa\Groups\Group), so 'group' may
+     * exist again — the lock is that it is never Minoo's class.
      */
     #[Test]
     public function community_group_entity_type_replaces_legacy_group_id(): void
     {
         $manager = self::$kernel->getEntityTypeManager();
 
-        $this->assertTrue(
-            $manager->hasDefinition('community_group'),
+        $communityGroup = $manager->getDefinition('community_group');
+        $this->assertNotNull(
+            $communityGroup,
             "Entity type 'community_group' should be registered after the #923 rename.",
         );
-        $this->assertFalse(
-            $manager->hasDefinition('group'),
-            "Entity type 'group' should no longer be registered after the #923 rename.",
+        $this->assertSame(
+            \App\Entity\Groups\Group::class,
+            $communityGroup->getClass(),
+            "Entity type 'community_group' should be backed by Minoo's Group entity class.",
         );
+
+        if ($manager->hasDefinition('group')) {
+            $this->assertSame(
+                \Waaseyaa\Groups\Group::class,
+                $manager->getDefinition('group')?->getClass(),
+                "Any 'group' entity type must be the framework's own (waaseyaa/groups), never Minoo's pre-#923 registration.",
+            );
+        }
     }
 }
