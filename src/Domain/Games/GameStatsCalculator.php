@@ -31,8 +31,8 @@ final class GameStatsCalculator
             return ['authenticated' => false];
         }
 
-        $storage = $entityTypeManager->getStorage('game_session');
-        $allIds = $storage->getQuery()
+        $repository = $entityTypeManager->getRepository('game_session');
+        $allIds = $repository->getQuery()
             ->setAccount($account)
             ->condition('user_id', $account->id())
             ->condition('game_type', $gameType)
@@ -48,7 +48,7 @@ final class GameStatsCalculator
             ];
         }
 
-        $sessions = array_values($storage->loadMultiple($allIds));
+        $sessions = $repository->findMany($allIds);
 
         // Sort by created_at DESC for streak calculation
         usort($sessions, fn ($a, $b) => (int) $b->get('created_at') - (int) $a->get('created_at'));

@@ -14,8 +14,8 @@ use Twig\Loader\ArrayLoader;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 #[CoversClass(CrosswordController::class)]
 final class CrosswordControllerTest extends TestCase
@@ -23,7 +23,7 @@ final class CrosswordControllerTest extends TestCase
     private EntityTypeManager $entityTypeManager;
     private Environment $twig;
     private GateInterface $gate;
-    private EntityStorageInterface $puzzleStorage;
+    private EntityRepositoryInterface $puzzleRepository;
     private EntityQueryInterface $puzzleQuery;
     private AccountInterface $account;
     private HttpRequest $request;
@@ -37,14 +37,14 @@ final class CrosswordControllerTest extends TestCase
         $this->puzzleQuery->method('sort')->willReturnSelf();
         $this->puzzleQuery->method('range')->willReturnSelf();
 
-        $this->puzzleStorage = $this->createMock(EntityStorageInterface::class);
-        $this->puzzleStorage->method('getQuery')->willReturn($this->puzzleQuery);
+        $this->puzzleRepository = $this->createMock(EntityRepositoryInterface::class);
+        $this->puzzleRepository->method('getQuery')->willReturn($this->puzzleQuery);
 
         $this->entityTypeManager = $this->createMock(EntityTypeManager::class);
-        $this->entityTypeManager->method('getStorage')
+        $this->entityTypeManager->method('getRepository')
             ->willReturnCallback(fn (string $type) => match ($type) {
-                'crossword_puzzle' => $this->puzzleStorage,
-                default => $this->createMock(EntityStorageInterface::class),
+                'crossword_puzzle' => $this->puzzleRepository,
+                default => $this->createMock(EntityRepositoryInterface::class),
             });
 
         $this->twig = new Environment(new ArrayLoader([

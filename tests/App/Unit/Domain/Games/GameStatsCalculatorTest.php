@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Entity\ContentEntityBase;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\Entity\Storage\EntityQueryInterface;
-use Waaseyaa\Entity\Storage\EntityStorageInterface;
 
 /**
  * Streak semantics live here for every game's complete() response — restored
@@ -64,12 +64,13 @@ final class GameStatsCalculatorTest extends TestCase
         $query->method('condition')->willReturnSelf();
         $query->method('execute')->willReturn(array_keys($sessions));
 
-        $storage = $this->createMock(EntityStorageInterface::class);
-        $storage->method('getQuery')->willReturn($query);
-        $storage->method('loadMultiple')->willReturn($sessions);
+        $repository = $this->createMock(EntityRepositoryInterface::class);
+        $repository->method('getQuery')->willReturn($query);
+        // findMany() returns a list (not id-keyed like the old loadMultiple()).
+        $repository->method('findMany')->willReturn(array_values($sessions));
 
         $entityTypeManager = $this->createMock(EntityTypeManager::class);
-        $entityTypeManager->method('getStorage')->willReturn($storage);
+        $entityTypeManager->method('getRepository')->willReturn($repository);
 
         return $entityTypeManager;
     }

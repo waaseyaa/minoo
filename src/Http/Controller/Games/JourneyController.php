@@ -144,7 +144,7 @@ class JourneyController
 
         $foundIds[] = $hit['id'];
         $session->set('found_objects', json_encode($foundIds));
-        $this->entityTypeManager->getStorage('game_session')->save($session);
+        $this->entityTypeManager->getRepository('game_session')->save($session);
 
         $sceneTotal = count($objects);
         $foundCount = count($foundIds);
@@ -214,7 +214,7 @@ class JourneyController
         }
 
         $session->set('hints_used', $hintsUsed + 1);
-        $this->entityTypeManager->getStorage('game_session')->save($session);
+        $this->entityTypeManager->getRepository('game_session')->save($session);
 
         return $this->json([
             'label_en'        => $hintObj['label_en'],
@@ -257,7 +257,7 @@ class JourneyController
         }
 
         $session->set('status', 'completed');
-        $this->entityTypeManager->getStorage('game_session')->save($session);
+        $this->entityTypeManager->getRepository('game_session')->save($session);
 
         $slug         = (string) $session->get('puzzle_id');
         $timeSeconds  = time() - (int) $session->get('created_at');
@@ -282,8 +282,8 @@ class JourneyController
 
     private function createSession(string $slug, AccountInterface $account): object
     {
-        $storage = $this->entityTypeManager->getStorage('game_session');
-        $session = $storage->create([
+        $repository = $this->entityTypeManager->getRepository('game_session');
+        $session = $repository->create([
             'game_type'    => 'journey',
             'mode'         => 'chapter',
             'puzzle_id'    => $slug,
@@ -291,7 +291,7 @@ class JourneyController
             'found_objects' => '[]',
             'hints_used'   => 0,
         ]);
-        $storage->save($session);
+        $repository->save($session);
         return $session;
     }
 

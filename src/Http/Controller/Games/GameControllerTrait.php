@@ -43,7 +43,19 @@ trait GameControllerTrait
 
     private function loadSessionByToken(string $uuid): ?GameSession
     {
-        $entity = $this->getEntityTypeManager()->getStorage('game_session')->loadByKey('uuid', $uuid);
+        // Token-as-capability lookup: the session UUID is the bearer secret and
+        // every mutating caller enforces ownership via the gate afterwards, so
+        // bypass per-row view checks (same semantics as the old loadByKey()).
+        // See docs/security/sql-entity-query-access-check-bypass-audit.md.
+        $repository = $this->getEntityTypeManager()->getRepository('game_session');
+        $ids = $repository->getQuery()->accessCheck(false)
+            ->condition('uuid', $uuid)
+            ->range(0, 1)
+            ->execute();
+        if ($ids === []) {
+            return null;
+        }
+        $entity = $repository->find((string) reset($ids));
         return $entity instanceof GameSession ? $entity : null;
     }
 }

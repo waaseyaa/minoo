@@ -15,6 +15,7 @@ use Twig\Environment;
 use Waaseyaa\Access\AccountInterface;
 use Waaseyaa\Access\Gate\GateInterface;
 use Waaseyaa\Entity\EntityTypeManager;
+use Waaseyaa\Entity\Repository\EntityRepositoryInterface;
 use Waaseyaa\SSR\Attribute\MapQuery;
 use Waaseyaa\SSR\Attribute\MapRoute;
 
@@ -49,8 +50,7 @@ final class CrosswordController
         $today = date('Y-m-d');
         $puzzleId = "daily-{$today}";
 
-        $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $puzzle = $puzzleStorage->load($puzzleId);
+        $puzzle = $this->entityTypeManager->getRepository('crossword_puzzle')->find($puzzleId);
 
         if ($puzzle === null) {
             // Fallback: generate on-the-fly when cron missed a run
@@ -84,8 +84,8 @@ final class CrosswordController
             $tier = 'easy';
         }
 
-        $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $ids = $puzzleStorage->getQuery()->setAccount($account)
+        $puzzleRepository = $this->entityTypeManager->getRepository('crossword_puzzle');
+        $ids = $puzzleRepository->getQuery()->setAccount($account)
             ->condition('difficulty_tier', $tier)
             ->execute();
 
@@ -98,7 +98,7 @@ final class CrosswordController
         // Self-heal: keep a small practice pool per tier so medium/hard never
         // dead-end on a fresh database (the seeder adds more variety on deploy).
         if (count($practiceIds) < 3) {
-            $generated = $this->generatePuzzle($this->nextPuzzleId($puzzleStorage, "practice-{$tier}"), $tier);
+            $generated = $this->generatePuzzle($this->nextPuzzleId($puzzleRepository, "practice-{$tier}"), $tier);
             if ($generated !== null) {
                 $practiceIds[] = (string) $generated->id();
             }
@@ -109,7 +109,7 @@ final class CrosswordController
         }
 
         $puzzleId = $practiceIds[array_rand($practiceIds)];
-        $puzzle = $puzzleStorage->load($puzzleId);
+        $puzzle = $puzzleRepository->find((string) $puzzleId);
 
         if ($puzzle === null) {
             return $this->json(['error' => 'Puzzle not found'], 503);
@@ -133,14 +133,14 @@ final class CrosswordController
     /** GET /api/games/crossword/themes — list theme packs with progress. */
     public function themes(#[MapRoute] array $params, #[MapQuery] array $query, AccountInterface $account, HttpRequest $request): Response
     {
-        $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $allIds = $puzzleStorage->getQuery()->setAccount($account)->execute();
+        $puzzleRepository = $this->entityTypeManager->getRepository('crossword_puzzle');
+        $allIds = $puzzleRepository->getQuery()->setAccount($account)->execute();
 
         // Count existing themed puzzles + remember each puzzle's theme.
         $themeCounts = [];
         $themeOfPuzzle = [];
         if ($allIds !== []) {
-            foreach ($puzzleStorage->loadMultiple($allIds) as $puzzle) {
+            foreach ($puzzleRepository->findMany($allIds) as $puzzle) {
                 $theme = (string) $puzzle->get('theme');
                 if ($theme === '') {
                     continue;
@@ -153,13 +153,13 @@ final class CrosswordController
         // Completed-per-theme for authenticated users (one session query).
         $completedByTheme = [];
         if ($account->isAuthenticated()) {
-            $sessionIds = $this->entityTypeManager->getStorage('game_session')->getQuery()->setAccount($account)
+            $sessionIds = $this->entityTypeManager->getRepository('game_session')->getQuery()->setAccount($account)
                 ->condition('game_type', 'crossword')
                 ->condition('user_id', $account->id())
                 ->condition('status', 'completed')
                 ->execute();
             if ($sessionIds !== []) {
-                foreach ($this->entityTypeManager->getStorage('game_session')->loadMultiple($sessionIds) as $s) {
+                foreach ($this->entityTypeManager->getRepository('game_session')->findMany($sessionIds) as $s) {
                     $theme = $themeOfPuzzle[(string) $s->get('puzzle_id')] ?? null;
                     if ($theme !== null) {
                         $completedByTheme[$theme] = ($completedByTheme[$theme] ?? 0) + 1;
@@ -194,14 +194,14 @@ final class CrosswordController
             return $this->json(['error' => 'Theme not found'], 404);
         }
 
-        $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $allIds = $puzzleStorage->getQuery()->setAccount($account)
+        $puzzleRepository = $this->entityTypeManager->getRepository('crossword_puzzle');
+        $allIds = $puzzleRepository->getQuery()->setAccount($account)
             ->condition('theme', $slug)
             ->execute();
 
         // Self-heal: bootstrap a small themed pool on first visit.
         if (count($allIds) < 2) {
-            $generated = $this->generatePuzzle($this->nextPuzzleId($puzzleStorage, "theme-{$slug}"), 'easy', $slug);
+            $generated = $this->generatePuzzle($this->nextPuzzleId($puzzleRepository, "theme-{$slug}"), 'easy', $slug);
             if ($generated !== null) {
                 $allIds[] = (string) $generated->id();
             }
@@ -215,12 +215,12 @@ final class CrosswordController
         // Determine completed puzzles
         $completedPuzzleIds = [];
         if ($account->isAuthenticated()) {
-            $sessionIds = $this->entityTypeManager->getStorage('game_session')->getQuery()->setAccount($account)
+            $sessionIds = $this->entityTypeManager->getRepository('game_session')->getQuery()->setAccount($account)
                 ->condition('game_type', 'crossword')
                 ->condition('user_id', $account->id())
                 ->condition('status', 'completed')
                 ->execute();
-            $sessions = $this->entityTypeManager->getStorage('game_session')->loadMultiple($sessionIds);
+            $sessions = $this->entityTypeManager->getRepository('game_session')->findMany($sessionIds);
             foreach ($sessions as $s) {
                 $completedPuzzleIds[] = (string) $s->get('puzzle_id');
             }
@@ -246,7 +246,7 @@ final class CrosswordController
             return $this->json(['error' => 'All puzzles in this theme completed', 'theme_complete' => true], 200);
         }
 
-        $puzzle = $puzzleStorage->load($nextId);
+        $puzzle = $puzzleRepository->find((string) $nextId);
         if ($puzzle === null) {
             return $this->json(['error' => 'Puzzle not found'], 503);
         }
@@ -289,7 +289,7 @@ final class CrosswordController
         }
 
         $puzzleId = (string) $session->get('puzzle_id');
-        $puzzle = $this->entityTypeManager->getStorage('crossword_puzzle')->load($puzzleId);
+        $puzzle = $this->entityTypeManager->getRepository('crossword_puzzle')->find($puzzleId);
         if ($puzzle === null) {
             return $this->json(['error' => 'Puzzle not found'], 500);
         }
@@ -323,7 +323,7 @@ final class CrosswordController
             $session->set('status', 'completed');
         }
 
-        $this->entityTypeManager->getStorage('game_session')->save($session);
+        $this->entityTypeManager->getRepository('game_session')->save($session);
 
         $response = [
             'correct' => $result['correct'],
@@ -335,8 +335,8 @@ final class CrosswordController
 
         // Include teaching data for correct words
         if ($result['correct'] && isset($words[$wordIndex]['dictionary_entry_id'])) {
-            $entry = $this->entityTypeManager->getStorage('dictionary_entry')
-                ->load((int) $words[$wordIndex]['dictionary_entry_id']);
+            $entry = $this->entityTypeManager->getRepository('dictionary_entry')
+                ->find((string) (int) $words[$wordIndex]['dictionary_entry_id']);
             if ($entry !== null) {
                 $response['teaching'] = [
                     'word' => (string) $entry->get('word'),
@@ -373,7 +373,7 @@ final class CrosswordController
         }
 
         $puzzleId = (string) $session->get('puzzle_id');
-        $puzzle = $this->entityTypeManager->getStorage('crossword_puzzle')->load($puzzleId);
+        $puzzle = $this->entityTypeManager->getRepository('crossword_puzzle')->find($puzzleId);
         if ($puzzle === null) {
             return $this->json(['error' => 'Puzzle not found'], 500);
         }
@@ -382,10 +382,14 @@ final class CrosswordController
         $cluesData = json_decode((string) $puzzle->get('clues'), true) ?: [];
 
         // Batch-load dictionary entries to avoid N+1 queries
+        // (findMany returns a list — re-key by id for the per-word lookups below).
         $entryIds = array_filter(array_column($words, 'dictionary_entry_id'));
-        $dictEntries = $entryIds !== []
-            ? $this->entityTypeManager->getStorage('dictionary_entry')->loadMultiple($entryIds)
-            : [];
+        $dictEntries = [];
+        if ($entryIds !== []) {
+            foreach ($this->entityTypeManager->getRepository('dictionary_entry')->findMany($entryIds) as $entry) {
+                $dictEntries[(int) $entry->id()] = $entry;
+            }
+        }
 
         // Build teaching data for each word
         $wordTeachings = [];
@@ -399,13 +403,13 @@ final class CrosswordController
                     $teaching['pos'] = (string) $entry->get('part_of_speech');
 
                     // Load example sentence
-                    $exampleIds = $this->entityTypeManager->getStorage('example_sentence')->getQuery()->setAccount($account)
+                    $exampleIds = $this->entityTypeManager->getRepository('example_sentence')->getQuery()->setAccount($account)
                         ->condition('dictionary_entry_id', $entry->id())
                         ->condition('status', 1)
                         ->range(0, 1)
                         ->execute();
                     $example = $exampleIds !== []
-                        ? $this->entityTypeManager->getStorage('example_sentence')->load(reset($exampleIds))
+                        ? $this->entityTypeManager->getRepository('example_sentence')->find((string) reset($exampleIds))
                         : null;
                     if ($example !== null) {
                         $teaching['example_ojibwe'] = (string) $example->get('ojibwe_text');
@@ -467,8 +471,8 @@ final class CrosswordController
             return $this->json(['error' => 'No hints remaining'], 400);
         }
 
-        $puzzle = $this->entityTypeManager->getStorage('crossword_puzzle')
-            ->load((string) $session->get('puzzle_id'));
+        $puzzle = $this->entityTypeManager->getRepository('crossword_puzzle')
+            ->find((string) $session->get('puzzle_id'));
         if ($puzzle === null) {
             return $this->json(['error' => 'Puzzle not found'], 500);
         }
@@ -484,7 +488,7 @@ final class CrosswordController
         $letter = mb_substr(mb_strtolower($word), $position, 1);
 
         $session->set('hints_used', $hintsUsed + 1);
-        $this->entityTypeManager->getStorage('game_session')->save($session);
+        $this->entityTypeManager->getRepository('game_session')->save($session);
 
         return $this->json([
             'letter' => $letter,
@@ -529,7 +533,7 @@ final class CrosswordController
         AccountInterface $account,
         ?string $dailyDate = null,
     ): object {
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
+        $sessionRepository = $this->entityTypeManager->getRepository('game_session');
         $values = [
             'game_type' => 'crossword',
             'mode' => $mode,
@@ -540,8 +544,8 @@ final class CrosswordController
         if ($dailyDate !== null) {
             $values['daily_date'] = $dailyDate;
         }
-        $session = $sessionStorage->create($values);
-        $sessionStorage->save($session);
+        $session = $sessionRepository->create($values);
+        $sessionRepository->save($session);
         return $session;
     }
 
@@ -596,10 +600,10 @@ final class CrosswordController
      */
     private function loadCandidateWords(int $minLen, int $maxLen, array $themeKeywords = []): array
     {
-        $dictStorage = $this->entityTypeManager->getStorage('dictionary_entry');
+        $dictRepository = $this->entityTypeManager->getRepository('dictionary_entry');
 
         if ($themeKeywords === []) {
-            $ids = $dictStorage->getQuery()->accessCheck(false)
+            $ids = $dictRepository->getQuery()->accessCheck(false)
                 ->condition('status', 1)
                 ->condition('consent_public', 1)
                 ->condition('definition', '%"%', 'LIKE')
@@ -611,7 +615,7 @@ final class CrosswordController
             // themes like animals/family).
             $idSet = [];
             foreach ($themeKeywords as $kw) {
-                $kwIds = $dictStorage->getQuery()->accessCheck(false)
+                $kwIds = $dictRepository->getQuery()->accessCheck(false)
                     ->condition('status', 1)
                     ->condition('consent_public', 1)
                     ->condition('definition', '%' . addcslashes($kw, '%_\\') . '%', 'LIKE')
@@ -633,7 +637,7 @@ final class CrosswordController
 
         $words = [];
         $meta = [];
-        foreach ($dictStorage->loadMultiple($ids) as $entry) {
+        foreach ($dictRepository->findMany($ids) as $entry) {
             $word = mb_strtolower((string) $entry->get('word'));
             $def = (string) $entry->get('definition');
             $len = mb_strlen($word);
@@ -721,19 +725,19 @@ final class CrosswordController
             $values['theme'] = $theme;
         }
 
-        $puzzleStorage = $this->entityTypeManager->getStorage('crossword_puzzle');
-        $puzzle = $puzzleStorage->create($values);
-        $puzzleStorage->save($puzzle);
+        $puzzleRepository = $this->entityTypeManager->getRepository('crossword_puzzle');
+        $puzzle = $puzzleRepository->create($values);
+        $puzzleRepository->save($puzzle);
 
         return $puzzle;
     }
 
     /** First unused "{prefix}-NNN" id so the generated pool grows deterministically. */
-    private function nextPuzzleId(object $puzzleStorage, string $prefix): string
+    private function nextPuzzleId(EntityRepositoryInterface $puzzleRepository, string $prefix): string
     {
         for ($i = 1; $i <= 999; $i++) {
             $id = sprintf('%s-%03d', $prefix, $i);
-            if ($puzzleStorage->load($id) === null) {
+            if (!$puzzleRepository->exists($id)) {
                 return $id;
             }
         }
@@ -753,12 +757,14 @@ final class CrosswordController
         }
 
         // Batch-load dictionary entries to avoid N+1 queries
+        // (findMany returns a list — re-key by id for the per-word lookups below).
         $dictEntries = [];
         if ($tier === 'easy') {
             $entryIds = array_filter(array_column($words, 'dictionary_entry_id'));
             if ($entryIds !== []) {
-                $dictEntries = $this->entityTypeManager->getStorage('dictionary_entry')
-                    ->loadMultiple($entryIds);
+                foreach ($this->entityTypeManager->getRepository('dictionary_entry')->findMany($entryIds) as $entry) {
+                    $dictEntries[(int) $entry->id()] = $entry;
+                }
             }
         }
 

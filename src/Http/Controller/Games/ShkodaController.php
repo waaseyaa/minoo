@@ -57,8 +57,7 @@ final class ShkodaController
         $dayOfWeek = (int) date('w');
 
         // Try pre-generated challenge
-        $challengeStorage = $this->entityTypeManager->getStorage('daily_challenge');
-        $challenge = $challengeStorage->load($today);
+        $challenge = $this->entityTypeManager->getRepository('daily_challenge')->find($today);
 
         if ($challenge !== null) {
             $entryId = (int) $challenge->get('dictionary_entry_id');
@@ -74,7 +73,7 @@ final class ShkodaController
             }
         }
 
-        $entry = $this->entityTypeManager->getStorage('dictionary_entry')->load($entryId);
+        $entry = $this->entityTypeManager->getRepository('dictionary_entry')->find((string) $entryId);
         if ($entry === null) {
             return $this->json(['error' => 'Word not found'], 503);
         }
@@ -82,8 +81,8 @@ final class ShkodaController
         $word = (string) $entry->get('word');
 
         // Create server-side session for validation
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
-        $session = $sessionStorage->create([
+        $sessionRepository = $this->entityTypeManager->getRepository('game_session');
+        $session = $sessionRepository->create([
             'game_type' => 'shkoda',
             'mode' => 'daily',
             'direction' => $direction,
@@ -92,7 +91,7 @@ final class ShkodaController
             'daily_date' => $today,
             'difficulty_tier' => $tier,
         ]);
-        $sessionStorage->save($session);
+        $sessionRepository->save($session);
 
         // English→Ojibwe: clue = definition (active recall)
         // Ojibwe→English: clue = POS hint only (spelling practice, meaning revealed at end)
@@ -132,7 +131,7 @@ final class ShkodaController
             return $this->json(['error' => 'No words available'], 503);
         }
 
-        $entry = $this->entityTypeManager->getStorage('dictionary_entry')->load($entryId);
+        $entry = $this->entityTypeManager->getRepository('dictionary_entry')->find((string) $entryId);
         if ($entry === null) {
             return $this->json(['error' => 'Word not found'], 503);
         }
@@ -145,8 +144,8 @@ final class ShkodaController
         $word = (string) $entry->get('word');
 
         // For practice/streak, include word (base64 obfuscated, client-side validation)
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
-        $session = $sessionStorage->create([
+        $sessionRepository = $this->entityTypeManager->getRepository('game_session');
+        $session = $sessionRepository->create([
             'game_type' => 'shkoda',
             'mode' => $mode,
             'direction' => $direction,
@@ -154,7 +153,7 @@ final class ShkodaController
             'user_id' => $account->isAuthenticated() ? $account->id() : null,
             'difficulty_tier' => $tier,
         ]);
-        $sessionStorage->save($session);
+        $sessionRepository->save($session);
 
         $pos = (string) $entry->get('part_of_speech');
         if ($direction === 'english_to_ojibwe') {
@@ -202,8 +201,8 @@ final class ShkodaController
         }
 
         // Load the word
-        $entry = $this->entityTypeManager->getStorage('dictionary_entry')
-            ->load((int) $session->get('dictionary_entry_id'));
+        $entry = $this->entityTypeManager->getRepository('dictionary_entry')
+            ->find((string) (int) $session->get('dictionary_entry_id'));
         if ($entry === null) {
             return $this->json(['error' => 'Word not found'], 500);
         }
@@ -235,11 +234,11 @@ final class ShkodaController
             $status = 'lost';
         }
 
-        $sessionStorage = $this->entityTypeManager->getStorage('game_session');
+        $sessionRepository = $this->entityTypeManager->getRepository('game_session');
         $session->set('guesses', json_encode($previousGuesses));
         $session->set('wrong_count', $wrongCount);
         $session->set('status', $status);
-        $sessionStorage->save($session);
+        $sessionRepository->save($session);
 
         $response = [
             'correct' => $result['correct'],
@@ -283,16 +282,16 @@ final class ShkodaController
             $guesses = $data['guesses'] ?? [];
             $wrongCount = (int) ($data['wrong_count'] ?? 0);
 
-            $sessionStorage = $this->entityTypeManager->getStorage('game_session');
+            $sessionRepository = $this->entityTypeManager->getRepository('game_session');
             $session->set('status', $result);
             $session->set('guesses', json_encode($guesses));
             $session->set('wrong_count', $wrongCount);
-            $sessionStorage->save($session);
+            $sessionRepository->save($session);
         }
 
         // Load word data for teaching moment
-        $entry = $this->entityTypeManager->getStorage('dictionary_entry')
-            ->load((int) $session->get('dictionary_entry_id'));
+        $entry = $this->entityTypeManager->getRepository('dictionary_entry')
+            ->find((string) (int) $session->get('dictionary_entry_id'));
 
         if ($entry === null) {
             return $this->json(['error' => 'Word not found'], 500);
@@ -302,13 +301,13 @@ final class ShkodaController
         $slug = (string) $entry->get('slug');
 
         // Load example sentence if available
-        $exampleStorage = $this->entityTypeManager->getStorage('example_sentence');
-        $exampleIds = $exampleStorage->getQuery()->setAccount($account)
+        $exampleRepository = $this->entityTypeManager->getRepository('example_sentence');
+        $exampleIds = $exampleRepository->getQuery()->setAccount($account)
             ->condition('dictionary_entry_id', $entry->id())
             ->condition('status', 1)
             ->range(0, 1)
             ->execute();
-        $example = $exampleIds !== [] ? $exampleStorage->load(reset($exampleIds)) : null;
+        $example = $exampleIds !== [] ? $exampleRepository->find((string) reset($exampleIds)) : null;
 
         // Build stats for authenticated users
         $stats = GameStatsCalculator::build($this->entityTypeManager, $account, 'shkoda');
@@ -329,11 +328,11 @@ final class ShkodaController
 
     private function selectRandomWord(string $tier, string $seed = ''): ?int
     {
-        $storage = $this->entityTypeManager->getStorage('dictionary_entry');
+        $repository = $this->entityTypeManager->getRepository('dictionary_entry');
 
         // Draw from the WHOLE dictionary, not the first 500 (alphabetical "aa…")
         // rows. #793: sample diversely, then keep only learnable words.
-        $allIds = $storage->getQuery()->accessCheck(false)
+        $allIds = $repository->getQuery()->accessCheck(false)
             ->condition('status', 1)
             ->condition('consent_public', 1)
             ->condition('definition', '%"%', 'LIKE')
@@ -353,7 +352,7 @@ final class ShkodaController
 
         $tierMatched = [];
         $anyLearnable = [];
-        foreach ($storage->loadMultiple($sample) as $entry) {
+        foreach ($repository->findMany($sample) as $entry) {
             $word = (string) $entry->get('word');
             $def = $this->cleanDefinition((string) $entry->get('definition'));
             if (!LearnableWord::isLearnable($word, $def)) {
