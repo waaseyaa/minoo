@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Feed engagement UI (#817): `public/js/engagement.js` wires the inert feed-card buttons to the social spine API — optimistic reaction toggle, inline comment view/add, share, and delete-own-post — plus an authenticated-only Feed entry in the sidebar navigation.
 - Navigation links for `/events`, `/groups`, and `/chat` in the sidebar (#920) — all three pages were fully built but unreachable.
 - 301 redirects preserving old URLs: `/media/corpus/video/{id}` → `/lessons/media/video/{id}` (stored in pre-2026-07 corpus rows), `/home` → `/`, `/studio` → `/` (#920).
 
