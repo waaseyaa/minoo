@@ -1,3 +1,5 @@
+> Current social planning: `docs/specs/social-capabilities.md` and `docs/roadmap.md`. Read `skills/framework-dependency-workflow/SKILL.md` for upstream blockers and adoption.
+
 # Minoo
 
 Indigenous knowledge platform built on Waaseyaa CMS framework.

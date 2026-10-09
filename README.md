@@ -70,3 +70,9 @@ The deploy workflow runs the idempotent `bin/waaseyaa db:init` — do **not** sw
 ## License
 
 Software: MIT. Community content: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). See [LICENSE](LICENSE) for details.
+
+## Product planning
+
+See the [roadmap](docs/roadmap.md), [social specification](docs/specs/social-capabilities.md)
+and [Framework dependency workflow](skills/framework-dependency-workflow/SKILL.md).
+Social scope includes commenting and replies; planned capabilities are not release claims.

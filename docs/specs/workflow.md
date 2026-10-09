@@ -6,7 +6,7 @@
 
 **Planning and execution** for substantive work follow the **design-first flow**: brainstorm → design/spec in `docs/specs/` → written plan → TDD implementation → code review → verification. Multi-PR efforts are anchored by a **GitHub anchor issue** that records scope, work-package breakdown, and descope decisions; every PR in the effort references it. **`docs/specs/`** remains the contract layer agents read (directly or via the `minoo_*` MCP tools).
 
-**GitHub** is the execution and visibility surface: issues, pull requests, Actions CI. Roadmap and prioritization live in anchor issues and human judgment; this repo does not maintain GitHub milestones as a planning surface.
+**GitHub** is the execution and visibility surface: issues, pull requests, Actions CI. The delivery sequence lives in `docs/roadmap.md`; anchor issues own live execution status and dependencies. This repo does not maintain GitHub milestones as a planning surface.
 
 > **Spec Kitty is retired** (2026-07, matching waaseyaa's 2026-07-06 retirement). Do not run `spec-kitty` commands or consult `.kittify/` state (the directory is removed). Historical mission artifacts are preserved read-only under `kitty-specs/`.
 
@@ -46,3 +46,7 @@ The script exits `0` always — warning surface, not a CI gate (script name is h
 - Note on `indigenous-taxonomy` PHP package presence
 
 These checks protect architectural boundaries.
+
+For Framework dependencies, use [the repository skill](../../skills/framework-dependency-workflow/SKILL.md).
+[Social capabilities](social-capabilities.md) owns current social intent; historical
+closed issues and removed routes are not current acceptance evidence.
